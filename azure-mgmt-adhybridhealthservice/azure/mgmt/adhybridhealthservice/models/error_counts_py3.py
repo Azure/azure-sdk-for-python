@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ErrorCounts(Model):
     """The list of error counts.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.ErrorCount]
     """
 

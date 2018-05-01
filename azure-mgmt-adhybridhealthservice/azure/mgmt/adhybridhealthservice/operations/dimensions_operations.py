@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AddomainservicemembersOperations(object):
-    """AddomainservicemembersOperations operations.
+class DimensionsOperations(object):
+    """DimensionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,60 +37,37 @@ class AddomainservicemembersOperations(object):
 
         self.config = config
 
-    def list(
-            self, service_name, is_groupby_site, filter=None, query=None, next_partition_key=None, next_row_key=None, take_count=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of the servers, for a given Active Directory Domain
-        Service, that are onboarded to Azure Active Directory Connect Health.
+    def list_adds_dimensions(
+            self, service_name, dimension, custom_headers=None, raw=False, **operation_config):
+        """Gets the dimensions for a given dimension type in a server.
 
         :param service_name: The name of the service.
         :type service_name: str
-        :param is_groupby_site: Indicates if the result should be grouped by
-         site or not.
-        :type is_groupby_site: bool
-        :param filter: The server property filter to apply.
-        :type filter: str
-        :param query: The custom query.
-        :type query: str
-        :param next_partition_key: The next partition key to query for.
-        :type next_partition_key: str
-        :param next_row_key: The next row key to query for.
-        :type next_row_key: str
-        :param take_count: The take count , which specifies the number of
-         elements that can be returned from a sequence.
-        :type take_count: int
+        :param dimension: The dimension type.
+        :type dimension: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AddsServiceMember
+        :return: An iterator like instance of Dimension
         :rtype:
-         ~azure.mgmt.adhybridhealthservice.models.AddsServiceMemberPaged[~azure.mgmt.adhybridhealthservice.models.AddsServiceMember]
+         ~azure.mgmt.adhybridhealthservice.models.DimensionPaged[~azure.mgmt.adhybridhealthservice.models.Dimension]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_adds_dimensions.metadata['url']
                 path_format_arguments = {
-                    'serviceName': self._serialize.url("service_name", service_name, 'str')
+                    'serviceName': self._serialize.url("service_name", service_name, 'str'),
+                    'dimension': self._serialize.url("dimension", dimension, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['isGroupbySite'] = self._serialize.query("is_groupby_site", is_groupby_site, 'bool')
-                if query is not None:
-                    query_parameters['query'] = self._serialize.query("query", query, 'str')
-                if next_partition_key is not None:
-                    query_parameters['nextPartitionKey'] = self._serialize.query("next_partition_key", next_partition_key, 'str')
-                if next_row_key is not None:
-                    query_parameters['nextRowKey'] = self._serialize.query("next_row_key", next_row_key, 'str')
-                if take_count is not None:
-                    query_parameters['takeCount'] = self._serialize.query("take_count", take_count, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -120,12 +97,12 @@ class AddomainservicemembersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AddsServiceMemberPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AddsServiceMemberPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/addomainservicemembers'}
+    list_adds_dimensions.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/dimensions/{dimension}'}

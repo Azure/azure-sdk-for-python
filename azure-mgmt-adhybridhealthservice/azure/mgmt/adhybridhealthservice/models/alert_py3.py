@@ -24,7 +24,7 @@ class Alert(Model):
      multile resolution types. Possible values include: 'Active',
      'ResolvedByPositiveResult', 'ResolvedManually', 'ResolvedByTimer',
      'ResolvedByStateChange'
-    :type state: str or ~azure.mgmt.adhybridhealthservice.models.enum
+    :type state: str or ~azure.mgmt.adhybridhealthservice.models.State
     :param short_name: The alert short name.
     :type short_name: str
     :param display_name: The display name for the alert.

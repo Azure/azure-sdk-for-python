@@ -10,15 +10,14 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .item_py3 import Item
     from .additional_information_py3 import AdditionalInformation
     from .adds_service_member_py3 import AddsServiceMember
-    from .adds_service_members_py3 import AddsServiceMembers
     from .agent_py3 import Agent
     from .help_link_py3 import HelpLink
     from .alert_py3 import Alert
     from .alert_feedback_py3 import AlertFeedback
     from .alert_feedbacks_py3 import AlertFeedbacks
-    from .alerts_py3 import Alerts
     from .associated_object_py3 import AssociatedObject
     from .value_delta_py3 import ValueDelta
     from .attribute_delta_py3 import AttributeDelta
@@ -40,6 +39,7 @@ try:
     from .connector_object_errors_py3 import ConnectorObjectErrors
     from .credential_py3 import Credential
     from .data_freshness_detail_py3 import DataFreshnessDetail
+    from .dimension_py3 import Dimension
     from .display_py3 import Display
     from .error_count_py3 import ErrorCount
     from .error_counts_py3 import ErrorCounts
@@ -51,7 +51,6 @@ try:
     from .error_report_users_entry_py3 import ErrorReportUsersEntry
     from .error_report_users_entries_py3 import ErrorReportUsersEntries
     from .export_status_py3 import ExportStatus
-    from .export_statuses_py3 import ExportStatuses
     from .extension_error_info_py3 import ExtensionErrorInfo
     from .forest_summary_py3 import ForestSummary
     from .global_configuration_py3 import GlobalConfiguration
@@ -62,12 +61,10 @@ try:
     from .import_errors_py3 import ImportErrors
     from .inbound_replication_neighbor_py3 import InboundReplicationNeighbor
     from .inbound_replication_neighbors_py3 import InboundReplicationNeighbors
-    from .item_py3 import Item
     from .items_py3 import Items
     from .merged_export_errors_py3 import MergedExportErrors
     from .metric_group_py3 import MetricGroup
     from .metric_metadata_py3 import MetricMetadata
-    from .metric_metadata_list_py3 import MetricMetadataList
     from .metric_set_py3 import MetricSet
     from .metric_sets_py3 import MetricSets
     from .module_configuration_py3 import ModuleConfiguration
@@ -82,23 +79,20 @@ try:
     from .service_properties_py3 import ServiceProperties
     from .service_py3 import Service
     from .service_configuration_py3 import ServiceConfiguration
-    from .services_py3 import Services
     from .service_member_properties_py3 import ServiceMemberProperties
     from .service_member_py3 import ServiceMember
-    from .service_members_py3 import ServiceMembers
     from .tabular_export_error_py3 import TabularExportError
     from .tenant_py3 import Tenant
     from .tenant_onboarding_details_py3 import TenantOnboardingDetails
 except (SyntaxError, ImportError):
+    from .item import Item
     from .additional_information import AdditionalInformation
     from .adds_service_member import AddsServiceMember
-    from .adds_service_members import AddsServiceMembers
     from .agent import Agent
     from .help_link import HelpLink
     from .alert import Alert
     from .alert_feedback import AlertFeedback
     from .alert_feedbacks import AlertFeedbacks
-    from .alerts import Alerts
     from .associated_object import AssociatedObject
     from .value_delta import ValueDelta
     from .attribute_delta import AttributeDelta
@@ -120,6 +114,7 @@ except (SyntaxError, ImportError):
     from .connector_object_errors import ConnectorObjectErrors
     from .credential import Credential
     from .data_freshness_detail import DataFreshnessDetail
+    from .dimension import Dimension
     from .display import Display
     from .error_count import ErrorCount
     from .error_counts import ErrorCounts
@@ -131,7 +126,6 @@ except (SyntaxError, ImportError):
     from .error_report_users_entry import ErrorReportUsersEntry
     from .error_report_users_entries import ErrorReportUsersEntries
     from .export_status import ExportStatus
-    from .export_statuses import ExportStatuses
     from .extension_error_info import ExtensionErrorInfo
     from .forest_summary import ForestSummary
     from .global_configuration import GlobalConfiguration
@@ -142,12 +136,10 @@ except (SyntaxError, ImportError):
     from .import_errors import ImportErrors
     from .inbound_replication_neighbor import InboundReplicationNeighbor
     from .inbound_replication_neighbors import InboundReplicationNeighbors
-    from .item import Item
     from .items import Items
     from .merged_export_errors import MergedExportErrors
     from .metric_group import MetricGroup
     from .metric_metadata import MetricMetadata
-    from .metric_metadata_list import MetricMetadataList
     from .metric_set import MetricSet
     from .metric_sets import MetricSets
     from .module_configuration import ModuleConfiguration
@@ -162,23 +154,30 @@ except (SyntaxError, ImportError):
     from .service_properties import ServiceProperties
     from .service import Service
     from .service_configuration import ServiceConfiguration
-    from .services import Services
     from .service_member_properties import ServiceMemberProperties
     from .service_member import ServiceMember
-    from .service_members import ServiceMembers
     from .tabular_export_error import TabularExportError
     from .tenant import Tenant
     from .tenant_onboarding_details import TenantOnboardingDetails
+from .service_paged import ServicePaged
+from .item_paged import ItemPaged
+from .metric_metadata_paged import MetricMetadataPaged
+from .alert_paged import AlertPaged
+from .dimension_paged import DimensionPaged
+from .adds_service_member_paged import AddsServiceMemberPaged
+from .export_status_paged import ExportStatusPaged
+from .service_member_paged import ServiceMemberPaged
 from .ad_hybrid_health_service_enums import (
     Level,
+    State,
     ValueDeltaOperationType,
     AttributeDeltaOperationType,
     ValueType,
     AttributeMappingType,
     DeltaOperationType,
     RunStepOperationType,
-    AlgorithmStepType,
     HealthStatus,
+    AlgorithmStepType,
     PasswordOperationTypes,
     ServiceType,
     ServerDisabledReason,
@@ -186,15 +185,14 @@ from .ad_hybrid_health_service_enums import (
 )
 
 __all__ = [
+    'Item',
     'AdditionalInformation',
     'AddsServiceMember',
-    'AddsServiceMembers',
     'Agent',
     'HelpLink',
     'Alert',
     'AlertFeedback',
     'AlertFeedbacks',
-    'Alerts',
     'AssociatedObject',
     'ValueDelta',
     'AttributeDelta',
@@ -216,6 +214,7 @@ __all__ = [
     'ConnectorObjectErrors',
     'Credential',
     'DataFreshnessDetail',
+    'Dimension',
     'Display',
     'ErrorCount',
     'ErrorCounts',
@@ -227,7 +226,6 @@ __all__ = [
     'ErrorReportUsersEntry',
     'ErrorReportUsersEntries',
     'ExportStatus',
-    'ExportStatuses',
     'ExtensionErrorInfo',
     'ForestSummary',
     'GlobalConfiguration',
@@ -238,12 +236,10 @@ __all__ = [
     'ImportErrors',
     'InboundReplicationNeighbor',
     'InboundReplicationNeighbors',
-    'Item',
     'Items',
     'MergedExportErrors',
     'MetricGroup',
     'MetricMetadata',
-    'MetricMetadataList',
     'MetricSet',
     'MetricSets',
     'ModuleConfiguration',
@@ -258,22 +254,29 @@ __all__ = [
     'ServiceProperties',
     'Service',
     'ServiceConfiguration',
-    'Services',
     'ServiceMemberProperties',
     'ServiceMember',
-    'ServiceMembers',
     'TabularExportError',
     'Tenant',
     'TenantOnboardingDetails',
+    'ServicePaged',
+    'ItemPaged',
+    'MetricMetadataPaged',
+    'AlertPaged',
+    'DimensionPaged',
+    'AddsServiceMemberPaged',
+    'ExportStatusPaged',
+    'ServiceMemberPaged',
     'Level',
+    'State',
     'ValueDeltaOperationType',
     'AttributeDeltaOperationType',
     'ValueType',
     'AttributeMappingType',
     'DeltaOperationType',
     'RunStepOperationType',
-    'AlgorithmStepType',
     'HealthStatus',
+    'AlgorithmStepType',
     'PasswordOperationTypes',
     'ServiceType',
     'ServerDisabledReason',

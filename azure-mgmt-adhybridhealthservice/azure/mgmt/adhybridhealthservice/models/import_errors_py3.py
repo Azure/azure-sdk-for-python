@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ImportErrors(Model):
     """The list of import errors.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.ImportError]
     """
 

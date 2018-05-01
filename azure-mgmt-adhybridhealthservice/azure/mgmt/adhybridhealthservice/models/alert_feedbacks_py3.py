@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AlertFeedbacks(Model):
     """The list of alert feedback.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.AlertFeedback]
     """
 

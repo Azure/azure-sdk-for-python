@@ -37,7 +37,77 @@ class ConfigurationOperations(object):
 
         self.config = config
 
-    def post_tenant_configuration(
+    def list_adds_configurations(
+            self, service_name, grouping=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the service configurations.
+
+        :param service_name: The name of the service.
+        :type service_name: str
+        :param grouping: The grouping for configurations.
+        :type grouping: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Item
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ItemPaged[~azure.mgmt.adhybridhealthservice.models.Item]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_adds_configurations.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if grouping is not None:
+                    query_parameters['grouping'] = self._serialize.query("grouping", grouping, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200, 400]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ItemPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_adds_configurations.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/configuration'}
+
+    def add(
             self, custom_headers=None, raw=False, **operation_config):
         """Onboards a tenant in Azure Active Directory Connect Health.
 
@@ -52,7 +122,7 @@ class ConfigurationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.post_tenant_configuration.metadata['url']
+        url = self.add.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -87,9 +157,9 @@ class ConfigurationOperations(object):
             return client_raw_response
 
         return deserialized
-    post_tenant_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}
+    add.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}
 
-    def get_tenant(
+    def get(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets the details of a tenant onboarded to Azure Active Directory
         Connect Health.
@@ -105,7 +175,7 @@ class ConfigurationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_tenant.metadata['url']
+        url = self.get.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -140,9 +210,9 @@ class ConfigurationOperations(object):
             return client_raw_response
 
         return deserialized
-    get_tenant.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}
+    get.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}
 
-    def patch_tenant(
+    def update(
             self, tenant, custom_headers=None, raw=False, **operation_config):
         """Updates tenant properties for tenants onboarded to Azure Active
         Directory Connect Health.
@@ -161,7 +231,7 @@ class ConfigurationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.patch_tenant.metadata['url']
+        url = self.update.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -200,4 +270,4 @@ class ConfigurationOperations(object):
             return client_raw_response
 
         return deserialized
-    patch_tenant.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}
+    update.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/configuration'}

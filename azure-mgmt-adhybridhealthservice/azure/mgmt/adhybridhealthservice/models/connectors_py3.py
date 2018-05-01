@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Connectors(Model):
     """The list of connects for a service.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.Connector]
     """
 

@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AddsServiceMembers(Model):
-    """The list of  ADDS service members.
-
-    :param value:
-    :type value:
-     list[~azure.mgmt.adhybridhealthservice.models.AddsServiceMember]
+class MetricMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MetricMetadata <azure.mgmt.adhybridhealthservice.models.MetricMetadata>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AddsServiceMember]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MetricMetadata]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(AddsServiceMembers, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(MetricMetadataPaged, self).__init__(*args, **kwargs)

@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ConnectorConnectionErrors(Model):
     """The list of connector connection errors.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value:
      list[~azure.mgmt.adhybridhealthservice.models.ConnectorConnectionError]
     """

@@ -19,6 +19,15 @@ class Level(str, Enum):
     pre_warning = "PreWarning"
 
 
+class State(str, Enum):
+
+    active = "Active"
+    resolved_by_positive_result = "ResolvedByPositiveResult"
+    resolved_manually = "ResolvedManually"
+    resolved_by_timer = "ResolvedByTimer"
+    resolved_by_state_change = "ResolvedByStateChange"
+
+
 class ValueDeltaOperationType(str, Enum):
 
     undefined = "Undefined"
@@ -79,6 +88,15 @@ class RunStepOperationType(str, Enum):
     full_import_reevaluate_rules = "FullImportReevaluateRules"
 
 
+class HealthStatus(str, Enum):
+
+    healthy = "Healthy"
+    warning = "Warning"
+    error = "Error"
+    not_monitored = "NotMonitored"
+    missing = "Missing"
+
+
 class AlgorithmStepType(str, Enum):
 
     undefined = "Undefined"
@@ -94,15 +112,6 @@ class AlgorithmStepType(str, Enum):
     mv_deletion = "MvDeletion"
     recall = "Recall"
     mv_object_type_change = "MvObjectTypeChange"
-
-
-class HealthStatus(str, Enum):
-
-    healthy = "Healthy"
-    warning = "Warning"
-    error = "Error"
-    not_monitored = "NotMonitored"
-    missing = "Missing"
 
 
 class PasswordOperationTypes(str, Enum):

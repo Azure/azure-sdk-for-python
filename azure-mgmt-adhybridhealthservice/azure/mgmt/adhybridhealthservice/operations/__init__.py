@@ -11,32 +11,24 @@
 
 from .addsservices_operations import AddsservicesOperations
 from .alerts_operations import AlertsOperations
+from .configuration_operations import ConfigurationOperations
+from .dimensions_operations import DimensionsOperations
 from .addsservicemembers_operations import AddsservicemembersOperations
 from .addomainservicemembers_operations import AddomainservicemembersOperations
-from .forestsummary_operations import ForestsummaryOperations
-from .metrics_operations import MetricsOperations
-from .metricmetadata_operations import MetricmetadataOperations
-from .replicationstatus_operations import ReplicationstatusOperations
-from .replicationsummary_operations import ReplicationsummaryOperations
 from .operations import Operations
-from .configuration_operations import ConfigurationOperations
 from .services_operations import ServicesOperations
-from .premium_check_operations import PremiumCheckOperations
-from .feedback_operations import FeedbackOperations
+from .servicemembers_operations import ServicemembersOperations
+from .servimembers_operations import ServimembersOperations
 
 __all__ = [
     'AddsservicesOperations',
     'AlertsOperations',
+    'ConfigurationOperations',
+    'DimensionsOperations',
     'AddsservicemembersOperations',
     'AddomainservicemembersOperations',
-    'ForestsummaryOperations',
-    'MetricsOperations',
-    'MetricmetadataOperations',
-    'ReplicationstatusOperations',
-    'ReplicationsummaryOperations',
     'Operations',
-    'ConfigurationOperations',
     'ServicesOperations',
-    'PremiumCheckOperations',
-    'FeedbackOperations',
+    'ServicemembersOperations',
+    'ServimembersOperations',
 ]

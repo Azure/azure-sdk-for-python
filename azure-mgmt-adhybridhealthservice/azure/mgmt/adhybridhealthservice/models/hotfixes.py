@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Hotfixes(Model):
     """The list of hotfixes installed in the server.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
     """
 

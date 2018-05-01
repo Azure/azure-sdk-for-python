@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MetricMetadataList(Model):
-    """The list of metric metadata.
-
-    :param value:
-    :type value: list[~azure.mgmt.adhybridhealthservice.models.MetricMetadata]
+class DimensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Dimension <azure.mgmt.adhybridhealthservice.models.Dimension>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricMetadata]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Dimension]'}
     }
 
-    def __init__(self, **kwargs):
-        super(MetricMetadataList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(DimensionPaged, self).__init__(*args, **kwargs)

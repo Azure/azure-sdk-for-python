@@ -37,7 +37,7 @@ class ServicesOperations(object):
 
         self.config = config
 
-    def get_services(
+    def list(
             self, filter=None, service_type=None, skip_count=None, take_count=None, custom_headers=None, raw=False, **operation_config):
         """Gets the details of services, for a tenant, that are onboarded to Azure
         Active Directory Connect Health.
@@ -61,58 +61,67 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Services or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Services or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of Service
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ServicePaged[~azure.mgmt.adhybridhealthservice.models.Service]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.get_services.metadata['url']
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if service_type is not None:
-            query_parameters['serviceType'] = self._serialize.query("service_type", service_type, 'str')
-        if skip_count is not None:
-            query_parameters['skipCount'] = self._serialize.query("skip_count", skip_count, 'int')
-        if take_count is not None:
-            query_parameters['takeCount'] = self._serialize.query("take_count", take_count, 'int')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if service_type is not None:
+                    query_parameters['serviceType'] = self._serialize.query("service_type", service_type, 'str')
+                if skip_count is not None:
+                    query_parameters['skipCount'] = self._serialize.query("skip_count", skip_count, 'int')
+                if take_count is not None:
+                    query_parameters['takeCount'] = self._serialize.query("take_count", take_count, 'int')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('Services', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_services.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services'}
+    list.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services'}
 
-    def post_services(
+    def add(
             self, service, custom_headers=None, raw=False, **operation_config):
         """Onboards a service for a given tenant in Azure Active Directory Connect
         Health.
@@ -130,7 +139,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.post_services.metadata['url']
+        url = self.add.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -169,9 +178,93 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    post_services.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services'}
+    add.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services'}
 
-    def get_service(
+    def list_premium(
+            self, filter=None, service_type=None, skip_count=None, take_count=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of services for a tenant having Azure AD Premium
+        license and is onboarded to Azure Active Directory Connect Health.
+
+        :param filter: The service property filter to apply.
+        :type filter: str
+        :param service_type: The service type for the services onboarded to
+         Azure Active Directory Connect Health. Depending on whether the
+         service is monitoring, ADFS, Sync or ADDS roles, the service type can
+         either be AdFederationService or AadSyncService or AdDomainService.
+        :type service_type: str
+        :param skip_count: The skip count, which specifies the number of
+         elements that can be bypassed from a sequence and then return the
+         remaining elements.
+        :type skip_count: int
+        :param take_count: The take count , which specifies the number of
+         elements that can be returned from a sequence.
+        :type take_count: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Service
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ServicePaged[~azure.mgmt.adhybridhealthservice.models.Service]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_premium.metadata['url']
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if service_type is not None:
+                    query_parameters['serviceType'] = self._serialize.query("service_type", service_type, 'str')
+                if skip_count is not None:
+                    query_parameters['skipCount'] = self._serialize.query("skip_count", skip_count, 'int')
+                if take_count is not None:
+                    query_parameters['takeCount'] = self._serialize.query("take_count", take_count, 'int')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ServicePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_premium.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/premiumCheck'}
+
+    def get(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the details of a service for a tenant having Azure AD Premium
         license and is onboarded to Azure Active Directory Connect Health.
@@ -189,7 +282,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_service.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -228,9 +321,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_service.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
+    get.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
 
-    def delete_service(
+    def delete(
             self, service_name, confirm=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a service which is onboarded to Azure Active Directory Connect
         Health.
@@ -253,7 +346,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.delete_service.metadata['url']
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -287,9 +380,9 @@ class ServicesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_service.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
+    delete.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
 
-    def update_service(
+    def update(
             self, service_name, service, custom_headers=None, raw=False, **operation_config):
         """Updates the service properties of an onboarded service.
 
@@ -309,7 +402,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.update_service.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -352,9 +445,92 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    update_service.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
+    update.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}'}
 
-    def check_service_feature_availibility(
+    def list_alerts(
+            self, service_name, filter=None, state=None, from_parameter=None, to=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the alerts for a given service.
+
+        :param service_name: The name of the service.
+        :type service_name: str
+        :param filter: The alert property filter to apply.
+        :type filter: str
+        :param state: The alert state to query for.
+        :type state: str
+        :param from_parameter: The start date to query for.
+        :type from_parameter: datetime
+        :param to: The end date till when to query for.
+        :type to: datetime
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Alert
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.AlertPaged[~azure.mgmt.adhybridhealthservice.models.Alert]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_alerts.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if state is not None:
+                    query_parameters['state'] = self._serialize.query("state", state, 'str')
+                if from_parameter is not None:
+                    query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['to'] = self._serialize.query("to", to, 'iso-8601')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AlertPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.AlertPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_alerts.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/alerts'}
+
+    def get_feature_availibility(
             self, service_name, feature_name, custom_headers=None, raw=False, **operation_config):
         """Checks if the service has all the pre-requisites met to use a feature.
 
@@ -372,7 +548,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.check_service_feature_availibility.metadata['url']
+        url = self.get_feature_availibility.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'featureName': self._serialize.url("feature_name", feature_name, 'str')
@@ -412,9 +588,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    check_service_feature_availibility.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/checkServiceFeatureAvailibility/{featureName}'}
+    get_feature_availibility.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/checkServiceFeatureAvailibility/{featureName}'}
 
-    def get_latest_aad_export_error_count(
+    def list_export_errors(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the count of latest AAD export errors.
 
@@ -431,7 +607,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_latest_aad_export_error_count.metadata['url']
+        url = self.list_export_errors.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -470,9 +646,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_latest_aad_export_error_count.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exporterrors/counts'}
+    list_export_errors.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exporterrors/counts'}
 
-    def get_latest_aad_export_errors_v2(
+    def list_export_errors_v2(
             self, service_name, error_bucket, next_link=None, custom_headers=None, raw=False, **operation_config):
         """Gets the categorized export errors.
 
@@ -493,7 +669,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_latest_aad_export_errors_v2.metadata['url']
+        url = self.list_export_errors_v2.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -535,9 +711,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_latest_aad_export_errors_v2.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exporterrors/listV2'}
+    list_export_errors_v2.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exporterrors/listV2'}
 
-    def get_export_status(
+    def list_export_status(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the export status.
 
@@ -548,13 +724,83 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ExportStatuses or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ExportStatuses or
+        :return: An iterator like instance of ExportStatus
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ExportStatusPaged[~azure.mgmt.adhybridhealthservice.models.ExportStatus]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_export_status.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ExportStatusPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ExportStatusPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_export_status.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exportstatus'}
+
+    def add_alert_feedback(
+            self, service_name, alert_feedback, custom_headers=None, raw=False, **operation_config):
+        """Adds an alert feedback submitted by customer.
+
+        :param service_name: The name of the service.
+        :type service_name: str
+        :param alert_feedback: The alert feedback.
+        :type alert_feedback:
+         ~azure.mgmt.adhybridhealthservice.models.AlertFeedback
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AlertFeedback or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.AlertFeedback or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_export_status.metadata['url']
+        url = self.add_alert_feedback.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -574,9 +820,13 @@ class ServicesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(alert_feedback, 'AlertFeedback')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -586,16 +836,16 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ExportStatuses', response)
+            deserialized = self._deserialize('AlertFeedback', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_export_status.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exportstatus'}
+    add_alert_feedback.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/feedbacktype/alerts/feedback'}
 
-    def get_peralertfeedback(
+    def list_alert_feedback(
             self, service_name, short_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all alert feedback for a given tenant and alert type.
 
@@ -614,7 +864,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_peralertfeedback.metadata['url']
+        url = self.list_alert_feedback.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'shortName': self._serialize.url("short_name", short_name, 'str')
@@ -654,9 +904,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_peralertfeedback.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/feedbacktype/alerts/{shortName}/alertfeedback'}
+    list_alert_feedback.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/feedbacktype/alerts/{shortName}/alertfeedback'}
 
-    def get_metrics_average(
+    def list_metrics_average(
             self, service_name, metric_name, group_name, custom_headers=None, raw=False, **operation_config):
         """Gets the average of the metric values for a given metric and group
         combination.
@@ -672,56 +922,65 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Items or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Items or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of Item
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ItemPaged[~azure.mgmt.adhybridhealthservice.models.Item]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.get_metrics_average.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'metricName': self._serialize.url("metric_name", metric_name, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_metrics_average.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str'),
+                    'metricName': self._serialize.url("metric_name", metric_name, 'str'),
+                    'groupName': self._serialize.url("group_name", group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('Items', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_metrics_average.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metrics/{metricName}/groups/{groupName}/average'}
+    list_metrics_average.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metrics/{metricName}/groups/{groupName}/average'}
 
-    def get_metrics_sum(
+    def list_metrics_sum(
             self, service_name, metric_name, group_name, custom_headers=None, raw=False, **operation_config):
         """Gets the sum of the metric values for a given metric and group
         combination.
@@ -737,56 +996,65 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Items or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Items or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of Item
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ItemPaged[~azure.mgmt.adhybridhealthservice.models.Item]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.get_metrics_sum.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'metricName': self._serialize.url("metric_name", metric_name, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_metrics_sum.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str'),
+                    'metricName': self._serialize.url("metric_name", metric_name, 'str'),
+                    'groupName': self._serialize.url("group_name", group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('Items', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_metrics_sum.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metrics/{metricName}/groups/{groupName}/sum'}
+    list_metrics_sum.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metrics/{metricName}/groups/{groupName}/sum'}
 
-    def get_metric_metadata(
+    def list_metric_metadata(
             self, service_name, filter=None, perf_counter=None, custom_headers=None, raw=False, **operation_config):
         """Gets the service related metrics information.
 
@@ -802,58 +1070,67 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MetricMetadataList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.MetricMetadataList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of MetricMetadata
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.MetricMetadataPaged[~azure.mgmt.adhybridhealthservice.models.MetricMetadata]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.get_metric_metadata.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if perf_counter is not None:
-            query_parameters['perfCounter'] = self._serialize.query("perf_counter", perf_counter, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_metric_metadata.metadata['url']
+                path_format_arguments = {
+                    'serviceName': self._serialize.url("service_name", service_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if perf_counter is not None:
+                    query_parameters['perfCounter'] = self._serialize.query("perf_counter", perf_counter, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricMetadataList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.MetricMetadataPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.MetricMetadataPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_metric_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata'}
+    list_metric_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata'}
 
-    def get_single_metric_metadata(
+    def get_metric_metadata(
             self, service_name, metric_name, custom_headers=None, raw=False, **operation_config):
         """Gets the service related metrics information.
 
@@ -872,7 +1149,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_single_metric_metadata.metadata['url']
+        url = self.get_metric_metadata.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'metricName': self._serialize.url("metric_name", metric_name, 'str')
@@ -912,9 +1189,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_single_metric_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata/{metricName}'}
+    get_metric_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata/{metricName}'}
 
-    def get_metrics_for_service(
+    def list_metric_metadata_for_group(
             self, service_name, metric_name, group_name, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
         """Gets the service related metrics for a given metric and group
         combination.
@@ -942,7 +1219,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_metrics_for_service.metadata['url']
+        url = self.list_metric_metadata_for_group.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'metricName': self._serialize.url("metric_name", metric_name, 'str'),
@@ -989,9 +1266,9 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_metrics_for_service.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata/{metricName}/groups/{groupName}'}
+    list_metric_metadata_for_group.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metricmetadata/{metricName}/groups/{groupName}'}
 
-    def update_service_monitoring_configuration(
+    def update_monitoring_configuration(
             self, service_name, key=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Updates the service level monitoring configuration.
 
@@ -1013,7 +1290,7 @@ class ServicesOperations(object):
         configuration_setting = models.Item(key=key, value=value)
 
         # Construct URL
-        url = self.update_service_monitoring_configuration.metadata['url']
+        url = self.update_monitoring_configuration.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -1049,9 +1326,9 @@ class ServicesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_service_monitoring_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/monitoringconfiguration'}
+    update_monitoring_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/monitoringconfiguration'}
 
-    def get_service_monitoring_configurations(
+    def list_monitoring_configurations(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the service level monitoring configurations.
 
@@ -1068,7 +1345,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_service_monitoring_configurations.metadata['url']
+        url = self.list_monitoring_configurations.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -1107,33 +1384,30 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_service_monitoring_configurations.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/monitoringconfigurations'}
+    list_monitoring_configurations.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/monitoringconfigurations'}
 
-    def get_service_members(
-            self, service_name, filter=None, dimension_type=None, dimension_signature=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of the servers, for a given service, that are
-        onboarded to Azure Active Directory Connect Health Service.
+    def list_user_bad_password_report(
+            self, service_name, data_source=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the bad password login attempt report for an user.
 
         :param service_name: The name of the service.
         :type service_name: str
-        :param filter: The server property filter to apply.
-        :type filter: str
-        :param dimension_type: The server specific dimension.
-        :type dimension_type: str
-        :param dimension_signature: The value of the dimension.
-        :type dimension_signature: str
+        :param data_source: The source of data, if its test data or customer
+         data.
+        :type data_source: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ServiceMembers or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceMembers or
+        :return: ErrorReportUsersEntries or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.adhybridhealthservice.models.ErrorReportUsersEntries or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_service_members.metadata['url']
+        url = self.list_user_bad_password_report.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -1141,12 +1415,8 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if dimension_type is not None:
-            query_parameters['dimensionType'] = self._serialize.query("dimension_type", dimension_type, 'str')
-        if dimension_signature is not None:
-            query_parameters['dimensionSignature'] = self._serialize.query("dimension_signature", dimension_signature, 'str')
+        if data_source is not None:
+            query_parameters['dataSource'] = self._serialize.query("data_source", data_source, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -1171,791 +1441,16 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceMembers', response)
+            deserialized = self._deserialize('ErrorReportUsersEntries', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_members.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers'}
+    list_user_bad_password_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/badpassword/details/user'}
 
-    def add_service_members(
-            self, service_name, service_member, custom_headers=None, raw=False, **operation_config):
-        """Onboards  a server, for a given service, to Azure Active Directory
-        Connect Health Service.
-
-        :param service_name: The name of the service under which the server is
-         to be onboarded.
-        :type service_name: str
-        :param service_member: The server object.
-        :type service_member:
-         ~azure.mgmt.adhybridhealthservice.models.ServiceMember
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ServiceMember or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceMember or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.add_service_members.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(service_member, 'ServiceMember')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ServiceMember', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    add_service_members.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers'}
-
-    def get_service_member(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of a server, for a given service, that are onboarded
-        to Azure Active Directory Connect Health Service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ServiceMember or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceMember or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_member.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ServiceMember', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_member.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}'}
-
-    def delete_service_member(
-            self, service_name, service_member_id, confirm=None, custom_headers=None, raw=False, **operation_config):
-        """Deletes a server that has been onboarded to Azure Active Directory
-        Connect Health Service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param confirm: Indicates if the server will be permanently deleted or
-         disabled. True indicates that the server will be permanently deleted
-         and False indicates that the server will be marked disabled and then
-         deleted after 30 days, if it is not re-registered.
-        :type confirm: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.delete_service_member.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if confirm is not None:
-            query_parameters['confirm'] = self._serialize.query("confirm", confirm, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_service_member.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}'}
-
-    def get_service_member_alerts(
-            self, service_member_id, service_name, filter=None, state=None, from_parameter=None, to=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of an alert for a given service and server
-        combination.
-
-        :param service_member_id: The server Id for which the laert details
-         needs to be queried.
-        :type service_member_id: str
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param filter: The alert property filter to apply.
-        :type filter: str
-        :param state: The alert state to query for.
-        :type state: str
-        :param from_parameter: The start date to query for.
-        :type from_parameter: datetime
-        :param to: The end date till when to query for.
-        :type to: datetime
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Alerts or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Alerts or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_member_alerts.metadata['url']
-        path_format_arguments = {
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str'),
-            'serviceName': self._serialize.url("service_name", service_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if state is not None:
-            query_parameters['state'] = self._serialize.query("state", state, 'str')
-        if from_parameter is not None:
-            query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['to'] = self._serialize.query("to", to, 'iso-8601')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Alerts', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_member_alerts.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/alerts'}
-
-    def get_connectors(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the connector details for a service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Connectors or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Connectors or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_connectors.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Connectors', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_connectors.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/service/{serviceName}/servicemembers/{serviceMemberId}/connectors'}
-
-    def get_service_member_credentials(
-            self, service_name, service_member_id, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the credentials of the server which is needed by the agent to
-        connect to Azure Active Directory Connect Health Service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param filter: The property filter to apply.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Credential or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Credential or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_member_credentials.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Credential', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_member_credentials.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/credentials'}
-
-    def delete_service_member_data(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the data uploaded by the server to Azure Active Directory
-        Connect Health Service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.delete_service_member_data.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_service_member_data.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/data'}
-
-    def get_service_member_data_freshness(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the last time when the server uploaded data to Azure Active
-        Directory Connect Health Service.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DataFreshnessDetail or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.DataFreshnessDetail
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_member_data_freshness.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('DataFreshnessDetail', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_member_data_freshness.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/datafreshness'}
-
-    def get_service_member_export_status(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the export status.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ExportStatuses or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ExportStatuses or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_member_export_status.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ExportStatuses', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_member_export_status.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/exportstatus'}
-
-    def get_global_configuration(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the global configuration.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: GlobalConfiguration or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.GlobalConfiguration
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_global_configuration.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('GlobalConfiguration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_global_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/globalconfiguration'}
-
-    def get_metrics_for_service_member(
-            self, service_name, metric_name, group_name, service_member_id, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the server related metrics for a given metric and group
-        combination.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param metric_name: The metric name
-        :type metric_name: str
-        :param group_name: The group name
-        :type group_name: str
-        :param service_member_id: The server id.
-        :type service_member_id: str
-        :param group_key: The group key
-        :type group_key: str
-        :param from_date: The start date.
-        :type from_date: datetime
-        :param to_date: The end date.
-        :type to_date: datetime
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: MetricSets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.MetricSets or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_metrics_for_service_member.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'metricName': self._serialize.url("metric_name", metric_name, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if group_key is not None:
-            query_parameters['groupKey'] = self._serialize.query("group_key", group_key, 'str')
-        if from_date is not None:
-            query_parameters['fromDate'] = self._serialize.query("from_date", from_date, 'iso-8601')
-        if to_date is not None:
-            query_parameters['toDate'] = self._serialize.query("to_date", to_date, 'iso-8601')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricSets', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_metrics_for_service_member.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/{metricName}/groups/{groupName}'}
-
-    def get_service_configuration(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the service configuration.
-
-        :param service_name: The name of the service.
-        :type service_name: str
-        :param service_member_id: The server Id.
-        :type service_member_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ServiceConfiguration or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceConfiguration
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_service_configuration.metadata['url']
-        path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ServiceConfiguration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_service_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/serviceconfiguration'}
-
-    def check_tenant_whitelisting_for_feature(
+    def get_tenant_whitelisting(
             self, service_name, feature_name, custom_headers=None, raw=False, **operation_config):
         """Checks if the tenant, to which a service is registered, is whitelisted
         to use a feature.
@@ -1974,7 +1469,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.check_tenant_whitelisting_for_feature.metadata['url']
+        url = self.get_tenant_whitelisting.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'featureName': self._serialize.url("feature_name", feature_name, 'str')
@@ -2014,4 +1509,4 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    check_tenant_whitelisting_for_feature.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/TenantWhitelisting/{featureName}'}
+    get_tenant_whitelisting.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/TenantWhitelisting/{featureName}'}

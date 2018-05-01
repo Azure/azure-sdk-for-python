@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Items(Model):
     """The list of key value properties.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.Item]
     """
 

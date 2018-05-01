@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class RunProfiles(Model):
     """The list of run profiles.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value: list[~azure.mgmt.adhybridhealthservice.models.RunProfile]
     """
 

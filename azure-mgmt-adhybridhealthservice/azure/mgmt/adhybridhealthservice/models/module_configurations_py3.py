@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ModuleConfigurations(Model):
     """The list of module configurations.
 
-    :param value:
+    :param value: The value returned by the operation.
     :type value:
      list[~azure.mgmt.adhybridhealthservice.models.ModuleConfiguration]
     """
