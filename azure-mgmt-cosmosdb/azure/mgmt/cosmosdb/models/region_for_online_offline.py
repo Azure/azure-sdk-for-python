@@ -15,16 +15,15 @@ from msrest.serialization import Model
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar region: Cosmos DB region, with spaces between words and each word
-     capitalized.
-    :vartype region: str
+    :param region: Required. Cosmos DB region, with spaces between words and
+     each word capitalized.
+    :type region: str
     """
 
     _validation = {
-        'region': {'readonly': True},
+        'region': {'required': True},
     }
 
     _attribute_map = {
@@ -33,4 +32,4 @@ class RegionForOnlineOffline(Model):
 
     def __init__(self, **kwargs):
         super(RegionForOnlineOffline, self).__init__(**kwargs)
-        self.region = None
+        self.region = kwargs.get('region', None)

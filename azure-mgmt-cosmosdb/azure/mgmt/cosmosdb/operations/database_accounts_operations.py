@@ -749,8 +749,8 @@ class DatabaseAccountsOperations(object):
 
 
     def _offline_region_initial(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        region_parameter_for_offline = None
+            self, resource_group_name, account_name, region, custom_headers=None, raw=False, **operation_config):
+        region_parameter_for_offline = models.RegionForOnlineOffline(region=region)
 
         # Construct URL
         url = self.offline_region.metadata['url']
@@ -793,7 +793,7 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def offline_region(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, region, custom_headers=None, raw=False, polling=True, **operation_config):
         """Offline the specified region for the specified Azure Cosmos DB database
         account.
 
@@ -801,6 +801,9 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
+        :param region: Cosmos DB region, with spaces between words and each
+         word capitalized.
+        :type region: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -815,6 +818,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._offline_region_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            region=region,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -836,8 +840,8 @@ class DatabaseAccountsOperations(object):
 
 
     def _online_region_initial(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        region_parameter_for_online = None
+            self, resource_group_name, account_name, region, custom_headers=None, raw=False, **operation_config):
+        region_parameter_for_online = models.RegionForOnlineOffline(region=region)
 
         # Construct URL
         url = self.online_region.metadata['url']
@@ -880,7 +884,7 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def online_region(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, region, custom_headers=None, raw=False, polling=True, **operation_config):
         """Online the specified region for the specified Azure Cosmos DB database
         account.
 
@@ -888,6 +892,9 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
+        :param region: Cosmos DB region, with spaces between words and each
+         word capitalized.
+        :type region: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -902,6 +909,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._online_region_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            region=region,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
