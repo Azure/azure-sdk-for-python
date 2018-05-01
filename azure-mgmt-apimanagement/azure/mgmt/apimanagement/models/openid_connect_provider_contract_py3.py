@@ -61,7 +61,7 @@ class OpenidConnectProviderContract(Resource):
     }
 
     def __init__(self, *, display_name: str, metadata_endpoint: str, client_id: str, description: str=None, client_secret: str=None, **kwargs) -> None:
-        super(OpenidConnectProviderContract, self).__init__(, **kwargs)
+        super(OpenidConnectProviderContract, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.metadata_endpoint = metadata_endpoint

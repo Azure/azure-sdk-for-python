@@ -46,6 +46,6 @@ class PortalSignupSettings(Resource):
     }
 
     def __init__(self, *, enabled: bool=None, terms_of_service=None, **kwargs) -> None:
-        super(PortalSignupSettings, self).__init__(, **kwargs)
+        super(PortalSignupSettings, self).__init__(**kwargs)
         self.enabled = enabled
         self.terms_of_service = terms_of_service

@@ -52,6 +52,6 @@ class PolicyContract(Resource):
     }
 
     def __init__(self, *, policy_content: str, content_format="xml", **kwargs) -> None:
-        super(PolicyContract, self).__init__(, **kwargs)
+        super(PolicyContract, self).__init__(**kwargs)
         self.policy_content = policy_content
         self.content_format = content_format

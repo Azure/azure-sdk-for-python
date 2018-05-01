@@ -83,7 +83,7 @@ class ProductContract(Resource):
     }
 
     def __init__(self, *, display_name: str, description: str=None, terms: str=None, subscription_required: bool=None, approval_required: bool=None, subscriptions_limit: int=None, state=None, **kwargs) -> None:
-        super(ProductContract, self).__init__(, **kwargs)
+        super(ProductContract, self).__init__(**kwargs)
         self.description = description
         self.terms = terms
         self.subscription_required = subscription_required

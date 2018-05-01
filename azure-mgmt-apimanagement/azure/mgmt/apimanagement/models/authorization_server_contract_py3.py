@@ -123,7 +123,7 @@ class AuthorizationServerContract(Resource):
     }
 
     def __init__(self, *, display_name: str, client_registration_endpoint: str, authorization_endpoint: str, grant_types, client_id: str, description: str=None, authorization_methods=None, client_authentication_method=None, token_body_parameters=None, token_endpoint: str=None, support_state: bool=None, default_scope: str=None, bearer_token_sending_methods=None, client_secret: str=None, resource_owner_username: str=None, resource_owner_password: str=None, **kwargs) -> None:
-        super(AuthorizationServerContract, self).__init__(, **kwargs)
+        super(AuthorizationServerContract, self).__init__(**kwargs)
         self.description = description
         self.authorization_methods = authorization_methods
         self.client_authentication_method = client_authentication_method

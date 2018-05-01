@@ -55,7 +55,7 @@ class ApiReleaseContract(Resource):
     }
 
     def __init__(self, *, api_id: str=None, notes: str=None, **kwargs) -> None:
-        super(ApiReleaseContract, self).__init__(, **kwargs)
+        super(ApiReleaseContract, self).__init__(**kwargs)
         self.api_id = api_id
         self.created_date_time = None
         self.updated_date_time = None

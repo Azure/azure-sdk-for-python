@@ -65,7 +65,7 @@ class GroupContract(Resource):
     }
 
     def __init__(self, *, display_name: str, description: str=None, group_contract_type=None, external_id: str=None, **kwargs) -> None:
-        super(GroupContract, self).__init__(, **kwargs)
+        super(GroupContract, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.built_in = None

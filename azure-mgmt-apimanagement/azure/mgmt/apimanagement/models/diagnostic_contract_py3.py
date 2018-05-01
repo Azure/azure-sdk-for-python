@@ -46,5 +46,5 @@ class DiagnosticContract(Resource):
     }
 
     def __init__(self, *, enabled: bool, **kwargs) -> None:
-        super(DiagnosticContract, self).__init__(, **kwargs)
+        super(DiagnosticContract, self).__init__(**kwargs)
         self.enabled = enabled
