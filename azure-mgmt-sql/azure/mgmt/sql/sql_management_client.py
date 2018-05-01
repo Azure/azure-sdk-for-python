@@ -57,6 +57,7 @@ from .operations.restore_points_operations import RestorePointsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
+from .operations.database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 from .operations.instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .operations.short_term_retention_policies_operations import ShortTermRetentionPoliciesOperations
 from . import models
@@ -189,6 +190,8 @@ class SqlManagementClient(SDKClient):
     :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
+    :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScans operations
+    :vartype database_vulnerability_assessment_scans: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
     :ivar instance_failover_groups: InstanceFailoverGroups operations
     :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
     :ivar short_term_retention_policies: ShortTermRetentionPolicies operations
@@ -300,6 +303,8 @@ class SqlManagementClient(SDKClient):
         self.elastic_pool_operations = ElasticPoolOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.instance_failover_groups = InstanceFailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

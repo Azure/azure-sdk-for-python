@@ -53,6 +53,7 @@ from .restore_points_operations import RestorePointsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
+from .database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 from .instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .short_term_retention_policies_operations import ShortTermRetentionPoliciesOperations
 
@@ -101,6 +102,7 @@ __all__ = [
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
+    'DatabaseVulnerabilityAssessmentScansOperations',
     'InstanceFailoverGroupsOperations',
     'ShortTermRetentionPoliciesOperations',
 ]
