@@ -65,6 +65,7 @@ try:
     from .virtual_machine_instance_view_py3 import VirtualMachineInstanceView
     from .virtual_machine_py3 import VirtualMachine
     from .virtual_machine_update_py3 import VirtualMachineUpdate
+    from .auto_os_upgrade_policy_py3 import AutoOSUpgradePolicy
     from .rolling_upgrade_policy_py3 import RollingUpgradePolicy
     from .upgrade_policy_py3 import UpgradePolicy
     from .image_os_disk_py3 import ImageOSDisk
@@ -192,6 +193,7 @@ except (SyntaxError, ImportError):
     from .virtual_machine_instance_view import VirtualMachineInstanceView
     from .virtual_machine import VirtualMachine
     from .virtual_machine_update import VirtualMachineUpdate
+    from .auto_os_upgrade_policy import AutoOSUpgradePolicy
     from .rolling_upgrade_policy import RollingUpgradePolicy
     from .upgrade_policy import UpgradePolicy
     from .image_os_disk import ImageOSDisk
@@ -358,6 +360,7 @@ __all__ = [
     'VirtualMachineInstanceView',
     'VirtualMachine',
     'VirtualMachineUpdate',
+    'AutoOSUpgradePolicy',
     'RollingUpgradePolicy',
     'UpgradePolicy',
     'ImageOSDisk',
