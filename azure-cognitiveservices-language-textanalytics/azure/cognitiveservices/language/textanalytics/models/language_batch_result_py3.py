@@ -12,15 +12,15 @@
 from msrest.serialization import Model
 
 
-class SentimentBatchResult(Model):
-    """SentimentBatchResult.
+class LanguageBatchResult(Model):
+    """LanguageBatchResult.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar documents:
     :vartype documents:
-     list[~azure.cognitiveservices.language.textanalytics.models.SentimentBatchResultItem]
+     list[~azure.cognitiveservices.language.textanalytics.models.LanguageBatchResultItem]
     :ivar errors:
     :vartype errors:
      list[~azure.cognitiveservices.language.textanalytics.models.ErrorRecord]
@@ -32,11 +32,11 @@ class SentimentBatchResult(Model):
     }
 
     _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[SentimentBatchResultItem]'},
+        'documents': {'key': 'documents', 'type': '[LanguageBatchResultItem]'},
         'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
-    def __init__(self, **kwargs):
-        super(SentimentBatchResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(LanguageBatchResult, self).__init__(**kwargs)
         self.documents = None
         self.errors = None

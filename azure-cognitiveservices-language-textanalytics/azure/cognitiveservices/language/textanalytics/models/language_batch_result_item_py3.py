@@ -35,7 +35,7 @@ class LanguageBatchResultItem(Model):
         'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(LanguageBatchResultItem, self).__init__(**kwargs)
         self.id = None
         self.detected_languages = None

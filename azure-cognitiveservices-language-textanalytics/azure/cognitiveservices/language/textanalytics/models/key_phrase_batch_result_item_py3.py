@@ -12,30 +12,31 @@
 from msrest.serialization import Model
 
 
-class LanguageBatchResultItem(Model):
-    """LanguageBatchResultItem.
+class KeyPhraseBatchResultItem(Model):
+    """KeyPhraseBatchResultItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar key_phrases: A list of representative words or phrases. The number
+     of key phrases returned is proportional to the number of words in the
+     input document.
+    :vartype key_phrases: list[str]
     :ivar id: Unique document identifier.
     :vartype id: str
-    :ivar detected_languages: A list of extracted languages.
-    :vartype detected_languages:
-     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
     """
 
     _validation = {
+        'key_phrases': {'readonly': True},
         'id': {'readonly': True},
-        'detected_languages': {'readonly': True},
     }
 
     _attribute_map = {
+        'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
         'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
     }
 
-    def __init__(self, **kwargs):
-        super(LanguageBatchResultItem, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(KeyPhraseBatchResultItem, self).__init__(**kwargs)
+        self.key_phrases = None
         self.id = None
-        self.detected_languages = None

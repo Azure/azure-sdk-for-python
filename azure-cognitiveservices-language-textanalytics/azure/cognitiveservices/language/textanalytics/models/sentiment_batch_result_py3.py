@@ -36,7 +36,7 @@ class SentimentBatchResult(Model):
         'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(SentimentBatchResult, self).__init__(**kwargs)
         self.documents = None
         self.errors = None
