@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class DscNodeConfigurationCreateOrUpdateParameters(Model):
+class DscNodeConfigurationCreateOrUpdateParametersProperties(Model):
     """The parameters supplied to the create or update node configuration
     operation.
 
@@ -23,9 +23,9 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
     :param configuration: Gets or sets the configuration of the node.
     :type configuration:
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
-    :param new_node_configuration_build_version_required: If a new build
-     version of NodeConfiguration is required.
-    :type new_node_configuration_build_version_required: bool
+    :param increment_node_configuration_build: If a new build version of
+     NodeConfiguration is required.
+    :type increment_node_configuration_build: bool
     """
 
     _validation = {
@@ -38,12 +38,12 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
         'source': {'key': 'source', 'type': 'ContentSource'},
         'name': {'key': 'name', 'type': 'str'},
         'configuration': {'key': 'configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'new_node_configuration_build_version_required': {'key': 'newNodeConfigurationBuildVersionRequired', 'type': 'bool'},
+        'increment_node_configuration_build': {'key': 'incrementNodeConfigurationBuild', 'type': 'bool'},
     }
 
-    def __init__(self, source, name, configuration, new_node_configuration_build_version_required=None):
-        super(DscNodeConfigurationCreateOrUpdateParameters, self).__init__()
+    def __init__(self, source, name, configuration, increment_node_configuration_build=None):
+        super(DscNodeConfigurationCreateOrUpdateParametersProperties, self).__init__()
         self.source = source
         self.name = name
         self.configuration = configuration
-        self.new_node_configuration_build_version_required = new_node_configuration_build_version_required
+        self.increment_node_configuration_build = increment_node_configuration_build
