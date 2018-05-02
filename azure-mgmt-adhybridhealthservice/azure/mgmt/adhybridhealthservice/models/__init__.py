@@ -17,7 +17,6 @@ try:
     from .help_link_py3 import HelpLink
     from .alert_py3 import Alert
     from .alert_feedback_py3 import AlertFeedback
-    from .alert_feedbacks_py3 import AlertFeedbacks
     from .associated_object_py3 import AssociatedObject
     from .value_delta_py3 import ValueDelta
     from .attribute_delta_py3 import AttributeDelta
@@ -49,7 +48,6 @@ try:
     from .export_error_py3 import ExportError
     from .export_errors_py3 import ExportErrors
     from .error_report_users_entry_py3 import ErrorReportUsersEntry
-    from .error_report_users_entries_py3 import ErrorReportUsersEntries
     from .export_status_py3 import ExportStatus
     from .extension_error_info_py3 import ExtensionErrorInfo
     from .forest_summary_py3 import ForestSummary
@@ -61,7 +59,6 @@ try:
     from .import_errors_py3 import ImportErrors
     from .inbound_replication_neighbor_py3 import InboundReplicationNeighbor
     from .inbound_replication_neighbors_py3 import InboundReplicationNeighbors
-    from .items_py3 import Items
     from .metric_group_py3 import MetricGroup
     from .metric_metadata_py3 import MetricMetadata
     from .metric_set_py3 import MetricSet
@@ -90,7 +87,6 @@ except (SyntaxError, ImportError):
     from .help_link import HelpLink
     from .alert import Alert
     from .alert_feedback import AlertFeedback
-    from .alert_feedbacks import AlertFeedbacks
     from .associated_object import AssociatedObject
     from .value_delta import ValueDelta
     from .attribute_delta import AttributeDelta
@@ -122,7 +118,6 @@ except (SyntaxError, ImportError):
     from .export_error import ExportError
     from .export_errors import ExportErrors
     from .error_report_users_entry import ErrorReportUsersEntry
-    from .error_report_users_entries import ErrorReportUsersEntries
     from .export_status import ExportStatus
     from .extension_error_info import ExtensionErrorInfo
     from .forest_summary import ForestSummary
@@ -134,7 +129,6 @@ except (SyntaxError, ImportError):
     from .import_errors import ImportErrors
     from .inbound_replication_neighbor import InboundReplicationNeighbor
     from .inbound_replication_neighbors import InboundReplicationNeighbors
-    from .items import Items
     from .metric_group import MetricGroup
     from .metric_metadata import MetricMetadata
     from .metric_set import MetricSet
@@ -164,6 +158,8 @@ from .adds_service_member_paged import AddsServiceMemberPaged
 from .operation_paged import OperationPaged
 from .export_error_paged import ExportErrorPaged
 from .export_status_paged import ExportStatusPaged
+from .alert_feedback_paged import AlertFeedbackPaged
+from .error_report_users_entry_paged import ErrorReportUsersEntryPaged
 from .service_member_paged import ServiceMemberPaged
 from .ad_hybrid_health_service_enums import (
     Level,
@@ -190,7 +186,6 @@ __all__ = [
     'HelpLink',
     'Alert',
     'AlertFeedback',
-    'AlertFeedbacks',
     'AssociatedObject',
     'ValueDelta',
     'AttributeDelta',
@@ -222,7 +217,6 @@ __all__ = [
     'ExportError',
     'ExportErrors',
     'ErrorReportUsersEntry',
-    'ErrorReportUsersEntries',
     'ExportStatus',
     'ExtensionErrorInfo',
     'ForestSummary',
@@ -234,7 +228,6 @@ __all__ = [
     'ImportErrors',
     'InboundReplicationNeighbor',
     'InboundReplicationNeighbors',
-    'Items',
     'MetricGroup',
     'MetricMetadata',
     'MetricSet',
@@ -264,6 +257,8 @@ __all__ = [
     'OperationPaged',
     'ExportErrorPaged',
     'ExportStatusPaged',
+    'AlertFeedbackPaged',
+    'ErrorReportUsersEntryPaged',
     'ServiceMemberPaged',
     'Level',
     'State',

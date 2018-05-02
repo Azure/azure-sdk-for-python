@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ErrorReportUsersEntries(Model):
-    """The list of bad password log in attempt entries.
-
-    :param value: The value returned by the operation.
-    :type value:
-     list[~azure.mgmt.adhybridhealthservice.models.ErrorReportUsersEntry]
+class ErrorReportUsersEntryPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ErrorReportUsersEntry <azure.mgmt.adhybridhealthservice.models.ErrorReportUsersEntry>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ErrorReportUsersEntry]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ErrorReportUsersEntry]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ErrorReportUsersEntries, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(ErrorReportUsersEntryPaged, self).__init__(*args, **kwargs)

@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class Items(Model):
-    """The list of key value properties.
-
-    :param value: The value returned by the operation.
-    :type value: list[~azure.mgmt.adhybridhealthservice.models.Item]
+class AlertFeedbackPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AlertFeedback <azure.mgmt.adhybridhealthservice.models.AlertFeedback>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Item]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertFeedback]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(Items, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(AlertFeedbackPaged, self).__init__(*args, **kwargs)
