@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import json
+
 try:
     import unittest.mock as mock
 except ImportError:
@@ -116,7 +117,6 @@ class TestRecordingProcessors(unittest.TestCase):
                                      [location_header_template.format(replaced_subscription_id)])
             self.assertSequenceEqual(mock_response['headers']['azure-asyncoperation'],
                                      [asyncoperation_header_template.format(replaced_subscription_id)])
-
 
     def test_recording_processor_skip_body_on_unrecognized_content_type(self):
         location_header_template = 'https://graph.windows.net/{}/directoryObjects/' \

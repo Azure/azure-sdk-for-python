@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import os.path
+import os
 import unittest
 
 from azure_devtools.scenario_tests.base import IntegrationTestBase, LiveTest

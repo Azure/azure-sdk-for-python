@@ -96,5 +96,7 @@ ENV/
 *.sln
 
 # PyCharm / IntelliJ IDEA
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/
+
+# PyTest and its code coverage
+.pytest_cache/

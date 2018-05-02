@@ -5,6 +5,7 @@
 
 from .utilities import is_text_payload, is_json_payload
 
+
 class RecordingProcessor(object):
     def process_request(self, request):  # pylint: disable=no-self-use
         return request
@@ -136,6 +137,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
 
 class DeploymentNameReplacer(RecordingProcessor):
     """Replace the random deployment name with a fixed mock name."""
+
     def process_request(self, request):
         import re
         request.uri = re.sub('/deployments/([^/?]+)', '/deployments/mock-deployment', request.uri)
@@ -144,6 +146,7 @@ class DeploymentNameReplacer(RecordingProcessor):
 
 class AccessTokenReplacer(RecordingProcessor):
     """Replace the access token for service principal authentication in a response body."""
+
     def __init__(self, replacement='fake_token'):
         self._replacement = replacement
 
@@ -189,6 +192,7 @@ class GeneralNameReplacer(RecordingProcessor):
 
 class RequestUrlNormalizer(RecordingProcessor):
     """URL parsing fix to account for '//' vs '/' in different versions of python"""
+
     def process_request(self, request):
         import re
         request.uri = re.sub('(?<!:)//', '/', request.uri)

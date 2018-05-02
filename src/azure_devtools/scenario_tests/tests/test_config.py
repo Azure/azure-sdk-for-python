@@ -12,9 +12,7 @@ try:
 except ImportError:
     from unittest import mock
 
-
 from azure_devtools.scenario_tests.const import ENV_LIVE_TEST
-from azure_devtools.scenario_tests.config import TestConfig
 
 
 class TestScenarioConfig(unittest.TestCase):
@@ -27,10 +25,12 @@ class TestScenarioConfig(unittest.TestCase):
         os.remove(self.cfgfile)
 
     def test_env_var(self):
+        from azure_devtools.scenario_tests.config import TestConfig
         with mock.patch.dict('os.environ', {ENV_LIVE_TEST: 'yes'}):
             config = TestConfig()
         self.assertIs(config.record_mode, True)
 
     def test_config_file(self):
+        from azure_devtools.scenario_tests.config import TestConfig
         config = TestConfig(config_file=self.cfgfile)
         self.assertIs(config.record_mode, True)

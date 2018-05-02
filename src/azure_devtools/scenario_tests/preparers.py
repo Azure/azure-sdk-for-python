@@ -40,16 +40,17 @@ class AbstractPreparer(object):
                     resource_name,
                     **kwargs
                 )
-            test_class_instance.addCleanup(
-                lambda: self.remove_resource_with_record_override(resource_name, **kwargs)
-            )
 
             if parameter_update:
                 kwargs.update(parameter_update)
 
             trim_kwargs_from_test_function(fn, kwargs)
 
-            fn(test_class_instance, **kwargs)
+            try:
+                fn(test_class_instance, **kwargs)
+            finally:
+                # Russian Doll - the last declared resource to be deleted first.
+                self.remove_resource_with_record_override(resource_name, **kwargs)
 
         setattr(_preparer_wrapper, '__is_preparer', True)
         functools.update_wrapper(_preparer_wrapper, fn)

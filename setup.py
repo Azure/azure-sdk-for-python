@@ -9,7 +9,7 @@ import io
 from setuptools import setup
 
 
-VERSION = "0.5.5"
+VERSION = "1.0.0"
 
 
 CLASSIFIERS = [
