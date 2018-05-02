@@ -129,6 +129,7 @@ from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
 from .dsc_node import DscNode
 from .dsc_node_configuration import DscNodeConfiguration
+from .dsc_node_configuration_create_or_update_parameters_properties import DscNodeConfigurationCreateOrUpdateParametersProperties
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -303,6 +304,7 @@ __all__ = [
     'SourceControlSyncJobById',
     'DscNode',
     'DscNodeConfiguration',
+    'DscNodeConfigurationCreateOrUpdateParametersProperties',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
