@@ -15,17 +15,14 @@ from .tracked_resource import TrackedResource
 class Profile(TrackedResource):
     """Class representing a Traffic Manager profile.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
+    :type id: str
+    :param name: The name of the resource
+    :type name: str
+    :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :vartype type: str
+    :type type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
@@ -48,12 +45,6 @@ class Profile(TrackedResource):
     :type endpoints: list[~azure.mgmt.trafficmanager.models.Endpoint]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -67,8 +58,8 @@ class Profile(TrackedResource):
         'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
     }
 
-    def __init__(self, tags=None, location=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None):
-        super(Profile, self).__init__(tags=tags, location=location)
+    def __init__(self, id=None, name=None, type=None, tags=None, location=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None):
+        super(Profile, self).__init__(id=id, name=name, type=type, tags=tags, location=location)
         self.profile_status = profile_status
         self.traffic_routing_method = traffic_routing_method
         self.dns_config = dns_config

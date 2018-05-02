@@ -40,6 +40,12 @@ class MonitorConfig(Model):
      health check that Traffic Manager tolerates before declaring an endpoint
      in this profile Degraded after the next failed health check.
     :type tolerated_number_of_failures: long
+    :param custom_headers: List of custom headers.
+    :type custom_headers:
+     list[~azure.mgmt.trafficmanager.models.MonitorConfigCustomHeadersItem]
+    :param expected_status_code_ranges: List of expected status code ranges.
+    :type expected_status_code_ranges:
+     list[~azure.mgmt.trafficmanager.models.MonitorConfigExpectedStatusCodeRangesItem]
     """
 
     _attribute_map = {
@@ -50,9 +56,11 @@ class MonitorConfig(Model):
         'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'long'},
         'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
         'tolerated_number_of_failures': {'key': 'toleratedNumberOfFailures', 'type': 'long'},
+        'custom_headers': {'key': 'customHeaders', 'type': '[MonitorConfigCustomHeadersItem]'},
+        'expected_status_code_ranges': {'key': 'expectedStatusCodeRanges', 'type': '[MonitorConfigExpectedStatusCodeRangesItem]'},
     }
 
-    def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None):
+    def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None, custom_headers=None, expected_status_code_ranges=None):
         super(MonitorConfig, self).__init__()
         self.profile_monitor_status = profile_monitor_status
         self.protocol = protocol
@@ -61,3 +69,5 @@ class MonitorConfig(Model):
         self.interval_in_seconds = interval_in_seconds
         self.timeout_in_seconds = timeout_in_seconds
         self.tolerated_number_of_failures = tolerated_number_of_failures
+        self.custom_headers = custom_headers
+        self.expected_status_code_ranges = expected_status_code_ranges
