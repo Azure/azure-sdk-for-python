@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_groups_operations import ManagementGroupsOperations
-from .management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
-from .operations import Operations
-from .entities_operations import EntitiesOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'ManagementGroupsOperations',
-    'ManagementGroupSubscriptionsOperations',
-    'Operations',
-    'EntitiesOperations',
-]
+
+class EntityInfoPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EntityInfo <azure.mgmt.managementgroups.models.EntityInfo>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EntityInfo]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EntityInfoPaged, self).__init__(*args, **kwargs)
