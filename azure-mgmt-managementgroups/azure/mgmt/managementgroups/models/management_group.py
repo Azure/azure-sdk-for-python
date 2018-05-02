@@ -32,6 +32,8 @@ class ManagementGroup(Model):
     :type tenant_id: str
     :param display_name: The friendly name of the management group.
     :type display_name: str
+    :param roles: The role definitions associated with the management group.
+    :type roles: list[str]
     :param details: Details.
     :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
     :param children: The list of children.
@@ -51,6 +53,7 @@ class ManagementGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'roles': {'key': 'properties.roles', 'type': '[str]'},
         'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
         'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
     }
@@ -62,5 +65,6 @@ class ManagementGroup(Model):
         self.name = None
         self.tenant_id = kwargs.get('tenant_id', None)
         self.display_name = kwargs.get('display_name', None)
+        self.roles = kwargs.get('roles', None)
         self.details = kwargs.get('details', None)
         self.children = kwargs.get('children', None)

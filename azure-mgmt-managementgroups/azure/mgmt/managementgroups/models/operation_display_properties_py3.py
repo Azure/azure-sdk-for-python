@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class OperationDisplay(Model):
+class OperationDisplayProperties(Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when
@@ -43,7 +43,7 @@ class OperationDisplay(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(OperationDisplay, self).__init__(**kwargs)
+        super(OperationDisplayProperties, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None

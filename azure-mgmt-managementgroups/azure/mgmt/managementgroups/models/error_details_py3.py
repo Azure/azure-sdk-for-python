@@ -19,14 +19,18 @@ class ErrorDetails(Model):
     :type code: str
     :param message: A human-readable representation of the error.
     :type message: str
+    :param details: A human-readable representation of the error's details.
+    :type details: str
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, *, code: str=None, message: str=None, details: str=None, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = code
         self.message = message
+        self.details = details

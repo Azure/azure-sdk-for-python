@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class EntitiesOperations(object):
+    """EntitiesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,17 +37,25 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Management REST API operations.
+            self, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
+        """List all entities (Management Groups, Subscriptions, etc.) for the
+        authenticated user.
+        .
 
+        :param group_name: A filter which allows the call to be filtered for a
+         specific group.
+        :type group_name: str
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of EntityInfo
         :rtype:
-         ~azure.mgmt.managementgroups.models.OperationPaged[~azure.mgmt.managementgroups.models.Operation]
+         ~azure.mgmt.managementgroups.models.EntityInfoPaged[~azure.mgmt.managementgroups.models.EntityInfo]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
@@ -60,6 +68,10 @@ class Operations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if self.config.skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
+                if group_name is not None:
+                    query_parameters['groupName'] = self._serialize.query("group_name", group_name, 'str')
 
             else:
                 url = next_link
@@ -72,11 +84,13 @@ class Operations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            if cache_control is not None:
+                header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
+            request = self._client.post(url, query_parameters)
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -86,12 +100,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Management/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Management/getEntities'}
