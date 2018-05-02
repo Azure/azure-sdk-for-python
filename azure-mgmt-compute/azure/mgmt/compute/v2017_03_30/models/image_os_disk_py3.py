@@ -32,7 +32,7 @@ class ImageOSDisk(Model):
     :param managed_disk: The managedDisk.
     :type managed_disk: ~azure.mgmt.compute.v2017_03_30.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
-    :type blob_uri: str
+    :type blob_uri: int
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
@@ -41,7 +41,7 @@ class ImageOSDisk(Model):
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
      This element can be used to overwrite the name of the disk in a virtual
      machine image. <br><br> This value cannot be larger than 1023 GB
-    :type disk_size_gb: int
+    :type disk_size_gb: str
     :param storage_account_type: Specifies the storage account type for the
      managed disk. Possible values are: Standard_LRS or Premium_LRS. Possible
      values include: 'Standard_LRS', 'Premium_LRS'
@@ -59,13 +59,13 @@ class ImageOSDisk(Model):
         'os_state': {'key': 'osState', 'type': 'OperatingSystemStateTypes'},
         'snapshot': {'key': 'snapshot', 'type': 'SubResource'},
         'managed_disk': {'key': 'managedDisk', 'type': 'SubResource'},
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
+        'blob_uri': {'key': 'blobUri', 'type': 'int'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'str'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
     }
 
-    def __init__(self, *, os_type, os_state, snapshot=None, managed_disk=None, blob_uri: str=None, caching=None, disk_size_gb: int=None, storage_account_type=None, **kwargs) -> None:
+    def __init__(self, *, os_type, os_state, snapshot=None, managed_disk=None, blob_uri: int=None, caching=None, disk_size_gb: str=None, storage_account_type=None, **kwargs) -> None:
         super(ImageOSDisk, self).__init__(**kwargs)
         self.os_type = os_type
         self.os_state = os_state

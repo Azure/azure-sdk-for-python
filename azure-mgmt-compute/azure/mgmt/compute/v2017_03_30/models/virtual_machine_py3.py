@@ -84,11 +84,11 @@ class VirtualMachine(Resource):
      [Azure Hybrid Use Benefit for Windows
      Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Minimum api-version: 2015-06-15
-    :type license_type: str
+    :type license_type: int
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
-    :vartype vm_id: str
+    :vartype vm_id: int
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
      list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtension]
@@ -125,14 +125,14 @@ class VirtualMachine(Resource):
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        'license_type': {'key': 'properties.licenseType', 'type': 'int'},
+        'vm_id': {'key': 'properties.vmId', 'type': 'int'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: int=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.hardware_profile = hardware_profile
