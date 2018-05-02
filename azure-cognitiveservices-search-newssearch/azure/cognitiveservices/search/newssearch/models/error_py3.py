@@ -62,11 +62,11 @@ class Error(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, message: str, code="None", **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', "None")
+        self.code = code
         self.sub_code = None
-        self.message = kwargs.get('message', None)
+        self.message = message
         self.more_details = None
         self.parameter = None
         self.value = None

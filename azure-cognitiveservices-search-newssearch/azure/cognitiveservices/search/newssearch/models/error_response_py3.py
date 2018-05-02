@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .answer import Answer
+from .response import Response
+from msrest.exceptions import HttpOperationError
 
 
-class TrendingTopics(Answer):
-    """TrendingTopics.
+class ErrorResponse(Response):
+    """The top-level response that represents a failed request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,31 +27,39 @@ class TrendingTopics(Answer):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :ivar follow_up_queries:
-    :vartype follow_up_queries:
-     list[~azure.cognitiveservices.search.newssearch.models.Query]
-    :param value: Required. A list of trending news topics on Bing
-    :type value:
-     list[~azure.cognitiveservices.search.newssearch.models.NewsTopic]
+    :param errors: Required. A list of errors that describe the reasons why
+     the request failed.
+    :type errors:
+     list[~azure.cognitiveservices.search.newssearch.models.Error]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
-        'follow_up_queries': {'readonly': True},
-        'value': {'required': True},
+        'errors': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
-        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
-        'value': {'key': 'value', 'type': '[NewsTopic]'},
+        'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingTopics, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self._type = 'TrendingTopics'
+    def __init__(self, *, errors, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.errors = errors
+        self._type = 'ErrorResponse'
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

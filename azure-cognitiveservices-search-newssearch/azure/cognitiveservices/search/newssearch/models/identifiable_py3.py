@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .answer import Answer
+from .response_base import ResponseBase
 
 
-class TrendingTopics(Answer):
-    """TrendingTopics.
+class Identifiable(ResponseBase):
+    """Defines the identity of a resource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Response
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,33 +27,23 @@ class TrendingTopics(Answer):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :ivar web_search_url: The URL To Bing's search result for this item.
-    :vartype web_search_url: str
-    :ivar follow_up_queries:
-    :vartype follow_up_queries:
-     list[~azure.cognitiveservices.search.newssearch.models.Query]
-    :param value: Required. A list of trending news topics on Bing
-    :type value:
-     list[~azure.cognitiveservices.search.newssearch.models.NewsTopic]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
-        'web_search_url': {'readonly': True},
-        'follow_up_queries': {'readonly': True},
-        'value': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
-        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
-        'value': {'key': 'value', 'type': '[NewsTopic]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingTopics, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self._type = 'TrendingTopics'
+    _subtype_map = {
+        '_type': {'Response': 'Response'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Identifiable, self).__init__(**kwargs)
+        self.id = None
+        self._type = 'Identifiable'

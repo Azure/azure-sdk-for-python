@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .answer import Answer
+from .search_results_answer import SearchResultsAnswer
 
 
-class TrendingTopics(Answer):
-    """TrendingTopics.
+class News(SearchResultsAnswer):
+    """Defines a news answer.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,9 +29,17 @@ class TrendingTopics(Answer):
     :ivar follow_up_queries:
     :vartype follow_up_queries:
      list[~azure.cognitiveservices.search.newssearch.models.Query]
-    :param value: Required. A list of trending news topics on Bing
+    :ivar total_estimated_matches: The estimated number of webpages that are
+     relevant to the query. Use this number along with the count and offset
+     query parameters to page the results.
+    :vartype total_estimated_matches: long
+    :param value: Required. An array of NewsArticle objects that contain
+     information about news articles that are relevant to the query. If there
+     are no results to return for the request, the array is empty.
     :type value:
-     list[~azure.cognitiveservices.search.newssearch.models.NewsTopic]
+     list[~azure.cognitiveservices.search.newssearch.models.NewsArticle]
+    :ivar location: Location of local news
+    :vartype location: str
     """
 
     _validation = {
@@ -39,7 +47,9 @@ class TrendingTopics(Answer):
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
         'follow_up_queries': {'readonly': True},
+        'total_estimated_matches': {'readonly': True},
         'value': {'required': True},
+        'location': {'readonly': True},
     }
 
     _attribute_map = {
@@ -47,10 +57,13 @@ class TrendingTopics(Answer):
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
         'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
-        'value': {'key': 'value', 'type': '[NewsTopic]'},
+        'total_estimated_matches': {'key': 'totalEstimatedMatches', 'type': 'long'},
+        'value': {'key': 'value', 'type': '[NewsArticle]'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingTopics, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self._type = 'TrendingTopics'
+    def __init__(self, *, value, **kwargs) -> None:
+        super(News, self).__init__(**kwargs)
+        self.value = value
+        self.location = None
+        self._type = 'News'

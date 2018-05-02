@@ -50,7 +50,7 @@ class TrendingTopics(Answer):
         'value': {'key': 'value', 'type': '[NewsTopic]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value, **kwargs) -> None:
         super(TrendingTopics, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
         self._type = 'TrendingTopics'

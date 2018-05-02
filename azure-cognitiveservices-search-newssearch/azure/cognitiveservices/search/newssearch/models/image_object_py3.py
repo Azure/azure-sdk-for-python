@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .media_object import MediaObject
 
 
-class MediaObject(CreativeWork):
-    """Defines a media object.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+class ImageObject(MediaObject):
+    """Defines an image.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -60,6 +57,9 @@ class MediaObject(CreativeWork):
     :vartype width: int
     :ivar height: The height of the source media object, in pixels.
     :vartype height: int
+    :ivar thumbnail: The URL to a thumbnail of the image
+    :vartype thumbnail:
+     ~azure.cognitiveservices.search.newssearch.models.ImageObject
     """
 
     _validation = {
@@ -79,6 +79,7 @@ class MediaObject(CreativeWork):
         'content_url': {'readonly': True},
         'width': {'readonly': True},
         'height': {'readonly': True},
+        'thumbnail': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,15 +99,10 @@ class MediaObject(CreativeWork):
         'content_url': {'key': 'contentUrl', 'type': 'str'},
         'width': {'key': 'width', 'type': 'int'},
         'height': {'key': 'height', 'type': 'int'},
+        'thumbnail': {'key': 'thumbnail', 'type': 'ImageObject'},
     }
 
-    _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
-    }
-
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(ImageObject, self).__init__(**kwargs)
+        self.thumbnail = None
+        self._type = 'ImageObject'

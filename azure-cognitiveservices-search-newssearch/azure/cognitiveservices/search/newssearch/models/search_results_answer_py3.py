@@ -12,8 +12,11 @@
 from .answer import Answer
 
 
-class TrendingTopics(Answer):
-    """TrendingTopics.
+class SearchResultsAnswer(Answer):
+    """Defines a search result answer.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: News
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,9 +32,10 @@ class TrendingTopics(Answer):
     :ivar follow_up_queries:
     :vartype follow_up_queries:
      list[~azure.cognitiveservices.search.newssearch.models.Query]
-    :param value: Required. A list of trending news topics on Bing
-    :type value:
-     list[~azure.cognitiveservices.search.newssearch.models.NewsTopic]
+    :ivar total_estimated_matches: The estimated number of webpages that are
+     relevant to the query. Use this number along with the count and offset
+     query parameters to page the results.
+    :vartype total_estimated_matches: long
     """
 
     _validation = {
@@ -39,7 +43,7 @@ class TrendingTopics(Answer):
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
         'follow_up_queries': {'readonly': True},
-        'value': {'required': True},
+        'total_estimated_matches': {'readonly': True},
     }
 
     _attribute_map = {
@@ -47,10 +51,14 @@ class TrendingTopics(Answer):
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
         'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
-        'value': {'key': 'value', 'type': '[NewsTopic]'},
+        'total_estimated_matches': {'key': 'totalEstimatedMatches', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingTopics, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self._type = 'TrendingTopics'
+    _subtype_map = {
+        '_type': {'News': 'News'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SearchResultsAnswer, self).__init__(**kwargs)
+        self.total_estimated_matches = None
+        self._type = 'SearchResultsAnswer'

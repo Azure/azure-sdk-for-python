@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .article import Article
 
 
-class MediaObject(CreativeWork):
-    """Defines a media object.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+class NewsArticle(Article):
+    """Defines a news article.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,13 +50,20 @@ class MediaObject(CreativeWork):
     :ivar video: A video of the item.
     :vartype video:
      ~azure.cognitiveservices.search.newssearch.models.VideoObject
-    :ivar content_url: Original URL to retrieve the source (file) for the
-     media object (e.g the source URL for the image).
-    :vartype content_url: str
-    :ivar width: The width of the source media object, in pixels.
-    :vartype width: int
-    :ivar height: The height of the source media object, in pixels.
-    :vartype height: int
+    :ivar word_count: The number of words in the text of the Article.
+    :vartype word_count: int
+    :ivar category: The news category that the article belongs to. For
+     example, Sports. If the news category cannot be determined, the article
+     does not include this field.
+    :vartype category: str
+    :ivar headline: A Boolean value that indicates whether the news article is
+     a headline. If true, the article is a headline. The article includes this
+     field only for news categories requests that do not specify the category
+     query parameter.
+    :vartype headline: bool
+    :ivar clustered_articles: A list of related news articles.
+    :vartype clustered_articles:
+     list[~azure.cognitiveservices.search.newssearch.models.NewsArticle]
     """
 
     _validation = {
@@ -76,9 +80,10 @@ class MediaObject(CreativeWork):
         'provider': {'readonly': True},
         'date_published': {'readonly': True},
         'video': {'readonly': True},
-        'content_url': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
+        'word_count': {'readonly': True},
+        'category': {'readonly': True},
+        'headline': {'readonly': True},
+        'clustered_articles': {'readonly': True},
     }
 
     _attribute_map = {
@@ -95,18 +100,15 @@ class MediaObject(CreativeWork):
         'provider': {'key': 'provider', 'type': '[Thing]'},
         'date_published': {'key': 'datePublished', 'type': 'str'},
         'video': {'key': 'video', 'type': 'VideoObject'},
-        'content_url': {'key': 'contentUrl', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'int'},
-        'height': {'key': 'height', 'type': 'int'},
+        'word_count': {'key': 'wordCount', 'type': 'int'},
+        'category': {'key': 'category', 'type': 'str'},
+        'headline': {'key': 'headline', 'type': 'bool'},
+        'clustered_articles': {'key': 'clusteredArticles', 'type': '[NewsArticle]'},
     }
 
-    _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
-    }
-
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(NewsArticle, self).__init__(**kwargs)
+        self.category = None
+        self.headline = None
+        self.clustered_articles = None
+        self._type = 'NewsArticle'

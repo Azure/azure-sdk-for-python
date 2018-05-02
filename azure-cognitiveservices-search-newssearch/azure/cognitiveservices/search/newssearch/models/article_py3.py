@@ -12,11 +12,11 @@
 from .creative_work import CreativeWork
 
 
-class MediaObject(CreativeWork):
-    """Defines a media object.
+class Article(CreativeWork):
+    """Article.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+    sub-classes are: NewsArticle
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,13 +53,8 @@ class MediaObject(CreativeWork):
     :ivar video: A video of the item.
     :vartype video:
      ~azure.cognitiveservices.search.newssearch.models.VideoObject
-    :ivar content_url: Original URL to retrieve the source (file) for the
-     media object (e.g the source URL for the image).
-    :vartype content_url: str
-    :ivar width: The width of the source media object, in pixels.
-    :vartype width: int
-    :ivar height: The height of the source media object, in pixels.
-    :vartype height: int
+    :ivar word_count: The number of words in the text of the Article.
+    :vartype word_count: int
     """
 
     _validation = {
@@ -76,9 +71,7 @@ class MediaObject(CreativeWork):
         'provider': {'readonly': True},
         'date_published': {'readonly': True},
         'video': {'readonly': True},
-        'content_url': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
+        'word_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -95,18 +88,14 @@ class MediaObject(CreativeWork):
         'provider': {'key': 'provider', 'type': '[Thing]'},
         'date_published': {'key': 'datePublished', 'type': 'str'},
         'video': {'key': 'video', 'type': 'VideoObject'},
-        'content_url': {'key': 'contentUrl', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'int'},
-        'height': {'key': 'height', 'type': 'int'},
+        'word_count': {'key': 'wordCount', 'type': 'int'},
     }
 
     _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
+        '_type': {'NewsArticle': 'NewsArticle'}
     }
 
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(Article, self).__init__(**kwargs)
+        self.word_count = None
+        self._type = 'Article'
