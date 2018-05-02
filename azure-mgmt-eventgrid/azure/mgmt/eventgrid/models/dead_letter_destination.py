@@ -12,14 +12,15 @@
 from msrest.serialization import Model
 
 
-class EventSubscriptionDestination(Model):
-    """Information about the destination for an event subscription.
+class DeadLetterDestination(Model):
+    """Information about the dead letter destination for an event subscription. To
+    configure a deadletter destination, do not directly instantiate an object
+    of this class. Instead, instantiate an object of a derived class.
+    Currently, StorageBlobDeadLetterDestination is the only class that derives
+    from this class.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebHookEventSubscriptionDestination,
-    EventHubEventSubscriptionDestination,
-    StorageQueueEventSubscriptionDestination,
-    HybridConnectionEventSubscriptionDestination
+    sub-classes are: StorageBlobDeadLetterDestination
 
     :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
@@ -34,9 +35,9 @@ class EventSubscriptionDestination(Model):
     }
 
     _subtype_map = {
-        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination'}
+        'endpoint_type': {'StorageBlob': 'StorageBlobDeadLetterDestination'}
     }
 
     def __init__(self):
-        super(EventSubscriptionDestination, self).__init__()
+        super(DeadLetterDestination, self).__init__()
         self.endpoint_type = None

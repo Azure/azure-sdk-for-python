@@ -9,17 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_subscription_destination import EventSubscriptionDestination
+from .dead_letter_destination import DeadLetterDestination
 
 
-class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
-    """Information about the event hub destination for an event subscription.
+class StorageBlobDeadLetterDestination(DeadLetterDestination):
+    """Information about the storage blob based dead letter destination.
 
     :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
-    :param resource_id: The Azure Resource Id that represents the endpoint of
-     an Event Hub destination of an event subscription.
+    :param resource_id: The Azure Resource ID of the storage account that is
+     the destination of the deadletter events
     :type resource_id: str
+    :param blob_container_name: The name of the Storage blob container that is
+     the destination of the deadletter events
+    :type blob_container_name: str
     """
 
     _validation = {
@@ -29,9 +32,11 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     _attribute_map = {
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
+        'blob_container_name': {'key': 'properties.blobContainerName', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None):
-        super(EventHubEventSubscriptionDestination, self).__init__()
+    def __init__(self, resource_id=None, blob_container_name=None):
+        super(StorageBlobDeadLetterDestination, self).__init__()
         self.resource_id = resource_id
-        self.endpoint_type = 'EventHub'
+        self.blob_container_name = blob_container_name
+        self.endpoint_type = 'StorageBlob'

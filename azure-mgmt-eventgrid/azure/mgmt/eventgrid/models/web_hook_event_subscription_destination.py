@@ -18,9 +18,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param endpoint_type: Required. Constant filled by server.
+    :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
     :param endpoint_url: The URL that represents the endpoint of the
      destination of an event subscription.
@@ -41,8 +39,8 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         'endpoint_base_url': {'key': 'properties.endpointBaseUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(WebHookEventSubscriptionDestination, self).__init__(**kwargs)
-        self.endpoint_url = kwargs.get('endpoint_url', None)
+    def __init__(self, endpoint_url=None):
+        super(WebHookEventSubscriptionDestination, self).__init__()
+        self.endpoint_url = endpoint_url
         self.endpoint_base_url = None
         self.endpoint_type = 'WebHook'

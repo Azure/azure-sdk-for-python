@@ -28,7 +28,7 @@ class EventSubscription(Resource):
     :vartype topic: str
     :ivar provisioning_state: Provisioning state of the event subscription.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
-     'Canceled', 'Failed'
+     'Canceled', 'Failed', 'AwaitingManualAction'
     :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.EventSubscriptionProvisioningState
     :param destination: Information about the destination where events have to
@@ -39,6 +39,19 @@ class EventSubscription(Resource):
     :type filter: ~azure.mgmt.eventgrid.models.EventSubscriptionFilter
     :param labels: List of user defined labels.
     :type labels: list[str]
+    :param event_delivery_schema: The event delivery schema for the event
+     subscription. Possible values include: 'EventGridSchema',
+     'InputEventSchema', 'CloudEventV01Schema'. Default value:
+     "EventGridSchema" .
+    :type event_delivery_schema: str or
+     ~azure.mgmt.eventgrid.models.EventDeliverySchema
+    :param retry_policy: The retry policy for events. This can be used to
+     configure maximum number of delivery attempts and time to live for events.
+    :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
+    :param dead_letter_destination: The DeadLetter destination of the event
+     subscription.
+    :type dead_letter_destination:
+     ~azure.mgmt.eventgrid.models.DeadLetterDestination
     """
 
     _validation = {
@@ -58,12 +71,18 @@ class EventSubscription(Resource):
         'destination': {'key': 'properties.destination', 'type': 'EventSubscriptionDestination'},
         'filter': {'key': 'properties.filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
+        'event_delivery_schema': {'key': 'properties.eventDeliverySchema', 'type': 'str'},
+        'retry_policy': {'key': 'properties.retryPolicy', 'type': 'RetryPolicy'},
+        'dead_letter_destination': {'key': 'properties.deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, **kwargs):
-        super(EventSubscription, self).__init__(**kwargs)
+    def __init__(self, destination=None, filter=None, labels=None, event_delivery_schema="EventGridSchema", retry_policy=None, dead_letter_destination=None):
+        super(EventSubscription, self).__init__()
         self.topic = None
         self.provisioning_state = None
-        self.destination = kwargs.get('destination', None)
-        self.filter = kwargs.get('filter', None)
-        self.labels = kwargs.get('labels', None)
+        self.destination = destination
+        self.filter = filter
+        self.labels = labels
+        self.event_delivery_schema = event_delivery_schema
+        self.retry_policy = retry_policy
+        self.dead_letter_destination = dead_letter_destination

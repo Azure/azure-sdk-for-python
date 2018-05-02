@@ -12,13 +12,14 @@
 from .event_subscription_destination import EventSubscriptionDestination
 
 
-class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
-    """Information about the event hub destination for an event subscription.
+class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):
+    """Information about the HybridConnection destination for an event
+    subscription.
 
     :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
-    :param resource_id: The Azure Resource Id that represents the endpoint of
-     an Event Hub destination of an event subscription.
+    :param resource_id: The Azure Resource ID of an hybrid connection that is
+     the destination of an event subscription.
     :type resource_id: str
     """
 
@@ -32,6 +33,6 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     }
 
     def __init__(self, resource_id=None):
-        super(EventHubEventSubscriptionDestination, self).__init__()
+        super(HybridConnectionEventSubscriptionDestination, self).__init__()
         self.resource_id = resource_id
-        self.endpoint_type = 'EventHub'
+        self.endpoint_type = 'HybridConnection'
