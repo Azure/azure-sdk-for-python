@@ -18,12 +18,14 @@ class AggregateRating(Rating):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar text: Text representation of an item.
     :vartype text: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
-    :param rating_value: The mean (average) rating. The possible values are
-     1.0 through 5.0.
+    :param rating_value: Required. The mean (average) rating. The possible
+     values are 1.0 through 5.0.
     :type rating_value: float
     :ivar best_rating: The highest rated review. The possible values are 1.0
      through 5.0.
@@ -49,7 +51,7 @@ class AggregateRating(Rating):
         'review_count': {'key': 'reviewCount', 'type': 'int'},
     }
 
-    def __init__(self, rating_value):
-        super(AggregateRating, self).__init__(rating_value=rating_value)
+    def __init__(self, **kwargs):
+        super(AggregateRating, self).__init__(**kwargs)
         self.review_count = None
         self._type = 'AggregateRating'

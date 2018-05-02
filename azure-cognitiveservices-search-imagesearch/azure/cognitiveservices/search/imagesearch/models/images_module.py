@@ -31,6 +31,6 @@ class ImagesModule(Model):
         'value': {'key': 'value', 'type': '[ImageObject]'},
     }
 
-    def __init__(self):
-        super(ImagesModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImagesModule, self).__init__(**kwargs)
         self.value = None

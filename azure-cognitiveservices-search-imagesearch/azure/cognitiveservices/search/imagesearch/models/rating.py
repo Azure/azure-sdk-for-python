@@ -21,12 +21,14 @@ class Rating(PropertiesItem):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar text: Text representation of an item.
     :vartype text: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
-    :param rating_value: The mean (average) rating. The possible values are
-     1.0 through 5.0.
+    :param rating_value: Required. The mean (average) rating. The possible
+     values are 1.0 through 5.0.
     :type rating_value: float
     :ivar best_rating: The highest rated review. The possible values are 1.0
      through 5.0.
@@ -51,8 +53,8 @@ class Rating(PropertiesItem):
         '_type': {'AggregateRating': 'AggregateRating'}
     }
 
-    def __init__(self, rating_value):
-        super(Rating, self).__init__()
-        self.rating_value = rating_value
+    def __init__(self, **kwargs):
+        super(Rating, self).__init__(**kwargs)
+        self.rating_value = kwargs.get('rating_value', None)
         self.best_rating = None
         self._type = 'Rating'
