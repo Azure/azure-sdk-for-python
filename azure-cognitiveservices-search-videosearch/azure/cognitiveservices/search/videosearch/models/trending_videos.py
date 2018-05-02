@@ -18,16 +18,18 @@ class TrendingVideos(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :param banner_tiles:
+    :param banner_tiles: Required.
     :type banner_tiles:
      list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
-    :param categories:
+    :param categories: Required.
     :type categories:
      list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosCategory]
     """
@@ -48,8 +50,8 @@ class TrendingVideos(Response):
         'categories': {'key': 'categories', 'type': '[TrendingVideosCategory]'},
     }
 
-    def __init__(self, banner_tiles, categories):
-        super(TrendingVideos, self).__init__()
-        self.banner_tiles = banner_tiles
-        self.categories = categories
+    def __init__(self, **kwargs):
+        super(TrendingVideos, self).__init__(**kwargs)
+        self.banner_tiles = kwargs.get('banner_tiles', None)
+        self.categories = kwargs.get('categories', None)
         self._type = 'TrendingVideos'

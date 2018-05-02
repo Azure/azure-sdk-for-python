@@ -18,12 +18,14 @@ class SpellingFlaggedToken(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param offset:
+    All required parameters must be populated in order to send to Azure.
+
+    :param offset: Required.
     :type offset: int
-    :param token:
+    :param token: Required.
     :type token: str
-    :param type: Possible values include: 'UnknownToken', 'RepeatedToken'.
-     Default value: "UnknownToken" .
+    :param type: Required. Possible values include: 'UnknownToken',
+     'RepeatedToken'. Default value: "UnknownToken" .
     :type type: str or
      ~azure.cognitiveservices.language.spellcheck.models.ErrorType
     :ivar suggestions:
@@ -49,10 +51,10 @@ class SpellingFlaggedToken(Model):
         'ping_url_suffix': {'key': 'pingUrlSuffix', 'type': 'str'},
     }
 
-    def __init__(self, offset, token, type="UnknownToken"):
-        super(SpellingFlaggedToken, self).__init__()
-        self.offset = offset
-        self.token = token
-        self.type = type
+    def __init__(self, **kwargs):
+        super(SpellingFlaggedToken, self).__init__(**kwargs)
+        self.offset = kwargs.get('offset', None)
+        self.token = kwargs.get('token', None)
+        self.type = kwargs.get('type', "UnknownToken")
         self.suggestions = None
         self.ping_url_suffix = None
