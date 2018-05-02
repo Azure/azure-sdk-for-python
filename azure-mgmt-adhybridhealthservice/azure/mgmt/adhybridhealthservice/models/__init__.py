@@ -62,7 +62,6 @@ try:
     from .inbound_replication_neighbor_py3 import InboundReplicationNeighbor
     from .inbound_replication_neighbors_py3 import InboundReplicationNeighbors
     from .items_py3 import Items
-    from .merged_export_errors_py3 import MergedExportErrors
     from .metric_group_py3 import MetricGroup
     from .metric_metadata_py3 import MetricMetadata
     from .metric_set_py3 import MetricSet
@@ -136,7 +135,6 @@ except (SyntaxError, ImportError):
     from .inbound_replication_neighbor import InboundReplicationNeighbor
     from .inbound_replication_neighbors import InboundReplicationNeighbors
     from .items import Items
-    from .merged_export_errors import MergedExportErrors
     from .metric_group import MetricGroup
     from .metric_metadata import MetricMetadata
     from .metric_set import MetricSet
@@ -164,6 +162,7 @@ from .alert_paged import AlertPaged
 from .dimension_paged import DimensionPaged
 from .adds_service_member_paged import AddsServiceMemberPaged
 from .operation_paged import OperationPaged
+from .export_error_paged import ExportErrorPaged
 from .export_status_paged import ExportStatusPaged
 from .service_member_paged import ServiceMemberPaged
 from .ad_hybrid_health_service_enums import (
@@ -236,7 +235,6 @@ __all__ = [
     'InboundReplicationNeighbor',
     'InboundReplicationNeighbors',
     'Items',
-    'MergedExportErrors',
     'MetricGroup',
     'MetricMetadata',
     'MetricSet',
@@ -264,6 +262,7 @@ __all__ = [
     'DimensionPaged',
     'AddsServiceMemberPaged',
     'OperationPaged',
+    'ExportErrorPaged',
     'ExportStatusPaged',
     'ServiceMemberPaged',
     'Level',

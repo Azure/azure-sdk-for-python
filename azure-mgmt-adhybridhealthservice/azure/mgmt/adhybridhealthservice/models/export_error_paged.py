@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MergedExportErrors(Model):
-    """The list of export errors.
-
-    :param value: The value returned by the operation.
-    :type value: list[~azure.mgmt.adhybridhealthservice.models.ExportError]
+class ExportErrorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExportError <azure.mgmt.adhybridhealthservice.models.ExportError>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExportError]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExportError]'}
     }
 
-    def __init__(self, **kwargs):
-        super(MergedExportErrors, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ExportErrorPaged, self).__init__(*args, **kwargs)
