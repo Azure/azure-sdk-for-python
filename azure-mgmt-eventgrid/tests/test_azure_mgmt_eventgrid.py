@@ -57,7 +57,8 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
 
         destination = WebHookEventSubscriptionDestination(
-            endpoint_url="https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1?code=69AbujfvYn77Ccf5OySDcTk9CYM1b9Ua2lO37ayoWb97fGRWELGbnA=="
+            # TODO: Before recording tests, replace with a valid Azure function URL
+            endpoint_url="https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1?code=hidden"
         )
         filter = EventSubscriptionFilter()
 
