@@ -48,13 +48,13 @@ class OSDisk(Model):
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
     :param create_option: Required. Specifies how the virtual machine should
-     be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
-     value is used when you are using a specialized disk to create the virtual
-     machine.<br><br> **FromImage** \\u2013 This value is used when you are
-     using an image to create the virtual machine. If you are using a platform
-     image, you also use the imageReference element described above. If you are
-     using a marketplace image, you  also use the plan element previously
-     described. Possible values include: 'FromImage', 'Empty', 'Attach'
+     be created.<br><br> Possible values are:<br><br> **Attach**  This value is
+     used when you are using a specialized disk to create the virtual
+     machine.<br><br> **FromImage**  This value is used when you are using an
+     image to create the virtual machine. If you are using a platform image,
+     you also use the imageReference element described above. If you are using
+     a marketplace image, you  also use the plan element previously described.
+     Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2017_12_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
