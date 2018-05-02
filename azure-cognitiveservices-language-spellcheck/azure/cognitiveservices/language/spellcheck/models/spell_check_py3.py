@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
-from msrest.exceptions import HttpOperationError
+from .answer import Answer
 
 
-class ErrorResponse(Response):
-    """The top-level response that represents a failed request.
+class SpellCheck(Answer):
+    """SpellCheck.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,37 +24,24 @@ class ErrorResponse(Response):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :param errors: Required. A list of errors that describe the reasons why
-     the request failed.
-    :type errors:
-     list[~azure.cognitiveservices.language.spellcheck.models.Error]
+    :param flagged_tokens: Required.
+    :type flagged_tokens:
+     list[~azure.cognitiveservices.language.spellcheck.models.SpellingFlaggedToken]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
-        'errors': {'required': True},
+        'flagged_tokens': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[Error]'},
+        'flagged_tokens': {'key': 'flaggedTokens', 'type': '[SpellingFlaggedToken]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.errors = kwargs.get('errors', None)
-        self._type = 'ErrorResponse'
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+    def __init__(self, *, flagged_tokens, **kwargs) -> None:
+        super(SpellCheck, self).__init__(**kwargs)
+        self.flagged_tokens = flagged_tokens
+        self._type = 'SpellCheck'
