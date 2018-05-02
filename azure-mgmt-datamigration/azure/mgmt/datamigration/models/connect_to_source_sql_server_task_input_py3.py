@@ -41,8 +41,8 @@ class ConnectToSourceSqlServerTaskInput(Model):
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
         'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'str'},
-        'collect_logins': {'key': 'CollectLogins', 'type': 'bool'},
-        'collect_agent_jobs': {'key': 'CollectAgentJobs', 'type': 'bool'},
+        'collect_logins': {'key': 'collectLogins', 'type': 'bool'},
+        'collect_agent_jobs': {'key': 'collectAgentJobs', 'type': 'bool'},
     }
 
     def __init__(self, *, source_connection_info, check_permissions_group=None, collect_logins: bool=False, collect_agent_jobs: bool=False, **kwargs) -> None:
