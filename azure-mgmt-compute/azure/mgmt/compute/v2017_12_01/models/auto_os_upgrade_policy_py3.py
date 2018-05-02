@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class AutoOSUpgradePolicy(Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
-    :param disable_auto_rollback: whether OS image rollback feature should be
-     disabled.
+    :param disable_auto_rollback: Whether OS image rollback feature should be
+     disabled. Default value is false.
     :type disable_auto_rollback: bool
     """
 
