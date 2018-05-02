@@ -24,7 +24,7 @@ class HeatMapOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar heat_map_type: The type of HeatMap for the Traffic Manager profile. Constant value: "default".
-    :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class HeatMapOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.heat_map_type = "default"
-        self.api_version = "2017-09-01-preview"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
