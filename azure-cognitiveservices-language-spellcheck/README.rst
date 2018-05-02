@@ -3,13 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Cognitive Services Bing Spell Check Client Library.
 
-Azure Resource Manager (ARM) is the next generation of management APIs that
-replace the old Azure Service Management (ASM).
-
-This package has been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
-
-For the older Azure Service Management (ASM) libraries, see
-`azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
+This package has been tested with Python 2.7, 3.4, 3.5 and 3.6.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
@@ -31,6 +25,14 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 .. code:: shell
 
     pip uninstall azure
+
+
+Usage
+=====
+
+For code examples, see `Spell Check
+<https://docs.microsoft.com/python/api/overview/azure/cognitive-services>`__
+on readthedocs.org.
 
 
 Provide Feedback
