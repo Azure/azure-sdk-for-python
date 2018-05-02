@@ -162,6 +162,7 @@ from .alert_feedback_paged import AlertFeedbackPaged
 from .error_report_users_entry_paged import ErrorReportUsersEntryPaged
 from .service_member_paged import ServiceMemberPaged
 from .credential_paged import CredentialPaged
+from .global_configuration_paged import GlobalConfigurationPaged
 from .ad_hybrid_health_service_enums import (
     Level,
     State,
@@ -262,6 +263,7 @@ __all__ = [
     'ErrorReportUsersEntryPaged',
     'ServiceMemberPaged',
     'CredentialPaged',
+    'GlobalConfigurationPaged',
     'Level',
     'State',
     'ValueDeltaOperationType',
