@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class InboundReplicationNeighbors(Model):
     """The list of replication summary for the domain controller inbound neighbor.
 
-    :param value:
+    :param value: The details of inbound replication neighbors.
     :type value:
      list[~azure.mgmt.adhybridhealthservice.models.InboundReplicationNeighbor]
     """

@@ -41,7 +41,6 @@ try:
     from .dimension_py3 import Dimension
     from .display_py3 import Display
     from .error_count_py3 import ErrorCount
-    from .error_counts_py3 import ErrorCounts
     from .object_with_sync_error_py3 import ObjectWithSyncError
     from .merged_export_error_py3 import MergedExportError
     from .error_detail_py3 import ErrorDetail
@@ -111,7 +110,6 @@ except (SyntaxError, ImportError):
     from .dimension import Dimension
     from .display import Display
     from .error_count import ErrorCount
-    from .error_counts import ErrorCounts
     from .object_with_sync_error import ObjectWithSyncError
     from .merged_export_error import MergedExportError
     from .error_detail import ErrorDetail
@@ -156,6 +154,7 @@ from .alert_paged import AlertPaged
 from .dimension_paged import DimensionPaged
 from .adds_service_member_paged import AddsServiceMemberPaged
 from .operation_paged import OperationPaged
+from .error_count_paged import ErrorCountPaged
 from .export_error_paged import ExportErrorPaged
 from .export_status_paged import ExportStatusPaged
 from .alert_feedback_paged import AlertFeedbackPaged
@@ -212,7 +211,6 @@ __all__ = [
     'Dimension',
     'Display',
     'ErrorCount',
-    'ErrorCounts',
     'ObjectWithSyncError',
     'MergedExportError',
     'ErrorDetail',
@@ -257,6 +255,7 @@ __all__ = [
     'DimensionPaged',
     'AddsServiceMemberPaged',
     'OperationPaged',
+    'ErrorCountPaged',
     'ExportErrorPaged',
     'ExportStatusPaged',
     'AlertFeedbackPaged',

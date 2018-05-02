@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ErrorCounts(Model):
-    """The list of error counts.
-
-    :param value: The value returned by the operation.
-    :type value: list[~azure.mgmt.adhybridhealthservice.models.ErrorCount]
+class ErrorCountPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ErrorCount <azure.mgmt.adhybridhealthservice.models.ErrorCount>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ErrorCount]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ErrorCount]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorCounts, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ErrorCountPaged, self).__init__(*args, **kwargs)
