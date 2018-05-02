@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .thing import Thing
 
 
-class MediaObject(CreativeWork):
-    """MediaObject.
+class CreativeWork(Thing):
+    """CreativeWork.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+    sub-classes are: MediaObject
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -50,15 +50,6 @@ class MediaObject(CreativeWork):
      list[~azure.cognitiveservices.search.videosearch.models.Thing]
     :ivar text:
     :vartype text: str
-    :ivar content_url: Original URL to retrieve the source (file) for the
-     media object (e.g the source URL for the image).
-    :vartype content_url: str
-    :ivar host_page_url: URL of the page that hosts the media object.
-    :vartype host_page_url: str
-    :ivar width: The width of the source media object, in pixels.
-    :vartype width: int
-    :ivar height: The height of the source media object, in pixels.
-    :vartype height: int
     """
 
     _validation = {
@@ -74,10 +65,6 @@ class MediaObject(CreativeWork):
         'thumbnail_url': {'readonly': True},
         'provider': {'readonly': True},
         'text': {'readonly': True},
-        'content_url': {'readonly': True},
-        'host_page_url': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,20 +80,15 @@ class MediaObject(CreativeWork):
         'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
         'provider': {'key': 'provider', 'type': '[Thing]'},
         'text': {'key': 'text', 'type': 'str'},
-        'content_url': {'key': 'contentUrl', 'type': 'str'},
-        'host_page_url': {'key': 'hostPageUrl', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'int'},
-        'height': {'key': 'height', 'type': 'int'},
     }
 
     _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
+        '_type': {'MediaObject': 'MediaObject'}
     }
 
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.host_page_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(CreativeWork, self).__init__(**kwargs)
+        self.thumbnail_url = None
+        self.provider = None
+        self.text = None
+        self._type = 'CreativeWork'

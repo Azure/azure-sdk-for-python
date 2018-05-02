@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_results_answer import SearchResultsAnswer
+from .answer import Answer
 
 
-class Videos(SearchResultsAnswer):
-    """Defines a video answer.
+class SearchResultsAnswer(Answer):
+    """SearchResultsAnswer.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Videos
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,21 +38,6 @@ class Videos(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param value: Required. A list of video objects that are relevant to the
-     query.
-    :type value:
-     list[~azure.cognitiveservices.search.videosearch.models.VideoObject]
-    :ivar next_offset:
-    :vartype next_offset: int
-    :ivar scenario: Possible values include: 'List', 'SingleDominantVideo'
-    :vartype scenario: str or
-     ~azure.cognitiveservices.search.videosearch.models.VideoQueryScenario
-    :ivar query_expansions:
-    :vartype query_expansions:
-     list[~azure.cognitiveservices.search.videosearch.models.Query]
-    :ivar pivot_suggestions:
-    :vartype pivot_suggestions:
-     list[~azure.cognitiveservices.search.videosearch.models.PivotSuggestions]
     """
 
     _validation = {
@@ -59,11 +47,6 @@ class Videos(SearchResultsAnswer):
         'follow_up_queries': {'readonly': True},
         'total_estimated_matches': {'readonly': True},
         'is_family_friendly': {'readonly': True},
-        'value': {'required': True},
-        'next_offset': {'readonly': True},
-        'scenario': {'readonly': True},
-        'query_expansions': {'readonly': True},
-        'pivot_suggestions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -73,18 +56,14 @@ class Videos(SearchResultsAnswer):
         'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
         'total_estimated_matches': {'key': 'totalEstimatedMatches', 'type': 'long'},
         'is_family_friendly': {'key': 'isFamilyFriendly', 'type': 'bool'},
-        'value': {'key': 'value', 'type': '[VideoObject]'},
-        'next_offset': {'key': 'nextOffset', 'type': 'int'},
-        'scenario': {'key': 'scenario', 'type': 'VideoQueryScenario'},
-        'query_expansions': {'key': 'queryExpansions', 'type': '[Query]'},
-        'pivot_suggestions': {'key': 'pivotSuggestions', 'type': '[PivotSuggestions]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Videos, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_offset = None
-        self.scenario = None
-        self.query_expansions = None
-        self.pivot_suggestions = None
-        self._type = 'Videos'
+    _subtype_map = {
+        '_type': {'Videos': 'Videos'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SearchResultsAnswer, self).__init__(**kwargs)
+        self.total_estimated_matches = None
+        self.is_family_friendly = None
+        self._type = 'SearchResultsAnswer'

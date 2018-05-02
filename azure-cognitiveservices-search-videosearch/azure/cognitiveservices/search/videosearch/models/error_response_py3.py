@@ -10,10 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .response import Response
+from msrest.exceptions import HttpOperationError
 
 
-class TrendingVideos(Response):
-    """TrendingVideos.
+class ErrorResponse(Response):
+    """The top-level response that represents a failed request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,32 +27,39 @@ class TrendingVideos(Response):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :param banner_tiles: Required.
-    :type banner_tiles:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
-    :param categories: Required.
-    :type categories:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosCategory]
+    :param errors: Required. A list of errors that describe the reasons why
+     the request failed.
+    :type errors:
+     list[~azure.cognitiveservices.search.videosearch.models.Error]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
-        'banner_tiles': {'required': True},
-        'categories': {'required': True},
+        'errors': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
-        'banner_tiles': {'key': 'bannerTiles', 'type': '[TrendingVideosTile]'},
-        'categories': {'key': 'categories', 'type': '[TrendingVideosCategory]'},
+        'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingVideos, self).__init__(**kwargs)
-        self.banner_tiles = kwargs.get('banner_tiles', None)
-        self.categories = kwargs.get('categories', None)
-        self._type = 'TrendingVideos'
+    def __init__(self, *, errors, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.errors = errors
+        self._type = 'ErrorResponse'
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

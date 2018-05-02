@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class TrendingVideosSubcategory(Model):
-    """TrendingVideosSubcategory.
+class TrendingVideosTile(Model):
+    """TrendingVideosTile.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param title: Required.
-    :type title: str
-    :param tiles: Required.
-    :type tiles:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
+    :param query: Required.
+    :type query: ~azure.cognitiveservices.search.videosearch.models.Query
+    :param image: Required.
+    :type image:
+     ~azure.cognitiveservices.search.videosearch.models.ImageObject
     """
 
     _validation = {
-        'title': {'required': True},
-        'tiles': {'required': True},
+        'query': {'required': True},
+        'image': {'required': True},
     }
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'tiles': {'key': 'tiles', 'type': '[TrendingVideosTile]'},
+        'query': {'key': 'query', 'type': 'Query'},
+        'image': {'key': 'image', 'type': 'ImageObject'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingVideosSubcategory, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.tiles = kwargs.get('tiles', None)
+    def __init__(self, *, query, image, **kwargs) -> None:
+        super(TrendingVideosTile, self).__init__(**kwargs)
+        self.query = query
+        self.image = image

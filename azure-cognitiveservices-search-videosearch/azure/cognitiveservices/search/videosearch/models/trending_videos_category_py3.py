@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class TrendingVideosSubcategory(Model):
-    """TrendingVideosSubcategory.
+class TrendingVideosCategory(Model):
+    """TrendingVideosCategory.
 
     All required parameters must be populated in order to send to Azure.
 
     :param title: Required.
     :type title: str
-    :param tiles: Required.
-    :type tiles:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
+    :param subcategories: Required.
+    :type subcategories:
+     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosSubcategory]
     """
 
     _validation = {
         'title': {'required': True},
-        'tiles': {'required': True},
+        'subcategories': {'required': True},
     }
 
     _attribute_map = {
         'title': {'key': 'title', 'type': 'str'},
-        'tiles': {'key': 'tiles', 'type': '[TrendingVideosTile]'},
+        'subcategories': {'key': 'subcategories', 'type': '[TrendingVideosSubcategory]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingVideosSubcategory, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.tiles = kwargs.get('tiles', None)
+    def __init__(self, *, title: str, subcategories, **kwargs) -> None:
+        super(TrendingVideosCategory, self).__init__(**kwargs)
+        self.title = title
+        self.subcategories = subcategories

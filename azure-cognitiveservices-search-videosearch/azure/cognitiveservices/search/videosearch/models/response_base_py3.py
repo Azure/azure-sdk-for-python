@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class TrendingVideosSubcategory(Model):
-    """TrendingVideosSubcategory.
+class ResponseBase(Model):
+    """ResponseBase.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Identifiable
 
     All required parameters must be populated in order to send to Azure.
 
-    :param title: Required.
-    :type title: str
-    :param tiles: Required.
-    :type tiles:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
+    :param _type: Required. Constant filled by server.
+    :type _type: str
     """
 
     _validation = {
-        'title': {'required': True},
-        'tiles': {'required': True},
+        '_type': {'required': True},
     }
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'tiles': {'key': 'tiles', 'type': '[TrendingVideosTile]'},
+        '_type': {'key': '_type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingVideosSubcategory, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.tiles = kwargs.get('tiles', None)
+    _subtype_map = {
+        '_type': {'Identifiable': 'Identifiable'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResponseBase, self).__init__(**kwargs)
+        self._type = None

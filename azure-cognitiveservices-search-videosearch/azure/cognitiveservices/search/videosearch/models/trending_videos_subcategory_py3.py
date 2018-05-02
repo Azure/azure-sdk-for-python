@@ -34,7 +34,7 @@ class TrendingVideosSubcategory(Model):
         'tiles': {'key': 'tiles', 'type': '[TrendingVideosTile]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, title: str, tiles, **kwargs) -> None:
         super(TrendingVideosSubcategory, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.tiles = kwargs.get('tiles', None)
+        self.title = title
+        self.tiles = tiles

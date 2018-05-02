@@ -103,7 +103,7 @@ class MediaObject(CreativeWork):
         '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(MediaObject, self).__init__(**kwargs)
         self.content_url = None
         self.host_page_url = None

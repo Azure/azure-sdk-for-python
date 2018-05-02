@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response_base import ResponseBase
+from .response import Response
 
 
-class Identifiable(ResponseBase):
-    """Defines the identity of a resource.
+class Answer(Response):
+    """Answer.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Response
+    sub-classes are: SearchResultsAnswer
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,23 +27,32 @@ class Identifiable(ResponseBase):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
+    :ivar web_search_url: The URL To Bing's search result for this item.
+    :vartype web_search_url: str
+    :ivar follow_up_queries:
+    :vartype follow_up_queries:
+     list[~azure.cognitiveservices.search.videosearch.models.Query]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
+        'web_search_url': {'readonly': True},
+        'follow_up_queries': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
     }
 
     _subtype_map = {
-        '_type': {'Response': 'Response'}
+        '_type': {'SearchResultsAnswer': 'SearchResultsAnswer'}
     }
 
-    def __init__(self, **kwargs):
-        super(Identifiable, self).__init__(**kwargs)
-        self.id = None
-        self._type = 'Identifiable'
+    def __init__(self, **kwargs) -> None:
+        super(Answer, self).__init__(**kwargs)
+        self.follow_up_queries = None
+        self._type = 'Answer'

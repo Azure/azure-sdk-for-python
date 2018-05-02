@@ -43,7 +43,7 @@ class Identifiable(ResponseBase):
         '_type': {'Response': 'Response'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Identifiable, self).__init__(**kwargs)
         self.id = None
         self._type = 'Identifiable'

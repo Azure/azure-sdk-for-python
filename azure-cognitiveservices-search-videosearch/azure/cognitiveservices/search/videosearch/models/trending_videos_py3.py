@@ -50,8 +50,8 @@ class TrendingVideos(Response):
         'categories': {'key': 'categories', 'type': '[TrendingVideosCategory]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, banner_tiles, categories, **kwargs) -> None:
         super(TrendingVideos, self).__init__(**kwargs)
-        self.banner_tiles = kwargs.get('banner_tiles', None)
-        self.categories = kwargs.get('categories', None)
+        self.banner_tiles = banner_tiles
+        self.categories = categories
         self._type = 'TrendingVideos'

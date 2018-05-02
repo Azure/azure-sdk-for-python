@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class TrendingVideosSubcategory(Model):
-    """TrendingVideosSubcategory.
+class PivotSuggestions(Model):
+    """PivotSuggestions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param title: Required.
-    :type title: str
-    :param tiles: Required.
-    :type tiles:
-     list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosTile]
+    :param pivot: Required.
+    :type pivot: str
+    :param suggestions: Required.
+    :type suggestions:
+     list[~azure.cognitiveservices.search.videosearch.models.Query]
     """
 
     _validation = {
-        'title': {'required': True},
-        'tiles': {'required': True},
+        'pivot': {'required': True},
+        'suggestions': {'required': True},
     }
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'tiles': {'key': 'tiles', 'type': '[TrendingVideosTile]'},
+        'pivot': {'key': 'pivot', 'type': 'str'},
+        'suggestions': {'key': 'suggestions', 'type': '[Query]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrendingVideosSubcategory, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.tiles = kwargs.get('tiles', None)
+    def __init__(self, *, pivot: str, suggestions, **kwargs) -> None:
+        super(PivotSuggestions, self).__init__(**kwargs)
+        self.pivot = pivot
+        self.suggestions = suggestions

@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .media_object import MediaObject
 
 
-class MediaObject(CreativeWork):
-    """MediaObject.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+class VideoObject(MediaObject):
+    """Defines a video object that is relevant to the query.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -59,6 +56,25 @@ class MediaObject(CreativeWork):
     :vartype width: int
     :ivar height: The height of the source media object, in pixels.
     :vartype height: int
+    :ivar motion_thumbnail_url:
+    :vartype motion_thumbnail_url: str
+    :ivar motion_thumbnail_id:
+    :vartype motion_thumbnail_id: str
+    :ivar embed_html:
+    :vartype embed_html: str
+    :ivar allow_https_embed:
+    :vartype allow_https_embed: bool
+    :ivar view_count:
+    :vartype view_count: int
+    :ivar thumbnail:
+    :vartype thumbnail:
+     ~azure.cognitiveservices.search.videosearch.models.ImageObject
+    :ivar video_id:
+    :vartype video_id: str
+    :ivar allow_mobile_embed:
+    :vartype allow_mobile_embed: bool
+    :ivar is_superfresh:
+    :vartype is_superfresh: bool
     """
 
     _validation = {
@@ -78,6 +94,15 @@ class MediaObject(CreativeWork):
         'host_page_url': {'readonly': True},
         'width': {'readonly': True},
         'height': {'readonly': True},
+        'motion_thumbnail_url': {'readonly': True},
+        'motion_thumbnail_id': {'readonly': True},
+        'embed_html': {'readonly': True},
+        'allow_https_embed': {'readonly': True},
+        'view_count': {'readonly': True},
+        'thumbnail': {'readonly': True},
+        'video_id': {'readonly': True},
+        'allow_mobile_embed': {'readonly': True},
+        'is_superfresh': {'readonly': True},
     }
 
     _attribute_map = {
@@ -97,16 +122,26 @@ class MediaObject(CreativeWork):
         'host_page_url': {'key': 'hostPageUrl', 'type': 'str'},
         'width': {'key': 'width', 'type': 'int'},
         'height': {'key': 'height', 'type': 'int'},
+        'motion_thumbnail_url': {'key': 'motionThumbnailUrl', 'type': 'str'},
+        'motion_thumbnail_id': {'key': 'motionThumbnailId', 'type': 'str'},
+        'embed_html': {'key': 'embedHtml', 'type': 'str'},
+        'allow_https_embed': {'key': 'allowHttpsEmbed', 'type': 'bool'},
+        'view_count': {'key': 'viewCount', 'type': 'int'},
+        'thumbnail': {'key': 'thumbnail', 'type': 'ImageObject'},
+        'video_id': {'key': 'videoId', 'type': 'str'},
+        'allow_mobile_embed': {'key': 'allowMobileEmbed', 'type': 'bool'},
+        'is_superfresh': {'key': 'isSuperfresh', 'type': 'bool'},
     }
 
-    _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
-    }
-
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.host_page_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(VideoObject, self).__init__(**kwargs)
+        self.motion_thumbnail_url = None
+        self.motion_thumbnail_id = None
+        self.embed_html = None
+        self.allow_https_embed = None
+        self.view_count = None
+        self.thumbnail = None
+        self.video_id = None
+        self.allow_mobile_embed = None
+        self.is_superfresh = None
+        self._type = 'VideoObject'

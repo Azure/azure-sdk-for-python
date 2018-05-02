@@ -80,9 +80,9 @@ class Videos(SearchResultsAnswer):
         'pivot_suggestions': {'key': 'pivotSuggestions', 'type': '[PivotSuggestions]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value, **kwargs) -> None:
         super(Videos, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
         self.next_offset = None
         self.scenario = None
         self.query_expansions = None

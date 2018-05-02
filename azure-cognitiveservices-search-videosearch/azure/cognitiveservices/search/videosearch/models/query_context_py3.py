@@ -72,9 +72,9 @@ class QueryContext(Model):
         'is_transactional': {'key': 'isTransactional', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, original_query: str, **kwargs) -> None:
         super(QueryContext, self).__init__(**kwargs)
-        self.original_query = kwargs.get('original_query', None)
+        self.original_query = original_query
         self.altered_query = None
         self.alteration_override_query = None
         self.adult_intent = None

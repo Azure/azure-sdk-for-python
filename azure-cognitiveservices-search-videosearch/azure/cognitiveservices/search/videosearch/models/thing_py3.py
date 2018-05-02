@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .response import Response
 
 
-class MediaObject(CreativeWork):
-    """MediaObject.
+class Thing(Response):
+    """Thing.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject, VideoObject
+    sub-classes are: CreativeWork
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -43,22 +43,6 @@ class MediaObject(CreativeWork):
     :vartype alternate_name: str
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
-    :ivar thumbnail_url: The URL to a thumbnail of the item.
-    :vartype thumbnail_url: str
-    :ivar provider: The source of the creative work.
-    :vartype provider:
-     list[~azure.cognitiveservices.search.videosearch.models.Thing]
-    :ivar text:
-    :vartype text: str
-    :ivar content_url: Original URL to retrieve the source (file) for the
-     media object (e.g the source URL for the image).
-    :vartype content_url: str
-    :ivar host_page_url: URL of the page that hosts the media object.
-    :vartype host_page_url: str
-    :ivar width: The width of the source media object, in pixels.
-    :vartype width: int
-    :ivar height: The height of the source media object, in pixels.
-    :vartype height: int
     """
 
     _validation = {
@@ -71,13 +55,6 @@ class MediaObject(CreativeWork):
         'description': {'readonly': True},
         'alternate_name': {'readonly': True},
         'bing_id': {'readonly': True},
-        'thumbnail_url': {'readonly': True},
-        'provider': {'readonly': True},
-        'text': {'readonly': True},
-        'content_url': {'readonly': True},
-        'host_page_url': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
     }
 
     _attribute_map = {
@@ -90,23 +67,18 @@ class MediaObject(CreativeWork):
         'description': {'key': 'description', 'type': 'str'},
         'alternate_name': {'key': 'alternateName', 'type': 'str'},
         'bing_id': {'key': 'bingId', 'type': 'str'},
-        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': '[Thing]'},
-        'text': {'key': 'text', 'type': 'str'},
-        'content_url': {'key': 'contentUrl', 'type': 'str'},
-        'host_page_url': {'key': 'hostPageUrl', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'int'},
-        'height': {'key': 'height', 'type': 'int'},
     }
 
     _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
+        '_type': {'CreativeWork': 'CreativeWork'}
     }
 
-    def __init__(self, **kwargs):
-        super(MediaObject, self).__init__(**kwargs)
-        self.content_url = None
-        self.host_page_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+    def __init__(self, **kwargs) -> None:
+        super(Thing, self).__init__(**kwargs)
+        self.name = None
+        self.url = None
+        self.image = None
+        self.description = None
+        self.alternate_name = None
+        self.bing_id = None
+        self._type = 'Thing'
