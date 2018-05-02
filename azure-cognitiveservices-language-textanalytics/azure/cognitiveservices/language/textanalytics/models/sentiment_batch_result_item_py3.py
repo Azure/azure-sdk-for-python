@@ -12,30 +12,32 @@
 from msrest.serialization import Model
 
 
-class LanguageBatchResultItem(Model):
-    """LanguageBatchResultItem.
+class SentimentBatchResultItem(Model):
+    """SentimentBatchResultItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar score: A decimal number between 0 and 1 denoting the sentiment of
+     the document. A score above 0.7 usually refers to a positive document
+     while a score below 0.3 normally has a negative connotation. Mid values
+     refer to neutral text.
+    :vartype score: float
     :ivar id: Unique document identifier.
     :vartype id: str
-    :ivar detected_languages: A list of extracted languages.
-    :vartype detected_languages:
-     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
     """
 
     _validation = {
+        'score': {'readonly': True},
         'id': {'readonly': True},
-        'detected_languages': {'readonly': True},
     }
 
     _attribute_map = {
+        'score': {'key': 'score', 'type': 'float'},
         'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
     }
 
-    def __init__(self, **kwargs):
-        super(LanguageBatchResultItem, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(SentimentBatchResultItem, self).__init__(**kwargs)
+        self.score = None
         self.id = None
-        self.detected_languages = None

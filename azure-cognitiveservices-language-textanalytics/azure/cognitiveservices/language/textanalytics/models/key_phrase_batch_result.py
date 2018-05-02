@@ -36,7 +36,7 @@ class KeyPhraseBatchResult(Model):
         'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
-    def __init__(self):
-        super(KeyPhraseBatchResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(KeyPhraseBatchResult, self).__init__(**kwargs)
         self.documents = None
         self.errors = None

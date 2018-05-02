@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -50,7 +50,7 @@ class TextAnalyticsAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class TextAnalyticsAPI(object):
+class TextAnalyticsAPI(SDKClient):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
 
     :ivar config: Configuration for client.
@@ -72,7 +72,7 @@ class TextAnalyticsAPI(object):
             self, azure_region, credentials):
 
         self.config = TextAnalyticsAPIConfiguration(azure_region, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(TextAnalyticsAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = 'v2.0'
@@ -85,8 +85,7 @@ class TextAnalyticsAPI(object):
         """The API returns a list of strings denoting the key talking points in
         the input text.
 
-        We employ techniques from Microsoft Office's sophisticated Natural
-        Language Processing toolkit. See the <a
+        See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
         Analytics Documentation</a> for details about the languages that are
         supported by key phrase extraction.
@@ -109,7 +108,7 @@ class TextAnalyticsAPI(object):
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/keyPhrases'
+        url = self.key_phrases.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -145,6 +144,7 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    key_phrases.metadata = {'url': '/v2.0/keyPhrases'}
 
     def detect_language(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -172,7 +172,7 @@ class TextAnalyticsAPI(object):
         input = models.BatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/languages'
+        url = self.detect_language.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -208,16 +208,15 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    detect_language.metadata = {'url': '/v2.0/languages'}
 
     def sentiment(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
         """The API returns a numeric score between 0 and 1.
 
         Scores close to 1 indicate positive sentiment, while scores close to 0
-        indicate negative sentiment. Sentiment score is generated using
-        classification techniques. The input features to the classifier include
-        n-grams, features generated from part-of-speech tags, and word
-        embeddings. See the <a
+        indicate negative sentiment. A score of 0.5 indicates the lack of
+        sentiment (e.g. a factoid statement). See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
         Analytics Documentation</a> for details about the languages that are
         supported by sentiment analysis.
@@ -240,7 +239,7 @@ class TextAnalyticsAPI(object):
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/sentiment'
+        url = self.sentiment.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -276,3 +275,70 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    sentiment.metadata = {'url': '/v2.0/sentiment'}
+
+    def entities(
+            self, documents=None, custom_headers=None, raw=False, **operation_config):
+        """The API returns a list of recognized entities in a given document.
+
+        To get even more information on each recognized entity we recommend
+        using the Bing Entity Search API by querying for the recognized
+        entities names. See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
+        languages in Text Analytics API</a> for the list of enabled languages.
+
+        :param documents:
+        :type documents:
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EntitiesBatchResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
+        """
+        input = models.MultiLanguageBatchInput(documents=documents)
+
+        # Construct URL
+        url = self.entities.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EntitiesBatchResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    entities.metadata = {'url': '/v2.0/entities'}
