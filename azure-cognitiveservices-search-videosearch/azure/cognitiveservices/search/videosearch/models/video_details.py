@@ -18,7 +18,9 @@ class VideoDetails(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -48,8 +50,8 @@ class VideoDetails(Response):
         'video_result': {'key': 'videoResult', 'type': 'VideoObject'},
     }
 
-    def __init__(self):
-        super(VideoDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(VideoDetails, self).__init__(**kwargs)
         self.related_videos = None
         self.video_result = None
         self._type = 'VideoDetails'

@@ -55,6 +55,13 @@
     ],
     "service_name": "Cognitive Services Search VideoSearch"
   },
+  "azure-cognitiveservices-search-visualsearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.visualsearch"
+    ],
+    "service_name": "Cognitive Services Search VisualSearch"
+  },
   "azure-cognitiveservices-search-websearch": {
     "category": "Client",
     "namespaces": [

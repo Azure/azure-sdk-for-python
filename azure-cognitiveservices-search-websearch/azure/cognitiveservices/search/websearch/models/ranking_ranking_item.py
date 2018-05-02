@@ -18,11 +18,13 @@ class RankingRankingItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param answer_type: The answer that contains the item to display. Use the
-     type to find the answer in the SearchResponse object. The type is the name
-     of a SearchResponse field. Possible values include: 'WebPages', 'Images',
-     'SpellSuggestions', 'News', 'RelatedSearches', 'Videos', 'Computation',
-     'TimeZone'. Default value: "WebPages" .
+    All required parameters must be populated in order to send to Azure.
+
+    :param answer_type: Required. The answer that contains the item to
+     display. Use the type to find the answer in the SearchResponse object. The
+     type is the name of a SearchResponse field. Possible values include:
+     'WebPages', 'Images', 'SpellSuggestions', 'News', 'RelatedSearches',
+     'Videos', 'Computation', 'TimeZone'. Default value: "WebPages" .
     :type answer_type: str or
      ~azure.cognitiveservices.search.websearch.models.AnswerType
     :ivar result_index: A zero-based index of the item in the answer.If the
@@ -60,9 +62,9 @@ class RankingRankingItem(Model):
         'screenshot_index': {'key': 'screenshotIndex', 'type': 'int'},
     }
 
-    def __init__(self, answer_type="WebPages"):
-        super(RankingRankingItem, self).__init__()
-        self.answer_type = answer_type
+    def __init__(self, **kwargs):
+        super(RankingRankingItem, self).__init__(**kwargs)
+        self.answer_type = kwargs.get('answer_type', "WebPages")
         self.result_index = None
         self.value = None
         self.html_index = None

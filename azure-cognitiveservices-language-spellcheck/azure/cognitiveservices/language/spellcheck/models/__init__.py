@@ -9,15 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .spelling_token_suggestion import SpellingTokenSuggestion
-from .spelling_flagged_token import SpellingFlaggedToken
-from .spell_check import SpellCheck
-from .answer import Answer
-from .response import Response
-from .identifiable import Identifiable
-from .error import Error
-from .error_response import ErrorResponse, ErrorResponseException
-from .response_base import ResponseBase
+try:
+    from .spelling_token_suggestion_py3 import SpellingTokenSuggestion
+    from .spelling_flagged_token_py3 import SpellingFlaggedToken
+    from .spell_check_py3 import SpellCheck
+    from .answer_py3 import Answer
+    from .response_py3 import Response
+    from .identifiable_py3 import Identifiable
+    from .error_py3 import Error
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .response_base_py3 import ResponseBase
+except (SyntaxError, ImportError):
+    from .spelling_token_suggestion import SpellingTokenSuggestion
+    from .spelling_flagged_token import SpellingFlaggedToken
+    from .spell_check import SpellCheck
+    from .answer import Answer
+    from .response import Response
+    from .identifiable import Identifiable
+    from .error import Error
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .response_base import ResponseBase
 from .spell_check_api_enums import (
     ErrorType,
     ErrorCode,

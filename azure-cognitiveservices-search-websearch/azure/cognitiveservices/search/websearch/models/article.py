@@ -21,7 +21,9 @@ class Article(CreativeWork):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -84,7 +86,7 @@ class Article(CreativeWork):
         '_type': {'NewsArticle': 'NewsArticle'}
     }
 
-    def __init__(self):
-        super(Article, self).__init__()
+    def __init__(self, **kwargs):
+        super(Article, self).__init__(**kwargs)
         self.word_count = None
         self._type = 'Article'

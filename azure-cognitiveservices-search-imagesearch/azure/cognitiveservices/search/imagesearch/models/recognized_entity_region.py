@@ -19,7 +19,9 @@ class RecognizedEntityRegion(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -61,8 +63,8 @@ class RecognizedEntityRegion(Response):
         'matching_entities': {'key': 'matchingEntities', 'type': '[RecognizedEntity]'},
     }
 
-    def __init__(self):
-        super(RecognizedEntityRegion, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecognizedEntityRegion, self).__init__(**kwargs)
         self.region = None
         self.matching_entities = None
         self._type = 'RecognizedEntityRegion'
