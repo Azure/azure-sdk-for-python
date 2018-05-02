@@ -90,3 +90,15 @@ class QuotaUsageStatus(str, Enum):
     blocked = "Blocked"
     in_overage = "InOverage"
     unknown = "Unknown"
+
+
+class ResourceSkuRestrictionsType(str, Enum):
+
+    location = "Location"
+    zone = "Zone"
+
+
+class ResourceSkuRestrictionsReasonCode(str, Enum):
+
+    quota_id = "QuotaId"
+    not_available_for_subscription = "NotAvailableForSubscription"

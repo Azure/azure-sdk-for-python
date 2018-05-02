@@ -28,6 +28,9 @@ try:
     from .check_sku_availability_parameter_py3 import CheckSkuAvailabilityParameter
     from .check_sku_availability_result_py3 import CheckSkuAvailabilityResult
     from .check_sku_availability_result_list_py3 import CheckSkuAvailabilityResultList
+    from .resource_sku_restriction_info_py3 import ResourceSkuRestrictionInfo
+    from .resource_sku_restrictions_py3 import ResourceSkuRestrictions
+    from .resource_sku_py3 import ResourceSku
 except (SyntaxError, ImportError):
     from .sku import Sku
     from .cognitive_services_account_create_parameters import CognitiveServicesAccountCreateParameters
@@ -47,7 +50,11 @@ except (SyntaxError, ImportError):
     from .check_sku_availability_parameter import CheckSkuAvailabilityParameter
     from .check_sku_availability_result import CheckSkuAvailabilityResult
     from .check_sku_availability_result_list import CheckSkuAvailabilityResultList
+    from .resource_sku_restriction_info import ResourceSkuRestrictionInfo
+    from .resource_sku_restrictions import ResourceSkuRestrictions
+    from .resource_sku import ResourceSku
 from .cognitive_services_account_paged import CognitiveServicesAccountPaged
+from .resource_sku_paged import ResourceSkuPaged
 from .operation_entity_paged import OperationEntityPaged
 from .cognitive_services_management_client_enums import (
     SkuName,
@@ -57,6 +64,8 @@ from .cognitive_services_management_client_enums import (
     KeyName,
     UnitType,
     QuotaUsageStatus,
+    ResourceSkuRestrictionsType,
+    ResourceSkuRestrictionsReasonCode,
 )
 
 __all__ = [
@@ -78,7 +87,11 @@ __all__ = [
     'CheckSkuAvailabilityParameter',
     'CheckSkuAvailabilityResult',
     'CheckSkuAvailabilityResultList',
+    'ResourceSkuRestrictionInfo',
+    'ResourceSkuRestrictions',
+    'ResourceSku',
     'CognitiveServicesAccountPaged',
+    'ResourceSkuPaged',
     'OperationEntityPaged',
     'SkuName',
     'SkuTier',
@@ -87,4 +100,6 @@ __all__ = [
     'KeyName',
     'UnitType',
     'QuotaUsageStatus',
+    'ResourceSkuRestrictionsType',
+    'ResourceSkuRestrictionsReasonCode',
 ]
