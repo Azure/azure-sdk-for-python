@@ -21,7 +21,9 @@ class Answer(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -40,10 +42,17 @@ class Answer(Response):
         'web_search_url': {'readonly': True},
     }
 
+    _attribute_map = {
+        '_type': {'key': '_type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'contractual_rules': {'key': 'contractualRules', 'type': '[ContractualRulesContractualRule]'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+    }
+
     _subtype_map = {
         '_type': {'SearchResultsAnswer': 'SearchResultsAnswer'}
     }
 
-    def __init__(self):
-        super(Answer, self).__init__()
+    def __init__(self, **kwargs):
+        super(Answer, self).__init__(**kwargs)
         self._type = 'Answer'
