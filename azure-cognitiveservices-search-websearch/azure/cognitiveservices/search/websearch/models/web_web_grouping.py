@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class WebWebGrouping(Model):
     """WebWebGrouping.
 
-    :param web_pages:
+    All required parameters must be populated in order to send to Azure.
+
+    :param web_pages: Required.
     :type web_pages:
      list[~azure.cognitiveservices.search.websearch.models.WebPage]
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     """
 
@@ -32,7 +34,7 @@ class WebWebGrouping(Model):
         '_type': {'key': '_type', 'type': 'str'},
     }
 
-    def __init__(self, web_pages):
-        super(WebWebGrouping, self).__init__()
-        self.web_pages = web_pages
+    def __init__(self, **kwargs):
+        super(WebWebGrouping, self).__init__(**kwargs)
+        self.web_pages = kwargs.get('web_pages', None)
         self._type = None
