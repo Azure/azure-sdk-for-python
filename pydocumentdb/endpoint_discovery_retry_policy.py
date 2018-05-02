@@ -24,6 +24,14 @@
 
 import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+log_formatter = logging.Formatter('%(levelname)s:%(message)s')
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(log_formatter)
+logger.addHandler(log_handler)
+
+
 class _EndpointDiscoveryRetryPolicy(object):
     """The endpoint discovery retry policy class used for geo-replicated database accounts
        to handle the write forbidden exceptions due to writable/readable location changes
@@ -40,7 +48,6 @@ class _EndpointDiscoveryRetryPolicy(object):
         self._max_retry_attempt_count = _EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self.current_retry_attempt_count = 0
         self.retry_after_in_milliseconds = _EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -53,7 +60,7 @@ class _EndpointDiscoveryRetryPolicy(object):
         """
         if self.current_retry_attempt_count < self._max_retry_attempt_count and self.global_endpoint_manager.EnableEndpointDiscovery:
             self.current_retry_attempt_count += 1
-            logging.info('Write location was changed, refreshing the locations list from database account and will retry the request.')
+            logger.info('Write location was changed, refreshing the locations list from database account and will retry the request.')
 
             # Refresh the endpoint list to refresh the new writable and readable locations
             self.global_endpoint_manager.RefreshEndpointList()
