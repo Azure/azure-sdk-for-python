@@ -36,10 +36,13 @@ class CustomInstanceOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def image_search(
-            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, custom_config=None, aspect=None, color=None, country_code=None, count=None, freshness=None, height=None, id=None, image_content=None, image_type=None, license=None, market=None, max_file_size=None, max_height=None, max_width=None, min_file_size=None, min_height=None, min_width=None, offset=None, safe_search=None, size=None, set_lang=None, width=None, custom_headers=None, raw=False, **operation_config):
+            self, custom_config, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, aspect=None, color=None, country_code=None, count=None, freshness=None, height=None, id=None, image_content=None, image_type=None, license=None, market=None, max_file_size=None, max_height=None, max_width=None, min_file_size=None, min_height=None, min_width=None, offset=None, safe_search=None, size=None, set_lang=None, width=None, custom_headers=None, raw=False, **operation_config):
         """The Custom Image Search API lets you send an image search query to Bing
         and get image results found in your custom view of the web.
 
+        :param custom_config: The identifier for the custom search
+         configuration
+        :type custom_config: long
         :param query: The user's search query term. The term cannot be empty.
          The term may contain [Bing Advanced
          Operators](http://msdn.microsoft.com/library/ff795620.aspx). For
@@ -175,9 +178,6 @@ class CustomInstanceOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
-        :param custom_config: The identifier for the custom search
-         configuration
-        :type custom_config: int
         :param aspect: Filter images by the following aspect ratios. All: Do
          not filter by aspect.Specifying this value is the same as not
          specifying the aspect parameter. Square: Return images with standard
@@ -414,8 +414,7 @@ class CustomInstanceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if custom_config is not None:
-            query_parameters['customConfig'] = self._serialize.query("custom_config", custom_config, 'int')
+        query_parameters['customConfig'] = self._serialize.query("custom_config", custom_config, 'long', minimum=0)
         if aspect is not None:
             query_parameters['aspect'] = self._serialize.query("aspect", aspect, 'str')
         if color is not None:
