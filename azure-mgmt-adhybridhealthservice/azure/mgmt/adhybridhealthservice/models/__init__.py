@@ -70,7 +70,6 @@ try:
     from .module_configuration_py3 import ModuleConfiguration
     from .module_configurations_py3 import ModuleConfigurations
     from .operation_py3 import Operation
-    from .operation_list_response_py3 import OperationListResponse
     from .password_management_settings_py3 import PasswordManagementSettings
     from .password_hash_sync_configuration_py3 import PasswordHashSyncConfiguration
     from .replication_status_py3 import ReplicationStatus
@@ -145,7 +144,6 @@ except (SyntaxError, ImportError):
     from .module_configuration import ModuleConfiguration
     from .module_configurations import ModuleConfigurations
     from .operation import Operation
-    from .operation_list_response import OperationListResponse
     from .password_management_settings import PasswordManagementSettings
     from .password_hash_sync_configuration import PasswordHashSyncConfiguration
     from .replication_status import ReplicationStatus
@@ -165,6 +163,7 @@ from .metric_metadata_paged import MetricMetadataPaged
 from .alert_paged import AlertPaged
 from .dimension_paged import DimensionPaged
 from .adds_service_member_paged import AddsServiceMemberPaged
+from .operation_paged import OperationPaged
 from .export_status_paged import ExportStatusPaged
 from .service_member_paged import ServiceMemberPaged
 from .ad_hybrid_health_service_enums import (
@@ -245,7 +244,6 @@ __all__ = [
     'ModuleConfiguration',
     'ModuleConfigurations',
     'Operation',
-    'OperationListResponse',
     'PasswordManagementSettings',
     'PasswordHashSyncConfiguration',
     'ReplicationStatus',
@@ -265,6 +263,7 @@ __all__ = [
     'AlertPaged',
     'DimensionPaged',
     'AddsServiceMemberPaged',
+    'OperationPaged',
     'ExportStatusPaged',
     'ServiceMemberPaged',
     'Level',

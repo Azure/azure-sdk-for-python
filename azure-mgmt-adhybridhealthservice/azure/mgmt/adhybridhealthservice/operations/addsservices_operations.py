@@ -709,7 +709,7 @@ class AddsservicesOperations(object):
         return deserialized
     get_metric_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/metricmetadata/{metricName}'}
 
-    def list_metric_metadata_for_group(
+    def get_metric_metadata_for_group(
             self, service_name, metric_name, group_name, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
         """Gets the service related metrics for a given metric and group
         combination.
@@ -737,7 +737,7 @@ class AddsservicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_metric_metadata_for_group.metadata['url']
+        url = self.get_metric_metadata_for_group.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'metricName': self._serialize.url("metric_name", metric_name, 'str'),
@@ -784,7 +784,7 @@ class AddsservicesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_metric_metadata_for_group.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/metricmetadata/{metricName}/groups/{groupName}'}
+    get_metric_metadata_for_group.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/metricmetadata/{metricName}/groups/{groupName}'}
 
     def get_replication_status(
             self, service_name, custom_headers=None, raw=False, **operation_config):
