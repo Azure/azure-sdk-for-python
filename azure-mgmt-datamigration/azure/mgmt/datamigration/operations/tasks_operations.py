@@ -22,7 +22,7 @@ class TasksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API. Constant value: "2018-03-31-preview".
+    :ivar api_version: Version of the API. Constant value: "2018-04-19".
     """
 
     models = models
@@ -32,7 +32,7 @@ class TasksOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31-preview"
+        self.api_version = "2018-04-19"
 
         self.config = config
 
@@ -41,8 +41,8 @@ class TasksOperations(object):
         """Get tasks in a service.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This method returns a list of tasks owned by a
-        service resource. Some tasks may have a status of Unknown, which
+        Database Migration Service. This method returns a list of tasks owned
+        by a service resource. Some tasks may have a status of Unknown, which
         indicates that an error occurred while querying the status of that
         task.
 

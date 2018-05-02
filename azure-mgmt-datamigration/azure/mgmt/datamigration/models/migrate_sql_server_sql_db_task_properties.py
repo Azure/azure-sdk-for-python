@@ -21,8 +21,8 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar errors: Array of errors. This is ignored if submitted.
-    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :param errors: Array of errors. This is ignored if submitted.
+    :type errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
@@ -38,7 +38,6 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
     """
 
     _validation = {
-        'errors': {'readonly': True},
         'state': {'readonly': True},
         'task_type': {'required': True},
         'output': {'readonly': True},

@@ -15,14 +15,22 @@ from msrest.serialization import Model
 class WaitStatistics(Model):
     """Wait statistics gathered during query batch execution.
 
-    :param wait_type: Type of the Wait
-    :type wait_type: str
-    :param wait_time_ms: Total wait time in millisecond(s) . Default value: 0
-     .
-    :type wait_time_ms: float
-    :param wait_count: Total no. of waits
-    :type wait_count: long
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar wait_type: Type of the Wait
+    :vartype wait_type: str
+    :ivar wait_time_ms: Total wait time in millisecond(s). Default value: 0 .
+    :vartype wait_time_ms: float
+    :ivar wait_count: Total no. of waits
+    :vartype wait_count: long
     """
+
+    _validation = {
+        'wait_type': {'readonly': True},
+        'wait_time_ms': {'readonly': True},
+        'wait_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'wait_type': {'key': 'waitType', 'type': 'str'},
@@ -30,8 +38,8 @@ class WaitStatistics(Model):
         'wait_count': {'key': 'waitCount', 'type': 'long'},
     }
 
-    def __init__(self, *, wait_type: str=None, wait_time_ms: float=0, wait_count: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(WaitStatistics, self).__init__(**kwargs)
-        self.wait_type = wait_type
-        self.wait_time_ms = wait_time_ms
-        self.wait_count = wait_count
+        self.wait_type = None
+        self.wait_time_ms = None
+        self.wait_count = None

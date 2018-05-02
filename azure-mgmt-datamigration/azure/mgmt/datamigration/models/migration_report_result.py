@@ -16,11 +16,19 @@ class MigrationReportResult(Model):
     """Migration validation report result, contains the url for downloading the
     generated report.
 
-    :param id: Migration validation result identifier
-    :type id: str
-    :param report_url: The url of the report.
-    :type report_url: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Migration validation result identifier
+    :vartype id: str
+    :ivar report_url: The url of the report.
+    :vartype report_url: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'report_url': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -29,5 +37,5 @@ class MigrationReportResult(Model):
 
     def __init__(self, **kwargs):
         super(MigrationReportResult, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.report_url = kwargs.get('report_url', None)
+        self.id = None
+        self.report_url = None

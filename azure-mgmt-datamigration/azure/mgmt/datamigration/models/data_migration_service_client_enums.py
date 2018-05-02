@@ -12,15 +12,6 @@
 from enum import Enum
 
 
-class AuthenticationType(str, Enum):
-
-    none = "None"
-    windows_authentication = "WindowsAuthentication"
-    sql_authentication = "SqlAuthentication"
-    active_directory_integrated = "ActiveDirectoryIntegrated"
-    active_directory_password = "ActiveDirectoryPassword"
-
-
 class ValidationStatus(str, Enum):
 
     default = "Default"
@@ -91,17 +82,13 @@ class MigrationStatus(str, Enum):
     completed_with_warnings = "CompletedWithWarnings"
 
 
-class LoginMigrationStage(str, Enum):
+class AuthenticationType(str, Enum):
 
     none = "None"
-    initialize = "Initialize"
-    login_migration = "LoginMigration"
-    establish_user_mapping = "EstablishUserMapping"
-    assign_role_membership = "AssignRoleMembership"
-    assign_role_ownership = "AssignRoleOwnership"
-    establish_server_permissions = "EstablishServerPermissions"
-    establish_object_permissions = "EstablishObjectPermissions"
-    completed = "Completed"
+    windows_authentication = "WindowsAuthentication"
+    sql_authentication = "SqlAuthentication"
+    active_directory_integrated = "ActiveDirectoryIntegrated"
+    active_directory_password = "ActiveDirectoryPassword"
 
 
 class LoginType(str, Enum):
@@ -183,7 +170,6 @@ class ServiceProvisioningState(str, Enum):
 class ProjectTargetPlatform(str, Enum):
 
     sqldb = "SQLDB"
-    sqlmi = "SQLMI"
     unknown = "Unknown"
 
 
@@ -235,3 +221,16 @@ class ErrorType(str, Enum):
     default = "Default"
     warning = "Warning"
     error = "Error"
+
+
+class LoginMigrationStage(str, Enum):
+
+    none = "None"
+    initialize = "Initialize"
+    login_migration = "LoginMigration"
+    establish_user_mapping = "EstablishUserMapping"
+    assign_role_membership = "AssignRoleMembership"
+    assign_role_ownership = "AssignRoleOwnership"
+    establish_server_permissions = "EstablishServerPermissions"
+    establish_object_permissions = "EstablishObjectPermissions"
+    completed = "Completed"
