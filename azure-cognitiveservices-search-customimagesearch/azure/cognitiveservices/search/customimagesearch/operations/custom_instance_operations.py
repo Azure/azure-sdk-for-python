@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class CustomOperations(object):
-    """CustomOperations operations.
+class CustomInstanceOperations(object):
+    """CustomInstanceOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,7 +35,7 @@ class CustomOperations(object):
         self.config = config
         self.x_bing_apis_sdk = "true"
 
-    def search(
+    def image_search(
             self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, custom_config=None, aspect=None, color=None, country_code=None, count=None, freshness=None, height=None, id=None, image_content=None, image_type=None, license=None, market=None, max_file_size=None, max_height=None, max_width=None, min_file_size=None, min_height=None, min_width=None, offset=None, safe_search=None, size=None, set_lang=None, width=None, custom_headers=None, raw=False, **operation_config):
         """The Custom Image Search API lets you send an image search query to Bing
         and get image results found in your custom view of the web.
@@ -410,7 +410,7 @@ class CustomOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.customimagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.search.metadata['url']
+        url = self.image_search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -496,4 +496,4 @@ class CustomOperations(object):
             return client_raw_response
 
         return deserialized
-    search.metadata = {'url': '/images/search'}
+    image_search.metadata = {'url': '/images/search'}

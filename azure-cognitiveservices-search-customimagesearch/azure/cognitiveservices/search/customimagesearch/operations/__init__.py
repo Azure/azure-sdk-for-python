@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .custom_operations import CustomOperations
+from .custom_instance_operations import CustomInstanceOperations
 
 __all__ = [
-    'CustomOperations',
+    'CustomInstanceOperations',
 ]

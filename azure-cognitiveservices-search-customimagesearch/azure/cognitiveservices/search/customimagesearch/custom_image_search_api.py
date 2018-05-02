@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from .operations.custom_operations import CustomOperations
+from .operations.custom_instance_operations import CustomInstanceOperations
 from . import models
 
 
@@ -48,8 +48,8 @@ class CustomImageSearchAPI(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CustomImageSearchAPIConfiguration
 
-    :ivar custom: Custom operations
-    :vartype custom: azure.cognitiveservices.search.customimagesearch.operations.CustomOperations
+    :ivar custom_instance: CustomInstance operations
+    :vartype custom_instance: azure.cognitiveservices.search.customimagesearch.operations.CustomInstanceOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -68,5 +68,5 @@ class CustomImageSearchAPI(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.custom = CustomOperations(
+        self.custom_instance = CustomInstanceOperations(
             self._client, self.config, self._serialize, self._deserialize)
