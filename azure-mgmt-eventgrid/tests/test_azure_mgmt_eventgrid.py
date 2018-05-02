@@ -53,8 +53,8 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         # Create a new event subscription to this topic
         # Use this for recording mode
-        scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        # scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
 
         destination = WebHookEventSubscriptionDestination(
             endpoint_url="https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1?code=69AbujfvYn77Ccf5OySDcTk9CYM1b9Ua2lO37ayoWb97fGRWELGbnA=="
@@ -88,8 +88,8 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         # Create a new event subscription to this topic
         # Use this for recording mode
-        scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        # scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
 
         destination = StorageQueueEventSubscriptionDestination(
             resource_id= "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
