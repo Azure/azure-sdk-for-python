@@ -13,16 +13,15 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.addsservices_operations import AddsservicesOperations
+from .operations.adds_services_operations import AddsServicesOperations
 from .operations.alerts_operations import AlertsOperations
 from .operations.configuration_operations import ConfigurationOperations
 from .operations.dimensions_operations import DimensionsOperations
-from .operations.addsservicemembers_operations import AddsservicemembersOperations
-from .operations.addomainservicemembers_operations import AddomainservicemembersOperations
+from .operations.adds_servicemembers_operations import AddsServicemembersOperations
+from .operations.ad_domain_service_members_operations import AdDomainServiceMembersOperations
 from .operations.operations import Operations
 from .operations.services_operations import ServicesOperations
-from .operations.servicemembers_operations import ServicemembersOperations
-from .operations.servimembers_operations import ServimembersOperations
+from .operations.service_members_operations import ServiceMembersOperations
 from . import models
 
 
@@ -59,26 +58,24 @@ class ADHybridHealthService(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ADHybridHealthServiceConfiguration
 
-    :ivar addsservices: Addsservices operations
-    :vartype addsservices: azure.mgmt.adhybridhealthservice.operations.AddsservicesOperations
+    :ivar adds_services: AddsServices operations
+    :vartype adds_services: azure.mgmt.adhybridhealthservice.operations.AddsServicesOperations
     :ivar alerts: Alerts operations
     :vartype alerts: azure.mgmt.adhybridhealthservice.operations.AlertsOperations
     :ivar configuration: Configuration operations
     :vartype configuration: azure.mgmt.adhybridhealthservice.operations.ConfigurationOperations
     :ivar dimensions: Dimensions operations
     :vartype dimensions: azure.mgmt.adhybridhealthservice.operations.DimensionsOperations
-    :ivar addsservicemembers: Addsservicemembers operations
-    :vartype addsservicemembers: azure.mgmt.adhybridhealthservice.operations.AddsservicemembersOperations
-    :ivar addomainservicemembers: Addomainservicemembers operations
-    :vartype addomainservicemembers: azure.mgmt.adhybridhealthservice.operations.AddomainservicemembersOperations
+    :ivar adds_servicemembers: AddsServicemembers operations
+    :vartype adds_servicemembers: azure.mgmt.adhybridhealthservice.operations.AddsServicemembersOperations
+    :ivar ad_domain_service_members: AdDomainServiceMembers operations
+    :vartype ad_domain_service_members: azure.mgmt.adhybridhealthservice.operations.AdDomainServiceMembersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.adhybridhealthservice.operations.Operations
     :ivar services: Services operations
     :vartype services: azure.mgmt.adhybridhealthservice.operations.ServicesOperations
-    :ivar servicemembers: Servicemembers operations
-    :vartype servicemembers: azure.mgmt.adhybridhealthservice.operations.ServicemembersOperations
-    :ivar servimembers: Servimembers operations
-    :vartype servimembers: azure.mgmt.adhybridhealthservice.operations.ServimembersOperations
+    :ivar service_members: ServiceMembers operations
+    :vartype service_members: azure.mgmt.adhybridhealthservice.operations.ServiceMembersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -97,7 +94,7 @@ class ADHybridHealthService(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.addsservices = AddsservicesOperations(
+        self.adds_services = AddsServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -105,15 +102,13 @@ class ADHybridHealthService(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.dimensions = DimensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.addsservicemembers = AddsservicemembersOperations(
+        self.adds_servicemembers = AddsServicemembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.addomainservicemembers = AddomainservicemembersOperations(
+        self.ad_domain_service_members = AdDomainServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.services = ServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.servicemembers = ServicemembersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servimembers = ServimembersOperations(
+        self.service_members = ServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)

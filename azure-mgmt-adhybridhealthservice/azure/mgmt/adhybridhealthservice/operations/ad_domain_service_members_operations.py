@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AddomainservicemembersOperations(object):
-    """AddomainservicemembersOperations operations.
+class AdDomainServiceMembersOperations(object):
+    """AdDomainServiceMembersOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

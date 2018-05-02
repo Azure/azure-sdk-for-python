@@ -9,26 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .addsservices_operations import AddsservicesOperations
+from .adds_services_operations import AddsServicesOperations
 from .alerts_operations import AlertsOperations
 from .configuration_operations import ConfigurationOperations
 from .dimensions_operations import DimensionsOperations
-from .addsservicemembers_operations import AddsservicemembersOperations
-from .addomainservicemembers_operations import AddomainservicemembersOperations
+from .adds_servicemembers_operations import AddsServicemembersOperations
+from .ad_domain_service_members_operations import AdDomainServiceMembersOperations
 from .operations import Operations
 from .services_operations import ServicesOperations
-from .servicemembers_operations import ServicemembersOperations
-from .servimembers_operations import ServimembersOperations
+from .service_members_operations import ServiceMembersOperations
 
 __all__ = [
-    'AddsservicesOperations',
+    'AddsServicesOperations',
     'AlertsOperations',
     'ConfigurationOperations',
     'DimensionsOperations',
-    'AddsservicemembersOperations',
-    'AddomainservicemembersOperations',
+    'AddsServicemembersOperations',
+    'AdDomainServiceMembersOperations',
     'Operations',
     'ServicesOperations',
-    'ServicemembersOperations',
-    'ServimembersOperations',
+    'ServiceMembersOperations',
 ]

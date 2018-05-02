@@ -658,15 +658,13 @@ class ServicesOperations(object):
     list_export_errors.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/exporterrors/counts'}
 
     def list_export_errors_v2(
-            self, service_name, error_bucket, next_link=None, custom_headers=None, raw=False, **operation_config):
+            self, service_name, error_bucket, custom_headers=None, raw=False, **operation_config):
         """Gets the categorized export errors.
 
         :param service_name: The name of the service.
         :type service_name: str
         :param error_bucket: The error category to query for.
         :type error_bucket: str
-        :param next_link: The next link to get next step of data.
-        :type next_link: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -690,8 +688,6 @@ class ServicesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['errorBucket'] = self._serialize.query("error_bucket", error_bucket, 'str')
-                if next_link is not None:
-                    query_parameters['nextLink'] = self._serialize.query("next_link", next_link, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

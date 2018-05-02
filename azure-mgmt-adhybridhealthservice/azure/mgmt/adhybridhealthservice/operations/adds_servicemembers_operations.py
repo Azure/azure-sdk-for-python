@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AddsservicemembersOperations(object):
-    """AddsservicemembersOperations operations.
+class AddsServicemembersOperations(object):
+    """AddsServicemembersOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AddsservicesOperations(object):
-    """AddsservicesOperations operations.
+class AddsServicesOperations(object):
+    """AddsServicesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -365,7 +365,7 @@ class AddsservicesOperations(object):
         return deserialized
     update.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}'}
 
-    def getforest_summary(
+    def get_forest_summary(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the forest summary for a given Active Directory Domain Service,
         that is onboarded to Azure Active Directory Connect Health.
@@ -383,7 +383,7 @@ class AddsservicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.getforest_summary.metadata['url']
+        url = self.get_forest_summary.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
@@ -422,7 +422,7 @@ class AddsservicesOperations(object):
             return client_raw_response
 
         return deserialized
-    getforest_summary.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/forestsummary'}
+    get_forest_summary.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/forestsummary'}
 
     def list_metrics_average(
             self, service_name, metric_name, group_name, custom_headers=None, raw=False, **operation_config):
