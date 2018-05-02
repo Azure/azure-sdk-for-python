@@ -15,20 +15,60 @@ from msrest.serialization import Model
 class CreateManagementGroupRequest(Model):
     """Management group creation parameters.
 
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param parent_id: (Optional) The fully qualified ID for the parent
-     management group.  For example,
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The fully qualified ID for the management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
-    :type parent_id: str
+    :vartype id: str
+    :ivar type: The type of the resource.  For example,
+     /providers/Microsoft.Management/managementGroups
+    :vartype type: str
+    :param name: The name of the management group. For example,
+     00000000-0000-0000-0000-000000000000
+    :type name: str
+    :ivar tenant_id: The AAD Tenant ID associated with the management group.
+     For example, 00000000-0000-0000-0000-000000000000
+    :vartype tenant_id: str
+    :param display_name: The friendly name of the management group. If no
+     value is passed then this  field will be set to the groupId.
+    :type display_name: str
+    :ivar roles: The roles definitions associated with the management group.
+    :vartype roles: list[str]
+    :param details: Details.
+    :type details:
+     ~azure.mgmt.managementgroups.models.CreateManagementGroupDetails
+    :ivar children: The list of children.
+    :vartype children:
+     list[~azure.mgmt.managementgroups.models.CreateManagementGroupChildInfo]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'roles': {'readonly': True},
+        'children': {'readonly': True},
+    }
+
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'parent_id': {'key': 'parentId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'roles': {'key': 'properties.roles', 'type': '[str]'},
+        'details': {'key': 'properties.details', 'type': 'CreateManagementGroupDetails'},
+        'children': {'key': 'properties.children', 'type': '[CreateManagementGroupChildInfo]'},
     }
 
     def __init__(self, **kwargs):
         super(CreateManagementGroupRequest, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = kwargs.get('name', None)
+        self.tenant_id = None
         self.display_name = kwargs.get('display_name', None)
-        self.parent_id = kwargs.get('parent_id', None)
+        self.roles = None
+        self.details = kwargs.get('details', None)
+        self.children = None

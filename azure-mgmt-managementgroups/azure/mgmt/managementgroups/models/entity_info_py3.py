@@ -12,33 +12,31 @@
 from msrest.serialization import Model
 
 
-class ManagementGroup(Model):
-    """The management group details.
+class EntityInfo(Model):
+    """The entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified ID for the management group.  For example,
+    :ivar id: The fully qualified ID for the entity.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
-    :ivar type: The type of the resource.  For example,
+    :ivar type: The type of the resource. For example,
      /providers/Microsoft.Management/managementGroups
     :vartype type: str
-    :ivar name: The name of the management group. For example,
+    :ivar name: The name of the entity. For example,
      00000000-0000-0000-0000-000000000000
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the management group.
-     For example, 00000000-0000-0000-0000-000000000000
+    :param tenant_id: The AAD Tenant ID associated with the entity. For
+     example, 00000000-0000-0000-0000-000000000000
     :type tenant_id: str
     :param display_name: The friendly name of the management group.
     :type display_name: str
-    :param roles: The role definitions associated with the management group.
-    :type roles: list[str]
-    :param details: Details.
-    :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
-    :param children: The list of children.
-    :type children:
-     list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+    :param parent: Parent.
+    :type parent: ~azure.mgmt.managementgroups.models.EntityParentGroupInfo
+    :param permissions: Permissions. Possible values include: 'noaccess',
+     'view', 'edit', 'delete'
+    :type permissions: str or ~azure.mgmt.managementgroups.models.enum
     """
 
     _validation = {
@@ -53,18 +51,16 @@ class ManagementGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[str]'},
-        'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
-        'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
+        'parent': {'key': 'properties.parent', 'type': 'EntityParentGroupInfo'},
+        'permissions': {'key': 'properties.permissions', 'type': 'str'},
     }
 
-    def __init__(self, *, tenant_id: str=None, display_name: str=None, roles=None, details=None, children=None, **kwargs) -> None:
-        super(ManagementGroup, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: str=None, display_name: str=None, parent=None, permissions=None, **kwargs) -> None:
+        super(EntityInfo, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
         self.tenant_id = tenant_id
         self.display_name = display_name
-        self.roles = roles
-        self.details = details
-        self.children = children
+        self.parent = parent
+        self.permissions = permissions

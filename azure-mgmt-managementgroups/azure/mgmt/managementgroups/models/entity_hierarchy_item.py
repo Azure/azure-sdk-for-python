@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ManagementGroup(Model):
-    """The management group details.
+class EntityHierarchyItem(Model):
+    """The management group details for the hierarchy view.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,18 +27,14 @@ class ManagementGroup(Model):
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the management group.
-     For example, 00000000-0000-0000-0000-000000000000
-    :type tenant_id: str
     :param display_name: The friendly name of the management group.
     :type display_name: str
-    :param roles: The role definitions associated with the management group.
-    :type roles: list[str]
-    :param details: Details.
-    :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
+    :param permissions: Permissions. Possible values include: 'noaccess',
+     'view', 'edit', 'delete'
+    :type permissions: str or ~azure.mgmt.managementgroups.models.enum
     :param children: The list of children.
     :type children:
-     list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+     list[~azure.mgmt.managementgroups.models.EntityHierarchyItem]
     """
 
     _validation = {
@@ -51,20 +47,16 @@ class ManagementGroup(Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[str]'},
-        'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
-        'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
+        'permissions': {'key': 'properties.permissions', 'type': 'str'},
+        'children': {'key': 'properties.children', 'type': '[EntityHierarchyItem]'},
     }
 
-    def __init__(self, *, tenant_id: str=None, display_name: str=None, roles=None, details=None, children=None, **kwargs) -> None:
-        super(ManagementGroup, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(EntityHierarchyItem, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.tenant_id = tenant_id
-        self.display_name = display_name
-        self.roles = roles
-        self.details = details
-        self.children = children
+        self.display_name = kwargs.get('display_name', None)
+        self.permissions = kwargs.get('permissions', None)
+        self.children = kwargs.get('children', None)
