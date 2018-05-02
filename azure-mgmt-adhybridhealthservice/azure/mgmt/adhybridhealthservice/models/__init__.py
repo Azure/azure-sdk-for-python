@@ -37,7 +37,6 @@ try:
     from .connector_object_error_py3 import ConnectorObjectError
     from .connector_object_errors_py3 import ConnectorObjectErrors
     from .credential_py3 import Credential
-    from .data_freshness_detail_py3 import DataFreshnessDetail
     from .dimension_py3 import Dimension
     from .display_py3 import Display
     from .error_count_py3 import ErrorCount
@@ -106,7 +105,6 @@ except (SyntaxError, ImportError):
     from .connector_object_error import ConnectorObjectError
     from .connector_object_errors import ConnectorObjectErrors
     from .credential import Credential
-    from .data_freshness_detail import DataFreshnessDetail
     from .dimension import Dimension
     from .display import Display
     from .error_count import ErrorCount
@@ -207,7 +205,6 @@ __all__ = [
     'ConnectorObjectError',
     'ConnectorObjectErrors',
     'Credential',
-    'DataFreshnessDetail',
     'Dimension',
     'Display',
     'ErrorCount',
