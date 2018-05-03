@@ -43,9 +43,6 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
     :param scope: Required. The ARM resource ID of the Storage Account.
     :type scope: str
-    :param max_concurrency: Required. The max number of parallel events to
-     handle when triggered.
-    :type max_concurrency: int
     """
 
     _validation = {
@@ -54,7 +51,6 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'blob_path': {'required': True},
         'events': {'required': True},
         'scope': {'required': True},
-        'max_concurrency': {'required': True, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -66,7 +62,6 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'blob_path': {'key': 'typeProperties.blobPath', 'type': 'str'},
         'events': {'key': 'typeProperties.events', 'type': '[str]'},
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
-        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -74,5 +69,4 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         self.blob_path = kwargs.get('blob_path', None)
         self.events = kwargs.get('events', None)
         self.scope = kwargs.get('scope', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
         self.type = 'BlobEventsTrigger'
