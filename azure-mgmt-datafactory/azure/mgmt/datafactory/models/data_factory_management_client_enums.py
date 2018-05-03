@@ -248,6 +248,12 @@ class TumblingWindowFrequency(str, Enum):
     hour = "Hour"
 
 
+class BlobEventTypes(str, Enum):
+
+    blob_created = "blobCreated"
+    blob_deleted = "blobDeleted"
+
+
 class DayOfWeek(str, Enum):
 
     sunday = "Sunday"

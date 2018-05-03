@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .trigger import Trigger
+from .multiple_pipeline_trigger import MultiplePipelineTrigger
 
 
-class MultiplePipelineTrigger(Trigger):
-    """Base class for all triggers that support one to many model for trigger to
-    pipeline.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobEventsTrigger, BlobTrigger, ScheduleTrigger
+class BlobEventsTrigger(MultiplePipelineTrigger):
+    """Trigger that runs everytime a Blob event occurs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,11 +35,26 @@ class MultiplePipelineTrigger(Trigger):
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
+    :param blob_path: Required. path to container, folder, blob, or file
+     extension for which events can trigger the pipeline.
+    :type blob_path: str
+    :param events: Required. the type of events for which we want to trigger
+     the pipeline.
+    :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
+    :param scope: Required. the resource id of the Storage Account.
+    :type scope: str
+    :param max_concurrency: Required. the max number of parallel events to
+     handle when it is triggered.
+    :type max_concurrency: int
     """
 
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'blob_path': {'required': True},
+        'events': {'required': True},
+        'scope': {'required': True},
+        'max_concurrency': {'required': True},
     }
 
     _attribute_map = {
@@ -52,13 +63,16 @@ class MultiplePipelineTrigger(Trigger):
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+        'blob_path': {'key': 'typeProperties.blobPath', 'type': 'str'},
+        'events': {'key': 'typeProperties.events', 'type': '[str]'},
+        'scope': {'key': 'typeProperties.scope', 'type': 'str'},
+        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
     }
 
-    _subtype_map = {
-        'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
-    }
-
-    def __init__(self, *, additional_properties=None, description: str=None, pipelines=None, **kwargs) -> None:
-        super(MultiplePipelineTrigger, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
-        self.pipelines = pipelines
-        self.type = 'MultiplePipelineTrigger'
+    def __init__(self, **kwargs):
+        super(BlobEventsTrigger, self).__init__(**kwargs)
+        self.blob_path = kwargs.get('blob_path', None)
+        self.events = kwargs.get('events', None)
+        self.scope = kwargs.get('scope', None)
+        self.max_concurrency = kwargs.get('max_concurrency', None)
+        self.type = 'BlobEventsTrigger'
