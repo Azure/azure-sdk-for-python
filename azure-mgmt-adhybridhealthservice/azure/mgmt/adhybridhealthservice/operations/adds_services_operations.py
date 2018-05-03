@@ -24,6 +24,8 @@ class AddsServicesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2014-01-01".
+    :ivar next_partition_key: The next partition key to query for. Constant value: "".
+    :ivar next_row_key: The next row key to query for. Constant value: "".
     """
 
     models = models
@@ -34,6 +36,8 @@ class AddsServicesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2014-01-01"
+        self.next_partition_key = ""
+        self.next_row_key = ""
 
         self.config = config
 
@@ -846,7 +850,7 @@ class AddsServicesOperations(object):
     get_replication_status.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/replicationstatus'}
 
     def get_replication_summary(
-            self, service_name, is_groupby_site, query, next_partition_key, filter=None, next_row_key=None, take_count=None, custom_headers=None, raw=False, **operation_config):
+            self, service_name, is_groupby_site, query, filter=None, take_count=None, custom_headers=None, raw=False, **operation_config):
         """Gets complete domain controller list along with replication details for
         a given Active Directory Domain Service, that is onboarded to Azure
         Active Directory Connect Health.
@@ -858,12 +862,8 @@ class AddsServicesOperations(object):
         :type is_groupby_site: bool
         :param query: The custom query.
         :type query: str
-        :param next_partition_key: The next partition key to query for.
-        :type next_partition_key: str
         :param filter: The server property filter to apply.
         :type filter: str
-        :param next_row_key: The next row key to query for.
-        :type next_row_key: str
         :param take_count: The take count , which specifies the number of
          elements that can be returned from a sequence.
         :type take_count: int
@@ -890,9 +890,8 @@ class AddsServicesOperations(object):
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['isGroupbySite'] = self._serialize.query("is_groupby_site", is_groupby_site, 'bool')
         query_parameters['query'] = self._serialize.query("query", query, 'str')
-        query_parameters['nextPartitionKey'] = self._serialize.query("next_partition_key", next_partition_key, 'str')
-        if next_row_key is not None:
-            query_parameters['nextRowKey'] = self._serialize.query("next_row_key", next_row_key, 'str')
+        query_parameters['nextPartitionKey'] = self._serialize.query("self.next_partition_key", self.next_partition_key, 'str')
+        query_parameters['nextRowKey'] = self._serialize.query("self.next_row_key", self.next_row_key, 'str')
         if take_count is not None:
             query_parameters['takeCount'] = self._serialize.query("take_count", take_count, 'int')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
