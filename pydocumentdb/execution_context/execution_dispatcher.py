@@ -30,6 +30,7 @@ from pydocumentdb.execution_context.base_execution_context import _DefaultQueryE
 from pydocumentdb.execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from pydocumentdb.execution_context import endpoint_component
 from pydocumentdb.execution_context import multi_execution_aggregator
+from pydocumentdb.http_constants import StatusCodes, SubStatusCodes
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
     '''
@@ -92,7 +93,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
         return self._execution_context.fetch_next_block()        
         
     def _is_partitioned_execution_info(self, e):    
-        return e.status_code == 400 and e.sub_status == 1004
+        return e.status_code == StatusCodes.BAD_REQUEST and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
     
     def _get_partitioned_execution_info(self, e):
         error_msg = json.loads(e._http_error_message)

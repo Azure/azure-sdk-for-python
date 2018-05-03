@@ -24,6 +24,7 @@ import time
 
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
+from pydocumentdb.http_constants import StatusCodes
 import test.test_config as test_config
 
 
@@ -92,7 +93,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # None is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -102,7 +103,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # 0 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -112,7 +113,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -124,7 +125,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
@@ -134,7 +135,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # None is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
@@ -144,7 +145,7 @@ class Test_ttl_tests(unittest.TestCase):
         
         # -10 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            StatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
@@ -170,7 +171,7 @@ class Test_ttl_tests(unittest.TestCase):
         
         # the created document should be gone now as it's ttl value would be same as defaultTtl value of the collection
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.ReadDocument,
             created_document['_self'])
 
@@ -192,7 +193,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(5)
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.ReadDocument,
             created_document['_self'])
 
@@ -210,7 +211,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # the created document should be gone now as we have waited for (6+4) secs which is greater than documents's ttl value of 8
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.ReadDocument,
             created_document['_self'])
 
@@ -245,7 +246,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(-1)
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.ReadDocument,
             created_document3['_self'])
 
@@ -299,7 +300,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # the created document cannot be deleted since it should already be gone now
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.DeleteDocument,
             created_document['_self'])
 
@@ -323,7 +324,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # the upserted document should be gone now after 10 secs from the last write(upsert) of the document
         self.__AssertHTTPFailureWithStatus(
-            404,
+            StatusCodes.NOT_FOUND,
             client.ReadDocument,
             upserted_docment['_self'])
 

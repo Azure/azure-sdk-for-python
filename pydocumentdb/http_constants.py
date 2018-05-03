@@ -267,3 +267,69 @@ class HttpContextProperties:
     """Constants of http context properties.
     """
     SubscriptionId = 'SubscriptionId'
+
+
+class StatusCodes:
+    """HTTP status codes returned by the REST operations
+    """
+    # Success
+    OK = 200
+    CREATED = 201
+    ACCEPTED = 202
+    NO_CONTENT = 204
+
+    NOT_MODIFIED = 304
+
+    # Client Error
+    BAD_REQUEST = 400
+    UNAUTHORIZED = 401
+    FORBIDDEN = 403
+    NOT_FOUND = 404
+    METHOD_NOT_ALLOWED = 405
+    REQUEST_TIMEOUT = 408
+    CONFLICT = 409
+    GONE = 410
+    PRECONDITION_FAILED = 412
+    REQUEST_ENTITY_TOO_LARGE = 413
+    TOO_MANY_REQUESTS = 429
+    RETRY_WITH = 449
+
+    INTERNAL_SERVER_ERROR = 500
+    SERVICE_UNAVAILABLE = 503
+
+    # Operation pause and cancel. These are FAKE status codes for QOS logging purpose only.
+    OPERATION_PAUSED = 1200
+    OPERATION_CANCELLED = 1201
+
+class SubStatusCodes:
+    """Sub status codes returned by the REST operations specifying the details of the operation
+    """
+    UNKNOWN = 0
+
+    # 400: Bad Request Substatus 
+    PARTITION_KEY_MISMATCH = 1001
+    CROSS_PARTITION_QUERY_NOT_SERVABLE = 1004
+
+    # 410: StatusCodeType_Gone: substatus 
+    NAME_CACHE_IS_STALE = 1000
+    PARTITION_KEY_RANGE_GONE = 1002
+    COMPLETING_SPLIT = 1007
+    COMPLETING_PARTITION_MIGRATION = 1008
+        
+    # 403: Forbidden Substatus.
+    WRITE_FORBIDDEN = 3
+    PROVISION_LIMIT_REACHED = 1005
+    DATABASE_ACCOUNT_NOT_FOUND = 1008
+    REDUNDANT_COLLECTION_PUT = 1009
+    SHARED_THROUGHPUT_DATABASE_QUOTA_EXCEEDED = 1010
+    SHARED_THROUGHPUT_OFFER_GROW_NOT_NEEDED = 1011
+
+    # 404: LSN in session token is higher
+    READ_SESSION_NOTAVAILABLE = 1002
+    OWNER_RESOURCE_NOT_FOUND = 1003
+
+    # 409: Conflict exception
+    CONFLICT_WITH_CONTROL_PLANE = 1006
+
+    # 503: Service Unavailable due to region being out of capacity for bindable partitions
+    INSUFFICIENT_BINDABLE_PARTITIONS = 1007
