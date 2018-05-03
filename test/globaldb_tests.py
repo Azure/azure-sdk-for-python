@@ -31,7 +31,7 @@ import pydocumentdb.errors as errors
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import pydocumentdb.retry_utility as retry_utility
-import pydocumentdb.http_constants as http_constants
+from pydocumentdb.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import test.test_config as test_config
 
 #IMPORTANT NOTES: 
@@ -124,7 +124,7 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
+        content_location = str(client.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         host_url = urlparse(Test_globaldb_tests.host)
@@ -146,7 +146,7 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
+        content_location = str(client.last_response_headers[HttpHeaders.ContentLocation])
         
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(Test_globaldb_tests.write_location_host)
@@ -168,8 +168,8 @@ class Test_globaldb_tests(unittest.TestCase):
         # Create Document will fail for the read location client since it has EnableEndpointDiscovery set to false, and hence the request will directly go to 
         # the endpoint that was used to create the client instance(which happens to be a read endpoint)
         self.__AssertHTTPFailureWithStatus(
-            403,
-            3,
+            StatusCodes.FORBIDDEN,
+            SubStatusCodes.WRITE_FORBIDDEN,
             read_location_client.CreateDocument,
             self.test_coll['_self'],
             document_definition)
@@ -206,7 +206,7 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
+        content_location = str(client.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(Test_globaldb_tests.write_location_host)
@@ -225,7 +225,7 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
+        content_location = str(client.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         read_location2_url = urlparse(Test_globaldb_tests.read_location2_host)
@@ -372,8 +372,8 @@ class Test_globaldb_tests(unittest.TestCase):
                                 'key': 'value'} 
 
         self.__AssertHTTPFailureWithStatus(
-            403,
-            3,
+            StatusCodes.FORBIDDEN,
+            SubStatusCodes.WRITE_FORBIDDEN,
             client.CreateDocument,
             self.test_coll['_self'],
             document_definition)
@@ -381,7 +381,7 @@ class Test_globaldb_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(403, "Write Forbidden", {'x-ms-substatus' : 3})
+        raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Write Forbidden", {'x-ms-substatus' : SubStatusCodes.WRITE_FORBIDDEN})
             
     def _MockGetDatabaseAccount(self, url_conection):
         database_account = documents.DatabaseAccount()

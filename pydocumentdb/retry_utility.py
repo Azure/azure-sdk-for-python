@@ -27,7 +27,7 @@ import time
 import pydocumentdb.errors as errors
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import pydocumentdb.resource_throttle_retry_policy as resource_throttle_retry_policy
-import pydocumentdb.http_constants as http_constants
+from pydocumentdb.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies
@@ -57,17 +57,17 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 client.last_response_headers = {}
             
             # setting the throttle related response headers before returning the result
-            client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
-            client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+            client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
+            client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
             
             return result
         except errors.HTTPFailure as e:
             retry_policy = None
 
-            if (e.status_code == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.FORBIDDEN_STATUS_CODE
-                    and e.sub_status == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.WRITE_FORBIDDEN_SUB_STATUS_CODE):
+            if (e.status_code == StatusCodes.FORBIDDEN
+                    and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN):
                 retry_policy = endpointDiscovery_retry_policy
-            elif e.status_code == resource_throttle_retry_policy._ResourceThrottleRetryPolicy.THROTTLE_STATUS_CODE:
+            elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
                 retry_policy = resourceThrottle_retry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and 
@@ -75,8 +75,8 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
             if not (retry_policy and retry_policy.ShouldRetry(e)):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
-                client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
-                client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+                client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
+                client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
                 raise
             else:
                 # Wait for retry_after_in_milliseconds time before the next retry
