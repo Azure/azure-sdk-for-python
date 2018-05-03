@@ -250,8 +250,8 @@ class TumblingWindowFrequency(str, Enum):
 
 class BlobEventTypes(str, Enum):
 
-    blob_created = "blobCreated"
-    blob_deleted = "blobDeleted"
+    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
+    microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
 
 
 class DayOfWeek(str, Enum):
