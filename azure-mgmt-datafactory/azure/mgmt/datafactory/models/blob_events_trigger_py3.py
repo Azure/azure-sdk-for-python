@@ -35,16 +35,16 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
-    :param blob_path: Required. path to container, folder, blob, or file
+    :param blob_path: Required. Path to container, folder, blob, or file
      extension for which events can trigger the pipeline.
     :type blob_path: str
-    :param events: Required. the type of events for which we want to trigger
-     the pipeline.
+    :param events: Required. The type of events that cause this trigger to
+     fire.
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
-    :param scope: Required. the resource id of the Storage Account.
+    :param scope: Required. The ARM resource ID of the Storage Account.
     :type scope: str
-    :param max_concurrency: Required. the max number of parallel events to
-     handle when it is triggered.
+    :param max_concurrency: Required. The max number of parallel events to
+     handle when triggered.
     :type max_concurrency: int
     """
 
@@ -54,7 +54,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'blob_path': {'required': True},
         'events': {'required': True},
         'scope': {'required': True},
-        'max_concurrency': {'required': True},
+        'max_concurrency': {'required': True, 'minimum': 1},
     }
 
     _attribute_map = {
