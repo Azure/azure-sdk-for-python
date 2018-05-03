@@ -21,9 +21,9 @@ class Source(Model):
     :type query: str
     :param authorized_resources: List of  Resource referred into query
     :type authorized_resources: list[str]
-    :param datasource_id: Required. The resource uri over which log search
+    :param data_source_id: Required. The resource uri over which log search
      query is to be run.
-    :type datasource_id: str
+    :type data_source_id: str
     :param query_type: Set value to ResultCount if query should be returning
      search result count. Set it to Number if its a metric query. Possible
      values include: 'ResultCount'
@@ -32,19 +32,19 @@ class Source(Model):
 
     _validation = {
         'query': {'required': True},
-        'datasource_id': {'required': True},
+        'data_source_id': {'required': True},
     }
 
     _attribute_map = {
         'query': {'key': 'query', 'type': 'str'},
         'authorized_resources': {'key': 'authorizedResources', 'type': '[str]'},
-        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
+        'data_source_id': {'key': 'dataSourceId', 'type': 'str'},
         'query_type': {'key': 'queryType', 'type': 'str'},
     }
 
-    def __init__(self, *, query: str, datasource_id: str, authorized_resources=None, query_type=None, **kwargs) -> None:
+    def __init__(self, *, query: str, data_source_id: str, authorized_resources=None, query_type=None, **kwargs) -> None:
         super(Source, self).__init__(**kwargs)
         self.query = query
         self.authorized_resources = authorized_resources
-        self.datasource_id = datasource_id
+        self.data_source_id = data_source_id
         self.query_type = query_type
