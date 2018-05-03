@@ -40,9 +40,11 @@ class SignalROperations(object):
         self.config = config
 
     def check_name_availability(
-            self, type, name, custom_headers=None, raw=False, **operation_config):
+            self, location, type, name, custom_headers=None, raw=False, **operation_config):
         """Checks that the SignalR name is valid and is not already in use.
 
+        :param location: the region
+        :type location: str
         :param type: The resource type. Should be always
          "Microsoft.SignalRService/SignalR".
         :type type: str
@@ -66,6 +68,7 @@ class SignalROperations(object):
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -110,7 +113,7 @@ class SignalROperations(object):
             return client_raw_response
 
         return deserialized
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/checkNameAvailability'}
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/locations/{location}/checkNameAvailability'}
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
