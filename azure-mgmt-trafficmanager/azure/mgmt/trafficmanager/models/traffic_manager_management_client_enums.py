@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class EndpointStatus(Enum):
+class EndpointStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class EndpointMonitorStatus(Enum):
+class EndpointMonitorStatus(str, Enum):
 
     checking_endpoint = "CheckingEndpoint"
     online = "Online"
@@ -28,7 +28,7 @@ class EndpointMonitorStatus(Enum):
     stopped = "Stopped"
 
 
-class ProfileMonitorStatus(Enum):
+class ProfileMonitorStatus(str, Enum):
 
     checking_endpoints = "CheckingEndpoints"
     online = "Online"
@@ -37,20 +37,20 @@ class ProfileMonitorStatus(Enum):
     inactive = "Inactive"
 
 
-class MonitorProtocol(Enum):
+class MonitorProtocol(str, Enum):
 
     http = "HTTP"
     https = "HTTPS"
     tcp = "TCP"
 
 
-class ProfileStatus(Enum):
+class ProfileStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class TrafficRoutingMethod(Enum):
+class TrafficRoutingMethod(str, Enum):
 
     performance = "Performance"
     priority = "Priority"
