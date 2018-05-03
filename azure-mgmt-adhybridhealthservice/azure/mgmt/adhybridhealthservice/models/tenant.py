@@ -28,7 +28,7 @@ class Tenant(Model):
     :type agent_auto_update: bool
     :param alert_suppression_time_in_mins: The time in minutues after which an
      alert will be autosupressed.
-    :type alert_suppression_time_in_mins: datetime
+    :type alert_suppression_time_in_mins: int
     :param consented_to_microsoft_dev_ops: Indicates if the tenant data can be
      seen by Microsoft through Azure portal.
     :type consented_to_microsoft_dev_ops: bool
@@ -45,7 +45,7 @@ class Tenant(Model):
     :type disabled: bool
     :param disabled_reason: The reason due to which the tenant was disabled in
      Azure Active Directory Connect Health.
-    :type disabled_reason: str
+    :type disabled_reason: int
     :param global_admins_email: The list of golbal administrators for the
      tenant.
     :type global_admins_email: object
@@ -58,6 +58,9 @@ class Tenant(Model):
      onboarding status in Azure Active Directory Connect Health was last
      verified.
     :type last_verified: datetime
+    :param onboarding_allowed: Indicates if the tenant is allowed to  onboard
+     to Azure Active Directory Connect Health.
+    :type onboarding_allowed: bool
     :param onboarded: Indicates if the tenant is already onboarded to Azure
      Active Directory Connect Health.
     :type onboarded: bool
@@ -79,17 +82,18 @@ class Tenant(Model):
         'aad_license': {'key': 'aadLicense', 'type': 'str'},
         'aad_premium': {'key': 'aadPremium', 'type': 'bool'},
         'agent_auto_update': {'key': 'agentAutoUpdate', 'type': 'bool'},
-        'alert_suppression_time_in_mins': {'key': 'alertSuppressionTimeInMins', 'type': 'iso-8601'},
+        'alert_suppression_time_in_mins': {'key': 'alertSuppressionTimeInMins', 'type': 'int'},
         'consented_to_microsoft_dev_ops': {'key': 'consentedToMicrosoftDevOps', 'type': 'bool'},
         'country_letter_code': {'key': 'countryLetterCode', 'type': 'str'},
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
         'dev_ops_ttl': {'key': 'devOpsTtl', 'type': 'iso-8601'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
-        'disabled_reason': {'key': 'disabledReason', 'type': 'str'},
+        'disabled_reason': {'key': 'disabledReason', 'type': 'int'},
         'global_admins_email': {'key': 'globalAdminsEmail', 'type': 'object'},
         'initial_domain': {'key': 'initialDomain', 'type': 'str'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_verified': {'key': 'lastVerified', 'type': 'iso-8601'},
+        'onboarding_allowed': {'key': 'onboardingAllowed', 'type': 'bool'},
         'onboarded': {'key': 'onboarded', 'type': 'bool'},
         'pks_certificate': {'key': 'pksCertificate', 'type': 'object'},
         'private_preview_tenant': {'key': 'privatePreviewTenant', 'type': 'bool'},
@@ -114,6 +118,7 @@ class Tenant(Model):
         self.initial_domain = kwargs.get('initial_domain', None)
         self.last_disabled = kwargs.get('last_disabled', None)
         self.last_verified = kwargs.get('last_verified', None)
+        self.onboarding_allowed = kwargs.get('onboarding_allowed', None)
         self.onboarded = kwargs.get('onboarded', None)
         self.pks_certificate = kwargs.get('pks_certificate', None)
         self.private_preview_tenant = kwargs.get('private_preview_tenant', None)

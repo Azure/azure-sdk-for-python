@@ -28,7 +28,7 @@ class Tenant(Model):
     :type agent_auto_update: bool
     :param alert_suppression_time_in_mins: The time in minutues after which an
      alert will be autosupressed.
-    :type alert_suppression_time_in_mins: datetime
+    :type alert_suppression_time_in_mins: int
     :param consented_to_microsoft_dev_ops: Indicates if the tenant data can be
      seen by Microsoft through Azure portal.
     :type consented_to_microsoft_dev_ops: bool
@@ -45,7 +45,7 @@ class Tenant(Model):
     :type disabled: bool
     :param disabled_reason: The reason due to which the tenant was disabled in
      Azure Active Directory Connect Health.
-    :type disabled_reason: str
+    :type disabled_reason: int
     :param global_admins_email: The list of golbal administrators for the
      tenant.
     :type global_admins_email: object
@@ -58,6 +58,9 @@ class Tenant(Model):
      onboarding status in Azure Active Directory Connect Health was last
      verified.
     :type last_verified: datetime
+    :param onboarding_allowed: Indicates if the tenant is allowed to  onboard
+     to Azure Active Directory Connect Health.
+    :type onboarding_allowed: bool
     :param onboarded: Indicates if the tenant is already onboarded to Azure
      Active Directory Connect Health.
     :type onboarded: bool
@@ -79,17 +82,18 @@ class Tenant(Model):
         'aad_license': {'key': 'aadLicense', 'type': 'str'},
         'aad_premium': {'key': 'aadPremium', 'type': 'bool'},
         'agent_auto_update': {'key': 'agentAutoUpdate', 'type': 'bool'},
-        'alert_suppression_time_in_mins': {'key': 'alertSuppressionTimeInMins', 'type': 'iso-8601'},
+        'alert_suppression_time_in_mins': {'key': 'alertSuppressionTimeInMins', 'type': 'int'},
         'consented_to_microsoft_dev_ops': {'key': 'consentedToMicrosoftDevOps', 'type': 'bool'},
         'country_letter_code': {'key': 'countryLetterCode', 'type': 'str'},
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
         'dev_ops_ttl': {'key': 'devOpsTtl', 'type': 'iso-8601'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
-        'disabled_reason': {'key': 'disabledReason', 'type': 'str'},
+        'disabled_reason': {'key': 'disabledReason', 'type': 'int'},
         'global_admins_email': {'key': 'globalAdminsEmail', 'type': 'object'},
         'initial_domain': {'key': 'initialDomain', 'type': 'str'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_verified': {'key': 'lastVerified', 'type': 'iso-8601'},
+        'onboarding_allowed': {'key': 'onboardingAllowed', 'type': 'bool'},
         'onboarded': {'key': 'onboarded', 'type': 'bool'},
         'pks_certificate': {'key': 'pksCertificate', 'type': 'object'},
         'private_preview_tenant': {'key': 'privatePreviewTenant', 'type': 'bool'},
@@ -97,7 +101,7 @@ class Tenant(Model):
         'tenant_name': {'key': 'tenantName', 'type': 'str'},
     }
 
-    def __init__(self, *, tenant_id: str=None, aad_license: str=None, aad_premium: bool=None, agent_auto_update: bool=None, alert_suppression_time_in_mins=None, consented_to_microsoft_dev_ops: bool=None, country_letter_code: str=None, created_date=None, dev_ops_ttl=None, disabled: bool=None, disabled_reason: str=None, global_admins_email=None, initial_domain: str=None, last_disabled=None, last_verified=None, onboarded: bool=None, pks_certificate=None, private_preview_tenant: bool=None, tenant_in_quarantine: bool=None, tenant_name: str=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str=None, aad_license: str=None, aad_premium: bool=None, agent_auto_update: bool=None, alert_suppression_time_in_mins: int=None, consented_to_microsoft_dev_ops: bool=None, country_letter_code: str=None, created_date=None, dev_ops_ttl=None, disabled: bool=None, disabled_reason: int=None, global_admins_email=None, initial_domain: str=None, last_disabled=None, last_verified=None, onboarding_allowed: bool=None, onboarded: bool=None, pks_certificate=None, private_preview_tenant: bool=None, tenant_in_quarantine: bool=None, tenant_name: str=None, **kwargs) -> None:
         super(Tenant, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.aad_license = aad_license
@@ -114,6 +118,7 @@ class Tenant(Model):
         self.initial_domain = initial_domain
         self.last_disabled = last_disabled
         self.last_verified = last_verified
+        self.onboarding_allowed = onboarding_allowed
         self.onboarded = onboarded
         self.pks_certificate = pks_certificate
         self.private_preview_tenant = private_preview_tenant

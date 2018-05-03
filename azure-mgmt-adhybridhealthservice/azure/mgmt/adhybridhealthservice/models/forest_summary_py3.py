@@ -21,9 +21,9 @@ class ForestSummary(Model):
     :type domain_count: int
     :param site_count: The site count.
     :type site_count: int
-    :param monitered_dc_count: The number of domain controllers that are
+    :param monitored_dc_count: The number of domain controllers that are
      monitored by Azure Active Directory Connect Health.
-    :type monitered_dc_count: int
+    :type monitored_dc_count: int
     :param total_dc_count: The total domain controllers.
     :type total_dc_count: int
     :param domains: The list of domain controller names.
@@ -36,18 +36,18 @@ class ForestSummary(Model):
         'forest_name': {'key': 'forestName', 'type': 'str'},
         'domain_count': {'key': 'domainCount', 'type': 'int'},
         'site_count': {'key': 'siteCount', 'type': 'int'},
-        'monitered_dc_count': {'key': 'moniteredDcCount', 'type': 'int'},
+        'monitored_dc_count': {'key': 'monitoredDcCount', 'type': 'int'},
         'total_dc_count': {'key': 'totalDcCount', 'type': 'int'},
         'domains': {'key': 'domains', 'type': '[str]'},
         'sites': {'key': 'sites', 'type': '[str]'},
     }
 
-    def __init__(self, *, forest_name: str=None, domain_count: int=None, site_count: int=None, monitered_dc_count: int=None, total_dc_count: int=None, domains=None, sites=None, **kwargs) -> None:
+    def __init__(self, *, forest_name: str=None, domain_count: int=None, site_count: int=None, monitored_dc_count: int=None, total_dc_count: int=None, domains=None, sites=None, **kwargs) -> None:
         super(ForestSummary, self).__init__(**kwargs)
         self.forest_name = forest_name
         self.domain_count = domain_count
         self.site_count = site_count
-        self.monitered_dc_count = monitered_dc_count
+        self.monitored_dc_count = monitored_dc_count
         self.total_dc_count = total_dc_count
         self.domains = domains
         self.sites = sites

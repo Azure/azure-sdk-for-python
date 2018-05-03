@@ -45,7 +45,7 @@ class MetricMetadata(Model):
     """
 
     _attribute_map = {
-        'metrics_processor_class_name': {'key': 'metricsPRocessorClassName', 'type': 'str'},
+        'metrics_processor_class_name': {'key': 'metricsProcessorClassName', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'groupings': {'key': 'groupings', 'type': '[MetricGroup]'},
         'display_name': {'key': 'displayName', 'type': 'str'},

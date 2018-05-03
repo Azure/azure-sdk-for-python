@@ -21,9 +21,9 @@ class ForestSummary(Model):
     :type domain_count: int
     :param site_count: The site count.
     :type site_count: int
-    :param monitered_dc_count: The number of domain controllers that are
+    :param monitored_dc_count: The number of domain controllers that are
      monitored by Azure Active Directory Connect Health.
-    :type monitered_dc_count: int
+    :type monitored_dc_count: int
     :param total_dc_count: The total domain controllers.
     :type total_dc_count: int
     :param domains: The list of domain controller names.
@@ -36,7 +36,7 @@ class ForestSummary(Model):
         'forest_name': {'key': 'forestName', 'type': 'str'},
         'domain_count': {'key': 'domainCount', 'type': 'int'},
         'site_count': {'key': 'siteCount', 'type': 'int'},
-        'monitered_dc_count': {'key': 'moniteredDcCount', 'type': 'int'},
+        'monitored_dc_count': {'key': 'monitoredDcCount', 'type': 'int'},
         'total_dc_count': {'key': 'totalDcCount', 'type': 'int'},
         'domains': {'key': 'domains', 'type': '[str]'},
         'sites': {'key': 'sites', 'type': '[str]'},
@@ -47,7 +47,7 @@ class ForestSummary(Model):
         self.forest_name = kwargs.get('forest_name', None)
         self.domain_count = kwargs.get('domain_count', None)
         self.site_count = kwargs.get('site_count', None)
-        self.monitered_dc_count = kwargs.get('monitered_dc_count', None)
+        self.monitored_dc_count = kwargs.get('monitored_dc_count', None)
         self.total_dc_count = kwargs.get('total_dc_count', None)
         self.domains = kwargs.get('domains', None)
         self.sites = kwargs.get('sites', None)

@@ -61,9 +61,9 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Service
+        :return: An iterator like instance of ServiceProperties
         :rtype:
-         ~azure.mgmt.adhybridhealthservice.models.ServicePaged[~azure.mgmt.adhybridhealthservice.models.Service]
+         ~azure.mgmt.adhybridhealthservice.models.ServicePropertiesPaged[~azure.mgmt.adhybridhealthservice.models.ServiceProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -111,11 +111,11 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ServicePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ServicePropertiesPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ServicePropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -127,14 +127,15 @@ class ServicesOperations(object):
         Health.
 
         :param service: The service object.
-        :type service: ~azure.mgmt.adhybridhealthservice.models.Service
+        :type service:
+         ~azure.mgmt.adhybridhealthservice.models.ServiceProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Service or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Service or
+        :return: ServiceProperties or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceProperties or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -156,7 +157,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(service, 'Service')
+        body_content = self._serialize.body(service, 'ServiceProperties')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -171,7 +172,7 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Service', response)
+            deserialized = self._deserialize('ServiceProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -204,9 +205,9 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Service
+        :return: An iterator like instance of ServiceProperties
         :rtype:
-         ~azure.mgmt.adhybridhealthservice.models.ServicePaged[~azure.mgmt.adhybridhealthservice.models.Service]
+         ~azure.mgmt.adhybridhealthservice.models.ServicePropertiesPaged[~azure.mgmt.adhybridhealthservice.models.ServiceProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -254,11 +255,11 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ServicePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ServicePropertiesPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ServicePropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -276,8 +277,8 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Service or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Service or
+        :return: ServiceProperties or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceProperties or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -314,7 +315,7 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Service', response)
+            deserialized = self._deserialize('ServiceProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -390,14 +391,15 @@ class ServicesOperations(object):
          deleted.
         :type service_name: str
         :param service: The service object.
-        :type service: ~azure.mgmt.adhybridhealthservice.models.Service
+        :type service:
+         ~azure.mgmt.adhybridhealthservice.models.ServiceProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Service or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.Service or
+        :return: ServiceProperties or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.ServiceProperties or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -423,7 +425,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(service, 'Service')
+        body_content = self._serialize.body(service, 'ServiceProperties')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -438,7 +440,7 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Service', response)
+            deserialized = self._deserialize('ServiceProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

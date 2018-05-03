@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ServicePaged(Paged):
+class ServicePropertiesPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Service <azure.mgmt.adhybridhealthservice.models.Service>` object
+    A paging container for iterating over a list of :class:`ServiceProperties <azure.mgmt.adhybridhealthservice.models.ServiceProperties>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Service]'}
+        'current_page': {'key': 'value', 'type': '[ServiceProperties]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ServicePaged, self).__init__(*args, **kwargs)
+        super(ServicePropertiesPaged, self).__init__(*args, **kwargs)

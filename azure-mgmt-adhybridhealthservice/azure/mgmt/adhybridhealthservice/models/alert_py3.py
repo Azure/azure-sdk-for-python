@@ -52,9 +52,9 @@ class Alert(Model):
     :param last_updated: The date and time, in UTC, when the alert was last
      updated.
     :type last_updated: datetime
-    :param monitoring_role_type: The monitoring role type for which the alert
-     was raised.
-    :type monitoring_role_type: str
+    :param monitor_role_type: The monitoring role type for which the alert was
+     raised.
+    :type monitor_role_type: str
     :param active_alert_properties: The active alert properties.
     :type active_alert_properties: object
     :param resolved_alert_properties: The active alert properties.
@@ -81,7 +81,7 @@ class Alert(Model):
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
         'resolved_date': {'key': 'resolvedDate', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'monitoring_role_type': {'key': 'monitoringRoleType', 'type': 'str'},
+        'monitor_role_type': {'key': 'monitorRoleType', 'type': 'str'},
         'active_alert_properties': {'key': 'activeAlertProperties', 'type': 'object'},
         'resolved_alert_properties': {'key': 'resolvedAlertProperties', 'type': 'object'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
@@ -89,7 +89,7 @@ class Alert(Model):
         'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
     }
 
-    def __init__(self, *, alert_id: str=None, level=None, state=None, short_name: str=None, display_name: str=None, description: str=None, remediation: str=None, related_links=None, scope: str=None, additional_information=None, created_date=None, resolved_date=None, last_updated=None, monitoring_role_type: str=None, active_alert_properties=None, resolved_alert_properties=None, tenant_id: str=None, service_id: str=None, service_member_id: str=None, **kwargs) -> None:
+    def __init__(self, *, alert_id: str=None, level=None, state=None, short_name: str=None, display_name: str=None, description: str=None, remediation: str=None, related_links=None, scope: str=None, additional_information=None, created_date=None, resolved_date=None, last_updated=None, monitor_role_type: str=None, active_alert_properties=None, resolved_alert_properties=None, tenant_id: str=None, service_id: str=None, service_member_id: str=None, **kwargs) -> None:
         super(Alert, self).__init__(**kwargs)
         self.alert_id = alert_id
         self.level = level
@@ -104,7 +104,7 @@ class Alert(Model):
         self.created_date = created_date
         self.resolved_date = resolved_date
         self.last_updated = last_updated
-        self.monitoring_role_type = monitoring_role_type
+        self.monitor_role_type = monitor_role_type
         self.active_alert_properties = active_alert_properties
         self.resolved_alert_properties = resolved_alert_properties
         self.tenant_id = tenant_id

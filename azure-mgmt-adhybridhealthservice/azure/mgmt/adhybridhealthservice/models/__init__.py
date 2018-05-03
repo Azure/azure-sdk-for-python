@@ -69,9 +69,8 @@ try:
     from .replication_status_py3 import ReplicationStatus
     from .replication_summary_py3 import ReplicationSummary
     from .replication_summary_list_py3 import ReplicationSummaryList
-    from .service_properties_py3 import ServiceProperties
-    from .service_py3 import Service
     from .service_configuration_py3 import ServiceConfiguration
+    from .service_properties_py3 import ServiceProperties
     from .service_member_properties_py3 import ServiceMemberProperties
     from .service_member_py3 import ServiceMember
     from .tabular_export_error_py3 import TabularExportError
@@ -137,15 +136,14 @@ except (SyntaxError, ImportError):
     from .replication_status import ReplicationStatus
     from .replication_summary import ReplicationSummary
     from .replication_summary_list import ReplicationSummaryList
-    from .service_properties import ServiceProperties
-    from .service import Service
     from .service_configuration import ServiceConfiguration
+    from .service_properties import ServiceProperties
     from .service_member_properties import ServiceMemberProperties
     from .service_member import ServiceMember
     from .tabular_export_error import TabularExportError
     from .tenant import Tenant
     from .tenant_onboarding_details import TenantOnboardingDetails
-from .service_paged import ServicePaged
+from .service_properties_paged import ServicePropertiesPaged
 from .item_paged import ItemPaged
 from .metric_metadata_paged import MetricMetadataPaged
 from .alert_paged import AlertPaged
@@ -237,15 +235,14 @@ __all__ = [
     'ReplicationStatus',
     'ReplicationSummary',
     'ReplicationSummaryList',
-    'ServiceProperties',
-    'Service',
     'ServiceConfiguration',
+    'ServiceProperties',
     'ServiceMemberProperties',
     'ServiceMember',
     'TabularExportError',
     'Tenant',
     'TenantOnboardingDetails',
-    'ServicePaged',
+    'ServicePropertiesPaged',
     'ItemPaged',
     'MetricMetadataPaged',
     'AlertPaged',

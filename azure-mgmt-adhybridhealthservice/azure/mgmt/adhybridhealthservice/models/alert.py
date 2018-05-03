@@ -52,9 +52,9 @@ class Alert(Model):
     :param last_updated: The date and time, in UTC, when the alert was last
      updated.
     :type last_updated: datetime
-    :param monitoring_role_type: The monitoring role type for which the alert
-     was raised.
-    :type monitoring_role_type: str
+    :param monitor_role_type: The monitoring role type for which the alert was
+     raised.
+    :type monitor_role_type: str
     :param active_alert_properties: The active alert properties.
     :type active_alert_properties: object
     :param resolved_alert_properties: The active alert properties.
@@ -81,7 +81,7 @@ class Alert(Model):
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
         'resolved_date': {'key': 'resolvedDate', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'monitoring_role_type': {'key': 'monitoringRoleType', 'type': 'str'},
+        'monitor_role_type': {'key': 'monitorRoleType', 'type': 'str'},
         'active_alert_properties': {'key': 'activeAlertProperties', 'type': 'object'},
         'resolved_alert_properties': {'key': 'resolvedAlertProperties', 'type': 'object'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
@@ -104,7 +104,7 @@ class Alert(Model):
         self.created_date = kwargs.get('created_date', None)
         self.resolved_date = kwargs.get('resolved_date', None)
         self.last_updated = kwargs.get('last_updated', None)
-        self.monitoring_role_type = kwargs.get('monitoring_role_type', None)
+        self.monitor_role_type = kwargs.get('monitor_role_type', None)
         self.active_alert_properties = kwargs.get('active_alert_properties', None)
         self.resolved_alert_properties = kwargs.get('resolved_alert_properties', None)
         self.tenant_id = kwargs.get('tenant_id', None)
