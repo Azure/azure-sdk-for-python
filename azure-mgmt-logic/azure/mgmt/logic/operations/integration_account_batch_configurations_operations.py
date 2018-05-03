@@ -174,7 +174,7 @@ class IntegrationAccountBatchConfigurationsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/batchConfigurations/{batchConfigurationName}'}
 
     def create_or_update(
-            self, resource_group_name, integration_account_name, batch_configuration_name, assembly_artifact, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, integration_account_name, batch_configuration_name, batch_configuration, custom_headers=None, raw=False, **operation_config):
         """Create or update a batch configuration for an integration account.
 
         :param resource_group_name: The resource group name.
@@ -183,8 +183,8 @@ class IntegrationAccountBatchConfigurationsOperations(object):
         :type integration_account_name: str
         :param batch_configuration_name: The batch configuration name.
         :type batch_configuration_name: str
-        :param assembly_artifact: The assembly artifact.
-        :type assembly_artifact: ~azure.mgmt.logic.models.BatchConfiguration
+        :param batch_configuration: The batch configuration.
+        :type batch_configuration: ~azure.mgmt.logic.models.BatchConfiguration
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -220,7 +220,7 @@ class IntegrationAccountBatchConfigurationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(assembly_artifact, 'BatchConfiguration')
+        body_content = self._serialize.body(batch_configuration, 'BatchConfiguration')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
