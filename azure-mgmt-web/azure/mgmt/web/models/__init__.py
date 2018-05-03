@@ -118,6 +118,12 @@ from .data_source import DataSource
 from .response_meta_data import ResponseMetaData
 from .analysis_data import AnalysisData
 from .analysis_definition import AnalysisDefinition
+from .data_table_response_column import DataTableResponseColumn
+from .data_table_response_object import DataTableResponseObject
+from .detector_info import DetectorInfo
+from .rendering import Rendering
+from .diagnostic_data import DiagnosticData
+from .detector_response import DetectorResponse
 from .diagnostic_analysis import DiagnosticAnalysis
 from .diagnostic_category import DiagnosticCategory
 from .diagnostic_detector_response import DiagnosticDetectorResponse
@@ -226,6 +232,7 @@ from .top_level_domain_paged import TopLevelDomainPaged
 from .tld_legal_agreement_paged import TldLegalAgreementPaged
 from .certificate_paged import CertificatePaged
 from .deleted_site_paged import DeletedSitePaged
+from .detector_response_paged import DetectorResponsePaged
 from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
@@ -301,6 +308,7 @@ from .web_site_management_client_enums import (
     OperationStatus,
     IssueType,
     SolutionType,
+    RenderingType,
     ResourceScopeType,
     NotificationLevel,
     Channels,
@@ -439,6 +447,12 @@ __all__ = [
     'ResponseMetaData',
     'AnalysisData',
     'AnalysisDefinition',
+    'DataTableResponseColumn',
+    'DataTableResponseObject',
+    'DetectorInfo',
+    'Rendering',
+    'DiagnosticData',
+    'DetectorResponse',
     'DiagnosticAnalysis',
     'DiagnosticCategory',
     'DiagnosticDetectorResponse',
@@ -547,6 +561,7 @@ __all__ = [
     'TldLegalAgreementPaged',
     'CertificatePaged',
     'DeletedSitePaged',
+    'DetectorResponsePaged',
     'DiagnosticCategoryPaged',
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
@@ -621,6 +636,7 @@ __all__ = [
     'OperationStatus',
     'IssueType',
     'SolutionType',
+    'RenderingType',
     'ResourceScopeType',
     'NotificationLevel',
     'Channels',
