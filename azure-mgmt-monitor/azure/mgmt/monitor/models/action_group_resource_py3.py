@@ -75,7 +75,7 @@ class ActionGroupResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'group_short_name': {'required': True, 'max_length': 15},
+        'group_short_name': {'required': True, 'max_length': 12},
         'enabled': {'required': True},
     }
 
