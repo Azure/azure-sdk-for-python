@@ -13,7 +13,7 @@ from .adds_services_operations import AddsServicesOperations
 from .alerts_operations import AlertsOperations
 from .configuration_operations import ConfigurationOperations
 from .dimensions_operations import DimensionsOperations
-from .adds_servicemembers_operations import AddsServicemembersOperations
+from .adds_service_members_operations import AddsServiceMembersOperations
 from .ad_domain_service_members_operations import AdDomainServiceMembersOperations
 from .operations import Operations
 from .services_operations import ServicesOperations
@@ -24,7 +24,7 @@ __all__ = [
     'AlertsOperations',
     'ConfigurationOperations',
     'DimensionsOperations',
-    'AddsServicemembersOperations',
+    'AddsServiceMembersOperations',
     'AdDomainServiceMembersOperations',
     'Operations',
     'ServicesOperations',

@@ -17,7 +17,7 @@ from .operations.adds_services_operations import AddsServicesOperations
 from .operations.alerts_operations import AlertsOperations
 from .operations.configuration_operations import ConfigurationOperations
 from .operations.dimensions_operations import DimensionsOperations
-from .operations.adds_servicemembers_operations import AddsServicemembersOperations
+from .operations.adds_service_members_operations import AddsServiceMembersOperations
 from .operations.ad_domain_service_members_operations import AdDomainServiceMembersOperations
 from .operations.operations import Operations
 from .operations.services_operations import ServicesOperations
@@ -66,8 +66,8 @@ class ADHybridHealthService(SDKClient):
     :vartype configuration: azure.mgmt.adhybridhealthservice.operations.ConfigurationOperations
     :ivar dimensions: Dimensions operations
     :vartype dimensions: azure.mgmt.adhybridhealthservice.operations.DimensionsOperations
-    :ivar adds_servicemembers: AddsServicemembers operations
-    :vartype adds_servicemembers: azure.mgmt.adhybridhealthservice.operations.AddsServicemembersOperations
+    :ivar adds_service_members: AddsServiceMembers operations
+    :vartype adds_service_members: azure.mgmt.adhybridhealthservice.operations.AddsServiceMembersOperations
     :ivar ad_domain_service_members: AdDomainServiceMembers operations
     :vartype ad_domain_service_members: azure.mgmt.adhybridhealthservice.operations.AdDomainServiceMembersOperations
     :ivar operations: Operations operations
@@ -102,7 +102,7 @@ class ADHybridHealthService(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.dimensions = DimensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.adds_servicemembers = AddsServicemembersOperations(
+        self.adds_service_members = AddsServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.ad_domain_service_members = AdDomainServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
