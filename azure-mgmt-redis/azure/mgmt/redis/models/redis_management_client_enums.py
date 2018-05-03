@@ -25,6 +25,29 @@ class SkuFamily(Enum):
     p = "P"
 
 
+class TlsVersion(Enum):
+
+    one_full_stop_zero = "1.0"
+    one_full_stop_one = "1.1"
+    one_full_stop_two = "1.2"
+
+
+class ProvisioningState(Enum):
+
+    creating = "Creating"
+    deleting = "Deleting"
+    disabled = "Disabled"
+    failed = "Failed"
+    linking = "Linking"
+    provisioning = "Provisioning"
+    recovering_scale_failure = "RecoveringScaleFailure"
+    scaling = "Scaling"
+    succeeded = "Succeeded"
+    unlinking = "Unlinking"
+    unprovisioning = "Unprovisioning"
+    updating = "Updating"
+
+
 class RedisKeyType(Enum):
 
     primary = "Primary"
