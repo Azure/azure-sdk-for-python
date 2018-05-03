@@ -35,9 +35,9 @@ class ServiceProperties(Model):
     :type display_name: str
     :param health: The health of the service.
     :type health: str
-    :param last_disable: The date and time, in UTC, when the service was last
+    :param last_disabled: The date and time, in UTC, when the service was last
      disabled.
-    :type last_disable: datetime
+    :type last_disabled: datetime
     :param last_updated: The date or time , in UTC, when the service
      properties were last updated.
     :type last_updated: datetime
@@ -55,6 +55,9 @@ class ServiceProperties(Model):
     :param notification_email_enabled_for_global_admins: Indicates if email
      notification is enabled for global administrators of the tenant.
     :type notification_email_enabled_for_global_admins: bool
+    :param notification_emails_enabled_for_global_admins: Indicates if email
+     notification is enabled for global administrators of the tenant.
+    :type notification_emails_enabled_for_global_admins: bool
     :param notification_emails: The list of emails to whom service
      notifications will be sent.
     :type notification_emails: list[str]
@@ -91,12 +94,13 @@ class ServiceProperties(Model):
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'health': {'key': 'health', 'type': 'str'},
-        'last_disable': {'key': 'lastDisable', 'type': 'iso-8601'},
+        'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': 'object'},
         'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': 'object'},
         'notification_email_enabled': {'key': 'notificationEmailEnabled', 'type': 'bool'},
         'notification_email_enabled_for_global_admins': {'key': 'notificationEmailEnabledForGlobalAdmins', 'type': 'bool'},
+        'notification_emails_enabled_for_global_admins': {'key': 'notificationEmailsEnabledForGlobalAdmins', 'type': 'bool'},
         'notification_emails': {'key': 'notificationEmails', 'type': '[str]'},
         'original_disabled_state': {'key': 'originalDisabledState', 'type': 'bool'},
         'resolved_alerts': {'key': 'resolvedAlerts', 'type': 'int'},
@@ -108,7 +112,7 @@ class ServiceProperties(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, active_alerts: int=None, additional_information: str=None, created_date=None, custom_notification_emails=None, disabled: bool=None, display_name: str=None, health: str=None, last_disable=None, last_updated=None, monitoring_configurations_computed=None, monitoring_configurations_customized=None, notification_email_enabled: bool=None, notification_email_enabled_for_global_admins: bool=None, notification_emails=None, original_disabled_state: bool=None, resolved_alerts: int=None, service_id: str=None, service_name: str=None, signature: str=None, simple_properties=None, tenant_id: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, active_alerts: int=None, additional_information: str=None, created_date=None, custom_notification_emails=None, disabled: bool=None, display_name: str=None, health: str=None, last_disabled=None, last_updated=None, monitoring_configurations_computed=None, monitoring_configurations_customized=None, notification_email_enabled: bool=None, notification_email_enabled_for_global_admins: bool=None, notification_emails_enabled_for_global_admins: bool=None, notification_emails=None, original_disabled_state: bool=None, resolved_alerts: int=None, service_id: str=None, service_name: str=None, signature: str=None, simple_properties=None, tenant_id: str=None, type: str=None, **kwargs) -> None:
         super(ServiceProperties, self).__init__(**kwargs)
         self.id = id
         self.active_alerts = active_alerts
@@ -118,12 +122,13 @@ class ServiceProperties(Model):
         self.disabled = disabled
         self.display_name = display_name
         self.health = health
-        self.last_disable = last_disable
+        self.last_disabled = last_disabled
         self.last_updated = last_updated
         self.monitoring_configurations_computed = monitoring_configurations_computed
         self.monitoring_configurations_customized = monitoring_configurations_customized
         self.notification_email_enabled = notification_email_enabled
         self.notification_email_enabled_for_global_admins = notification_email_enabled_for_global_admins
+        self.notification_emails_enabled_for_global_admins = notification_emails_enabled_for_global_admins
         self.notification_emails = notification_emails
         self.original_disabled_state = original_disabled_state
         self.resolved_alerts = resolved_alerts
