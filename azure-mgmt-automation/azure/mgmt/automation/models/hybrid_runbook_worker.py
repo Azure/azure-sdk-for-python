@@ -22,16 +22,20 @@ class HybridRunbookWorker(Model):
     :param registration_time: Gets or sets the registration time of the worker
      machine.
     :type registration_time: datetime
+    :param last_seen_date_time: Last Heartbeat from the Worker
+    :type last_seen_date_time: datetime
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'ip': {'key': 'ip', 'type': 'str'},
         'registration_time': {'key': 'registrationTime', 'type': 'iso-8601'},
+        'last_seen_date_time': {'key': 'lastSeenDateTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name=None, ip=None, registration_time=None):
+    def __init__(self, name=None, ip=None, registration_time=None, last_seen_date_time=None):
         super(HybridRunbookWorker, self).__init__()
         self.name = name
         self.ip = ip
         self.registration_time = registration_time
+        self.last_seen_date_time = last_seen_date_time
