@@ -248,3 +248,9 @@ class ProvisioningState(Enum):
     completed = "Completed"
     failed = "Failed"
     running = "Running"
+
+
+class StartType(Enum):
+
+    auto_sync = "AutoSync"
+    manual_sync = "ManualSync"
