@@ -369,6 +369,13 @@
     ],
     "service_name": "Notification Hubs"
   },
+  "azure-mgmt-policyinsights": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.policyinsights"
+    ],
+    "service_name": "Policy Insights"
+  },
   "azure-mgmt-powerbiembedded": {
     "category ": "Management",
     "namespaces": [
