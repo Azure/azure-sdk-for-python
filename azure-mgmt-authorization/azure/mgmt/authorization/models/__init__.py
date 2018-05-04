@@ -9,44 +9,48 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .role_assignment_filter import RoleAssignmentFilter
-from .role_definition_filter import RoleDefinitionFilter
-from .classic_administrator_properties import ClassicAdministratorProperties
-from .classic_administrator import ClassicAdministrator
-from .permission import Permission
-from .provider_operation import ProviderOperation
-from .resource_type import ResourceType
-from .provider_operations_metadata import ProviderOperationsMetadata
-from .role_assignment_properties_with_scope import RoleAssignmentPropertiesWithScope
-from .role_assignment import RoleAssignment
-from .role_assignment_properties import RoleAssignmentProperties
-from .role_assignment_create_parameters import RoleAssignmentCreateParameters
-from .role_definition_properties import RoleDefinitionProperties
-from .role_definition import RoleDefinition
+try:
+    from .classic_administrator_py3 import ClassicAdministrator
+    from .provider_operation_py3 import ProviderOperation
+    from .resource_type_py3 import ResourceType
+    from .provider_operations_metadata_py3 import ProviderOperationsMetadata
+    from .permission_py3 import Permission
+    from .role_definition_filter_py3 import RoleDefinitionFilter
+    from .role_definition_py3 import RoleDefinition
+    from .role_assignment_filter_py3 import RoleAssignmentFilter
+    from .role_assignment_py3 import RoleAssignment
+    from .role_assignment_create_parameters_py3 import RoleAssignmentCreateParameters
+except (SyntaxError, ImportError):
+    from .classic_administrator import ClassicAdministrator
+    from .provider_operation import ProviderOperation
+    from .resource_type import ResourceType
+    from .provider_operations_metadata import ProviderOperationsMetadata
+    from .permission import Permission
+    from .role_definition_filter import RoleDefinitionFilter
+    from .role_definition import RoleDefinition
+    from .role_assignment_filter import RoleAssignmentFilter
+    from .role_assignment import RoleAssignment
+    from .role_assignment_create_parameters import RoleAssignmentCreateParameters
 from .classic_administrator_paged import ClassicAdministratorPaged
-from .permission_paged import PermissionPaged
 from .provider_operations_metadata_paged import ProviderOperationsMetadataPaged
+from .permission_paged import PermissionPaged
 from .role_assignment_paged import RoleAssignmentPaged
 from .role_definition_paged import RoleDefinitionPaged
 
 __all__ = [
-    'RoleAssignmentFilter',
-    'RoleDefinitionFilter',
-    'ClassicAdministratorProperties',
     'ClassicAdministrator',
-    'Permission',
     'ProviderOperation',
     'ResourceType',
     'ProviderOperationsMetadata',
-    'RoleAssignmentPropertiesWithScope',
-    'RoleAssignment',
-    'RoleAssignmentProperties',
-    'RoleAssignmentCreateParameters',
-    'RoleDefinitionProperties',
+    'Permission',
+    'RoleDefinitionFilter',
     'RoleDefinition',
+    'RoleAssignmentFilter',
+    'RoleAssignment',
+    'RoleAssignmentCreateParameters',
     'ClassicAdministratorPaged',
-    'PermissionPaged',
     'ProviderOperationsMetadataPaged',
+    'PermissionPaged',
     'RoleAssignmentPaged',
     'RoleDefinitionPaged',
 ]

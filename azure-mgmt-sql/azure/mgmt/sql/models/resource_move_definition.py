@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ResourceMoveDefinition(Model):
     """Contains the information necessary to perform a resource move (rename).
 
-    :param id: The target ID for the resource
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The target ID for the resource
     :type id: str
     """
 
@@ -27,6 +29,6 @@ class ResourceMoveDefinition(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(ResourceMoveDefinition, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(ResourceMoveDefinition, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

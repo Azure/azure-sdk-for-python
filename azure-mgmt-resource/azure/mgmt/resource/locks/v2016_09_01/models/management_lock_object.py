@@ -18,11 +18,14 @@ class ManagementLockObject(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param level: The level of the lock. Possible values are: NotSpecified,
-     CanNotDelete, ReadOnly. CanNotDelete means authorized users are able to
-     read and modify the resources, but not delete. ReadOnly means authorized
-     users can only read from a resource, but they can't modify or delete it.
-     Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
+    All required parameters must be populated in order to send to Azure.
+
+    :param level: Required. The level of the lock. Possible values are:
+     NotSpecified, CanNotDelete, ReadOnly. CanNotDelete means authorized users
+     are able to read and modify the resources, but not delete. ReadOnly means
+     authorized users can only read from a resource, but they can't modify or
+     delete it. Possible values include: 'NotSpecified', 'CanNotDelete',
+     'ReadOnly'
     :type level: str or
      ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
     :param notes: Notes about the lock. Maximum of 512 characters.
@@ -53,11 +56,11 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level, notes=None, owners=None, name=None):
-        super(ManagementLockObject, self).__init__()
-        self.level = level
-        self.notes = notes
-        self.owners = owners
+    def __init__(self, **kwargs):
+        super(ManagementLockObject, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.notes = kwargs.get('notes', None)
+        self.owners = kwargs.get('owners', None)
         self.id = None
         self.type = None
-        self.name = name
+        self.name = kwargs.get('name', None)

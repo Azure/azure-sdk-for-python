@@ -12,11 +12,9 @@
 from .operations import Operations
 from .dps_certificate_operations import DpsCertificateOperations
 from .iot_dps_resource_operations import IotDpsResourceOperations
-from .dps_certificates_operations import DpsCertificatesOperations
 
 __all__ = [
     'Operations',
     'DpsCertificateOperations',
     'IotDpsResourceOperations',
-    'DpsCertificatesOperations',
 ]

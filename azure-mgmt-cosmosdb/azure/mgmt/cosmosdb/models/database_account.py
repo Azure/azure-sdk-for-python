@@ -18,14 +18,16 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
+    :param location: Required. The location of the resource group to which the
+     resource belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -48,6 +50,9 @@ class DatabaseAccount(Resource):
      as the allowed list of client IPs for a given database account. IP
      addresses/ranges must be comma separated and must not contain any spaces.
     :type ip_range_filter: str
+    :param is_virtual_network_filter_enabled: Flag to indicate whether to
+     enable/disable Virtual Network ACL rules.
+    :type is_virtual_network_filter_enabled: bool
     :param enable_automatic_failover: Enables automatic failover of the write
      region in the rare event that the region is unavailable due to an outage.
      Automatic failover will result in a new write region for the account and
@@ -68,6 +73,10 @@ class DatabaseAccount(Resource):
      their failover priorities.
     :vartype failover_policies:
      list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    :param virtual_network_rules: List of Virtual Network ACL rules configured
+     for the Cosmos DB account.
+    :type virtual_network_rules:
+     list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
     """
 
     _validation = {
@@ -93,24 +102,28 @@ class DatabaseAccount(Resource):
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'DatabaseAccountOfferType'},
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
         'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
     }
 
-    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, enable_automatic_failover=None, consistency_policy=None, capabilities=None):
-        super(DatabaseAccount, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(DatabaseAccount, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.document_endpoint = None
         self.database_account_offer_type = None
-        self.ip_range_filter = ip_range_filter
-        self.enable_automatic_failover = enable_automatic_failover
-        self.consistency_policy = consistency_policy
-        self.capabilities = capabilities
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.capabilities = kwargs.get('capabilities', None)
         self.write_locations = None
         self.read_locations = None
         self.failover_policies = None
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)

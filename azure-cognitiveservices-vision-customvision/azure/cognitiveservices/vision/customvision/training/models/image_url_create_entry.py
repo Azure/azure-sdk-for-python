@@ -26,7 +26,7 @@ class ImageUrlCreateEntry(Model):
         'tag_ids': {'key': 'TagIds', 'type': '[str]'},
     }
 
-    def __init__(self, url=None, tag_ids=None):
-        super(ImageUrlCreateEntry, self).__init__()
-        self.url = url
-        self.tag_ids = tag_ids
+    def __init__(self, **kwargs):
+        super(ImageUrlCreateEntry, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.tag_ids = kwargs.get('tag_ids', None)

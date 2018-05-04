@@ -38,8 +38,8 @@ class ImageTagPrediction(Model):
         'probability': {'key': 'Probability', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(ImageTagPrediction, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageTagPrediction, self).__init__(**kwargs)
         self.tag_id = None
         self.tag = None
         self.probability = None

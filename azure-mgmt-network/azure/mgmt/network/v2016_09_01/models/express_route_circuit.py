@@ -90,17 +90,17 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None, etag=None):
-        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
-        self.sku = sku
-        self.allow_classic_operations = allow_classic_operations
-        self.circuit_provisioning_state = circuit_provisioning_state
-        self.service_provider_provisioning_state = service_provider_provisioning_state
-        self.authorizations = authorizations
-        self.peerings = peerings
-        self.service_key = service_key
-        self.service_provider_notes = service_provider_notes
-        self.service_provider_properties = service_provider_properties
-        self.provisioning_state = provisioning_state
-        self.gateway_manager_etag = gateway_manager_etag
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuit, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.allow_classic_operations = kwargs.get('allow_classic_operations', None)
+        self.circuit_provisioning_state = kwargs.get('circuit_provisioning_state', None)
+        self.service_provider_provisioning_state = kwargs.get('service_provider_provisioning_state', None)
+        self.authorizations = kwargs.get('authorizations', None)
+        self.peerings = kwargs.get('peerings', None)
+        self.service_key = kwargs.get('service_key', None)
+        self.service_provider_notes = kwargs.get('service_provider_notes', None)
+        self.service_provider_properties = kwargs.get('service_provider_properties', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
+        self.etag = kwargs.get('etag', None)

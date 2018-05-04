@@ -12,20 +12,20 @@
 from enum import Enum
 
 
-class StatusLevelTypes(Enum):
+class StatusLevelTypes(str, Enum):
 
     info = "Info"
     warning = "Warning"
     error = "Error"
 
 
-class OperatingSystemTypes(Enum):
+class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
 
 
-class VirtualMachineSizeTypes(Enum):
+class VirtualMachineSizeTypes(str, Enum):
 
     basic_a0 = "Basic_A0"
     basic_a1 = "Basic_A1"
@@ -51,6 +51,12 @@ class VirtualMachineSizeTypes(Enum):
     standard_a2m_v2 = "Standard_A2m_v2"
     standard_a4m_v2 = "Standard_A4m_v2"
     standard_a8m_v2 = "Standard_A8m_v2"
+    standard_b1s = "Standard_B1s"
+    standard_b1ms = "Standard_B1ms"
+    standard_b2s = "Standard_B2s"
+    standard_b2ms = "Standard_B2ms"
+    standard_b4ms = "Standard_B4ms"
+    standard_b8ms = "Standard_B8ms"
     standard_d1 = "Standard_D1"
     standard_d2 = "Standard_D2"
     standard_d3 = "Standard_D3"
@@ -64,6 +70,18 @@ class VirtualMachineSizeTypes(Enum):
     standard_d3_v2 = "Standard_D3_v2"
     standard_d4_v2 = "Standard_D4_v2"
     standard_d5_v2 = "Standard_D5_v2"
+    standard_d2_v3 = "Standard_D2_v3"
+    standard_d4_v3 = "Standard_D4_v3"
+    standard_d8_v3 = "Standard_D8_v3"
+    standard_d16_v3 = "Standard_D16_v3"
+    standard_d32_v3 = "Standard_D32_v3"
+    standard_d64_v3 = "Standard_D64_v3"
+    standard_d2s_v3 = "Standard_D2s_v3"
+    standard_d4s_v3 = "Standard_D4s_v3"
+    standard_d8s_v3 = "Standard_D8s_v3"
+    standard_d16s_v3 = "Standard_D16s_v3"
+    standard_d32s_v3 = "Standard_D32s_v3"
+    standard_d64s_v3 = "Standard_D64s_v3"
     standard_d11_v2 = "Standard_D11_v2"
     standard_d12_v2 = "Standard_D12_v2"
     standard_d13_v2 = "Standard_D13_v2"
@@ -87,6 +105,26 @@ class VirtualMachineSizeTypes(Enum):
     standard_ds13_v2 = "Standard_DS13_v2"
     standard_ds14_v2 = "Standard_DS14_v2"
     standard_ds15_v2 = "Standard_DS15_v2"
+    standard_ds13_4_v2 = "Standard_DS13-4_v2"
+    standard_ds13_2_v2 = "Standard_DS13-2_v2"
+    standard_ds14_8_v2 = "Standard_DS14-8_v2"
+    standard_ds14_4_v2 = "Standard_DS14-4_v2"
+    standard_e2_v3 = "Standard_E2_v3"
+    standard_e4_v3 = "Standard_E4_v3"
+    standard_e8_v3 = "Standard_E8_v3"
+    standard_e16_v3 = "Standard_E16_v3"
+    standard_e32_v3 = "Standard_E32_v3"
+    standard_e64_v3 = "Standard_E64_v3"
+    standard_e2s_v3 = "Standard_E2s_v3"
+    standard_e4s_v3 = "Standard_E4s_v3"
+    standard_e8s_v3 = "Standard_E8s_v3"
+    standard_e16s_v3 = "Standard_E16s_v3"
+    standard_e32s_v3 = "Standard_E32s_v3"
+    standard_e64s_v3 = "Standard_E64s_v3"
+    standard_e32_16_v3 = "Standard_E32-16_v3"
+    standard_e32_8s_v3 = "Standard_E32-8s_v3"
+    standard_e64_32s_v3 = "Standard_E64-32s_v3"
+    standard_e64_16s_v3 = "Standard_E64-16s_v3"
     standard_f1 = "Standard_F1"
     standard_f2 = "Standard_F2"
     standard_f4 = "Standard_F4"
@@ -97,6 +135,13 @@ class VirtualMachineSizeTypes(Enum):
     standard_f4s = "Standard_F4s"
     standard_f8s = "Standard_F8s"
     standard_f16s = "Standard_F16s"
+    standard_f2s_v2 = "Standard_F2s_v2"
+    standard_f4s_v2 = "Standard_F4s_v2"
+    standard_f8s_v2 = "Standard_F8s_v2"
+    standard_f16s_v2 = "Standard_F16s_v2"
+    standard_f32s_v2 = "Standard_F32s_v2"
+    standard_f64s_v2 = "Standard_F64s_v2"
+    standard_f72s_v2 = "Standard_F72s_v2"
     standard_g1 = "Standard_G1"
     standard_g2 = "Standard_G2"
     standard_g3 = "Standard_G3"
@@ -107,6 +152,10 @@ class VirtualMachineSizeTypes(Enum):
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
+    standard_gs4_8 = "Standard_GS4-8"
+    standard_gs4_4 = "Standard_GS4-4"
+    standard_gs5_16 = "Standard_GS5-16"
+    standard_gs5_8 = "Standard_GS5-8"
     standard_h8 = "Standard_H8"
     standard_h16 = "Standard_H16"
     standard_h8m = "Standard_H8m"
@@ -117,58 +166,78 @@ class VirtualMachineSizeTypes(Enum):
     standard_l8s = "Standard_L8s"
     standard_l16s = "Standard_L16s"
     standard_l32s = "Standard_L32s"
+    standard_m64s = "Standard_M64s"
+    standard_m64ms = "Standard_M64ms"
+    standard_m128s = "Standard_M128s"
+    standard_m128ms = "Standard_M128ms"
+    standard_m64_32ms = "Standard_M64-32ms"
+    standard_m64_16ms = "Standard_M64-16ms"
+    standard_m128_64ms = "Standard_M128-64ms"
+    standard_m128_32ms = "Standard_M128-32ms"
     standard_nc6 = "Standard_NC6"
     standard_nc12 = "Standard_NC12"
     standard_nc24 = "Standard_NC24"
     standard_nc24r = "Standard_NC24r"
+    standard_nc6s_v2 = "Standard_NC6s_v2"
+    standard_nc12s_v2 = "Standard_NC12s_v2"
+    standard_nc24s_v2 = "Standard_NC24s_v2"
+    standard_nc24rs_v2 = "Standard_NC24rs_v2"
+    standard_nc6s_v3 = "Standard_NC6s_v3"
+    standard_nc12s_v3 = "Standard_NC12s_v3"
+    standard_nc24s_v3 = "Standard_NC24s_v3"
+    standard_nc24rs_v3 = "Standard_NC24rs_v3"
+    standard_nd6s = "Standard_ND6s"
+    standard_nd12s = "Standard_ND12s"
+    standard_nd24s = "Standard_ND24s"
+    standard_nd24rs = "Standard_ND24rs"
     standard_nv6 = "Standard_NV6"
     standard_nv12 = "Standard_NV12"
     standard_nv24 = "Standard_NV24"
 
 
-class CachingTypes(Enum):
+class CachingTypes(str, Enum):
 
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
 
-class DiskCreateOptionTypes(Enum):
+class DiskCreateOptionTypes(str, Enum):
 
     from_image = "FromImage"
     empty = "Empty"
     attach = "Attach"
 
 
-class StorageAccountTypes(Enum):
+class StorageAccountTypes(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
 
 
-class PassNames(Enum):
+class PassNames(str, Enum):
 
     oobe_system = "OobeSystem"
 
 
-class ComponentNames(Enum):
+class ComponentNames(str, Enum):
 
     microsoft_windows_shell_setup = "Microsoft-Windows-Shell-Setup"
 
 
-class SettingNames(Enum):
+class SettingNames(str, Enum):
 
     auto_logon = "AutoLogon"
     first_logon_commands = "FirstLogonCommands"
 
 
-class ProtocolTypes(Enum):
+class ProtocolTypes(str, Enum):
 
     http = "Http"
     https = "Https"
 
 
-class ResourceIdentityType(Enum):
+class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"
@@ -176,7 +245,7 @@ class ResourceIdentityType(Enum):
     none = "None"
 
 
-class MaintenanceOperationResultCodeTypes(Enum):
+class MaintenanceOperationResultCodeTypes(str, Enum):
 
     none = "None"
     retry_later = "RetryLater"
@@ -184,38 +253,44 @@ class MaintenanceOperationResultCodeTypes(Enum):
     maintenance_completed = "MaintenanceCompleted"
 
 
-class UpgradeMode(Enum):
+class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     rolling = "Rolling"
 
 
-class OperatingSystemStateTypes(Enum):
+class OperatingSystemStateTypes(str, Enum):
 
     generalized = "Generalized"
     specialized = "Specialized"
 
 
-class IPVersion(Enum):
+class IPVersion(str, Enum):
 
     ipv4 = "IPv4"
     ipv6 = "IPv6"
 
 
-class VirtualMachinePriorityTypes(Enum):
+class VirtualMachinePriorityTypes(str, Enum):
 
     regular = "Regular"
     low = "Low"
 
 
-class VirtualMachineScaleSetSkuScaleType(Enum):
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
 
     automatic = "Automatic"
     none = "None"
 
 
-class RollingUpgradeStatusCode(Enum):
+class UpgradeState(str, Enum):
 
     rolling_forward = "RollingForward"
     cancelled = "Cancelled"
@@ -223,12 +298,35 @@ class RollingUpgradeStatusCode(Enum):
     faulted = "Faulted"
 
 
-class RollingUpgradeActionType(Enum):
+class UpgradeOperationInvoker(str, Enum):
+
+    unknown = "Unknown"
+    user = "User"
+    platform = "Platform"
+
+
+class RollingUpgradeStatusCode(str, Enum):
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+
+class RollingUpgradeActionType(str, Enum):
 
     start = "Start"
     cancel = "Cancel"
 
 
-class InstanceViewTypes(Enum):
+class IntervalInMins(str, Enum):
+
+    three_mins = "ThreeMins"
+    five_mins = "FiveMins"
+    thirty_mins = "ThirtyMins"
+    sixty_mins = "SixtyMins"
+
+
+class InstanceViewTypes(str, Enum):
 
     instance_view = "instanceView"

@@ -20,13 +20,15 @@ class Image(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -61,8 +63,8 @@ class Image(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, source_virtual_machine=None, storage_profile=None):
-        super(Image, self).__init__(location=location, tags=tags)
-        self.source_virtual_machine = source_virtual_machine
-        self.storage_profile = storage_profile
+    def __init__(self, **kwargs):
+        super(Image, self).__init__(**kwargs)
+        self.source_virtual_machine = kwargs.get('source_virtual_machine', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.provisioning_state = None

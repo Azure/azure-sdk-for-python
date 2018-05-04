@@ -47,9 +47,9 @@ class Usage(Model):
         'current_value': {'key': 'currentValue', 'type': 'int'},
     }
 
-    def __init__(self, unit=None):
-        super(Usage, self).__init__()
-        self.unit = unit
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.quota_period = None
         self.limit = None

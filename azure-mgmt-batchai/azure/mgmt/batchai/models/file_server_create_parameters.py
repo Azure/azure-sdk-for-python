@@ -15,22 +15,23 @@ from msrest.serialization import Model
 class FileServerCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which to create the File Server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The region in which to create the File Server.
     :type location: str
     :param tags: The user specified tags associated with the File Server.
-    :type tags: dict
-    :param vm_size: The size of the virtual machine of the file server. For
-     information about available VM sizes for fileservers from the Virtual
-     Machines Marketplace, see Sizes for Virtual Machines (Linux).
+    :type tags: dict[str, str]
+    :param vm_size: Required. The size of the virtual machine of the file
+     server. For information about available VM sizes for fileservers from the
+     Virtual Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
-    :param ssh_configuration: SSH settings for the file server.
-    :type ssh_configuration: :class:`SshConfiguration
-     <azure.mgmt.batchai.models.SshConfiguration>`
-    :param data_disks: Settings for the data disk which would be created for
-     the file server.
-    :type data_disks: :class:`DataDisks <azure.mgmt.batchai.models.DataDisks>`
+    :param ssh_configuration: Required. SSH configuration for the file server.
+    :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
+    :param data_disks: Required. Settings for the data disk which would be
+     created for the file server.
+    :type data_disks: ~azure.mgmt.batchai.models.DataDisks
     :param subnet: Specifies the identifier of the subnet.
-    :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 
     _validation = {
@@ -49,10 +50,11 @@ class FileServerCreateParameters(Model):
         'subnet': {'key': 'properties.subnet', 'type': 'ResourceId'},
     }
 
-    def __init__(self, location, vm_size, ssh_configuration, data_disks, tags=None, subnet=None):
-        self.location = location
-        self.tags = tags
-        self.vm_size = vm_size
-        self.ssh_configuration = ssh_configuration
-        self.data_disks = data_disks
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(FileServerCreateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.ssh_configuration = kwargs.get('ssh_configuration', None)
+        self.data_disks = kwargs.get('data_disks', None)
+        self.subnet = kwargs.get('subnet', None)

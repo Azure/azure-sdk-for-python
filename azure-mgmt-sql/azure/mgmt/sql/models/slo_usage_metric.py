@@ -50,8 +50,8 @@ class SloUsageMetric(Model):
         'in_range_time_ratio': {'key': 'inRangeTimeRatio', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(SloUsageMetric, self).__init__()
+    def __init__(self, **kwargs):
+        super(SloUsageMetric, self).__init__(**kwargs)
         self.service_level_objective = None
         self.service_level_objective_id = None
         self.in_range_time_ratio = None

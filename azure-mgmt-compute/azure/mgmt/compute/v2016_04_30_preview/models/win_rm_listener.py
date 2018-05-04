@@ -36,7 +36,7 @@ class WinRMListener(Model):
         'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
     }
 
-    def __init__(self, protocol=None, certificate_url=None):
-        super(WinRMListener, self).__init__()
-        self.protocol = protocol
-        self.certificate_url = certificate_url
+    def __init__(self, **kwargs):
+        super(WinRMListener, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.certificate_url = kwargs.get('certificate_url', None)

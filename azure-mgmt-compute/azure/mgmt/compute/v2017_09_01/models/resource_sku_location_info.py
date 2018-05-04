@@ -34,7 +34,7 @@ class ResourceSkuLocationInfo(Model):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(ResourceSkuLocationInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
         self.location = None
         self.zones = None

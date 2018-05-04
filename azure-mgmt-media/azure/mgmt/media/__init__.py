@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
+from .azure_media_services import AzureMediaServices
 from .version import VERSION
 
-__all__ = ['MediaServicesManagementClient']
+__all__ = ['AzureMediaServices']
 
 __version__ = VERSION
 

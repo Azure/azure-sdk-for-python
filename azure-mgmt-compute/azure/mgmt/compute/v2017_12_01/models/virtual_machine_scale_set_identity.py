@@ -52,9 +52,9 @@ class VirtualMachineScaleSetIdentity(Model):
         'identity_ids': {'key': 'identityIds', 'type': '[str]'},
     }
 
-    def __init__(self, type=None, identity_ids=None):
-        super(VirtualMachineScaleSetIdentity, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = type
-        self.identity_ids = identity_ids
+        self.type = kwargs.get('type', None)
+        self.identity_ids = kwargs.get('identity_ids', None)

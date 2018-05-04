@@ -95,7 +95,7 @@ class PredictionEndpoint(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/{projectId}/url'
+        url = self.predict_image_url.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -136,6 +136,7 @@ class PredictionEndpoint(object):
             return client_raw_response
 
         return deserialized
+    predict_image_url.metadata = {'url': '/{projectId}/url'}
 
     def predict_image(
             self, project_id, image_data, iteration_id=None, application=None, custom_headers=None, raw=False, **operation_config):
@@ -165,7 +166,7 @@ class PredictionEndpoint(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/{projectId}/image'
+        url = self.predict_image.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -208,6 +209,7 @@ class PredictionEndpoint(object):
             return client_raw_response
 
         return deserialized
+    predict_image.metadata = {'url': '/{projectId}/image'}
 
     def predict_image_url_with_no_store(
             self, project_id, iteration_id=None, application=None, url=None, custom_headers=None, raw=False, **operation_config):
@@ -239,7 +241,7 @@ class PredictionEndpoint(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/{projectId}/url/nostore'
+        url = self.predict_image_url_with_no_store.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -280,6 +282,7 @@ class PredictionEndpoint(object):
             return client_raw_response
 
         return deserialized
+    predict_image_url_with_no_store.metadata = {'url': '/{projectId}/url/nostore'}
 
     def predict_image_with_no_store(
             self, project_id, image_data, iteration_id=None, application=None, custom_headers=None, raw=False, **operation_config):
@@ -309,7 +312,7 @@ class PredictionEndpoint(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/{projectId}/image/nostore'
+        url = self.predict_image_with_no_store.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -352,3 +355,4 @@ class PredictionEndpoint(object):
             return client_raw_response
 
         return deserialized
+    predict_image_with_no_store.metadata = {'url': '/{projectId}/image/nostore'}

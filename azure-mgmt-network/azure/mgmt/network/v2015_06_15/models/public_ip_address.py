@@ -76,13 +76,13 @@ class PublicIPAddress(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags)
-        self.public_ip_allocation_method = public_ip_allocation_method
-        self.ip_configuration = ip_configuration
-        self.dns_settings = dns_settings
-        self.ip_address = ip_address
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(PublicIPAddress, self).__init__(**kwargs)
+        self.public_ip_allocation_method = kwargs.get('public_ip_allocation_method', None)
+        self.ip_configuration = kwargs.get('ip_configuration', None)
+        self.dns_settings = kwargs.get('dns_settings', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

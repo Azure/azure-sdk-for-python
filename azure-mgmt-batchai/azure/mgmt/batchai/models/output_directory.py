@@ -15,23 +15,30 @@ from msrest.serialization import Model
 class OutputDirectory(Model):
     """Output directory for the job.
 
-    :param id: The name for the output directory. It will be available for the
-     job as an environment variable under AZ_BATCHAI_OUTPUT_id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The name for the output directory. The path of the
+     output directory will be available as a value of an environment variable
+     with AZ_BATCHAI_OUTPUT_<id> name, where <id> is the value of id attribute.
     :type id: str
-    :param path_prefix: The prefix path where the output directory will be
-     created. NOTE: This is an absolute path to prefix. E.g.
-     $AZ_BATCHAI_MOUNT_ROOT/MyNFS/MyLogs.
+    :param path_prefix: Required. The prefix path where the output directory
+     will be created. NOTE: This is an absolute path to prefix. E.g.
+     $AZ_BATCHAI_MOUNT_ROOT/MyNFS/MyLogs. You can find the full path to the
+     output directory by combining pathPrefix, jobOutputDirectoryPathSegment
+     (reported by get job) and pathSuffix.
     :type path_prefix: str
     :param path_suffix: The suffix path where the output directory will be
-     created. The suffix path where the output directory will be created.
+     created. The suffix path where the output directory will be created. E.g.
+     models. You can find the full path to the output directory by combining
+     pathPrefix, jobOutputDirectoryPathSegment (reported by get job) and
+     pathSuffix.
     :type path_suffix: str
     :param type: An enumeration, which specifies the type of job output
      directory. Default value is Custom. The possible values are Model, Logs,
      Summary, and Custom. Users can use multiple enums for a single directory.
      Eg. outPutType='Model,Logs, Summary'. Possible values include: 'model',
      'logs', 'summary', 'custom'. Default value: "custom" .
-    :type type: str or :class:`OutputType
-     <azure.mgmt.batchai.models.OutputType>`
+    :type type: str or ~azure.mgmt.batchai.models.OutputType
     :param create_new: True to create new directory. Default is true. If
      false, then the directory is not created and can be any directory path
      that the user specifies. Default value: True .
@@ -51,9 +58,10 @@ class OutputDirectory(Model):
         'create_new': {'key': 'createNew', 'type': 'bool'},
     }
 
-    def __init__(self, id, path_prefix, path_suffix=None, type="custom", create_new=True):
-        self.id = id
-        self.path_prefix = path_prefix
-        self.path_suffix = path_suffix
-        self.type = type
-        self.create_new = create_new
+    def __init__(self, **kwargs):
+        super(OutputDirectory, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.path_prefix = kwargs.get('path_prefix', None)
+        self.path_suffix = kwargs.get('path_suffix', None)
+        self.type = kwargs.get('type', "custom")
+        self.create_new = kwargs.get('create_new', True)

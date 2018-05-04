@@ -12,6 +12,6 @@
 from enum import Enum
 
 
-class Filter(Enum):
+class Filter(str, Enum):
 
     at_scope = "atScope()"

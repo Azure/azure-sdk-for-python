@@ -34,6 +34,7 @@ class BatchError(Model):
     }
 
     def __init__(self, code=None, message=None, values=None):
+        super(BatchError, self).__init__()
         self.code = code
         self.message = message
         self.values = values

@@ -43,7 +43,8 @@ class SubscriptionPolicies(Model):
         'spending_limit': {'key': 'spendingLimit', 'type': 'SpendingLimit'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(SubscriptionPolicies, self).__init__(**kwargs)
         self.location_placement_id = None
         self.quota_id = None
         self.spending_limit = None

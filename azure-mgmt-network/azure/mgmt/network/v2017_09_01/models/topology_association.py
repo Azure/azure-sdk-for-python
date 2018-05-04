@@ -33,8 +33,8 @@ class TopologyAssociation(Model):
         'association_type': {'key': 'associationType', 'type': 'str'},
     }
 
-    def __init__(self, name=None, resource_id=None, association_type=None):
-        super(TopologyAssociation, self).__init__()
-        self.name = name
-        self.resource_id = resource_id
-        self.association_type = association_type
+    def __init__(self, **kwargs):
+        super(TopologyAssociation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.association_type = kwargs.get('association_type', None)

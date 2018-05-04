@@ -29,7 +29,8 @@ class ResourceType(Model):
         'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
     }
 
-    def __init__(self, name=None, display_name=None, operations=None):
-        self.name = name
-        self.display_name = display_name
-        self.operations = operations
+    def __init__(self, **kwargs):
+        super(ResourceType, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.operations = kwargs.get('operations', None)

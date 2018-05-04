@@ -23,6 +23,6 @@ class OperationListResult(Model):
         'value': {'key': 'value', 'type': '[Operation]'},
     }
 
-    def __init__(self, value=None):
-        super(OperationListResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

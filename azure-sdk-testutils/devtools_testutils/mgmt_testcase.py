@@ -12,17 +12,10 @@ from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     AbstractPreparer, GeneralNameReplacer,
     OAuthRequestResponsesFilter, DeploymentNameReplacer,
+    RequestUrlNormalizer
 )
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
-
-
-should_log = os.getenv('SDK_TESTS_LOG', '0')
-if should_log.lower() == 'true' or should_log == '1':
-    import logging
-    logger = logging.getLogger('msrest')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
 
 
 class HttpStatusCode(object):
@@ -73,7 +66,7 @@ class AzureMgmtTestCase(ReplayableTest):
             recording_dir=recording_dir,
             recording_name=recording_name or self.qualified_test_name,
             recording_processors=recording_processors or self._get_recording_processors(),
-            replay_processors=replay_processors,
+            replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
         )
@@ -99,7 +92,13 @@ class AzureMgmtTestCase(ReplayableTest):
         return [
             self.scrubber,
             OAuthRequestResponsesFilter(),
-            DeploymentNameReplacer(),
+            # DeploymentNameReplacer(), Not use this one, give me full control on deployment name
+            RequestUrlNormalizer()
+        ]
+
+    def _get_replay_processors(self):
+        return [
+            RequestUrlNormalizer()
         ]
 
     def is_playback(self):
@@ -149,6 +148,7 @@ class AzureMgmtTestCase(ReplayableTest):
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
+        client.config.enable_http_logger = True
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):

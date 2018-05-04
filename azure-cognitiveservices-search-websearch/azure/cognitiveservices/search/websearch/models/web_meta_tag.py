@@ -34,7 +34,7 @@ class WebMetaTag(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(WebMetaTag, self).__init__()
+    def __init__(self, **kwargs):
+        super(WebMetaTag, self).__init__(**kwargs)
         self.name = None
         self.content = None

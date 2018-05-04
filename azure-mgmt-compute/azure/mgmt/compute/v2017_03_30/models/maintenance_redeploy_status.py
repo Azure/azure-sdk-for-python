@@ -49,12 +49,12 @@ class MaintenanceRedeployStatus(Model):
         'last_operation_message': {'key': 'lastOperationMessage', 'type': 'str'},
     }
 
-    def __init__(self, is_customer_initiated_maintenance_allowed=None, pre_maintenance_window_start_time=None, pre_maintenance_window_end_time=None, maintenance_window_start_time=None, maintenance_window_end_time=None, last_operation_result_code=None, last_operation_message=None):
-        super(MaintenanceRedeployStatus, self).__init__()
-        self.is_customer_initiated_maintenance_allowed = is_customer_initiated_maintenance_allowed
-        self.pre_maintenance_window_start_time = pre_maintenance_window_start_time
-        self.pre_maintenance_window_end_time = pre_maintenance_window_end_time
-        self.maintenance_window_start_time = maintenance_window_start_time
-        self.maintenance_window_end_time = maintenance_window_end_time
-        self.last_operation_result_code = last_operation_result_code
-        self.last_operation_message = last_operation_message
+    def __init__(self, **kwargs):
+        super(MaintenanceRedeployStatus, self).__init__(**kwargs)
+        self.is_customer_initiated_maintenance_allowed = kwargs.get('is_customer_initiated_maintenance_allowed', None)
+        self.pre_maintenance_window_start_time = kwargs.get('pre_maintenance_window_start_time', None)
+        self.pre_maintenance_window_end_time = kwargs.get('pre_maintenance_window_end_time', None)
+        self.maintenance_window_start_time = kwargs.get('maintenance_window_start_time', None)
+        self.maintenance_window_end_time = kwargs.get('maintenance_window_end_time', None)
+        self.last_operation_result_code = kwargs.get('last_operation_result_code', None)
+        self.last_operation_message = kwargs.get('last_operation_message', None)

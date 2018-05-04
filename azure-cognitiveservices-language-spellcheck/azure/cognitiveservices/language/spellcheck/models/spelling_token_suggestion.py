@@ -18,7 +18,9 @@ class SpellingTokenSuggestion(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param suggestion:
+    All required parameters must be populated in order to send to Azure.
+
+    :param suggestion: Required.
     :type suggestion: str
     :ivar score:
     :vartype score: float
@@ -38,8 +40,8 @@ class SpellingTokenSuggestion(Model):
         'ping_url_suffix': {'key': 'pingUrlSuffix', 'type': 'str'},
     }
 
-    def __init__(self, suggestion):
-        super(SpellingTokenSuggestion, self).__init__()
-        self.suggestion = suggestion
+    def __init__(self, **kwargs):
+        super(SpellingTokenSuggestion, self).__init__(**kwargs)
+        self.suggestion = kwargs.get('suggestion', None)
         self.score = None
         self.ping_url_suffix = None

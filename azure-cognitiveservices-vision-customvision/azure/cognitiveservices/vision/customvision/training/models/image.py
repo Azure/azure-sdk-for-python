@@ -60,8 +60,8 @@ class Image(Model):
         'predictions': {'key': 'Predictions', 'type': '[PredictionTag]'},
     }
 
-    def __init__(self):
-        super(Image, self).__init__()
+    def __init__(self, **kwargs):
+        super(Image, self).__init__(**kwargs)
         self.id = None
         self.created = None
         self.width = None

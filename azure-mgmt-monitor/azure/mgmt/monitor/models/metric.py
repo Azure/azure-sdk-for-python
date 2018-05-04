@@ -15,18 +15,20 @@ from msrest.serialization import Model
 class Metric(Model):
     """The result data of a query.
 
-    :param id: the metric Id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. the metric Id.
     :type id: str
-    :param type: the resource type of the metric resource.
+    :param type: Required. the resource type of the metric resource.
     :type type: str
-    :param name: the name and the display name of the metric, i.e. it is
-     localizable string.
+    :param name: Required. the name and the display name of the metric, i.e.
+     it is localizable string.
     :type name: ~azure.mgmt.monitor.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count',
-     'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent',
-     'MilliSeconds', 'ByteSeconds', 'Unspecified'
+    :param unit: Required. the unit of the metric. Possible values include:
+     'Count', 'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond',
+     'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified'
     :type unit: str or ~azure.mgmt.monitor.models.Unit
-    :param timeseries: the time series returned when a data query is
+    :param timeseries: Required. the time series returned when a data query is
      performed.
     :type timeseries: list[~azure.mgmt.monitor.models.TimeSeriesElement]
     """
@@ -47,9 +49,10 @@ class Metric(Model):
         'timeseries': {'key': 'timeseries', 'type': '[TimeSeriesElement]'},
     }
 
-    def __init__(self, id, type, name, unit, timeseries):
-        self.id = id
-        self.type = type
-        self.name = name
-        self.unit = unit
-        self.timeseries = timeseries
+    def __init__(self, **kwargs):
+        super(Metric, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.timeseries = kwargs.get('timeseries', None)

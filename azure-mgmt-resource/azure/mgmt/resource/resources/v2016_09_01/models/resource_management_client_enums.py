@@ -12,12 +12,12 @@
 from enum import Enum
 
 
-class DeploymentMode(Enum):
+class DeploymentMode(str, Enum):
 
     incremental = "Incremental"
     complete = "Complete"
 
 
-class ResourceIdentityType(Enum):
+class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"

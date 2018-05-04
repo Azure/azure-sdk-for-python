@@ -3,6 +3,24 @@
 Release History
 ===============
 
+1.1.10 (2018-04-30)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix MultiApiClientMixin.__init__ to be a real mixin
+
+1.1.9 (2018-04-03)
+++++++++++++++++++
+
+**Features**
+
+- Add "azure.profiles" namespace #2247
+
+**Bugfixes**
+
+- get_client_from_cli_profile now supports Datalake #2318
+
 1.1.8 (2017-07-28)
 ++++++++++++++++++
 

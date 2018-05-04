@@ -18,6 +18,8 @@ class ConnectionMonitorResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar name: Name of the connection monitor.
     :vartype name: str
     :ivar id: ID of the connection monitor.
@@ -31,10 +33,10 @@ class ConnectionMonitorResult(Model):
     :type location: str
     :param tags: Connection monitor tags.
     :type tags: dict[str, str]
-    :param source:
+    :param source: Required.
     :type source:
      ~azure.mgmt.network.v2017_10_01.models.ConnectionMonitorSource
-    :param destination:
+    :param destination: Required.
     :type destination:
      ~azure.mgmt.network.v2017_10_01.models.ConnectionMonitorDestination
     :param auto_start: Determines if the connection monitor will start
@@ -79,18 +81,18 @@ class ConnectionMonitorResult(Model):
         'monitoring_status': {'key': 'properties.monitoringStatus', 'type': 'str'},
     }
 
-    def __init__(self, source, destination, etag="A unique read-only string that changes whenever the resource is updated.", location=None, tags=None, auto_start=True, monitoring_interval_in_seconds=60, provisioning_state=None, start_time=None, monitoring_status=None):
-        super(ConnectionMonitorResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConnectionMonitorResult, self).__init__(**kwargs)
         self.name = None
         self.id = None
-        self.etag = etag
+        self.etag = kwargs.get('etag', "A unique read-only string that changes whenever the resource is updated.")
         self.type = None
-        self.location = location
-        self.tags = tags
-        self.source = source
-        self.destination = destination
-        self.auto_start = auto_start
-        self.monitoring_interval_in_seconds = monitoring_interval_in_seconds
-        self.provisioning_state = provisioning_state
-        self.start_time = start_time
-        self.monitoring_status = monitoring_status
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.source = kwargs.get('source', None)
+        self.destination = kwargs.get('destination', None)
+        self.auto_start = kwargs.get('auto_start', True)
+        self.monitoring_interval_in_seconds = kwargs.get('monitoring_interval_in_seconds', 60)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.monitoring_status = kwargs.get('monitoring_status', None)

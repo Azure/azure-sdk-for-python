@@ -18,7 +18,9 @@ class Entities(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -44,7 +46,7 @@ class Entities(SearchResultsAnswer):
      'ListWithPivot'. Default value: "DominantEntity" .
     :vartype query_scenario: str or
      ~azure.cognitiveservices.search.entitysearch.models.EntityQueryScenario
-    :param value: A list of entities.
+    :param value: Required. A list of entities.
     :type value:
      list[~azure.cognitiveservices.search.entitysearch.models.Thing]
     """
@@ -69,8 +71,8 @@ class Entities(SearchResultsAnswer):
         'value': {'key': 'value', 'type': '[Thing]'},
     }
 
-    def __init__(self, value):
-        super(Entities, self).__init__()
+    def __init__(self, **kwargs):
+        super(Entities, self).__init__(**kwargs)
         self.query_scenario = None
-        self.value = value
+        self.value = kwargs.get('value', None)
         self._type = 'Entities'

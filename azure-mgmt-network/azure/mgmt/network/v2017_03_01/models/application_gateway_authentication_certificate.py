@@ -39,9 +39,9 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, data=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayAuthenticationCertificate, self).__init__(id=id)
-        self.data = data
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayAuthenticationCertificate, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

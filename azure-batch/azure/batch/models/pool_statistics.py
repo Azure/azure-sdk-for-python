@@ -48,6 +48,7 @@ class PoolStatistics(Model):
     }
 
     def __init__(self, url, start_time, last_update_time, usage_stats=None, resource_stats=None):
+        super(PoolStatistics, self).__init__()
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time

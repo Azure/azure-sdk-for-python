@@ -31,8 +31,8 @@ class BgpSettings(Model):
         'peer_weight': {'key': 'peerWeight', 'type': 'int'},
     }
 
-    def __init__(self, asn=None, bgp_peering_address=None, peer_weight=None):
-        super(BgpSettings, self).__init__()
-        self.asn = asn
-        self.bgp_peering_address = bgp_peering_address
-        self.peer_weight = peer_weight
+    def __init__(self, **kwargs):
+        super(BgpSettings, self).__init__(**kwargs)
+        self.asn = kwargs.get('asn', None)
+        self.bgp_peering_address = kwargs.get('bgp_peering_address', None)
+        self.peer_weight = kwargs.get('peer_weight', None)

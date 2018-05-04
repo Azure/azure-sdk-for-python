@@ -31,8 +31,8 @@ class StorageProfile(Model):
         'storage_mb': {'key': 'storageMB', 'type': 'int'},
     }
 
-    def __init__(self, backup_retention_days=None, geo_redundant_backup=None, storage_mb=None):
-        super(StorageProfile, self).__init__()
-        self.backup_retention_days = backup_retention_days
-        self.geo_redundant_backup = geo_redundant_backup
-        self.storage_mb = storage_mb
+    def __init__(self, **kwargs):
+        super(StorageProfile, self).__init__(**kwargs)
+        self.backup_retention_days = kwargs.get('backup_retention_days', None)
+        self.geo_redundant_backup = kwargs.get('geo_redundant_backup', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
