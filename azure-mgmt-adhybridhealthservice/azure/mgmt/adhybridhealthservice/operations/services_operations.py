@@ -672,9 +672,9 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ExportError
+        :return: An iterator like instance of MergedExportError
         :rtype:
-         ~azure.mgmt.adhybridhealthservice.models.ExportErrorPaged[~azure.mgmt.adhybridhealthservice.models.ExportError]
+         ~azure.mgmt.adhybridhealthservice.models.MergedExportErrorPaged[~azure.mgmt.adhybridhealthservice.models.MergedExportError]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -719,11 +719,11 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ExportErrorPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MergedExportErrorPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ExportErrorPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MergedExportErrorPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

@@ -27,8 +27,8 @@ class ExportError(Model):
     :type error_code: str
     :param message: The export error message.
     :type message: str
-    :param servver_error_detail: The server error detail.
-    :type servver_error_detail: str
+    :param server_error_detail: The server error detail.
+    :type server_error_detail: str
     :param time_first_occured: The date and time when the export error first
      occured.
     :type time_first_occured: datetime
@@ -103,7 +103,7 @@ class ExportError(Model):
         'type': {'key': 'type', 'type': 'str'},
         'error_code': {'key': 'errorCode', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'servver_error_detail': {'key': 'servverErrorDetail', 'type': 'str'},
+        'server_error_detail': {'key': 'serverErrorDetail', 'type': 'str'},
         'time_first_occured': {'key': 'timeFirstOccured', 'type': 'iso-8601'},
         'retry_count': {'key': 'retryCount', 'type': 'int'},
         'cs_object_id': {'key': 'csObjectId', 'type': 'str'},
@@ -136,7 +136,7 @@ class ExportError(Model):
         'modified_attribute_value': {'key': 'modifiedAttributeValue', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, run_step_result_id: str=None, connector_id: str=None, type: str=None, error_code: str=None, message: str=None, servver_error_detail: str=None, time_first_occured=None, retry_count: int=None, cs_object_id: str=None, dn: str=None, min_limit: str=None, max_limit: str=None, cloud_anchor: str=None, attribute_name: str=None, attribute_value: str=None, attribute_multi_value: bool=None, object_id_conflict: str=None, sam_account_name: str=None, ad_object_type: str=None, ad_object_guid: str=None, ad_display_name: str=None, ad_source_of_authority: str=None, ad_source_anchor: str=None, ad_user_principal_name: str=None, ad_distinguished_name: str=None, ad_mail: str=None, time_occured=None, aad_object_type: str=None, aad_object_guid: str=None, aad_display_name: str=None, aad_source_of_authority: str=None, aad_user_principal_name: str=None, aad_distringuished_name: str=None, aad_mail: str=None, last_dir_sync_time=None, modified_attribute_value: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, run_step_result_id: str=None, connector_id: str=None, type: str=None, error_code: str=None, message: str=None, server_error_detail: str=None, time_first_occured=None, retry_count: int=None, cs_object_id: str=None, dn: str=None, min_limit: str=None, max_limit: str=None, cloud_anchor: str=None, attribute_name: str=None, attribute_value: str=None, attribute_multi_value: bool=None, object_id_conflict: str=None, sam_account_name: str=None, ad_object_type: str=None, ad_object_guid: str=None, ad_display_name: str=None, ad_source_of_authority: str=None, ad_source_anchor: str=None, ad_user_principal_name: str=None, ad_distinguished_name: str=None, ad_mail: str=None, time_occured=None, aad_object_type: str=None, aad_object_guid: str=None, aad_display_name: str=None, aad_source_of_authority: str=None, aad_user_principal_name: str=None, aad_distringuished_name: str=None, aad_mail: str=None, last_dir_sync_time=None, modified_attribute_value: str=None, **kwargs) -> None:
         super(ExportError, self).__init__(**kwargs)
         self.id = id
         self.run_step_result_id = run_step_result_id
@@ -144,7 +144,7 @@ class ExportError(Model):
         self.type = type
         self.error_code = error_code
         self.message = message
-        self.servver_error_detail = servver_error_detail
+        self.server_error_detail = server_error_detail
         self.time_first_occured = time_first_occured
         self.retry_count = retry_count
         self.cs_object_id = cs_object_id

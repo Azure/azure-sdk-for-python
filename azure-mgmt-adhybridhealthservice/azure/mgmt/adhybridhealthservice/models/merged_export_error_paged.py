@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ExportErrorPaged(Paged):
+class MergedExportErrorPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ExportError <azure.mgmt.adhybridhealthservice.models.ExportError>` object
+    A paging container for iterating over a list of :class:`MergedExportError <azure.mgmt.adhybridhealthservice.models.MergedExportError>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExportError]'}
+        'current_page': {'key': 'value', 'type': '[MergedExportError]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ExportErrorPaged, self).__init__(*args, **kwargs)
+        super(MergedExportErrorPaged, self).__init__(*args, **kwargs)

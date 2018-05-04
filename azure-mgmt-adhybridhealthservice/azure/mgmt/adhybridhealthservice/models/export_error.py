@@ -27,8 +27,8 @@ class ExportError(Model):
     :type error_code: str
     :param message: The export error message.
     :type message: str
-    :param servver_error_detail: The server error detail.
-    :type servver_error_detail: str
+    :param server_error_detail: The server error detail.
+    :type server_error_detail: str
     :param time_first_occured: The date and time when the export error first
      occured.
     :type time_first_occured: datetime
@@ -103,7 +103,7 @@ class ExportError(Model):
         'type': {'key': 'type', 'type': 'str'},
         'error_code': {'key': 'errorCode', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'servver_error_detail': {'key': 'servverErrorDetail', 'type': 'str'},
+        'server_error_detail': {'key': 'serverErrorDetail', 'type': 'str'},
         'time_first_occured': {'key': 'timeFirstOccured', 'type': 'iso-8601'},
         'retry_count': {'key': 'retryCount', 'type': 'int'},
         'cs_object_id': {'key': 'csObjectId', 'type': 'str'},
@@ -144,7 +144,7 @@ class ExportError(Model):
         self.type = kwargs.get('type', None)
         self.error_code = kwargs.get('error_code', None)
         self.message = kwargs.get('message', None)
-        self.servver_error_detail = kwargs.get('servver_error_detail', None)
+        self.server_error_detail = kwargs.get('server_error_detail', None)
         self.time_first_occured = kwargs.get('time_first_occured', None)
         self.retry_count = kwargs.get('retry_count', None)
         self.cs_object_id = kwargs.get('cs_object_id', None)

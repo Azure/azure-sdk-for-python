@@ -19,12 +19,11 @@ class InboundReplicationNeighbor(Model):
     :type source_domain_controller: str
     :param consecutive_failure_count: The number of consecutive faulire
      counts.
-    :type consecutive_failure_count: str
+    :type consecutive_failure_count: int
     :param naming_context: The naming context.
     :type naming_context: str
-    :param status: The health status for the domain controller. Possible
-     values include: 'Healthy', 'Warning', 'Error', 'NotMonitored', 'Missing'
-    :type status: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
+    :param status: The health status for the domain controller
+    :type status: int
     :param last_attempted_sync: The last time a sync was attempted on the
      domain controller.
     :type last_attempted_sync: datetime
@@ -49,9 +48,9 @@ class InboundReplicationNeighbor(Model):
 
     _attribute_map = {
         'source_domain_controller': {'key': 'sourceDomainController', 'type': 'str'},
-        'consecutive_failure_count': {'key': 'consecutiveFailureCount', 'type': 'str'},
+        'consecutive_failure_count': {'key': 'consecutiveFailureCount', 'type': 'int'},
         'naming_context': {'key': 'namingContext', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'int'},
         'last_attempted_sync': {'key': 'lastAttemptedSync', 'type': 'iso-8601'},
         'last_successful_sync': {'key': 'lastSuccessfulSync', 'type': 'iso-8601'},
         'last_error_code': {'key': 'lastErrorCode', 'type': 'int'},
@@ -63,7 +62,7 @@ class InboundReplicationNeighbor(Model):
         'additional_info': {'key': 'additionalInfo', 'type': 'str'},
     }
 
-    def __init__(self, *, source_domain_controller: str=None, consecutive_failure_count: str=None, naming_context: str=None, status=None, last_attempted_sync=None, last_successful_sync=None, last_error_code: int=None, last_error_message: str=None, error_title: str=None, error_description: str=None, fix_link: str=None, fix_details: str=None, additional_info: str=None, **kwargs) -> None:
+    def __init__(self, *, source_domain_controller: str=None, consecutive_failure_count: int=None, naming_context: str=None, status: int=None, last_attempted_sync=None, last_successful_sync=None, last_error_code: int=None, last_error_message: str=None, error_title: str=None, error_description: str=None, fix_link: str=None, fix_details: str=None, additional_info: str=None, **kwargs) -> None:
         super(InboundReplicationNeighbor, self).__init__(**kwargs)
         self.source_domain_controller = source_domain_controller
         self.consecutive_failure_count = consecutive_failure_count

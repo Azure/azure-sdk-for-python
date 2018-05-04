@@ -21,19 +21,14 @@ class ReplicationSummary(Model):
     :type site: str
     :param domain: The domain name for a given domain controller.
     :type domain: str
-    :param status: The health status for a domain controller. Possible values
-     include: 'Healthy', 'Warning', 'Error', 'NotMonitored', 'Missing'
-    :type status: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
+    :param status: The health status for a domain controller.
+    :type status: int
     :param last_attempted_sync: The last time when a sync was attempted for a
      given domain controller.
     :type last_attempted_sync: datetime
     :param last_successful_sync: The time when the last successful sync
      happened for a given domain controller.
     :type last_successful_sync: datetime
-    :param service_id: The service Id.
-    :type service_id: str
-    :param service_member_id: The serviceMemberId.
-    :type service_member_id: str
     :param inbound_neighbor_collection: List of individual domain controller
      neighbor's inbound replication status.
     :type inbound_neighbor_collection:
@@ -44,11 +39,9 @@ class ReplicationSummary(Model):
         'target_server': {'key': 'targetServer', 'type': 'str'},
         'site': {'key': 'site', 'type': 'str'},
         'domain': {'key': 'domain', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'int'},
         'last_attempted_sync': {'key': 'lastAttemptedSync', 'type': 'iso-8601'},
         'last_successful_sync': {'key': 'lastSuccessfulSync', 'type': 'iso-8601'},
-        'service_id': {'key': 'serviceId', 'type': 'str'},
-        'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
         'inbound_neighbor_collection': {'key': 'inboundNeighborCollection', 'type': '[InboundReplicationNeighbor]'},
     }
 
@@ -60,6 +53,4 @@ class ReplicationSummary(Model):
         self.status = kwargs.get('status', None)
         self.last_attempted_sync = kwargs.get('last_attempted_sync', None)
         self.last_successful_sync = kwargs.get('last_successful_sync', None)
-        self.service_id = kwargs.get('service_id', None)
-        self.service_member_id = kwargs.get('service_member_id', None)
         self.inbound_neighbor_collection = kwargs.get('inbound_neighbor_collection', None)

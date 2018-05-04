@@ -19,18 +19,18 @@ class ErrorCount(Model):
     :type error_bucket: str
     :param count: The error count.
     :type count: int
-    :param trucated: Indicates if the error count is truncated or not.
-    :type trucated: bool
+    :param truncated: Indicates if the error count is truncated or not.
+    :type truncated: bool
     """
 
     _attribute_map = {
         'error_bucket': {'key': 'errorBucket', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
-        'trucated': {'key': 'trucated', 'type': 'bool'},
+        'truncated': {'key': 'truncated', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorCount, self).__init__(**kwargs)
         self.error_bucket = kwargs.get('error_bucket', None)
         self.count = kwargs.get('count', None)
-        self.trucated = kwargs.get('trucated', None)
+        self.truncated = kwargs.get('truncated', None)

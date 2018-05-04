@@ -15,10 +15,6 @@ from msrest.serialization import Model
 class MergedExportError(Model):
     """The merged export error.
 
-    :param id: The internal Id for the export error.
-    :type id: str
-    :param id_set: Indicates if the Id has been set externally or not.
-    :type id_set: bool
     :param incoming_object_display_name: The incoming object display name.
     :type incoming_object_display_name: str
     :param incoming_object_type: The incoming object type.
@@ -61,8 +57,6 @@ class MergedExportError(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'id_set': {'key': 'idSet', 'type': 'bool'},
         'incoming_object_display_name': {'key': 'incomingObjectDisplayName', 'type': 'str'},
         'incoming_object_type': {'key': 'incomingObjectType', 'type': 'str'},
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
@@ -83,10 +77,8 @@ class MergedExportError(Model):
         'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, id_set: bool=None, incoming_object_display_name: str=None, incoming_object_type: str=None, user_principal_name: str=None, type: str=None, attribute_name: str=None, attribute_value: str=None, time_occurred=None, time_first_occurred=None, cs_object_id: str=None, dn: str=None, incoming_object=None, existing_object=None, modified_or_removed_attribute_value: str=None, run_step_result_id: str=None, sam_account_name: str=None, server_error_detail: str=None, service_id: str=None, service_member_id: str=None, **kwargs) -> None:
+    def __init__(self, *, incoming_object_display_name: str=None, incoming_object_type: str=None, user_principal_name: str=None, type: str=None, attribute_name: str=None, attribute_value: str=None, time_occurred=None, time_first_occurred=None, cs_object_id: str=None, dn: str=None, incoming_object=None, existing_object=None, modified_or_removed_attribute_value: str=None, run_step_result_id: str=None, sam_account_name: str=None, server_error_detail: str=None, service_id: str=None, service_member_id: str=None, **kwargs) -> None:
         super(MergedExportError, self).__init__(**kwargs)
-        self.id = id
-        self.id_set = id_set
         self.incoming_object_display_name = incoming_object_display_name
         self.incoming_object_type = incoming_object_type
         self.user_principal_name = user_principal_name

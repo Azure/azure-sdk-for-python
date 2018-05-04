@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class Dimension(Model):
     """The connector object error.
 
-    :param status: The health status for the domain controller. Possible
+    :param health: The health status for the domain controller. Possible
      values include: 'Healthy', 'Warning', 'Error', 'NotMonitored', 'Missing'
-    :type status: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
+    :type health: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
     :param simple_properties: List of service specific configuration
      properties.
     :type simple_properties: object
@@ -45,7 +45,7 @@ class Dimension(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        'health': {'key': 'health', 'type': 'str'},
         'simple_properties': {'key': 'simpleProperties', 'type': 'object'},
         'active_alerts': {'key': 'activeAlerts', 'type': 'int'},
         'additional_information': {'key': 'additionalInformation', 'type': 'str'},
@@ -56,9 +56,9 @@ class Dimension(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, status=None, simple_properties=None, active_alerts: int=None, additional_information: str=None, last_updated=None, display_name: str=None, resolved_alerts: int=None, signature: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, *, health=None, simple_properties=None, active_alerts: int=None, additional_information: str=None, last_updated=None, display_name: str=None, resolved_alerts: int=None, signature: str=None, type: str=None, **kwargs) -> None:
         super(Dimension, self).__init__(**kwargs)
-        self.status = status
+        self.health = health
         self.simple_properties = simple_properties
         self.active_alerts = active_alerts
         self.additional_information = additional_information

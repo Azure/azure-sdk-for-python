@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class Dimension(Model):
     """The connector object error.
 
-    :param status: The health status for the domain controller. Possible
+    :param health: The health status for the domain controller. Possible
      values include: 'Healthy', 'Warning', 'Error', 'NotMonitored', 'Missing'
-    :type status: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
+    :type health: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
     :param simple_properties: List of service specific configuration
      properties.
     :type simple_properties: object
@@ -45,7 +45,7 @@ class Dimension(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        'health': {'key': 'health', 'type': 'str'},
         'simple_properties': {'key': 'simpleProperties', 'type': 'object'},
         'active_alerts': {'key': 'activeAlerts', 'type': 'int'},
         'additional_information': {'key': 'additionalInformation', 'type': 'str'},
@@ -58,7 +58,7 @@ class Dimension(Model):
 
     def __init__(self, **kwargs):
         super(Dimension, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
+        self.health = kwargs.get('health', None)
         self.simple_properties = kwargs.get('simple_properties', None)
         self.active_alerts = kwargs.get('active_alerts', None)
         self.additional_information = kwargs.get('additional_information', None)

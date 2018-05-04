@@ -25,7 +25,7 @@ class GlobalConfiguration(Model):
     :param num_saved_pwd_events: The number of saved password events.
     :type num_saved_pwd_events: int
     :param feature_set: The list of additional feature sets.
-    :type feature_set: object
+    :type feature_set: list[~azure.mgmt.adhybridhealthservice.models.Item]
     """
 
     _attribute_map = {
@@ -33,7 +33,7 @@ class GlobalConfiguration(Model):
         'schema_xml': {'key': 'schemaXml', 'type': 'str'},
         'password_sync_enabled': {'key': 'passwordSyncEnabled', 'type': 'bool'},
         'num_saved_pwd_events': {'key': 'numSavedPwdEvents', 'type': 'int'},
-        'feature_set': {'key': 'featureSet', 'type': 'object'},
+        'feature_set': {'key': 'featureSet', 'type': '[Item]'},
     }
 
     def __init__(self, **kwargs):

@@ -12,6 +12,21 @@
 from enum import Enum
 
 
+class ServerDisabledReason(str, Enum):
+
+    none = "None"
+    gdpr_stop_collection = "GdprStopCollection"
+    deleted_from_portal = "DeletedFromPortal"
+    disabled_due_to_inactivity = "DisabledDueToInactivity"
+
+
+class MonitoringLevel(str, Enum):
+
+    partial = "Partial"
+    full = "Full"
+    off = "Off"
+
+
 class Level(str, Enum):
 
     warning = "Warning"
@@ -126,18 +141,3 @@ class ServiceType(str, Enum):
     undefined = "Undefined"
     aad_connect_sync = "AadConnectSync"
     dir_sync = "DirSync"
-
-
-class ServerDisabledReason(str, Enum):
-
-    none = "None"
-    gdpr_stop_collection = "GdprStopCollection"
-    deleted_from_portal = "DeletedFromPortal"
-    disabled_due_to_inactivity = "DisabledDueToInactivity"
-
-
-class MonitoringLevel(str, Enum):
-
-    partial = "Partial"
-    full = "Full"
-    off = "Off"

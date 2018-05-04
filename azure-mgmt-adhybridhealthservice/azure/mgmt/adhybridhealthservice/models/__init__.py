@@ -151,7 +151,7 @@ from .dimension_paged import DimensionPaged
 from .adds_service_member_paged import AddsServiceMemberPaged
 from .operation_paged import OperationPaged
 from .error_count_paged import ErrorCountPaged
-from .export_error_paged import ExportErrorPaged
+from .merged_export_error_paged import MergedExportErrorPaged
 from .export_status_paged import ExportStatusPaged
 from .alert_feedback_paged import AlertFeedbackPaged
 from .error_report_users_entry_paged import ErrorReportUsersEntryPaged
@@ -159,6 +159,8 @@ from .service_member_paged import ServiceMemberPaged
 from .credential_paged import CredentialPaged
 from .global_configuration_paged import GlobalConfigurationPaged
 from .ad_hybrid_health_service_enums import (
+    ServerDisabledReason,
+    MonitoringLevel,
     Level,
     State,
     ValueDeltaOperationType,
@@ -171,8 +173,6 @@ from .ad_hybrid_health_service_enums import (
     AlgorithmStepType,
     PasswordOperationTypes,
     ServiceType,
-    ServerDisabledReason,
-    MonitoringLevel,
 )
 
 __all__ = [
@@ -250,13 +250,15 @@ __all__ = [
     'AddsServiceMemberPaged',
     'OperationPaged',
     'ErrorCountPaged',
-    'ExportErrorPaged',
+    'MergedExportErrorPaged',
     'ExportStatusPaged',
     'AlertFeedbackPaged',
     'ErrorReportUsersEntryPaged',
     'ServiceMemberPaged',
     'CredentialPaged',
     'GlobalConfigurationPaged',
+    'ServerDisabledReason',
+    'MonitoringLevel',
     'Level',
     'State',
     'ValueDeltaOperationType',
@@ -269,6 +271,4 @@ __all__ = [
     'AlgorithmStepType',
     'PasswordOperationTypes',
     'ServiceType',
-    'ServerDisabledReason',
-    'MonitoringLevel',
 ]
