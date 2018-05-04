@@ -1478,7 +1478,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_multi_role_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}metrics'}
+    list_multi_role_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metrics'}
 
     def list_multi_role_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -2911,7 +2911,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_worker_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}metrics'}
+    list_worker_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metrics'}
 
     def list_web_worker_metric_definitions(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
