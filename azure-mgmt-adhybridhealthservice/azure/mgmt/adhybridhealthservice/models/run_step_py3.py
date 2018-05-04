@@ -28,6 +28,8 @@ class RunStep(Model):
     :type partition_id: str
     :param operation_type: The run step operation types.
     :type operation_type: int
+    :param timeout: The operation timeout.
+    :type timeout: int
     """
 
     _attribute_map = {
@@ -37,9 +39,10 @@ class RunStep(Model):
         'page_size': {'key': 'pageSize', 'type': 'int'},
         'partition_id': {'key': 'partitionId', 'type': 'str'},
         'operation_type': {'key': 'operationType', 'type': 'int'},
+        'timeout': {'key': 'timeout', 'type': 'int'},
     }
 
-    def __init__(self, *, batch_size: int=None, object_process_limit: int=None, object_delete_limit: int=None, page_size: int=None, partition_id: str=None, operation_type: int=None, **kwargs) -> None:
+    def __init__(self, *, batch_size: int=None, object_process_limit: int=None, object_delete_limit: int=None, page_size: int=None, partition_id: str=None, operation_type: int=None, timeout: int=None, **kwargs) -> None:
         super(RunStep, self).__init__(**kwargs)
         self.batch_size = batch_size
         self.object_process_limit = object_process_limit
@@ -47,3 +50,4 @@ class RunStep(Model):
         self.page_size = page_size
         self.partition_id = partition_id
         self.operation_type = operation_type
+        self.timeout = timeout

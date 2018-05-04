@@ -170,8 +170,6 @@ from .ad_hybrid_health_service_enums import (
     HealthStatus,
     AlgorithmStepType,
     PasswordOperationTypes,
-    ServiceType,
-    ServerDisabledReason,
 )
 
 __all__ = [
@@ -267,6 +265,4 @@ __all__ = [
     'HealthStatus',
     'AlgorithmStepType',
     'PasswordOperationTypes',
-    'ServiceType',
-    'ServerDisabledReason',
 ]

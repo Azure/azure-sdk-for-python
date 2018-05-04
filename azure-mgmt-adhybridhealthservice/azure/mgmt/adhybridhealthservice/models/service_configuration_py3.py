@@ -17,10 +17,8 @@ class ServiceConfiguration(Model):
 
     :param version: The version of the sync service.
     :type version: str
-    :param service_type: The service type of the server. Possible values
-     include: 'Undefined', 'AadConnectSync', 'DirSync'
-    :type service_type: str or
-     ~azure.mgmt.adhybridhealthservice.models.ServiceType
+    :param service_type: The service type of the server.
+    :type service_type: int
     :param service_account: The service account.
     :type service_account: str
     :param sql_server: The SQL server information.
@@ -39,7 +37,7 @@ class ServiceConfiguration(Model):
 
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
-        'service_type': {'key': 'serviceType', 'type': 'str'},
+        'service_type': {'key': 'serviceType', 'type': 'int'},
         'service_account': {'key': 'serviceAccount', 'type': 'str'},
         'sql_server': {'key': 'sqlServer', 'type': 'str'},
         'sql_version': {'key': 'sqlVersion', 'type': 'str'},
@@ -49,7 +47,7 @@ class ServiceConfiguration(Model):
         'sql_database_size': {'key': 'sqlDatabaseSize', 'type': 'int'},
     }
 
-    def __init__(self, *, version: str=None, service_type=None, service_account: str=None, sql_server: str=None, sql_version: str=None, sql_edition: str=None, sql_instance: str=None, sql_database: str=None, sql_database_size: int=None, **kwargs) -> None:
+    def __init__(self, *, version: str=None, service_type: int=None, service_account: str=None, sql_server: str=None, sql_version: str=None, sql_edition: str=None, sql_instance: str=None, sql_database: str=None, sql_database_size: int=None, **kwargs) -> None:
         super(ServiceConfiguration, self).__init__(**kwargs)
         self.version = version
         self.service_type = service_type

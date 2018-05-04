@@ -34,11 +34,8 @@ class ServiceMember(Model):
     :type dimensions: object
     :param disabled: Indicates if the server is disabled or not.
     :type disabled: bool
-    :param disabled_reason: The reason for disabling the server. Possible
-     values include: 'None', 'GdprStopCollection', 'DeletedFromPortal',
-     'DisabledDueToInactivity'
-    :type disabled_reason: str or
-     ~azure.mgmt.adhybridhealthservice.models.ServerDisabledReason
+    :param disabled_reason: The reason for disabling the server.
+    :type disabled_reason: int
     :param installed_qfes: The list of installed QFEs for the server.
     :type installed_qfes: object
     :param last_disabled: The date and time , in UTC, when the server was last
@@ -96,7 +93,7 @@ class ServiceMember(Model):
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
         'dimensions': {'key': 'dimensions', 'type': 'object'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
-        'disabled_reason': {'key': 'disabledReason', 'type': 'ServerDisabledReason'},
+        'disabled_reason': {'key': 'disabledReason', 'type': 'int'},
         'installed_qfes': {'key': 'installedQfes', 'type': 'object'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_reboot': {'key': 'lastReboot', 'type': 'iso-8601'},

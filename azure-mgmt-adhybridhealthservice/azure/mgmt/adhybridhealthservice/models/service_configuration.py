@@ -17,10 +17,8 @@ class ServiceConfiguration(Model):
 
     :param version: The version of the sync service.
     :type version: str
-    :param service_type: The service type of the server. Possible values
-     include: 'Undefined', 'AadConnectSync', 'DirSync'
-    :type service_type: str or
-     ~azure.mgmt.adhybridhealthservice.models.ServiceType
+    :param service_type: The service type of the server.
+    :type service_type: int
     :param service_account: The service account.
     :type service_account: str
     :param sql_server: The SQL server information.
@@ -39,7 +37,7 @@ class ServiceConfiguration(Model):
 
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
-        'service_type': {'key': 'serviceType', 'type': 'str'},
+        'service_type': {'key': 'serviceType', 'type': 'int'},
         'service_account': {'key': 'serviceAccount', 'type': 'str'},
         'sql_server': {'key': 'sqlServer', 'type': 'str'},
         'sql_version': {'key': 'sqlVersion', 'type': 'str'},

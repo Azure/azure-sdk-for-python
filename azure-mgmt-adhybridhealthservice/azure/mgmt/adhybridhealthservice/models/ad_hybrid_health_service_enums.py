@@ -113,18 +113,3 @@ class PasswordOperationTypes(str, Enum):
     undefined = "Undefined"
     set = "Set"
     change = "Change"
-
-
-class ServiceType(str, Enum):
-
-    undefined = "Undefined"
-    aad_connect_sync = "AadConnectSync"
-    dir_sync = "DirSync"
-
-
-class ServerDisabledReason(str, Enum):
-
-    none = "None"
-    gdpr_stop_collection = "GdprStopCollection"
-    deleted_from_portal = "DeletedFromPortal"
-    disabled_due_to_inactivity = "DisabledDueToInactivity"
