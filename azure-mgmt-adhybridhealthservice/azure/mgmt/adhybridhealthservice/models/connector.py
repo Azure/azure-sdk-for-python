@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class Connector(Model):
     """The connect details.
 
+    :param connector_id: The connector Id.
+    :type connector_id: str
     :param id: The connector Id.
     :type id: str
     :param name: The connector name.
@@ -50,6 +52,7 @@ class Connector(Model):
     """
 
     _attribute_map = {
+        'connector_id': {'key': 'connectorId', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'version': {'key': 'version', 'type': 'int'},
@@ -68,6 +71,7 @@ class Connector(Model):
 
     def __init__(self, **kwargs):
         super(Connector, self).__init__(**kwargs)
+        self.connector_id = kwargs.get('connector_id', None)
         self.id = kwargs.get('id', None)
         self.name = kwargs.get('name', None)
         self.version = kwargs.get('version', None)

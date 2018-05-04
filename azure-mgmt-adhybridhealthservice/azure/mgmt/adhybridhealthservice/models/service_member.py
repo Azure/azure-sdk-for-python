@@ -13,31 +13,134 @@ from msrest.serialization import Model
 
 
 class ServiceMember(Model):
-    """The details of the server for a given onboarded service.
+    """The server properties for a given service.
 
-    :param continuation_token: The page-continuation token to use with a paged
-     version of this API.
-    :type continuation_token: str
-    :param total_count: The total number of servers onboarded for a given
-     service.
-    :type total_count: int
-    :param next_link: The link used to get the next page of the operation.
-    :type next_link: str
-    :param value: The server properties.
-    :type value:
-     list[~azure.mgmt.adhybridhealthservice.models.ServiceMemberProperties]
+    :param service_member_id: The id of the server.
+    :type service_member_id: str
+    :param service_id: The service id to whom this server belongs.
+    :type service_id: str
+    :param tenant_id: The tenant id to whom this server belongs.
+    :type tenant_id: str
+    :param active_alerts: The total number of alerts that are currently active
+     for the server.
+    :type active_alerts: int
+    :param additional_information: The additional information, if any, for the
+     server.
+    :type additional_information: str
+    :param created_date: The date time , in UTC, when the server was
+     onboaraded to Azure Active Directory Connect Health.
+    :type created_date: datetime
+    :param dimensions: The server specific configuration related dimensions.
+    :type dimensions: object
+    :param disabled: Indicates if the server is disabled or not.
+    :type disabled: bool
+    :param disabled_reason: The reason for disabling the server. Possible
+     values include: 'None', 'GdprStopCollection', 'DeletedFromPortal',
+     'DisabledDueToInactivity'
+    :type disabled_reason: str or
+     ~azure.mgmt.adhybridhealthservice.models.ServerDisabledReason
+    :param installed_qfes: The list of installed QFEs for the server.
+    :type installed_qfes: object
+    :param last_disabled: The date and time , in UTC, when the server was last
+     disabled.
+    :type last_disabled: datetime
+    :param last_reboot: The date and time, in UTC, when the server was last
+     rebooted.
+    :type last_reboot: datetime
+    :param last_server_reported_monitoring_level_change: The date and time, in
+     UTC, when the server's data monitoring configuration was last changed.
+    :type last_server_reported_monitoring_level_change: datetime
+    :param last_updated: The date and time, in UTC, when the server proeprties
+     were last updated.
+    :type last_updated: datetime
+    :param machine_id: The id of the machine.
+    :type machine_id: str
+    :param machine_name: The name of the server.
+    :type machine_name: str
+    :param monitoring_configurations_computed: The monitoring configuration of
+     the server which determines what activities are monitored by Azure Active
+     Directory Connect Health.
+    :type monitoring_configurations_computed: object
+    :param monitoring_configurations_customized: The customized monitoring
+     configuration of the server which determines what activities are monitored
+     by Azure Active Directory Connect Health.
+    :type monitoring_configurations_customized: object
+    :param os_name: The name of the operating system installed in the machine.
+    :type os_name: str
+    :param os_version: The version of the operating system installed in the
+     machine.
+    :type os_version: str
+    :param properties: Server specific properties.
+    :type properties: object
+    :param recommended_qfes: The list of recommended hotfixes for the server.
+    :type recommended_qfes: object
+    :param resolved_alerts: The total count of alerts that are resolved for
+     this server.
+    :type resolved_alerts: int
+    :param role: The service role that is being monitored in the server.
+    :type role: str
+    :param server_reported_monitoring_level: The monitoring level reported by
+     the server. Possible values include: 'Partial', 'Full', 'Off'
+    :type server_reported_monitoring_level: str or
+     ~azure.mgmt.adhybridhealthservice.models.MonitoringLevel
+    :param status: The health status of the server.
+    :type status: str
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'total_count': {'key': 'totalCount', 'type': 'int'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ServiceMemberProperties]'},
+        'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
+        'service_id': {'key': 'serviceId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'active_alerts': {'key': 'activeAlerts', 'type': 'int'},
+        'additional_information': {'key': 'additionalInformation', 'type': 'str'},
+        'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
+        'dimensions': {'key': 'dimensions', 'type': 'object'},
+        'disabled': {'key': 'disabled', 'type': 'bool'},
+        'disabled_reason': {'key': 'disabledReason', 'type': 'ServerDisabledReason'},
+        'installed_qfes': {'key': 'installedQfes', 'type': 'object'},
+        'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
+        'last_reboot': {'key': 'lastReboot', 'type': 'iso-8601'},
+        'last_server_reported_monitoring_level_change': {'key': 'lastServerReportedMonitoringLevelChange', 'type': 'iso-8601'},
+        'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
+        'machine_id': {'key': 'machineId', 'type': 'str'},
+        'machine_name': {'key': 'machineName', 'type': 'str'},
+        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': 'object'},
+        'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': 'object'},
+        'os_name': {'key': 'osName', 'type': 'str'},
+        'os_version': {'key': 'osVersion', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
+        'recommended_qfes': {'key': 'recommendedQfes', 'type': 'object'},
+        'resolved_alerts': {'key': 'resolvedAlerts', 'type': 'int'},
+        'role': {'key': 'role', 'type': 'str'},
+        'server_reported_monitoring_level': {'key': 'serverReportedMonitoringLevel', 'type': 'MonitoringLevel'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ServiceMember, self).__init__(**kwargs)
-        self.continuation_token = kwargs.get('continuation_token', None)
-        self.total_count = kwargs.get('total_count', None)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.service_member_id = kwargs.get('service_member_id', None)
+        self.service_id = kwargs.get('service_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.active_alerts = kwargs.get('active_alerts', None)
+        self.additional_information = kwargs.get('additional_information', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.disabled = kwargs.get('disabled', None)
+        self.disabled_reason = kwargs.get('disabled_reason', None)
+        self.installed_qfes = kwargs.get('installed_qfes', None)
+        self.last_disabled = kwargs.get('last_disabled', None)
+        self.last_reboot = kwargs.get('last_reboot', None)
+        self.last_server_reported_monitoring_level_change = kwargs.get('last_server_reported_monitoring_level_change', None)
+        self.last_updated = kwargs.get('last_updated', None)
+        self.machine_id = kwargs.get('machine_id', None)
+        self.machine_name = kwargs.get('machine_name', None)
+        self.monitoring_configurations_computed = kwargs.get('monitoring_configurations_computed', None)
+        self.monitoring_configurations_customized = kwargs.get('monitoring_configurations_customized', None)
+        self.os_name = kwargs.get('os_name', None)
+        self.os_version = kwargs.get('os_version', None)
+        self.properties = kwargs.get('properties', None)
+        self.recommended_qfes = kwargs.get('recommended_qfes', None)
+        self.resolved_alerts = kwargs.get('resolved_alerts', None)
+        self.role = kwargs.get('role', None)
+        self.server_reported_monitoring_level = kwargs.get('server_reported_monitoring_level', None)
+        self.status = kwargs.get('status', None)

@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class Connector(Model):
     """The connect details.
 
+    :param connector_id: The connector Id.
+    :type connector_id: str
     :param id: The connector Id.
     :type id: str
     :param name: The connector name.
@@ -50,6 +52,7 @@ class Connector(Model):
     """
 
     _attribute_map = {
+        'connector_id': {'key': 'connectorId', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'version': {'key': 'version', 'type': 'int'},
@@ -66,8 +69,9 @@ class Connector(Model):
         'attributes_included': {'key': 'attributesIncluded', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, version: int=None, type: str=None, description: str=None, schema_xml: str=None, password_management_settings=None, password_hash_sync_configuration=None, time_created=None, time_last_modified=None, partitions=None, run_profiles=None, classes_included=None, attributes_included=None, **kwargs) -> None:
+    def __init__(self, *, connector_id: str=None, id: str=None, name: str=None, version: int=None, type: str=None, description: str=None, schema_xml: str=None, password_management_settings=None, password_hash_sync_configuration=None, time_created=None, time_last_modified=None, partitions=None, run_profiles=None, classes_included=None, attributes_included=None, **kwargs) -> None:
         super(Connector, self).__init__(**kwargs)
+        self.connector_id = connector_id
         self.id = id
         self.name = name
         self.version = version

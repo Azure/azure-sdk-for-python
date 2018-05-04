@@ -26,12 +26,8 @@ class RunStep(Model):
     :param partition_id: The Id of the partition that a current run setp
      operation is executing.
     :type partition_id: str
-    :param run_step_operation_type: The run step operation types. Possible
-     values include: 'Undefined', 'FullImport', 'DeltaImport',
-     'FullSynchornization', 'DeltaSynchronization', 'ApplyRules', 'Export',
-     'FullExport', 'FullImportReevaluateRules'
-    :type run_step_operation_type: str or
-     ~azure.mgmt.adhybridhealthservice.models.RunStepOperationType
+    :param operation_type: The run step operation types.
+    :type operation_type: int
     """
 
     _attribute_map = {
@@ -40,14 +36,14 @@ class RunStep(Model):
         'object_delete_limit': {'key': 'objectDeleteLimit', 'type': 'int'},
         'page_size': {'key': 'pageSize', 'type': 'int'},
         'partition_id': {'key': 'partitionId', 'type': 'str'},
-        'run_step_operation_type': {'key': 'runStepOperationType', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'int'},
     }
 
-    def __init__(self, *, batch_size: int=None, object_process_limit: int=None, object_delete_limit: int=None, page_size: int=None, partition_id: str=None, run_step_operation_type=None, **kwargs) -> None:
+    def __init__(self, *, batch_size: int=None, object_process_limit: int=None, object_delete_limit: int=None, page_size: int=None, partition_id: str=None, operation_type: int=None, **kwargs) -> None:
         super(RunStep, self).__init__(**kwargs)
         self.batch_size = batch_size
         self.object_process_limit = object_process_limit
         self.object_delete_limit = object_delete_limit
         self.page_size = page_size
         self.partition_id = partition_id
-        self.run_step_operation_type = run_step_operation_type
+        self.operation_type = operation_type

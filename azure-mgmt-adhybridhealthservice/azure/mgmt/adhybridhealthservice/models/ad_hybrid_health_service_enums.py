@@ -12,14 +12,6 @@
 from enum import Enum
 
 
-class ServerDisabledReason(str, Enum):
-
-    none = "None"
-    gdpr_stop_collection = "GdprStopCollection"
-    deleted_from_portal = "DeletedFromPortal"
-    disabled_due_to_inactivity = "DisabledDueToInactivity"
-
-
 class MonitoringLevel(str, Enum):
 
     partial = "Partial"
@@ -90,19 +82,6 @@ class DeltaOperationType(str, Enum):
     delet_add = "DeletAdd"
 
 
-class RunStepOperationType(str, Enum):
-
-    undefined = "Undefined"
-    full_import = "FullImport"
-    delta_import = "DeltaImport"
-    full_synchornization = "FullSynchornization"
-    delta_synchronization = "DeltaSynchronization"
-    apply_rules = "ApplyRules"
-    export = "Export"
-    full_export = "FullExport"
-    full_import_reevaluate_rules = "FullImportReevaluateRules"
-
-
 class HealthStatus(str, Enum):
 
     healthy = "Healthy"
@@ -141,3 +120,11 @@ class ServiceType(str, Enum):
     undefined = "Undefined"
     aad_connect_sync = "AadConnectSync"
     dir_sync = "DirSync"
+
+
+class ServerDisabledReason(str, Enum):
+
+    none = "None"
+    gdpr_stop_collection = "GdprStopCollection"
+    deleted_from_portal = "DeletedFromPortal"
+    disabled_due_to_inactivity = "DisabledDueToInactivity"

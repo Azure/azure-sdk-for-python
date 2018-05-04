@@ -22,16 +22,20 @@ class AdditionalInformation(Model):
     :param properties: The list of properties which are included in the
      aditional information.
     :type properties: object
+    :param has_properties: Indicates if properties are present or not.
+    :type has_properties: bool
     """
 
     _attribute_map = {
         'title_name': {'key': 'titleName', 'type': 'str'},
         'title_value': {'key': 'titleValue', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
+        'has_properties': {'key': 'hasProperties', 'type': 'bool'},
     }
 
-    def __init__(self, *, title_name: str=None, title_value: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, title_name: str=None, title_value: str=None, properties=None, has_properties: bool=None, **kwargs) -> None:
         super(AdditionalInformation, self).__init__(**kwargs)
         self.title_name = title_name
         self.title_value = title_value
         self.properties = properties
+        self.has_properties = has_properties

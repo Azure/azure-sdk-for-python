@@ -35,8 +35,8 @@ class AssociatedObject(Model):
     :type source_anchor: str
     :param source_of_authority: The source of authority.
     :type source_of_authority: str
-    :param time_occured:  The time of the error.
-    :type time_occured: datetime
+    :param time_occurred:  The time of the error.
+    :type time_occurred: datetime
     :param user_principal_name:  The UPN.
     :type user_principal_name: str
     """
@@ -52,11 +52,11 @@ class AssociatedObject(Model):
         'proxy_addresses': {'key': 'proxyAddresses', 'type': 'str'},
         'source_anchor': {'key': 'sourceAnchor', 'type': 'str'},
         'source_of_authority': {'key': 'sourceOfAuthority', 'type': 'str'},
-        'time_occured': {'key': 'timeOccured', 'type': 'iso-8601'},
+        'time_occurred': {'key': 'timeOccurred', 'type': 'iso-8601'},
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
     }
 
-    def __init__(self, *, display_name: str=None, distinguished_name: str=None, last_dir_sync_time=None, mail: str=None, object_guid: str=None, object_type: str=None, onpremises_user_principal_name: str=None, proxy_addresses: str=None, source_anchor: str=None, source_of_authority: str=None, time_occured=None, user_principal_name: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, distinguished_name: str=None, last_dir_sync_time=None, mail: str=None, object_guid: str=None, object_type: str=None, onpremises_user_principal_name: str=None, proxy_addresses: str=None, source_anchor: str=None, source_of_authority: str=None, time_occurred=None, user_principal_name: str=None, **kwargs) -> None:
         super(AssociatedObject, self).__init__(**kwargs)
         self.display_name = display_name
         self.distinguished_name = distinguished_name
@@ -68,5 +68,5 @@ class AssociatedObject(Model):
         self.proxy_addresses = proxy_addresses
         self.source_anchor = source_anchor
         self.source_of_authority = source_of_authority
-        self.time_occured = time_occured
+        self.time_occurred = time_occurred
         self.user_principal_name = user_principal_name

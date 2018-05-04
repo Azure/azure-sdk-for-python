@@ -72,7 +72,6 @@ try:
     from .run_profiles_py3 import RunProfiles
     from .service_configuration_py3 import ServiceConfiguration
     from .service_properties_py3 import ServiceProperties
-    from .service_member_properties_py3 import ServiceMemberProperties
     from .service_member_py3 import ServiceMember
     from .tabular_export_error_py3 import TabularExportError
     from .tenant_py3 import Tenant
@@ -140,7 +139,6 @@ except (SyntaxError, ImportError):
     from .run_profiles import RunProfiles
     from .service_configuration import ServiceConfiguration
     from .service_properties import ServiceProperties
-    from .service_member_properties import ServiceMemberProperties
     from .service_member import ServiceMember
     from .tabular_export_error import TabularExportError
     from .tenant import Tenant
@@ -161,7 +159,6 @@ from .service_member_paged import ServiceMemberPaged
 from .credential_paged import CredentialPaged
 from .global_configuration_paged import GlobalConfigurationPaged
 from .ad_hybrid_health_service_enums import (
-    ServerDisabledReason,
     MonitoringLevel,
     Level,
     State,
@@ -170,11 +167,11 @@ from .ad_hybrid_health_service_enums import (
     ValueType,
     AttributeMappingType,
     DeltaOperationType,
-    RunStepOperationType,
     HealthStatus,
     AlgorithmStepType,
     PasswordOperationTypes,
     ServiceType,
+    ServerDisabledReason,
 )
 
 __all__ = [
@@ -240,7 +237,6 @@ __all__ = [
     'RunProfiles',
     'ServiceConfiguration',
     'ServiceProperties',
-    'ServiceMemberProperties',
     'ServiceMember',
     'TabularExportError',
     'Tenant',
@@ -260,7 +256,6 @@ __all__ = [
     'ServiceMemberPaged',
     'CredentialPaged',
     'GlobalConfigurationPaged',
-    'ServerDisabledReason',
     'MonitoringLevel',
     'Level',
     'State',
@@ -269,9 +264,9 @@ __all__ = [
     'ValueType',
     'AttributeMappingType',
     'DeltaOperationType',
-    'RunStepOperationType',
     'HealthStatus',
     'AlgorithmStepType',
     'PasswordOperationTypes',
     'ServiceType',
+    'ServerDisabledReason',
 ]

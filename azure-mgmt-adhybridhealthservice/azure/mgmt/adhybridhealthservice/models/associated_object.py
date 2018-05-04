@@ -35,8 +35,8 @@ class AssociatedObject(Model):
     :type source_anchor: str
     :param source_of_authority: The source of authority.
     :type source_of_authority: str
-    :param time_occured:  The time of the error.
-    :type time_occured: datetime
+    :param time_occurred:  The time of the error.
+    :type time_occurred: datetime
     :param user_principal_name:  The UPN.
     :type user_principal_name: str
     """
@@ -52,7 +52,7 @@ class AssociatedObject(Model):
         'proxy_addresses': {'key': 'proxyAddresses', 'type': 'str'},
         'source_anchor': {'key': 'sourceAnchor', 'type': 'str'},
         'source_of_authority': {'key': 'sourceOfAuthority', 'type': 'str'},
-        'time_occured': {'key': 'timeOccured', 'type': 'iso-8601'},
+        'time_occurred': {'key': 'timeOccurred', 'type': 'iso-8601'},
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
     }
 
@@ -68,5 +68,5 @@ class AssociatedObject(Model):
         self.proxy_addresses = kwargs.get('proxy_addresses', None)
         self.source_anchor = kwargs.get('source_anchor', None)
         self.source_of_authority = kwargs.get('source_of_authority', None)
-        self.time_occured = kwargs.get('time_occured', None)
+        self.time_occurred = kwargs.get('time_occurred', None)
         self.user_principal_name = kwargs.get('user_principal_name', None)
