@@ -28,7 +28,7 @@ class RetryPolicy(Model):
         'event_time_to_live_in_minutes': {'key': 'eventTimeToLiveInMinutes', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, max_delivery_attempts: int=None, event_time_to_live_in_minutes: int=None, **kwargs) -> None:
         super(RetryPolicy, self).__init__(**kwargs)
-        self.max_delivery_attempts = kwargs.get('max_delivery_attempts', None)
-        self.event_time_to_live_in_minutes = kwargs.get('event_time_to_live_in_minutes', None)
+        self.max_delivery_attempts = max_delivery_attempts
+        self.event_time_to_live_in_minutes = event_time_to_live_in_minutes

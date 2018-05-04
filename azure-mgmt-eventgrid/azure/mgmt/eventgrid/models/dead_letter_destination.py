@@ -22,7 +22,9 @@ class DeadLetterDestination(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StorageBlobDeadLetterDestination
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     """
 
@@ -38,6 +40,6 @@ class DeadLetterDestination(Model):
         'endpoint_type': {'StorageBlob': 'StorageBlobDeadLetterDestination'}
     }
 
-    def __init__(self):
-        super(DeadLetterDestination, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeadLetterDestination, self).__init__(**kwargs)
         self.endpoint_type = None

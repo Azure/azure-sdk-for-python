@@ -16,7 +16,9 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
     """Information about the HybridConnection destination for an event
     subscription.
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param resource_id: The Azure Resource ID of an hybrid connection that is
      the destination of an event subscription.
@@ -32,7 +34,7 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None):
-        super(HybridConnectionEventSubscriptionDestination, self).__init__()
-        self.resource_id = resource_id
+    def __init__(self, **kwargs):
+        super(HybridConnectionEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
         self.endpoint_type = 'HybridConnection'

@@ -15,7 +15,9 @@ from .dead_letter_destination import DeadLetterDestination
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
     """Information about the storage blob based dead letter destination.
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param resource_id: The Azure Resource ID of the storage account that is
      the destination of the deadletter events
@@ -35,8 +37,8 @@ class StorageBlobDeadLetterDestination(DeadLetterDestination):
         'blob_container_name': {'key': 'properties.blobContainerName', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None, blob_container_name=None):
-        super(StorageBlobDeadLetterDestination, self).__init__()
-        self.resource_id = resource_id
-        self.blob_container_name = blob_container_name
+    def __init__(self, **kwargs):
+        super(StorageBlobDeadLetterDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.blob_container_name = kwargs.get('blob_container_name', None)
         self.endpoint_type = 'StorageBlob'

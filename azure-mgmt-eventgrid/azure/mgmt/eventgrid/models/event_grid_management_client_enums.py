@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class EventSubscriptionProvisioningState(Enum):
+class EventSubscriptionProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
@@ -23,14 +23,14 @@ class EventSubscriptionProvisioningState(Enum):
     awaiting_manual_action = "AwaitingManualAction"
 
 
-class EventDeliverySchema(Enum):
+class EventDeliverySchema(str, Enum):
 
     event_grid_schema = "EventGridSchema"
     input_event_schema = "InputEventSchema"
     cloud_event_v01_schema = "CloudEventV01Schema"
 
 
-class TopicProvisioningState(Enum):
+class TopicProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
@@ -40,20 +40,20 @@ class TopicProvisioningState(Enum):
     failed = "Failed"
 
 
-class InputSchema(Enum):
+class InputSchema(str, Enum):
 
     event_grid_schema = "EventGridSchema"
     custom_event_schema = "CustomEventSchema"
     cloud_event_v01_schema = "CloudEventV01Schema"
 
 
-class ResourceRegionType(Enum):
+class ResourceRegionType(str, Enum):
 
     regional_resource = "RegionalResource"
     global_resource = "GlobalResource"
 
 
-class TopicTypeProvisioningState(Enum):
+class TopicTypeProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"

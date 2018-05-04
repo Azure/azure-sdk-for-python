@@ -12,16 +12,19 @@
 from .event_subscription_destination import EventSubscriptionDestination
 
 
-class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
-    """Information about the event hub destination for an event subscription.
+class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
+    """Information about the storage queue destination for an event subscription.
 
     All required parameters must be populated in order to send to Azure.
 
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
-    :param resource_id: The Azure Resource Id that represents the endpoint of
-     an Event Hub destination of an event subscription.
+    :param resource_id: The Azure Resource ID of the storage account that
+     contains the queue that is the destination of an event subscription.
     :type resource_id: str
+    :param queue_name: The name of the Storage queue under a storage account
+     that is the destination of an event subscription.
+    :type queue_name: str
     """
 
     _validation = {
@@ -31,9 +34,11 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     _attribute_map = {
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
+        'queue_name': {'key': 'properties.queueName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(EventHubEventSubscriptionDestination, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.endpoint_type = 'EventHub'
+    def __init__(self, *, resource_id: str=None, queue_name: str=None, **kwargs) -> None:
+        super(StorageQueueEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.queue_name = queue_name
+        self.endpoint_type = 'StorageQueue'

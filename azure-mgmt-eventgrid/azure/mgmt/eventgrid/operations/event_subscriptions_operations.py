@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -161,7 +161,7 @@ class EventSubscriptionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, scope, event_subscription_name, event_subscription_info, custom_headers=None, raw=False, **operation_config):
+            self, scope, event_subscription_name, event_subscription_info, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an event subscription.
 
         Asynchronously creates a new event subscription or updates an existing
@@ -188,13 +188,16 @@ class EventSubscriptionsOperations(object):
         :type event_subscription_info:
          ~azure.mgmt.eventgrid.models.EventSubscription
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         EventSubscription or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns EventSubscription or
+         ClientRawResponse<EventSubscription> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.EventSubscription]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.EventSubscription]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -205,30 +208,8 @@ class EventSubscriptionsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [201]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('EventSubscription', response)
 
             if raw:
@@ -237,12 +218,13 @@ class EventSubscriptionsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}'}
 
 
@@ -284,7 +266,7 @@ class EventSubscriptionsOperations(object):
             return client_raw_response
 
     def delete(
-            self, scope, event_subscription_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, event_subscription_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete an event subscription.
 
         Delete an existing event subscription.
@@ -303,12 +285,14 @@ class EventSubscriptionsOperations(object):
         :param event_subscription_name: Name of the event subscription
         :type event_subscription_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -318,40 +302,19 @@ class EventSubscriptionsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}'}
 
 
@@ -404,7 +367,7 @@ class EventSubscriptionsOperations(object):
         return deserialized
 
     def update(
-            self, scope, event_subscription_name, event_subscription_update_parameters, custom_headers=None, raw=False, **operation_config):
+            self, scope, event_subscription_name, event_subscription_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update an event subscription.
 
         Asynchronously updates an existing event subscription.
@@ -428,13 +391,16 @@ class EventSubscriptionsOperations(object):
         :type event_subscription_update_parameters:
          ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         EventSubscription or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns EventSubscription or
+         ClientRawResponse<EventSubscription> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.EventSubscription]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.EventSubscription]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -445,30 +411,8 @@ class EventSubscriptionsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [201]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('EventSubscription', response)
 
             if raw:
@@ -477,12 +421,13 @@ class EventSubscriptionsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}'}
 
     def get_full_url(

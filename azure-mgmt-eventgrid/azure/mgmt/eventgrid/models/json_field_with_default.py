@@ -33,7 +33,7 @@ class JsonFieldWithDefault(Model):
         'default_value': {'key': 'defaultValue', 'type': 'str'},
     }
 
-    def __init__(self, source_field=None, default_value=None):
-        super(JsonFieldWithDefault, self).__init__()
-        self.source_field = source_field
-        self.default_value = default_value
+    def __init__(self, **kwargs):
+        super(JsonFieldWithDefault, self).__init__(**kwargs)
+        self.source_field = kwargs.get('source_field', None)
+        self.default_value = kwargs.get('default_value', None)

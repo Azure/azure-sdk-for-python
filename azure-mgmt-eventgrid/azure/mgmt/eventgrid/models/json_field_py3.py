@@ -27,6 +27,6 @@ class JsonField(Model):
         'source_field': {'key': 'sourceField', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_field: str=None, **kwargs) -> None:
         super(JsonField, self).__init__(**kwargs)
-        self.source_field = kwargs.get('source_field', None)
+        self.source_field = source_field

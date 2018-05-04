@@ -47,11 +47,11 @@ class EventSubscriptionUpdateParameters(Model):
         'dead_letter_destination': {'key': 'deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, destination=None, filter=None, labels=None, event_delivery_schema="EventGridSchema", retry_policy=None, dead_letter_destination=None):
-        super(EventSubscriptionUpdateParameters, self).__init__()
-        self.destination = destination
-        self.filter = filter
-        self.labels = labels
-        self.event_delivery_schema = event_delivery_schema
-        self.retry_policy = retry_policy
-        self.dead_letter_destination = dead_letter_destination
+    def __init__(self, **kwargs):
+        super(EventSubscriptionUpdateParameters, self).__init__(**kwargs)
+        self.destination = kwargs.get('destination', None)
+        self.filter = kwargs.get('filter', None)
+        self.labels = kwargs.get('labels', None)
+        self.event_delivery_schema = kwargs.get('event_delivery_schema', "EventGridSchema")
+        self.retry_policy = kwargs.get('retry_policy', None)
+        self.dead_letter_destination = kwargs.get('dead_letter_destination', None)

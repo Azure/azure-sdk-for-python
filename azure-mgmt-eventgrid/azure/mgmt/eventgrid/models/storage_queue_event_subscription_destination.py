@@ -15,7 +15,9 @@ from .event_subscription_destination import EventSubscriptionDestination
 class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the storage queue destination for an event subscription.
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param resource_id: The Azure Resource ID of the storage account that
      contains the queue that is the destination of an event subscription.
@@ -35,8 +37,8 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
         'queue_name': {'key': 'properties.queueName', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None, queue_name=None):
-        super(StorageQueueEventSubscriptionDestination, self).__init__()
-        self.resource_id = resource_id
-        self.queue_name = queue_name
+    def __init__(self, **kwargs):
+        super(StorageQueueEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.queue_name = kwargs.get('queue_name', None)
         self.endpoint_type = 'StorageQueue'

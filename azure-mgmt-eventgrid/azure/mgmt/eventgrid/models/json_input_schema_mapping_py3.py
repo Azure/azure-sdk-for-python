@@ -55,12 +55,12 @@ class JsonInputSchemaMapping(InputSchemaMapping):
         'data_version': {'key': 'properties.dataVersion', 'type': 'JsonFieldWithDefault'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id=None, topic=None, event_time=None, event_type=None, subject=None, data_version=None, **kwargs) -> None:
         super(JsonInputSchemaMapping, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.topic = kwargs.get('topic', None)
-        self.event_time = kwargs.get('event_time', None)
-        self.event_type = kwargs.get('event_type', None)
-        self.subject = kwargs.get('subject', None)
-        self.data_version = kwargs.get('data_version', None)
+        self.id = id
+        self.topic = topic
+        self.event_time = event_time
+        self.event_type = event_type
+        self.subject = subject
+        self.data_version = data_version
         self.input_schema_mapping_type = 'Json'

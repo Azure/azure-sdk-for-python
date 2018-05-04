@@ -39,6 +39,6 @@ class InputSchemaMapping(Model):
         'input_schema_mapping_type': {'Json': 'JsonInputSchemaMapping'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(InputSchemaMapping, self).__init__(**kwargs)
         self.input_schema_mapping_type = None

@@ -21,7 +21,9 @@ class EventSubscriptionDestination(Model):
     StorageQueueEventSubscriptionDestination,
     HybridConnectionEventSubscriptionDestination
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     """
 
@@ -37,6 +39,6 @@ class EventSubscriptionDestination(Model):
         'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination'}
     }
 
-    def __init__(self):
-        super(EventSubscriptionDestination, self).__init__()
+    def __init__(self, **kwargs):
+        super(EventSubscriptionDestination, self).__init__(**kwargs)
         self.endpoint_type = None

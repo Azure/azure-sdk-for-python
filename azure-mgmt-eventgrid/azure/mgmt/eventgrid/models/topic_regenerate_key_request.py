@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class TopicRegenerateKeyRequest(Model):
     """Topic regenerate share access key request.
 
-    :param key_name: Key name to regenerate key1 or key2
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. Key name to regenerate key1 or key2
     :type key_name: str
     """
 
@@ -27,6 +29,6 @@ class TopicRegenerateKeyRequest(Model):
         'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
-    def __init__(self, key_name):
-        super(TopicRegenerateKeyRequest, self).__init__()
-        self.key_name = key_name
+    def __init__(self, **kwargs):
+        super(TopicRegenerateKeyRequest, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
