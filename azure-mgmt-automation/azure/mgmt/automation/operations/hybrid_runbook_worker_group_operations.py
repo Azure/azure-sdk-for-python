@@ -233,13 +233,15 @@ class HybridRunbookWorkerGroupOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups/{hybridRunbookWorkerGroupName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of hybrid runbook worker groups.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
+        :param filter: The filter to apply on the operation.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -265,6 +267,8 @@ class HybridRunbookWorkerGroupOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

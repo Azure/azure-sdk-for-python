@@ -65,7 +65,6 @@ from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParame
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
-from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
 from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
 from .dsc_node_update_parameters_properties import DscNodeUpdateParametersProperties
@@ -129,7 +128,7 @@ from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
 from .dsc_node import DscNode
 from .dsc_node_configuration import DscNodeConfiguration
-from .dsc_node_configuration_create_or_update_parameters_properties import DscNodeConfigurationCreateOrUpdateParametersProperties
+from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -240,7 +239,6 @@ __all__ = [
     'DscConfigurationCreateOrUpdateParameters',
     'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
-    'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
     'DscNodeExtensionHandlerAssociationProperty',
     'DscNodeUpdateParametersProperties',
@@ -304,7 +302,7 @@ __all__ = [
     'SourceControlSyncJobById',
     'DscNode',
     'DscNodeConfiguration',
-    'DscNodeConfigurationCreateOrUpdateParametersProperties',
+    'DscNodeConfigurationCreateOrUpdateParameters',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
