@@ -29,8 +29,8 @@ class ServiceConfiguration(Model):
     :type sql_edition: str
     :param sql_instance: The SQL instance details.
     :type sql_instance: str
-    :param sql_database: The SQL database.
-    :type sql_database: str
+    :param sql_database_name: The SQL database.
+    :type sql_database_name: str
     :param sql_database_size: The SQL database size.
     :type sql_database_size: int
     """
@@ -43,11 +43,11 @@ class ServiceConfiguration(Model):
         'sql_version': {'key': 'sqlVersion', 'type': 'str'},
         'sql_edition': {'key': 'sqlEdition', 'type': 'str'},
         'sql_instance': {'key': 'sqlInstance', 'type': 'str'},
-        'sql_database': {'key': 'sqlDatabase', 'type': 'str'},
+        'sql_database_name': {'key': 'sqlDatabaseName', 'type': 'str'},
         'sql_database_size': {'key': 'sqlDatabaseSize', 'type': 'int'},
     }
 
-    def __init__(self, *, version: str=None, service_type: int=None, service_account: str=None, sql_server: str=None, sql_version: str=None, sql_edition: str=None, sql_instance: str=None, sql_database: str=None, sql_database_size: int=None, **kwargs) -> None:
+    def __init__(self, *, version: str=None, service_type: int=None, service_account: str=None, sql_server: str=None, sql_version: str=None, sql_edition: str=None, sql_instance: str=None, sql_database_name: str=None, sql_database_size: int=None, **kwargs) -> None:
         super(ServiceConfiguration, self).__init__(**kwargs)
         self.version = version
         self.service_type = service_type
@@ -56,5 +56,5 @@ class ServiceConfiguration(Model):
         self.sql_version = sql_version
         self.sql_edition = sql_edition
         self.sql_instance = sql_instance
-        self.sql_database = sql_database
+        self.sql_database_name = sql_database_name
         self.sql_database_size = sql_database_size

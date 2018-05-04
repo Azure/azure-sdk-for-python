@@ -29,8 +29,8 @@ class ServiceConfiguration(Model):
     :type sql_edition: str
     :param sql_instance: The SQL instance details.
     :type sql_instance: str
-    :param sql_database: The SQL database.
-    :type sql_database: str
+    :param sql_database_name: The SQL database.
+    :type sql_database_name: str
     :param sql_database_size: The SQL database size.
     :type sql_database_size: int
     """
@@ -43,7 +43,7 @@ class ServiceConfiguration(Model):
         'sql_version': {'key': 'sqlVersion', 'type': 'str'},
         'sql_edition': {'key': 'sqlEdition', 'type': 'str'},
         'sql_instance': {'key': 'sqlInstance', 'type': 'str'},
-        'sql_database': {'key': 'sqlDatabase', 'type': 'str'},
+        'sql_database_name': {'key': 'sqlDatabaseName', 'type': 'str'},
         'sql_database_size': {'key': 'sqlDatabaseSize', 'type': 'int'},
     }
 
@@ -56,5 +56,5 @@ class ServiceConfiguration(Model):
         self.sql_version = kwargs.get('sql_version', None)
         self.sql_edition = kwargs.get('sql_edition', None)
         self.sql_instance = kwargs.get('sql_instance', None)
-        self.sql_database = kwargs.get('sql_database', None)
+        self.sql_database_name = kwargs.get('sql_database_name', None)
         self.sql_database_size = kwargs.get('sql_database_size', None)
