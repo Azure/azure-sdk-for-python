@@ -52,8 +52,8 @@ class ConsumerGroup(Resource):
         'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, user_metadata=None):
-        super(ConsumerGroup, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConsumerGroup, self).__init__(**kwargs)
         self.created_at = None
         self.updated_at = None
-        self.user_metadata = user_metadata
+        self.user_metadata = kwargs.get('user_metadata', None)

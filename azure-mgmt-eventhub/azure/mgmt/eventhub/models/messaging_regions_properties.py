@@ -34,7 +34,7 @@ class MessagingRegionsProperties(Model):
         'full_name': {'key': 'fullName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(MessagingRegionsProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(MessagingRegionsProperties, self).__init__(**kwargs)
         self.code = None
         self.full_name = None
