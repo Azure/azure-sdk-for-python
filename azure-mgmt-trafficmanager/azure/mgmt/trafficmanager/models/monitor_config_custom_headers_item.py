@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(Model):
-    """Parameters supplied to check Traffic Manager name operation.
+class MonitorConfigCustomHeadersItem(Model):
+    """Custom header name and value.
 
-    :param name: The name of the resource.
+    :param name: Header name.
     :type name: str
-    :param type: The type of the resource.
-    :type type: str
+    :param value: Header value.
+    :type value: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckTrafficManagerRelativeDnsNameAvailabilityParameters, self).__init__(**kwargs)
+        super(MonitorConfigCustomHeadersItem, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', None)

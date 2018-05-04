@@ -12,8 +12,9 @@
 from .resource import Resource
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
@@ -23,21 +24,13 @@ class TrackedResource(Resource):
     :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
     :type type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
-    :type location: str
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, **kwargs) -> None:
+        super(ProxyResource, self).__init__(id=id, name=name, type=type, **kwargs)

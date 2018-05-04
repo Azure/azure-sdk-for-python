@@ -58,10 +58,10 @@ class Profile(TrackedResource):
         'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Profile, self).__init__(**kwargs)
-        self.profile_status = kwargs.get('profile_status', None)
-        self.traffic_routing_method = kwargs.get('traffic_routing_method', None)
-        self.dns_config = kwargs.get('dns_config', None)
-        self.monitor_config = kwargs.get('monitor_config', None)
-        self.endpoints = kwargs.get('endpoints', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, tags=None, location: str=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, **kwargs) -> None:
+        super(Profile, self).__init__(id=id, name=name, type=type, tags=tags, location=location, **kwargs)
+        self.profile_status = profile_status
+        self.traffic_routing_method = traffic_routing_method
+        self.dns_config = dns_config
+        self.monitor_config = monitor_config
+        self.endpoints = endpoints

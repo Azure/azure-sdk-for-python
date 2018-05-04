@@ -82,15 +82,15 @@ class Endpoint(ProxyResource):
         'custom_headers': {'key': 'properties.customHeaders', 'type': '[EndpointPropertiesCustomHeadersItem]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Endpoint, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
-        self.target = kwargs.get('target', None)
-        self.endpoint_status = kwargs.get('endpoint_status', None)
-        self.weight = kwargs.get('weight', None)
-        self.priority = kwargs.get('priority', None)
-        self.endpoint_location = kwargs.get('endpoint_location', None)
-        self.endpoint_monitor_status = kwargs.get('endpoint_monitor_status', None)
-        self.min_child_endpoints = kwargs.get('min_child_endpoints', None)
-        self.geo_mapping = kwargs.get('geo_mapping', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, target_resource_id: str=None, target: str=None, endpoint_status=None, weight: int=None, priority: int=None, endpoint_location: str=None, endpoint_monitor_status=None, min_child_endpoints: int=None, geo_mapping=None, custom_headers=None, **kwargs) -> None:
+        super(Endpoint, self).__init__(id=id, name=name, type=type, **kwargs)
+        self.target_resource_id = target_resource_id
+        self.target = target
+        self.endpoint_status = endpoint_status
+        self.weight = weight
+        self.priority = priority
+        self.endpoint_location = endpoint_location
+        self.endpoint_monitor_status = endpoint_monitor_status
+        self.min_child_endpoints = min_child_endpoints
+        self.geo_mapping = geo_mapping
+        self.custom_headers = custom_headers

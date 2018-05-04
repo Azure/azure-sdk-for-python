@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(Model):
-    """Parameters supplied to check Traffic Manager name operation.
+class MonitorConfigExpectedStatusCodeRangesItem(Model):
+    """Min and max value of a status code range.
 
-    :param name: The name of the resource.
-    :type name: str
-    :param type: The type of the resource.
-    :type type: str
+    :param min: Min status code.
+    :type min: int
+    :param max: Max status code.
+    :type max: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'min': {'key': 'min', 'type': 'int'},
+        'max': {'key': 'max', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckTrafficManagerRelativeDnsNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        super(MonitorConfigExpectedStatusCodeRangesItem, self).__init__(**kwargs)
+        self.min = kwargs.get('min', None)
+        self.max = kwargs.get('max', None)

@@ -16,24 +16,21 @@ class ProxyResource(Resource):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
+    :type id: str
+    :param name: The name of the resource
+    :type name: str
+    :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :vartype type: str
+    :type type: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ProxyResource, self).__init__()
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)

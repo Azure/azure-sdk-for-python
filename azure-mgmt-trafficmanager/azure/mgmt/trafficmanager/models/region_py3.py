@@ -31,8 +31,8 @@ class Region(Model):
         'regions': {'key': 'regions', 'type': '[Region]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, name: str=None, regions=None, **kwargs) -> None:
         super(Region, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.name = kwargs.get('name', None)
-        self.regions = kwargs.get('regions', None)
+        self.code = code
+        self.name = name
+        self.regions = regions

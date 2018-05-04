@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+class TrafficManagerGeographicHierarchy(ProxyResource):
+    """Class representing the Geographic hierarchy used with the Geographic
+    traffic routing method.
 
     :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
@@ -23,21 +24,18 @@ class TrackedResource(Resource):
     :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
     :type type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
-    :type location: str
+    :param geographic_hierarchy: The region at the root of the hierarchy from
+     all the regions in the hierarchy can be retrieved.
+    :type geographic_hierarchy: ~azure.mgmt.trafficmanager.models.Region
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        'geographic_hierarchy': {'key': 'properties.geographicHierarchy', 'type': 'Region'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, geographic_hierarchy=None, **kwargs) -> None:
+        super(TrafficManagerGeographicHierarchy, self).__init__(id=id, name=name, type=type, **kwargs)
+        self.geographic_hierarchy = geographic_hierarchy
