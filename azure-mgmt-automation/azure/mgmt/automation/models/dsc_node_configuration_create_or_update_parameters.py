@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class DscNodeConfigurationCreateOrUpdateParameters(Model):
-    """DscNodeConfigurationCreateOrUpdateParameters.
+    """The parameters supplied to the create or update node configuration
+    operation.
 
     :param source: Gets or sets the source.
     :type source: ~azure.mgmt.automation.models.ContentSource
