@@ -17,10 +17,7 @@ class ImageInfo(Model):
     includes the optional crop area that you use to identify the region of
     interest in the image.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar image_insights_token: An image insights token. To get the insights
+    :param image_insights_token: An image insights token. To get the insights
      token, call one of the Image Search APIs (for example, /images/search). In
      the search results, the
      [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
@@ -29,25 +26,19 @@ class ImageInfo(Model):
      field contains the token. The imageInsightsToken and url fields mutually
      exclusive; do not specify both. Do not specify an insights token if the
      request includes the image form data.
-    :vartype image_insights_token: str
-    :ivar url: The URL of the input image. The imageInsightsToken and url
+    :type image_insights_token: str
+    :param url: The URL of the input image. The imageInsightsToken and url
      fields are mutually exclusive; do not specify both. Do not specify the URL
      if the request includes the image form data.
-    :vartype url: str
-    :ivar crop_area: A JSON object consisting of coordinates specifying the
+    :type url: str
+    :param crop_area: A JSON object consisting of coordinates specifying the
      four corners of a cropped rectangle within the input image. Use the crop
      area to identify the region of interest in the image. You can apply the
      crop area to the images specified using the imageInsightsToken or url
      fields, or an image binary specified in an image form data.
-    :vartype crop_area:
+    :type crop_area:
      ~azure.cognitiveservices.search.visualsearch.models.CropArea
     """
-
-    _validation = {
-        'image_insights_token': {'readonly': True},
-        'url': {'readonly': True},
-        'crop_area': {'readonly': True},
-    }
 
     _attribute_map = {
         'image_insights_token': {'key': 'imageInsightsToken', 'type': 'str'},
@@ -57,6 +48,6 @@ class ImageInfo(Model):
 
     def __init__(self, **kwargs):
         super(ImageInfo, self).__init__(**kwargs)
-        self.image_insights_token = None
-        self.url = None
-        self.crop_area = None
+        self.image_insights_token = kwargs.get('image_insights_token', None)
+        self.url = kwargs.get('url', None)
+        self.crop_area = kwargs.get('crop_area', None)

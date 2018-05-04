@@ -16,18 +16,10 @@ class KnowledgeRequest(Model):
     """A JSON object containing information about the request, such as filters for
     the resulting actions.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar filters: A key-value object consisting of filters that may be
+    :param filters: A key-value object consisting of filters that may be
      specified to limit the results returned by the API.
-    :vartype filters:
-     ~azure.cognitiveservices.search.visualsearch.models.Filters
+    :type filters: ~azure.cognitiveservices.search.visualsearch.models.Filters
     """
-
-    _validation = {
-        'filters': {'readonly': True},
-    }
 
     _attribute_map = {
         'filters': {'key': 'filters', 'type': 'Filters'},
@@ -35,4 +27,4 @@ class KnowledgeRequest(Model):
 
     def __init__(self, **kwargs):
         super(KnowledgeRequest, self).__init__(**kwargs)
-        self.filters = None
+        self.filters = kwargs.get('filters', None)
