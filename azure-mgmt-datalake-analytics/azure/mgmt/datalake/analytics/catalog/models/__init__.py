@@ -29,6 +29,7 @@ try:
     from .entity_id_py3 import EntityId
     from .external_table_py3 import ExternalTable
     from .type_field_info_py3 import TypeFieldInfo
+    from .usql_table_preview_py3 import USqlTablePreview
     from .usql_table_py3 import USqlTable
     from .usql_table_fragment_py3 import USqlTableFragment
     from .usql_table_type_py3 import USqlTableType
@@ -66,6 +67,7 @@ except (SyntaxError, ImportError):
     from .entity_id import EntityId
     from .external_table import ExternalTable
     from .type_field_info import TypeFieldInfo
+    from .usql_table_preview import USqlTablePreview
     from .usql_table import USqlTable
     from .usql_table_fragment import USqlTableFragment
     from .usql_table_type import USqlTableType
@@ -125,6 +127,7 @@ __all__ = [
     'EntityId',
     'ExternalTable',
     'TypeFieldInfo',
+    'USqlTablePreview',
     'USqlTable',
     'USqlTableFragment',
     'USqlTableType',
