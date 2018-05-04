@@ -47,7 +47,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         eventsubscription_name = "kalspythonEventSubscription2"
 
         # Create a new topic and verify that it is created successfully
-        topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, Topic("westcentralus"))
+        topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, Topic(location="westcentralus"))
         topic = topic_result_create.result()
         self.assertEqual(topic.name, topic_name)
 
@@ -81,7 +81,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         input_schema = InputSchema.cloud_event_v01_schema
         # Create a new topic and verify that it is created successfully
-        topic = Topic("westcentralus", tags=None, input_schema=input_schema, input_schema_mapping=None)
+        topic = Topic(location="westcentralus", tags=None, input_schema=input_schema, input_schema_mapping=None)
         topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, topic)
         topic = topic_result_create.result()
         self.assertEqual(topic.name, topic_name)
