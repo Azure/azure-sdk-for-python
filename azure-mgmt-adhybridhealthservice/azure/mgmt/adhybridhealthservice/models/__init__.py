@@ -12,6 +12,7 @@
 try:
     from .item_py3 import Item
     from .additional_information_py3 import AdditionalInformation
+    from .hotfix_py3 import Hotfix
     from .adds_service_member_py3 import AddsServiceMember
     from .agent_py3 import Agent
     from .help_link_py3 import HelpLink
@@ -29,7 +30,6 @@ try:
     from .partition_py3 import Partition
     from .run_step_py3 import RunStep
     from .run_profile_py3 import RunProfile
-    from .run_profiles_py3 import RunProfiles
     from .connector_py3 import Connector
     from .connectors_py3 import Connectors
     from .connector_connection_error_py3 import ConnectorConnectionError
@@ -50,7 +50,6 @@ try:
     from .extension_error_info_py3 import ExtensionErrorInfo
     from .forest_summary_py3 import ForestSummary
     from .global_configuration_py3 import GlobalConfiguration
-    from .hotfix_py3 import Hotfix
     from .hotfixes_py3 import Hotfixes
     from .rule_error_info_py3 import RuleErrorInfo
     from .import_error_py3 import ImportError
@@ -69,6 +68,7 @@ try:
     from .replication_status_py3 import ReplicationStatus
     from .replication_summary_py3 import ReplicationSummary
     from .replication_summary_list_py3 import ReplicationSummaryList
+    from .run_profiles_py3 import RunProfiles
     from .service_configuration_py3 import ServiceConfiguration
     from .service_properties_py3 import ServiceProperties
     from .service_member_properties_py3 import ServiceMemberProperties
@@ -79,6 +79,7 @@ try:
 except (SyntaxError, ImportError):
     from .item import Item
     from .additional_information import AdditionalInformation
+    from .hotfix import Hotfix
     from .adds_service_member import AddsServiceMember
     from .agent import Agent
     from .help_link import HelpLink
@@ -96,7 +97,6 @@ except (SyntaxError, ImportError):
     from .partition import Partition
     from .run_step import RunStep
     from .run_profile import RunProfile
-    from .run_profiles import RunProfiles
     from .connector import Connector
     from .connectors import Connectors
     from .connector_connection_error import ConnectorConnectionError
@@ -117,7 +117,6 @@ except (SyntaxError, ImportError):
     from .extension_error_info import ExtensionErrorInfo
     from .forest_summary import ForestSummary
     from .global_configuration import GlobalConfiguration
-    from .hotfix import Hotfix
     from .hotfixes import Hotfixes
     from .rule_error_info import RuleErrorInfo
     from .import_error import ImportError
@@ -136,6 +135,7 @@ except (SyntaxError, ImportError):
     from .replication_status import ReplicationStatus
     from .replication_summary import ReplicationSummary
     from .replication_summary_list import ReplicationSummaryList
+    from .run_profiles import RunProfiles
     from .service_configuration import ServiceConfiguration
     from .service_properties import ServiceProperties
     from .service_member_properties import ServiceMemberProperties
@@ -178,6 +178,7 @@ from .ad_hybrid_health_service_enums import (
 __all__ = [
     'Item',
     'AdditionalInformation',
+    'Hotfix',
     'AddsServiceMember',
     'Agent',
     'HelpLink',
@@ -195,7 +196,6 @@ __all__ = [
     'Partition',
     'RunStep',
     'RunProfile',
-    'RunProfiles',
     'Connector',
     'Connectors',
     'ConnectorConnectionError',
@@ -216,7 +216,6 @@ __all__ = [
     'ExtensionErrorInfo',
     'ForestSummary',
     'GlobalConfiguration',
-    'Hotfix',
     'Hotfixes',
     'RuleErrorInfo',
     'ImportError',
@@ -235,6 +234,7 @@ __all__ = [
     'ReplicationStatus',
     'ReplicationSummary',
     'ReplicationSummaryList',
+    'RunProfiles',
     'ServiceConfiguration',
     'ServiceProperties',
     'ServiceMemberProperties',

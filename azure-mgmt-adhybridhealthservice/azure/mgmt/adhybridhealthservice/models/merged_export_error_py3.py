@@ -54,6 +54,13 @@ class MergedExportError(Model):
     :type service_id: str
     :param service_member_id: The server Id.
     :type service_member_id: str
+    :param merged_entity_id: The merged entity Id.
+    :type merged_entity_id: str
+    :param created_date: The date and time, in UTC, when the error was
+     created.
+    :type created_date: datetime
+    :param export_error_status: The export error status.
+    :type export_error_status: int
     """
 
     _attribute_map = {
@@ -75,9 +82,12 @@ class MergedExportError(Model):
         'server_error_detail': {'key': 'serverErrorDetail', 'type': 'str'},
         'service_id': {'key': 'serviceId', 'type': 'str'},
         'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
+        'merged_entity_id': {'key': 'mergedEntityId', 'type': 'str'},
+        'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
+        'export_error_status': {'key': 'exportErrorStatus', 'type': 'int'},
     }
 
-    def __init__(self, *, incoming_object_display_name: str=None, incoming_object_type: str=None, user_principal_name: str=None, type: str=None, attribute_name: str=None, attribute_value: str=None, time_occurred=None, time_first_occurred=None, cs_object_id: str=None, dn: str=None, incoming_object=None, existing_object=None, modified_or_removed_attribute_value: str=None, run_step_result_id: str=None, sam_account_name: str=None, server_error_detail: str=None, service_id: str=None, service_member_id: str=None, **kwargs) -> None:
+    def __init__(self, *, incoming_object_display_name: str=None, incoming_object_type: str=None, user_principal_name: str=None, type: str=None, attribute_name: str=None, attribute_value: str=None, time_occurred=None, time_first_occurred=None, cs_object_id: str=None, dn: str=None, incoming_object=None, existing_object=None, modified_or_removed_attribute_value: str=None, run_step_result_id: str=None, sam_account_name: str=None, server_error_detail: str=None, service_id: str=None, service_member_id: str=None, merged_entity_id: str=None, created_date=None, export_error_status: int=None, **kwargs) -> None:
         super(MergedExportError, self).__init__(**kwargs)
         self.incoming_object_display_name = incoming_object_display_name
         self.incoming_object_type = incoming_object_type
@@ -97,3 +107,6 @@ class MergedExportError(Model):
         self.server_error_detail = server_error_detail
         self.service_id = service_id
         self.service_member_id = service_member_id
+        self.merged_entity_id = merged_entity_id
+        self.created_date = created_date
+        self.export_error_status = export_error_status

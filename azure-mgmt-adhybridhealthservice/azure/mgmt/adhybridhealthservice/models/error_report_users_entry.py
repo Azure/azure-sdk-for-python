@@ -22,8 +22,8 @@ class ErrorReportUsersEntry(Model):
     :param last_updated: The date and time when the last error event was
      logged.
     :type last_updated: datetime
-    :param unique_id_addresses: The list of unique IP addresses.
-    :type unique_id_addresses: str
+    :param unique_ip_addresses: The list of unique IP addresses.
+    :type unique_ip_addresses: str
     :param total_error_attempts: The total count of specific error events.
     :type total_error_attempts: int
     """
@@ -32,7 +32,7 @@ class ErrorReportUsersEntry(Model):
         'user_id': {'key': 'userId', 'type': 'str'},
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'unique_id_addresses': {'key': 'uniqueIdAddresses', 'type': 'str'},
+        'unique_ip_addresses': {'key': 'uniqueIpAddresses', 'type': 'str'},
         'total_error_attempts': {'key': 'totalErrorAttempts', 'type': 'int'},
     }
 
@@ -41,5 +41,5 @@ class ErrorReportUsersEntry(Model):
         self.user_id = kwargs.get('user_id', None)
         self.ip_address = kwargs.get('ip_address', None)
         self.last_updated = kwargs.get('last_updated', None)
-        self.unique_id_addresses = kwargs.get('unique_id_addresses', None)
+        self.unique_ip_addresses = kwargs.get('unique_ip_addresses', None)
         self.total_error_attempts = kwargs.get('total_error_attempts', None)

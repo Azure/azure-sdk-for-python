@@ -42,7 +42,7 @@ class Connector(Model):
     :type partitions: list[~azure.mgmt.adhybridhealthservice.models.Partition]
     :param run_profiles: The run profiles of the connector.
     :type run_profiles:
-     list[~azure.mgmt.adhybridhealthservice.models.RunProfiles]
+     list[~azure.mgmt.adhybridhealthservice.models.RunProfile]
     :param classes_included: The class inclusion list of the connector.
     :type classes_included: list[str]
     :param attributes_included: The attribute inclusion list of the connector.
@@ -61,7 +61,7 @@ class Connector(Model):
         'time_created': {'key': 'timeCreated', 'type': 'iso-8601'},
         'time_last_modified': {'key': 'timeLastModified', 'type': 'iso-8601'},
         'partitions': {'key': 'partitions', 'type': '[Partition]'},
-        'run_profiles': {'key': 'runProfiles', 'type': '[RunProfiles]'},
+        'run_profiles': {'key': 'runProfiles', 'type': '[RunProfile]'},
         'classes_included': {'key': 'classesIncluded', 'type': '[str]'},
         'attributes_included': {'key': 'attributesIncluded', 'type': '[str]'},
     }

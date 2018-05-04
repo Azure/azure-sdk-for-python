@@ -56,9 +56,11 @@ class Alert(Model):
      raised.
     :type monitor_role_type: str
     :param active_alert_properties: The active alert properties.
-    :type active_alert_properties: object
-    :param resolved_alert_properties: The active alert properties.
-    :type resolved_alert_properties: object
+    :type active_alert_properties:
+     list[~azure.mgmt.adhybridhealthservice.models.Item]
+    :param resolved_alert_properties: The resolved alert properties.
+    :type resolved_alert_properties:
+     list[~azure.mgmt.adhybridhealthservice.models.Item]
     :param tenant_id: The tenant Id.
     :type tenant_id: str
     :param service_id: The service Id.
@@ -82,8 +84,8 @@ class Alert(Model):
         'resolved_date': {'key': 'resolvedDate', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'monitor_role_type': {'key': 'monitorRoleType', 'type': 'str'},
-        'active_alert_properties': {'key': 'activeAlertProperties', 'type': 'object'},
-        'resolved_alert_properties': {'key': 'resolvedAlertProperties', 'type': 'object'},
+        'active_alert_properties': {'key': 'activeAlertProperties', 'type': '[Item]'},
+        'resolved_alert_properties': {'key': 'resolvedAlertProperties', 'type': '[Item]'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'service_id': {'key': 'serviceId', 'type': 'str'},
         'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},

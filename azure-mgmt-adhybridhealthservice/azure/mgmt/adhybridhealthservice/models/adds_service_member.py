@@ -49,7 +49,7 @@ class AddsServiceMember(Model):
      onboaraded to Azure Active Directory Connect Health.
     :type created_date: datetime
     :param dimensions: The server specific configuration related dimensions.
-    :type dimensions: object
+    :type dimensions: list[~azure.mgmt.adhybridhealthservice.models.Item]
     :param disabled: Indicates if the server is disabled or not.
     :type disabled: bool
     :param disabled_reason: The reason for disabling the server. Possible
@@ -58,7 +58,7 @@ class AddsServiceMember(Model):
     :type disabled_reason: str or
      ~azure.mgmt.adhybridhealthservice.models.ServerDisabledReason
     :param installed_qfe: The list of installed QFEs for the server.
-    :type installed_qfe: object
+    :type installed_qfe: list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
     :param last_disabled: The date and time , in UTC, when the server was last
      disabled.
     :type last_disabled: datetime
@@ -78,20 +78,23 @@ class AddsServiceMember(Model):
     :param monitoring_configurations_computed: The monitoring configuration of
      the server which determines what activities are monitored by Azure Active
      Directory Connect Health.
-    :type monitoring_configurations_computed: object
+    :type monitoring_configurations_computed:
+     list[~azure.mgmt.adhybridhealthservice.models.Item]
     :param monitoring_configurations_customized: The customized monitoring
      configuration of the server which determines what activities are monitored
      by Azure Active Directory Connect Health.
-    :type monitoring_configurations_customized: object
+    :type monitoring_configurations_customized:
+     list[~azure.mgmt.adhybridhealthservice.models.Item]
     :param os_name: The name of the operating system installed in the machine.
     :type os_name: str
     :param os_version: The version of the operating system installed in the
      machine.
     :type os_version: str
     :param properties: Server specific properties.
-    :type properties: object
+    :type properties: list[~azure.mgmt.adhybridhealthservice.models.Item]
     :param recommended_qfes: The list of recommended hotfixes for the server.
-    :type recommended_qfes: object
+    :type recommended_qfes:
+     list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
     :param resolved_alerts: The total count of alerts that are resolved for
      this server.
     :type resolved_alerts: int
@@ -120,22 +123,22 @@ class AddsServiceMember(Model):
         'active_alerts': {'key': 'activeAlerts', 'type': 'int'},
         'additional_information': {'key': 'additionalInformation', 'type': 'str'},
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
-        'dimensions': {'key': 'dimensions', 'type': 'object'},
+        'dimensions': {'key': 'dimensions', 'type': '[Item]'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'disabled_reason': {'key': 'disabledReason', 'type': 'ServerDisabledReason'},
-        'installed_qfe': {'key': 'installedQfe', 'type': 'object'},
+        'installed_qfe': {'key': 'installedQfe', 'type': '[Hotfix]'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_reboot': {'key': 'lastReboot', 'type': 'iso-8601'},
         'last_server_reported_monitoring_level_change': {'key': 'lastServerReportedMonitoringLevelChange', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'machine_id': {'key': 'machineId', 'type': 'str'},
         'machine_name': {'key': 'machineName', 'type': 'str'},
-        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': 'object'},
-        'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': 'object'},
+        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': '[Item]'},
+        'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': '[Item]'},
         'os_name': {'key': 'osName', 'type': 'str'},
         'os_version': {'key': 'osVersion', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'recommended_qfes': {'key': 'recommendedQfes', 'type': 'object'},
+        'properties': {'key': 'properties', 'type': '[Item]'},
+        'recommended_qfes': {'key': 'recommendedQfes', 'type': '[Hotfix]'},
         'resolved_alerts': {'key': 'resolvedAlerts', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
         'server_reported_monitoring_level': {'key': 'serverReportedMonitoringLevel', 'type': 'MonitoringLevel'},

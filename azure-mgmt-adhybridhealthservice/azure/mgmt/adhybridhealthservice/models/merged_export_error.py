@@ -54,6 +54,13 @@ class MergedExportError(Model):
     :type service_id: str
     :param service_member_id: The server Id.
     :type service_member_id: str
+    :param merged_entity_id: The merged entity Id.
+    :type merged_entity_id: str
+    :param created_date: The date and time, in UTC, when the error was
+     created.
+    :type created_date: datetime
+    :param export_error_status: The export error status.
+    :type export_error_status: int
     """
 
     _attribute_map = {
@@ -75,6 +82,9 @@ class MergedExportError(Model):
         'server_error_detail': {'key': 'serverErrorDetail', 'type': 'str'},
         'service_id': {'key': 'serviceId', 'type': 'str'},
         'service_member_id': {'key': 'serviceMemberId', 'type': 'str'},
+        'merged_entity_id': {'key': 'mergedEntityId', 'type': 'str'},
+        'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
+        'export_error_status': {'key': 'exportErrorStatus', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -97,3 +107,6 @@ class MergedExportError(Model):
         self.server_error_detail = kwargs.get('server_error_detail', None)
         self.service_id = kwargs.get('service_id', None)
         self.service_member_id = kwargs.get('service_member_id', None)
+        self.merged_entity_id = kwargs.get('merged_entity_id', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.export_error_status = kwargs.get('export_error_status', None)
