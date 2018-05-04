@@ -9,22 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_subscription_destination import EventSubscriptionDestination
 
 
-class EventSubscriptionDestination(Model):
-    """Information about the destination for an event subscription.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebHookEventSubscriptionDestination,
-    EventHubEventSubscriptionDestination,
-    StorageQueueEventSubscriptionDestination,
-    HybridConnectionEventSubscriptionDestination
+class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):
+    """Information about the HybridConnection destination for an event
+    subscription.
 
     All required parameters must be populated in order to send to Azure.
 
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
+    :param resource_id: The Azure Resource ID of an hybrid connection that is
+     the destination of an event subscription.
+    :type resource_id: str
     """
 
     _validation = {
@@ -33,12 +31,10 @@ class EventSubscriptionDestination(Model):
 
     _attribute_map = {
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination'}
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(EventSubscriptionDestination, self).__init__(**kwargs)
-        self.endpoint_type = None
+        super(HybridConnectionEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.endpoint_type = 'HybridConnection'

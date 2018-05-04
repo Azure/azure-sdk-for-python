@@ -23,12 +23,28 @@ class EventSubscriptionUpdateParameters(Model):
     :type filter: ~azure.mgmt.eventgrid.models.EventSubscriptionFilter
     :param labels: List of user defined labels.
     :type labels: list[str]
+    :param event_delivery_schema: The event delivery schema for the event
+     subscription. Possible values include: 'EventGridSchema',
+     'InputEventSchema', 'CloudEventV01Schema'. Default value:
+     "EventGridSchema" .
+    :type event_delivery_schema: str or
+     ~azure.mgmt.eventgrid.models.EventDeliverySchema
+    :param retry_policy: The retry policy for events. This can be used to
+     configure maximum number of delivery attempts and time to live for events.
+    :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
+    :param dead_letter_destination: The DeadLetter destination of the event
+     subscription.
+    :type dead_letter_destination:
+     ~azure.mgmt.eventgrid.models.DeadLetterDestination
     """
 
     _attribute_map = {
         'destination': {'key': 'destination', 'type': 'EventSubscriptionDestination'},
         'filter': {'key': 'filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'labels', 'type': '[str]'},
+        'event_delivery_schema': {'key': 'eventDeliverySchema', 'type': 'str'},
+        'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
+        'dead_letter_destination': {'key': 'deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
     def __init__(self, **kwargs):
@@ -36,3 +52,6 @@ class EventSubscriptionUpdateParameters(Model):
         self.destination = kwargs.get('destination', None)
         self.filter = kwargs.get('filter', None)
         self.labels = kwargs.get('labels', None)
+        self.event_delivery_schema = kwargs.get('event_delivery_schema', "EventGridSchema")
+        self.retry_policy = kwargs.get('retry_policy', None)
+        self.dead_letter_destination = kwargs.get('dead_letter_destination', None)
