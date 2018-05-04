@@ -1,1 +1,0 @@
-autorest --version=latest https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/resource-manager/readme.md --python --azure-arm=true --payload-flattening-threshold=2 --license-header=MICROSOFT_MIT_NO_VERSION --namespace=azure.mgmt.eventgrid --package-name=azure-mgmt-eventgrid --package-version=2.0.0rc1 --python-sdks-folder=c:\temp\python\
