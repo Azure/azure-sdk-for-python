@@ -33,6 +33,7 @@ try:
     from .deployment_extended_py3 import DeploymentExtended
     from .plan_py3 import Plan
     from .sku_py3 import Sku
+    from .user_defined_identity_py3 import UserDefinedIdentity
     from .identity_py3 import Identity
     from .generic_resource_py3 import GenericResource
     from .resource_group_properties_py3 import ResourceGroupProperties
@@ -75,6 +76,7 @@ except (SyntaxError, ImportError):
     from .deployment_extended import DeploymentExtended
     from .plan import Plan
     from .sku import Sku
+    from .user_defined_identity import UserDefinedIdentity
     from .identity import Identity
     from .generic_resource import GenericResource
     from .resource_group_properties import ResourceGroupProperties
@@ -129,6 +131,7 @@ __all__ = [
     'DeploymentExtended',
     'Plan',
     'Sku',
+    'UserDefinedIdentity',
     'Identity',
     'GenericResource',
     'ResourceGroupProperties',
