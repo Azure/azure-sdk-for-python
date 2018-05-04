@@ -22,8 +22,8 @@ class GlobalConfiguration(Model):
     :param password_sync_enabled: Indicates if password sync is enabled or
      not.
     :type password_sync_enabled: bool
-    :param num_saved_pwd_events: The number of saved password events.
-    :type num_saved_pwd_events: int
+    :param num_saved_pwd_event: The number of saved password events.
+    :type num_saved_pwd_event: int
     :param feature_set: The list of additional feature sets.
     :type feature_set: list[~azure.mgmt.adhybridhealthservice.models.Item]
     """
@@ -32,7 +32,7 @@ class GlobalConfiguration(Model):
         'version': {'key': 'version', 'type': 'int'},
         'schema_xml': {'key': 'schemaXml', 'type': 'str'},
         'password_sync_enabled': {'key': 'passwordSyncEnabled', 'type': 'bool'},
-        'num_saved_pwd_events': {'key': 'numSavedPwdEvents', 'type': 'int'},
+        'num_saved_pwd_event': {'key': 'numSavedPwdEvent', 'type': 'int'},
         'feature_set': {'key': 'featureSet', 'type': '[Item]'},
     }
 
@@ -41,5 +41,5 @@ class GlobalConfiguration(Model):
         self.version = kwargs.get('version', None)
         self.schema_xml = kwargs.get('schema_xml', None)
         self.password_sync_enabled = kwargs.get('password_sync_enabled', None)
-        self.num_saved_pwd_events = kwargs.get('num_saved_pwd_events', None)
+        self.num_saved_pwd_event = kwargs.get('num_saved_pwd_event', None)
         self.feature_set = kwargs.get('feature_set', None)

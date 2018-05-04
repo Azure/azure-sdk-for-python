@@ -68,6 +68,7 @@ try:
     from .replication_status_py3 import ReplicationStatus
     from .replication_summary_py3 import ReplicationSummary
     from .replication_summary_list_py3 import ReplicationSummaryList
+    from .result_py3 import Result
     from .run_profiles_py3 import RunProfiles
     from .service_configuration_py3 import ServiceConfiguration
     from .service_properties_py3 import ServiceProperties
@@ -135,6 +136,7 @@ except (SyntaxError, ImportError):
     from .replication_status import ReplicationStatus
     from .replication_summary import ReplicationSummary
     from .replication_summary_list import ReplicationSummaryList
+    from .result import Result
     from .run_profiles import RunProfiles
     from .service_configuration import ServiceConfiguration
     from .service_properties import ServiceProperties
@@ -234,6 +236,7 @@ __all__ = [
     'ReplicationStatus',
     'ReplicationSummary',
     'ReplicationSummaryList',
+    'Result',
     'RunProfiles',
     'ServiceConfiguration',
     'ServiceProperties',

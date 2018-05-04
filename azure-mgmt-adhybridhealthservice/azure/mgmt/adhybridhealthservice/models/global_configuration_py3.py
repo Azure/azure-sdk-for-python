@@ -22,8 +22,8 @@ class GlobalConfiguration(Model):
     :param password_sync_enabled: Indicates if password sync is enabled or
      not.
     :type password_sync_enabled: bool
-    :param num_saved_pwd_events: The number of saved password events.
-    :type num_saved_pwd_events: int
+    :param num_saved_pwd_event: The number of saved password events.
+    :type num_saved_pwd_event: int
     :param feature_set: The list of additional feature sets.
     :type feature_set: list[~azure.mgmt.adhybridhealthservice.models.Item]
     """
@@ -32,14 +32,14 @@ class GlobalConfiguration(Model):
         'version': {'key': 'version', 'type': 'int'},
         'schema_xml': {'key': 'schemaXml', 'type': 'str'},
         'password_sync_enabled': {'key': 'passwordSyncEnabled', 'type': 'bool'},
-        'num_saved_pwd_events': {'key': 'numSavedPwdEvents', 'type': 'int'},
+        'num_saved_pwd_event': {'key': 'numSavedPwdEvent', 'type': 'int'},
         'feature_set': {'key': 'featureSet', 'type': '[Item]'},
     }
 
-    def __init__(self, *, version: int=None, schema_xml: str=None, password_sync_enabled: bool=None, num_saved_pwd_events: int=None, feature_set=None, **kwargs) -> None:
+    def __init__(self, *, version: int=None, schema_xml: str=None, password_sync_enabled: bool=None, num_saved_pwd_event: int=None, feature_set=None, **kwargs) -> None:
         super(GlobalConfiguration, self).__init__(**kwargs)
         self.version = version
         self.schema_xml = schema_xml
         self.password_sync_enabled = password_sync_enabled
-        self.num_saved_pwd_events = num_saved_pwd_events
+        self.num_saved_pwd_event = num_saved_pwd_event
         self.feature_set = feature_set

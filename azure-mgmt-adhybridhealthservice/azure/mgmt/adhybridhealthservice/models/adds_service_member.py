@@ -57,8 +57,9 @@ class AddsServiceMember(Model):
      'DisabledDueToInactivity'
     :type disabled_reason: str or
      ~azure.mgmt.adhybridhealthservice.models.ServerDisabledReason
-    :param installed_qfe: The list of installed QFEs for the server.
-    :type installed_qfe: list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
+    :param installed_qfes: The list of installed QFEs for the server.
+    :type installed_qfes:
+     list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
     :param last_disabled: The date and time , in UTC, when the server was last
      disabled.
     :type last_disabled: datetime
@@ -126,7 +127,7 @@ class AddsServiceMember(Model):
         'dimensions': {'key': 'dimensions', 'type': '[Item]'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'disabled_reason': {'key': 'disabledReason', 'type': 'ServerDisabledReason'},
-        'installed_qfe': {'key': 'installedQfe', 'type': '[Hotfix]'},
+        'installed_qfes': {'key': 'installedQfes', 'type': '[Hotfix]'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_reboot': {'key': 'lastReboot', 'type': 'iso-8601'},
         'last_server_reported_monitoring_level_change': {'key': 'lastServerReportedMonitoringLevelChange', 'type': 'iso-8601'},
@@ -164,7 +165,7 @@ class AddsServiceMember(Model):
         self.dimensions = kwargs.get('dimensions', None)
         self.disabled = kwargs.get('disabled', None)
         self.disabled_reason = kwargs.get('disabled_reason', None)
-        self.installed_qfe = kwargs.get('installed_qfe', None)
+        self.installed_qfes = kwargs.get('installed_qfes', None)
         self.last_disabled = kwargs.get('last_disabled', None)
         self.last_reboot = kwargs.get('last_reboot', None)
         self.last_server_reported_monitoring_level_change = kwargs.get('last_server_reported_monitoring_level_change', None)

@@ -57,8 +57,9 @@ class AddsServiceMember(Model):
      'DisabledDueToInactivity'
     :type disabled_reason: str or
      ~azure.mgmt.adhybridhealthservice.models.ServerDisabledReason
-    :param installed_qfe: The list of installed QFEs for the server.
-    :type installed_qfe: list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
+    :param installed_qfes: The list of installed QFEs for the server.
+    :type installed_qfes:
+     list[~azure.mgmt.adhybridhealthservice.models.Hotfix]
     :param last_disabled: The date and time , in UTC, when the server was last
      disabled.
     :type last_disabled: datetime
@@ -126,7 +127,7 @@ class AddsServiceMember(Model):
         'dimensions': {'key': 'dimensions', 'type': '[Item]'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'disabled_reason': {'key': 'disabledReason', 'type': 'ServerDisabledReason'},
-        'installed_qfe': {'key': 'installedQfe', 'type': '[Hotfix]'},
+        'installed_qfes': {'key': 'installedQfes', 'type': '[Hotfix]'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_reboot': {'key': 'lastReboot', 'type': 'iso-8601'},
         'last_server_reported_monitoring_level_change': {'key': 'lastServerReportedMonitoringLevelChange', 'type': 'iso-8601'},
@@ -145,7 +146,7 @@ class AddsServiceMember(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, *, domain_name: str=None, site_name: str=None, adds_roles=None, gc_reachable: bool=None, is_advertising: bool=None, pdc_reachable: bool=None, sysvol_state: bool=None, dc_types=None, service_member_id: str=None, service_id: str=None, tenant_id: str=None, active_alerts: int=None, additional_information: str=None, created_date=None, dimensions=None, disabled: bool=None, disabled_reason=None, installed_qfe=None, last_disabled=None, last_reboot=None, last_server_reported_monitoring_level_change=None, last_updated=None, machine_id: str=None, machine_name: str=None, monitoring_configurations_computed=None, monitoring_configurations_customized=None, os_name: str=None, os_version: str=None, properties=None, recommended_qfes=None, resolved_alerts: int=None, role: str=None, server_reported_monitoring_level=None, status: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str=None, site_name: str=None, adds_roles=None, gc_reachable: bool=None, is_advertising: bool=None, pdc_reachable: bool=None, sysvol_state: bool=None, dc_types=None, service_member_id: str=None, service_id: str=None, tenant_id: str=None, active_alerts: int=None, additional_information: str=None, created_date=None, dimensions=None, disabled: bool=None, disabled_reason=None, installed_qfes=None, last_disabled=None, last_reboot=None, last_server_reported_monitoring_level_change=None, last_updated=None, machine_id: str=None, machine_name: str=None, monitoring_configurations_computed=None, monitoring_configurations_customized=None, os_name: str=None, os_version: str=None, properties=None, recommended_qfes=None, resolved_alerts: int=None, role: str=None, server_reported_monitoring_level=None, status: str=None, **kwargs) -> None:
         super(AddsServiceMember, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.site_name = site_name
@@ -164,7 +165,7 @@ class AddsServiceMember(Model):
         self.dimensions = dimensions
         self.disabled = disabled
         self.disabled_reason = disabled_reason
-        self.installed_qfe = installed_qfe
+        self.installed_qfes = installed_qfes
         self.last_disabled = last_disabled
         self.last_reboot = last_reboot
         self.last_server_reported_monitoring_level_change = last_server_reported_monitoring_level_change

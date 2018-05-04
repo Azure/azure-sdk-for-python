@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class MergedExportError(Model):
     """The merged export error.
 
+    :param id: The error Id.
+    :type id: str
     :param incoming_object_display_name: The incoming object display name.
     :type incoming_object_display_name: str
     :param incoming_object_type: The incoming object type.
@@ -64,6 +66,7 @@ class MergedExportError(Model):
     """
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'incoming_object_display_name': {'key': 'incomingObjectDisplayName', 'type': 'str'},
         'incoming_object_type': {'key': 'incomingObjectType', 'type': 'str'},
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
@@ -89,6 +92,7 @@ class MergedExportError(Model):
 
     def __init__(self, **kwargs):
         super(MergedExportError, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.incoming_object_display_name = kwargs.get('incoming_object_display_name', None)
         self.incoming_object_type = kwargs.get('incoming_object_type', None)
         self.user_principal_name = kwargs.get('user_principal_name', None)

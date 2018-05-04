@@ -545,8 +545,9 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or ClientRawResponse if raw=true
-        :rtype: bool or ~msrest.pipeline.ClientRawResponse
+        :return: Result or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.Result or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -583,7 +584,7 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('bool', response)
+            deserialized = self._deserialize('Result', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1506,8 +1507,9 @@ class ServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or ClientRawResponse if raw=true
-        :rtype: bool or ~msrest.pipeline.ClientRawResponse
+        :return: Result or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.Result or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1544,7 +1546,7 @@ class ServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('bool', response)
+            deserialized = self._deserialize('Result', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
