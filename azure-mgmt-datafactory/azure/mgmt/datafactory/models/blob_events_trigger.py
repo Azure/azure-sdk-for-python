@@ -35,8 +35,9 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
-    :param blob_path: Required. Path to container, folder, blob, or file
-     extension for which events can trigger the pipeline.
+    :param blob_path: Required. Expression to determine if trigger should
+     fire. For example, @startswith('/records/blobs/december/') will only fire
+     the trigger for blobs in the december folder under the records container.
     :type blob_path: str
     :param events: Required. The type of events that cause this trigger to
      fire.
