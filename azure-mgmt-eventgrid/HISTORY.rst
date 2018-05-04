@@ -3,6 +3,21 @@
 Release History
 ===============
 
+2.0.0rc1 (2018-05-04)
++++++++++++++++++++++
+
+**Features**
+
+- input mappings for topics
+- CloudEvents support for topics
+- customizable delivery schemas
+- delivering events to Azure Storage queue and Azure hybrid connections
+- deadlettering
+- retry policies
+- manual subscription validation handshake validation. 
+
+Internal API version is 2018-05-01-preview 
+
 1.0.0 (2018-04-26)
 ++++++++++++++++++
 

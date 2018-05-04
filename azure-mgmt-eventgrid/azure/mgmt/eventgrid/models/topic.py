@@ -37,6 +37,17 @@ class Topic(TrackedResource):
      ~azure.mgmt.eventgrid.models.TopicProvisioningState
     :ivar endpoint: Endpoint for the topic.
     :vartype endpoint: str
+    :param input_schema: This determines the format that Event Grid should
+     expect for incoming events published to the topic. Possible values
+     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventV01Schema'.
+     Default value: "EventGridSchema" .
+    :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
+    :param input_schema_mapping: This enables publishing using custom event
+     schemas. An InputSchemaMapping can be specified to map various properties
+     of a source schema to various required properties of the EventGridEvent
+     schema.
+    :type input_schema_mapping:
+     ~azure.mgmt.eventgrid.models.InputSchemaMapping
     """
 
     _validation = {
@@ -56,9 +67,13 @@ class Topic(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
+        'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
     }
 
     def __init__(self, **kwargs):
         super(Topic, self).__init__(**kwargs)
         self.provisioning_state = None
         self.endpoint = None
+        self.input_schema = kwargs.get('input_schema', "EventGridSchema")
+        self.input_schema_mapping = kwargs.get('input_schema_mapping', None)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TopicRegenerateKeyRequest(Model):
-    """Topic regenerate share access key key request.
+    """Topic regenerate share access key request.
 
     All required parameters must be populated in order to send to Azure.
 
