@@ -36,9 +36,9 @@ class Destination(Model):
         'archive_name_format': {'key': 'properties.archiveNameFormat', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, storage_account_resource_id: str=None, blob_container: str=None, archive_name_format: str=None, **kwargs) -> None:
         super(Destination, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
-        self.blob_container = kwargs.get('blob_container', None)
-        self.archive_name_format = kwargs.get('archive_name_format', None)
+        self.name = name
+        self.storage_account_resource_id = storage_account_resource_id
+        self.blob_container = blob_container
+        self.archive_name_format = archive_name_format

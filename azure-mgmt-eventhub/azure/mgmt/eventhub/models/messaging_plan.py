@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class ConsumerGroup(Resource):
-    """Single item in List or Get Consumer group operation.
+class MessagingPlan(TrackedResource):
+    """Messaging Plan for the namespace.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,36 +24,45 @@ class ConsumerGroup(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar created_at: Exact time the message was created.
-    :vartype created_at: datetime
-    :ivar updated_at: The exact time the message was updated.
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar sku: Sku type
+    :vartype sku: int
+    :ivar selected_event_hub_unit: Selected event hub unit
+    :vartype selected_event_hub_unit: int
+    :ivar updated_at: The exact time the messaging plan was updated.
     :vartype updated_at: datetime
-    :param user_metadata: Usermetadata is a placeholder to store user-defined
-     string data with maximum length 1024. e.g. it can be used to store
-     descriptive data, such as list of teams and their contact information also
-     user-defined configuration settings can be stored.
-    :type user_metadata: str
+    :ivar revision: revision number
+    :vartype revision: long
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'created_at': {'readonly': True},
+        'sku': {'readonly': True},
+        'selected_event_hub_unit': {'readonly': True},
         'updated_at': {'readonly': True},
+        'revision': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'properties.sku', 'type': 'int'},
+        'selected_event_hub_unit': {'key': 'properties.selectedEventHubUnit', 'type': 'int'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
+        'revision': {'key': 'properties.revision', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
-        super(ConsumerGroup, self).__init__(**kwargs)
-        self.created_at = None
+        super(MessagingPlan, self).__init__(**kwargs)
+        self.sku = None
+        self.selected_event_hub_unit = None
         self.updated_at = None
-        self.user_metadata = kwargs.get('user_metadata', None)
+        self.revision = None

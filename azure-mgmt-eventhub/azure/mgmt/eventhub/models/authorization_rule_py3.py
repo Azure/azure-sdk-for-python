@@ -44,6 +44,6 @@ class AuthorizationRule(Resource):
         'rights': {'key': 'properties.rights', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, rights, **kwargs) -> None:
         super(AuthorizationRule, self).__init__(**kwargs)
-        self.rights = kwargs.get('rights', None)
+        self.rights = rights

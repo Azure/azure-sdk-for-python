@@ -12,23 +12,29 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityParameter(Model):
-    """Parameter supplied to check Namespace name availability operation .
+class MessagingRegionsProperties(Model):
+    """MessagingRegionsProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: Required. Name to check the namespace name availability
-    :type name: str
+    :ivar code: Region code
+    :vartype code: str
+    :ivar full_name: Full name of the region
+    :vartype full_name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'code': {'readonly': True},
+        'full_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'full_name': {'key': 'fullName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        super(MessagingRegionsProperties, self).__init__(**kwargs)
+        self.code = None
+        self.full_name = None

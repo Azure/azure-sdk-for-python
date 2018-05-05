@@ -12,28 +12,29 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """A Event Hub REST API operation.
+class MessagingRegionsProperties(Model):
+    """MessagingRegionsProperties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
-    :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.eventhub.models.OperationDisplay
+    :ivar code: Region code
+    :vartype code: str
+    :ivar full_name: Full name of the region
+    :vartype full_name: str
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'code': {'readonly': True},
+        'full_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'code': {'key': 'code', 'type': 'str'},
+        'full_name': {'key': 'fullName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
-        self.display = kwargs.get('display', None)
+    def __init__(self, **kwargs) -> None:
+        super(MessagingRegionsProperties, self).__init__(**kwargs)
+        self.code = None
+        self.full_name = None
