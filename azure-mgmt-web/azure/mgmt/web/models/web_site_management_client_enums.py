@@ -173,6 +173,13 @@ class SiteAvailabilityState(Enum):
     disaster_recovery_mode = "DisasterRecoveryMode"
 
 
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
 class StatusOptions(Enum):
 
     ready = "Ready"
@@ -248,13 +255,6 @@ class InternalLoadBalancingMode(Enum):
     none = "None"
     web = "Web"
     publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
 
 
 class WorkerSizeOptions(Enum):
