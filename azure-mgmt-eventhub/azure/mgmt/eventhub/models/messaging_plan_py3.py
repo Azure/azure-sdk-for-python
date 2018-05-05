@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class TrackedResource(Resource):
-    """Definition of Resource.
+class MessagingPlan(TrackedResource):
+    """Messaging Plan for the namespace.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,12 +28,24 @@ class TrackedResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar sku: Sku type
+    :vartype sku: int
+    :ivar selected_event_hub_unit: Selected event hub unit
+    :vartype selected_event_hub_unit: int
+    :ivar updated_at: The exact time the messaging plan was updated.
+    :vartype updated_at: datetime
+    :ivar revision: revision number
+    :vartype revision: long
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'sku': {'readonly': True},
+        'selected_event_hub_unit': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'revision': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,9 +54,15 @@ class TrackedResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'properties.sku', 'type': 'int'},
+        'selected_event_hub_unit': {'key': 'properties.selectedEventHubUnit', 'type': 'int'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
+        'revision': {'key': 'properties.revision', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+        super(MessagingPlan, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = None
+        self.selected_event_hub_unit = None
+        self.updated_at = None
+        self.revision = None

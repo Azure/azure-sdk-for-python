@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -18,6 +18,7 @@ from .operations.namespaces_operations import NamespacesOperations
 from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .operations.event_hubs_operations import EventHubsOperations
 from .operations.consumer_groups_operations import ConsumerGroupsOperations
+from .operations.regions_operations import RegionsOperations
 from . import models
 
 
@@ -55,7 +56,7 @@ class EventHubManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class EventHubManagementClient(object):
+class EventHubManagementClient(SDKClient):
     """Azure Event Hubs client
 
     :ivar config: Configuration for client.
@@ -71,6 +72,8 @@ class EventHubManagementClient(object):
     :vartype event_hubs: azure.mgmt.eventhub.operations.EventHubsOperations
     :ivar consumer_groups: ConsumerGroups operations
     :vartype consumer_groups: azure.mgmt.eventhub.operations.ConsumerGroupsOperations
+    :ivar regions: Regions operations
+    :vartype regions: azure.mgmt.eventhub.operations.RegionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -86,7 +89,7 @@ class EventHubManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = EventHubManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(EventHubManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-01'
@@ -102,4 +105,6 @@ class EventHubManagementClient(object):
         self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.consumer_groups = ConsumerGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regions = RegionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class AuthorizationRule(Resource):
-    """Single item in a List or Get AuthorizationRule operation.
+class Resource(Model):
+    """The Resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id
     :vartype id: str
@@ -26,24 +24,22 @@ class AuthorizationRule(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param rights: Required. The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.eventhub.models.AccessRights]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'rights': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'rights': {'key': 'properties.rights', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(AuthorizationRule, self).__init__(**kwargs)
-        self.rights = kwargs.get('rights', None)
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None

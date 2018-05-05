@@ -12,32 +12,32 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     basic = "Basic"
     standard = "Standard"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     basic = "Basic"
     standard = "Standard"
 
 
-class AccessRights(Enum):
+class AccessRights(str, Enum):
 
     manage = "Manage"
     send = "Send"
     listen = "Listen"
 
 
-class KeyType(Enum):
+class KeyType(str, Enum):
 
     primary_key = "PrimaryKey"
     secondary_key = "SecondaryKey"
 
 
-class EntityStatus(Enum):
+class EntityStatus(str, Enum):
 
     active = "Active"
     disabled = "Disabled"
@@ -50,13 +50,13 @@ class EntityStatus(Enum):
     unknown = "Unknown"
 
 
-class EncodingCaptureDescription(Enum):
+class EncodingCaptureDescription(str, Enum):
 
     avro = "Avro"
     avro_deflate = "AvroDeflate"
 
 
-class UnavailableReason(Enum):
+class UnavailableReason(str, Enum):
 
     none = "None"
     invalid_name = "InvalidName"
@@ -66,14 +66,14 @@ class UnavailableReason(Enum):
     too_many_namespace_in_current_subscription = "TooManyNamespaceInCurrentSubscription"
 
 
-class ProvisioningStateDR(Enum):
+class ProvisioningStateDR(str, Enum):
 
     accepted = "Accepted"
     succeeded = "Succeeded"
     failed = "Failed"
 
 
-class RoleDisasterRecovery(Enum):
+class RoleDisasterRecovery(str, Enum):
 
     primary = "Primary"
     primary_not_replicating = "PrimaryNotReplicating"
