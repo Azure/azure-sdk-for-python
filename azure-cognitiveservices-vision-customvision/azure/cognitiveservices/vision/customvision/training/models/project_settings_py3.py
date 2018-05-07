@@ -21,7 +21,7 @@ class ProjectSettings(Model):
     """
 
     _attribute_map = {
-        'domain_id': {'key': 'DomainId', 'type': 'str'},
+        'domain_id': {'key': 'domainId', 'type': 'str'},
     }
 
     def __init__(self, *, domain_id: str=None, **kwargs) -> None:

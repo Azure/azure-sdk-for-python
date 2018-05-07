@@ -19,14 +19,19 @@ class ImageIdCreateEntry(Model):
     :type id: str
     :param tag_ids:
     :type tag_ids: list[str]
+    :param regions:
+    :type regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.Region]
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
+        'regions': {'key': 'regions', 'type': '[Region]'},
     }
 
     def __init__(self, **kwargs):
         super(ImageIdCreateEntry, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.tag_ids = kwargs.get('tag_ids', None)
+        self.regions = kwargs.get('regions', None)

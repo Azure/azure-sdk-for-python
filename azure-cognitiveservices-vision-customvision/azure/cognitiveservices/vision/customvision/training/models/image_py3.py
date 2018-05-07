@@ -33,9 +33,9 @@ class Image(Model):
     :ivar tags:
     :vartype tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageTag]
-    :ivar predictions:
-    :vartype predictions:
-     list[~azure.cognitiveservices.vision.customvision.training.models.PredictionTag]
+    :ivar regions:
+    :vartype regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegion]
     """
 
     _validation = {
@@ -46,18 +46,18 @@ class Image(Model):
         'image_uri': {'readonly': True},
         'thumbnail_uri': {'readonly': True},
         'tags': {'readonly': True},
-        'predictions': {'readonly': True},
+        'regions': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'created': {'key': 'Created', 'type': 'iso-8601'},
-        'width': {'key': 'Width', 'type': 'int'},
-        'height': {'key': 'Height', 'type': 'int'},
-        'image_uri': {'key': 'ImageUri', 'type': 'str'},
-        'thumbnail_uri': {'key': 'ThumbnailUri', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': '[ImageTag]'},
-        'predictions': {'key': 'Predictions', 'type': '[PredictionTag]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
+        'width': {'key': 'width', 'type': 'int'},
+        'height': {'key': 'height', 'type': 'int'},
+        'image_uri': {'key': 'imageUri', 'type': 'str'},
+        'thumbnail_uri': {'key': 'thumbnailUri', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '[ImageTag]'},
+        'regions': {'key': 'regions', 'type': '[ImageRegion]'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -69,4 +69,4 @@ class Image(Model):
         self.image_uri = None
         self.thumbnail_uri = None
         self.tags = None
-        self.predictions = None
+        self.regions = None

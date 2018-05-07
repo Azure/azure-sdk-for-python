@@ -12,31 +12,31 @@
 from msrest.serialization import Model
 
 
-class PredictionQuery(Model):
-    """PredictionQuery.
+class PredictionQueryResult(Model):
+    """PredictionQueryResult.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar results:
-    :vartype results:
-     list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     :ivar token:
     :vartype token:
      ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
+    :ivar results:
+    :vartype results:
+     list[~azure.cognitiveservices.vision.customvision.training.models.StoredImagePrediction]
     """
 
     _validation = {
-        'results': {'readonly': True},
         'token': {'readonly': True},
+        'results': {'readonly': True},
     }
 
     _attribute_map = {
-        'results': {'key': 'Results', 'type': '[Prediction]'},
-        'token': {'key': 'Token', 'type': 'PredictionQueryToken'},
+        'token': {'key': 'token', 'type': 'PredictionQueryToken'},
+        'results': {'key': 'results', 'type': '[StoredImagePrediction]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(PredictionQuery, self).__init__(**kwargs)
-        self.results = None
+        super(PredictionQueryResult, self).__init__(**kwargs)
         self.token = None
+        self.results = None

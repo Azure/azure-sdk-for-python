@@ -12,12 +12,18 @@
 from msrest.serialization import Model
 
 
-class ImagePredictionResultModel(Model):
-    """result of an image prediction request.
+class StoredImagePrediction(Model):
+    """result of an image classification request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar image_uri:
+    :vartype image_uri: str
+    :ivar thumbnail_uri:
+    :vartype thumbnail_uri: str
+    :ivar domain:
+    :vartype domain: str
     :ivar id:
     :vartype id: str
     :ivar project:
@@ -28,10 +34,13 @@ class ImagePredictionResultModel(Model):
     :vartype created: datetime
     :ivar predictions:
     :vartype predictions:
-     list[~azure.cognitiveservices.vision.customvision.prediction.models.ImageTagPredictionModel]
+     list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     """
 
     _validation = {
+        'image_uri': {'readonly': True},
+        'thumbnail_uri': {'readonly': True},
+        'domain': {'readonly': True},
         'id': {'readonly': True},
         'project': {'readonly': True},
         'iteration': {'readonly': True},
@@ -40,15 +49,21 @@ class ImagePredictionResultModel(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'project': {'key': 'Project', 'type': 'str'},
-        'iteration': {'key': 'Iteration', 'type': 'str'},
-        'created': {'key': 'Created', 'type': 'iso-8601'},
-        'predictions': {'key': 'Predictions', 'type': '[ImageTagPredictionModel]'},
+        'image_uri': {'key': 'imageUri', 'type': 'str'},
+        'thumbnail_uri': {'key': 'thumbnailUri', 'type': 'str'},
+        'domain': {'key': 'domain', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'project': {'key': 'project', 'type': 'str'},
+        'iteration': {'key': 'iteration', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
+        'predictions': {'key': 'predictions', 'type': '[Prediction]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ImagePredictionResultModel, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(StoredImagePrediction, self).__init__(**kwargs)
+        self.image_uri = None
+        self.thumbnail_uri = None
+        self.domain = None
         self.id = None
         self.project = None
         self.iteration = None
