@@ -34,12 +34,12 @@ class ExpressRouteCrossConnection(Resource):
     :vartype secondary_azure_port: str
     :ivar s_tag: The identifier of the circuit traffic.
     :vartype s_tag: int
-    :ivar peering_location: The peering location of the ExpressRoute circuit.
-    :vartype peering_location: str
-    :ivar bandwidth_in_mbps: The circuit bandwidth In Mbps.
-    :vartype bandwidth_in_mbps: int
-    :ivar express_route_circuit: The ExpressRouteCircuit
-    :vartype express_route_circuit:
+    :param peering_location: The peering location of the ExpressRoute circuit.
+    :type peering_location: str
+    :param bandwidth_in_mbps: The circuit bandwidth In Mbps.
+    :type bandwidth_in_mbps: int
+    :param express_route_circuit: The ExpressRouteCircuit
+    :type express_route_circuit:
      ~azure.mgmt.network.v2018_02_01.models.ExpressRouteCircuitReference
     :param service_provider_provisioning_state: The provisioning state of the
      circuit in the connectivity provider system. Possible values are
@@ -67,9 +67,6 @@ class ExpressRouteCrossConnection(Resource):
         'primary_azure_port': {'readonly': True},
         'secondary_azure_port': {'readonly': True},
         's_tag': {'readonly': True},
-        'peering_location': {'readonly': True},
-        'bandwidth_in_mbps': {'readonly': True},
-        'express_route_circuit': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -93,14 +90,14 @@ class ExpressRouteCrossConnection(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, service_provider_provisioning_state=None, service_provider_notes: str=None, peerings=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, peering_location: str=None, bandwidth_in_mbps: int=None, express_route_circuit=None, service_provider_provisioning_state=None, service_provider_notes: str=None, peerings=None, **kwargs) -> None:
         super(ExpressRouteCrossConnection, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.primary_azure_port = None
         self.secondary_azure_port = None
         self.s_tag = None
-        self.peering_location = None
-        self.bandwidth_in_mbps = None
-        self.express_route_circuit = None
+        self.peering_location = peering_location
+        self.bandwidth_in_mbps = bandwidth_in_mbps
+        self.express_route_circuit = express_route_circuit
         self.service_provider_provisioning_state = service_provider_provisioning_state
         self.service_provider_notes = service_provider_notes
         self.provisioning_state = None
