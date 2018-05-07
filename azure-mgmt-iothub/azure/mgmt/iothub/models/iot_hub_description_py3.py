@@ -34,9 +34,9 @@ class IotHubDescription(Resource):
      response body, it must also be provided as a header per the normal ETag
      convention.
     :type etag: str
-    :param properties:
+    :param properties: IotHub properties
     :type properties: ~azure.mgmt.iothub.models.IotHubProperties
-    :param sku: Required.
+    :param sku: Required. IotHub SKU info
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     """
 

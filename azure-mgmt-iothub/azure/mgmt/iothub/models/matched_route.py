@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2018-04-01"
+from msrest.serialization import Model
 
+
+class MatchedRoute(Model):
+    """Routes that matched.
+
+    :param properties: Properties of routes that matched
+    :type properties: ~azure.mgmt.iothub.models.RouteProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'RouteProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MatchedRoute, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

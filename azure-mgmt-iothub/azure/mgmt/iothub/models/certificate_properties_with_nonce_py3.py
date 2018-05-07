@@ -34,6 +34,8 @@ class CertificatePropertiesWithNonce(Model):
     :ivar verification_code: The certificate's verification code that will be
      used for proof of possession.
     :vartype verification_code: str
+    :ivar certificate: The certificate content
+    :vartype certificate: str
     """
 
     _validation = {
@@ -44,6 +46,7 @@ class CertificatePropertiesWithNonce(Model):
         'created': {'readonly': True},
         'updated': {'readonly': True},
         'verification_code': {'readonly': True},
+        'certificate': {'readonly': True},
     }
 
     _attribute_map = {
@@ -54,6 +57,7 @@ class CertificatePropertiesWithNonce(Model):
         'created': {'key': 'created', 'type': 'rfc-1123'},
         'updated': {'key': 'updated', 'type': 'rfc-1123'},
         'verification_code': {'key': 'verificationCode', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -65,3 +69,4 @@ class CertificatePropertiesWithNonce(Model):
         self.created = None
         self.updated = None
         self.verification_code = None
+        self.certificate = None

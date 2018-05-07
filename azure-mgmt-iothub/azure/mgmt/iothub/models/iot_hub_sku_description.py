@@ -24,7 +24,7 @@ class IotHubSkuDescription(Model):
     :vartype resource_type: str
     :param sku: Required. The type of the resource.
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
-    :param capacity: Required.
+    :param capacity: Required. IotHub capacity
     :type capacity: ~azure.mgmt.iothub.models.IotHubCapacity
     """
 
