@@ -12,34 +12,31 @@
 from msrest.serialization import Model
 
 
-class ImageTagPrediction(Model):
-    """ImageTagPrediction.
+class PredictionQueryResult(Model):
+    """PredictionQueryResult.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar tag_id:
-    :vartype tag_id: str
-    :ivar tag:
-    :vartype tag: str
-    :ivar probability:
-    :vartype probability: float
+    :ivar token:
+    :vartype token:
+     ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
+    :ivar results:
+    :vartype results:
+     list[~azure.cognitiveservices.vision.customvision.training.models.StoredImagePrediction]
     """
 
     _validation = {
-        'tag_id': {'readonly': True},
-        'tag': {'readonly': True},
-        'probability': {'readonly': True},
+        'token': {'readonly': True},
+        'results': {'readonly': True},
     }
 
     _attribute_map = {
-        'tag_id': {'key': 'TagId', 'type': 'str'},
-        'tag': {'key': 'Tag', 'type': 'str'},
-        'probability': {'key': 'Probability', 'type': 'float'},
+        'token': {'key': 'token', 'type': 'PredictionQueryToken'},
+        'results': {'key': 'results', 'type': '[StoredImagePrediction]'},
     }
 
     def __init__(self, **kwargs):
-        super(ImageTagPrediction, self).__init__(**kwargs)
-        self.tag_id = None
-        self.tag = None
-        self.probability = None
+        super(PredictionQueryResult, self).__init__(**kwargs)
+        self.token = None
+        self.results = None

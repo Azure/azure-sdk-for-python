@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -33,7 +33,7 @@ class PredictionEndpointConfiguration(Configuration):
         if api_key is None:
             raise ValueError("Parameter 'api_key' must not be None.")
         if not base_url:
-            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v1.1/Prediction'
+            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Prediction'
 
         super(PredictionEndpointConfiguration, self).__init__(base_url)
 
@@ -42,7 +42,7 @@ class PredictionEndpointConfiguration(Configuration):
         self.api_key = api_key
 
 
-class PredictionEndpoint(object):
+class PredictionEndpoint(SDKClient):
     """PredictionEndpoint
 
     :ivar config: Configuration for client.
@@ -57,10 +57,10 @@ class PredictionEndpoint(object):
             self, api_key, base_url=None):
 
         self.config = PredictionEndpointConfiguration(api_key, base_url)
-        self._client = ServiceClient(None, self.config)
+        super(PredictionEndpoint, self).__init__(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.1'
+        self.api_version = '2.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -85,9 +85,9 @@ class PredictionEndpoint(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImagePredictionResultModel or ClientRawResponse if raw=true
+        :return: ImagePrediction or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePredictionResultModel
+         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
@@ -129,7 +129,7 @@ class PredictionEndpoint(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ImagePredictionResultModel', response)
+            deserialized = self._deserialize('ImagePrediction', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -158,9 +158,9 @@ class PredictionEndpoint(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImagePredictionResultModel or ClientRawResponse if raw=true
+        :return: ImagePrediction or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePredictionResultModel
+         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
@@ -202,7 +202,7 @@ class PredictionEndpoint(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ImagePredictionResultModel', response)
+            deserialized = self._deserialize('ImagePrediction', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -231,9 +231,9 @@ class PredictionEndpoint(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImagePredictionResultModel or ClientRawResponse if raw=true
+        :return: ImagePrediction or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePredictionResultModel
+         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
@@ -275,7 +275,7 @@ class PredictionEndpoint(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ImagePredictionResultModel', response)
+            deserialized = self._deserialize('ImagePrediction', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -304,9 +304,9 @@ class PredictionEndpoint(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImagePredictionResultModel or ClientRawResponse if raw=true
+        :return: ImagePrediction or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePredictionResultModel
+         ~azure.cognitiveservices.vision.customvision.prediction.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
@@ -348,7 +348,7 @@ class PredictionEndpoint(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ImagePredictionResultModel', response)
+            deserialized = self._deserialize('ImagePrediction', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
