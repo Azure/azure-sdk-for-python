@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ImagePredictionResultModel(Model):
-    """result of an image prediction request.
+class ImagePrediction(Model):
+    """ImagePrediction.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,7 +28,7 @@ class ImagePredictionResultModel(Model):
     :vartype created: datetime
     :ivar predictions:
     :vartype predictions:
-     list[~azure.cognitiveservices.vision.customvision.prediction.models.ImageTagPredictionModel]
+     list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     """
 
     _validation = {
@@ -40,15 +40,15 @@ class ImagePredictionResultModel(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'project': {'key': 'Project', 'type': 'str'},
-        'iteration': {'key': 'Iteration', 'type': 'str'},
-        'created': {'key': 'Created', 'type': 'iso-8601'},
-        'predictions': {'key': 'Predictions', 'type': '[ImageTagPredictionModel]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'project': {'key': 'project', 'type': 'str'},
+        'iteration': {'key': 'iteration', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
+        'predictions': {'key': 'predictions', 'type': '[Prediction]'},
     }
 
     def __init__(self, **kwargs):
-        super(ImagePredictionResultModel, self).__init__(**kwargs)
+        super(ImagePrediction, self).__init__(**kwargs)
         self.id = None
         self.project = None
         self.iteration = None

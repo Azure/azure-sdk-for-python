@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class KeyPair(Model):
-    """KeyPair.
+class ImageRegionCreateBatch(Model):
+    """Batch of image region information to create.
 
-    :param primary_key:
-    :type primary_key: str
-    :param secondary_key:
-    :type secondary_key: str
+    :param regions:
+    :type regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateEntry]
     """
 
     _attribute_map = {
-        'primary_key': {'key': 'PrimaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'SecondaryKey', 'type': 'str'},
+        'regions': {'key': 'regions', 'type': '[ImageRegionCreateEntry]'},
     }
 
     def __init__(self, **kwargs):
-        super(KeyPair, self).__init__(**kwargs)
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
+        super(ImageRegionCreateBatch, self).__init__(**kwargs)
+        self.regions = kwargs.get('regions', None)

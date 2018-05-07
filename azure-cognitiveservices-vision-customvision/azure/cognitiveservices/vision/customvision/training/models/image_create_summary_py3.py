@@ -31,8 +31,8 @@ class ImageCreateSummary(Model):
     }
 
     _attribute_map = {
-        'is_batch_successful': {'key': 'IsBatchSuccessful', 'type': 'bool'},
-        'images': {'key': 'Images', 'type': '[ImageCreateResult]'},
+        'is_batch_successful': {'key': 'isBatchSuccessful', 'type': 'bool'},
+        'images': {'key': 'images', 'type': '[ImageCreateResult]'},
     }
 
     def __init__(self, **kwargs) -> None:

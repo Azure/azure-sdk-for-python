@@ -23,8 +23,8 @@ class ImageIdCreateBatch(Model):
     """
 
     _attribute_map = {
-        'images': {'key': 'Images', 'type': '[ImageIdCreateEntry]'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+        'images': {'key': 'images', 'type': '[ImageIdCreateEntry]'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):

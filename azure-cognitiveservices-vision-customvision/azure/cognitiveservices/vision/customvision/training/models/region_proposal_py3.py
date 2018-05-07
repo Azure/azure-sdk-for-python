@@ -12,31 +12,30 @@
 from msrest.serialization import Model
 
 
-class PredictionQuery(Model):
-    """PredictionQuery.
+class RegionProposal(Model):
+    """RegionProposal.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar results:
-    :vartype results:
-     list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
-    :ivar token:
-    :vartype token:
-     ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
+    :ivar confidence:
+    :vartype confidence: float
+    :ivar bounding_box:
+    :vartype bounding_box:
+     ~azure.cognitiveservices.vision.customvision.training.models.BoundingBox
     """
 
     _validation = {
-        'results': {'readonly': True},
-        'token': {'readonly': True},
+        'confidence': {'readonly': True},
+        'bounding_box': {'readonly': True},
     }
 
     _attribute_map = {
-        'results': {'key': 'Results', 'type': '[Prediction]'},
-        'token': {'key': 'Token', 'type': 'PredictionQueryToken'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+        'bounding_box': {'key': 'boundingBox', 'type': 'BoundingBox'},
     }
 
-    def __init__(self, **kwargs):
-        super(PredictionQuery, self).__init__(**kwargs)
-        self.results = None
-        self.token = None
+    def __init__(self, **kwargs) -> None:
+        super(RegionProposal, self).__init__(**kwargs)
+        self.confidence = None
+        self.bounding_box = None

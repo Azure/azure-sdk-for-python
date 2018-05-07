@@ -22,8 +22,8 @@ class ImageTagCreateEntry(Model):
     """
 
     _attribute_map = {
-        'image_id': {'key': 'ImageId', 'type': 'str'},
-        'tag_id': {'key': 'TagId', 'type': 'str'},
+        'image_id': {'key': 'imageId', 'type': 'str'},
+        'tag_id': {'key': 'tagId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
