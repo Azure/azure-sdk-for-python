@@ -16,6 +16,7 @@ try:
     from .failover_policy_py3 import FailoverPolicy
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .database_account_py3 import DatabaseAccount
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .failover_policies_py3 import FailoverPolicies
     from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
@@ -45,6 +46,7 @@ except (SyntaxError, ImportError):
     from .failover_policy import FailoverPolicy
     from .virtual_network_rule import VirtualNetworkRule
     from .database_account import DatabaseAccount
+    from .error_response import ErrorResponse, ErrorResponseException
     from .failover_policies import FailoverPolicies
     from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
@@ -91,6 +93,7 @@ __all__ = [
     'FailoverPolicy',
     'VirtualNetworkRule',
     'DatabaseAccount',
+    'ErrorResponse', 'ErrorResponseException',
     'FailoverPolicies',
     'RegionForOnlineOffline',
     'Resource',
