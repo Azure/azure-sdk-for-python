@@ -124,7 +124,6 @@ from .source_control import SourceControl
 from .source_control_update_parameters import SourceControlUpdateParameters
 from .source_control_sync_job import SourceControlSyncJob
 from .source_control_sync_job_create_parameters import SourceControlSyncJobCreateParameters
-from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
 from .dsc_node import DscNode
 from .dsc_node_configuration import DscNodeConfiguration
@@ -180,6 +179,7 @@ from .automation_client_enums import (
     LinuxUpdateClasses,
     SourceType,
     ProvisioningState,
+    StartType,
 )
 
 __all__ = [
@@ -298,7 +298,6 @@ __all__ = [
     'SourceControlUpdateParameters',
     'SourceControlSyncJob',
     'SourceControlSyncJobCreateParameters',
-    'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
     'DscNode',
     'DscNodeConfiguration',
@@ -353,4 +352,5 @@ __all__ = [
     'LinuxUpdateClasses',
     'SourceType',
     'ProvisioningState',
+    'StartType',
 ]

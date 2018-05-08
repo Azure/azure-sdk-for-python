@@ -143,12 +143,12 @@ class DscNodeConfigurationOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
+        if response.status_code == 200:
             deserialized = self._deserialize('DscNodeConfiguration', response)
 
         if raw:
