@@ -8,10 +8,7 @@
 import unittest
 
 import azure.mgmt.trafficmanager
-from datetime import date, timedelta
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtTrafficManagerTest(AzureMgmtTestCase):
 
@@ -20,11 +17,9 @@ class MgmtTrafficManagerTest(AzureMgmtTestCase):
         self.commerce_client = self.create_mgmt_client(
             azure.mgmt.trafficmanager.TrafficManagerManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_trafficmanager(self):
+    @ResourceGroupPreparer()
+    def test_trafficmanager(self, resource_group, location):
         # FIXME, write tests
         pass
 
