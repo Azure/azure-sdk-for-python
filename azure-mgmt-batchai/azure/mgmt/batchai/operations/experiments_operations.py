@@ -126,7 +126,9 @@ class ExperimentsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, workspace_name, experiment_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, experiment_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ExperimentCreateParameters(properties=properties)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -152,7 +154,7 @@ class ExperimentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'object')
+        body_content = self._serialize.body(parameters, 'ExperimentCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -176,7 +178,7 @@ class ExperimentsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, workspace_name, experiment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, workspace_name, experiment_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates an Experiment.
 
         :param resource_group_name: Name of the resource group to which the
@@ -192,9 +194,8 @@ class ExperimentsOperations(object):
          dash (-) and underscore (_). The name must be from 1 through 64
          characters long.
         :type experiment_name: str
-        :param parameters: The parameters to provide for the experiment
-         creation.
-        :type parameters: object
+        :param properties: The properties of an Experiment.
+        :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -212,7 +213,7 @@ class ExperimentsOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             experiment_name=experiment_name,
-            parameters=parameters,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
