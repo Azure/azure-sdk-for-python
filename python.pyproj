@@ -21,6 +21,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="README.md" />
+    <Compile Include="pydocumentdb\default_retry_policy.py" />
     <Compile Include="pydocumentdb\consistent_hash_ring.py" />
     <Compile Include="pydocumentdb\constants.py" />
     <Compile Include="pydocumentdb\endpoint_discovery_retry_policy.py" />

@@ -27,6 +27,7 @@ import time
 import pydocumentdb.errors as errors
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import pydocumentdb.resource_throttle_retry_policy as resource_throttle_retry_policy
+import pydocumentdb.default_retry_policy as default_retry_policy
 from pydocumentdb.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
@@ -48,6 +49,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     resourceThrottle_retry_policy = resource_throttle_retry_policy._ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount, 
                                                                                                 client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds, 
                                                                                                 client.connection_policy.RetryOptions.MaxWaitTimeInSeconds)
+    defaultRetry_policy = default_retry_policy._DefaultRetryPolicy(*args)
 
     while True:
         try:
@@ -69,10 +71,12 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
                 retry_policy = resourceThrottle_retry_policy
+            else:
+                retry_policy = defaultRetry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and 
             # re-throw the exception back
-            if not (retry_policy and retry_policy.ShouldRetry(e)):
+            if not (retry_policy.ShouldRetry(e)):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count

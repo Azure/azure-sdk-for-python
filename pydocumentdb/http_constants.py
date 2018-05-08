@@ -246,7 +246,7 @@ class Versions:
     """
     CurrentVersion = '2017-11-15'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.3.1'
+    SDKVersion = '2.3.2'
 
 
 class Delimiters:
@@ -267,6 +267,30 @@ class HttpContextProperties:
     """Constants of http context properties.
     """
     SubscriptionId = 'SubscriptionId'
+
+
+class _ErrorCodes:
+    """Windows Socket Error Codes
+    """
+    WindowsInterruptedFunctionCall = 10004;
+    WindowsFileHandleNotValid = 10009;
+    WindowsPermissionDenied = 10013;
+    WindowsBadAddress = 10014;
+    WindowsInvalidArgumnet = 10022;
+    WindowsResourceTemporarilyUnavailable = 10035;
+    WindowsOperationNowInProgress = 10036;
+    WindowsAddressAlreadyInUse = 10048;
+    WindowsConnectionResetByPeer = 10054;
+    WindowsCannotSendAfterSocketShutdown = 10058;
+    WindowsConnectionTimedOut = 10060;
+    WindowsConnectionRefused = 10061;
+    WindowsNameTooLong = 10063;
+    WindowsHostIsDown = 10064;
+    WindowsNoRouteTohost = 10065;
+
+    """Linux Error Codes
+    """
+    LinuxConnectionReset = 131;
 
 
 class StatusCodes:
@@ -301,6 +325,7 @@ class StatusCodes:
     OPERATION_PAUSED = 1200
     OPERATION_CANCELLED = 1201
 
+
 class SubStatusCodes:
     """Sub status codes returned by the REST operations specifying the details of the operation
     """
@@ -333,3 +358,4 @@ class SubStatusCodes:
 
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
+

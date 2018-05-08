@@ -29,7 +29,7 @@ class RetryOptions(object):
         Max number of retries to be performed for a request. Default value 9.
     :ivar int FixedRetryIntervalInMilliseconds:
         Fixed retry interval in milliseconds to wait between each retry ignoring the retryAfter returned as part of the response.
-    :ivar int MaxRetryAttemptCount:
+    :ivar int MaxWaitTimeInSeconds:
         Max wait time in seconds to wait for a request while the retries are happening. Default value 30 seconds.
     """
     def __init__(self, max_retry_attempt_count = 9, fixed_retry_interval_in_milliseconds = None, max_wait_time_in_seconds = 30):
