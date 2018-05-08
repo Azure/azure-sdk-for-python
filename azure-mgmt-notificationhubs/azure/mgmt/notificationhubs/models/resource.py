@@ -27,16 +27,15 @@ class Resource(Model):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -48,10 +47,11 @@ class Resource(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, tags=None, sku=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
-        self.sku = sku
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)

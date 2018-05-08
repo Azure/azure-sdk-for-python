@@ -9,25 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class CheckAvailabilityParameters(Model):
-    """Parameters supplied to the Check Name Availability for Namespace and
-    NotificationHubs.
+class CheckAvailabilityResult(Resource):
+    """Description of a CheckAvailibility resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Required. Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Required. Resource location
+    :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -40,9 +37,8 @@ class CheckAvailabilityParameters(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -55,12 +51,6 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckAvailabilityParameters, self).__init__(**kwargs)
-        self.id = None
-        self.name = kwargs.get('name', None)
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.is_availiable = kwargs.get('is_availiable', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, is_availiable: bool=None, **kwargs) -> None:
+        super(CheckAvailabilityResult, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        self.is_availiable = is_availiable

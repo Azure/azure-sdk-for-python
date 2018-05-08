@@ -99,19 +99,19 @@ class NamespaceResource(Resource):
         'namespace_type': {'key': 'properties.namespaceType', 'type': 'NamespaceType'},
     }
 
-    def __init__(self, **kwargs):
-        super(NamespaceResource, self).__init__(**kwargs)
-        self.namespace_resource_name = kwargs.get('namespace_resource_name', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.region = kwargs.get('region', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, namespace_resource_name: str=None, provisioning_state: str=None, region: str=None, status: str=None, created_at=None, updated_at=None, service_bus_endpoint: str=None, subscription_id: str=None, scale_unit: str=None, enabled: bool=None, critical: bool=None, data_center: str=None, namespace_type=None, **kwargs) -> None:
+        super(NamespaceResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        self.namespace_resource_name = namespace_resource_name
+        self.provisioning_state = provisioning_state
+        self.region = region
         self.metric_id = None
-        self.status = kwargs.get('status', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.service_bus_endpoint = kwargs.get('service_bus_endpoint', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.scale_unit = kwargs.get('scale_unit', None)
-        self.enabled = kwargs.get('enabled', None)
-        self.critical = kwargs.get('critical', None)
-        self.data_center = kwargs.get('data_center', None)
-        self.namespace_type = kwargs.get('namespace_type', None)
+        self.status = status
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.service_bus_endpoint = service_bus_endpoint
+        self.subscription_id = subscription_id
+        self.scale_unit = scale_unit
+        self.enabled = enabled
+        self.critical = critical
+        self.data_center = data_center
+        self.namespace_type = namespace_type

@@ -9,15 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleProperties(Model):
-    """SharedAccessAuthorizationRule properties.
+class SharedAccessAuthorizationRuleResource(Resource):
+    """Description of a Namespace AuthorizationRules.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku: The sku of the created namespace
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param rights: The rights associated with the rule.
     :type rights: list[str or
      ~azure.mgmt.notificationhubs.models.AccessRights]
@@ -42,6 +54,9 @@ class SharedAccessAuthorizationRuleProperties(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'primary_key': {'readonly': True},
         'secondary_key': {'readonly': True},
         'key_name': {'readonly': True},
@@ -53,20 +68,26 @@ class SharedAccessAuthorizationRuleProperties(Model):
     }
 
     _attribute_map = {
-        'rights': {'key': 'rights', 'type': '[AccessRights]'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'claim_type': {'key': 'claimType', 'type': 'str'},
-        'claim_value': {'key': 'claimValue', 'type': 'str'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'int'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
+        'key_name': {'key': 'properties.keyName', 'type': 'str'},
+        'claim_type': {'key': 'properties.claimType', 'type': 'str'},
+        'claim_value': {'key': 'properties.claimValue', 'type': 'str'},
+        'modified_time': {'key': 'properties.modifiedTime', 'type': 'str'},
+        'created_time': {'key': 'properties.createdTime', 'type': 'str'},
+        'revision': {'key': 'properties.revision', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(SharedAccessAuthorizationRuleProperties, self).__init__(**kwargs)
-        self.rights = kwargs.get('rights', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, rights=None, **kwargs) -> None:
+        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        self.rights = rights
         self.primary_key = None
         self.secondary_key = None
         self.key_name = None

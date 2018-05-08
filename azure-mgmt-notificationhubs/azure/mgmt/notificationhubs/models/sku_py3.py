@@ -42,10 +42,10 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name, tier: str=None, size: str=None, family: str=None, capacity: int=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = name
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.capacity = capacity
