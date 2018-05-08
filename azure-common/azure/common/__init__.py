@@ -4,8 +4,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-__author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '1.1.10'
+__author__ = 'Microsoft Corp. <azpysdkhelp@microsoft.com>'
+__version__ = '1.1.11'
 
 
 class AzureException(Exception):

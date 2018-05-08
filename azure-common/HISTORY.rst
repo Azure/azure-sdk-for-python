@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.11 (2018-05-08)
++++++++++++++++++++
+
+**Features**
+
+- Add support for "resource" in "get_azure_cli_credentials"
+
 1.1.10 (2018-04-30)
 +++++++++++++++++++
 
