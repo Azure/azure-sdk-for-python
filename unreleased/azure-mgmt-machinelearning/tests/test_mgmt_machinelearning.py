@@ -17,9 +17,7 @@ from azure.mgmt.storage.models import (
     SkuName,
     Kind
 )
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtMachineLearningTest(AzureMgmtTestCase):
 
@@ -28,11 +26,9 @@ class MgmtMachineLearningTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.machinelearning.AzureMLWebServicesManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_ml(self):
+    @ResourceGroupPreparer()
+    def test_ml(self, resource_group, location):
         region = 'southcentralus'
 
         # Create a storage account and get keys
@@ -42,7 +38,7 @@ class MgmtMachineLearningTest(AzureMgmtTestCase):
             subscription_id=self.settings.SUBSCRIPTION_ID
         )
         storage_async_operation = storage_client.storage_accounts.create(
-            self.group_name,
+            resource_group.name,
             storage_name,
             StorageAccountCreateParameters(
                 sku=Sku(SkuName.standard_ragrs),
@@ -52,14 +48,14 @@ class MgmtMachineLearningTest(AzureMgmtTestCase):
         )
         storage_async_operation.wait()
         storage_key = storage_client.storage_accounts.list_keys(
-            self.group_name,
+            resource_group.name,
             storage_name
         ).keys[0].value
 
         # Create Commitment plan
         commitplan_name = self.get_resource_name('pycommit')
         commitplan = self.resource_client.resources.create_or_update(
-            resource_group_name=self.group_name,
+            resource_group_name=resource_group.name,
             resource_provider_namespace="Microsoft.MachineLearning",
             parent_resource_path="",
             resource_type="commitmentPlans",
@@ -90,11 +86,9 @@ class MgmtMachineLearningTest(AzureMgmtTestCase):
                     'packageType': 'Graph'
                 }
             },
-            self.group_name,
+            resource_group.name,
             ws_name
         )
-            
-
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
