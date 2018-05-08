@@ -1,6 +1,10 @@
+## Changes in 2.3.2 : ##
+
+- Added support for default retries on connection issues.
+
 ## Changes in 2.3.1 : ##
 
-- Updated documentation to reference Azure Cosmos DB instead of Azure DocumentDB
+- Updated documentation to reference Azure Cosmos DB instead of Azure DocumentDB.
 
 ## Changes in 2.3.0 : ##
 

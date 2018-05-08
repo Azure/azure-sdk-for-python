@@ -44,6 +44,7 @@ class Test_retry_policy_tests(unittest.TestCase):
     masterKey = test_config._test_config.masterKey
     test_db_name = 'sample database' 
     test_coll_name = 'sample collection'
+    counter = 0;
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -197,8 +198,93 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
+    def test_default_retry_policy_for_query(self):
+        connection_policy = documents.ConnectionPolicy()
+
+        client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+
+        document_definition_1 = { 'id': 'doc1',
+                                  'name': 'sample document',
+                                  'key': 'value'} 
+        document_definition_2 = { 'id': 'doc2',
+                                  'name': 'sample document',
+                                  'key': 'value'} 
+
+        client.CreateDocument(self.created_collection['_self'], document_definition_1)
+        client.CreateDocument(self.created_collection['_self'], document_definition_2)
+
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
+
+        docs = client.QueryDocuments(self.created_collection['_self'], "Select * from c", {'maxItemCount':1})
+        
+        result_docs = list(docs)
+        self.assertEqual(result_docs[0]['id'], 'doc1')
+        self.assertEqual(result_docs[1]['id'], 'doc2')
+        self.assertEqual(self.counter, 12)
+
+        self.counter = 0;
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+
+        client.DeleteDocument(result_docs[0]['_self'])
+        client.DeleteDocument(result_docs[1]['_self'])
+
+    def test_default_retry_policy_for_read(self):
+        connection_policy = documents.ConnectionPolicy()
+
+        client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        
+        document_definition = { 'id': 'doc',
+                                'name': 'sample document',
+                                'key': 'value'} 
+
+        created_document = client.CreateDocument(self.created_collection['_self'], document_definition)
+
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
+
+        doc = client.ReadDocument(created_document['_self'], {})
+        self.assertEqual(doc['id'], 'doc')
+        self.assertEqual(self.counter, 3)
+        
+        self.counter = 0;
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+                
+        client.DeleteDocument(doc['_self'])
+    
+    def test_default_retry_policy_for_create(self):
+        connection_policy = documents.ConnectionPolicy()
+
+        client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        
+        document_definition = { 'id': 'doc',
+                                'name': 'sample document',
+                                'key': 'value'} 
+
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
+
+        created_document = {}
+        try :
+            created_document = client.CreateDocument(self.created_collection['_self'], document_definition)
+        except Exception as err:
+            self.assertEqual(err.status_code, 10054)
+
+        self.assertDictEqual(created_document, {})
+        self.assertEqual(self.counter, 7)
+
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         raise errors.HTTPFailure(StatusCodes.TOO_MANY_REQUESTS, "Request rate is too large", {HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
+
+    def _MockExecuteFunctionConnectionReset(self, function, *args, **kwargs):
+        self.counter += 1;
+
+        if self.counter % 3 == 0:
+            return self.OriginalExecuteFunction(function, *args, **kwargs)
+        else:
+            raise errors.HTTPFailure(10054, "Connection was reset", {})
 
 if __name__ == '__main__':
     unittest.main()

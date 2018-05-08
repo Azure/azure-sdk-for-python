@@ -145,7 +145,7 @@ class DocumentManagement:
 def run_sample():
     with IDisposable(document_client.DocumentClient(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
-			# setup database for this sample
+            # setup database for this sample
             try:
                 client.CreateDatabase({"id": DATABASE_ID})
 
