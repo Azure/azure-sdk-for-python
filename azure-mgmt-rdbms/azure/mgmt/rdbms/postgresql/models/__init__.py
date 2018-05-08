@@ -32,6 +32,7 @@ try:
     from .performance_tier_properties_py3 import PerformanceTierProperties
     from .name_availability_request_py3 import NameAvailabilityRequest
     from .name_availability_py3 import NameAvailability
+    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
 except (SyntaxError, ImportError):
     from .proxy_resource import ProxyResource
     from .tracked_resource import TrackedResource
@@ -55,6 +56,7 @@ except (SyntaxError, ImportError):
     from .performance_tier_properties import PerformanceTierProperties
     from .name_availability_request import NameAvailabilityRequest
     from .name_availability import NameAvailability
+    from .server_security_alert_policy import ServerSecurityAlertPolicy
 from .server_paged import ServerPaged
 from .firewall_rule_paged import FirewallRulePaged
 from .database_paged import DatabasePaged
@@ -68,6 +70,7 @@ from .postgre_sql_management_client_enums import (
     GeoRedundantBackup,
     SkuTier,
     OperationOrigin,
+    ServerSecurityAlertPolicyState,
 )
 
 __all__ = [
@@ -93,6 +96,7 @@ __all__ = [
     'PerformanceTierProperties',
     'NameAvailabilityRequest',
     'NameAvailability',
+    'ServerSecurityAlertPolicy',
     'ServerPaged',
     'FirewallRulePaged',
     'DatabasePaged',
@@ -105,4 +109,5 @@ __all__ = [
     'GeoRedundantBackup',
     'SkuTier',
     'OperationOrigin',
+    'ServerSecurityAlertPolicyState',
 ]
