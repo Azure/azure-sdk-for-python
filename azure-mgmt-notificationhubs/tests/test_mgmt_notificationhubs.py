@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.notificationhubs
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtNotificationHubsTest(AzureMgmtTestCase):
 
@@ -19,10 +17,7 @@ class MgmtNotificationHubsTest(AzureMgmtTestCase):
         self.notificationhubs_client = self.create_mgmt_client(
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
     def test_notification_hubs(self):
         account_name = self.get_resource_name('pyarmnotificationhubs')
 
