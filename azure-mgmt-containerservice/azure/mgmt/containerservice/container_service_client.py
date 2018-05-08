@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -52,7 +52,7 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ContainerServiceClient(object):
+class ContainerServiceClient(SDKClient):
     """The Container Service Client.
 
     :ivar config: Configuration for client.
@@ -77,7 +77,7 @@ class ContainerServiceClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ContainerServiceClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ContainerServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
