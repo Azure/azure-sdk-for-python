@@ -18,12 +18,13 @@ class HardwareProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar hardware_type: Name of the hardware type (vendor and/or thrie
-     product name). Possible values include: 'Cisco_UCS'
+    :ivar hardware_type: Name of the hardware type (vendor and/or their
+     product name). Possible values include: 'Cisco_UCS', 'HPE'
     :vartype hardware_type: str or
      ~azure.mgmt.hanaonazure.models.HanaHardwareTypeNamesEnum
     :ivar hana_instance_size: Specifies the HANA instance SKU. Possible values
-     include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m'
+     include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S384', 'S384m',
+     'S384xm', 'S576', 'S768', 'S960'
     :vartype hana_instance_size: str or
      ~azure.mgmt.hanaonazure.models.HanaInstanceSizeNamesEnum
     """
