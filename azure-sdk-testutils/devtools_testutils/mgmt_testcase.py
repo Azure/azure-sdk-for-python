@@ -105,7 +105,7 @@ class AzureMgmtTestCase(ReplayableTest):
         return not self.is_live
 
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID', 'ADLA_JOB_ID']
         for key in constants_to_scrub:
             if hasattr(self.settings, key) and hasattr(self._fake_settings, key):
                 self.scrubber.register_name_pair(getattr(self.settings, key),
