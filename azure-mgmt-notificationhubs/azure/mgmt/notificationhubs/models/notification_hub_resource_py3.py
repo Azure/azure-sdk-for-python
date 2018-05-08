@@ -79,14 +79,14 @@ class NotificationHubResource(Resource):
         'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, **kwargs):
-        super(NotificationHubResource, self).__init__(**kwargs)
-        self.notification_hub_resource_name = kwargs.get('notification_hub_resource_name', None)
-        self.registration_ttl = kwargs.get('registration_ttl', None)
-        self.authorization_rules = kwargs.get('authorization_rules', None)
-        self.apns_credential = kwargs.get('apns_credential', None)
-        self.wns_credential = kwargs.get('wns_credential', None)
-        self.gcm_credential = kwargs.get('gcm_credential', None)
-        self.mpns_credential = kwargs.get('mpns_credential', None)
-        self.adm_credential = kwargs.get('adm_credential', None)
-        self.baidu_credential = kwargs.get('baidu_credential', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, notification_hub_resource_name: str=None, registration_ttl: str=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None, **kwargs) -> None:
+        super(NotificationHubResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        self.notification_hub_resource_name = notification_hub_resource_name
+        self.registration_ttl = registration_ttl
+        self.authorization_rules = authorization_rules
+        self.apns_credential = apns_credential
+        self.wns_credential = wns_credential
+        self.gcm_credential = gcm_credential
+        self.mpns_credential = mpns_credential
+        self.adm_credential = adm_credential
+        self.baidu_credential = baidu_credential

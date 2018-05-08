@@ -12,10 +12,10 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """SubResource.
+class Kind(Model):
+    """Kind.
 
-    :param id: Resource Id
+    :param id: Namespace Kind
     :type id: str
     """
 
@@ -23,6 +23,6 @@ class SubResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(Kind, self).__init__(**kwargs)
+        self.id = id

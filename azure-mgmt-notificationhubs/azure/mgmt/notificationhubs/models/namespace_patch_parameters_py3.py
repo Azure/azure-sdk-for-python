@@ -29,8 +29,8 @@ class NamespacePatchParameters(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, kind=None, sku=None, **kwargs) -> None:
         super(NamespacePatchParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.kind = kwargs.get('kind', None)
-        self.sku = kwargs.get('sku', None)
+        self.tags = tags
+        self.kind = kind
+        self.sku = sku
