@@ -177,16 +177,17 @@ class NamespacesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'}
 
     def patch(
-            self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, tags=None, sku=None, custom_headers=None, raw=False, **operation_config):
         """Patches the existing namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param parameters: Parameters supplied to patch a Namespace Resource.
-        :type parameters:
-         ~azure.mgmt.notificationhubs.models.NamespacePatchParameters
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param sku: The sku of the created namespace
+        :type sku: ~azure.mgmt.notificationhubs.models.Sku
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -197,6 +198,8 @@ class NamespacesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.NamespacePatchParameters(tags=tags, sku=sku)
+
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
@@ -812,8 +815,8 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ResourceListKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys or
+        :return: NamespaceListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NamespaceListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -853,7 +856,7 @@ class NamespacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ResourceListKeys', response)
+            deserialized = self._deserialize('NamespaceListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

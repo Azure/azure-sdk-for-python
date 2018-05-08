@@ -17,20 +17,16 @@ class NamespacePatchParameters(Model):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param kind: The kind of namespace
-    :type kind: ~azure.mgmt.notificationhubs.models.Kind
     :param sku: The sku of the created namespace
     :type sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'Kind'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, **kwargs):
         super(NamespacePatchParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
-        self.kind = kwargs.get('kind', None)
         self.sku = kwargs.get('sku', None)

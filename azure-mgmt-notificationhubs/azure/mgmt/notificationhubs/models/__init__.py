@@ -17,12 +17,13 @@ try:
     from .check_availability_parameters_py3 import CheckAvailabilityParameters
     from .check_availability_result_py3 import CheckAvailabilityResult
     from .namespace_create_or_update_parameters_py3 import NamespaceCreateOrUpdateParameters
-    from .kind_py3 import Kind
     from .namespace_patch_parameters_py3 import NamespacePatchParameters
     from .namespace_resource_py3 import NamespaceResource
     from .shared_access_authorization_rule_properties_py3 import SharedAccessAuthorizationRuleProperties
     from .shared_access_authorization_rule_create_or_update_parameters_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
     from .shared_access_authorization_rule_resource_py3 import SharedAccessAuthorizationRuleResource
+    from .namespace_list_result_py3 import NamespaceListResult
+    from .shared_access_authorization_rule_list_result_py3 import SharedAccessAuthorizationRuleListResult
     from .resource_list_keys_py3 import ResourceListKeys
     from .policykey_resource_py3 import PolicykeyResource
     from .apns_credential_py3 import ApnsCredential
@@ -44,12 +45,13 @@ except (SyntaxError, ImportError):
     from .check_availability_parameters import CheckAvailabilityParameters
     from .check_availability_result import CheckAvailabilityResult
     from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-    from .kind import Kind
     from .namespace_patch_parameters import NamespacePatchParameters
     from .namespace_resource import NamespaceResource
     from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
     from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
     from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
+    from .namespace_list_result import NamespaceListResult
+    from .shared_access_authorization_rule_list_result import SharedAccessAuthorizationRuleListResult
     from .resource_list_keys import ResourceListKeys
     from .policykey_resource import PolicykeyResource
     from .apns_credential import ApnsCredential
@@ -81,12 +83,13 @@ __all__ = [
     'CheckAvailabilityParameters',
     'CheckAvailabilityResult',
     'NamespaceCreateOrUpdateParameters',
-    'Kind',
     'NamespacePatchParameters',
     'NamespaceResource',
     'SharedAccessAuthorizationRuleProperties',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
+    'NamespaceListResult',
+    'SharedAccessAuthorizationRuleListResult',
     'ResourceListKeys',
     'PolicykeyResource',
     'ApnsCredential',
