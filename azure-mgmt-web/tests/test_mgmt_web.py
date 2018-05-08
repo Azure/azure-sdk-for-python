@@ -7,38 +7,29 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.logic
 import azure.mgmt.web
-from msrest.version import msrest_version
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtAppsTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtAppsTest, self).setUp()
-        self.logic_client = self.create_mgmt_client(
-            azure.mgmt.logic.LogicManagementClient
-        )
         self.web_client = self.create_mgmt_client(
             azure.mgmt.web.WebSiteManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_webapp(self):
+    @ResourceGroupPreparer()
+    def test_webapp(self, resource_group, location):
         raise unittest.SkipTest("Skipping WebApp test")
 
         app_service_plan_name = self.get_resource_name('pyarmappserviceplan')
         site_name = self.get_resource_name('pyarmsite')
 
         server_farm_async_operation = self.web_client.server_farms.create_or_update_server_farm(
-            self.group_name,
+            resource_group.name,
             app_service_plan_name,
             azure.mgmt.web.models.ServerFarmWithRichSku(
-                location=self.region,
+                location=location,
                 sku=azure.mgmt.web.models.SkuDescription(
                     name='S1',
                     capacity=1,
@@ -79,27 +70,6 @@ class MgmtAppsTest(AzureMgmtTestCase):
 
         # Delete a Site
         self.web_client.sites.delete_site(self.group_name, site_name)
-
-
-    @record
-    def test_logic(self):
-        workflow_name = '12HourHeartBeat'
-        self.logic_client.workflows.create_or_update(
-            self.group_name,
-            workflow_name,
-            azure.mgmt.logic.models.Workflow(
-                location='West US',
-                definition={ 
-                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "triggers": {},
-                    "actions": {},
-                    "outputs": {}
-                }
-            )
-        )
-
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
