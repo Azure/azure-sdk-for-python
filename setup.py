@@ -48,8 +48,16 @@ setup(
     classifiers=CLASSIFIERS,
     packages=[
         'azure_devtools',
-        'azure_devtools.scenario_tests'
+        'azure_devtools.scenario_tests',
+        'azure_devtools.ci_tools',
     ],
+    extras_require={
+        'ci_tools':[
+            "PyGithub>=1.36", # Can Merge PR after 1.36
+            "GitPython",
+            "requests>=2.0"
+        ]
+    },    
     package_dir={'': 'src'},
     install_requires=DEPENDENCIES,
 )
