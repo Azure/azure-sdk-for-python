@@ -2256,6 +2256,89 @@ class CatalogOperations(object):
         return deserialized
     list_table_statistics.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics'}
 
+    def preview_table_partition(
+            self, account_name, database_name, schema_name, table_name, partition_name, max_rows=None, max_columns=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves a preview set of rows in given partition.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         partition.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the partition.
+        :type schema_name: str
+        :param table_name: The name of the table containing the partition.
+        :type table_name: str
+        :param partition_name: The name of the table partition.
+        :type partition_name: str
+        :param max_rows: The maximum number of preview rows to be
+         retrieved.Rows returned may be less than or equal to this number
+         depending on row sizes and number of rows in the partition.
+        :type max_rows: long
+        :param max_columns: The maximum number of columns to be retrieved.
+        :type max_columns: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlTablePreview or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePreview
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.preview_table_partition.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+            'partitionName': self._serialize.url("partition_name", partition_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if max_rows is not None:
+            query_parameters['maxRows'] = self._serialize.query("max_rows", max_rows, 'long')
+        if max_columns is not None:
+            query_parameters['maxColumns'] = self._serialize.query("max_columns", max_columns, 'long')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlTablePreview', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    preview_table_partition.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}/previewrows'}
+
     def get_table_partition(
             self, account_name, database_name, schema_name, table_name, partition_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified table partition from the Data Lake Analytics
@@ -2330,6 +2413,85 @@ class CatalogOperations(object):
 
         return deserialized
     get_table_partition.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'}
+
+    def preview_table(
+            self, account_name, database_name, schema_name, table_name, max_rows=None, max_columns=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves a preview set of rows in given table.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the table.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the table.
+        :type schema_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :param max_rows: The maximum number of preview rows to be retrieved.
+         Rows returned may be less than or equal to this number depending on
+         row sizes and number of rows in the table.
+        :type max_rows: long
+        :param max_columns: The maximum number of columns to be retrieved.
+        :type max_columns: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlTablePreview or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePreview
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.preview_table.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if max_rows is not None:
+            query_parameters['maxRows'] = self._serialize.query("max_rows", max_rows, 'long')
+        if max_columns is not None:
+            query_parameters['maxColumns'] = self._serialize.query("max_columns", max_columns, 'long')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlTablePreview', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    preview_table.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/previewrows'}
 
     def list_table_partitions(
             self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
