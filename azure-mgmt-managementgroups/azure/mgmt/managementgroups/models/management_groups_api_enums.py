@@ -20,4 +20,4 @@ class Reason(str, Enum):
 
 class Type(str, Enum):
 
-    providers_microsoft_managementmanagement_group = "/providers/Microsoft.Management/managementGroup"
+    providers_microsoft_managementmanagement_groups = "/providers/Microsoft.Management/managementGroups"
