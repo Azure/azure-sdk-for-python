@@ -22,7 +22,6 @@ try:
     from .shared_access_authorization_rule_properties_py3 import SharedAccessAuthorizationRuleProperties
     from .shared_access_authorization_rule_create_or_update_parameters_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
     from .shared_access_authorization_rule_resource_py3 import SharedAccessAuthorizationRuleResource
-    from .namespace_list_result_py3 import NamespaceListResult
     from .shared_access_authorization_rule_list_result_py3 import SharedAccessAuthorizationRuleListResult
     from .resource_list_keys_py3 import ResourceListKeys
     from .policykey_resource_py3 import PolicykeyResource
@@ -50,7 +49,6 @@ except (SyntaxError, ImportError):
     from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
     from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
     from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-    from .namespace_list_result import NamespaceListResult
     from .shared_access_authorization_rule_list_result import SharedAccessAuthorizationRuleListResult
     from .resource_list_keys import ResourceListKeys
     from .policykey_resource import PolicykeyResource
@@ -88,7 +86,6 @@ __all__ = [
     'SharedAccessAuthorizationRuleProperties',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
-    'NamespaceListResult',
     'SharedAccessAuthorizationRuleListResult',
     'ResourceListKeys',
     'PolicykeyResource',

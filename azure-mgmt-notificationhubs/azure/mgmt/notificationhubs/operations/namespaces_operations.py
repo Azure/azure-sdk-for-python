@@ -815,9 +815,11 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NamespaceListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.notificationhubs.models.NamespaceListResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: SharedAccessAuthorizationRuleListResult or ClientRawResponse
+         if raw=true
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleListResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -856,7 +858,7 @@ class NamespacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('NamespaceListResult', response)
+            deserialized = self._deserialize('SharedAccessAuthorizationRuleListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
