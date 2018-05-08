@@ -15,6 +15,7 @@ from enum import Enum
 class HanaHardwareTypeNamesEnum(Enum):
 
     cisco_ucs = "Cisco_UCS"
+    hpe = "HPE"
 
 
 class HanaInstanceSizeNamesEnum(Enum):
@@ -25,3 +26,9 @@ class HanaInstanceSizeNamesEnum(Enum):
     s144 = "S144"
     s192 = "S192"
     s192m = "S192m"
+    s384 = "S384"
+    s384m = "S384m"
+    s384xm = "S384xm"
+    s576 = "S576"
+    s768 = "S768"
+    s960 = "S960"
