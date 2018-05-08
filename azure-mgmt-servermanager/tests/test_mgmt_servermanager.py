@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.servermanager
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtServerManagerTest(AzureMgmtTestCase):
 
@@ -19,16 +17,14 @@ class MgmtServerManagerTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.servermanager.ServerManagement
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_servermanager_gateways(self):
+    @ResourceGroupPreparer()
+    def test_servermanager_gateways(self, resource_group, location):
         gateway_name = self.get_resource_name('pygateway')
         region = 'centralus'
 
         gateway_async = self.client.gateway.create(
-            self.group_name,
+            resource_group.name,
             gateway_name,
             region
         )
@@ -36,16 +32,13 @@ class MgmtServerManagerTest(AzureMgmtTestCase):
         self.assertEqual(gateway.name, gateway_name)
 
         gateway = self.client.gateway.get(
-            self.group_name,
+            resource_group.name,
             gateway_name
         )
         self.assertEqual(gateway.name, gateway_name)
 
         gateways = list(self.client.gateway.list())
         self.assertEqual(len(gateways), 1)
-        
-            
-
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
