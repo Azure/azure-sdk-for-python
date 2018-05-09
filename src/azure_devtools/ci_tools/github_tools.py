@@ -19,7 +19,7 @@ from .git_tools import (
 
 _LOGGER = logging.getLogger(__name__)
 
-class ExceptionContext:
+class ExceptionContext:  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.comment = None
 
@@ -30,7 +30,7 @@ def exception_to_github(github_obj_to_comment, summary=""):
     context = ExceptionContext()
     try:
         yield context
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         if summary:
             summary = ": ({})".format(summary)
         error_type = "an unknown error"
@@ -44,7 +44,7 @@ def exception_to_github(github_obj_to_comment, summary=""):
                 content += "and output:\n```shell\n{}\n```".format(err.output)
             else:
                 content += "and no output"
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             content = "```python\n{}\n```".format(traceback.format_exc())
         response = "<details><summary>Encountered {}{}</summary><p>\n\n".format(
             error_type,
@@ -143,13 +143,14 @@ def get_or_create_pull(github_repo, title, body, head, base, *, none_if_no_commi
             base=base
         )
     except GithubException as err:
-        if err.status == 422 and err.data['errors'][0].get('message', '').startswith('A pull request already exists'):
+        err_message = err.data['errors'][0].get('message', '')
+        if err.status == 422 and err_message.startswith('A pull request already exists'):
             _LOGGER.info('PR already exists, get this PR')
             return list(github_repo.get_pulls(
                 head=head,
                 base=base
             ))[0]
-        elif none_if_no_commit and err.status == 422 and err.data['errors'][0].get('message', '').startswith('No commits between'):
+        elif none_if_no_commit and err.status == 422 and err_message.startswith('No commits between'):
             _LOGGER.info('No PR possible since head %s and base %s are the same',
                          head,
                          base)
@@ -200,19 +201,19 @@ def clone_to_path(gh_token, folder, sdk_git_id, branch_or_commit=None, *, pr_num
         try:
             checkout_with_fetch(folder, "pull/{}/merge".format(pr_number))
             return
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             pass  # Assume "merge" doesn't exist anymore, fetch "head"
         checkout_with_fetch(folder, "pull/{}/head".format(pr_number))
 
 
-def do_pr(gh_token, sdk_git_id, sdk_pr_target_repo_id, branch_name, base_branch, pr_body=""):
+def do_pr(gh_token, sdk_git_id, sdk_pr_target_repo_id, branch_name, base_branch, pr_body=""):  # pylint: disable=too-many-arguments
     "Do the PR"
     if not gh_token:
         _LOGGER.info('Skipping the PR, no token found')
-        return
+        return None
     if not sdk_pr_target_repo_id:
         _LOGGER.info('Skipping the PR, no target repo id')
-        return
+        return None
 
     github_con = Github(gh_token)
     sdk_pr_target_repo = github_con.get_repo(sdk_pr_target_repo_id)
@@ -237,7 +238,7 @@ def do_pr(gh_token, sdk_git_id, sdk_pr_target_repo_id, branch_name, base_branch,
         if err.status == 422 and err.data['errors'][0].get('message', '').startswith('A pull request already exists'):
             matching_pulls = sdk_pr_target_repo.get_pulls(base=base_branch, head=sdk_git_owner+":"+head_name)
             matching_pull = matching_pulls[0]
-            _LOGGER.info('PR already exists: '+matching_pull.html_url)
+            _LOGGER.info('PR already exists: %s', matching_pull.html_url)
             return matching_pull
         raise
     _LOGGER.info("Made PR %s", github_pr.html_url)
@@ -258,7 +259,7 @@ def manage_git_folder(gh_token, temp_dir, git_id, *, pr_number=None):
     _LOGGER.debug("Git ID %s", git_id)
     if Path(git_id).exists():
         yield git_id
-        return None # Do not erase a local folder, just skip here
+        return  # Do not erase a local folder, just skip here
 
     # Clone the specific branch
     split_git_id = git_id.split("@")
@@ -273,7 +274,7 @@ def manage_git_folder(gh_token, temp_dir, git_id, *, pr_number=None):
 
 
 class GithubLink:
-    def __init__(self, gitid, link_type, branch_or_commit, path, token=None):
+    def __init__(self, gitid, link_type, branch_or_commit, path, token=None):  # pylint: disable=too-many-arguments
         self.gitid = gitid
         self.link_type = link_type
         self.branch_or_commit = branch_or_commit
@@ -322,7 +323,7 @@ class GithubLink:
             self.token
         )
 
-class DashboardCommentableObject:
+class DashboardCommentableObject:  # pylint: disable=too-few-public-methods
     def __init__(self, issue_or_pr, header):
         self._issue_or_pr = issue_or_pr
         self._header = header
@@ -359,7 +360,7 @@ class DashboardComment:
 
     def edit(self, text):
         self.github_comment.edit(self._header+"\n"+text)
-    
+
     @property
     def body(self):
         return self.github_comment.body[len(self._header+"\n"):]

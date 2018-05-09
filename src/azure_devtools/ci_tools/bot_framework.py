@@ -37,6 +37,7 @@ def build_from_issue_comment(gh_token, body):
             # If the comment has already disapeared, skip the command
             return None
         return WebhookMetadata(repo, issue, text, comment)
+    return None
 
 def build_from_issues(gh_token, body):
     """Create a WebhookMetadata from an opening issue text.
@@ -48,6 +49,7 @@ def build_from_issues(gh_token, body):
         text = body['issue']['body']
         comment = issue  # It's where we update the comment: in the issue itself
         return WebhookMetadata(repo, issue, text, comment)
+    return None
 
 @lru_cache()
 def robot_name_from_env_variable():
