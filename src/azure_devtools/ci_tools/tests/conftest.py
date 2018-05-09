@@ -1,10 +1,17 @@
 """Configuration of fixtures for pytest"""
 import os
+import sys
 
 from github import Github
 
 import pytest
 
+collect_ignore = []
+if sys.version_info < (3, 6):
+    # Might do something more generic later
+    collect_ignore.append("test_bot_framework.py")
+    collect_ignore.append("test_git_tools.py")
+    collect_ignore.append("test_github_tools.py")
 
 @pytest.fixture
 def github_token():
