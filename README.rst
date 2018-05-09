@@ -5,9 +5,20 @@ Development tools for Python-based Azure tools
 ==============================================
 
 This package contains tools to aid in developing Python-based Azure code.
-Currently it includes ``scenario_tests``,
-a testing framework to handle much of the busywork
+
+This includes the following components:
+
+scenario_tests
+--------------
+
+A testing framework to handle much of the busywork
 associated with testing code that interacts with Azure.
+
+ci_tools
+--------
+
+Some tooling to help developing CI tools. This includes some Git helpers,
+Github RestAPI wrapper and a Bot framework for Github issues.
 
 Contributing
 ============
