@@ -3,7 +3,7 @@ import tempfile
 
 from git import Repo
 
-from swaggertosdk.git_tools import (
+from azure_devtools.ci_tools.git_tools import (
     do_commit,
     get_files_in_commit
 )

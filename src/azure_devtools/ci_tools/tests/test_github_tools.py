@@ -7,7 +7,7 @@ import pytest
 from git import Repo, GitCommandError
 from github import GithubException
 
-from swaggertosdk.github_tools import (
+from azure_devtools.ci_tools.github_tools import (
     exception_to_github,
     user_from_token,
     configure_user,

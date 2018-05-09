@@ -1,6 +1,6 @@
 import pytest
 
-from swaggertosdk.restapi.bot_framework import BotHandler, order, build_from_issue_comment, build_from_issues
+from azure_devtools.ci_tools.bot_framework import BotHandler, order, build_from_issue_comment, build_from_issues
 
 
 def test_webhook_data(github_client, github_token):
@@ -23,7 +23,7 @@ def test_webhook_data(github_client, github_token):
     assert webhook_data.text == "@AutorestCI help"
     assert webhook_data.issue.number == 16
     assert webhook_data.repo.full_name == repo.full_name
-    
+
     fake_webhook = {
         'action': 'created',  # What is the comment state?
         'repository': {
