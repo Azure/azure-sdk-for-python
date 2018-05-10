@@ -520,6 +520,13 @@
     ],
     "service_name": "Web Apps"
   },
+  "azure-operationalinsights": {
+		"service_name": "Log Analytics",
+		"category ": "Client",
+    "namespaces": [
+      "azure.operationalinsights"
+    ]
+	},
   "azure-servicebus": {
     "category ": "Client",
     "service_name": "Service Bus"
