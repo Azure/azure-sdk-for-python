@@ -8,7 +8,7 @@ Release History
 
 **Features**
 
-- Add blob operations, immutability policy
+- Add blob containers operations, immutability policy
 - Add usage.list_by_location
 - Client now supports Azure profiles.
 - Client class can be used as a context manager to keep the underlying HTTP session open for performance
