@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -52,7 +52,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class StorageManagementClient(MultiApiClientMixin):
+class StorageManagementClient(MultiApiClientMixin, SDKClient):
     """The Azure Storage Management API.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -80,7 +80,7 @@ class StorageManagementClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2017-10-01'
+    DEFAULT_API_VERSION='2018-02-01'
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -90,16 +90,13 @@ class StorageManagementClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
         super(StorageManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
