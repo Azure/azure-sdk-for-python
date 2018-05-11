@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_entity_resource import AzureEntityResource
+from .azure_entity_resource_py3 import AzureEntityResource
 
 
 class ImmutabilityPolicy(AzureEntityResource):
