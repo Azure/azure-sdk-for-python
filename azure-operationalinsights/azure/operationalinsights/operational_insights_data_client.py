@@ -21,9 +21,6 @@ class OperationalInsightsDataClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param workspace_id: ID of the workspace. This is Workspace ID from the
-     Properties blade in the Azure portal.
-    :type workspace_id: str
     :param workspaces: Comma separated workspace IDs to include in
      cross-workspace queries.
     :type workspaces: str
@@ -34,10 +31,8 @@ class OperationalInsightsDataClientConfiguration(Configuration):
     """
 
     def __init__(
-            self, workspace_id, credentials, workspaces=None, base_url=None):
+            self, credentials, workspaces=None, base_url=None):
 
-        if workspace_id is None:
-            raise ValueError("Parameter 'workspace_id' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
@@ -47,7 +42,6 @@ class OperationalInsightsDataClientConfiguration(Configuration):
 
         self.add_user_agent('azure-operationalinsights/{}'.format(VERSION))
 
-        self.workspace_id = workspace_id
         self.workspaces = workspaces
         self.credentials = credentials
 
@@ -58,9 +52,6 @@ class OperationalInsightsDataClient(object):
     :ivar config: Configuration for client.
     :vartype config: OperationalInsightsDataClientConfiguration
 
-    :param workspace_id: ID of the workspace. This is Workspace ID from the
-     Properties blade in the Azure portal.
-    :type workspace_id: str
     :param workspaces: Comma separated workspace IDs to include in
      cross-workspace queries.
     :type workspaces: str
@@ -71,9 +62,9 @@ class OperationalInsightsDataClient(object):
     """
 
     def __init__(
-            self, workspace_id, credentials, workspaces=None, base_url=None):
+            self, credentials, workspaces=None, base_url=None):
 
-        self.config = OperationalInsightsDataClientConfiguration(workspace_id, credentials, workspaces, base_url)
+        self.config = OperationalInsightsDataClientConfiguration(credentials, workspaces, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -83,13 +74,16 @@ class OperationalInsightsDataClient(object):
 
 
     def query(
-            self, body, custom_headers=None, raw=False, **operation_config):
+            self, workspace_id, body, custom_headers=None, raw=False, **operation_config):
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
         [Here](/documentation/2-Using-the-API/Query) is an example for using
         POST with an Analytics query.
 
+        :param workspace_id: ID of the workspace. This is Workspace ID from
+         the Properties blade in the Azure portal.
+        :type workspace_id: str
         :param body: The Analytics query. Learn more about the [Analytics
          query
          syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/)
@@ -108,7 +102,7 @@ class OperationalInsightsDataClient(object):
         # Construct URL
         url = '/workspaces/{workspaceId}/query'
         path_format_arguments = {
-            'workspaceId': self._serialize.url("self.config.workspace_id", self.config.workspace_id, 'str')
+            'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
