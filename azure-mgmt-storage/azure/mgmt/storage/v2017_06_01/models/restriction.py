@@ -44,8 +44,8 @@ class Restriction(Model):
         'reason_code': {'key': 'reasonCode', 'type': 'str'},
     }
 
-    def __init__(self, reason_code=None):
-        super(Restriction, self).__init__()
+    def __init__(self, **kwargs):
+        super(Restriction, self).__init__(**kwargs)
         self.type = None
         self.values = None
-        self.reason_code = reason_code
+        self.reason_code = kwargs.get('reason_code', None)
