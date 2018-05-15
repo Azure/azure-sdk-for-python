@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage import Usage
+from .usage_py3 import Usage
 
 
 class PartitionUsage(Usage):

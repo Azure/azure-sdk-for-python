@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .metric_value import MetricValue
+from .metric_value_py3 import MetricValue
 
 
 class PercentileMetricValue(MetricValue):
