@@ -61,7 +61,7 @@ class MgmtDataMigrationTest(AzureMgmtTestCase):
             vnet_name,
             'subnet1',
             {'address_prefix': '10.0.0.0/24'}
-        )
+        ).wait()
 
         # create the service
         params_create_service = DataMigrationService(
