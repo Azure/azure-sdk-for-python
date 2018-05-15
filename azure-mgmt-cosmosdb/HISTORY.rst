@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.4.1 (2018-05-15)
+++++++++++++++++++
+
+**Features**
+
+- Add database_accounts.offline_region
+- Add database_accounts.online_region
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
 0.4.0 (2018-04-17)
 ++++++++++++++++++
 
