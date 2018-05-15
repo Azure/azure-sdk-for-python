@@ -46,8 +46,8 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self):
-        super(Usage, self).__init__()
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.unit = None
         self.current_value = None
         self.limit = None
