@@ -72,7 +72,6 @@ try:
     from .workspace_py3 import Workspace
     from .workspace_create_parameters_py3 import WorkspaceCreateParameters
     from .experiment_py3 import Experiment
-    from .experiment_create_parameters_py3 import ExperimentCreateParameters
     from .clusters_list_options_py3 import ClustersListOptions
     from .clusters_list_by_resource_group_options_py3 import ClustersListByResourceGroupOptions
     from .clusters_list_by_workspace_options_py3 import ClustersListByWorkspaceOptions
@@ -147,7 +146,6 @@ except (SyntaxError, ImportError):
     from .workspace import Workspace
     from .workspace_create_parameters import WorkspaceCreateParameters
     from .experiment import Experiment
-    from .experiment_create_parameters import ExperimentCreateParameters
     from .clusters_list_options import ClustersListOptions
     from .clusters_list_by_resource_group_options import ClustersListByResourceGroupOptions
     from .clusters_list_by_workspace_options import ClustersListByWorkspaceOptions
@@ -246,7 +244,6 @@ __all__ = [
     'Workspace',
     'WorkspaceCreateParameters',
     'Experiment',
-    'ExperimentCreateParameters',
     'ClustersListOptions',
     'ClustersListByResourceGroupOptions',
     'ClustersListByWorkspaceOptions',
