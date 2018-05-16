@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -51,7 +51,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLockClient(object):
+class ManagementLockClient(SDKClient):
     """ManagementLockClient
 
     :ivar config: Configuration for client.
@@ -74,7 +74,7 @@ class ManagementLockClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ManagementLockClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-01-01'
