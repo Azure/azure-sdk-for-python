@@ -36,6 +36,7 @@ from .traffic_manager_management_client_enums import (
     MonitorProtocol,
     ProfileStatus,
     TrafficRoutingMethod,
+    TrafficViewEnrollmentStatus,
 )
 
 __all__ = [
@@ -65,4 +66,5 @@ __all__ = [
     'MonitorProtocol',
     'ProfileStatus',
     'TrafficRoutingMethod',
+    'TrafficViewEnrollmentStatus',
 ]

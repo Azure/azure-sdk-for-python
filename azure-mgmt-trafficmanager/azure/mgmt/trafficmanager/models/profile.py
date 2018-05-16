@@ -43,6 +43,12 @@ class Profile(TrackedResource):
     :type monitor_config: ~azure.mgmt.trafficmanager.models.MonitorConfig
     :param endpoints: The list of endpoints in the Traffic Manager profile.
     :type endpoints: list[~azure.mgmt.trafficmanager.models.Endpoint]
+    :param traffic_view_enrollment_status: Indicates whether Traffic View is
+     'Enabled' or 'Disabled' for the Traffic Manager profile. Null, indicates
+     'Disabled'. Enabling this feature will increase the cost of the Traffic
+     Manage profile. Possible values include: 'Enabled', 'Disabled'
+    :type traffic_view_enrollment_status: str or
+     ~azure.mgmt.trafficmanager.models.TrafficViewEnrollmentStatus
     """
 
     _attribute_map = {
@@ -56,12 +62,14 @@ class Profile(TrackedResource):
         'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfig'},
         'monitor_config': {'key': 'properties.monitorConfig', 'type': 'MonitorConfig'},
         'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
+        'traffic_view_enrollment_status': {'key': 'properties.trafficViewEnrollmentStatus', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, tags=None, location=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None):
+    def __init__(self, id=None, name=None, type=None, tags=None, location=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, traffic_view_enrollment_status=None):
         super(Profile, self).__init__(id=id, name=name, type=type, tags=tags, location=location)
         self.profile_status = profile_status
         self.traffic_routing_method = traffic_routing_method
         self.dns_config = dns_config
         self.monitor_config = monitor_config
         self.endpoints = endpoints
+        self.traffic_view_enrollment_status = traffic_view_enrollment_status

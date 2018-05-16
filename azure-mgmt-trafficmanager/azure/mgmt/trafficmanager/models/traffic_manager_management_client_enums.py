@@ -56,3 +56,9 @@ class TrafficRoutingMethod(Enum):
     priority = "Priority"
     weighted = "Weighted"
     geographic = "Geographic"
+
+
+class TrafficViewEnrollmentStatus(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
