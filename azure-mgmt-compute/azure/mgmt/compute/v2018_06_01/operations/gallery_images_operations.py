@@ -41,7 +41,7 @@ class GalleryImagesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gallery_name, gallery_image_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -67,7 +67,7 @@ class GalleryImagesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'GalleryImage')
+        body_content = self._serialize.body(gallery_image, 'GalleryImage')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -93,7 +93,7 @@ class GalleryImagesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gallery_name, gallery_image_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a gallery image.
 
         :param resource_group_name: The name of the resource group.
@@ -102,9 +102,10 @@ class GalleryImagesOperations(object):
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image.
         :type gallery_image_name: str
-        :param parameters: Parameters supplied to the create or update gallery
-         image operation.
-        :type parameters: ~azure.mgmt.compute.v2018_06_01.models.GalleryImage
+        :param gallery_image: Parameters supplied to the create or update
+         gallery image operation.
+        :type gallery_image:
+         ~azure.mgmt.compute.v2018_06_01.models.GalleryImage
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -122,7 +123,7 @@ class GalleryImagesOperations(object):
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
             gallery_image_name=gallery_image_name,
-            parameters=parameters,
+            gallery_image=gallery_image,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

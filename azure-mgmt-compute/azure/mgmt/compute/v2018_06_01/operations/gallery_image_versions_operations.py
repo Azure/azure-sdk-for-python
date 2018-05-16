@@ -41,7 +41,7 @@ class GalleryImageVersionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -68,7 +68,7 @@ class GalleryImageVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'GalleryImageVersion')
+        body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersion')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -94,7 +94,7 @@ class GalleryImageVersionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a gallery image version.
 
         :param resource_group_name: The name of the resource group.
@@ -106,9 +106,9 @@ class GalleryImageVersionsOperations(object):
         :param gallery_image_version_name: The name of the gallery image
          version.
         :type gallery_image_version_name: str
-        :param parameters: Parameters supplied to the create or update gallery
-         image version operation.
-        :type parameters:
+        :param gallery_image_version: Parameters supplied to the create or
+         update gallery image version operation.
+        :type gallery_image_version:
          ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -128,7 +128,7 @@ class GalleryImageVersionsOperations(object):
             gallery_name=gallery_name,
             gallery_image_name=gallery_image_name,
             gallery_image_version_name=gallery_image_version_name,
-            parameters=parameters,
+            gallery_image_version=gallery_image_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

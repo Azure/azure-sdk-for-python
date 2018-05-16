@@ -41,7 +41,7 @@ class GalleriesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gallery_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -66,7 +66,7 @@ class GalleriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Gallery')
+        body_content = self._serialize.body(gallery, 'Gallery')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -92,16 +92,16 @@ class GalleriesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gallery_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a gallery.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the gallery.
         :type gallery_name: str
-        :param parameters: Parameters supplied to the create or update gallery
+        :param gallery: Parameters supplied to the create or update gallery
          operation.
-        :type parameters: ~azure.mgmt.compute.v2018_06_01.models.Gallery
+        :type gallery: ~azure.mgmt.compute.v2018_06_01.models.Gallery
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -118,7 +118,7 @@ class GalleriesOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
-            parameters=parameters,
+            gallery=gallery,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
