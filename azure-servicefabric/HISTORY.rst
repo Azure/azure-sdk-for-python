@@ -34,6 +34,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 **Bugfixes**
  
 - Numerous fixes to descriptions and help text of entities
+- Compatibility of the sdist with wheel 0.31.0
  
 **Features**
  
