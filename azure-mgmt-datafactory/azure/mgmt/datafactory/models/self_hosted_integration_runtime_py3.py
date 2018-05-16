@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_runtime import IntegrationRuntime
+from .integration_runtime_py3 import IntegrationRuntime
 
 
 class SelfHostedIntegrationRuntime(IntegrationRuntime):

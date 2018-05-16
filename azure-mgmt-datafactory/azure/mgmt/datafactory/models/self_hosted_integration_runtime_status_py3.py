@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_runtime_status import IntegrationRuntimeStatus
+from .integration_runtime_status_py3 import IntegrationRuntimeStatus
 
 
 class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):

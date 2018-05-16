@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .multiple_pipeline_trigger import MultiplePipelineTrigger
+from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
 
 
 class BlobEventsTrigger(MultiplePipelineTrigger):
@@ -35,10 +35,17 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
-    :param blob_path: Required. Expression to determine if trigger should
-     fire. For example, @startswith('/records/blobs/december/') will only fire
-     the trigger for blobs in the december folder under the records container.
-    :type blob_path: str
+    :param blob_path_begins_with: The blob path must begin with the pattern
+     provided for trigger to fire. For example, '/records/blobs/december/' will
+     only fire the trigger for blobs in the december folder under the records
+     container. At least one of these must be provided: blobPathBeginsWith,
+     blobPathEndsWith.
+    :type blob_path_begins_with: str
+    :param blob_path_ends_with: The blob path must end with the pattern
+     provided for trigger to fire. For example, 'december/boxes.csv' will only
+     fire the trigger for blobs named boxes in a december folder. At least one
+     of these must be provided: blobPathBeginsWith, blobPathEndsWith.
+    :type blob_path_ends_with: str
     :param events: Required. The type of events that cause this trigger to
      fire.
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
@@ -49,7 +56,6 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
-        'blob_path': {'required': True},
         'events': {'required': True},
         'scope': {'required': True},
     }
@@ -60,14 +66,16 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
-        'blob_path': {'key': 'typeProperties.blobPath', 'type': 'str'},
+        'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
+        'blob_path_ends_with': {'key': 'typeProperties.blobPathEndsWith', 'type': 'str'},
         'events': {'key': 'typeProperties.events', 'type': '[str]'},
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
 
-    def __init__(self, *, blob_path: str, events, scope: str, additional_properties=None, description: str=None, pipelines=None, **kwargs) -> None:
+    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, pipelines=None, blob_path_begins_with: str=None, blob_path_ends_with: str=None, **kwargs) -> None:
         super(BlobEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, pipelines=pipelines, **kwargs)
-        self.blob_path = blob_path
+        self.blob_path_begins_with = blob_path_begins_with
+        self.blob_path_ends_with = blob_path_ends_with
         self.events = events
         self.scope = scope
         self.type = 'BlobEventsTrigger'
