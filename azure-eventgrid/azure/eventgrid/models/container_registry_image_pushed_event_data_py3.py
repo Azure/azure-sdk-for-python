@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_registry_event_data import ContainerRegistryEventData
+from .container_registry_event_data_py3 import ContainerRegistryEventData
 
 
 class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):

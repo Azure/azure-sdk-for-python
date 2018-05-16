@@ -20,6 +20,9 @@ try:
     from .resource_delete_failure_data_py3 import ResourceDeleteFailureData
     from .resource_delete_cancel_data_py3 import ResourceDeleteCancelData
     from .event_grid_event_py3 import EventGridEvent
+    from .subscription_validation_event_data_py3 import SubscriptionValidationEventData
+    from .subscription_validation_response_py3 import SubscriptionValidationResponse
+    from .subscription_deleted_event_data_py3 import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data_py3 import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
     from .device_twin_metadata_py3 import DeviceTwinMetadata
@@ -48,6 +51,9 @@ except (SyntaxError, ImportError):
     from .resource_delete_failure_data import ResourceDeleteFailureData
     from .resource_delete_cancel_data import ResourceDeleteCancelData
     from .event_grid_event import EventGridEvent
+    from .subscription_validation_event_data import SubscriptionValidationEventData
+    from .subscription_validation_response import SubscriptionValidationResponse
+    from .subscription_deleted_event_data import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
     from .device_twin_metadata import DeviceTwinMetadata
@@ -77,6 +83,9 @@ __all__ = [
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
     'EventGridEvent',
+    'SubscriptionValidationEventData',
+    'SubscriptionValidationResponse',
+    'SubscriptionDeletedEventData',
     'IotHubDeviceCreatedEventData',
     'IotHubDeviceDeletedEventData',
     'DeviceTwinMetadata',
