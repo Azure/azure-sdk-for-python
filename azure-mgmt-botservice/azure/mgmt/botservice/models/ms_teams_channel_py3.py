@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .channel import Channel
+from .channel_py3 import Channel
 
 
 class MsTeamsChannel(Channel):

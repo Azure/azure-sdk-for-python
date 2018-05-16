@@ -16,6 +16,10 @@ from .version import VERSION
 from .operations.bots_operations import BotsOperations
 from .operations.channels_operations import ChannelsOperations
 from .operations.operations import Operations
+from .operations.bot_connections_operations import BotConnectionsOperations
+from .operations.bot_connection_operations import BotConnectionOperations
+from .operations.bot_token_operations import BotTokenOperations
+from .operations.connections_operations import ConnectionsOperations
 from . import models
 
 
@@ -63,6 +67,14 @@ class AzureBotService(SDKClient):
     :vartype channels: azure.mgmt.botservice.operations.ChannelsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.operations.Operations
+    :ivar bot_connections: BotConnections operations
+    :vartype bot_connections: azure.mgmt.botservice.operations.BotConnectionsOperations
+    :ivar bot_connection: BotConnection operations
+    :vartype bot_connection: azure.mgmt.botservice.operations.BotConnectionOperations
+    :ivar bot_token: BotToken operations
+    :vartype bot_token: azure.mgmt.botservice.operations.BotTokenOperations
+    :ivar connections: Connections operations
+    :vartype connections: azure.mgmt.botservice.operations.ConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,4 +100,12 @@ class AzureBotService(SDKClient):
         self.channels = ChannelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bot_connections = BotConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bot_connection = BotConnectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bot_token = BotTokenOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
