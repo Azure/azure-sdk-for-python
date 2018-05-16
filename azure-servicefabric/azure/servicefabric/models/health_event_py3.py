@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .health_information import HealthInformation
+from .health_information_py3 import HealthInformation
 
 
 class HealthEvent(HealthInformation):

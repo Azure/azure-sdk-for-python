@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scaling_mechanism_description import ScalingMechanismDescription
+from .scaling_mechanism_description_py3 import ScalingMechanismDescription
 
 
 class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanismDescription):

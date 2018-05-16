@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .fabric_event import FabricEvent
+from .fabric_event_py3 import FabricEvent
 
 
 class ServiceEvent(FabricEvent):

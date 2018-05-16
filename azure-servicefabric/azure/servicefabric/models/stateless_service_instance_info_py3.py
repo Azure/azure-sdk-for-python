@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .replica_info import ReplicaInfo
+from .replica_info_py3 import ReplicaInfo
 
 
 class StatelessServiceInstanceInfo(ReplicaInfo):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_health_state_chunk import EntityHealthStateChunk
+from .entity_health_state_chunk_py3 import EntityHealthStateChunk
 
 
 class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):

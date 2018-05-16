@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scaling_trigger_description import ScalingTriggerDescription
+from .scaling_trigger_description_py3 import ScalingTriggerDescription
 
 
 class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):

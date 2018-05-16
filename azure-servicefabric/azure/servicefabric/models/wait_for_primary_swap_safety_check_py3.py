@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partition_safety_check import PartitionSafetyCheck
+from .partition_safety_check_py3 import PartitionSafetyCheck
 
 
 class WaitForPrimarySwapSafetyCheck(PartitionSafetyCheck):

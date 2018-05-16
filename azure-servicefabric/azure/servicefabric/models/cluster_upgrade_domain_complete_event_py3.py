@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cluster_event import ClusterEvent
+from .cluster_event_py3 import ClusterEvent
 
 
 class ClusterUpgradeDomainCompleteEvent(ClusterEvent):

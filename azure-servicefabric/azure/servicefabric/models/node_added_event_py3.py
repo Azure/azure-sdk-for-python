@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .node_event import NodeEvent
+from .node_event_py3 import NodeEvent
 
 
 class NodeAddedEvent(NodeEvent):

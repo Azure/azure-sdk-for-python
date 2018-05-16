@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .property_value import PropertyValue
+from .property_value_py3 import PropertyValue
 
 
 class StringPropertyValue(PropertyValue):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .provision_application_type_description_base import ProvisionApplicationTypeDescriptionBase
+from .provision_application_type_description_base_py3 import ProvisionApplicationTypeDescriptionBase
 
 
 class ProvisionApplicationTypeDescription(ProvisionApplicationTypeDescriptionBase):

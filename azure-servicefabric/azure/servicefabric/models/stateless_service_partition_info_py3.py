@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_partition_info import ServicePartitionInfo
+from .service_partition_info_py3 import ServicePartitionInfo
 
 
 class StatelessServicePartitionInfo(ServicePartitionInfo):

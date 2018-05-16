@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .property_batch_info import PropertyBatchInfo
+from .property_batch_info_py3 import PropertyBatchInfo
 
 
 class FailedPropertyBatchInfo(PropertyBatchInfo):

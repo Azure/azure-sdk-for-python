@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partition_information import PartitionInformation
+from .partition_information_py3 import PartitionInformation
 
 
 class Int64RangePartitionInformation(PartitionInformation):

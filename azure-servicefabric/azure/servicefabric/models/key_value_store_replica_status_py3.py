@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .replica_status_base import ReplicaStatusBase
+from .replica_status_base_py3 import ReplicaStatusBase
 
 
 class KeyValueStoreReplicaStatus(ReplicaStatusBase):

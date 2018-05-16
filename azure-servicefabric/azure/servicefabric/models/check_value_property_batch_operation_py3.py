@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .property_batch_operation import PropertyBatchOperation
+from .property_batch_operation_py3 import PropertyBatchOperation
 
 
 class CheckValuePropertyBatchOperation(PropertyBatchOperation):

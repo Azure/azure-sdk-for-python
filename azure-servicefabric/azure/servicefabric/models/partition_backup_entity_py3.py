@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_entity import BackupEntity
+from .backup_entity_py3 import BackupEntity
 
 
 class PartitionBackupEntity(BackupEntity):

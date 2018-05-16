@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_health import EntityHealth
+from .entity_health_py3 import EntityHealth
 
 
 class PartitionHealth(EntityHealth):

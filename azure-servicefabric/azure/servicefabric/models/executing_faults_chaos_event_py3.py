@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .chaos_event import ChaosEvent
+from .chaos_event_py3 import ChaosEvent
 
 
 class ExecutingFaultsChaosEvent(ChaosEvent):

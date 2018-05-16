@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_event import ApplicationEvent
+from .application_event_py3 import ApplicationEvent
 
 
 class ChaosRestartCodePackageFaultCompletedEvent(ApplicationEvent):

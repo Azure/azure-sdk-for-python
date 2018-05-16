@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_storage_description import BackupStorageDescription
+from .backup_storage_description_py3 import BackupStorageDescription
 
 
 class FileShareBackupStorageDescription(BackupStorageDescription):

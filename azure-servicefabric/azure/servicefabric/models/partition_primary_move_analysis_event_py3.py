@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partition_analysis_event import PartitionAnalysisEvent
+from .partition_analysis_event_py3 import PartitionAnalysisEvent
 
 
 class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):

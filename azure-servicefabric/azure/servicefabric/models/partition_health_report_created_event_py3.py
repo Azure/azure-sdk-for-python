@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partition_event import PartitionEvent
+from .partition_event_py3 import PartitionEvent
 
 
 class PartitionHealthReportCreatedEvent(PartitionEvent):

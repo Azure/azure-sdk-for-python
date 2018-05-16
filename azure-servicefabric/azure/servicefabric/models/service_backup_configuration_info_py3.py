@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_configuration_info import BackupConfigurationInfo
+from .backup_configuration_info_py3 import BackupConfigurationInfo
 
 
 class ServiceBackupConfigurationInfo(BackupConfigurationInfo):

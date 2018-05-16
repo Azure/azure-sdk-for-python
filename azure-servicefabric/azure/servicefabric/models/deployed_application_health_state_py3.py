@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_health_state import EntityHealthState
+from .entity_health_state_py3 import EntityHealthState
 
 
 class DeployedApplicationHealthState(EntityHealthState):

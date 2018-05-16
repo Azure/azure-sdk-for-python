@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .replica_health import ReplicaHealth
+from .replica_health_py3 import ReplicaHealth
 
 
 class StatelessServiceInstanceHealth(ReplicaHealth):

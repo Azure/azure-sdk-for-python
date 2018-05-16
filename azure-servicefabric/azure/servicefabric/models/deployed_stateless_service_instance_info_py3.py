@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .deployed_service_replica_info import DeployedServiceReplicaInfo
+from .deployed_service_replica_info_py3 import DeployedServiceReplicaInfo
 
 
 class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_health_state_chunk_list import EntityHealthStateChunkList
+from .entity_health_state_chunk_list_py3 import EntityHealthStateChunkList
 
 
 class NodeHealthStateChunkList(EntityHealthStateChunkList):

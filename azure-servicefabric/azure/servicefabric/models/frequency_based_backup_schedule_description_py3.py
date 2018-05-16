@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_schedule_description import BackupScheduleDescription
+from .backup_schedule_description_py3 import BackupScheduleDescription
 
 
 class FrequencyBasedBackupScheduleDescription(BackupScheduleDescription):

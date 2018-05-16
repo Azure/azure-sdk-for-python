@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_info import ServiceInfo
+from .service_info_py3 import ServiceInfo
 
 
 class StatefulServiceInfo(ServiceInfo):

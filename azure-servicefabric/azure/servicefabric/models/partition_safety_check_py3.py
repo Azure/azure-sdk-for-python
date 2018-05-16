@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .safety_check import SafetyCheck
+from .safety_check_py3 import SafetyCheck
 
 
 class PartitionSafetyCheck(SafetyCheck):

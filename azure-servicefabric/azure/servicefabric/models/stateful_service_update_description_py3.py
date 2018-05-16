@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_update_description import ServiceUpdateDescription
+from .service_update_description_py3 import ServiceUpdateDescription
 
 
 class StatefulServiceUpdateDescription(ServiceUpdateDescription):

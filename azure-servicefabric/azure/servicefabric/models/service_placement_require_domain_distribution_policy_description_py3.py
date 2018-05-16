@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_placement_policy_description import ServicePlacementPolicyDescription
+from .service_placement_policy_description_py3 import ServicePlacementPolicyDescription
 
 
 class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacementPolicyDescription):

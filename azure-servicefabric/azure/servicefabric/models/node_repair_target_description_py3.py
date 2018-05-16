@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .repair_target_description_base import RepairTargetDescriptionBase
+from .repair_target_description_base_py3 import RepairTargetDescriptionBase
 
 
 class NodeRepairTargetDescription(RepairTargetDescriptionBase):

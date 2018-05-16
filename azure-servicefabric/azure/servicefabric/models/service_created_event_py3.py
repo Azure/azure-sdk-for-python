@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_event import ServiceEvent
+from .service_event_py3 import ServiceEvent
 
 
 class ServiceCreatedEvent(ServiceEvent):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .repair_impact_description_base import RepairImpactDescriptionBase
+from .repair_impact_description_base_py3 import RepairImpactDescriptionBase
 
 
 class NodeRepairImpactDescription(RepairImpactDescriptionBase):

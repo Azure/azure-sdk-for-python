@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .replicator_status import ReplicatorStatus
+from .replicator_status_py3 import ReplicatorStatus
 
 
 class SecondaryReplicatorStatus(ReplicatorStatus):

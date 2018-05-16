@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .health_evaluation import HealthEvaluation
+from .health_evaluation_py3 import HealthEvaluation
 
 
 class ApplicationsHealthEvaluation(HealthEvaluation):

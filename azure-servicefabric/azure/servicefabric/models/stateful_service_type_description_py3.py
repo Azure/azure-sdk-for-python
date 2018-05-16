@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_type_description import ServiceTypeDescription
+from .service_type_description_py3 import ServiceTypeDescription
 
 
 class StatefulServiceTypeDescription(ServiceTypeDescription):

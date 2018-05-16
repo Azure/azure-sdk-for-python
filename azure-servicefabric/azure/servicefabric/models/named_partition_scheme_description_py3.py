@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partition_scheme_description import PartitionSchemeDescription
+from .partition_scheme_description_py3 import PartitionSchemeDescription
 
 
 class NamedPartitionSchemeDescription(PartitionSchemeDescription):

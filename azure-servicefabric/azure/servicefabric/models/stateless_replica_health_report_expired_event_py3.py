@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .replica_event import ReplicaEvent
+from .replica_event_py3 import ReplicaEvent
 
 
 class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
