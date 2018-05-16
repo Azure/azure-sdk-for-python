@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.2.0b2 (unreleased)
+++++++++++++++++++++
+
+- Added namespace_suffix to EventHubConfig() to support national clouds.
+
+
 0.2.0b1 (2018-04-20)
 ++++++++++++++++++++
 
