@@ -266,24 +266,27 @@ class PolicyAssignmentsOperations(object):
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a resource group.
 
-        This operation retrieves the list of all policy assignments that apply
-        to the given resource group in the given subscription that match the
-        given $filter. Valid values for $filter are: 'atScope()' or
+        This operation retrieves the list of all policy assignments associated
+        with the given resource group in the given subscription that match the
+        optional given $filter. Valid values for $filter are: 'atScope()' or
         'policyDefinitionId eq '{value}''. If $filter is not provided, the
-        returned list includes all policy assignments that apply to the
-        resource group, including any that might apply from higher-level scopes
-        that contain the given resource group. If $filter=atScope() is
-        provided, the returned list includes only applicable policy assignments
-        created with that resource group as their scope. If
-        $filter=policyDefinitionId eq '{value}' is provided, the returned list
-        includes only applicable policy assignments that enforce the policy
+        unfiltered list includes all policy assignments associated with the
+        resource group, including those that apply directly or apply from
+        containing scopes, as well as any applied to resources contained within
+        the resource group. If $filter=atScope() is provided, the returned list
+        includes all policy assignments that apply to the resource group, which
+        is everything in the unfiltered list except those applied to resources
+        contained within the resource group. If $filter=policyDefinitionId eq
+        '{value}' is provided, the returned list includes only policy
+        assignments that apply to the resource group and assign the policy
         definition whose id is {value}.
 
         :param resource_group_name: The name of the resource group that
          contains policy assignments.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Valid values for
-         $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''.
+         $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
+         $filter is not provided, no filtering is performed.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -352,26 +355,28 @@ class PolicyAssignmentsOperations(object):
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a resource.
 
-        This operation retrieves the list of all policy assignments that apply
-        to the specified resource in the given resource group and subscription,
-        that match the given $filter. Valid values for $filter are: 'atScope()'
-        or 'policyDefinitionId eq '{value}''. If $filter is not provided, the
-        returned list includes all policy assignments that apply to the
-        resource group, including any that might apply from higher-level scopes
-        that contain the given resource group. If $filter=atScope() is
-        provided, the returned list includes only applicable policy assignments
-        created with that resource as their scope. If
+        This operation retrieves the list of all policy assignments associated
+        with the specified resource in the given resource group and
+        subscription that match the optional given $filter. Valid values for
+        $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
+        $filter is not provided, the unfiltered list includes all policy
+        assignments associated with the resource, including those that apply
+        directly or from all containing scopes, as well as any applied to
+        resources contained within the resource. If $filter=atScope() is
+        provided, the returned list includes all policy assignments that apply
+        to the resource, which is everything in the unfiltered list except
+        those applied to resources contained within the resource. If
         $filter=policyDefinitionId eq '{value}' is provided, the returned list
-        includes only applicable policy assignments that enforce the policy
-        definition whose id is {value}. Three parameters plus the resource name
-        are used to identify a specific resource. If the resource is not part
-        of a parent resource (the more common case), the parent resource path
-        should not be provided (or provided as ''). For example a web app could
-        be specified as ({resourceProviderNamespace} == 'Microsoft.Web',
-        {parentResourcePath} == '', {resourceType} == 'sites', {resourceName}
-        == 'MyWebApp'). If the resource is part of a parent resource, then all
-        parameters should be provided. For example a virtual machine DNS name
-        could be specified as ({resourceProviderNamespace} ==
+        includes only policy assignments that apply to the resource and assign
+        the policy definition whose id is {value}. Three parameters plus the
+        resource name are used to identify a specific resource. If the resource
+        is not part of a parent resource (the more common case), the parent
+        resource path should not be provided (or provided as ''). For example a
+        web app could be specified as ({resourceProviderNamespace} ==
+        'Microsoft.Web', {parentResourcePath} == '', {resourceType} == 'sites',
+        {resourceName} == 'MyWebApp'). If the resource is part of a parent
+        resource, then all parameters should be provided. For example a virtual
+        machine DNS name could be specified as ({resourceProviderNamespace} ==
         'Microsoft.Compute', {parentResourcePath} ==
         'virtualMachines/MyVirtualMachine', {resourceType} == 'domainNames',
         {resourceName} == 'MyComputerName'). A convenient alternative to
@@ -470,20 +475,24 @@ class PolicyAssignmentsOperations(object):
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a subscription.
 
-        This operation retrieves the list of all policy assignments that apply
-        to the given subscription that match the given $filter. Valid values
-        for $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
-        $filter is not provided, the returned list includes all policy
-        assignments that apply to the subscription, including any that might
-        apply from management groups that contain the given subscription. If
-        $filter=atScope() is provided, the returned list includes only
-        applicable policy assignments created with that subscription as their
-        scope. If $filter=policyDefinitionId eq '{value}' is provided, the
-        returned list includes only applicable policy assignments that enforce
-        the policy definition whose id is {value}.
+        This operation retrieves the list of all policy assignments associated
+        with the given subscription that match the optional given $filter.
+        Valid values for $filter are: 'atScope()' or 'policyDefinitionId eq
+        '{value}''. If $filter is not provided, the unfiltered list includes
+        all policy assignments associated with the subscription, including
+        those that apply directly or from management groups that contain the
+        given subscription, as well as any applied to objects contained within
+        the subscription. If $filter=atScope() is provided, the returned list
+        includes all policy assignments that apply to the subscription, which
+        is everything in the unfiltered list except those applied to objects
+        contained within the subscription. If $filter=policyDefinitionId eq
+        '{value}' is provided, the returned list includes only policy
+        assignments that apply to the subscription and assign the policy
+        definition whose id is {value}.
 
         :param filter: The filter to apply on the operation. Valid values for
-         $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''
+         $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
+         $filter is not provided, no filtering is performed.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
