@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dataset_storage_format import DatasetStorageFormat
+from .dataset_storage_format_py3 import DatasetStorageFormat
 
 
 class OrcFormat(DatasetStorageFormat):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dataset_compression import DatasetCompression
+from .dataset_compression_py3 import DatasetCompression
 
 
 class DatasetGZipCompression(DatasetCompression):
