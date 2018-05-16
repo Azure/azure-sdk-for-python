@@ -295,7 +295,7 @@ class GalleryImagesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
 
-    def list_gallery_images_in_gallery(
+    def list_gallery_images_by_gallery(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
         """List gallery images under a gallery.
 
@@ -314,7 +314,7 @@ class GalleryImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_gallery_images_in_gallery.metadata['url']
+        url = self.list_gallery_images_by_gallery.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -355,4 +355,4 @@ class GalleryImagesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_gallery_images_in_gallery.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images'}
+    list_gallery_images_by_gallery.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images'}
