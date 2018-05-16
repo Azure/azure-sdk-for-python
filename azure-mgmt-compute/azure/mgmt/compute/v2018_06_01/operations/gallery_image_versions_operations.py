@@ -225,28 +225,9 @@ class GalleryImageVersionsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
-    def delete(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a gallery image version.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
-        :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
-        :type gallery_image_name: str
-        :param gallery_image_version_name: The name of the gallery image
-         version.
-        :type gallery_image_version_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -284,6 +265,53 @@ class GalleryImageVersionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a gallery image version.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param gallery_name: The name of the gallery.
+        :type gallery_name: str
+        :param gallery_image_name: The name of the gallery image.
+        :type gallery_image_name: str
+        :param gallery_image_version_name: The name of the gallery image
+         version.
+        :type gallery_image_version_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            gallery_name=gallery_name,
+            gallery_image_name=gallery_image_name,
+            gallery_image_version_name=gallery_image_version_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
     def list_gallery_image_versions_in_gallery_image(
