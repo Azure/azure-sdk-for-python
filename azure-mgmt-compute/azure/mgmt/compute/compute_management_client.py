@@ -194,40 +194,40 @@ class ComputeManagementClient(MultiApiClientMixin):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def gallery(self):
+    def galleries(self):
         """Instance depends on the API version:
 
-           * 2018-06-01: :class:`GalleryOperations<azure.mgmt.compute.v2018_06_01.operations.GalleryOperations>`
+           * 2018-06-01: :class:`GalleriesOperations<azure.mgmt.compute.v2018_06_01.operations.GalleriesOperations>`
         """
-        api_version = self._get_api_version('gallery')
+        api_version = self._get_api_version('galleries')
         if api_version == '2018-06-01':
-            from .v2018_06_01.operations import GalleryOperations as OperationClass
+            from .v2018_06_01.operations import GalleriesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def gallery_image(self):
+    def gallery_image_versions(self):
         """Instance depends on the API version:
 
-           * 2018-06-01: :class:`GalleryImageOperations<azure.mgmt.compute.v2018_06_01.operations.GalleryImageOperations>`
+           * 2018-06-01: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2018_06_01.operations.GalleryImageVersionsOperations>`
         """
-        api_version = self._get_api_version('gallery_image')
+        api_version = self._get_api_version('gallery_image_versions')
         if api_version == '2018-06-01':
-            from .v2018_06_01.operations import GalleryImageOperations as OperationClass
+            from .v2018_06_01.operations import GalleryImageVersionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def gallery_image_version(self):
+    def gallery_images(self):
         """Instance depends on the API version:
 
-           * 2018-06-01: :class:`GalleryImageVersionOperations<azure.mgmt.compute.v2018_06_01.operations.GalleryImageVersionOperations>`
+           * 2018-06-01: :class:`GalleryImagesOperations<azure.mgmt.compute.v2018_06_01.operations.GalleryImagesOperations>`
         """
-        api_version = self._get_api_version('gallery_image_version')
+        api_version = self._get_api_version('gallery_images')
         if api_version == '2018-06-01':
-            from .v2018_06_01.operations import GalleryImageVersionOperations as OperationClass
+            from .v2018_06_01.operations import GalleryImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

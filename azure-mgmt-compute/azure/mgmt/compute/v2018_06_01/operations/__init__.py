@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .gallery_operations import GalleryOperations
-from .gallery_image_operations import GalleryImageOperations
-from .gallery_image_version_operations import GalleryImageVersionOperations
+from .galleries_operations import GalleriesOperations
+from .gallery_images_operations import GalleryImagesOperations
+from .gallery_image_versions_operations import GalleryImageVersionsOperations
 
 __all__ = [
-    'GalleryOperations',
-    'GalleryImageOperations',
-    'GalleryImageVersionOperations',
+    'GalleriesOperations',
+    'GalleryImagesOperations',
+    'GalleryImageVersionsOperations',
 ]

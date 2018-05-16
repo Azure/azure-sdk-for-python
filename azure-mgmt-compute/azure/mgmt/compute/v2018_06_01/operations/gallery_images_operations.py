@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class GalleryImageOperations(object):
-    """GalleryImageOperations operations.
+class GalleryImagesOperations(object):
+    """GalleryImagesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

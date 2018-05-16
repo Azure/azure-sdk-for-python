@@ -13,9 +13,9 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.gallery_operations import GalleryOperations
-from .operations.gallery_image_operations import GalleryImageOperations
-from .operations.gallery_image_version_operations import GalleryImageVersionOperations
+from .operations.galleries_operations import GalleriesOperations
+from .operations.gallery_images_operations import GalleryImagesOperations
+from .operations.gallery_image_versions_operations import GalleryImageVersionsOperations
 from . import models
 
 
@@ -59,12 +59,12 @@ class ComputeManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ComputeManagementClientConfiguration
 
-    :ivar gallery: Gallery operations
-    :vartype gallery: azure.mgmt.compute.v2018_06_01.operations.GalleryOperations
-    :ivar gallery_image: GalleryImage operations
-    :vartype gallery_image: azure.mgmt.compute.v2018_06_01.operations.GalleryImageOperations
-    :ivar gallery_image_version: GalleryImageVersion operations
-    :vartype gallery_image_version: azure.mgmt.compute.v2018_06_01.operations.GalleryImageVersionOperations
+    :ivar galleries: Galleries operations
+    :vartype galleries: azure.mgmt.compute.v2018_06_01.operations.GalleriesOperations
+    :ivar gallery_images: GalleryImages operations
+    :vartype gallery_images: azure.mgmt.compute.v2018_06_01.operations.GalleryImagesOperations
+    :ivar gallery_image_versions: GalleryImageVersions operations
+    :vartype gallery_image_versions: azure.mgmt.compute.v2018_06_01.operations.GalleryImageVersionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,9 +87,9 @@ class ComputeManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.gallery = GalleryOperations(
+        self.galleries = GalleriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.gallery_image = GalleryImageOperations(
+        self.gallery_images = GalleryImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.gallery_image_version = GalleryImageVersionOperations(
+        self.gallery_image_versions = GalleryImageVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
