@@ -36,7 +36,7 @@ class BotConnectionOperations(object):
 
         self.config = config
 
-    def get(
+    def list_with_secrets(
             self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Get a Connection Setting registration for a Bot Service.
 
@@ -60,7 +60,7 @@ class BotConnectionOperations(object):
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list_with_secrets.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
@@ -100,7 +100,7 @@ class BotConnectionOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}/listWithSecrets'}
+    list_with_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}/listWithSecrets'}
 
     def create(
             self, resource_group_name, resource_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -177,7 +177,7 @@ class BotConnectionOperations(object):
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
 
-    def get1(
+    def get(
             self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Get a Connection Setting registration for a Bot Service.
 
@@ -201,7 +201,7 @@ class BotConnectionOperations(object):
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
         # Construct URL
-        url = self.get1.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
@@ -241,4 +241,4 @@ class BotConnectionOperations(object):
             return client_raw_response
 
         return deserialized
-    get1.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
