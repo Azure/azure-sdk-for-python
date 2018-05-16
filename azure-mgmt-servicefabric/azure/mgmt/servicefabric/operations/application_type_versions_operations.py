@@ -17,13 +17,14 @@ from msrestazure.azure_operation import AzureOperationPoller
 from .. import models
 
 
-class ApplicationTypeOperations(object):
-    """ApplicationTypeOperations operations.
+class ApplicationTypeVersionsOperations(object):
+    """ApplicationTypeVersionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2017-07-01-preview" for this specification. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -33,48 +34,54 @@ class ApplicationTypeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
     def get(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """Returns an application type name resource.
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
+        """Gets a Service Fabric application type version resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
+        Get a Service Fabric application type version resource created or in
+        the process of being created in the Service Fabric application type
+        name resource.
+
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
+        :param version: The application type version.
+        :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationTypeResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.ApplicationTypeResource or
+        :return: ApplicationTypeVersionResource or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -96,57 +103,34 @@ class ApplicationTypeOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationTypeResource', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
-    def put(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, location, custom_headers=None, raw=False, **operation_config):
-        """Creates the application type name resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
-        :type cluster_name: str
-        :param application_type_name: The name of the application type name
-         resource
-        :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param location: Resource location.
-        :type location: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ApplicationTypeResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.ApplicationTypeResource or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
-        """
-        parameters = models.ApplicationTypeResource(location=location)
+    def _create_initial(
+            self, resource_group_name, cluster_name, application_type_name, version, app_package_url, location=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ApplicationTypeVersionResource(location=location, app_package_url=app_package_url)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -159,20 +143,20 @@ class ApplicationTypeOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplicationTypeResource')
+        body_content = self._serialize.body(parameters, 'ApplicationTypeVersionResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.ErrorModelException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationTypeResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -180,22 +164,103 @@ class ApplicationTypeOperations(object):
 
         return deserialized
 
+    def create(
+            self, resource_group_name, cluster_name, application_type_name, version, app_package_url, location=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Service Fabric application type version resource.
+
+        Create or update a Service Fabric application type version resource
+        with the specified name.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource.
+        :type application_type_name: str
+        :param version: The application type version.
+        :type version: str
+        :param app_package_url: The URL to the application package
+        :type app_package_url: str
+        :param location: Azure resource location.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         ApplicationTypeVersionResource or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            application_type_name=application_type_name,
+            version=version,
+            app_package_url=app_package_url,
+            location=location,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [202]:
+                raise models.ErrorModelException(self._deserialize, response)
+
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
+
 
     def _delete_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -219,20 +284,21 @@ class ApplicationTypeOperations(object):
             return client_raw_response
 
     def delete(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """Deletes the application type name resource.
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Service Fabric application type version resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
+        Delete a Service Fabric application type version resource with the
+        specified name.
+
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
+        :param version: The application type version.
+        :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -244,11 +310,10 @@ class ApplicationTypeOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._delete_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
-            api_version=api_version,
+            version=version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -285,42 +350,49 @@ class ApplicationTypeOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
     def list(
-            self, subscription_id, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """Returns all application type names in the specified cluster.
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of application type version resources created in the
+        specified Service Fabric application type name resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
+        Gets all application type version resources created or in the process
+        of being created in the Service Fabric application type name resource.
+
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
+        :param application_type_name: The name of the application type name
+         resource.
+        :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationTypeResourceList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.ApplicationTypeResourceList
-         or ~msrest.pipeline.ClientRawResponse
+        :return: ApplicationTypeVersionResourceList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResourceList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes'
+        url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -342,10 +414,11 @@ class ApplicationTypeOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationTypeResourceList', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResourceList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions'}

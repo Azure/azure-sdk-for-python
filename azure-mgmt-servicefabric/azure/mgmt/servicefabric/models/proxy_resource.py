@@ -18,13 +18,13 @@ class ProxyResource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Azure resource location.
     :type location: str
     """
 
@@ -32,7 +32,6 @@ class ProxyResource(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -42,7 +41,7 @@ class ProxyResource(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, location):
+    def __init__(self, location=None):
         super(ProxyResource, self).__init__()
         self.id = None
         self.name = None

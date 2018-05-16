@@ -51,8 +51,8 @@ class ClusterUpgradePolicy(Model):
     :param health_policy: The cluster health policy used when upgrading the
      cluster.
     :type health_policy: ~azure.mgmt.servicefabric.models.ClusterHealthPolicy
-    :param delta_health_policy: The delta health policy used when upgrading
-     the cluster.
+    :param delta_health_policy: The cluster delta health policy used when
+     upgrading the cluster.
     :type delta_health_policy:
      ~azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy
     """
