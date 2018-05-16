@@ -20,7 +20,6 @@ class DeployedApplicationHealthStateFilter(Model):
     matches a filter specified in the cluster health chunk query description.
     One filter can match zero, one or multiple deployed applications, depending
     on its properties.
-    .
 
     :param node_name_filter: The name of the node where the application is
      deployed in order to match the filter.
@@ -59,8 +58,7 @@ class DeployedApplicationHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     :param deployed_service_package_filters: Defines a list of filters that
      specify which deployed service packages to be included in the returned
@@ -85,8 +83,8 @@ class DeployedApplicationHealthStateFilter(Model):
         'deployed_service_package_filters': {'key': 'DeployedServicePackageFilters', 'type': '[DeployedServicePackageHealthStateFilter]'},
     }
 
-    def __init__(self, node_name_filter=None, health_state_filter=0, deployed_service_package_filters=None):
-        super(DeployedApplicationHealthStateFilter, self).__init__()
-        self.node_name_filter = node_name_filter
-        self.health_state_filter = health_state_filter
-        self.deployed_service_package_filters = deployed_service_package_filters
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthStateFilter, self).__init__(**kwargs)
+        self.node_name_filter = kwargs.get('node_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.deployed_service_package_filters = kwargs.get('deployed_service_package_filters', None)

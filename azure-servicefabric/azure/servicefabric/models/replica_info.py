@@ -19,21 +19,12 @@ class ReplicaInfo(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StatefulServiceReplicaInfo, StatelessServiceInstanceInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param replica_status: The status of a replica of a service. Possible
-     values are following.
-     -Invalid - Indicates the replica status is invalid. All Service Fabric
-     enumerations have the invalid type. The value is zero.
-     -InBuild - The replica is being built. This means that a primary replica
-     is seeding this replica. The value is 1.
-     -Standby - The replica is in standby. The value is 2.
-     -Ready - The replica is ready. The value is 3.
-     -Down - The replica is down. The value is 4.
-     -Dropped - Replica is dropped. This means that the replica has been
-     removed from the replica set. If it is persisted, its state has been
-     deleted. The value is 5.
-     . Possible values include: 'Invalid', 'InBuild', 'Standby', 'Ready',
-     'Down', 'Dropped'
-    :type replica_status: str or ~azure.servicefabric.models.enum
+     values include: 'Invalid', 'InBuild', 'Standby', 'Ready', 'Down',
+     'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.ReplicaStatus
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
@@ -45,7 +36,7 @@ class ReplicaInfo(Model):
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -66,11 +57,11 @@ class ReplicaInfo(Model):
         'service_kind': {'Stateful': 'StatefulServiceReplicaInfo', 'Stateless': 'StatelessServiceInstanceInfo'}
     }
 
-    def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None):
-        super(ReplicaInfo, self).__init__()
-        self.replica_status = replica_status
-        self.health_state = health_state
-        self.node_name = node_name
-        self.address = address
-        self.last_in_build_duration_in_seconds = last_in_build_duration_in_seconds
+    def __init__(self, **kwargs):
+        super(ReplicaInfo, self).__init__(**kwargs)
+        self.replica_status = kwargs.get('replica_status', None)
+        self.health_state = kwargs.get('health_state', None)
+        self.node_name = kwargs.get('node_name', None)
+        self.address = kwargs.get('address', None)
+        self.last_in_build_duration_in_seconds = kwargs.get('last_in_build_duration_in_seconds', None)
         self.service_kind = None

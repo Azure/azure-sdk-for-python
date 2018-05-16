@@ -16,10 +16,12 @@ class StoppedChaosEvent(ChaosEvent):
     """Describes a Chaos event that gets generated when Chaos stops because either
     the user issued a stop or the time to run was up.
 
-    :param time_stamp_utc: The UTC timestamp when this Chaos event was
-     generated.
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param reason: Describes why Chaos stopped. Chaos can stop because of
      StopChaos API call or the timeToRun provided in ChaosParameters is over.
@@ -37,7 +39,7 @@ class StoppedChaosEvent(ChaosEvent):
         'reason': {'key': 'Reason', 'type': 'str'},
     }
 
-    def __init__(self, time_stamp_utc, reason=None):
-        super(StoppedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
-        self.reason = reason
+    def __init__(self, **kwargs):
+        super(StoppedChaosEvent, self).__init__(**kwargs)
+        self.reason = kwargs.get('reason', None)
         self.kind = 'Stopped'

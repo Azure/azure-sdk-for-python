@@ -15,6 +15,8 @@ from .service_info import ServiceInfo
 class StatelessServiceInfo(ServiceInfo):
     """Information about a stateless Service Fabric service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The identity of the service. This is an encoded representation
      of the service name. This is used in the REST APIs to identify the service
      resource.
@@ -40,7 +42,7 @@ class StatelessServiceInfo(ServiceInfo):
     :type service_status: str or ~azure.servicefabric.models.ServiceStatus
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -48,6 +50,17 @@ class StatelessServiceInfo(ServiceInfo):
         'service_kind': {'required': True},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None):
-        super(StatelessServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group)
+    _attribute_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'type_name': {'key': 'TypeName', 'type': 'str'},
+        'manifest_version': {'key': 'ManifestVersion', 'type': 'str'},
+        'health_state': {'key': 'HealthState', 'type': 'str'},
+        'service_status': {'key': 'ServiceStatus', 'type': 'str'},
+        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StatelessServiceInfo, self).__init__(**kwargs)
         self.service_kind = 'Stateless'

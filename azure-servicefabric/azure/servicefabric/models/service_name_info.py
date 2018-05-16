@@ -32,7 +32,7 @@ class ServiceNameInfo(Model):
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None):
-        super(ServiceNameInfo, self).__init__()
-        self.id = id
-        self.name = name
+    def __init__(self, **kwargs):
+        super(ServiceNameInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
