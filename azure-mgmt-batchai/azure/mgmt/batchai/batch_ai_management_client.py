@@ -15,11 +15,11 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.usages_operations import UsagesOperations
-from .operations.clusters_operations import ClustersOperations
-from .operations.file_servers_operations import FileServersOperations
 from .operations.workspaces_operations import WorkspacesOperations
 from .operations.experiments_operations import ExperimentsOperations
 from .operations.jobs_operations import JobsOperations
+from .operations.file_servers_operations import FileServersOperations
+from .operations.clusters_operations import ClustersOperations
 from . import models
 
 
@@ -65,16 +65,16 @@ class BatchAIManagementClient(SDKClient):
     :vartype operations: azure.mgmt.batchai.operations.Operations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.batchai.operations.UsagesOperations
-    :ivar clusters: Clusters operations
-    :vartype clusters: azure.mgmt.batchai.operations.ClustersOperations
-    :ivar file_servers: FileServers operations
-    :vartype file_servers: azure.mgmt.batchai.operations.FileServersOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.batchai.operations.WorkspacesOperations
     :ivar experiments: Experiments operations
     :vartype experiments: azure.mgmt.batchai.operations.ExperimentsOperations
     :ivar jobs: Jobs operations
     :vartype jobs: azure.mgmt.batchai.operations.JobsOperations
+    :ivar file_servers: FileServers operations
+    :vartype file_servers: azure.mgmt.batchai.operations.FileServersOperations
+    :ivar clusters: Clusters operations
+    :vartype clusters: azure.mgmt.batchai.operations.ClustersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -99,13 +99,13 @@ class BatchAIManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.file_servers = FileServersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.experiments = ExperimentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.file_servers = FileServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

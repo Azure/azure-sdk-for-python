@@ -72,17 +72,13 @@ try:
     from .workspace_py3 import Workspace
     from .workspace_create_parameters_py3 import WorkspaceCreateParameters
     from .experiment_py3 import Experiment
-    from .clusters_list_options_py3 import ClustersListOptions
-    from .clusters_list_by_resource_group_options_py3 import ClustersListByResourceGroupOptions
-    from .clusters_list_by_workspace_options_py3 import ClustersListByWorkspaceOptions
-    from .file_servers_list_options_py3 import FileServersListOptions
-    from .file_servers_list_by_resource_group_options_py3 import FileServersListByResourceGroupOptions
-    from .file_servers_list_by_workspace_options_py3 import FileServersListByWorkspaceOptions
     from .workspaces_list_options_py3 import WorkspacesListOptions
     from .workspaces_list_by_resource_group_options_py3 import WorkspacesListByResourceGroupOptions
     from .experiments_list_by_workspace_options_py3 import ExperimentsListByWorkspaceOptions
     from .jobs_list_by_experiment_options_py3 import JobsListByExperimentOptions
     from .jobs_list_output_files_options_py3 import JobsListOutputFilesOptions
+    from .file_servers_list_by_workspace_options_py3 import FileServersListByWorkspaceOptions
+    from .clusters_list_by_workspace_options_py3 import ClustersListByWorkspaceOptions
 except (SyntaxError, ImportError):
     from .usage_name import UsageName
     from .usage import Usage
@@ -146,26 +142,22 @@ except (SyntaxError, ImportError):
     from .workspace import Workspace
     from .workspace_create_parameters import WorkspaceCreateParameters
     from .experiment import Experiment
-    from .clusters_list_options import ClustersListOptions
-    from .clusters_list_by_resource_group_options import ClustersListByResourceGroupOptions
-    from .clusters_list_by_workspace_options import ClustersListByWorkspaceOptions
-    from .file_servers_list_options import FileServersListOptions
-    from .file_servers_list_by_resource_group_options import FileServersListByResourceGroupOptions
-    from .file_servers_list_by_workspace_options import FileServersListByWorkspaceOptions
     from .workspaces_list_options import WorkspacesListOptions
     from .workspaces_list_by_resource_group_options import WorkspacesListByResourceGroupOptions
     from .experiments_list_by_workspace_options import ExperimentsListByWorkspaceOptions
     from .jobs_list_by_experiment_options import JobsListByExperimentOptions
     from .jobs_list_output_files_options import JobsListOutputFilesOptions
+    from .file_servers_list_by_workspace_options import FileServersListByWorkspaceOptions
+    from .clusters_list_by_workspace_options import ClustersListByWorkspaceOptions
 from .operation_paged import OperationPaged
 from .usage_paged import UsagePaged
-from .cluster_paged import ClusterPaged
-from .remote_login_information_paged import RemoteLoginInformationPaged
-from .file_server_paged import FileServerPaged
 from .workspace_paged import WorkspacePaged
 from .experiment_paged import ExperimentPaged
 from .job_paged import JobPaged
 from .file_paged import FilePaged
+from .remote_login_information_paged import RemoteLoginInformationPaged
+from .file_server_paged import FileServerPaged
+from .cluster_paged import ClusterPaged
 from .batch_ai_management_client_enums import (
     UsageUnit,
     CachingType,
@@ -244,26 +236,22 @@ __all__ = [
     'Workspace',
     'WorkspaceCreateParameters',
     'Experiment',
-    'ClustersListOptions',
-    'ClustersListByResourceGroupOptions',
-    'ClustersListByWorkspaceOptions',
-    'FileServersListOptions',
-    'FileServersListByResourceGroupOptions',
-    'FileServersListByWorkspaceOptions',
     'WorkspacesListOptions',
     'WorkspacesListByResourceGroupOptions',
     'ExperimentsListByWorkspaceOptions',
     'JobsListByExperimentOptions',
     'JobsListOutputFilesOptions',
+    'FileServersListByWorkspaceOptions',
+    'ClustersListByWorkspaceOptions',
     'OperationPaged',
     'UsagePaged',
-    'ClusterPaged',
-    'RemoteLoginInformationPaged',
-    'FileServerPaged',
     'WorkspacePaged',
     'ExperimentPaged',
     'JobPaged',
     'FilePaged',
+    'RemoteLoginInformationPaged',
+    'FileServerPaged',
+    'ClusterPaged',
     'UsageUnit',
     'CachingType',
     'StorageAccountType',
