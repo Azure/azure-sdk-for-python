@@ -57,9 +57,9 @@ class ClusterHealthChunkQueryDescription(Model):
         'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
     }
 
-    def __init__(self, node_filters=None, application_filters=None, cluster_health_policy=None, application_health_policies=None):
-        super(ClusterHealthChunkQueryDescription, self).__init__()
-        self.node_filters = node_filters
-        self.application_filters = application_filters
-        self.cluster_health_policy = cluster_health_policy
-        self.application_health_policies = application_health_policies
+    def __init__(self, **kwargs):
+        super(ClusterHealthChunkQueryDescription, self).__init__(**kwargs)
+        self.node_filters = kwargs.get('node_filters', None)
+        self.application_filters = kwargs.get('application_filters', None)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.application_health_policies = kwargs.get('application_health_policies', None)

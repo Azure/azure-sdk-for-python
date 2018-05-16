@@ -35,7 +35,7 @@ class NodeHealthState(EntityHealthState):
         'id': {'key': 'Id', 'type': 'NodeId'},
     }
 
-    def __init__(self, aggregated_health_state=None, name=None, id=None):
-        super(NodeHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.name = name
-        self.id = id
+    def __init__(self, **kwargs):
+        super(NodeHealthState, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)

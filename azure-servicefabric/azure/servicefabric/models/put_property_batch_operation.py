@@ -16,13 +16,14 @@ class PutPropertyBatchOperation(PropertyBatchOperation):
     """Puts the specified property under the specified name.
     Note that if one PropertyBatchOperation in a PropertyBatch fails,
     the entire batch fails and cannot be committed in a transactional manner.
-    .
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
-    :param value: Describes a Service Fabric property value.
+    :param value: Required. Describes a Service Fabric property value.
     :type value: ~azure.servicefabric.models.PropertyValue
     :param custom_type_id: The property's custom type id. Using this property,
      the user is able to tag the type of the value of the property.
@@ -42,8 +43,8 @@ class PutPropertyBatchOperation(PropertyBatchOperation):
         'custom_type_id': {'key': 'CustomTypeId', 'type': 'str'},
     }
 
-    def __init__(self, property_name, value, custom_type_id=None):
-        super(PutPropertyBatchOperation, self).__init__(property_name=property_name)
-        self.value = value
-        self.custom_type_id = custom_type_id
+    def __init__(self, **kwargs):
+        super(PutPropertyBatchOperation, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.custom_type_id = kwargs.get('custom_type_id', None)
         self.kind = 'Put'

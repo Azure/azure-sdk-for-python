@@ -16,7 +16,9 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     """Describes the partition scheme of a singleton-partitioned, or
     non-partitioned service.
 
-    :param partition_scheme: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param partition_scheme: Required. Constant filled by server.
     :type partition_scheme: str
     """
 
@@ -24,6 +26,10 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
         'partition_scheme': {'required': True},
     }
 
-    def __init__(self):
-        super(SingletonPartitionSchemeDescription, self).__init__()
+    _attribute_map = {
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SingletonPartitionSchemeDescription, self).__init__(**kwargs)
         self.partition_scheme = 'Singleton'
