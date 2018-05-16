@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dataset import Dataset
+from .dataset_py3 import Dataset
 
 
 class SapEccResourceDataset(Dataset):

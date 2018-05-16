@@ -198,6 +198,7 @@ try:
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .retry_policy_py3 import RetryPolicy
     from .tumbling_window_trigger_py3 import TumblingWindowTrigger
+    from .blob_events_trigger_py3 import BlobEventsTrigger
     from .blob_trigger_py3 import BlobTrigger
     from .recurrence_schedule_occurrence_py3 import RecurrenceScheduleOccurrence
     from .recurrence_schedule_py3 import RecurrenceSchedule
@@ -522,6 +523,7 @@ except (SyntaxError, ImportError):
     from .amazon_s3_dataset import AmazonS3Dataset
     from .retry_policy import RetryPolicy
     from .tumbling_window_trigger import TumblingWindowTrigger
+    from .blob_events_trigger import BlobEventsTrigger
     from .blob_trigger import BlobTrigger
     from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
     from .recurrence_schedule import RecurrenceSchedule
@@ -700,6 +702,7 @@ from .data_factory_management_client_enums import (
     DatasetCompressionLevel,
     JsonFormatFilePattern,
     TumblingWindowFrequency,
+    BlobEventTypes,
     DayOfWeek,
     DaysOfWeek,
     RecurrenceFrequency,
@@ -914,6 +917,7 @@ __all__ = [
     'AmazonS3Dataset',
     'RetryPolicy',
     'TumblingWindowTrigger',
+    'BlobEventsTrigger',
     'BlobTrigger',
     'RecurrenceScheduleOccurrence',
     'RecurrenceSchedule',
@@ -1091,6 +1095,7 @@ __all__ = [
     'DatasetCompressionLevel',
     'JsonFormatFilePattern',
     'TumblingWindowFrequency',
+    'BlobEventTypes',
     'DayOfWeek',
     'DaysOfWeek',
     'RecurrenceFrequency',

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
+from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
 
 
 class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):

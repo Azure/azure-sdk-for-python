@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .secret_base import SecretBase
+from .secret_base_py3 import SecretBase
 
 
 class SecureString(SecretBase):

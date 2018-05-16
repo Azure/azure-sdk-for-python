@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .trigger import Trigger
+from .multiple_pipeline_trigger import MultiplePipelineTrigger
 
 
-class MultiplePipelineTrigger(Trigger):
-    """Base class for all triggers that support one to many model for trigger to
-    pipeline.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobEventsTrigger, BlobTrigger, ScheduleTrigger
+class BlobEventsTrigger(MultiplePipelineTrigger):
+    """Trigger that runs everytime a Blob event occurs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,11 +35,29 @@ class MultiplePipelineTrigger(Trigger):
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
+    :param blob_path_begins_with: The blob path must begin with the pattern
+     provided for trigger to fire. For example, '/records/blobs/december/' will
+     only fire the trigger for blobs in the december folder under the records
+     container. At least one of these must be provided: blobPathBeginsWith,
+     blobPathEndsWith.
+    :type blob_path_begins_with: str
+    :param blob_path_ends_with: The blob path must end with the pattern
+     provided for trigger to fire. For example, 'december/boxes.csv' will only
+     fire the trigger for blobs named boxes in a december folder. At least one
+     of these must be provided: blobPathBeginsWith, blobPathEndsWith.
+    :type blob_path_ends_with: str
+    :param events: Required. The type of events that cause this trigger to
+     fire.
+    :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
+    :param scope: Required. The ARM resource ID of the Storage Account.
+    :type scope: str
     """
 
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'events': {'required': True},
+        'scope': {'required': True},
     }
 
     _attribute_map = {
@@ -52,13 +66,16 @@ class MultiplePipelineTrigger(Trigger):
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
-    }
-
-    _subtype_map = {
-        'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
+        'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
+        'blob_path_ends_with': {'key': 'typeProperties.blobPathEndsWith', 'type': 'str'},
+        'events': {'key': 'typeProperties.events', 'type': '[str]'},
+        'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(MultiplePipelineTrigger, self).__init__(**kwargs)
-        self.pipelines = kwargs.get('pipelines', None)
-        self.type = 'MultiplePipelineTrigger'
+        super(BlobEventsTrigger, self).__init__(**kwargs)
+        self.blob_path_begins_with = kwargs.get('blob_path_begins_with', None)
+        self.blob_path_ends_with = kwargs.get('blob_path_ends_with', None)
+        self.events = kwargs.get('events', None)
+        self.scope = kwargs.get('scope', None)
+        self.type = 'BlobEventsTrigger'

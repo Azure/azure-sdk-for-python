@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .execution_activity import ExecutionActivity
+from .execution_activity_py3 import ExecutionActivity
 
 
 class GetMetadataActivity(ExecutionActivity):

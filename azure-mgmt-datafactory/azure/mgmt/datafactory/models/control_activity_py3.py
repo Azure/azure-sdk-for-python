@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .activity_py3 import Activity
 
 
 class ControlActivity(Activity):
