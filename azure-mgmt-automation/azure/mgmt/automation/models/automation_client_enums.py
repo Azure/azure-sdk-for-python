@@ -254,3 +254,9 @@ class StartType(Enum):
 
     auto_sync = "AutoSync"
     manual_sync = "ManualSync"
+
+
+class StreamType(Enum):
+
+    error = "Error"
+    output = "Output"
