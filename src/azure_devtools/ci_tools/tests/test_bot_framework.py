@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 
 from azure_devtools.ci_tools.bot_framework import BotHandler, order, build_from_issue_comment, build_from_issues
@@ -135,7 +137,10 @@ class BotFrameworkTest(Framework.TestCase):
         # Clean
         help_comment.delete()
 
-    def test_bot_basic_failure(self):
+    @mock.patch('traceback.format_exc')
+    def test_bot_basic_failure(self, format_exc):
+        format_exc.return_value = 'something to do with an exception'
+
         github_token = self.oauth_token
         repo = self.g.get_repo("lmazuel/TestingRepo")
         issue = repo.get_issue(18)
@@ -166,7 +171,7 @@ class BotFrameworkTest(Framework.TestCase):
         assert response['message'] == 'Nothing for me or exception'
 
         help_comment = list(issue.get_comments())[-1]
-        assert "Not happy" in help_comment.body
+        assert "something to do with an exception" in help_comment.body
         assert "```python" in help_comment.body
 
         # Clean

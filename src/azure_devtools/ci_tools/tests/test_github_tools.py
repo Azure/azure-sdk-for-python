@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from subprocess import CalledProcessError
 import tempfile
+from unittest import mock
 
 import pytest
 
@@ -33,7 +34,10 @@ class GithubTools(Framework.TestCase):
         self.tokenAuthMode = True
         super(GithubTools, self).setUp()
 
-    def test_exception_to_github(self):
+    @mock.patch('traceback.format_exc')
+    def test_exception_to_github(self, format_exc):
+        format_exc.return_value = 'something to do with an exception'
+
         # Prepare
         repo = self.g.get_repo("lmazuel/TestingRepo")
         issue = repo.get_issue(13)
