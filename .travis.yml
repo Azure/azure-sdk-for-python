@@ -9,7 +9,8 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - pylint src/azure_devtools
+  - pylint src/azure_devtools/scenario_tests
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then pylint src/azure_devtools/ci_tools; fi; # CI tools is Py3.6 only
   - pytest --cov=azure_devtools
 after_success:
   - codecov
