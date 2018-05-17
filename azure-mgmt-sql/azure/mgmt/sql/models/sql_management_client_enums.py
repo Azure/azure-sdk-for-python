@@ -411,48 +411,6 @@ class VirtualNetworkRuleState(str, Enum):
     unknown = "Unknown"
 
 
-class ManagedDatabaseStatus(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class AutomaticTuningServerMode(str, Enum):
-
-    custom = "Custom"
-    auto = "Auto"
-    unspecified = "Unspecified"
-
-
-class AutomaticTuningServerReason(str, Enum):
-
-    default = "Default"
-    disabled = "Disabled"
-    auto_configured = "AutoConfigured"
-
-
-class RestorePointType(str, Enum):
-
-    continuous = "CONTINUOUS"
-    discrete = "DISCRETE"
-
-
 class JobAgentState(str, Enum):
 
     creating = "Creating"
@@ -519,6 +477,48 @@ class JobTargetGroupMembershipType(str, Enum):
 
     include = "Include"
     exclude = "Exclude"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+
+
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class AutomaticTuningServerMode(str, Enum):
+
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningServerReason(str, Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
+
+
+class RestorePointType(str, Enum):
+
+    continuous = "CONTINUOUS"
+    discrete = "DISCRETE"
 
 
 class ManagementOperationState(str, Enum):

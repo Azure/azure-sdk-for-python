@@ -85,17 +85,6 @@ try:
     from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
-    from .long_term_retention_backup_py3 import LongTermRetentionBackup
-    from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
-    from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
-    from .managed_database_py3 import ManagedDatabase
-    from .managed_database_update_py3 import ManagedDatabaseUpdate
-    from .automatic_tuning_server_options_py3 import AutomaticTuningServerOptions
-    from .server_automatic_tuning_py3 import ServerAutomaticTuning
-    from .server_dns_alias_py3 import ServerDnsAlias
-    from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
-    from .restore_point_py3 import RestorePoint
-    from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .job_agent_py3 import JobAgent
     from .job_agent_update_py3 import JobAgentUpdate
     from .job_credential_py3 import JobCredential
@@ -110,6 +99,17 @@ try:
     from .job_target_py3 import JobTarget
     from .job_target_group_py3 import JobTargetGroup
     from .job_version_py3 import JobVersion
+    from .long_term_retention_backup_py3 import LongTermRetentionBackup
+    from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
+    from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
+    from .managed_database_py3 import ManagedDatabase
+    from .managed_database_update_py3 import ManagedDatabaseUpdate
+    from .automatic_tuning_server_options_py3 import AutomaticTuningServerOptions
+    from .server_automatic_tuning_py3 import ServerAutomaticTuning
+    from .server_dns_alias_py3 import ServerDnsAlias
+    from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
+    from .restore_point_py3 import RestorePoint
+    from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -220,17 +220,6 @@ except (SyntaxError, ImportError):
     from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
-    from .long_term_retention_backup import LongTermRetentionBackup
-    from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
-    from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
-    from .managed_database import ManagedDatabase
-    from .managed_database_update import ManagedDatabaseUpdate
-    from .automatic_tuning_server_options import AutomaticTuningServerOptions
-    from .server_automatic_tuning import ServerAutomaticTuning
-    from .server_dns_alias import ServerDnsAlias
-    from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
-    from .restore_point import RestorePoint
-    from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .job_agent import JobAgent
     from .job_agent_update import JobAgentUpdate
     from .job_credential import JobCredential
@@ -245,6 +234,17 @@ except (SyntaxError, ImportError):
     from .job_target import JobTarget
     from .job_target_group import JobTargetGroup
     from .job_version import JobVersion
+    from .long_term_retention_backup import LongTermRetentionBackup
+    from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
+    from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
+    from .managed_database import ManagedDatabase
+    from .managed_database_update import ManagedDatabaseUpdate
+    from .automatic_tuning_server_options import AutomaticTuningServerOptions
+    from .server_automatic_tuning import ServerAutomaticTuning
+    from .server_dns_alias import ServerDnsAlias
+    from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+    from .restore_point import RestorePoint
+    from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -315,10 +315,6 @@ from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
-from .managed_database_paged import ManagedDatabasePaged
-from .server_dns_alias_paged import ServerDnsAliasPaged
-from .restore_point_paged import RestorePointPaged
 from .job_agent_paged import JobAgentPaged
 from .job_credential_paged import JobCredentialPaged
 from .job_execution_paged import JobExecutionPaged
@@ -326,6 +322,10 @@ from .job_paged import JobPaged
 from .job_step_paged import JobStepPaged
 from .job_target_group_paged import JobTargetGroupPaged
 from .job_version_paged import JobVersionPaged
+from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
+from .managed_database_paged import ManagedDatabasePaged
+from .server_dns_alias_paged import ServerDnsAliasPaged
+from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -374,12 +374,6 @@ from .sql_management_client_enums import (
     SyncDirection,
     SyncMemberState,
     VirtualNetworkRuleState,
-    ManagedDatabaseStatus,
-    CatalogCollationType,
-    ManagedDatabaseCreateMode,
-    AutomaticTuningServerMode,
-    AutomaticTuningServerReason,
-    RestorePointType,
     JobAgentState,
     JobExecutionLifecycle,
     ProvisioningState,
@@ -389,6 +383,12 @@ from .sql_management_client_enums import (
     JobStepActionSource,
     JobStepOutputType,
     JobTargetGroupMembershipType,
+    ManagedDatabaseStatus,
+    CatalogCollationType,
+    ManagedDatabaseCreateMode,
+    AutomaticTuningServerMode,
+    AutomaticTuningServerReason,
+    RestorePointType,
     ManagementOperationState,
     MaxSizeUnit,
     LogSizeUnit,
@@ -484,17 +484,6 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
     'DatabaseVulnerabilityAssessment',
-    'LongTermRetentionBackup',
-    'BackupLongTermRetentionPolicy',
-    'CompleteDatabaseRestoreDefinition',
-    'ManagedDatabase',
-    'ManagedDatabaseUpdate',
-    'AutomaticTuningServerOptions',
-    'ServerAutomaticTuning',
-    'ServerDnsAlias',
-    'ServerDnsAliasAcquisition',
-    'RestorePoint',
-    'CreateDatabaseRestorePointDefinition',
     'JobAgent',
     'JobAgentUpdate',
     'JobCredential',
@@ -509,6 +498,17 @@ __all__ = [
     'JobTarget',
     'JobTargetGroup',
     'JobVersion',
+    'LongTermRetentionBackup',
+    'BackupLongTermRetentionPolicy',
+    'CompleteDatabaseRestoreDefinition',
+    'ManagedDatabase',
+    'ManagedDatabaseUpdate',
+    'AutomaticTuningServerOptions',
+    'ServerAutomaticTuning',
+    'ServerDnsAlias',
+    'ServerDnsAliasAcquisition',
+    'RestorePoint',
+    'CreateDatabaseRestorePointDefinition',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -579,10 +579,6 @@ __all__ = [
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
-    'LongTermRetentionBackupPaged',
-    'ManagedDatabasePaged',
-    'ServerDnsAliasPaged',
-    'RestorePointPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
     'JobExecutionPaged',
@@ -590,6 +586,10 @@ __all__ = [
     'JobStepPaged',
     'JobTargetGroupPaged',
     'JobVersionPaged',
+    'LongTermRetentionBackupPaged',
+    'ManagedDatabasePaged',
+    'ServerDnsAliasPaged',
+    'RestorePointPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -637,12 +637,6 @@ __all__ = [
     'SyncDirection',
     'SyncMemberState',
     'VirtualNetworkRuleState',
-    'ManagedDatabaseStatus',
-    'CatalogCollationType',
-    'ManagedDatabaseCreateMode',
-    'AutomaticTuningServerMode',
-    'AutomaticTuningServerReason',
-    'RestorePointType',
     'JobAgentState',
     'JobExecutionLifecycle',
     'ProvisioningState',
@@ -652,6 +646,12 @@ __all__ = [
     'JobStepActionSource',
     'JobStepOutputType',
     'JobTargetGroupMembershipType',
+    'ManagedDatabaseStatus',
+    'CatalogCollationType',
+    'ManagedDatabaseCreateMode',
+    'AutomaticTuningServerMode',
+    'AutomaticTuningServerReason',
+    'RestorePointType',
     'ManagementOperationState',
     'MaxSizeUnit',
     'LogSizeUnit',
