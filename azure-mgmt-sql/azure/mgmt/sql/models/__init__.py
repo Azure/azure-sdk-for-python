@@ -81,6 +81,10 @@ try:
     from .sync_member_py3 import SyncMember
     from .subscription_usage_py3 import SubscriptionUsage
     from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .database_vulnerability_assessment_rule_baseline_item_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
+    from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
+    from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
+    from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
     from .long_term_retention_backup_py3 import LongTermRetentionBackup
     from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
     from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
@@ -92,6 +96,20 @@ try:
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
+    from .job_agent_py3 import JobAgent
+    from .job_agent_update_py3 import JobAgentUpdate
+    from .job_credential_py3 import JobCredential
+    from .job_execution_target_py3 import JobExecutionTarget
+    from .job_execution_py3 import JobExecution
+    from .job_schedule_py3 import JobSchedule
+    from .job_py3 import Job
+    from .job_step_action_py3 import JobStepAction
+    from .job_step_output_py3 import JobStepOutput
+    from .job_step_execution_options_py3 import JobStepExecutionOptions
+    from .job_step_py3 import JobStep
+    from .job_target_py3 import JobTarget
+    from .job_target_group_py3 import JobTargetGroup
+    from .job_version_py3 import JobVersion
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -117,6 +135,9 @@ try:
     from .elastic_pool_per_database_settings_py3 import ElasticPoolPerDatabaseSettings
     from .elastic_pool_py3 import ElasticPool
     from .elastic_pool_update_py3 import ElasticPoolUpdate
+    from .vulnerability_assessment_scan_error_py3 import VulnerabilityAssessmentScanError
+    from .vulnerability_assessment_scan_record_py3 import VulnerabilityAssessmentScanRecord
+    from .database_vulnerability_assessment_scans_export_py3 import DatabaseVulnerabilityAssessmentScansExport
     from .instance_failover_group_read_write_endpoint_py3 import InstanceFailoverGroupReadWriteEndpoint
     from .instance_failover_group_read_only_endpoint_py3 import InstanceFailoverGroupReadOnlyEndpoint
     from .partner_region_info_py3 import PartnerRegionInfo
@@ -195,6 +216,10 @@ except (SyntaxError, ImportError):
     from .sync_member import SyncMember
     from .subscription_usage import SubscriptionUsage
     from .virtual_network_rule import VirtualNetworkRule
+    from .database_vulnerability_assessment_rule_baseline_item import DatabaseVulnerabilityAssessmentRuleBaselineItem
+    from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
+    from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
+    from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
     from .long_term_retention_backup import LongTermRetentionBackup
     from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
     from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
@@ -206,6 +231,20 @@ except (SyntaxError, ImportError):
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
+    from .job_agent import JobAgent
+    from .job_agent_update import JobAgentUpdate
+    from .job_credential import JobCredential
+    from .job_execution_target import JobExecutionTarget
+    from .job_execution import JobExecution
+    from .job_schedule import JobSchedule
+    from .job import Job
+    from .job_step_action import JobStepAction
+    from .job_step_output import JobStepOutput
+    from .job_step_execution_options import JobStepExecutionOptions
+    from .job_step import JobStep
+    from .job_target import JobTarget
+    from .job_target_group import JobTargetGroup
+    from .job_version import JobVersion
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -231,6 +270,9 @@ except (SyntaxError, ImportError):
     from .elastic_pool_per_database_settings import ElasticPoolPerDatabaseSettings
     from .elastic_pool import ElasticPool
     from .elastic_pool_update import ElasticPoolUpdate
+    from .vulnerability_assessment_scan_error import VulnerabilityAssessmentScanError
+    from .vulnerability_assessment_scan_record import VulnerabilityAssessmentScanRecord
+    from .database_vulnerability_assessment_scans_export import DatabaseVulnerabilityAssessmentScansExport
     from .instance_failover_group_read_write_endpoint import InstanceFailoverGroupReadWriteEndpoint
     from .instance_failover_group_read_only_endpoint import InstanceFailoverGroupReadOnlyEndpoint
     from .partner_region_info import PartnerRegionInfo
@@ -277,8 +319,16 @@ from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
+from .job_agent_paged import JobAgentPaged
+from .job_credential_paged import JobCredentialPaged
+from .job_execution_paged import JobExecutionPaged
+from .job_paged import JobPaged
+from .job_step_paged import JobStepPaged
+from .job_target_group_paged import JobTargetGroupPaged
+from .job_version_paged import JobVersionPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
+from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
 from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
@@ -330,6 +380,15 @@ from .sql_management_client_enums import (
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
+    JobAgentState,
+    JobExecutionLifecycle,
+    ProvisioningState,
+    JobTargetType,
+    JobScheduleType,
+    JobStepActionType,
+    JobStepActionSource,
+    JobStepOutputType,
+    JobTargetGroupMembershipType,
     ManagementOperationState,
     MaxSizeUnit,
     LogSizeUnit,
@@ -342,6 +401,8 @@ from .sql_management_client_enums import (
     DatabaseReadScale,
     ElasticPoolState,
     ElasticPoolLicenseType,
+    VulnerabilityAssessmentScanTriggerType,
+    VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
     CapabilityGroup,
@@ -419,6 +480,10 @@ __all__ = [
     'SyncMember',
     'SubscriptionUsage',
     'VirtualNetworkRule',
+    'DatabaseVulnerabilityAssessmentRuleBaselineItem',
+    'DatabaseVulnerabilityAssessmentRuleBaseline',
+    'VulnerabilityAssessmentRecurringScansProperties',
+    'DatabaseVulnerabilityAssessment',
     'LongTermRetentionBackup',
     'BackupLongTermRetentionPolicy',
     'CompleteDatabaseRestoreDefinition',
@@ -430,6 +495,20 @@ __all__ = [
     'ServerDnsAliasAcquisition',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
+    'JobAgent',
+    'JobAgentUpdate',
+    'JobCredential',
+    'JobExecutionTarget',
+    'JobExecution',
+    'JobSchedule',
+    'Job',
+    'JobStepAction',
+    'JobStepOutput',
+    'JobStepExecutionOptions',
+    'JobStep',
+    'JobTarget',
+    'JobTargetGroup',
+    'JobVersion',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -455,6 +534,9 @@ __all__ = [
     'ElasticPoolPerDatabaseSettings',
     'ElasticPool',
     'ElasticPoolUpdate',
+    'VulnerabilityAssessmentScanError',
+    'VulnerabilityAssessmentScanRecord',
+    'DatabaseVulnerabilityAssessmentScansExport',
     'InstanceFailoverGroupReadWriteEndpoint',
     'InstanceFailoverGroupReadOnlyEndpoint',
     'PartnerRegionInfo',
@@ -501,8 +583,16 @@ __all__ = [
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
+    'JobAgentPaged',
+    'JobCredentialPaged',
+    'JobExecutionPaged',
+    'JobPaged',
+    'JobStepPaged',
+    'JobTargetGroupPaged',
+    'JobVersionPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
+    'VulnerabilityAssessmentScanRecordPaged',
     'InstanceFailoverGroupPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
@@ -553,6 +643,15 @@ __all__ = [
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
+    'JobAgentState',
+    'JobExecutionLifecycle',
+    'ProvisioningState',
+    'JobTargetType',
+    'JobScheduleType',
+    'JobStepActionType',
+    'JobStepActionSource',
+    'JobStepOutputType',
+    'JobTargetGroupMembershipType',
     'ManagementOperationState',
     'MaxSizeUnit',
     'LogSizeUnit',
@@ -565,6 +664,8 @@ __all__ = [
     'DatabaseReadScale',
     'ElasticPoolState',
     'ElasticPoolLicenseType',
+    'VulnerabilityAssessmentScanTriggerType',
+    'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
     'CapabilityGroup',
