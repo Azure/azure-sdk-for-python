@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from unittest import TestCase
+import unittest
 from azure_devtools.scenario_tests.preparers import AbstractPreparer
 
 traces = []
@@ -22,7 +22,7 @@ class _TestPreparer(AbstractPreparer):
         traces.append('remove ' + self._name)
 
 
-class _TestClassSample(TestCase):
+class _TestClassSample(unittest.TestCase):
     @_TestPreparer('A')
     @_TestPreparer('B')
     def example_test(self):
@@ -30,7 +30,11 @@ class _TestClassSample(TestCase):
 
 
 def test_preparer_order():
-    _TestClassSample().example_test()
+    # Mimic a real test runner, for better compat 2.7 / 3.x
+    suite = unittest.TestSuite()
+    suite.addTest(_TestClassSample('example_test'))
+    unittest.TextTestRunner().run(suite)
+
     assert len(traces) == 4
     assert traces[0] == 'create A'
     assert traces[1] == 'create B'
