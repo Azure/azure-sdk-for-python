@@ -26,7 +26,6 @@ def build_from_issue_comment(gh_token, body):
     """Create a WebhookMetadata from a comment added to an issue.
     """
     if body["action"] in ["created", "edited"]:
-        gh_token = os.environ["GH_TOKEN"]
         github_con = Github(gh_token)
         repo = github_con.get_repo(body['repository']['full_name'])
         issue = repo.get_issue(body['issue']['number'])
