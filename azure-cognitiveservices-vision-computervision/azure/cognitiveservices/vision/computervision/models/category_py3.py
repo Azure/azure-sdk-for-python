@@ -30,8 +30,8 @@ class Category(Model):
         'detail': {'key': 'detail', 'type': 'CategoryDetail'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, score: float=None, detail=None, **kwargs) -> None:
         super(Category, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.score = kwargs.get('score', None)
-        self.detail = kwargs.get('detail', None)
+        self.name = name
+        self.score = score
+        self.detail = detail

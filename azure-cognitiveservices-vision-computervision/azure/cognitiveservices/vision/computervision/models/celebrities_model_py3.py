@@ -12,28 +12,26 @@
 from msrest.serialization import Model
 
 
-class FaceDescription(Model):
-    """An object describing a face identified in the image.
+class CelebritiesModel(Model):
+    """An object describing possible celebrity identification.
 
-    :param age: Possible age of the face.
-    :type age: int
-    :param gender: Possible gender of the face. Possible values include:
-     'Male', 'Female'
-    :type gender: str or
-     ~azure.cognitiveservices.vision.computervision.models.Gender
+    :param name: Name of the celebrity.
+    :type name: str
+    :param confidence: Level of confidence ranging from 0 to 1.
+    :type confidence: float
     :param face_rectangle:
     :type face_rectangle:
      ~azure.cognitiveservices.vision.computervision.models.FaceRectangle
     """
 
     _attribute_map = {
-        'age': {'key': 'age', 'type': 'int'},
-        'gender': {'key': 'gender', 'type': 'Gender'},
+        'name': {'key': 'name', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
     }
 
-    def __init__(self, **kwargs):
-        super(FaceDescription, self).__init__(**kwargs)
-        self.age = kwargs.get('age', None)
-        self.gender = kwargs.get('gender', None)
-        self.face_rectangle = kwargs.get('face_rectangle', None)
+    def __init__(self, *, name: str=None, confidence: float=None, face_rectangle=None, **kwargs) -> None:
+        super(CelebritiesModel, self).__init__(**kwargs)
+        self.name = name
+        self.confidence = confidence
+        self.face_rectangle = face_rectangle

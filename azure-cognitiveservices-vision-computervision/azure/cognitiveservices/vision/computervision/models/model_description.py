@@ -26,7 +26,7 @@ class ModelDescription(Model):
         'categories': {'key': 'categories', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, categories=None):
-        super(ModelDescription, self).__init__()
-        self.name = name
-        self.categories = categories
+    def __init__(self, **kwargs):
+        super(ModelDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.categories = kwargs.get('categories', None)

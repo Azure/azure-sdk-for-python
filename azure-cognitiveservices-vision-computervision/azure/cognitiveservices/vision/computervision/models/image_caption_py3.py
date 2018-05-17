@@ -12,26 +12,21 @@
 from msrest.serialization import Model
 
 
-class Line(Model):
-    """Line.
+class ImageCaption(Model):
+    """An image caption, i.e. a brief description of what the image depicts.
 
-    :param bounding_box:
-    :type bounding_box: list[int]
-    :param text:
+    :param text: The text of the caption
     :type text: str
-    :param words:
-    :type words:
-     list[~azure.cognitiveservices.vision.computervision.models.Word]
+    :param confidence: The level of confidence the service has in the caption
+    :type confidence: float
     """
 
     _attribute_map = {
-        'bounding_box': {'key': 'boundingBox', 'type': '[int]'},
         'text': {'key': 'text', 'type': 'str'},
-        'words': {'key': 'words', 'type': '[Word]'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
-        super(Line, self).__init__(**kwargs)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.text = kwargs.get('text', None)
-        self.words = kwargs.get('words', None)
+    def __init__(self, *, text: str=None, confidence: float=None, **kwargs) -> None:
+        super(ImageCaption, self).__init__(**kwargs)
+        self.text = text
+        self.confidence = confidence

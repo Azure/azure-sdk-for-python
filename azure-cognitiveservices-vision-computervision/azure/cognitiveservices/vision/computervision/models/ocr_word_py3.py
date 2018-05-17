@@ -12,28 +12,26 @@
 from msrest.serialization import Model
 
 
-class OcrLine(Model):
-    """An object describing a single recognized line of text.
+class OcrWord(Model):
+    """Information on a recognized word.
 
-    :param bounding_box: Bounding box of a recognized line. The four integers
+    :param bounding_box: Bounding box of a recognized word. The four integers
      represent the x-coordinate of the left edge, the y-coordinate of the top
      edge, width, and height of the bounding box, in the coordinate system of
      the input image, after it has been rotated around its center according to
      the detected text angle (see textAngle property), with the origin at the
      top-left corner, and the y-axis pointing down.
     :type bounding_box: str
-    :param words: An array of objects, where each object represents a
-     recognized word.
-    :type words:
-     list[~azure.cognitiveservices.vision.computervision.models.OcrWord]
+    :param text: String value of a recognized word.
+    :type text: str
     """
 
     _attribute_map = {
         'bounding_box': {'key': 'boundingBox', 'type': 'str'},
-        'words': {'key': 'words', 'type': '[OcrWord]'},
+        'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(OcrLine, self).__init__(**kwargs)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.words = kwargs.get('words', None)
+    def __init__(self, *, bounding_box: str=None, text: str=None, **kwargs) -> None:
+        super(OcrWord, self).__init__(**kwargs)
+        self.bounding_box = bounding_box
+        self.text = text

@@ -33,7 +33,7 @@ class OcrLine(Model):
         'words': {'key': 'words', 'type': '[OcrWord]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, bounding_box: str=None, words=None, **kwargs) -> None:
         super(OcrLine, self).__init__(**kwargs)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.words = kwargs.get('words', None)
+        self.bounding_box = bounding_box
+        self.words = words

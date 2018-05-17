@@ -12,23 +12,21 @@
 from msrest.serialization import Model
 
 
-class ImageUrl(Model):
-    """ImageUrl.
+class ModelDescription(Model):
+    """An object describing supported model by name and categories.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param url: Required. Publicly reachable URL of an image
-    :type url: str
+    :param name:
+    :type name: str
+    :param categories:
+    :type categories: list[str]
     """
 
-    _validation = {
-        'url': {'required': True},
-    }
-
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageUrl, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
+    def __init__(self, *, name: str=None, categories=None, **kwargs) -> None:
+        super(ModelDescription, self).__init__(**kwargs)
+        self.name = name
+        self.categories = categories

@@ -12,15 +12,13 @@
 from msrest.serialization import Model
 
 
-class ImageDescriptionDetails(Model):
-    """A collection of content tags, along with a list of captions sorted by
-    confidence level, and image metadata.
+class TagResult(Model):
+    """The results of a image tag operation, including any tags and image
+    metadata.
 
-    :param tags: A collection of image tags.
-    :type tags: list[str]
-    :param captions: A list of captions, sorted by confidence level.
-    :type captions:
-     list[~azure.cognitiveservices.vision.computervision.models.ImageCaption]
+    :param tags: A list of tags with confidence level.
+    :type tags:
+     list[~azure.cognitiveservices.vision.computervision.models.ImageTag]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -29,15 +27,13 @@ class ImageDescriptionDetails(Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'captions': {'key': 'captions', 'type': '[ImageCaption]'},
+        'tags': {'key': 'tags', 'type': '[ImageTag]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageDescriptionDetails, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.captions = kwargs.get('captions', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.metadata = kwargs.get('metadata', None)
+    def __init__(self, *, tags=None, request_id: str=None, metadata=None, **kwargs) -> None:
+        super(TagResult, self).__init__(**kwargs)
+        self.tags = tags
+        self.request_id = request_id
+        self.metadata = metadata

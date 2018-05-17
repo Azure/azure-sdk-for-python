@@ -33,7 +33,7 @@ class OcrRegion(Model):
         'lines': {'key': 'lines', 'type': '[OcrLine]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, bounding_box: str=None, lines=None, **kwargs) -> None:
         super(OcrRegion, self).__init__(**kwargs)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.lines = kwargs.get('lines', None)
+        self.bounding_box = bounding_box
+        self.lines = lines

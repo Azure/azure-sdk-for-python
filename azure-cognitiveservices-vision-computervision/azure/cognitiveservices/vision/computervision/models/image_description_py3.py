@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ImageDescriptionDetails(Model):
+class ImageDescription(Model):
     """A collection of content tags, along with a list of captions sorted by
     confidence level, and image metadata.
 
@@ -29,15 +29,15 @@ class ImageDescriptionDetails(Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'captions': {'key': 'captions', 'type': '[ImageCaption]'},
-        'request_id': {'key': 'requestId', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'tags': {'key': 'description.tags', 'type': '[str]'},
+        'captions': {'key': 'description.captions', 'type': '[ImageCaption]'},
+        'request_id': {'key': 'description.requestId', 'type': 'str'},
+        'metadata': {'key': 'description.metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageDescriptionDetails, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.captions = kwargs.get('captions', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.metadata = kwargs.get('metadata', None)
+    def __init__(self, *, tags=None, captions=None, request_id: str=None, metadata=None, **kwargs) -> None:
+        super(ImageDescription, self).__init__(**kwargs)
+        self.tags = tags
+        self.captions = captions
+        self.request_id = request_id
+        self.metadata = metadata
