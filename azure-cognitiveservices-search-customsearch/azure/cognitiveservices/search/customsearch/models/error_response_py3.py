@@ -9,15 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .response_py3 import Response
+from msrest.exceptions import HttpOperationError
 
 
-class Response(Identifiable):
-    """Defines a response. All schemas that could be returned at the root of a
-    response should inherit from this.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchResponse, ErrorResponse, Answer, Thing
+class ErrorResponse(Response):
+    """The top-level response that represents a failed request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,25 +27,39 @@ class Response(Identifiable):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
+    :param errors: Required. A list of errors that describe the reasons why
+     the request failed.
+    :type errors:
+     list[~azure.cognitiveservices.search.customsearch.models.Error]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
+        'errors': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    _subtype_map = {
-        '_type': {'SearchResponse': 'SearchResponse', 'ErrorResponse': 'ErrorResponse', 'Answer': 'Answer', 'Thing': 'Thing'}
-    }
+    def __init__(self, *, errors, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.errors = errors
+        self._type = 'ErrorResponse'
 
-    def __init__(self, **kwargs):
-        super(Response, self).__init__(**kwargs)
-        self.web_search_url = None
-        self._type = 'Response'
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

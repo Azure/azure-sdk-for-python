@@ -9,15 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .response_py3 import Response
 
 
-class Response(Identifiable):
-    """Defines a response. All schemas that could be returned at the root of a
-    response should inherit from this.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchResponse, ErrorResponse, Answer, Thing
+class SearchResponse(Response):
+    """Defines the top-level object that the response includes when the request
+    succeeds.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,25 +27,35 @@ class Response(Identifiable):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
+    :ivar query_context: An object that contains the query string that Bing
+     used for the request. This object contains the query string as entered by
+     the user. It may also contain an altered query string that Bing used for
+     the query if the query string contained a spelling mistake.
+    :vartype query_context:
+     ~azure.cognitiveservices.search.customsearch.models.QueryContext
+    :ivar web_pages: A list of webpages that are relevant to the search query.
+    :vartype web_pages:
+     ~azure.cognitiveservices.search.customsearch.models.WebWebAnswer
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
+        'query_context': {'readonly': True},
+        'web_pages': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'query_context': {'key': 'queryContext', 'type': 'QueryContext'},
+        'web_pages': {'key': 'webPages', 'type': 'WebWebAnswer'},
     }
 
-    _subtype_map = {
-        '_type': {'SearchResponse': 'SearchResponse', 'ErrorResponse': 'ErrorResponse', 'Answer': 'Answer', 'Thing': 'Thing'}
-    }
-
-    def __init__(self, **kwargs):
-        super(Response, self).__init__(**kwargs)
-        self.web_search_url = None
-        self._type = 'Response'
+    def __init__(self, **kwargs) -> None:
+        super(SearchResponse, self).__init__(**kwargs)
+        self.query_context = None
+        self.web_pages = None
+        self._type = 'SearchResponse'

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .identifiable_py3 import Identifiable
 
 
 class Response(Identifiable):
@@ -48,7 +48,7 @@ class Response(Identifiable):
         '_type': {'SearchResponse': 'SearchResponse', 'ErrorResponse': 'ErrorResponse', 'Answer': 'Answer', 'Thing': 'Thing'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Response, self).__init__(**kwargs)
         self.web_search_url = None
         self._type = 'Response'
