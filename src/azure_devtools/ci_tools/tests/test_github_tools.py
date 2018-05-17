@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from subprocess import CalledProcessError
 import tempfile
@@ -6,6 +7,8 @@ import pytest
 
 from git import Repo, GitCommandError
 from github import GithubException
+
+from . import Framework
 
 from azure_devtools.ci_tools.github_tools import (
     exception_to_github,
@@ -22,281 +25,293 @@ from azure_devtools.ci_tools.github_tools import (
     get_or_create_pull
 )
 
+class GithubTools(Framework.TestCase):
 
-def test_exception_to_github(github_client):
-    # Prepare
-    repo = github_client.get_repo("lmazuel/TestingRepo")
-    issue = repo.get_issue(13)
+    def setUp(self):
+        self.maxDiff = None # Big diff to come
+        self.recordMode = False  # turn to True to record
+        self.tokenAuthMode = True
+        super(GithubTools, self).setUp()
 
-    # Act
-    with exception_to_github(issue) as error:
-        pass
+    def test_exception_to_github(self):
+        # Prepare
+        repo = self.g.get_repo("lmazuel/TestingRepo")
+        issue = repo.get_issue(13)
 
-    assert error.comment is None
+        # Act
+        with exception_to_github(issue) as error:
+            pass
 
-    # Act
-    with exception_to_github(issue) as error:
-        "Test".fakemethod(12)  # pylint: disable=no-member
+        assert error.comment is None
 
-    # Test
-    assert error.comment is not None
-    assert "Encountered an unknown error" in error.comment.body
+        # Act
+        with exception_to_github(issue) as error:
+            "Test".fakemethod(12)  # pylint: disable=no-member
 
-    # Clean my mess
-    error.comment.delete()
+        # Test
+        assert error.comment is not None
+        assert "Encountered an unknown error" in error.comment.body
 
-    # Act
-    with exception_to_github(issue, "Python bot") as error:
-        "Test".fakemethod(12)  # pylint: disable=no-member
+        # Clean my mess
+        error.comment.delete()
 
-    # Test
-    assert error.comment is not None
-    assert "Encountered an unknown error: (Python bot)" in error.comment.body
+        # Act
+        with exception_to_github(issue, "Python bot") as error:
+            "Test".fakemethod(12)  # pylint: disable=no-member
 
-    # Clean my mess
-    error.comment.delete()
+        # Test
+        assert error.comment is not None
+        assert "Encountered an unknown error: (Python bot)" in error.comment.body
 
-    # Act
-    with exception_to_github(issue, "Python bot") as error:
-        raise CalledProcessError(
-            2,
-            ["autorest", "readme.md"],
-            "Error line 1\nError line 2"
-        )
+        # Clean my mess
+        error.comment.delete()
 
-    # Test
-    assert error.comment is not None
-    assert "Encountered a Subprocess error: (Python bot)" in error.comment.body
-    assert "Error line 1" in error.comment.body
+        # Act
+        with exception_to_github(issue, "Python bot") as error:
+            raise CalledProcessError(
+                2,
+                ["autorest", "readme.md"],
+                "Error line 1\nError line 2"
+            )
 
-    # Clean my mess
-    error.comment.delete()
+        # Test
+        assert error.comment is not None
+        assert "Encountered a Subprocess error: (Python bot)" in error.comment.body
+        assert "Error line 1" in error.comment.body
 
-    # Act
-    with exception_to_github(issue, "Python bot") as error:
-        raise CalledProcessError(
-            2,
-            ["autorest", "readme.md"],
-        )
+        # Clean my mess
+        error.comment.delete()
 
-    # Test
-    assert error.comment is not None
-    assert "Encountered a Subprocess error: (Python bot)" in error.comment.body
-    assert "no output" in error.comment.body
+        # Act
+        with exception_to_github(issue, "Python bot") as error:
+            raise CalledProcessError(
+                2,
+                ["autorest", "readme.md"],
+            )
 
-    # Clean my mess
-    error.comment.delete()
+        # Test
+        assert error.comment is not None
+        assert "Encountered a Subprocess error: (Python bot)" in error.comment.body
+        assert "no output" in error.comment.body
 
-def test_get_or_create_pull(github_client):
-    repo = github_client.get_repo("lmazuel/TestingRepo")
+        # Clean my mess
+        error.comment.delete()
 
-    # b1 and b2 should exist and be the same
-    with pytest.raises(GithubException):
-        get_or_create_pull(repo, "Title", "Body", "b1", "b2")
+    def test_get_or_create_pull(self):
+        repo = self.g.get_repo("lmazuel/TestingRepo")
 
-    prresult = get_or_create_pull(repo, "Title", "Body", "b1", "b2", none_if_no_commit=True)
-    assert prresult is None
+        # b1 and b2 should exist and be the same
+        with pytest.raises(GithubException):
+            get_or_create_pull(repo, "Title", "Body", "b1", "b2")
 
-def test_dashboard(github_client):
-    # Prepare
-    repo = github_client.get_repo("lmazuel/TestingRepo")
-    issue = repo.get_issue(15)
-    initial_size = len(list(issue.get_comments()))
-    header = "# MYHEADER"
+        prresult = get_or_create_pull(repo, "Title", "Body", "b1", "b2", none_if_no_commit=True)
+        assert prresult is None
 
-    dashboard = DashboardCommentableObject(issue, header)
+    def test_dashboard(self):
+        # Prepare
+        repo = self.g.get_repo("lmazuel/TestingRepo")
+        issue = repo.get_issue(15)
+        initial_size = len(list(issue.get_comments()))
+        header = "# MYHEADER"
 
-    with exception_to_github(dashboard, "Python bot") as error:
-        "Test".fakemethod(12)  # pylint: disable=no-member    
-    
-    after_size = len(list(issue.get_comments()))
-    assert after_size == initial_size + 1
+        dashboard = DashboardCommentableObject(issue, header)
 
-    assert error.comment is not None
-    assert "Encountered an unknown error" in error.comment.body
+        with exception_to_github(dashboard, "Python bot") as error:
+            "Test".fakemethod(12)  # pylint: disable=no-member    
+        
+        after_size = len(list(issue.get_comments()))
+        assert after_size == initial_size + 1
 
-    dashboard.create_comment("New text comment")
-    after_size_2 = len(list(issue.get_comments()))
-    assert after_size == after_size_2
+        assert error.comment is not None
+        assert "Encountered an unknown error" in error.comment.body
 
-    # Clean my mess
-    error.comment.delete()
+        dashboard.create_comment("New text comment")
+        after_size_2 = len(list(issue.get_comments()))
+        assert after_size == after_size_2
 
-def test_get_user(github_token):
-    user = user_from_token(github_token)
-    assert user.login == 'lmazuel'
+        # Clean my mess
+        error.comment.delete()
 
-def test_get_files(github_client):
-    repo = github_client.get_repo("Azure/azure-sdk-for-python")
-    pr = repo.get_pull(1833)
-    files = get_files(pr)
-    assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
+    def test_get_user(self):
+        github_token = self.oauth_token
+        user = user_from_token(github_token)
+        assert user.login == 'lmazuel'
 
-    commit = repo.get_commit("042b7a5840ff471776bb64e46b50950ee9f84430")
-    files = get_files(commit)
-    assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
+    def test_get_files(self):
+        repo = self.g.get_repo("Azure/azure-sdk-for-python")
+        pr = repo.get_pull(1833)
+        files = get_files(pr)
+        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
 
-def test_create_comment(github_client):
-    repo = github_client.get_repo("lmazuel/TestingRepo")
-    issue = repo.get_issue(14)
-    comment = create_comment(issue, "This is a test")
-    comment.delete()
+        commit = repo.get_commit("042b7a5840ff471776bb64e46b50950ee9f84430")
+        files = get_files(commit)
+        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
 
-    pull = repo.get_pull(2)
-    comment = create_comment(pull, "This is a test")
-    comment.delete()
+    def test_create_comment(self):
+        repo = self.g.get_repo("lmazuel/TestingRepo")
+        issue = repo.get_issue(14)
+        comment = create_comment(issue, "This is a test")
+        comment.delete()
 
-def test_configure(github_token):
-    finished = False
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            try:
-                Repo.clone_from('https://github.com/lmazuel/TestingRepo.git', temp_dir)
-                repo = Repo(temp_dir)
+        pull = repo.get_pull(2)
+        comment = create_comment(pull, "This is a test")
+        comment.delete()
 
-                # If it's not throwing, I'm happy enough
-                configure_user(github_token, repo)
+    def test_configure(self):
+        github_token = self.oauth_token
+        finished = False
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                try:
+                    Repo.clone_from('https://github.com/lmazuel/TestingRepo.git', temp_dir)
+                    repo = Repo(temp_dir)
 
-                assert repo.git.config('--get', 'user.name') == 'Laurent Mazuel'
-            except Exception as err:
-                print(err)
-                pytest.fail(err)
-            else:
+                    # If it's not throwing, I'm happy enough
+                    configure_user(github_token, repo)
+
+                    assert repo.git.config('--get', 'user.name') == 'Laurent Mazuel'
+                except Exception as err:
+                    print(err)
+                    pytest.fail(err)
+                else:
+                    finished = True
+        except PermissionError:
+            if finished:
+                return
+            raise
+
+    def test_clone_path(self):
+        github_token = self.oauth_token
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo")
+                assert (Path(temp_dir) / Path("README.md")).exists()
+
                 finished = True
-    except PermissionError:
-        if finished:
-            return
-        raise
+        except PermissionError:
+            if not finished:
+                raise
 
-def test_clone_path(github_token):
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo")
-            assert (Path(temp_dir) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "https://github.com/lmazuel/TestingRepo")
+                assert (Path(temp_dir) / Path("README.md")).exists()
 
-            finished = True
-    except PermissionError:
-        if not finished:
-            raise
+                finished = True
+        except PermissionError:
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            clone_to_path(github_token, temp_dir, "https://github.com/lmazuel/TestingRepo")
-            assert (Path(temp_dir) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", "lmazuel-patch-1")
+                assert (Path(temp_dir) / Path("README.md")).exists()
 
-            finished = True
-    except PermissionError:
-        if not finished:
-            raise
+                finished = True
+        except PermissionError:
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", "lmazuel-patch-1")
-            assert (Path(temp_dir) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                with pytest.raises(GitCommandError):
+                    clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", "fakebranch")
 
-            finished = True
-    except PermissionError:
-        if not finished:
-            raise
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            with pytest.raises(GitCommandError):
-                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", "fakebranch")
+        finished = False # Authorize PermissionError on cleanup
+        # PR 2 must be open, or the test means nothing
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=2)
+                assert (Path(temp_dir) / Path("README.md")).exists()
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    # PR 2 must be open, or the test means nothing
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=2)
-            assert (Path(temp_dir) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        # PR 1 must be MERGED, or the test means nothing
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1)
+                assert (Path(temp_dir) / Path("README.md")).exists()
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    # PR 1 must be MERGED, or the test means nothing
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1)
-            assert (Path(temp_dir) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                with pytest.raises(GitCommandError):
+                    clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=123456789)
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            with pytest.raises(GitCommandError):
-                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=123456789)
+    def test_manage_git_folder(self):
+        github_token = self.oauth_token
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir, \
+                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo") as rest_repo:
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                assert (Path(rest_repo) / Path("README.md")).exists()
 
-def test_manage_git_folder(github_token):
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir, \
-                    manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo") as rest_repo:
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-            assert (Path(rest_repo) / Path("README.md")).exists()
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir, \
+                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo@lmazuel-patch-1") as rest_repo:
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                assert (Path(rest_repo) / Path("README.md")).exists()
+                assert "lmazuel-patch-1" in str(Repo(rest_repo).active_branch)
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir, \
-                    manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo@lmazuel-patch-1") as rest_repo:
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-            assert (Path(rest_repo) / Path("README.md")).exists()
-            assert "lmazuel-patch-1" in str(Repo(rest_repo).active_branch)
+        finished = False # Authorize PermissionError on cleanup
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir, \
+                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1) as rest_repo:
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+                assert (Path(rest_repo) / Path("README.md")).exists()
+                with pytest.raises(TypeError) as err:
+                    Repo(rest_repo).active_branch
+                assert "HEAD is a detached symbolic reference" in str(err)
 
-    finished = False # Authorize PermissionError on cleanup
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir, \
-                    manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1) as rest_repo:
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
 
-            assert (Path(rest_repo) / Path("README.md")).exists()
-            with pytest.raises(TypeError) as err:
-                Repo(rest_repo).active_branch
-            assert "HEAD is a detached symbolic reference" in str(err)
+    def test_do_pr(self):
+        github_token = self.oauth_token
+        # Should do nothing
+        do_pr(None, 'bad', 'bad', 'bad', 'bad')
 
-            finished = True
-    except (PermissionError, FileNotFoundError):
-        if not finished:
-            raise
+        # Should do nothing
+        do_pr(github_token, 'bad', None, 'bad', 'bad')
 
-def test_do_pr(github_token):
-    # Should do nothing
-    do_pr(None, 'bad', 'bad', 'bad', 'bad')
-
-    # Should do nothing
-    do_pr(github_token, 'bad', None, 'bad', 'bad')
-
-    # FIXME - more tests
+        # FIXME - more tests
 
 
 def test_github_link():

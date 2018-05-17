@@ -1,0 +1,22 @@
+https
+POST
+api.github.com
+None
+/repos/lmazuel/TestingRepo/pulls
+{'Authorization': 'token private_token_removed', 'User-Agent': 'PyGithub/Python', 'Content-Type': 'application/json'}
+{"title": "Title", "body": "Body", "base": "b2", "head": "b1"}
+422
+[('Date', 'Thu, 17 May 2018 20:35:58 GMT'), ('Content-Type', 'application/json; charset=utf-8'), ('Content-Length', '209'), ('Server', 'GitHub.com'), ('Status', '422 Unprocessable Entity'), ('X-RateLimit-Limit', '5000'), ('X-RateLimit-Remaining', '4848'), ('X-RateLimit-Reset', '1526589493'), ('X-OAuth-Scopes', 'repo, user'), ('X-Accepted-OAuth-Scopes', ''), ('X-GitHub-Media-Type', 'github.v3; format=json'), ('Access-Control-Expose-Headers', 'ETag, Link, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval'), ('Access-Control-Allow-Origin', '*'), ('Strict-Transport-Security', 'max-age=31536000; includeSubdomains; preload'), ('X-Frame-Options', 'deny'), ('X-Content-Type-Options', 'nosniff'), ('X-XSS-Protection', '1; mode=block'), ('Referrer-Policy', 'origin-when-cross-origin, strict-origin-when-cross-origin'), ('Content-Security-Policy', "default-src 'none'"), ('X-Runtime-rack', '0.110004'), ('X-GitHub-Request-Id', 'FB5C:6558:9AB2A4:C9120F:5AFDE7AE')]
+{"message":"Validation Failed","errors":[{"resource":"PullRequest","code":"custom","message":"No commits between b2 and b1"}],"documentation_url":"https://developer.github.com/v3/pulls/#create-a-pull-request"}
+
+https
+POST
+api.github.com
+None
+/repos/lmazuel/TestingRepo/pulls
+{'Authorization': 'token private_token_removed', 'User-Agent': 'PyGithub/Python', 'Content-Type': 'application/json'}
+{"title": "Title", "body": "Body", "base": "b2", "head": "b1"}
+422
+[('Date', 'Thu, 17 May 2018 20:35:59 GMT'), ('Content-Type', 'application/json; charset=utf-8'), ('Content-Length', '209'), ('Server', 'GitHub.com'), ('Status', '422 Unprocessable Entity'), ('X-RateLimit-Limit', '5000'), ('X-RateLimit-Remaining', '4847'), ('X-RateLimit-Reset', '1526589493'), ('X-OAuth-Scopes', 'repo, user'), ('X-Accepted-OAuth-Scopes', ''), ('X-GitHub-Media-Type', 'github.v3; format=json'), ('Access-Control-Expose-Headers', 'ETag, Link, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval'), ('Access-Control-Allow-Origin', '*'), ('Strict-Transport-Security', 'max-age=31536000; includeSubdomains; preload'), ('X-Frame-Options', 'deny'), ('X-Content-Type-Options', 'nosniff'), ('X-XSS-Protection', '1; mode=block'), ('Referrer-Policy', 'origin-when-cross-origin, strict-origin-when-cross-origin'), ('Content-Security-Policy', "default-src 'none'"), ('X-Runtime-rack', '0.330047'), ('X-GitHub-Request-Id', 'FB5D:655C:AE3484:E403CF:5AFDE7AE')]
+{"message":"Validation Failed","errors":[{"resource":"PullRequest","code":"custom","message":"No commits between b2 and b1"}],"documentation_url":"https://developer.github.com/v3/pulls/#create-a-pull-request"}
+

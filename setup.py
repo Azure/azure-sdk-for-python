@@ -53,7 +53,7 @@ setup(
     ],
     extras_require={
         'ci_tools':[
-            "PyGithub>=1.36", # Can Merge PR after 1.36
+            "PyGithub>=1.40a3", # Can Merge PR after 1.36, "requests" after 1.40a1
             "GitPython",
             "requests>=2.0"
         ]
