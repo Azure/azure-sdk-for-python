@@ -111,7 +111,10 @@ class GithubTools(Framework.TestCase):
         prresult = get_or_create_pull(repo, "Title", "Body", "b1", "b2", none_if_no_commit=True)
         assert prresult is None
 
-    def test_dashboard(self):
+    @mock.patch('traceback.format_exc')
+    def test_dashboard(self, format_exc):
+        format_exc.return_value = 'something to do with an exception'
+
         # Prepare
         repo = self.g.get_repo("lmazuel/TestingRepo")
         issue = repo.get_issue(15)
