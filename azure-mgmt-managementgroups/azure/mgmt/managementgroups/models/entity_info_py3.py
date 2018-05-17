@@ -37,6 +37,18 @@ class EntityInfo(Model):
     :param permissions: Permissions. Possible values include: 'noaccess',
      'view', 'edit', 'delete'
     :type permissions: str or ~azure.mgmt.managementgroups.models.enum
+    :param inherited_permissions: Inherited Permissions. Possible values
+     include: 'noaccess', 'view', 'edit', 'delete'
+    :type inherited_permissions: str or
+     ~azure.mgmt.managementgroups.models.enum
+    :param number_of_descendants: Number of Descendants.
+    :type number_of_descendants: int
+    :param parent_display_name_chain: The parent display name chain from
+     immediate parent to the root group
+    :type parent_display_name_chain: list[str]
+    :param parent_name_chain: The parent name chain from immediate parent to
+     the root group
+    :type parent_name_chain: list[str]
     """
 
     _validation = {
@@ -53,9 +65,13 @@ class EntityInfo(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'parent': {'key': 'properties.parent', 'type': 'EntityParentGroupInfo'},
         'permissions': {'key': 'properties.permissions', 'type': 'str'},
+        'inherited_permissions': {'key': 'properties.inheritedPermissions', 'type': 'str'},
+        'number_of_descendants': {'key': 'properties.numberOfDescendants', 'type': 'int'},
+        'parent_display_name_chain': {'key': 'properties.parentDisplayNameChain', 'type': '[str]'},
+        'parent_name_chain': {'key': 'properties.parentNameChain', 'type': '[str]'},
     }
 
-    def __init__(self, *, tenant_id: str=None, display_name: str=None, parent=None, permissions=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str=None, display_name: str=None, parent=None, permissions=None, inherited_permissions=None, number_of_descendants: int=None, parent_display_name_chain=None, parent_name_chain=None, **kwargs) -> None:
         super(EntityInfo, self).__init__(**kwargs)
         self.id = None
         self.type = None
@@ -64,3 +80,7 @@ class EntityInfo(Model):
         self.display_name = display_name
         self.parent = parent
         self.permissions = permissions
+        self.inherited_permissions = inherited_permissions
+        self.number_of_descendants = number_of_descendants
+        self.parent_display_name_chain = parent_display_name_chain
+        self.parent_name_chain = parent_name_chain

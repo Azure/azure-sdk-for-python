@@ -15,6 +15,7 @@ try:
     from .operation_display_properties_py3 import OperationDisplayProperties
     from .operation_py3 import Operation
     from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .tenant_backfill_status_result_py3 import TenantBackfillStatusResult
     from .management_group_info_py3 import ManagementGroupInfo
     from .parent_group_info_py3 import ParentGroupInfo
     from .management_group_details_py3 import ManagementGroupDetails
@@ -23,6 +24,7 @@ try:
     from .operation_results_py3 import OperationResults
     from .entity_parent_group_info_py3 import EntityParentGroupInfo
     from .entity_info_py3 import EntityInfo
+    from .entity_list_result_py3 import EntityListResult
     from .entity_hierarchy_item_py3 import EntityHierarchyItem
     from .patch_management_group_request_py3 import PatchManagementGroupRequest
     from .create_parent_group_info_py3 import CreateParentGroupInfo
@@ -36,6 +38,7 @@ except (SyntaxError, ImportError):
     from .operation_display_properties import OperationDisplayProperties
     from .operation import Operation
     from .check_name_availability_result import CheckNameAvailabilityResult
+    from .tenant_backfill_status_result import TenantBackfillStatusResult
     from .management_group_info import ManagementGroupInfo
     from .parent_group_info import ParentGroupInfo
     from .management_group_details import ManagementGroupDetails
@@ -44,6 +47,7 @@ except (SyntaxError, ImportError):
     from .operation_results import OperationResults
     from .entity_parent_group_info import EntityParentGroupInfo
     from .entity_info import EntityInfo
+    from .entity_list_result import EntityListResult
     from .entity_hierarchy_item import EntityHierarchyItem
     from .patch_management_group_request import PatchManagementGroupRequest
     from .create_parent_group_info import CreateParentGroupInfo
@@ -53,9 +57,9 @@ except (SyntaxError, ImportError):
     from .check_name_availability_request import CheckNameAvailabilityRequest
 from .management_group_info_paged import ManagementGroupInfoPaged
 from .operation_paged import OperationPaged
-from .entity_info_paged import EntityInfoPaged
 from .management_groups_api_enums import (
     Reason,
+    Status,
     Type,
 )
 
@@ -65,6 +69,7 @@ __all__ = [
     'OperationDisplayProperties',
     'Operation',
     'CheckNameAvailabilityResult',
+    'TenantBackfillStatusResult',
     'ManagementGroupInfo',
     'ParentGroupInfo',
     'ManagementGroupDetails',
@@ -73,6 +78,7 @@ __all__ = [
     'OperationResults',
     'EntityParentGroupInfo',
     'EntityInfo',
+    'EntityListResult',
     'EntityHierarchyItem',
     'PatchManagementGroupRequest',
     'CreateParentGroupInfo',
@@ -82,7 +88,7 @@ __all__ = [
     'CheckNameAvailabilityRequest',
     'ManagementGroupInfoPaged',
     'OperationPaged',
-    'EntityInfoPaged',
     'Reason',
+    'Status',
     'Type',
 ]
