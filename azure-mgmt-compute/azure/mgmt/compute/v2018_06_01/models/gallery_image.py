@@ -62,9 +62,12 @@ class GalleryImage(Resource):
     :param purchase_plan:
     :type purchase_plan:
      ~azure.mgmt.compute.v2018_06_01.models.ImagePurchasePlan
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The current state of the gallery image. The
+     provisioning state, which only appears in the response. Possible values
+     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2018_06_01.models.enum
     """
 
     _validation = {

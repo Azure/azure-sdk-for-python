@@ -34,9 +34,12 @@ class Gallery(Resource):
     :type description: str
     :param identifier:
     :type identifier: ~azure.mgmt.compute.v2018_06_01.models.GalleryIdentifier
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The current state of the gallery. The
+     provisioning state, which only appears in the response. Possible values
+     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2018_06_01.models.enum
     """
 
     _validation = {
