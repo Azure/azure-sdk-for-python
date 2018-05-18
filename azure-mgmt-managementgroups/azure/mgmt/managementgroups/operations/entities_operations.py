@@ -11,8 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -38,64 +36,8 @@ class EntitiesOperations(object):
 
         self.config = config
 
-
-    def _list_initial(
-            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = self.list.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-        if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if search is not None:
-            query_parameters['$search'] = self._serialize.query("search", search, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if view is not None:
-            query_parameters['$view'] = self._serialize.query("view", view, 'str')
-        if group_name is not None:
-            query_parameters['groupName'] = self._serialize.query("group_name", group_name, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if cache_control is not None:
-            header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('EntityListResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def list(
-            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
+            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """List all entities (Management Groups, Subscriptions, etc.) for the
         authenticated user.
 
@@ -149,48 +91,75 @@ class EntitiesOperations(object):
          caches.
         :type cache_control: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns EntityListResult or
-         ClientRawResponse<EntityListResult> if raw==True
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of EntityInfo
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managementgroups.models.EntityListResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managementgroups.models.EntityListResult]]
+         ~azure.mgmt.managementgroups.models.EntityInfoPaged[~azure.mgmt.managementgroups.models.EntityInfo]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
-        raw_result = self._list_initial(
-            skiptoken=skiptoken,
-            skip=skip,
-            top=top,
-            select=select,
-            search=search,
-            filter=filter,
-            view=view,
-            group_name=group_name,
-            cache_control=cache_control,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
+        def internal_paging(next_link=None, raw=False):
 
-        def get_long_running_output(response):
-            deserialized = self._deserialize('EntityListResult', response)
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
 
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if search is not None:
+                    query_parameters['$search'] = self._serialize.query("search", search, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if view is not None:
+                    query_parameters['$view'] = self._serialize.query("view", view, 'str')
+                if group_name is not None:
+                    query_parameters['groupName'] = self._serialize.query("group_name", group_name, 'str')
 
-            return deserialized
+            else:
+                url = next_link
+                query_parameters = {}
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if cache_control is not None:
+                header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.post(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
     list.metadata = {'url': '/providers/Microsoft.Management/getEntities'}

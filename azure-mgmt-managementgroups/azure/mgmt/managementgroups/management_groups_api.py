@@ -152,9 +152,21 @@ class ManagementGroupsAPI(SDKClient):
         return deserialized
     check_name_availability.metadata = {'url': '/providers/Microsoft.Management/checkNameAvailability'}
 
-
-    def _start_tenant_backfill_initial(
+    def start_tenant_backfill(
             self, custom_headers=None, raw=False, **operation_config):
+        """Starts backfilling subscriptions for the Tenant.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: TenantBackfillStatusResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.managementgroups.models.TenantBackfillStatusResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
+        """
         # Construct URL
         url = self.start_tenant_backfill.metadata['url']
 
@@ -189,48 +201,6 @@ class ManagementGroupsAPI(SDKClient):
             return client_raw_response
 
         return deserialized
-
-    def start_tenant_backfill(
-            self, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Starts backfilling subscriptions for the Tenant.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         TenantBackfillStatusResult or
-         ClientRawResponse<TenantBackfillStatusResult> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managementgroups.models.TenantBackfillStatusResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managementgroups.models.TenantBackfillStatusResult]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
-        """
-        raw_result = self._start_tenant_backfill_initial(
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('TenantBackfillStatusResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     start_tenant_backfill.metadata = {'url': '/providers/Microsoft.Management/startTenantBackfill'}
 
     def tenant_backfill_status(
