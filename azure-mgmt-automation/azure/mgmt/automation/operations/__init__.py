@@ -38,6 +38,7 @@ from .software_update_configuration_runs_operations import SoftwareUpdateConfigu
 from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .source_control_operations import SourceControlOperations
 from .source_control_sync_job_operations import SourceControlSyncJobOperations
+from .source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
 from .job_operations import JobOperations
 from .job_stream_operations import JobStreamOperations
 from .agent_registration_information_operations import AgentRegistrationInformationOperations
@@ -46,6 +47,7 @@ from .node_reports_operations import NodeReportsOperations
 from .dsc_compilation_job_operations import DscCompilationJobOperations
 from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_node_configuration_operations import DscNodeConfigurationOperations
+from .watcher_operations import WatcherOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -77,6 +79,7 @@ __all__ = [
     'SoftwareUpdateConfigurationMachineRunsOperations',
     'SourceControlOperations',
     'SourceControlSyncJobOperations',
+    'SourceControlSyncJobStreamsOperations',
     'JobOperations',
     'JobStreamOperations',
     'AgentRegistrationInformationOperations',
@@ -85,4 +88,5 @@ __all__ = [
     'DscCompilationJobOperations',
     'DscCompilationJobStreamOperations',
     'DscNodeConfigurationOperations',
+    'WatcherOperations',
 ]

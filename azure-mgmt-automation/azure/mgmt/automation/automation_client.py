@@ -42,6 +42,7 @@ from .operations.software_update_configuration_runs_operations import SoftwareUp
 from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
+from .operations.source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
 from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
@@ -50,6 +51,7 @@ from .operations.node_reports_operations import NodeReportsOperations
 from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
 from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
+from .operations.watcher_operations import WatcherOperations
 from . import models
 
 
@@ -151,6 +153,8 @@ class AutomationClient(object):
     :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
     :ivar source_control_sync_job: SourceControlSyncJob operations
     :vartype source_control_sync_job: azure.mgmt.automation.operations.SourceControlSyncJobOperations
+    :ivar source_control_sync_job_streams: SourceControlSyncJobStreams operations
+    :vartype source_control_sync_job_streams: azure.mgmt.automation.operations.SourceControlSyncJobStreamsOperations
     :ivar job: Job operations
     :vartype job: azure.mgmt.automation.operations.JobOperations
     :ivar job_stream: JobStream operations
@@ -167,6 +171,8 @@ class AutomationClient(object):
     :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_node_configuration: DscNodeConfiguration operations
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
+    :ivar watcher: Watcher operations
+    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -246,6 +252,8 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.source_control_sync_job = SourceControlSyncJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.source_control_sync_job_streams = SourceControlSyncJobStreamsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.job = JobOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_stream = JobStreamOperations(
@@ -261,4 +269,6 @@ class AutomationClient(object):
         self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.dsc_node_configuration = DscNodeConfigurationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.watcher = WatcherOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -26,6 +26,7 @@ from .connection import Connection
 from .certificate import Certificate
 from .proxy_resource import ProxyResource
 from .resource import Resource
+from .watcher import Watcher
 from .runbook_parameter import RunbookParameter
 from .content_hash import ContentHash
 from .content_link import ContentLink
@@ -65,7 +66,6 @@ from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParame
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
-from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
 from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
 from .dsc_node_update_parameters_properties import DscNodeUpdateParametersProperties
@@ -106,6 +106,8 @@ from .variable_create_or_update_parameters import VariableCreateOrUpdateParamete
 from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
 from .webhook_update_parameters import WebhookUpdateParameters
+from .watcher_update_parameters import WatcherUpdateParameters
+from .watcher_create_or_update_parameters import WatcherCreateOrUpdateParameters
 from .job_collection_item import JobCollectionItem
 from .windows_properties import WindowsProperties
 from .linux_properties import LinuxProperties
@@ -126,8 +128,11 @@ from .source_control_update_parameters import SourceControlUpdateParameters
 from .source_control_sync_job import SourceControlSyncJob
 from .source_control_sync_job_create_parameters import SourceControlSyncJobCreateParameters
 from .source_control_sync_job_by_id import SourceControlSyncJobById
+from .source_control_sync_job_stream import SourceControlSyncJobStream
+from .source_control_sync_job_stream_by_id import SourceControlSyncJobStreamById
 from .dsc_node import DscNode
 from .dsc_node_configuration import DscNodeConfiguration
+from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -150,11 +155,13 @@ from .variable_paged import VariablePaged
 from .webhook_paged import WebhookPaged
 from .source_control_paged import SourceControlPaged
 from .source_control_sync_job_paged import SourceControlSyncJobPaged
+from .source_control_sync_job_stream_paged import SourceControlSyncJobStreamPaged
 from .job_collection_item_paged import JobCollectionItemPaged
 from .dsc_node_paged import DscNodePaged
 from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
+from .watcher_paged import WatcherPaged
 from .automation_client_enums import (
     AutomationKeyName,
     AutomationKeyPermissions,
@@ -180,6 +187,7 @@ from .automation_client_enums import (
     SourceType,
     ProvisioningState,
     StartType,
+    StreamType,
 )
 
 __all__ = [
@@ -200,6 +208,7 @@ __all__ = [
     'Certificate',
     'ProxyResource',
     'Resource',
+    'Watcher',
     'RunbookParameter',
     'ContentHash',
     'ContentLink',
@@ -239,7 +248,6 @@ __all__ = [
     'DscConfigurationCreateOrUpdateParameters',
     'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
-    'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
     'DscNodeExtensionHandlerAssociationProperty',
     'DscNodeUpdateParametersProperties',
@@ -280,6 +288,8 @@ __all__ = [
     'VariableUpdateParameters',
     'WebhookCreateOrUpdateParameters',
     'WebhookUpdateParameters',
+    'WatcherUpdateParameters',
+    'WatcherCreateOrUpdateParameters',
     'JobCollectionItem',
     'WindowsProperties',
     'LinuxProperties',
@@ -300,8 +310,11 @@ __all__ = [
     'SourceControlSyncJob',
     'SourceControlSyncJobCreateParameters',
     'SourceControlSyncJobById',
+    'SourceControlSyncJobStream',
+    'SourceControlSyncJobStreamById',
     'DscNode',
     'DscNodeConfiguration',
+    'DscNodeConfigurationCreateOrUpdateParameters',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
@@ -324,11 +337,13 @@ __all__ = [
     'WebhookPaged',
     'SourceControlPaged',
     'SourceControlSyncJobPaged',
+    'SourceControlSyncJobStreamPaged',
     'JobCollectionItemPaged',
     'DscNodePaged',
     'DscNodeReportPaged',
     'DscCompilationJobPaged',
     'DscNodeConfigurationPaged',
+    'WatcherPaged',
     'AutomationKeyName',
     'AutomationKeyPermissions',
     'JobProvisioningState',
@@ -353,4 +368,5 @@ __all__ = [
     'SourceType',
     'ProvisioningState',
     'StartType',
+    'StreamType',
 ]
