@@ -37,6 +37,18 @@ class EntityInfo(Model):
     :param permissions: Permissions. Possible values include: 'noaccess',
      'view', 'edit', 'delete'
     :type permissions: str or ~azure.mgmt.managementgroups.models.enum
+    :param inherited_permissions: Inherited Permissions. Possible values
+     include: 'noaccess', 'view', 'edit', 'delete'
+    :type inherited_permissions: str or
+     ~azure.mgmt.managementgroups.models.enum
+    :param number_of_descendants: Number of Descendants.
+    :type number_of_descendants: int
+    :param parent_display_name_chain: The parent display name chain from the
+     root group to the immediate parent
+    :type parent_display_name_chain: list[str]
+    :param parent_name_chain: The parent name chain from the root group to the
+     immediate parent
+    :type parent_name_chain: list[str]
     """
 
     _validation = {
@@ -53,6 +65,10 @@ class EntityInfo(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'parent': {'key': 'properties.parent', 'type': 'EntityParentGroupInfo'},
         'permissions': {'key': 'properties.permissions', 'type': 'str'},
+        'inherited_permissions': {'key': 'properties.inheritedPermissions', 'type': 'str'},
+        'number_of_descendants': {'key': 'properties.numberOfDescendants', 'type': 'int'},
+        'parent_display_name_chain': {'key': 'properties.parentDisplayNameChain', 'type': '[str]'},
+        'parent_name_chain': {'key': 'properties.parentNameChain', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -64,3 +80,7 @@ class EntityInfo(Model):
         self.display_name = kwargs.get('display_name', None)
         self.parent = kwargs.get('parent', None)
         self.permissions = kwargs.get('permissions', None)
+        self.inherited_permissions = kwargs.get('inherited_permissions', None)
+        self.number_of_descendants = kwargs.get('number_of_descendants', None)
+        self.parent_display_name_chain = kwargs.get('parent_display_name_chain', None)
+        self.parent_name_chain = kwargs.get('parent_name_chain', None)

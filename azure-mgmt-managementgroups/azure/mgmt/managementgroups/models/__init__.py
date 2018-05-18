@@ -15,6 +15,7 @@ try:
     from .operation_display_properties_py3 import OperationDisplayProperties
     from .operation_py3 import Operation
     from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .tenant_backfill_status_result_py3 import TenantBackfillStatusResult
     from .management_group_info_py3 import ManagementGroupInfo
     from .parent_group_info_py3 import ParentGroupInfo
     from .management_group_details_py3 import ManagementGroupDetails
@@ -36,6 +37,7 @@ except (SyntaxError, ImportError):
     from .operation_display_properties import OperationDisplayProperties
     from .operation import Operation
     from .check_name_availability_result import CheckNameAvailabilityResult
+    from .tenant_backfill_status_result import TenantBackfillStatusResult
     from .management_group_info import ManagementGroupInfo
     from .parent_group_info import ParentGroupInfo
     from .management_group_details import ManagementGroupDetails
@@ -56,6 +58,7 @@ from .operation_paged import OperationPaged
 from .entity_info_paged import EntityInfoPaged
 from .management_groups_api_enums import (
     Reason,
+    Status,
     Type,
 )
 
@@ -65,6 +68,7 @@ __all__ = [
     'OperationDisplayProperties',
     'Operation',
     'CheckNameAvailabilityResult',
+    'TenantBackfillStatusResult',
     'ManagementGroupInfo',
     'ParentGroupInfo',
     'ManagementGroupDetails',
@@ -84,5 +88,6 @@ __all__ = [
     'OperationPaged',
     'EntityInfoPaged',
     'Reason',
+    'Status',
     'Type',
 ]
