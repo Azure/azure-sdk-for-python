@@ -1,6 +1,7 @@
 -r ../requirements.txt
 
 azure-storage-blob
+azure-storage-file
 pytest-cov
 pytest>=3.5.1
 azure-devtools>=0.4.1
