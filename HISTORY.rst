@@ -6,7 +6,8 @@ Release History
 0.2.0b2 (unreleased)
 ++++++++++++++++++++
 
-- Added namespace_suffix to EventHubConfig() to support national clouds.
+- Added `namespace_suffix` to EventHubConfig() to support national clouds.
+- Added `device_id` attribute to EventData to support IoT Hub use cases.
 
 
 0.2.0b1 (2018-04-20)
