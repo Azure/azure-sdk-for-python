@@ -40,6 +40,7 @@ try:
     from .container_registry_event_data_py3 import ContainerRegistryEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
+    from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -71,6 +72,10 @@ except (SyntaxError, ImportError):
     from .container_registry_event_data import ContainerRegistryEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
+    from .media_job_state_change_event_data import MediaJobStateChangeEventData
+from .event_grid_client_enums import (
+    JobState,
+)
 
 __all__ = [
     'StorageBlobCreatedEventData',
@@ -103,4 +108,6 @@ __all__ = [
     'ContainerRegistryEventData',
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
+    'MediaJobStateChangeEventData',
+    'JobState',
 ]
