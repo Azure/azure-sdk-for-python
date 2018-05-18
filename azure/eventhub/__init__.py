@@ -555,7 +555,7 @@ class EventData(object):
         try:
             return self._annotations[self._partition_key]
         except KeyError:
-            return self._annotations.get(EventData.PROP_PARTITION_KEY)
+            return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
     @property
     def device_id(self):
