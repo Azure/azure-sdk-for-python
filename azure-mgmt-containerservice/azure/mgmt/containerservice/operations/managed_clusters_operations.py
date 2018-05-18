@@ -184,10 +184,8 @@ class ManagedClustersOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets upgrade profile for a managed cluster.
 
-        Use ManagedClusters_ListCredential instead.
-
-        .. warning::
-           This method is deprecated
+        Gets the details of the upgrade profile for a managed cluster with a
+        specified resource group and name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -204,7 +202,6 @@ class ManagedClustersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        warnings.warn("Method get_upgrade_profile is deprecated", DeprecationWarning)
         # Construct URL
         url = self.get_upgrade_profile.metadata['url']
         path_format_arguments = {
@@ -249,7 +246,7 @@ class ManagedClustersOperations(object):
         return deserialized
     get_upgrade_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/upgradeProfiles/default'}
 
-    def list_credential(
+    def get_access_profile(
             self, resource_group_name, resource_name, role_name, custom_headers=None, raw=False, **operation_config):
         """Gets an access profile of a managed cluster.
 
@@ -275,7 +272,7 @@ class ManagedClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_credential.metadata['url']
+        url = self.get_access_profile.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -317,14 +314,16 @@ class ManagedClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_credential.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/accessProfiles/{roleName}/listCredential'}
+    get_access_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/accessProfiles/{roleName}/listCredential'}
 
     def get_access_profiles(
             self, resource_group_name, resource_name, role_name, custom_headers=None, raw=False, **operation_config):
         """Gets access profile of a managed cluster.
 
-        Gets the accessProfile for the specified role name of the managed
-        cluster with a specified resource group and name.
+        Use ManagedClusters_GetAccessProfile instead.
+
+        .. warning::
+           This method is deprecated
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -344,6 +343,7 @@ class ManagedClustersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        warnings.warn("Method get_access_profiles is deprecated", DeprecationWarning)
         # Construct URL
         url = self.get_access_profiles.metadata['url']
         path_format_arguments = {
