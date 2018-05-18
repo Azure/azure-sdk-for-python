@@ -55,9 +55,6 @@ pip_command('install -r azure-sdk-testutils/test-requirements.txt')
 # install packaging requirements
 pip_command('install -r scripts/packaging_requirements.txt')
 
-# install storage for tests
-pip_command('install azure-storage')
-
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package
 pip_command('install --force-reinstall azure-nspkg==1.0.0')
