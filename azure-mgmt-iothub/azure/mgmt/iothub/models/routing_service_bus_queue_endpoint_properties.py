@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class RoutingServiceBusQueueEndpointProperties(Model):
     """The properties related to service bus queue endpoint types.
 
-    :param connection_string: The connection string of the service bus queue
-     endpoint.
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_string: Required. The connection string of the service
+     bus queue endpoint.
     :type connection_string: str
-    :param name: The name that identifies this endpoint. The name can only
-     include alphanumeric characters, periods, underscores, hyphens and has a
-     maximum length of 64 characters. The following names are reserved:
-     events, operationsMonitoringEvents, fileNotifications, $default. Endpoint
-     names must be unique across endpoint types. The name need not be the same
-     as the actual queue name.
+    :param name: Required. The name that identifies this endpoint. The name
+     can only include alphanumeric characters, periods, underscores, hyphens
+     and has a maximum length of 64 characters. The following names are
+     reserved:  events, operationsMonitoringEvents, fileNotifications,
+     $default. Endpoint names must be unique across endpoint types. The name
+     need not be the same as the actual queue name.
     :type name: str
     :param subscription_id: The subscription identifier of the service bus
      queue endpoint.
@@ -45,8 +47,9 @@ class RoutingServiceBusQueueEndpointProperties(Model):
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, connection_string, name, subscription_id=None, resource_group=None):
-        self.connection_string = connection_string
-        self.name = name
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
+    def __init__(self, **kwargs):
+        super(RoutingServiceBusQueueEndpointProperties, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.name = kwargs.get('name', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group = kwargs.get('resource_group', None)

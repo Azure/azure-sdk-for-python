@@ -63,7 +63,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     }
 
     def __init__(self, *, storage_account_id: str=None, event_hub_authorization_rule_id: str=None, event_hub_name: str=None, metrics=None, logs=None, workspace_id: str=None, **kwargs) -> None:
-        super(DiagnosticSettingsResource, self).__init__(, **kwargs)
+        super(DiagnosticSettingsResource, self).__init__(**kwargs)
         self.storage_account_id = storage_account_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
         self.event_hub_name = event_hub_name

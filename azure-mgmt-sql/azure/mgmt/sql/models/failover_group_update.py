@@ -36,9 +36,9 @@ class FailoverGroupUpdate(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, read_write_endpoint=None, read_only_endpoint=None, databases=None, tags=None):
-        super(FailoverGroupUpdate, self).__init__()
-        self.read_write_endpoint = read_write_endpoint
-        self.read_only_endpoint = read_only_endpoint
-        self.databases = databases
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(FailoverGroupUpdate, self).__init__(**kwargs)
+        self.read_write_endpoint = kwargs.get('read_write_endpoint', None)
+        self.read_only_endpoint = kwargs.get('read_only_endpoint', None)
+        self.databases = kwargs.get('databases', None)
+        self.tags = kwargs.get('tags', None)

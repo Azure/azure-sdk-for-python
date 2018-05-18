@@ -50,5 +50,5 @@ class RunCommandResult(OperationStatusResponse):
     }
 
     def __init__(self, *, output=None, **kwargs) -> None:
-        super(RunCommandResult, self).__init__(, **kwargs)
+        super(RunCommandResult, self).__init__(**kwargs)
         self.output = output

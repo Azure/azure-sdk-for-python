@@ -60,9 +60,9 @@ class ArmDisasterRecovery(Resource):
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
     }
 
-    def __init__(self, partner_namespace=None, alternate_name=None):
-        super(ArmDisasterRecovery, self).__init__()
+    def __init__(self, **kwargs):
+        super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.partner_namespace = partner_namespace
-        self.alternate_name = alternate_name
+        self.partner_namespace = kwargs.get('partner_namespace', None)
+        self.alternate_name = kwargs.get('alternate_name', None)
         self.role = None

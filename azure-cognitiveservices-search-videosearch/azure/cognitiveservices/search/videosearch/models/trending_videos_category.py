@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class TrendingVideosCategory(Model):
     """TrendingVideosCategory.
 
-    :param title:
+    All required parameters must be populated in order to send to Azure.
+
+    :param title: Required.
     :type title: str
-    :param subcategories:
+    :param subcategories: Required.
     :type subcategories:
      list[~azure.cognitiveservices.search.videosearch.models.TrendingVideosSubcategory]
     """
@@ -32,7 +34,7 @@ class TrendingVideosCategory(Model):
         'subcategories': {'key': 'subcategories', 'type': '[TrendingVideosSubcategory]'},
     }
 
-    def __init__(self, title, subcategories):
-        super(TrendingVideosCategory, self).__init__()
-        self.title = title
-        self.subcategories = subcategories
+    def __init__(self, **kwargs):
+        super(TrendingVideosCategory, self).__init__(**kwargs)
+        self.title = kwargs.get('title', None)
+        self.subcategories = kwargs.get('subcategories', None)

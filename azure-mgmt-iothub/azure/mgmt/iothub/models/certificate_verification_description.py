@@ -24,5 +24,6 @@ class CertificateVerificationDescription(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, certificate=None):
-        self.certificate = certificate
+    def __init__(self, **kwargs):
+        super(CertificateVerificationDescription, self).__init__(**kwargs)
+        self.certificate = kwargs.get('certificate', None)

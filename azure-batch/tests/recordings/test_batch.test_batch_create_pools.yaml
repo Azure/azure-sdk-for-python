@@ -104,8 +104,8 @@ interactions:
     uri: https://batchf0260dd0.westcentralus.batch.azure.com/nodecounts?api-version=2018-03-01.6.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#poolnodecounts\",\"value\":[\r\n
-        \   {\r\n      \"poolId\":\"batch_iaas_f0260dd0\",\"dedicated\":{\r\n        \"creating\":0,\"idle\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
-        \     },\"lowPriority\":{\r\n        \"creating\":0,\"idle\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
+        \   {\r\n      \"poolId\":\"batch_iaas_f0260dd0\",\"dedicated\":{\r\n        \"creating\":0,\"idle\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"leavingPool\":0,\"total\":0\r\n
+        \     },\"lowPriority\":{\r\n        \"creating\":0,\"idle\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"leavingPool\":0,\"total\":0\r\n
         \     }\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]

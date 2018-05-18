@@ -15,21 +15,40 @@ from msrest.serialization import Model
 class EventHubConsumerGroupInfo(Model):
     """The properties of the EventHubConsumerGroupInfo object.
 
-    :param tags: The tags.
-    :type tags: dict
-    :param id: The Event Hub-compatible consumer group identifier.
-    :type id: str
-    :param name: The Event Hub-compatible consumer group name.
-    :type name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param properties: The tags.
+    :type properties: dict[str, str]
+    :ivar id: The Event Hub-compatible consumer group identifier.
+    :vartype id: str
+    :ivar name: The Event Hub-compatible consumer group name.
+    :vartype name: str
+    :ivar type: the resource type.
+    :vartype type: str
+    :ivar etag: The etag.
+    :vartype etag: str
     """
 
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
-    def __init__(self, tags=None, id=None, name=None):
-        self.tags = tags
-        self.id = id
-        self.name = name
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EventHubConsumerGroupInfo, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.etag = None

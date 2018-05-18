@@ -20,9 +20,9 @@ class SelectedPartition(Model):
     :type service_name: str
     :param partition_id: An internal ID used by Service Fabric to uniquely
      identify a partition. This is a randomly generated GUID when the service
-     was created. The partition id is unique and does not change for the
+     was created. The partition ID is unique and does not change for the
      lifetime of the service. If the same service was deleted and recreated the
-     ids of its partitions would be different.
+     IDs of its partitions would be different.
     :type partition_id: str
     """
 
@@ -31,7 +31,7 @@ class SelectedPartition(Model):
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
-    def __init__(self, service_name=None, partition_id=None):
-        super(SelectedPartition, self).__init__()
-        self.service_name = service_name
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(SelectedPartition, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.partition_id = kwargs.get('partition_id', None)

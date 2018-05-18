@@ -32,8 +32,8 @@ class FileVersion(Model):
         'epoch_configuration_number': {'key': 'EpochConfigurationNumber', 'type': 'str'},
     }
 
-    def __init__(self, version_number=None, epoch_data_loss_number=None, epoch_configuration_number=None):
-        super(FileVersion, self).__init__()
-        self.version_number = version_number
-        self.epoch_data_loss_number = epoch_data_loss_number
-        self.epoch_configuration_number = epoch_configuration_number
+    def __init__(self, **kwargs):
+        super(FileVersion, self).__init__(**kwargs)
+        self.version_number = kwargs.get('version_number', None)
+        self.epoch_data_loss_number = kwargs.get('epoch_data_loss_number', None)
+        self.epoch_configuration_number = kwargs.get('epoch_configuration_number', None)

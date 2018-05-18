@@ -21,9 +21,9 @@ class ImageTagCreateBatch(Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'Tags', 'type': '[ImageTagCreateEntry]'},
+        'tags': {'key': 'tags', 'type': '[ImageTagCreateEntry]'},
     }
 
-    def __init__(self, tags=None):
-        super(ImageTagCreateBatch, self).__init__()
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ImageTagCreateBatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

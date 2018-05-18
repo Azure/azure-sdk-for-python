@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.0.0rc1 (2018-04-23)
++++++++++++++++++++++
+
+**Disclaimer**
+
+This is a complete rewriting of the package and a completly new RestAPI,
+and no compatibility at all is possible.
+
 0.2.0 (2017-09-14)
 ++++++++++++++++++
 

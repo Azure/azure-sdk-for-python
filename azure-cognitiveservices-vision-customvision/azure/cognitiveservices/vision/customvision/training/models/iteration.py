@@ -55,23 +55,23 @@ class Iteration(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'is_default': {'key': 'IsDefault', 'type': 'bool'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'created': {'key': 'Created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'LastModified', 'type': 'iso-8601'},
-        'trained_at': {'key': 'TrainedAt', 'type': 'iso-8601'},
-        'project_id': {'key': 'ProjectId', 'type': 'str'},
-        'exportable': {'key': 'Exportable', 'type': 'bool'},
-        'domain_id': {'key': 'DomainId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'status': {'key': 'status', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
+        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
+        'trained_at': {'key': 'trainedAt', 'type': 'iso-8601'},
+        'project_id': {'key': 'projectId', 'type': 'str'},
+        'exportable': {'key': 'exportable', 'type': 'bool'},
+        'domain_id': {'key': 'domainId', 'type': 'str'},
     }
 
-    def __init__(self, name=None, is_default=None):
-        super(Iteration, self).__init__()
+    def __init__(self, **kwargs):
+        super(Iteration, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.is_default = is_default
+        self.name = kwargs.get('name', None)
+        self.is_default = kwargs.get('is_default', None)
         self.status = None
         self.created = None
         self.last_modified = None

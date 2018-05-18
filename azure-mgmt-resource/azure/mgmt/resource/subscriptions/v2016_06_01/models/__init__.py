@@ -9,10 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .location import Location
-from .subscription_policies import SubscriptionPolicies
-from .subscription import Subscription
-from .tenant_id_description import TenantIdDescription
+try:
+    from .location_py3 import Location
+    from .subscription_policies_py3 import SubscriptionPolicies
+    from .subscription_py3 import Subscription
+    from .tenant_id_description_py3 import TenantIdDescription
+except (SyntaxError, ImportError):
+    from .location import Location
+    from .subscription_policies import SubscriptionPolicies
+    from .subscription import Subscription
+    from .tenant_id_description import TenantIdDescription
 from .location_paged import LocationPaged
 from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged

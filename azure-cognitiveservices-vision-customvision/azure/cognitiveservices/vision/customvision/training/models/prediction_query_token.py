@@ -23,7 +23,7 @@ class PredictionQueryToken(Model):
     :type max_count: int
     :param order_by: Possible values include: 'Newest', 'Oldest', 'Suggested'
     :type order_by: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.enum
+     ~azure.cognitiveservices.vision.customvision.training.models.OrderBy
     :param tags:
     :type tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryTag]
@@ -38,25 +38,25 @@ class PredictionQueryToken(Model):
     """
 
     _attribute_map = {
-        'session': {'key': 'Session', 'type': 'str'},
-        'continuation': {'key': 'Continuation', 'type': 'str'},
-        'max_count': {'key': 'MaxCount', 'type': 'int'},
-        'order_by': {'key': 'OrderBy', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': '[PredictionQueryTag]'},
-        'iteration_id': {'key': 'IterationId', 'type': 'str'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'EndTime', 'type': 'iso-8601'},
-        'application': {'key': 'Application', 'type': 'str'},
+        'session': {'key': 'session', 'type': 'str'},
+        'continuation': {'key': 'continuation', 'type': 'str'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'order_by': {'key': 'orderBy', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '[PredictionQueryTag]'},
+        'iteration_id': {'key': 'iterationId', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'application': {'key': 'application', 'type': 'str'},
     }
 
-    def __init__(self, session=None, continuation=None, max_count=None, order_by=None, tags=None, iteration_id=None, start_time=None, end_time=None, application=None):
-        super(PredictionQueryToken, self).__init__()
-        self.session = session
-        self.continuation = continuation
-        self.max_count = max_count
-        self.order_by = order_by
-        self.tags = tags
-        self.iteration_id = iteration_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.application = application
+    def __init__(self, **kwargs):
+        super(PredictionQueryToken, self).__init__(**kwargs)
+        self.session = kwargs.get('session', None)
+        self.continuation = kwargs.get('continuation', None)
+        self.max_count = kwargs.get('max_count', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.tags = kwargs.get('tags', None)
+        self.iteration_id = kwargs.get('iteration_id', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.application = kwargs.get('application', None)

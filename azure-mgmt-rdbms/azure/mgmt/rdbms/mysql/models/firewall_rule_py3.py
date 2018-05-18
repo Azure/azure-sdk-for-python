@@ -51,6 +51,6 @@ class FirewallRule(ProxyResource):
     }
 
     def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs) -> None:
-        super(FirewallRule, self).__init__(, **kwargs)
+        super(FirewallRule, self).__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address

@@ -31,7 +31,8 @@ class ClusterUpgradeProgressObject(Model):
      processed.
     :type next_upgrade_domain: str
     :param rolling_upgrade_mode: The mode used to monitor health during a
-     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     rolling upgrade. The values are UnmonitoredAuto, UnmonitoredManual, and
+     Monitored. Possible values include: 'Invalid', 'UnmonitoredAuto',
      'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
     :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
     :param upgrade_description: Represents a ServiceFabric cluster upgrade
@@ -84,20 +85,20 @@ class ClusterUpgradeProgressObject(Model):
         'upgrade_domain_progress_at_failure': {'key': 'UpgradeDomainProgressAtFailure', 'type': 'FailedUpgradeDomainProgressObject'},
     }
 
-    def __init__(self, code_version=None, config_version=None, upgrade_domains=None, upgrade_state=None, next_upgrade_domain=None, rolling_upgrade_mode="UnmonitoredAuto", upgrade_description=None, upgrade_duration_in_milliseconds=None, upgrade_domain_duration_in_milliseconds=None, unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None):
-        super(ClusterUpgradeProgressObject, self).__init__()
-        self.code_version = code_version
-        self.config_version = config_version
-        self.upgrade_domains = upgrade_domains
-        self.upgrade_state = upgrade_state
-        self.next_upgrade_domain = next_upgrade_domain
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.upgrade_description = upgrade_description
-        self.upgrade_duration_in_milliseconds = upgrade_duration_in_milliseconds
-        self.upgrade_domain_duration_in_milliseconds = upgrade_domain_duration_in_milliseconds
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.current_upgrade_domain_progress = current_upgrade_domain_progress
-        self.start_timestamp_utc = start_timestamp_utc
-        self.failure_timestamp_utc = failure_timestamp_utc
-        self.failure_reason = failure_reason
-        self.upgrade_domain_progress_at_failure = upgrade_domain_progress_at_failure
+    def __init__(self, **kwargs):
+        super(ClusterUpgradeProgressObject, self).__init__(**kwargs)
+        self.code_version = kwargs.get('code_version', None)
+        self.config_version = kwargs.get('config_version', None)
+        self.upgrade_domains = kwargs.get('upgrade_domains', None)
+        self.upgrade_state = kwargs.get('upgrade_state', None)
+        self.next_upgrade_domain = kwargs.get('next_upgrade_domain', None)
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.upgrade_description = kwargs.get('upgrade_description', None)
+        self.upgrade_duration_in_milliseconds = kwargs.get('upgrade_duration_in_milliseconds', None)
+        self.upgrade_domain_duration_in_milliseconds = kwargs.get('upgrade_domain_duration_in_milliseconds', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.current_upgrade_domain_progress = kwargs.get('current_upgrade_domain_progress', None)
+        self.start_timestamp_utc = kwargs.get('start_timestamp_utc', None)
+        self.failure_timestamp_utc = kwargs.get('failure_timestamp_utc', None)
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.upgrade_domain_progress_at_failure = kwargs.get('upgrade_domain_progress_at_failure', None)

@@ -33,13 +33,13 @@ class PredictionQueryTag(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'min_threshold': {'key': 'MinThreshold', 'type': 'float'},
-        'max_threshold': {'key': 'MaxThreshold', 'type': 'float'},
+        'id': {'key': 'id', 'type': 'str'},
+        'min_threshold': {'key': 'minThreshold', 'type': 'float'},
+        'max_threshold': {'key': 'maxThreshold', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(PredictionQueryTag, self).__init__()
+    def __init__(self, **kwargs):
+        super(PredictionQueryTag, self).__init__(**kwargs)
         self.id = None
         self.min_threshold = None
         self.max_threshold = None

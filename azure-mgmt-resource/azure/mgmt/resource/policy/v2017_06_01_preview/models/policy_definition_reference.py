@@ -27,7 +27,7 @@ class PolicyDefinitionReference(Model):
         'parameters': {'key': 'parameters', 'type': 'object'},
     }
 
-    def __init__(self, policy_definition_id=None, parameters=None):
-        super(PolicyDefinitionReference, self).__init__()
-        self.policy_definition_id = policy_definition_id
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(PolicyDefinitionReference, self).__init__(**kwargs)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.parameters = kwargs.get('parameters', None)

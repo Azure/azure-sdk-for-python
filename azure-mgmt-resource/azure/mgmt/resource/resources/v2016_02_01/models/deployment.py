@@ -24,6 +24,6 @@ class Deployment(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(Deployment, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

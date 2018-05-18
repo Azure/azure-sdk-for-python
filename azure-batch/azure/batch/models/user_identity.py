@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class UserIdentity(Model):
     """The definition of the user identity under which the task is run.
 
-    Specify either the userName or autoUser property, but not both.
+    Specify either the userName or autoUser property, but not both. On
+    CloudServiceConfiguration pools, this user is logged in with the
+    INTERACTIVE flag. On Windows VirtualMachineConfiguration pools, this user
+    is logged in with the BATCH flag.
 
     :param user_name: The name of the user identity under which the task is
      run. The userName and autoUser properties are mutually exclusive; you must

@@ -34,9 +34,9 @@ class ResourceGroupPatchable(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name=None, properties=None, managed_by=None, tags=None):
-        super(ResourceGroupPatchable, self).__init__()
-        self.name = name
-        self.properties = properties
-        self.managed_by = managed_by
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ResourceGroupPatchable, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+        self.managed_by = kwargs.get('managed_by', None)
+        self.tags = kwargs.get('tags', None)

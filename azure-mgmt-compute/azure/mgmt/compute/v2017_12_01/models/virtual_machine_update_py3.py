@@ -13,7 +13,7 @@ from .update_resource import UpdateResource
 
 
 class VirtualMachineUpdate(UpdateResource):
-    """Describes a Virtual Machine.
+    """Describes a Virtual Machine Update.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

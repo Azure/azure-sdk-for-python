@@ -26,7 +26,7 @@ class ProvisionFabricDescription(Model):
         'cluster_manifest_file_path': {'key': 'ClusterManifestFilePath', 'type': 'str'},
     }
 
-    def __init__(self, code_file_path=None, cluster_manifest_file_path=None):
-        super(ProvisionFabricDescription, self).__init__()
-        self.code_file_path = code_file_path
-        self.cluster_manifest_file_path = cluster_manifest_file_path
+    def __init__(self, **kwargs):
+        super(ProvisionFabricDescription, self).__init__(**kwargs)
+        self.code_file_path = kwargs.get('code_file_path', None)
+        self.cluster_manifest_file_path = kwargs.get('cluster_manifest_file_path', None)

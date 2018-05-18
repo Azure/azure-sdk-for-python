@@ -38,7 +38,8 @@ class MessagingEndpointProperties(Model):
         'max_delivery_count': {'key': 'maxDeliveryCount', 'type': 'int'},
     }
 
-    def __init__(self, lock_duration_as_iso8601=None, ttl_as_iso8601=None, max_delivery_count=None):
-        self.lock_duration_as_iso8601 = lock_duration_as_iso8601
-        self.ttl_as_iso8601 = ttl_as_iso8601
-        self.max_delivery_count = max_delivery_count
+    def __init__(self, **kwargs):
+        super(MessagingEndpointProperties, self).__init__(**kwargs)
+        self.lock_duration_as_iso8601 = kwargs.get('lock_duration_as_iso8601', None)
+        self.ttl_as_iso8601 = kwargs.get('ttl_as_iso8601', None)
+        self.max_delivery_count = kwargs.get('max_delivery_count', None)

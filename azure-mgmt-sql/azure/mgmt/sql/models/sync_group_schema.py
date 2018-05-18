@@ -27,7 +27,7 @@ class SyncGroupSchema(Model):
         'master_sync_member_name': {'key': 'masterSyncMemberName', 'type': 'str'},
     }
 
-    def __init__(self, tables=None, master_sync_member_name=None):
-        super(SyncGroupSchema, self).__init__()
-        self.tables = tables
-        self.master_sync_member_name = master_sync_member_name
+    def __init__(self, **kwargs):
+        super(SyncGroupSchema, self).__init__(**kwargs)
+        self.tables = kwargs.get('tables', None)
+        self.master_sync_member_name = kwargs.get('master_sync_member_name', None)

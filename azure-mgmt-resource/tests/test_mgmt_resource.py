@@ -385,12 +385,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
                 self.assertIn('West US', resource.locations)
 
     def test_providers(self):
-        self.resource_client.providers.unregister('Microsoft.Batch')
-        self.resource_client.providers.get('Microsoft.Batch')
+        self.resource_client.providers.unregister('Microsoft.Search')
+        self.resource_client.providers.get('Microsoft.Search')
 
         result_list = self.resource_client.providers.list()
         for provider in result_list:
             self.resource_client.providers.register(provider.namespace)
+            break
 
 
 #------------------------------------------------------------------------------

@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
 from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
+from .operations.migration_configs_operations import MigrationConfigsOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
@@ -60,7 +61,7 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ServiceBusManagementClient(object):
+class ServiceBusManagementClient(SDKClient):
     """Azure Service Bus client
 
     :ivar config: Configuration for client.
@@ -72,6 +73,8 @@ class ServiceBusManagementClient(object):
     :vartype namespaces: azure.mgmt.servicebus.operations.NamespacesOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
     :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
+    :ivar migration_configs: MigrationConfigs operations
+    :vartype migration_configs: azure.mgmt.servicebus.operations.MigrationConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
@@ -101,7 +104,7 @@ class ServiceBusManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ServiceBusManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ServiceBusManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-01'
@@ -113,6 +116,8 @@ class ServiceBusManagementClient(object):
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.migration_configs = MigrationConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)

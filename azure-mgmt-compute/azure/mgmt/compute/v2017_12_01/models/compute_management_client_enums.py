@@ -278,10 +278,31 @@ class VirtualMachinePriorityTypes(str, Enum):
     low = "Low"
 
 
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+
 class VirtualMachineScaleSetSkuScaleType(str, Enum):
 
     automatic = "Automatic"
     none = "None"
+
+
+class UpgradeState(str, Enum):
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+
+class UpgradeOperationInvoker(str, Enum):
+
+    unknown = "Unknown"
+    user = "User"
+    platform = "Platform"
 
 
 class RollingUpgradeStatusCode(str, Enum):

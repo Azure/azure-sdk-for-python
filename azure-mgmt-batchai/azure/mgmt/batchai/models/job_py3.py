@@ -184,7 +184,7 @@ class Job(Resource):
     }
 
     def __init__(self, *, experiment_name: str=None, priority: int=0, cluster=None, mount_volumes=None, job_output_directory_path_segment: str=None, node_count: int=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, std_out_err_path_prefix: str=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_state=None, execution_info=None, **kwargs) -> None:
-        super(Job, self).__init__(, **kwargs)
+        super(Job, self).__init__(**kwargs)
         self.experiment_name = experiment_name
         self.priority = priority
         self.cluster = cluster

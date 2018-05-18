@@ -29,7 +29,7 @@ class FailedUpgradeDomainProgressObject(Model):
         'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
     }
 
-    def __init__(self, domain_name=None, node_upgrade_progress_list=None):
-        super(FailedUpgradeDomainProgressObject, self).__init__()
-        self.domain_name = domain_name
-        self.node_upgrade_progress_list = node_upgrade_progress_list
+    def __init__(self, **kwargs):
+        super(FailedUpgradeDomainProgressObject, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.node_upgrade_progress_list = kwargs.get('node_upgrade_progress_list', None)

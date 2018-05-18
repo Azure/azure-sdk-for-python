@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class StorageAccountCreateParameters(Model):
     """The parameters to provide for the account.
 
-    :param location: The location of the resource. This will be one of the
-     supported and registered Azure Geo Regions (e.g. West US, East US,
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location of the resource. This will be one
+     of the supported and registered Azure Geo Regions (e.g. West US, East US,
      Southeast Asia, etc.). The geo region of a resource cannot be changed once
      it is created, but if an identical geo region is specified on update, the
      request will succeed.
@@ -27,10 +29,10 @@ class StorageAccountCreateParameters(Model):
      must have a key with a length no greater than 128 characters and a value
      with a length no greater than 256 characters.
     :type tags: dict[str, str]
-    :param account_type: The sku name. Required for account creation; optional
-     for update. Note that in older versions, sku name was called accountType.
-     Possible values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
-     'Standard_RAGRS', 'Premium_LRS'
+    :param account_type: Required. The sku name. Required for account
+     creation; optional for update. Note that in older versions, sku name was
+     called accountType. Possible values include: 'Standard_LRS',
+     'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'
     :type account_type: str or
      ~azure.mgmt.storage.v2015_06_15.models.AccountType
     """
@@ -46,8 +48,8 @@ class StorageAccountCreateParameters(Model):
         'account_type': {'key': 'properties.accountType', 'type': 'AccountType'},
     }
 
-    def __init__(self, location, account_type, tags=None):
-        super(StorageAccountCreateParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.account_type = account_type
+    def __init__(self, **kwargs):
+        super(StorageAccountCreateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.account_type = kwargs.get('account_type', None)
