@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sas_definition_item import SasDefinitionItem
+from .sas_definition_item_py3 import SasDefinitionItem
 
 
 class DeletedSasDefinitionItem(SasDefinitionItem):

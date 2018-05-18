@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_bundle import StorageBundle
+from .storage_bundle_py3 import StorageBundle
 
 
 class DeletedStorageBundle(StorageBundle):

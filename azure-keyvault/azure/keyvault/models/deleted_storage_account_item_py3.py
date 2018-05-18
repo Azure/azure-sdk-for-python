@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_account_item import StorageAccountItem
+from .storage_account_item_py3 import StorageAccountItem
 
 
 class DeletedStorageAccountItem(StorageAccountItem):

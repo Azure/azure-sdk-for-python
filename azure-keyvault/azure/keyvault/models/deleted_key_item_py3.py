@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_item import KeyItem
+from .key_item_py3 import KeyItem
 
 
 class DeletedKeyItem(KeyItem):
