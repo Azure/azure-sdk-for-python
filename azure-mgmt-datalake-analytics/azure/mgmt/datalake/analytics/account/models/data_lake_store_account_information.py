@@ -42,6 +42,6 @@ class DataLakeStoreAccountInformation(SubResource):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DataLakeStoreAccountInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataLakeStoreAccountInformation, self).__init__(**kwargs)
         self.suffix = None
