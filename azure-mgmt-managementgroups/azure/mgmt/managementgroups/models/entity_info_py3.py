@@ -43,11 +43,11 @@ class EntityInfo(Model):
      ~azure.mgmt.managementgroups.models.enum
     :param number_of_descendants: Number of Descendants.
     :type number_of_descendants: int
-    :param parent_display_name_chain: The parent display name chain from
-     immediate parent to the root group
+    :param parent_display_name_chain: The parent display name chain from the
+     root group to the immediate parent
     :type parent_display_name_chain: list[str]
-    :param parent_name_chain: The parent name chain from immediate parent to
-     the root group
+    :param parent_name_chain: The parent name chain from the root group to the
+     immediate parent
     :type parent_name_chain: list[str]
     """
 

@@ -115,10 +115,11 @@ class EntitiesOperations(object):
          determined by the user's permissions.
          With $search=AllowedChildren the API will return the entity info of
          all entities that can be added as children of the requested entity.
-         With $search=ChildrenOnly the API will return the first level of
-         children that the user has either direct access to or indirect access
-         via one of their descendants. Possible values include:
-         'AllowedParents', 'AllowedChildren', 'ChildrenOnly'
+         With $search=ParentAndFirstLevelChildren the API will return the
+         parent and  first level of children that the user has either direct
+         access to or indirect access via one of their descendants. Possible
+         values include: 'AllowedParents', 'AllowedChildren',
+         'ParentAndFirstLevelChildren'
         :type search: str
         :param filter: The filter parameter allows you to filter on the the
          name or display name fields. You can check for equality on the name
