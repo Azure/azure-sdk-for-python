@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
+import warnings
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
@@ -183,8 +184,10 @@ class ManagedClustersOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets upgrade profile for a managed cluster.
 
-        Gets the details of the upgrade profile for a managed cluster with a
-        specified resource group and name.
+        Use ManagedClusters_ListCredential instead.
+
+        .. warning::
+           This method is deprecated
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -201,6 +204,7 @@ class ManagedClustersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        warnings.warn("Method get_upgrade_profile is deprecated", DeprecationWarning)
         # Construct URL
         url = self.get_upgrade_profile.metadata['url']
         path_format_arguments = {
