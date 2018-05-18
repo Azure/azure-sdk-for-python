@@ -1,7 +1,8 @@
 -r ../requirements.txt
 
-azure-storage-blob
-azure-storage-file
+azure-storage-blob # azure-servicemanagement-legacy azure-keyvault
+azure-storage-file # azure-mgmt-batchai
+azure-storage-common # azure-keyvault
 pytest-cov
 pytest>=3.5.1
 azure-devtools>=0.4.1
