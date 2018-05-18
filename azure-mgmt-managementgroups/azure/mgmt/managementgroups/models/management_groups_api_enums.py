@@ -18,6 +18,16 @@ class Reason(str, Enum):
     already_exists = "AlreadyExists"
 
 
+class Status(str, Enum):
+
+    not_started = "NotStarted"
+    not_started_but_groups_exist = "NotStartedButGroupsExist"
+    started = "Started"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    completed = "Completed"
+
+
 class Type(str, Enum):
 
-    providers_microsoft_managementmanagement_groups = "/providers/Microsoft.Management/managementGroups"
+    providers_microsoft_managementmanagement_group = "/providers/Microsoft.Management/managementGroup"

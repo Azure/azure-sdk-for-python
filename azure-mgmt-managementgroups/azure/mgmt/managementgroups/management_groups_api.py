@@ -32,25 +32,14 @@ class ManagementGroupsAPIConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param operation_result_id: The id of the operation result. Possible
-     values include: 'create', 'delete'
-    :type operation_result_id: str
-    :param skiptoken: Page continuation token is only used if a previous
-     operation returned a partial result.
-     If a previous response contains a nextLink element, the value of the
-     nextLink element will include a token parameter that specifies a starting
-     point to use for subsequent calls.
-    :type skiptoken: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, operation_result_id, skiptoken=None, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if operation_result_id is None:
-            raise ValueError("Parameter 'operation_result_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -60,14 +49,10 @@ class ManagementGroupsAPIConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.operation_result_id = operation_result_id
-        self.skiptoken = skiptoken
 
 
 class ManagementGroupsAPI(SDKClient):
-    """The Azure Management Groups API enables consolidation of multiple
-    subscriptions/resources into an organizational hierarchy and centrally
-    manage access control, policies, alerting and reporting for those resources.
+    """The Azure Management Groups API enables consolidation of multiple subscriptions/resources into an organizational hierarchy and centrally manage access control, policies, alerting and reporting for those resources.
 
     :ivar config: Configuration for client.
     :vartype config: ManagementGroupsAPIConfiguration
@@ -84,26 +69,17 @@ class ManagementGroupsAPI(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param operation_result_id: The id of the operation result. Possible
-     values include: 'create', 'delete'
-    :type operation_result_id: str
-    :param skiptoken: Page continuation token is only used if a previous
-     operation returned a partial result.
-     If a previous response contains a nextLink element, the value of the
-     nextLink element will include a token parameter that specifies a starting
-     point to use for subsequent calls.
-    :type skiptoken: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, operation_result_id, skiptoken=None, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = ManagementGroupsAPIConfiguration(credentials, operation_result_id, skiptoken, base_url)
+        self.config = ManagementGroupsAPIConfiguration(credentials, base_url)
         super(ManagementGroupsAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-01-01-preview'
+        self.api_version = '2018-03-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -175,3 +151,105 @@ class ManagementGroupsAPI(SDKClient):
 
         return deserialized
     check_name_availability.metadata = {'url': '/providers/Microsoft.Management/checkNameAvailability'}
+
+    def start_tenant_backfill(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Starts backfilling subscriptions for the Tenant.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: TenantBackfillStatusResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.managementgroups.models.TenantBackfillStatusResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.start_tenant_backfill.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TenantBackfillStatusResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    start_tenant_backfill.metadata = {'url': '/providers/Microsoft.Management/startTenantBackfill'}
+
+    def tenant_backfill_status(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets tenant backfill status.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: TenantBackfillStatusResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.managementgroups.models.TenantBackfillStatusResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.tenant_backfill_status.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TenantBackfillStatusResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    tenant_backfill_status.metadata = {'url': '/providers/Microsoft.Management/tenantBackfillStatus'}
