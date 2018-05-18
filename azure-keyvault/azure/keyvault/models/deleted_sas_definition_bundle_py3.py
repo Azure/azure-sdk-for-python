@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sas_definition_bundle import SasDefinitionBundle
+from .sas_definition_bundle_py3 import SasDefinitionBundle
 
 
 class DeletedSasDefinitionBundle(SasDefinitionBundle):
