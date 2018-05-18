@@ -18,9 +18,11 @@ class EntitiesEntityPresentationInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param entity_scenario: The supported scenario. Possible values include:
-     'DominantEntity', 'DisambiguationItem', 'ListItem'. Default value:
-     "DominantEntity" .
+    All required parameters must be populated in order to send to Azure.
+
+    :param entity_scenario: Required. The supported scenario. Possible values
+     include: 'DominantEntity', 'DisambiguationItem', 'ListItem'. Default
+     value: "DominantEntity" .
     :type entity_scenario: str or
      ~azure.cognitiveservices.search.entitysearch.models.EntityScenario
     :ivar entity_type_hints: A list of hints that indicate the entity's type.
@@ -47,8 +49,8 @@ class EntitiesEntityPresentationInfo(Model):
         'entity_type_display_hint': {'key': 'entityTypeDisplayHint', 'type': 'str'},
     }
 
-    def __init__(self, entity_scenario="DominantEntity"):
-        super(EntitiesEntityPresentationInfo, self).__init__()
-        self.entity_scenario = entity_scenario
+    def __init__(self, **kwargs):
+        super(EntitiesEntityPresentationInfo, self).__init__(**kwargs)
+        self.entity_scenario = kwargs.get('entity_scenario', "DominantEntity")
         self.entity_type_hints = None
         self.entity_type_display_hint = None

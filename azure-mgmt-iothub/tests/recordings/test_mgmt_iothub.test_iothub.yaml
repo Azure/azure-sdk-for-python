@@ -1,61 +1,62 @@
 interactions:
 - request:
-    body: '{"Name": "iota8d80b97"}'
+    body: '{"name": "iota8d80b97"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['23']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkNameAvailability?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkNameAvailability?api-version=2018-04-01
   response:
     body: {string: '{"nameAvailable":true,"reason":"Invalid","message":null}'}
     headers:
       cache-control: [no-cache]
       content-length: ['56']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:15:16 GMT']
+      date: ['Tue, 17 Apr 2018 22:28:19 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
-    body: 'b''{"location": "westus", "subscriptionid": "00000000-0000-0000-0000-000000000000",
-      "resourcegroup": "test_mgmt_iothub_test_iothuba8d80b97", "properties": {"enableFileUploadNotifications":
+    body: '{"location": "westus", "properties": {"enableFileUploadNotifications":
       false, "operationsMonitoringProperties": {"events": {"C2DCommands": "Error",
       "DeviceTelemetry": "Error", "DeviceIdentityOperations": "Error", "Connections":
-      "Information"}}, "features": "None"}, "sku": {"name": "S1", "capacity": 2}}'''
+      "Information"}}, "features": "None"}, "sku": {"name": "S1", "capacity": 2}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['418']
+      Content-Length: ['303']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2018-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information"}},"state":"Activating","provisioningState":"Accepted","enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDM0MTY5NmMtM2UzYS00YmIzLWFlMzgtMGFiNDAwODEzYjMx?api-version=2017-07-01&asyncinfo']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfNjBkMWM5MTUtNTNiOC00OTU3LThkNmEtZTJiODQwNTg4MTRm?api-version=2018-04-01&asyncinfo']
       cache-control: [no-cache]
       content-length: ['845']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:15:18 GMT']
+      date: ['Tue, 17 Apr 2018 22:28:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-subscription-resource-requests: ['4999']
     status: {code: 201, message: Created}
 - request:
@@ -64,25 +65,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDM0MTY5NmMtM2UzYS00YmIzLWFlMzgtMGFiNDAwODEzYjMx?api-version=2017-07-01&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfNjBkMWM5MTUtNTNiOC00OTU3LThkNmEtZTJiODQwNTg4MTRm?api-version=2018-04-01&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['20']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:15:49 GMT']
+      date: ['Tue, 17 Apr 2018 22:28:52 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -90,25 +90,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDM0MTY5NmMtM2UzYS00YmIzLWFlMzgtMGFiNDAwODEzYjMx?api-version=2017-07-01&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfNjBkMWM5MTUtNTNiOC00OTU3LThkNmEtZTJiODQwNTg4MTRm?api-version=2018-04-01&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['20']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:16:20 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -116,51 +115,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDM0MTY5NmMtM2UzYS00YmIzLWFlMzgtMGFiNDAwODEzYjMx?api-version=2017-07-01&asyncinfo
-  response:
-    body: {string: '{"status":"Running"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['20']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:16:50 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDM0MTY5NmMtM2UzYS00YmIzLWFlMzgtMGFiNDAwODEzYjMx?api-version=2017-07-01&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfNjBkMWM5MTUtNTNiOC00OTU3LThkNmEtZTJiODQwNTg4MTRm?api-version=2018-04-01&asyncinfo
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['22']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:21 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:54 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -168,25 +140,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2018-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAExFwg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAHLQYg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1892']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:22 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:55 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -195,24 +166,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2018-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAExFwg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAHLQYg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1892']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:23 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:55 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -221,24 +193,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs?api-version=2018-04-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAExFwg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAHLQYg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1904']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:23 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -247,24 +220,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/IotHubs?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/IotHubs?api-version=2018-04-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAExFwg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-237608-067235c227.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAAHLQYg=","properties":{"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceTelemetry":"Error","DeviceIdentityOperations":"Error","Connections":"Information","None":"None","FileUploadOperations":"None","Routes":"None"}},"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-428455-2d4eb73d4c.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1904']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:24 GMT']
+      date: ['Tue, 17 Apr 2018 22:29:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -273,24 +247,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/IotHubStats?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/IotHubStats?api-version=2018-04-01
   response:
     body: {string: '{"totalDeviceCount":0,"enabledDeviceCount":0,"disabledDeviceCount":0}'}
     headers:
       cache-control: [no-cache]
       content-length: ['69']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:25 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:00 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -299,24 +274,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/skus?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/skus?api-version=2018-04-01
   response:
     body: {string: '{"value":[{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S1","tier":"Standard"},"capacity":{"minimum":1,"maximum":200,"default":1,"scaleType":"Manual"}},{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S2","tier":"Standard"},"capacity":{"minimum":1,"maximum":200,"default":1,"scaleType":"Manual"}},{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S3","tier":"Standard"},"capacity":{"minimum":1,"maximum":10,"default":1,"scaleType":"Manual"}}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['475']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:27 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:01 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -325,24 +301,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/jobs?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/jobs?api-version=2018-04-01
   response:
     body: {string: '{"value":[]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['12']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:27 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:01 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -351,24 +328,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/quotaMetrics?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/quotaMetrics?api-version=2018-04-01
   response:
-    body: {string: '{"value":[{"Name":"TotalMessages","CurrentValue":0,"MaxValue":800000},{"Name":"TotalDeviceCount","CurrentValue":0,"MaxValue":500000}]}'}
+    body: {string: '{"value":[{"name":"TotalMessages","currentValue":0,"maxValue":800000},{"name":"TotalDeviceCount","currentValue":0,"maxValue":500000}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['134']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:28 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:02 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -378,24 +356,25 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2017-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2018-04-01
   response:
     body: {string: 'null'}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZGI4MGI0MjMtOGIxOC00NjE0LTkwMzQtZDVjNWQzNjZhN2Rk?api-version=2017-07-01&asyncinfo']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfN2FiMTNiYzQtYmJmNS00M2I4LWE4MzgtMTJiYmVjNGJhNjA3?api-version=2018-04-01&asyncinfo']
       cache-control: [no-cache]
       content-length: ['4']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:30 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:04 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZGI4MGI0MjMtOGIxOC00NjE0LTkwMzQtZDVjNWQzNjZhN2Rk?api-version=2017-07-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfN2FiMTNiYzQtYmJmNS00M2I4LWE4MzgtMTJiYmVjNGJhNjA3?api-version=2018-04-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 202, message: Accepted}
 - request:
@@ -404,50 +383,23 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-iothub/0.5.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZGI4MGI0MjMtOGIxOC00NjE0LTkwMzQtZDVjNWQzNjZhN2Rk?api-version=2017-07-01&asyncinfo
-  response:
-    body: {string: '{"status":"Running"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['20']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:17:45 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 iothubclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZGI4MGI0MjMtOGIxOC00NjE0LTkwMzQtZDVjNWQzNjZhN2Rk?api-version=2017-07-01&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/b3NfaWhfN2FiMTNiYzQtYmJmNS00M2I4LWE4MzgtMTJiYmVjNGJhNjA3?api-version=2018-04-01&asyncinfo
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['22']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Oct 2017 17:18:16 GMT']
+      date: ['Tue, 17 Apr 2018 22:30:19 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1

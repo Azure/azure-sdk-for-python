@@ -78,8 +78,8 @@ class PercentileMetricValue(MetricValue):
         'p99': {'key': 'P99', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(PercentileMetricValue, self).__init__()
+    def __init__(self, **kwargs):
+        super(PercentileMetricValue, self).__init__(**kwargs)
         self.p10 = None
         self.p25 = None
         self.p50 = None

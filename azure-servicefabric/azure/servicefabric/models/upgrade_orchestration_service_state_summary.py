@@ -38,10 +38,10 @@ class UpgradeOrchestrationServiceStateSummary(Model):
         'pending_upgrade_type': {'key': 'PendingUpgradeType', 'type': 'str'},
     }
 
-    def __init__(self, current_code_version=None, current_manifest_version=None, target_code_version=None, target_manifest_version=None, pending_upgrade_type=None):
-        super(UpgradeOrchestrationServiceStateSummary, self).__init__()
-        self.current_code_version = current_code_version
-        self.current_manifest_version = current_manifest_version
-        self.target_code_version = target_code_version
-        self.target_manifest_version = target_manifest_version
-        self.pending_upgrade_type = pending_upgrade_type
+    def __init__(self, **kwargs):
+        super(UpgradeOrchestrationServiceStateSummary, self).__init__(**kwargs)
+        self.current_code_version = kwargs.get('current_code_version', None)
+        self.current_manifest_version = kwargs.get('current_manifest_version', None)
+        self.target_code_version = kwargs.get('target_code_version', None)
+        self.target_manifest_version = kwargs.get('target_manifest_version', None)
+        self.pending_upgrade_type = kwargs.get('pending_upgrade_type', None)

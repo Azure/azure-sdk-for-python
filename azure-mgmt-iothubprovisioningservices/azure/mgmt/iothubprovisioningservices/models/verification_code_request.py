@@ -24,6 +24,6 @@ class VerificationCodeRequest(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, certificate=None):
-        super(VerificationCodeRequest, self).__init__()
-        self.certificate = certificate
+    def __init__(self, **kwargs):
+        super(VerificationCodeRequest, self).__init__(**kwargs)
+        self.certificate = kwargs.get('certificate', None)

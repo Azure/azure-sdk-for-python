@@ -68,17 +68,17 @@ class DeploymentPropertiesExtended(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
-        super(DeploymentPropertiesExtended, self).__init__()
-        self.provisioning_state = provisioning_state
-        self.correlation_id = correlation_id
-        self.timestamp = timestamp
-        self.outputs = outputs
-        self.providers = providers
-        self.dependencies = dependencies
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
+    def __init__(self, **kwargs):
+        super(DeploymentPropertiesExtended, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.outputs = kwargs.get('outputs', None)
+        self.providers = kwargs.get('providers', None)
+        self.dependencies = kwargs.get('dependencies', None)
+        self.template = kwargs.get('template', None)
+        self.template_link = kwargs.get('template_link', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.parameters_link = kwargs.get('parameters_link', None)
+        self.mode = kwargs.get('mode', None)
+        self.debug_setting = kwargs.get('debug_setting', None)

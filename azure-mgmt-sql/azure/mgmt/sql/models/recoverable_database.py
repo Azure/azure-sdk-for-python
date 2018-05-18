@@ -56,8 +56,8 @@ class RecoverableDatabase(ProxyResource):
         'last_available_backup_date': {'key': 'properties.lastAvailableBackupDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(RecoverableDatabase, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecoverableDatabase, self).__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
         self.elastic_pool_name = None

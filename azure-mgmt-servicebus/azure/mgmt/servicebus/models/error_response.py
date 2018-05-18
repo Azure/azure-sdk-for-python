@@ -28,10 +28,10 @@ class ErrorResponse(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(ErrorResponse, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class ErrorResponseException(HttpOperationError):

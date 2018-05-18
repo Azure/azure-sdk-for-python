@@ -34,7 +34,7 @@ class SyncFullSchemaProperties(Model):
         'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(SyncFullSchemaProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncFullSchemaProperties, self).__init__(**kwargs)
         self.tables = None
         self.last_update_time = None

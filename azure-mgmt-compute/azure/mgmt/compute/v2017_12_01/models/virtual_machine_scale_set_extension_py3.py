@@ -68,7 +68,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     }
 
     def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
-        super(VirtualMachineScaleSetExtension, self).__init__(, **kwargs)
+        super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
         self.name = name
         self.force_update_tag = force_update_tag
         self.publisher = publisher

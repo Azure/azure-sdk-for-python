@@ -23,7 +23,7 @@ class CapabilitiesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-10-01-preview".
     """
 
     models = models
@@ -33,16 +33,22 @@ class CapabilitiesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
+        self.api_version = "2017-10-01-preview"
 
         self.config = config
 
     def list_by_location(
-            self, location_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the capabilities available for the specified location.
+            self, location_name, include=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the subscription capabilities available for the specified
+        location.
 
-        :param location_id: The location id whose capabilities are retrieved.
-        :type location_id: str
+        :param location_name: The location name whose capabilities are
+         retrieved.
+        :type location_name: str
+        :param include: If specified, restricts the response to only include
+         the selected item. Possible values include: 'supportedEditions',
+         'supportedElasticPoolEditions', 'supportedManagedInstanceVersions'
+        :type include: str or ~azure.mgmt.sql.models.CapabilityGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,13 +62,15 @@ class CapabilitiesOperations(object):
         # Construct URL
         url = self.list_by_location.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'locationId': self._serialize.url("location_id", location_id, 'str')
+            'locationName': self._serialize.url("location_name", location_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if include is not None:
+            query_parameters['include'] = self._serialize.query("include", include, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -94,4 +102,4 @@ class CapabilitiesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationId}/capabilities'}
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/capabilities'}

@@ -56,7 +56,7 @@ class LogFile(ProxyResource):
     }
 
     def __init__(self, *, size_in_kb: int=None, log_file_type: str=None, url: str=None, **kwargs) -> None:
-        super(LogFile, self).__init__(, **kwargs)
+        super(LogFile, self).__init__(**kwargs)
         self.size_in_kb = size_in_kb
         self.created_time = None
         self.last_modified_time = None

@@ -40,8 +40,8 @@ class CheckNameAvailabilityResult(Model):
         'reason': {'key': 'reason', 'type': 'UnavailableReason'},
     }
 
-    def __init__(self, name_available=None, reason=None):
-        super(CheckNameAvailabilityResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.message = None
-        self.name_available = name_available
-        self.reason = reason
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)

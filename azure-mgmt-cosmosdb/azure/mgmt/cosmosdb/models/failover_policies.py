@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class FailoverPolicies(Model):
     """The list of new failover policies for the failover priority change.
 
-    :param failover_policies: List of failover policies.
+    All required parameters must be populated in order to send to Azure.
+
+    :param failover_policies: Required. List of failover policies.
     :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
     """
 
@@ -27,6 +29,6 @@ class FailoverPolicies(Model):
         'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, failover_policies):
-        super(FailoverPolicies, self).__init__()
-        self.failover_policies = failover_policies
+    def __init__(self, **kwargs):
+        super(FailoverPolicies, self).__init__(**kwargs)
+        self.failover_policies = kwargs.get('failover_policies', None)

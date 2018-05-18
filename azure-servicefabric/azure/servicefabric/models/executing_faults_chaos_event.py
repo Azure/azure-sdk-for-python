@@ -17,10 +17,12 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
     faults for an iteration. This Chaos event contains the details of the
     faults as a list of strings.
 
-    :param time_stamp_utc: The UTC timestamp when this Chaos event was
-     generated.
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param faults: List of string description of the faults that Chaos decided
      to execute in an iteration.
@@ -38,7 +40,7 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
         'faults': {'key': 'Faults', 'type': '[str]'},
     }
 
-    def __init__(self, time_stamp_utc, faults=None):
-        super(ExecutingFaultsChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
-        self.faults = faults
+    def __init__(self, **kwargs):
+        super(ExecutingFaultsChaosEvent, self).__init__(**kwargs)
+        self.faults = kwargs.get('faults', None)
         self.kind = 'ExecutingFaults'

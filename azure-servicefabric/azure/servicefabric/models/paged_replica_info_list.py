@@ -34,7 +34,7 @@ class PagedReplicaInfoList(Model):
         'items': {'key': 'Items', 'type': '[ReplicaInfo]'},
     }
 
-    def __init__(self, continuation_token=None, items=None):
-        super(PagedReplicaInfoList, self).__init__()
-        self.continuation_token = continuation_token
-        self.items = items
+    def __init__(self, **kwargs):
+        super(PagedReplicaInfoList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.items = kwargs.get('items', None)

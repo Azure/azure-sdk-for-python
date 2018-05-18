@@ -21,9 +21,9 @@ class ProjectSettings(Model):
     """
 
     _attribute_map = {
-        'domain_id': {'key': 'DomainId', 'type': 'str'},
+        'domain_id': {'key': 'domainId', 'type': 'str'},
     }
 
-    def __init__(self, domain_id=None):
-        super(ProjectSettings, self).__init__()
-        self.domain_id = domain_id
+    def __init__(self, **kwargs):
+        super(ProjectSettings, self).__init__(**kwargs)
+        self.domain_id = kwargs.get('domain_id', None)

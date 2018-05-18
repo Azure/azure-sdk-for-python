@@ -50,7 +50,8 @@ class CertificateProperties(Model):
         'updated': {'key': 'updated', 'type': 'rfc-1123'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(CertificateProperties, self).__init__(**kwargs)
         self.subject = None
         self.expiry = None
         self.thumbprint = None

@@ -19,8 +19,7 @@ class CertificateWithNonceDescription(Model):
     sending a request.
 
     :param properties:
-    :type properties: :class:`CertificatePropertiesWithNonce
-     <azure.mgmt.iothub.models.CertificatePropertiesWithNonce>`
+    :type properties: ~azure.mgmt.iothub.models.CertificatePropertiesWithNonce
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The name of the certificate.
@@ -46,8 +45,9 @@ class CertificateWithNonceDescription(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CertificateWithNonceDescription, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.id = None
         self.name = None
         self.etag = None

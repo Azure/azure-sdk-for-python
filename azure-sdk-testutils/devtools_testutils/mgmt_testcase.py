@@ -18,14 +18,6 @@ from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
 
 
-should_log = os.getenv('SDK_TESTS_LOG', '0')
-if should_log.lower() == 'true' or should_log == '1':
-    import logging
-    logger = logging.getLogger('msrest')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
-
-
 class HttpStatusCode(object):
     OK = 200
     Created = 201
@@ -100,7 +92,7 @@ class AzureMgmtTestCase(ReplayableTest):
         return [
             self.scrubber,
             OAuthRequestResponsesFilter(),
-            DeploymentNameReplacer(),
+            # DeploymentNameReplacer(), Not use this one, give me full control on deployment name
             RequestUrlNormalizer()
         ]
 
@@ -113,7 +105,7 @@ class AzureMgmtTestCase(ReplayableTest):
         return not self.is_live
 
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID', 'ADLA_JOB_ID']
         for key in constants_to_scrub:
             if hasattr(self.settings, key) and hasattr(self._fake_settings, key):
                 self.scrubber.register_name_pair(getattr(self.settings, key),
@@ -156,6 +148,7 @@ class AzureMgmtTestCase(ReplayableTest):
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
+        client.config.enable_http_logger = True
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):

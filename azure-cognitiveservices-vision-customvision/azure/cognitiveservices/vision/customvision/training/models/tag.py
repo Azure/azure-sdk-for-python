@@ -34,15 +34,15 @@ class Tag(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'image_count': {'key': 'ImageCount', 'type': 'int'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'image_count': {'key': 'imageCount', 'type': 'int'},
     }
 
-    def __init__(self, name=None, description=None):
-        super(Tag, self).__init__()
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.description = description
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
         self.image_count = None

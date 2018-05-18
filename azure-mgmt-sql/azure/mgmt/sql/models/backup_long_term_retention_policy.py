@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class BackupLongTermRetentionPolicy(ProxyResource):
-    """A backup long term retention policy.
+    """A long term retention policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,37 +24,39 @@ class BackupLongTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: The geo-location where the resource lives
-    :vartype location: str
-    :param state: The status of the backup long term retention policy.
-     Possible values include: 'Disabled', 'Enabled'
-    :type state: str or
-     ~azure.mgmt.sql.models.BackupLongTermRetentionPolicyState
-    :param recovery_services_backup_policy_resource_id: The azure recovery
-     services backup protection policy resource id
-    :type recovery_services_backup_policy_resource_id: str
+    :param weekly_retention: The weekly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type weekly_retention: str
+    :param monthly_retention: The montly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type monthly_retention: str
+    :param yearly_retention: The yearly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type yearly_retention: str
+    :param week_of_year: The week of year to take the yearly backup in an ISO
+     8601 format.
+    :type week_of_year: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'state': {'required': True},
-        'recovery_services_backup_policy_resource_id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BackupLongTermRetentionPolicyState'},
-        'recovery_services_backup_policy_resource_id': {'key': 'properties.recoveryServicesBackupPolicyResourceId', 'type': 'str'},
+        'weekly_retention': {'key': 'properties.weeklyRetention', 'type': 'str'},
+        'monthly_retention': {'key': 'properties.monthlyRetention', 'type': 'str'},
+        'yearly_retention': {'key': 'properties.yearlyRetention', 'type': 'str'},
+        'week_of_year': {'key': 'properties.weekOfYear', 'type': 'int'},
     }
 
-    def __init__(self, state, recovery_services_backup_policy_resource_id):
-        super(BackupLongTermRetentionPolicy, self).__init__()
-        self.location = None
-        self.state = state
-        self.recovery_services_backup_policy_resource_id = recovery_services_backup_policy_resource_id
+    def __init__(self, **kwargs):
+        super(BackupLongTermRetentionPolicy, self).__init__(**kwargs)
+        self.weekly_retention = kwargs.get('weekly_retention', None)
+        self.monthly_retention = kwargs.get('monthly_retention', None)
+        self.yearly_retention = kwargs.get('yearly_retention', None)
+        self.week_of_year = kwargs.get('week_of_year', None)

@@ -50,8 +50,8 @@ class DatabaseAutomaticTuning(ProxyResource):
         'options': {'key': 'properties.options', 'type': '{AutomaticTuningOptions}'},
     }
 
-    def __init__(self, desired_state=None, options=None):
-        super(DatabaseAutomaticTuning, self).__init__()
-        self.desired_state = desired_state
+    def __init__(self, **kwargs):
+        super(DatabaseAutomaticTuning, self).__init__(**kwargs)
+        self.desired_state = kwargs.get('desired_state', None)
         self.actual_state = None
-        self.options = options
+        self.options = kwargs.get('options', None)

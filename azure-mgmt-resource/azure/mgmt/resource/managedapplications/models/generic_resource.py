@@ -53,8 +53,8 @@ class GenericResource(Resource):
         'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None):
-        super(GenericResource, self).__init__(location=location, tags=tags)
-        self.managed_by = managed_by
-        self.sku = sku
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(GenericResource, self).__init__(**kwargs)
+        self.managed_by = kwargs.get('managed_by', None)
+        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
