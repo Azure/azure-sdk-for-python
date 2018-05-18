@@ -40,19 +40,19 @@ class EntitiesOperations(object):
 
 
     def _list_initial(
-            self, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
+            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if self.config.skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
-        if self.config.skip is not None:
-            query_parameters['$skip'] = self._serialize.query("self.config.skip", self.config.skip, 'int')
-        if self.config.top is not None:
-            query_parameters['$top'] = self._serialize.query("self.config.top", self.config.top, 'int')
+        if skiptoken is not None:
+            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+        if skip is not None:
+            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if select is not None:
             query_parameters['$select'] = self._serialize.query("select", select, 'str')
         if search is not None:
@@ -95,11 +95,22 @@ class EntitiesOperations(object):
         return deserialized
 
     def list(
-            self, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
+            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
         """List all entities (Management Groups, Subscriptions, etc.) for the
         authenticated user.
-        .
 
+        :param skiptoken: Page continuation token is only used if a previous
+         operation returned a partial result. If a previous response contains a
+         nextLink element, the value of the nextLink element will include a
+         token parameter that specifies a starting point to use for subsequent
+         calls.
+        :type skiptoken: str
+        :param skip: Number of entities to skip over when retrieving results.
+         Passing this in will override $skipToken.
+        :type skip: int
+        :param top: Number of elements to return when retrieving results.
+         Passing this in will override $skipToken.
+        :type top: int
         :param select: This parameter specifies the fields to include in the
          response. Can include any combination of
          Name,DisplayName,Type,ParentDisplayNameChain,ParentChain, e.g.
@@ -109,17 +120,15 @@ class EntitiesOperations(object):
         :type select: str
         :param search: The $search parameter is used in conjunction with the
          $filter parameter to return three different outputs depending on the
-         parameter passed in.
-         With $search=AllowedParents the API will return the entity info of all
-         groups that the requested entity will be able to reparent to as
-         determined by the user's permissions.
-         With $search=AllowedChildren the API will return the entity info of
-         all entities that can be added as children of the requested entity.
-         With $search=ParentAndFirstLevelChildren the API will return the
-         parent and  first level of children that the user has either direct
-         access to or indirect access via one of their descendants. Possible
-         values include: 'AllowedParents', 'AllowedChildren',
-         'ParentAndFirstLevelChildren'
+         parameter passed in. With $search=AllowedParents the API will return
+         the entity info of all groups that the requested entity will be able
+         to reparent to as determined by the user's permissions. With
+         $search=AllowedChildren the API will return the entity info of all
+         entities that can be added as children of the requested entity. With
+         $search=ParentAndFirstLevelChildren the API will return the parent and
+         first level of children that the user has either direct access to or
+         indirect access via one of their descendants. Possible values include:
+         'AllowedParents', 'AllowedChildren', 'ParentAndFirstLevelChildren'
         :type search: str
         :param filter: The filter parameter allows you to filter on the the
          name or display name fields. You can check for equality on the name
@@ -154,6 +163,9 @@ class EntitiesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         raw_result = self._list_initial(
+            skiptoken=skiptoken,
+            skip=skip,
+            top=top,
             select=select,
             search=search,
             filter=filter,

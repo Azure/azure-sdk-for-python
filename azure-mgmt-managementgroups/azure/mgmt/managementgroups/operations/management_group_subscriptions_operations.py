@@ -39,7 +39,6 @@ class ManagementGroupSubscriptionsOperations(object):
     def create(
             self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Associates existing subscription with the management group.
-        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -97,7 +96,6 @@ class ManagementGroupSubscriptionsOperations(object):
     def delete(
             self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """De-associates subscription from the management group.
-        .
 
         :param group_id: Management Group ID.
         :type group_id: str

@@ -32,31 +32,14 @@ class ManagementGroupsAPIConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param operation_result_id: The id of the operation result. Possible
-     values include: 'create', 'delete'
-    :type operation_result_id: str
-    :param skip: Number of entities to skip over when retrieving results.
-     Passing this in will override $skipToken.
-    :type skip: int
-    :param top: Number of elements to return when retrieving results. Passing
-     this in will override $skipToken.
-    :type top: int
-    :param skiptoken: Page continuation token is only used if a previous
-     operation returned a partial result.
-     If a previous response contains a nextLink element, the value of the
-     nextLink element will include a token parameter that specifies a starting
-     point to use for subsequent calls.
-    :type skiptoken: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, operation_result_id, skip=None, top=None, skiptoken=None, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if operation_result_id is None:
-            raise ValueError("Parameter 'operation_result_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -66,16 +49,10 @@ class ManagementGroupsAPIConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.operation_result_id = operation_result_id
-        self.skip = skip
-        self.top = top
-        self.skiptoken = skiptoken
 
 
 class ManagementGroupsAPI(SDKClient):
-    """The Azure Management Groups API enables consolidation of multiple
-    subscriptions/resources into an organizational hierarchy and centrally
-    manage access control, policies, alerting and reporting for those resources.
+    """The Azure Management Groups API enables consolidation of multiple subscriptions/resources into an organizational hierarchy and centrally manage access control, policies, alerting and reporting for those resources.
 
     :ivar config: Configuration for client.
     :vartype config: ManagementGroupsAPIConfiguration
@@ -92,28 +69,13 @@ class ManagementGroupsAPI(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param operation_result_id: The id of the operation result. Possible
-     values include: 'create', 'delete'
-    :type operation_result_id: str
-    :param skip: Number of entities to skip over when retrieving results.
-     Passing this in will override $skipToken.
-    :type skip: int
-    :param top: Number of elements to return when retrieving results. Passing
-     this in will override $skipToken.
-    :type top: int
-    :param skiptoken: Page continuation token is only used if a previous
-     operation returned a partial result.
-     If a previous response contains a nextLink element, the value of the
-     nextLink element will include a token parameter that specifies a starting
-     point to use for subsequent calls.
-    :type skiptoken: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, operation_result_id, skip=None, top=None, skiptoken=None, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = ManagementGroupsAPIConfiguration(credentials, operation_result_id, skip, top, skiptoken, base_url)
+        self.config = ManagementGroupsAPIConfiguration(credentials, base_url)
         super(ManagementGroupsAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -214,14 +176,12 @@ class ManagementGroupsAPI(SDKClient):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TenantBackfillStatusResult', response)
-        if response.status_code == 202:
             deserialized = self._deserialize('TenantBackfillStatusResult', response)
 
         if raw:
