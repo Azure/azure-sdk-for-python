@@ -487,6 +487,7 @@ class EventData(object):
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
+    PROP_DEVICE_ID = b"iothub-connection-device-id" 
 
     def __init__(self, body=None, batch=None, message=None):
         """
@@ -555,6 +556,15 @@ class EventData(object):
             return self._annotations[self._partition_key]
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY)
+
+    @property
+    def device_id(self):
+        """
+        The device ID of the event data object. This is only used for
+        IoT Hub implementations.
+        :returns: bytes
+        """
+        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @partition_key.setter
     def partition_key(self, value):
