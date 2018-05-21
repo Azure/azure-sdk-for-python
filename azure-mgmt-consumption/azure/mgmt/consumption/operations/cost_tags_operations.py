@@ -40,7 +40,7 @@ class CostTagsOperations(object):
             self, billing_account_id, custom_headers=None, raw=False, **operation_config):
         """Get cost tags for a billing account.
 
-        :param billing_account_id: Azure Billing Account ID.
+        :param billing_account_id: BillingAccount ID
         :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -91,7 +91,7 @@ class CostTagsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
 
     def create_or_update(
             self, billing_account_id, e_tag=None, cost_tags=None, custom_headers=None, raw=False, **operation_config):
@@ -100,7 +100,7 @@ class CostTagsOperations(object):
         mandatorily. You may obtain the latest eTag by performing a get
         operation. Create operation does not require eTag.
 
-        :param billing_account_id: Azure Billing Account ID.
+        :param billing_account_id: BillingAccount ID
         :type billing_account_id: str
         :param e_tag: eTag of the resource. To handle concurrent update
          scenarion, this field will be used to determine whether the user is
@@ -165,4 +165,4 @@ class CostTagsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    create_or_update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
