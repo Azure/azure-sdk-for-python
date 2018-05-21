@@ -411,6 +411,74 @@ class VirtualNetworkRuleState(str, Enum):
     unknown = "Unknown"
 
 
+class JobAgentState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    updating = "Updating"
+    deleting = "Deleting"
+    disabled = "Disabled"
+
+
+class JobExecutionLifecycle(str, Enum):
+
+    created = "Created"
+    in_progress = "InProgress"
+    waiting_for_child_job_executions = "WaitingForChildJobExecutions"
+    waiting_for_retry = "WaitingForRetry"
+    succeeded = "Succeeded"
+    succeeded_with_skipped = "SucceededWithSkipped"
+    failed = "Failed"
+    timed_out = "TimedOut"
+    canceled = "Canceled"
+    skipped = "Skipped"
+
+
+class ProvisioningState(str, Enum):
+
+    created = "Created"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
+class JobTargetType(str, Enum):
+
+    target_group = "TargetGroup"
+    sql_database = "SqlDatabase"
+    sql_elastic_pool = "SqlElasticPool"
+    sql_shard_map = "SqlShardMap"
+    sql_server = "SqlServer"
+
+
+class JobScheduleType(str, Enum):
+
+    once = "Once"
+    recurring = "Recurring"
+
+
+class JobStepActionType(str, Enum):
+
+    tsql = "TSql"
+
+
+class JobStepActionSource(str, Enum):
+
+    inline = "Inline"
+
+
+class JobStepOutputType(str, Enum):
+
+    sql_database = "SqlDatabase"
+
+
+class JobTargetGroupMembershipType(str, Enum):
+
+    include = "Include"
+    exclude = "Exclude"
+
+
 class ManagedDatabaseStatus(str, Enum):
 
     online = "Online"
@@ -560,6 +628,20 @@ class ElasticPoolLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
     base_price = "BasePrice"
+
+
+class VulnerabilityAssessmentScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
 
 
 class InstanceFailoverGroupReplicationRole(str, Enum):
