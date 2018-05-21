@@ -50,6 +50,9 @@ class MetricAlertResource(Resource):
     :param criteria: Required. defines the specific alert criteria
      information.
     :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
+    :param auto_mitigate: the flag that indicates whether the alert should be
+     auto resolved or not.
+    :type auto_mitigate: bool
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
     :type actions: list[~azure.mgmt.monitor.models.Action]
@@ -84,6 +87,7 @@ class MetricAlertResource(Resource):
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
+        'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[Action]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
@@ -97,5 +101,6 @@ class MetricAlertResource(Resource):
         self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
         self.window_size = kwargs.get('window_size', None)
         self.criteria = kwargs.get('criteria', None)
+        self.auto_mitigate = kwargs.get('auto_mitigate', None)
         self.actions = kwargs.get('actions', None)
         self.last_updated_time = None
