@@ -12,24 +12,28 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeyParameters(Model):
-    """Regenerate key parameters.
+class ErrorBody(Model):
+    """Cognitive Services error body.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. key name to generate (Key1|Key2). Possible
-     values include: 'Key1', 'Key2'
-    :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
+    :param code: Required. error code
+    :type code: str
+    :param message: Required. error message
+    :type message: str
     """
 
     _validation = {
-        'key_name': {'required': True},
+        'code': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'KeyName'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
+        super(ErrorBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message

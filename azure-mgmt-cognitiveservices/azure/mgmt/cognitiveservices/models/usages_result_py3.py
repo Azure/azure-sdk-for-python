@@ -12,24 +12,24 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeyParameters(Model):
-    """Regenerate key parameters.
+class UsagesResult(Model):
+    """The response to a list usage request.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param key_name: Required. key name to generate (Key1|Key2). Possible
-     values include: 'Key1', 'Key2'
-    :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
+    :ivar value: The list of usages for Cognitive Service account.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.Usage]
     """
 
     _validation = {
-        'key_name': {'required': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'KeyName'},
+        'value': {'key': 'value', 'type': '[Usage]'},
     }
 
-    def __init__(self, **kwargs):
-        super(RegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+    def __init__(self, **kwargs) -> None:
+        super(UsagesResult, self).__init__(**kwargs)
+        self.value = None

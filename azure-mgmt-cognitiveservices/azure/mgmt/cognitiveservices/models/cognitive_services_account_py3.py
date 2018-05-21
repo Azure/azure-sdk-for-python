@@ -71,16 +71,16 @@ class CognitiveServicesAccount(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, etag: str=None, kind: str=None, location: str=None, endpoint: str=None, internal_id: str=None, sku=None, tags=None, **kwargs) -> None:
         super(CognitiveServicesAccount, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
+        self.etag = etag
         self.id = None
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
+        self.kind = kind
+        self.location = location
         self.name = None
         self.provisioning_state = None
-        self.endpoint = kwargs.get('endpoint', None)
-        self.internal_id = kwargs.get('internal_id', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
+        self.endpoint = endpoint
+        self.internal_id = internal_id
+        self.sku = sku
+        self.tags = tags
         self.type = None

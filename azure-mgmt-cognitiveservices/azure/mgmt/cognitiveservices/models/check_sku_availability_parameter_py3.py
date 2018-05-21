@@ -42,8 +42,8 @@ class CheckSkuAvailabilityParameter(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, skus, kind, type: str, **kwargs) -> None:
         super(CheckSkuAvailabilityParameter, self).__init__(**kwargs)
-        self.skus = kwargs.get('skus', None)
-        self.kind = kwargs.get('kind', None)
-        self.type = kwargs.get('type', None)
+        self.skus = skus
+        self.kind = kind
+        self.type = type
