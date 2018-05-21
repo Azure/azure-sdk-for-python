@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class BaseJobParameters(Model):
     """Data Lake Analytics Job Parameters base class for build and submit.
 
-    :param type: the job type of the current job (Hive, USql, or Scope (for
+    :param type: The job type of the current job (Hive, USql, or Scope (for
      internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
-    :param properties: the job specific properties.
+    :param properties: The job specific properties.
     :type properties:
      ~azure.mgmt.datalake.analytics.job.models.CreateJobProperties
     """

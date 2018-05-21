@@ -18,24 +18,24 @@ class HiveJobProperties(JobProperties):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param runtime_version: the runtime version of the Data Lake Analytics
+    :param runtime_version: The runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
+    :param script: The script to run. Please note that the maximum script size
      is 3 MB.
     :type script: str
     :param type: Constant filled by server.
     :type type: str
-    :ivar logs_location: the Hive logs location
+    :ivar logs_location: The Hive logs location.
     :vartype logs_location: str
-    :ivar output_location: the location of Hive job output files (both
-     execution output and results)
+    :ivar output_location: The location of Hive job output files (both
+     execution output and results).
     :vartype output_location: str
-    :ivar statement_count: the number of statements that will be run based on
-     the script
+    :ivar statement_count: The number of statements that will be run based on
+     the script.
     :vartype statement_count: int
-    :ivar executed_statement_count: the number of statements that have been
-     run based on the script
+    :ivar executed_statement_count: The number of statements that have been
+     run based on the script.
     :vartype executed_statement_count: int
     """
 

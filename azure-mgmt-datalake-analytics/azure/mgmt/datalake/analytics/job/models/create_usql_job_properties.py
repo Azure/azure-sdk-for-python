@@ -15,15 +15,15 @@ from .create_job_properties import CreateJobProperties
 class CreateUSqlJobProperties(CreateJobProperties):
     """U-SQL job properties used when submitting U-SQL jobs.
 
-    :param runtime_version: the runtime version of the Data Lake Analytics
+    :param runtime_version: The runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
+    :param script: The script to run. Please note that the maximum script size
      is 3 MB.
     :type script: str
     :param type: Constant filled by server.
     :type type: str
-    :param compile_mode: the specific compilation mode for the job used during
+    :param compile_mode: The specific compilation mode for the job used during
      execution. If this is not specified during submission, the server will
      determine the optimal compilation mode. Possible values include:
      'Semantic', 'Full', 'SingleBox'

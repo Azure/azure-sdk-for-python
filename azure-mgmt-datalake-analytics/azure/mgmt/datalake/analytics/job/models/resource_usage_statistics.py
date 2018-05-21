@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class ResourceUsageStatistics(Model):
-    """the statistics information for resource usage.
+    """The statistics information for resource usage.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar average: the average value.
+    :ivar average: The average value.
     :vartype average: float
-    :ivar minimum: the minimum value.
+    :ivar minimum: The minimum value.
     :vartype minimum: long
-    :ivar maximum: the maximum value.
+    :ivar maximum: The maximum value.
     :vartype maximum: long
     """
 
