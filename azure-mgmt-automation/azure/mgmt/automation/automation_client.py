@@ -42,6 +42,7 @@ from .operations.software_update_configuration_runs_operations import SoftwareUp
 from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
+from .operations.source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
 from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
@@ -151,6 +152,8 @@ class AutomationClient(object):
     :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
     :ivar source_control_sync_job: SourceControlSyncJob operations
     :vartype source_control_sync_job: azure.mgmt.automation.operations.SourceControlSyncJobOperations
+    :ivar source_control_sync_job_streams: SourceControlSyncJobStreams operations
+    :vartype source_control_sync_job_streams: azure.mgmt.automation.operations.SourceControlSyncJobStreamsOperations
     :ivar job: Job operations
     :vartype job: azure.mgmt.automation.operations.JobOperations
     :ivar job_stream: JobStream operations
@@ -245,6 +248,8 @@ class AutomationClient(object):
         self.source_control = SourceControlOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.source_control_sync_job = SourceControlSyncJobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.source_control_sync_job_streams = SourceControlSyncJobStreamsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job = JobOperations(
             self._client, self.config, self._serialize, self._deserialize)

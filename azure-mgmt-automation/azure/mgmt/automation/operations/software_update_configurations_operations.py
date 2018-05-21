@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -62,7 +61,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         :return: SoftwareUpdateConfiguration or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create.metadata['url']
@@ -98,10 +98,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 201]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -138,7 +136,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         :return: SoftwareUpdateConfiguration or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_name.metadata['url']
@@ -171,9 +170,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -207,7 +204,8 @@ class SoftwareUpdateConfigurationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -239,10 +237,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -271,7 +267,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         :rtype:
          ~azure.mgmt.automation.models.SoftwareUpdateConfigurationListResult or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -305,9 +302,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

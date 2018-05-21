@@ -38,6 +38,7 @@ from .software_update_configuration_runs_operations import SoftwareUpdateConfigu
 from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .source_control_operations import SourceControlOperations
 from .source_control_sync_job_operations import SourceControlSyncJobOperations
+from .source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
 from .job_operations import JobOperations
 from .job_stream_operations import JobStreamOperations
 from .agent_registration_information_operations import AgentRegistrationInformationOperations
@@ -77,6 +78,7 @@ __all__ = [
     'SoftwareUpdateConfigurationMachineRunsOperations',
     'SourceControlOperations',
     'SourceControlSyncJobOperations',
+    'SourceControlSyncJobStreamsOperations',
     'JobOperations',
     'JobStreamOperations',
     'AgentRegistrationInformationOperations',
