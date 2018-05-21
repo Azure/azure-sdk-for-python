@@ -45,3 +45,8 @@ class HostCaching(str, Enum):
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
+
+
+class ReplicationStatusTypes(str, Enum):
+
+    replication_status = "ReplicationStatus"

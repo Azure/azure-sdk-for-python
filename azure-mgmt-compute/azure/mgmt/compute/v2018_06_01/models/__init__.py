@@ -29,9 +29,10 @@ try:
     from .gallery_artifact_source_py3 import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base_py3 import GalleryArtifactPublishingProfileBase
     from .gallery_disk_image_py3 import GalleryDiskImage
-    from .gallery_list_py3 import GalleryList
-    from .gallery_image_list_py3 import GalleryImageList
-    from .gallery_image_version_list_py3 import GalleryImageVersionList
+    from .api_error_base_py3 import ApiErrorBase
+    from .inner_error_py3 import InnerError
+    from .api_error_py3 import ApiError
+    from .operation_status_response_py3 import OperationStatusResponse
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .gallery_identifier import GalleryIdentifier
@@ -53,16 +54,21 @@ except (SyntaxError, ImportError):
     from .gallery_artifact_source import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base import GalleryArtifactPublishingProfileBase
     from .gallery_disk_image import GalleryDiskImage
-    from .gallery_list import GalleryList
-    from .gallery_image_list import GalleryImageList
-    from .gallery_image_version_list import GalleryImageVersionList
+    from .api_error_base import ApiErrorBase
+    from .inner_error import InnerError
+    from .api_error import ApiError
+    from .operation_status_response import OperationStatusResponse
     from .resource import Resource
+from .gallery_paged import GalleryPaged
+from .gallery_image_paged import GalleryImagePaged
+from .gallery_image_version_paged import GalleryImageVersionPaged
 from .compute_management_client_enums import (
     OperatingSystemTypes,
     OperatingSystemStateTypes,
     AggregatedReplicationState,
     ReplicationState,
     HostCaching,
+    ReplicationStatusTypes,
 )
 
 __all__ = [
@@ -85,13 +91,18 @@ __all__ = [
     'GalleryArtifactSource',
     'GalleryArtifactPublishingProfileBase',
     'GalleryDiskImage',
-    'GalleryList',
-    'GalleryImageList',
-    'GalleryImageVersionList',
+    'ApiErrorBase',
+    'InnerError',
+    'ApiError',
+    'OperationStatusResponse',
     'Resource',
+    'GalleryPaged',
+    'GalleryImagePaged',
+    'GalleryImageVersionPaged',
     'OperatingSystemTypes',
     'OperatingSystemStateTypes',
     'AggregatedReplicationState',
     'ReplicationState',
     'HostCaching',
+    'ReplicationStatusTypes',
 ]
