@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .thing import Thing
+from .thing_py3 import Thing
 
 
 class CreativeWork(Thing):
@@ -77,7 +77,7 @@ class CreativeWork(Thing):
         '_type': {'WebPage': 'WebPage'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(CreativeWork, self).__init__(**kwargs)
         self.thumbnail_url = None
         self.provider = None

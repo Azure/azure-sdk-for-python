@@ -9,21 +9,38 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .query_context import QueryContext
-from .web_meta_tag import WebMetaTag
-from .web_page import WebPage
-from .web_web_answer import WebWebAnswer
-from .search_response import SearchResponse
-from .response import Response
-from .search_results_answer import SearchResultsAnswer
-from .identifiable import Identifiable
-from .error import Error
-from .error_response import ErrorResponse, ErrorResponseException
-from .query import Query
-from .answer import Answer
-from .thing import Thing
-from .creative_work import CreativeWork
-from .response_base import ResponseBase
+try:
+    from .query_context_py3 import QueryContext
+    from .web_meta_tag_py3 import WebMetaTag
+    from .web_page_py3 import WebPage
+    from .web_web_answer_py3 import WebWebAnswer
+    from .search_response_py3 import SearchResponse
+    from .response_py3 import Response
+    from .search_results_answer_py3 import SearchResultsAnswer
+    from .identifiable_py3 import Identifiable
+    from .error_py3 import Error
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .query_py3 import Query
+    from .answer_py3 import Answer
+    from .thing_py3 import Thing
+    from .creative_work_py3 import CreativeWork
+    from .response_base_py3 import ResponseBase
+except (SyntaxError, ImportError):
+    from .query_context import QueryContext
+    from .web_meta_tag import WebMetaTag
+    from .web_page import WebPage
+    from .web_web_answer import WebWebAnswer
+    from .search_response import SearchResponse
+    from .response import Response
+    from .search_results_answer import SearchResultsAnswer
+    from .identifiable import Identifiable
+    from .error import Error
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .query import Query
+    from .answer import Answer
+    from .thing import Thing
+    from .creative_work import CreativeWork
+    from .response_base import ResponseBase
 from .custom_search_api_enums import (
     ErrorCode,
     ErrorSubCode,

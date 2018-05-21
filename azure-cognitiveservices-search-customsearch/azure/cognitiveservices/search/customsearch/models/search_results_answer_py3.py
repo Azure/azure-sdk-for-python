@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .answer_py3 import Answer
 
 
-class SearchResponse(Response):
-    """Defines the top-level object that the response includes when the request
-    succeeds.
+class SearchResultsAnswer(Answer):
+    """SearchResultsAnswer.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: WebWebAnswer
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,35 +29,47 @@ class SearchResponse(Response):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :ivar query_context: An object that contains the query string that Bing
-     used for the request. This object contains the query string as entered by
-     the user. It may also contain an altered query string that Bing used for
-     the query if the query string contained a spelling mistake.
+    :ivar follow_up_queries:
+    :vartype follow_up_queries:
+     list[~azure.cognitiveservices.search.customsearch.models.Query]
+    :ivar query_context:
     :vartype query_context:
      ~azure.cognitiveservices.search.customsearch.models.QueryContext
-    :ivar web_pages: A list of webpages that are relevant to the search query.
-    :vartype web_pages:
-     ~azure.cognitiveservices.search.customsearch.models.WebWebAnswer
+    :ivar total_estimated_matches: The estimated number of webpages that are
+     relevant to the query. Use this number along with the count and offset
+     query parameters to page the results.
+    :vartype total_estimated_matches: long
+    :ivar is_family_friendly:
+    :vartype is_family_friendly: bool
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
+        'follow_up_queries': {'readonly': True},
         'query_context': {'readonly': True},
-        'web_pages': {'readonly': True},
+        'total_estimated_matches': {'readonly': True},
+        'is_family_friendly': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
         'query_context': {'key': 'queryContext', 'type': 'QueryContext'},
-        'web_pages': {'key': 'webPages', 'type': 'WebWebAnswer'},
+        'total_estimated_matches': {'key': 'totalEstimatedMatches', 'type': 'long'},
+        'is_family_friendly': {'key': 'isFamilyFriendly', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(SearchResponse, self).__init__(**kwargs)
+    _subtype_map = {
+        '_type': {'Web/WebAnswer': 'WebWebAnswer'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SearchResultsAnswer, self).__init__(**kwargs)
         self.query_context = None
-        self.web_pages = None
-        self._type = 'SearchResponse'
+        self.total_estimated_matches = None
+        self.is_family_friendly = None
+        self._type = 'SearchResultsAnswer'

@@ -9,15 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .response_py3 import Response
 
 
-class Response(Identifiable):
-    """Defines a response. All schemas that could be returned at the root of a
-    response should inherit from this.
+class Answer(Response):
+    """Answer.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchResponse, ErrorResponse, Answer, Thing
+    sub-classes are: SearchResultsAnswer
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,25 +29,30 @@ class Response(Identifiable):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
+    :ivar follow_up_queries:
+    :vartype follow_up_queries:
+     list[~azure.cognitiveservices.search.customsearch.models.Query]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
         'web_search_url': {'readonly': True},
+        'follow_up_queries': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
     }
 
     _subtype_map = {
-        '_type': {'SearchResponse': 'SearchResponse', 'ErrorResponse': 'ErrorResponse', 'Answer': 'Answer', 'Thing': 'Thing'}
+        '_type': {'SearchResultsAnswer': 'SearchResultsAnswer'}
     }
 
-    def __init__(self, **kwargs):
-        super(Response, self).__init__(**kwargs)
-        self.web_search_url = None
-        self._type = 'Response'
+    def __init__(self, **kwargs) -> None:
+        super(Answer, self).__init__(**kwargs)
+        self.follow_up_queries = None
+        self._type = 'Answer'

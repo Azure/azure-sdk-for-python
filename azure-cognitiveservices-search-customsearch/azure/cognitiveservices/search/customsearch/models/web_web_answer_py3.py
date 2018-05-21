@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_results_answer import SearchResultsAnswer
+from .search_results_answer_py3 import SearchResultsAnswer
 
 
 class WebWebAnswer(SearchResultsAnswer):
@@ -71,8 +71,8 @@ class WebWebAnswer(SearchResultsAnswer):
         'some_results_removed': {'key': 'someResultsRemoved', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value, **kwargs) -> None:
         super(WebWebAnswer, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
         self.some_results_removed = None
         self._type = 'Web/WebAnswer'
