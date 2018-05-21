@@ -13,15 +13,14 @@ from msrest.serialization import Model
 
 
 class AzNsActionGroup(Model):
-    """Azure action group.
+    """azns notification group.
 
-    :param action_group: Azure Action Group reference.
+    :param action_group: Azure Group reference.
     :type action_group: list[str]
-    :param email_subject: Custom subject override for all email ids in Azure
-     action group
+    :param email_subject: Custom subject for Azns email
     :type email_subject: str
-    :param custom_webhook_payload: Custom payload to be sent for all webook
-     URI in Azure action group
+    :param custom_webhook_payload: Custom webhook payload to be send to azns
+     action group
     :type custom_webhook_payload: str
     """
 
