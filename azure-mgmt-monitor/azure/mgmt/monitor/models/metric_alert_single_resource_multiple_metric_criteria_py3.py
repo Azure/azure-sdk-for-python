@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .metric_alert_criteria import MetricAlertCriteria
+from .metric_alert_criteria_py3 import MetricAlertCriteria
 
 
 class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
