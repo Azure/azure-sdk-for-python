@@ -42,9 +42,6 @@ class MetricAlertResourcePatch(Model):
     :param criteria: Required. defines the specific alert criteria
      information.
     :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
-    :param auto_mitigate: the flag that indicates whether the alert should be
-     auto resolved or not.
-    :type auto_mitigate: bool
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
     :type actions: list[~azure.mgmt.monitor.models.Action]
@@ -71,12 +68,11 @@ class MetricAlertResourcePatch(Model):
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
-        'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[Action]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, description: str, severity: int, enabled: bool, evaluation_frequency, window_size, criteria, tags=None, scopes=None, auto_mitigate: bool=None, actions=None, **kwargs) -> None:
+    def __init__(self, *, description: str, severity: int, enabled: bool, evaluation_frequency, window_size, criteria, tags=None, scopes=None, actions=None, **kwargs) -> None:
         super(MetricAlertResourcePatch, self).__init__(**kwargs)
         self.tags = tags
         self.description = description
@@ -86,6 +82,5 @@ class MetricAlertResourcePatch(Model):
         self.evaluation_frequency = evaluation_frequency
         self.window_size = window_size
         self.criteria = criteria
-        self.auto_mitigate = auto_mitigate
         self.actions = actions
         self.last_updated_time = None

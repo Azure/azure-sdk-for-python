@@ -100,6 +100,7 @@ try:
     from .source_py3 import Source
     from .schedule_py3 import Schedule
     from .log_search_rule_resource_py3 import LogSearchRuleResource
+    from .log_search_rule_resource_patch_py3 import LogSearchRuleResourcePatch
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
     from .alerting_action_py3 import AlertingAction
@@ -194,6 +195,7 @@ except (SyntaxError, ImportError):
     from .source import Source
     from .schedule import Schedule
     from .log_search_rule_resource import LogSearchRuleResource
+    from .log_search_rule_resource_patch import LogSearchRuleResourcePatch
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
     from .alerting_action import AlertingAction
@@ -323,6 +325,7 @@ __all__ = [
     'Source',
     'Schedule',
     'LogSearchRuleResource',
+    'LogSearchRuleResourcePatch',
     'TriggerCondition',
     'AzNsActionGroup',
     'AlertingAction',
