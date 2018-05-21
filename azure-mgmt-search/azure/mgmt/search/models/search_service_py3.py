@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class SearchService(Resource):
@@ -110,12 +110,12 @@ class SearchService(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
-        super(SearchService, self).__init__(**kwargs)
-        self.replica_count = kwargs.get('replica_count', 1)
-        self.partition_count = kwargs.get('partition_count', 1)
-        self.hosting_mode = kwargs.get('hosting_mode', "default")
+    def __init__(self, *, location: str=None, tags=None, replica_count: int=1, partition_count: int=1, hosting_mode="default", sku=None, **kwargs) -> None:
+        super(SearchService, self).__init__(location=location, tags=tags, **kwargs)
+        self.replica_count = replica_count
+        self.partition_count = partition_count
+        self.hosting_mode = hosting_mode
         self.status = None
         self.status_details = None
         self.provisioning_state = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = sku
