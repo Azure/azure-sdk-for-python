@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SearchServicePaged(Paged):
     """
-    A paging container for iterating over a list of SearchService object
+    A paging container for iterating over a list of :class:`SearchService <azure.mgmt.search.models.SearchService>` object
     """
 
     _attribute_map = {
