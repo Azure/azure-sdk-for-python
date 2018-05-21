@@ -22,7 +22,7 @@ class AdminKeysOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
     """
 
@@ -68,7 +68,7 @@ class AdminKeysOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listAdminKeys'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -111,6 +111,7 @@ class AdminKeysOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listAdminKeys'}
 
     def regenerate(
             self, resource_group_name, search_service_name, key_kind, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -147,7 +148,7 @@ class AdminKeysOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/regenerateAdminKey/{keyKind}'
+        url = self.regenerate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -191,3 +192,4 @@ class AdminKeysOperations(object):
             return client_raw_response
 
         return deserialized
+    regenerate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/regenerateAdminKey/{keyKind}'}

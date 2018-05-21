@@ -25,6 +25,6 @@ class SearchManagementRequestOptions(Model):
         'client_request_id': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, client_request_id: str=None, **kwargs) -> None:
         super(SearchManagementRequestOptions, self).__init__(**kwargs)
-        self.client_request_id = kwargs.get('client_request_id', None)
+        self.client_request_id = client_request_id

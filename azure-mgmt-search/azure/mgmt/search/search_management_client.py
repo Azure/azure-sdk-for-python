@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -54,7 +54,7 @@ class SearchManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class SearchManagementClient(object):
+class SearchManagementClient(SDKClient):
     """Client that can be used to manage Azure Search services and API keys.
 
     :ivar config: Configuration for client.
@@ -83,7 +83,7 @@ class SearchManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = SearchManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SearchManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-08-19'
