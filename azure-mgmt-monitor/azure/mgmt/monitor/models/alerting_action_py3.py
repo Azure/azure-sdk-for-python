@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .action import Action
+from .action_py3 import Action
 
 
 class AlertingAction(Action):
@@ -26,10 +26,10 @@ class AlertingAction(Action):
     :param severity: Required. Severity of the alert. Possible values include:
      '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-    :param azns_action: Required. Azure action group reference.
+    :param azns_action: Required. azns notification group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
     :param throttling_in_min: time (in minutes) for which Alerts should be
-     throttled or suppressed.
+     throttled
     :type throttling_in_min: int
     :param trigger: Required. The trigger condition that results in the alert
      rule being.
