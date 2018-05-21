@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import warnings
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
