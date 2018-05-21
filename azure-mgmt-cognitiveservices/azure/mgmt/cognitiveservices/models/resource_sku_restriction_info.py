@@ -12,26 +12,29 @@
 from msrest.serialization import Model
 
 
-class CognitiveServicesAccountEnumerateSkusResult(Model):
-    """The list of cognitive services accounts operation response.
+class ResourceSkuRestrictionInfo(Model):
+    """ResourceSkuRestrictionInfo.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Gets the list of Cognitive Services accounts and their
-     properties.
-    :vartype value:
-     list[~azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku]
+    :ivar locations: Locations where the SKU is restricted
+    :vartype locations: list[str]
+    :ivar zones: List of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'locations': {'readonly': True},
+        'zones': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CognitiveServicesResourceAndSku]'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
-        super(CognitiveServicesAccountEnumerateSkusResult, self).__init__(**kwargs)
-        self.value = None
+        super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
+        self.locations = None
+        self.zones = None

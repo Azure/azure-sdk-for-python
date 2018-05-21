@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ErrorBody(Model):
     """Cognitive Services error body.
 
-    :param code: error code
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code
     :type code: str
-    :param message: error message
+    :param message: Required. error message
     :type message: str
     """
 
@@ -31,6 +33,7 @@ class ErrorBody(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code, message):
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorBody, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

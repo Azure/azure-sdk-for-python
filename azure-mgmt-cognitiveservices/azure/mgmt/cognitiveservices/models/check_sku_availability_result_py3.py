@@ -44,11 +44,11 @@ class CheckSkuAvailabilityResult(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, kind=None, type: str=None, sku_name=None, sku_available: bool=None, reason: str=None, message: str=None, **kwargs) -> None:
         super(CheckSkuAvailabilityResult, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.type = kwargs.get('type', None)
-        self.sku_name = kwargs.get('sku_name', None)
-        self.sku_available = kwargs.get('sku_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.kind = kind
+        self.type = type
+        self.sku_name = sku_name
+        self.sku_available = sku_available
+        self.reason = reason
+        self.message = message

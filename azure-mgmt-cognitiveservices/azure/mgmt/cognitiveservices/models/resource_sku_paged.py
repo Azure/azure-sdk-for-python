@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .accounts_operations import AccountsOperations
-from .resource_skus_operations import ResourceSkusOperations
-from .operations import Operations
-from .check_sku_availability_operations import CheckSkuAvailabilityOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'AccountsOperations',
-    'ResourceSkusOperations',
-    'Operations',
-    'CheckSkuAvailabilityOperations',
-]
+
+class ResourceSkuPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceSku <azure.mgmt.cognitiveservices.models.ResourceSku>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceSku]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceSkuPaged, self).__init__(*args, **kwargs)
