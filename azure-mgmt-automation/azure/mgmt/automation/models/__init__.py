@@ -26,6 +26,7 @@ from .connection import Connection
 from .certificate import Certificate
 from .proxy_resource import ProxyResource
 from .resource import Resource
+from .watcher import Watcher
 from .runbook_parameter import RunbookParameter
 from .content_hash import ContentHash
 from .content_link import ContentLink
@@ -105,6 +106,8 @@ from .variable_create_or_update_parameters import VariableCreateOrUpdateParamete
 from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
 from .webhook_update_parameters import WebhookUpdateParameters
+from .watcher_update_parameters import WatcherUpdateParameters
+from .watcher_create_or_update_parameters import WatcherCreateOrUpdateParameters
 from .job_collection_item import JobCollectionItem
 from .windows_properties import WindowsProperties
 from .linux_properties import LinuxProperties
@@ -158,6 +161,7 @@ from .dsc_node_paged import DscNodePaged
 from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
+from .watcher_paged import WatcherPaged
 from .automation_client_enums import (
     AutomationKeyName,
     AutomationKeyPermissions,
@@ -204,6 +208,7 @@ __all__ = [
     'Certificate',
     'ProxyResource',
     'Resource',
+    'Watcher',
     'RunbookParameter',
     'ContentHash',
     'ContentLink',
@@ -283,6 +288,8 @@ __all__ = [
     'VariableUpdateParameters',
     'WebhookCreateOrUpdateParameters',
     'WebhookUpdateParameters',
+    'WatcherUpdateParameters',
+    'WatcherCreateOrUpdateParameters',
     'JobCollectionItem',
     'WindowsProperties',
     'LinuxProperties',
@@ -336,6 +343,7 @@ __all__ = [
     'DscNodeReportPaged',
     'DscCompilationJobPaged',
     'DscNodeConfigurationPaged',
+    'WatcherPaged',
     'AutomationKeyName',
     'AutomationKeyPermissions',
     'JobProvisioningState',
