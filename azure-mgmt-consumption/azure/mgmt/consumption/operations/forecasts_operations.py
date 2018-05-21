@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class GetBalancesByBillingAccountOperations(object):
-    """GetBalancesByBillingAccountOperations operations.
+class ForecastsOperations(object):
+    """ForecastsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-31. Constant value: "2018-03-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2018-05-31".
     """
 
     models = models
@@ -32,40 +32,41 @@ class GetBalancesByBillingAccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31"
+        self.api_version = "2018-05-31"
 
         self.config = config
 
-    def by_billing_period(
-            self, billing_account_id, billing_period_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the balances for a scope by billing period and billingAccountId.
-        Balances are available via this API only for May 1, 2014 or later.
+    def list(
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the forecast charges by subscriptionId.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param billing_period_name: Billing Period Name.
-        :type billing_period_name: str
+        :param filter: May be used to filter forecasts by properties/usageDate
+         (Utc time), properties/chargeType or properties/grain. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Balance or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.Balance or
+        :return: ForecastsListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ForecastsListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.by_billing_period.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -88,11 +89,11 @@ class GetBalancesByBillingAccountOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Balance', response)
+            deserialized = self._deserialize('ForecastsListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    by_billing_period.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/balances'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/forecasts'}

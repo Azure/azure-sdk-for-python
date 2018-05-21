@@ -12,29 +12,35 @@
 from msrest.serialization import Model
 
 
-class BalancePropertiesNewPurchasesDetailsItem(Model):
-    """BalancePropertiesNewPurchasesDetailsItem.
+class ForecastPropertiesConfidenceLevelsItem(Model):
+    """ForecastPropertiesConfidenceLevelsItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of new purchase.
-    :vartype name: str
-    :ivar value: the value of new purchase.
+    :ivar percentage: The percentage level of the confidence
+    :vartype percentage: decimal.Decimal
+    :ivar bound: The boundary of the percentage, values could be 'Upper' or
+     'Lower'
+    :vartype bound: str
+    :ivar value: The amount of forecast within the percentage level
     :vartype value: decimal.Decimal
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'percentage': {'readonly': True},
+        'bound': {'readonly': True},
         'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'percentage': {'key': 'percentage', 'type': 'decimal'},
+        'bound': {'key': 'bound', 'type': 'str'},
         'value': {'key': 'value', 'type': 'decimal'},
     }
 
     def __init__(self):
-        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__()
-        self.name = None
+        super(ForecastPropertiesConfidenceLevelsItem, self).__init__()
+        self.percentage = None
+        self.bound = None
         self.value = None
