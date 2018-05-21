@@ -27,7 +27,7 @@ class AccessUri(Model):
     }
 
     _attribute_map = {
-        'access_sas': {'key': 'properties.output.accessSAS', 'type': 'str'},
+        'access_sas': {'key': 'accessSAS', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

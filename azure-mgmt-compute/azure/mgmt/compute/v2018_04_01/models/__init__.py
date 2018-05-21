@@ -26,10 +26,6 @@ try:
     from .access_uri_py3 import AccessUri
     from .snapshot_py3 import Snapshot
     from .snapshot_update_py3 import SnapshotUpdate
-    from .api_error_base_py3 import ApiErrorBase
-    from .inner_error_py3 import InnerError
-    from .api_error_py3 import ApiError
-    from .operation_status_response_py3 import OperationStatusResponse
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .disk_sku import DiskSku
@@ -47,10 +43,6 @@ except (SyntaxError, ImportError):
     from .access_uri import AccessUri
     from .snapshot import Snapshot
     from .snapshot_update import SnapshotUpdate
-    from .api_error_base import ApiErrorBase
-    from .inner_error import InnerError
-    from .api_error import ApiError
-    from .operation_status_response import OperationStatusResponse
 from .disk_paged import DiskPaged
 from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
@@ -78,10 +70,6 @@ __all__ = [
     'AccessUri',
     'Snapshot',
     'SnapshotUpdate',
-    'ApiErrorBase',
-    'InnerError',
-    'ApiError',
-    'OperationStatusResponse',
     'DiskPaged',
     'SnapshotPaged',
     'StorageAccountTypes',
