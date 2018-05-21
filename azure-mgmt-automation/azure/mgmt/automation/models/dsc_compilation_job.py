@@ -33,8 +33,8 @@ class DscCompilationJob(ProxyResource):
     :vartype job_id: str
     :ivar creation_time: Gets the creation time of the job.
     :vartype creation_time: datetime
-    :param provisioning_state: The current provisioning state of the job.
-    :type provisioning_state:
+    :ivar provisioning_state: The current provisioning state of the job.
+    :vartype provisioning_state:
      ~azure.mgmt.automation.models.JobProvisioningStateProperty
     :param run_on: Gets or sets the runOn which specifies the group name where
      the job is to be executed.
@@ -68,6 +68,7 @@ class DscCompilationJob(ProxyResource):
         'started_by': {'readonly': True},
         'job_id': {'readonly': True},
         'creation_time': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'exception': {'readonly': True},
@@ -95,13 +96,13 @@ class DscCompilationJob(ProxyResource):
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
     }
 
-    def __init__(self, configuration=None, provisioning_state=None, run_on=None, status=None, status_details=None, parameters=None):
+    def __init__(self, configuration=None, run_on=None, status=None, status_details=None, parameters=None):
         super(DscCompilationJob, self).__init__()
         self.configuration = configuration
         self.started_by = None
         self.job_id = None
         self.creation_time = None
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.run_on = run_on
         self.status = status
         self.status_details = status_details
