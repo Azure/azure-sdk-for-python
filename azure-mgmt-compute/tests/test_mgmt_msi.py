@@ -19,7 +19,7 @@ from devtools_testutils import (
     ResourceGroupPreparer,
 )
 
-from .test_mgmt_compute import ComputeResourceNames
+from test_mgmt_compute import ComputeResourceNames
 
 class MgmtMSIComputeTest(AzureMgmtTestCase):
 
