@@ -9,16 +9,16 @@
 from azure.mgmt.batchai import BatchAIManagementClient
 from devtools_testutils import AzureMgmtTestCase
 
-from . import helpers
+from helpers import create_batchai_client, LOCATION
 
 
 class JobTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(JobTestCase, self).setUp()
-        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
+        self.client = create_batchai_client(self)  # type: BatchAIManagementClient
 
     def test_quota_and_usage(self):
-        usages = list(self.client.usage.list(helpers.LOCATION))
+        usages = list(self.client.usage.list(LOCATION))
         self.assertGreater(len(usages), 0)
         for u in usages:
             self.assertIsNotNone(u.name)

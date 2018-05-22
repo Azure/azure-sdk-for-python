@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservices.models import (StorageModelType, Vault, Sku, Sk
                                                 StorageModelType
                                                       )
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from .recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
+from recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
 
 class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
