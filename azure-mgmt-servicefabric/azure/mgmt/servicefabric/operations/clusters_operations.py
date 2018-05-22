@@ -23,7 +23,8 @@ class ClustersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2018-02-01" for this specification. Constant value: "2018-02-01".
     """
 
     models = models
@@ -33,24 +34,89 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2018-02-01"
 
         self.config = config
 
+    def get(
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a Service Fabric cluster resource.
 
-    def _create_initial(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
+        Get a Service Fabric cluster resource created or in the process of
+        being created in the specified resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Cluster or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicefabric.models.Cluster or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
+        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorModelException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Cluster', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
+
+
+    def _create_initial(
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.create.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -77,6 +143,8 @@ class ClustersOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('Cluster', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Cluster', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -85,20 +153,16 @@ class ClustersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a ServiceFabric cluster.
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Service Fabric cluster resource.
 
-        Create cluster resource
-        .
+        Create or update a Service Fabric cluster resource with the specified
+        name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param parameters: The cluster resource.
         :type parameters: ~azure.mgmt.servicefabric.models.Cluster
         :param dict custom_headers: headers that will be added to the request
@@ -115,8 +179,6 @@ class ClustersOperations(object):
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            api_version=api_version,
-            subscription_id=subscription_id,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -158,148 +220,23 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
-
-    def delete(
-            self, resource_group_name, cluster_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Delete cluster resource.
-
-        Delete cluster resource
-        .
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
-        :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            raise models.ErrorModelException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def get(
-            self, resource_group_name, cluster_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Get cluster resource.
-
-        Get cluster resource
-        .
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
-        :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Cluster or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.Cluster or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorModelException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Cluster', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -326,6 +263,8 @@ class ClustersOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('Cluster', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Cluster', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -334,20 +273,16 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Update cluster configuration.
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Updates the configuration of a Service Fabric cluster resource.
 
-        Update cluster configuration
-        .
+        Update the configuration of a Service Fabric cluster resource with the
+        specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param parameters: The parameters which contains the property value
          and property name which used to update the cluster configuration.
         :type parameters:
@@ -366,8 +301,6 @@ class ClustersOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            api_version=api_version,
-            subscription_id=subscription_id,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -409,42 +342,40 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
-    def list_by_resource_group(
-            self, resource_group_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """List cluster resource by resource group.
+    def delete(
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Service Fabric cluster resource.
 
-        List cluster resource by resource group
-        .
+        Delete a Service Fabric cluster resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ClusterListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.ClusterListResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -457,34 +388,27 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
+        request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorModelException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ClusterListResult', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
-        return deserialized
+    def list_by_resource_group(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of Service Fabric cluster resources created in the
+        specified resource group.
 
-    def list(
-            self, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """List cluster resource.
+        Gets all Service Fabric cluster resources created or in the process of
+        being created in the resource group.
 
-        List cluster resource
-        .
-
-        :param api_version: The version of the API.
-        :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -497,15 +421,16 @@ class ClustersOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/clusters'
+        url = self.list_by_resource_group.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -534,3 +459,63 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters'}
+
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of Service Fabric cluster resources created in the
+        specified subscription.
+
+        Gets all Service Fabric cluster resources created or in the process of
+        being created in the subscription.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ClusterListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicefabric.models.ClusterListResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
+        """
+        # Construct URL
+        url = self.list.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorModelException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterListResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/clusters'}
