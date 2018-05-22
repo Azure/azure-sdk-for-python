@@ -100,6 +100,71 @@ class FactoriesOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/factories'}
 
+    def configure_factory_repo(
+            self, location_id, factory_repo_update, custom_headers=None, raw=False, **operation_config):
+        """Updates a factory's repo information.
+
+        :param location_id: The location identifier.
+        :type location_id: str
+        :param factory_repo_update: Update factory repo request definition.
+        :type factory_repo_update:
+         ~azure.mgmt.datafactory.models.FactoryRepoUpdate
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Factory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.Factory or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.configure_factory_repo.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'locationId': self._serialize.url("location_id", location_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(factory_repo_update, 'FactoryRepoUpdate')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Factory', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    configure_factory_repo.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/configureFactoryRepo'}
+
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists factories.

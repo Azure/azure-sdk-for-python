@@ -18,6 +18,7 @@ try:
     from .azure_key_vault_secret_reference_py3 import AzureKeyVaultSecretReference
     from .secret_base_py3 import SecretBase
     from .factory_identity_py3 import FactoryIdentity
+    from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
     from .factory_py3 import Factory
     from .integration_runtime_py3 import IntegrationRuntime
     from .integration_runtime_resource_py3 import IntegrationRuntimeResource
@@ -39,6 +40,7 @@ try:
     from .trigger_resource_py3 import TriggerResource
     from .create_run_response_py3 import CreateRunResponse
     from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .factory_repo_update_py3 import FactoryRepoUpdate
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
@@ -343,6 +345,7 @@ except (SyntaxError, ImportError):
     from .azure_key_vault_secret_reference import AzureKeyVaultSecretReference
     from .secret_base import SecretBase
     from .factory_identity import FactoryIdentity
+    from .factory_vsts_configuration import FactoryVSTSConfiguration
     from .factory import Factory
     from .integration_runtime import IntegrationRuntime
     from .integration_runtime_resource import IntegrationRuntimeResource
@@ -364,6 +367,7 @@ except (SyntaxError, ImportError):
     from .trigger_resource import TriggerResource
     from .create_run_response import CreateRunResponse
     from .error_response import ErrorResponse, ErrorResponseException
+    from .factory_repo_update import FactoryRepoUpdate
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
@@ -737,6 +741,7 @@ __all__ = [
     'AzureKeyVaultSecretReference',
     'SecretBase',
     'FactoryIdentity',
+    'FactoryVSTSConfiguration',
     'Factory',
     'IntegrationRuntime',
     'IntegrationRuntimeResource',
@@ -758,6 +763,7 @@ __all__ = [
     'TriggerResource',
     'CreateRunResponse',
     'ErrorResponse', 'ErrorResponseException',
+    'FactoryRepoUpdate',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',
