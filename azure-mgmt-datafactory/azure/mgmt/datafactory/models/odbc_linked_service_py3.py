@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
 class OdbcLinkedService(LinkedService):
@@ -34,9 +34,8 @@ class OdbcLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: Required. The non-access credential portion of
-     the connection string as well as an optional encrypted credential. Type:
-     string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+     the connection string as well as an optional encrypted credential.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param authentication_type: Type of authentication used to connect to the
      ODBC data store. Possible values are: Anonymous and Basic. Type: string
      (or Expression with resultType string).
@@ -67,7 +66,7 @@ class OdbcLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'credential': {'key': 'typeProperties.credential', 'type': 'SecretBase'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},

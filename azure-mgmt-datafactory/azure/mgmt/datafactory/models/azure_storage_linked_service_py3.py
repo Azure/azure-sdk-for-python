@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
 class AzureStorageLinkedService(LinkedService):
@@ -34,9 +34,8 @@ class AzureStorageLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: The connection string. It is mutually exclusive
-     with sasUri property. Type: string, SecureString or
-     AzureKeyVaultSecretReference.
-    :type connection_string: object
+     with sasUri property.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
      exclusive with connectionString property.
     :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
@@ -57,7 +56,7 @@ class AzureStorageLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_translator import CopyTranslator
+from .copy_translator_py3 import CopyTranslator
 
 
 class TabularTranslator(CopyTranslator):

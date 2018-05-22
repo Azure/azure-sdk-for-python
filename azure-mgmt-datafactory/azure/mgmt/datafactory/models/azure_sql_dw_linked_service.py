@@ -33,10 +33,8 @@ class AzureSqlDWLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string. Type: string,
-     SecureString or AzureKeyVaultSecretReference. Type: string, SecureString
-     or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :param connection_string: Required. The connection string.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param service_principal_id: The ID of the service principal used to
      authenticate against Azure SQL Data Warehouse. Type: string (or Expression
      with resultType string).
@@ -65,7 +63,7 @@ class AzureSqlDWLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},

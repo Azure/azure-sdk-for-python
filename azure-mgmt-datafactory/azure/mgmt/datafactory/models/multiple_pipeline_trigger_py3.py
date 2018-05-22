@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .trigger import Trigger
+from .trigger_py3 import Trigger
 
 
 class MultiplePipelineTrigger(Trigger):

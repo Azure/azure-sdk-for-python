@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_sink import CopySink
+from .copy_sink_py3 import CopySink
 
 
 class SapCloudForCustomerSink(CopySink):

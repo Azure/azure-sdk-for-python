@@ -33,8 +33,20 @@ class MySqlLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :param server: Required. Server name for connection. Type: string (or
+     Expression with resultType string).
+    :type server: object
+    :param database: Required. Database name for connection. Type: string (or
+     Expression with resultType string).
+    :type database: object
+    :param schema: Schema name for connection. Type: string (or Expression
+     with resultType string).
+    :type schema: object
+    :param username: Username for authentication. Type: string (or Expression
+     with resultType string).
+    :type username: object
+    :param password: Password for authentication.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -43,7 +55,8 @@ class MySqlLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'connection_string': {'required': True},
+        'server': {'required': True},
+        'database': {'required': True},
     }
 
     _attribute_map = {
@@ -53,12 +66,20 @@ class MySqlLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'server': {'key': 'typeProperties.server', 'type': 'object'},
+        'database': {'key': 'typeProperties.database', 'type': 'object'},
+        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
+        'username': {'key': 'typeProperties.username', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(MySqlLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
+        self.server = kwargs.get('server', None)
+        self.database = kwargs.get('database', None)
+        self.schema = kwargs.get('schema', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'MySql'

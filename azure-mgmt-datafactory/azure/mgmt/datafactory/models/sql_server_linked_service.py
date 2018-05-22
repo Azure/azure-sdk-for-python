@@ -33,9 +33,8 @@ class SqlServerLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string. Type: string,
-     SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :param connection_string: Required. The connection string.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param user_name: The on-premises Windows authentication user name. Type:
      string (or Expression with resultType string).
     :type user_name: object
@@ -59,7 +58,7 @@ class SqlServerLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
