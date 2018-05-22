@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.0 (2018-05-24)
+++++++++++++++++++
+
+- Event Schemas for EventGrid subscription validation event, Azure Media events, and ServiceBus events.
+
 1.0.0 (2018-04-26)
 ++++++++++++++++++
 

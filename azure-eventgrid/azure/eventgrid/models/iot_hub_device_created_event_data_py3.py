@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+from .device_life_cycle_event_properties_py3 import DeviceLifeCycleEventProperties
 
 
 class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
