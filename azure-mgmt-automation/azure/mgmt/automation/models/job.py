@@ -56,8 +56,7 @@ class Job(ProxyResource):
     :param parameters: Gets or sets the parameters of the job.
     :type parameters: dict[str, str]
     :ivar provisioning_state: The provisioning state of a resource.
-    :vartype provisioning_state:
-     ~azure.mgmt.automation.models.JobProvisioningStateProperty
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -84,7 +83,7 @@ class Job(ProxyResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_status_modified_time': {'key': 'properties.lastStatusModifiedTime', 'type': 'iso-8601'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'JobProvisioningStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, runbook=None, started_by=None, run_on=None, job_id=None, creation_time=None, status=None, status_details=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None):

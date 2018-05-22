@@ -62,6 +62,8 @@ from .agent_registration_keys import AgentRegistrationKeys
 from .agent_registration import AgentRegistration
 from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
+from .job_stream import JobStream
+from .job_stream_list_result import JobStreamListResult
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
@@ -77,14 +79,9 @@ from .hybrid_runbook_worker import HybridRunbookWorker
 from .run_as_credential_association_property import RunAsCredentialAssociationProperty
 from .hybrid_runbook_worker_group import HybridRunbookWorkerGroup
 from .hybrid_runbook_worker_group_update_parameters import HybridRunbookWorkerGroupUpdateParameters
-from .job import Job
-from .job_create_parameters import JobCreateParameters
-from .job_list_result import JobListResult
 from .schedule_association_property import ScheduleAssociationProperty
 from .job_schedule_create_parameters import JobScheduleCreateParameters
 from .job_schedule import JobSchedule
-from .job_stream import JobStream
-from .job_stream_list_result import JobStreamListResult
 from .linked_workspace import LinkedWorkspace
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
@@ -105,7 +102,9 @@ from .variable_create_or_update_parameters import VariableCreateOrUpdateParamete
 from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
 from .webhook_update_parameters import WebhookUpdateParameters
+from .job import Job
 from .job_collection_item import JobCollectionItem
+from .job_create_parameters import JobCreateParameters
 from .windows_properties import WindowsProperties
 from .linux_properties import LinuxProperties
 from .update_configuration import UpdateConfiguration
@@ -240,6 +239,8 @@ __all__ = [
     'AgentRegistration',
     'AgentRegistrationRegenerateKeyParameter',
     'DscCompilationJobCreateParameters',
+    'JobStream',
+    'JobStreamListResult',
     'DscConfigurationCreateOrUpdateParameters',
     'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
@@ -255,14 +256,9 @@ __all__ = [
     'RunAsCredentialAssociationProperty',
     'HybridRunbookWorkerGroup',
     'HybridRunbookWorkerGroupUpdateParameters',
-    'Job',
-    'JobCreateParameters',
-    'JobListResult',
     'ScheduleAssociationProperty',
     'JobScheduleCreateParameters',
     'JobSchedule',
-    'JobStream',
-    'JobStreamListResult',
     'LinkedWorkspace',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
@@ -283,7 +279,9 @@ __all__ = [
     'VariableUpdateParameters',
     'WebhookCreateOrUpdateParameters',
     'WebhookUpdateParameters',
+    'Job',
     'JobCollectionItem',
+    'JobCreateParameters',
     'WindowsProperties',
     'LinuxProperties',
     'UpdateConfiguration',
