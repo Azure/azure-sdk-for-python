@@ -21,7 +21,8 @@ class KeyCreateParameters(Model):
      JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM',
      'oct'
     :type kty: str or ~azure.keyvault.models.JsonWebKeyType
-    :param key_size: The key size in bits. For example, 1024 or 2048.
+    :param key_size: The key size in bits. For example: 1024, 2048, 3072, or
+     4096 for RSA.
     :type key_size: int
     :param key_ops:
     :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
