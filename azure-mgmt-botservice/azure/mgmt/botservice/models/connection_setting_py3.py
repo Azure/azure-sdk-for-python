@@ -12,7 +12,7 @@
 from .resource_py3 import Resource
 
 
-class BotChannel(Resource):
+class ConnectionSetting(Resource):
     """Bot channel resource definition.
 
     Variables are only populated by the server, and will be ignored when
@@ -36,7 +36,8 @@ class BotChannel(Resource):
     :param etag: Entity Tag
     :type etag: str
     :param properties: The set of properties specific to bot channel resource
-    :type properties: ~azure.mgmt.botservice.models.Channel
+    :type properties:
+     ~azure.mgmt.botservice.models.ConnectionSettingProperties
     """
 
     _validation = {
@@ -54,9 +55,9 @@ class BotChannel(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Channel'},
+        'properties': {'key': 'properties', 'type': 'ConnectionSettingProperties'},
     }
 
     def __init__(self, *, location: str=None, tags=None, sku=None, kind=None, etag: str=None, properties=None, **kwargs) -> None:
-        super(BotChannel, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, **kwargs)
+        super(ConnectionSetting, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, **kwargs)
         self.properties = properties

@@ -39,6 +39,14 @@ try:
     from .sms_channel_py3 import SmsChannel
     from .slack_channel_properties_py3 import SlackChannelProperties
     from .slack_channel_py3 import SlackChannel
+    from .connection_item_name_py3 import ConnectionItemName
+    from .connection_setting_parameter_py3 import ConnectionSettingParameter
+    from .connection_setting_properties_py3 import ConnectionSettingProperties
+    from .connection_setting_py3 import ConnectionSetting
+    from .service_provider_parameter_py3 import ServiceProviderParameter
+    from .service_provider_properties_py3 import ServiceProviderProperties
+    from .service_provider_py3 import ServiceProvider
+    from .service_provider_response_list_py3 import ServiceProviderResponseList
     from .error_body_py3 import ErrorBody
     from .error_py3 import Error, ErrorException
     from .operation_display_info_py3 import OperationDisplayInfo
@@ -75,6 +83,14 @@ except (SyntaxError, ImportError):
     from .sms_channel import SmsChannel
     from .slack_channel_properties import SlackChannelProperties
     from .slack_channel import SlackChannel
+    from .connection_item_name import ConnectionItemName
+    from .connection_setting_parameter import ConnectionSettingParameter
+    from .connection_setting_properties import ConnectionSettingProperties
+    from .connection_setting import ConnectionSetting
+    from .service_provider_parameter import ServiceProviderParameter
+    from .service_provider_properties import ServiceProviderProperties
+    from .service_provider import ServiceProvider
+    from .service_provider_response_list import ServiceProviderResponseList
     from .error_body import ErrorBody
     from .error import Error, ErrorException
     from .operation_display_info import OperationDisplayInfo
@@ -84,6 +100,7 @@ except (SyntaxError, ImportError):
 from .bot_paged import BotPaged
 from .bot_channel_paged import BotChannelPaged
 from .operation_entity_paged import OperationEntityPaged
+from .connection_setting_paged import ConnectionSettingPaged
 from .azure_bot_service_enums import (
     SkuName,
     SkuTier,
@@ -121,6 +138,14 @@ __all__ = [
     'SmsChannel',
     'SlackChannelProperties',
     'SlackChannel',
+    'ConnectionItemName',
+    'ConnectionSettingParameter',
+    'ConnectionSettingProperties',
+    'ConnectionSetting',
+    'ServiceProviderParameter',
+    'ServiceProviderProperties',
+    'ServiceProvider',
+    'ServiceProviderResponseList',
     'ErrorBody',
     'Error', 'ErrorException',
     'OperationDisplayInfo',
@@ -130,6 +155,7 @@ __all__ = [
     'BotPaged',
     'BotChannelPaged',
     'OperationEntityPaged',
+    'ConnectionSettingPaged',
     'SkuName',
     'SkuTier',
     'Kind',
