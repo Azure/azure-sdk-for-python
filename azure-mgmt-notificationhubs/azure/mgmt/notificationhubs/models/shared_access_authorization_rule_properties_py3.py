@@ -64,9 +64,9 @@ class SharedAccessAuthorizationRuleProperties(Model):
         'revision': {'key': 'revision', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, rights=None, **kwargs) -> None:
         super(SharedAccessAuthorizationRuleProperties, self).__init__(**kwargs)
-        self.rights = kwargs.get('rights', None)
+        self.rights = rights
         self.primary_key = None
         self.secondary_key = None
         self.key_name = None

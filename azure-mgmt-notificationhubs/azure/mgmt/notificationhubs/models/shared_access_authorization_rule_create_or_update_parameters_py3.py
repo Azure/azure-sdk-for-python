@@ -31,6 +31,6 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties, **kwargs) -> None:
         super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties

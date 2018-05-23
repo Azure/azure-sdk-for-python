@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """SubResource.
+class NamespacePatchParameters(Model):
+    """Parameters supplied to the Patch Namespace operation.
 
-    :param id: Resource Id
-    :type id: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku: The sku of the created namespace
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, tags=None, sku=None, **kwargs) -> None:
+        super(NamespacePatchParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.sku = sku

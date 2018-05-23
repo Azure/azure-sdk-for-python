@@ -29,8 +29,8 @@ class MpnsCredential(Model):
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, mpns_certificate: str=None, certificate_key: str=None, thumbprint: str=None, **kwargs) -> None:
         super(MpnsCredential, self).__init__(**kwargs)
-        self.mpns_certificate = kwargs.get('mpns_certificate', None)
-        self.certificate_key = kwargs.get('certificate_key', None)
-        self.thumbprint = kwargs.get('thumbprint', None)
+        self.mpns_certificate = mpns_certificate
+        self.certificate_key = certificate_key
+        self.thumbprint = thumbprint

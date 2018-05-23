@@ -55,12 +55,12 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, location: str, tags=None, sku=None, is_availiable: bool=None, **kwargs) -> None:
         super(CheckAvailabilityParameters, self).__init__(**kwargs)
         self.id = None
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.is_availiable = kwargs.get('is_availiable', None)
+        self.location = location
+        self.tags = tags
+        self.sku = sku
+        self.is_availiable = is_availiable
