@@ -12,7 +12,7 @@
 from .custom import http_bearer_challenge_cache as HttpBearerChallengeCache
 from .custom.http_bearer_challenge import HttpBearerChallenge
 from .custom.http_challenge import HttpChallenge
-from .custom.key_vault_client import CustomKeyVaultClient as KeyVaultClient
+from .custom.key_vault_client import KeyVaultClient
 from .custom.key_vault_id import (KeyVaultId,
                                   KeyId,
                                   SecretId,
