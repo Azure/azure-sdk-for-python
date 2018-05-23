@@ -16,10 +16,7 @@ from .version import VERSION
 from .operations.bots_operations import BotsOperations
 from .operations.channels_operations import ChannelsOperations
 from .operations.operations import Operations
-from .operations.bot_connections_operations import BotConnectionsOperations
 from .operations.bot_connection_operations import BotConnectionOperations
-from .operations.bot_token_operations import BotTokenOperations
-from .operations.connections_operations import ConnectionsOperations
 from . import models
 
 
@@ -31,16 +28,25 @@ class AzureBotServiceConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param resource_group_name: The name of the Bot resource group in the user
+     subscription.
+    :type resource_group_name: str
+    :param resource_name: The name of the Bot resource.
+    :type resource_name: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, resource_group_name, resource_name, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if resource_name is None:
+            raise ValueError("Parameter 'resource_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
@@ -52,6 +58,8 @@ class AzureBotServiceConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.resource_group_name = resource_group_name
+        self.resource_name = resource_name
         self.subscription_id = subscription_id
 
 
@@ -67,27 +75,26 @@ class AzureBotService(SDKClient):
     :vartype channels: azure.mgmt.botservice.operations.ChannelsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.operations.Operations
-    :ivar bot_connections: BotConnections operations
-    :vartype bot_connections: azure.mgmt.botservice.operations.BotConnectionsOperations
     :ivar bot_connection: BotConnection operations
     :vartype bot_connection: azure.mgmt.botservice.operations.BotConnectionOperations
-    :ivar bot_token: BotToken operations
-    :vartype bot_token: azure.mgmt.botservice.operations.BotTokenOperations
-    :ivar connections: Connections operations
-    :vartype connections: azure.mgmt.botservice.operations.ConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param resource_group_name: The name of the Bot resource group in the user
+     subscription.
+    :type resource_group_name: str
+    :param resource_name: The name of the Bot resource.
+    :type resource_name: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, resource_group_name, resource_name, subscription_id, base_url=None):
 
-        self.config = AzureBotServiceConfiguration(credentials, subscription_id, base_url)
+        self.config = AzureBotServiceConfiguration(credentials, resource_group_name, resource_name, subscription_id, base_url)
         super(AzureBotService, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -101,11 +108,5 @@ class AzureBotService(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.bot_connections = BotConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.bot_connection = BotConnectionOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.bot_token = BotTokenOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.connections = ConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

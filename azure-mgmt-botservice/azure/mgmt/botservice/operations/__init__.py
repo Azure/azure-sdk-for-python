@@ -12,17 +12,11 @@
 from .bots_operations import BotsOperations
 from .channels_operations import ChannelsOperations
 from .operations import Operations
-from .bot_connections_operations import BotConnectionsOperations
 from .bot_connection_operations import BotConnectionOperations
-from .bot_token_operations import BotTokenOperations
-from .connections_operations import ConnectionsOperations
 
 __all__ = [
     'BotsOperations',
     'ChannelsOperations',
     'Operations',
-    'BotConnectionsOperations',
     'BotConnectionOperations',
-    'BotTokenOperations',
-    'ConnectionsOperations',
 ]

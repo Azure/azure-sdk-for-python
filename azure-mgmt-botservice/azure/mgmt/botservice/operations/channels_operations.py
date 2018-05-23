@@ -37,14 +37,9 @@ class ChannelsOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, resource_name, channel_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, channel_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a Channel registration for a Bot Service.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param channel_name: The name of the Channel resource. Possible values
          include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
          'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
@@ -66,8 +61,8 @@ class ChannelsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -113,14 +108,9 @@ class ChannelsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
 
     def update(
-            self, resource_group_name, resource_name, channel_name, location=None, tags=None, sku=None, kind=None, etag=None, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, channel_name, location=None, tags=None, sku=None, kind=None, etag=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates a Channel registration for a Bot Service.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param channel_name: The name of the Channel resource. Possible values
          include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
          'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
@@ -156,8 +146,8 @@ class ChannelsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -203,14 +193,9 @@ class ChannelsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
 
     def delete(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
+            self, channel_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a Channel registration from a Bot Service.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param channel_name: The name of the Bot resource.
         :type channel_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -226,8 +211,8 @@ class ChannelsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'channelName': self._serialize.url("channel_name", channel_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -260,14 +245,9 @@ class ChannelsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
 
     def get(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
+            self, channel_name, custom_headers=None, raw=False, **operation_config):
         """Returns a BotService Channel registration specified by the parameters.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param channel_name: The name of the Bot resource.
         :type channel_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -284,8 +264,8 @@ class ChannelsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'channelName': self._serialize.url("channel_name", channel_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -325,14 +305,9 @@ class ChannelsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
 
     def list_with_keys(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
+            self, channel_name, custom_headers=None, raw=False, **operation_config):
         """Lists a Channel registration for a Bot Service including secrets.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param channel_name: The name of the Channel resource. Possible values
          include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
          'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
@@ -352,8 +327,8 @@ class ChannelsOperations(object):
         # Construct URL
         url = self.list_with_keys.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -393,15 +368,10 @@ class ChannelsOperations(object):
     list_with_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}/listChannelWithKeys'}
 
     def list_by_resource_group(
-            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Returns all the Channel registrations of a particular BotService
         resource.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -419,8 +389,8 @@ class ChannelsOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+                    'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
