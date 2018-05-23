@@ -19,8 +19,8 @@ class KeyProperties(Model):
     :type exportable: bool
     :param key_type: The key type.
     :type key_type: str
-    :param key_size: The key size in bits. For example: 1024, 2048, 3072, or
-     4096 for RSA.
+    :param key_size: The key size in bits. For example: 2048, 3072, or 4096
+     for RSA.
     :type key_size: int
     :param reuse_key: Indicates if the same key pair will be used on
      certificate renewal.
