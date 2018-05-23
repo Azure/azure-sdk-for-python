@@ -71,6 +71,7 @@ try:
     from .operation_py3 import Operation
     from .workspace_py3 import Workspace
     from .workspace_create_parameters_py3 import WorkspaceCreateParameters
+    from .workspace_update_parameters_py3 import WorkspaceUpdateParameters
     from .experiment_py3 import Experiment
     from .workspaces_list_options_py3 import WorkspacesListOptions
     from .workspaces_list_by_resource_group_options_py3 import WorkspacesListByResourceGroupOptions
@@ -141,6 +142,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .workspace import Workspace
     from .workspace_create_parameters import WorkspaceCreateParameters
+    from .workspace_update_parameters import WorkspaceUpdateParameters
     from .experiment import Experiment
     from .workspaces_list_options import WorkspacesListOptions
     from .workspaces_list_by_resource_group_options import WorkspacesListByResourceGroupOptions
@@ -235,6 +237,7 @@ __all__ = [
     'Operation',
     'Workspace',
     'WorkspaceCreateParameters',
+    'WorkspaceUpdateParameters',
     'Experiment',
     'WorkspacesListOptions',
     'WorkspacesListByResourceGroupOptions',

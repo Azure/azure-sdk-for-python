@@ -151,7 +151,7 @@ class ClustersOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}'}
 
     def update(
-            self, resource_group_name, workspace_name, cluster_name, tags=None, scale_settings=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, cluster_name, scale_settings=None, custom_headers=None, raw=False, **operation_config):
         """Updates properties of a Cluster.
 
         :param resource_group_name: Name of the resource group to which the
@@ -167,8 +167,6 @@ class ClustersOperations(object):
          alphanumeric characters along with dash (-) and underscore (_). The
          name must be from 1 through 64 characters long.
         :type cluster_name: str
-        :param tags: The user specified tags associated with the Cluster.
-        :type tags: dict[str, str]
         :param scale_settings: Desired scale for the cluster
         :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
         :param dict custom_headers: headers that will be added to the request
@@ -181,7 +179,7 @@ class ClustersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.ClusterUpdateParameters(tags=tags, scale_settings=scale_settings)
+        parameters = models.ClusterUpdateParameters(scale_settings=scale_settings)
 
         # Construct URL
         url = self.update.metadata['url']
