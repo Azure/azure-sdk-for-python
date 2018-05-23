@@ -14,32 +14,32 @@ from azure.eventhub import EventData
 from azure.eventhub.async import EventHubClientAsync
 
 
-# @pytest.mark.asyncio
-# async def test_send_with_partition_key_async(connection_str, receivers):
-#     pytest.skip("")
-#     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
-#     sender = client.add_async_sender()
-#     await client.run_async()
+@pytest.mark.asyncio
+async def test_send_with_partition_key_async(connection_str, receivers):
+    pytest.skip("")
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
+    sender = client.add_async_sender()
+    await client.run_async()
 
-#     data_val = 0
-#     for partition in [b"a", b"b", b"c"]:
-#         partition_key = b"test_partition_" + partition
-#         for i in range(5):
-#             data = EventData(str(data_val))
-#             data.partition_key = partition_key
-#             data_val += 1
-#             sender.send(data)
-#     await client.stop_async()
+    data_val = 0
+    for partition in [b"a", b"b", b"c"]:
+        partition_key = b"test_partition_" + partition
+        for i in range(5):
+            data = EventData(str(data_val))
+            data.partition_key = partition_key
+            data_val += 1
+            sender.send(data)
+    await client.stop_async()
 
-#     found_partition_keys = {}
-#     for index, partition in enumerate(receivers):
-#         received = partition.receive(timeout=5)
-#         for message in received:
-#             try:
-#                 existing = found_partition_keys[message.partition_key]
-#                 assert existing == index
-#             except KeyError:
-#                 found_partition_keys[message.partition_key] = index
+    found_partition_keys = {}
+    for index, partition in enumerate(receivers):
+        received = partition.receive(timeout=5)
+        for message in received:
+            try:
+                existing = found_partition_keys[message.partition_key]
+                assert existing == index
+            except KeyError:
+                found_partition_keys[message.partition_key] = index
 
 
 @pytest.mark.asyncio

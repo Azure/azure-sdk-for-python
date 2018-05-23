@@ -35,10 +35,9 @@ def test_send_with_partition_key(connection_str, receivers):
     for index, partition in enumerate(receivers):
         received = partition.receive(timeout=5)
         for message in received:
-            print(index, message.partition_key)
             try:
                 existing = found_partition_keys[message.partition_key]
-                #assert existing == index
+                assert existing == index
             except KeyError:
                 found_partition_keys[message.partition_key] = index
 

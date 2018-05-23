@@ -20,7 +20,7 @@ except Exception:
 import uamqp
 from uamqp import Connection
 from uamqp import SendClient, ReceiveClient
-from uamqp import Message, BatchMessage
+from uamqp import Message, BatchMessage, MessageHeader
 from uamqp import Source, Target
 from uamqp import authentication
 from uamqp import constants, types, errors
@@ -502,6 +502,8 @@ class EventData(object):
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._properties = {}
+        self._header = MessageHeader()
+        self._header.durable = True
         if batch:
             self.message = BatchMessage(data=batch, multi_messages=True)
         elif message:
