@@ -13,13 +13,13 @@ from .linked_integration_runtime_properties import LinkedIntegrationRuntimePrope
 
 
 class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
-    """The base definition of a secret type.
+    """The key authorization type.
 
     All required parameters must be populated in order to send to Azure.
 
     :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param key: Required. Type of the secret.
+    :param key: Required. The key used for authorization.
     :type key: ~azure.mgmt.datafactory.models.SecureString
     """
 
