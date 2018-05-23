@@ -43,11 +43,11 @@ class ComputerVisionError(Model):
         'request_id': {'key': 'requestId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code, message: str, request_id: str=None, **kwargs) -> None:
         super(ComputerVisionError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.request_id = kwargs.get('request_id', None)
+        self.code = code
+        self.message = message
+        self.request_id = request_id
 
 
 class ComputerVisionErrorException(HttpOperationError):

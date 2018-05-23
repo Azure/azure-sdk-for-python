@@ -26,7 +26,7 @@ class ImageTag(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, confidence: float=None, **kwargs) -> None:
         super(ImageTag, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.confidence = kwargs.get('confidence', None)
+        self.name = name
+        self.confidence = confidence

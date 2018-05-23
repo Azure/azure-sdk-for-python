@@ -12,23 +12,18 @@
 from msrest.serialization import Model
 
 
-class ImageUrl(Model):
-    """ImageUrl.
+class CategoryDetail(Model):
+    """An object describing additional category details.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param url: Required. Publicly reachable URL of an image
-    :type url: str
+    :param celebrities: An array of celebrities if any identified.
+    :type celebrities:
+     list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
     """
 
-    _validation = {
-        'url': {'required': True},
-    }
-
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
+        'celebrities': {'key': 'celebrities', 'type': '[CelebritiesModel]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageUrl, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
+    def __init__(self, *, celebrities=None, **kwargs) -> None:
+        super(CategoryDetail, self).__init__(**kwargs)
+        self.celebrities = celebrities

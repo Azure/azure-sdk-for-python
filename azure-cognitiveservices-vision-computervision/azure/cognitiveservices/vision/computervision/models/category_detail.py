@@ -24,6 +24,6 @@ class CategoryDetail(Model):
         'celebrities': {'key': 'celebrities', 'type': '[CelebritiesModel]'},
     }
 
-    def __init__(self, celebrities=None):
-        super(CategoryDetail, self).__init__()
-        self.celebrities = celebrities
+    def __init__(self, **kwargs):
+        super(CategoryDetail, self).__init__(**kwargs)
+        self.celebrities = kwargs.get('celebrities', None)
