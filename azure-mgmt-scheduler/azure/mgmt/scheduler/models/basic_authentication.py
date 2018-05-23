@@ -15,11 +15,10 @@ from .http_authentication import HttpAuthentication
 class BasicAuthentication(HttpAuthentication):
     """BasicAuthentication.
 
-    :param type: Gets or sets the HTTP authentication type. Possible values
-     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
-     'Basic'
-    :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param username: Gets or sets the username.
     :type username: str
     :param password: Gets or sets the password, return value will always be
@@ -27,13 +26,18 @@ class BasicAuthentication(HttpAuthentication):
     :type password: str
     """
 
+    _validation = {
+        'type': {'required': True},
+    }
+
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+        'type': {'key': 'type', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, type=None, username=None, password=None):
-        super(BasicAuthentication, self).__init__(type=type)
-        self.username = username
-        self.password = password
+    def __init__(self, **kwargs):
+        super(BasicAuthentication, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.type = 'Basic'
