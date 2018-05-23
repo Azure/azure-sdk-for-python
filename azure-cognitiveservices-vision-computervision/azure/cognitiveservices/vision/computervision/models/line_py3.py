@@ -30,8 +30,8 @@ class Line(Model):
         'words': {'key': 'words', 'type': '[Word]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, bounding_box=None, text: str=None, words=None, **kwargs) -> None:
         super(Line, self).__init__(**kwargs)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.text = kwargs.get('text', None)
-        self.words = kwargs.get('words', None)
+        self.bounding_box = bounding_box
+        self.text = text
+        self.words = words

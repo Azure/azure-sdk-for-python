@@ -12,15 +12,14 @@
 from msrest.serialization import Model
 
 
-class ImageDescriptionDetails(Model):
-    """A collection of content tags, along with a list of captions sorted by
-    confidence level, and image metadata.
+class DomainModelResults(Model):
+    """Result of image analysis using a specific domain model including additional
+    metadata.
 
-    :param tags: A collection of image tags.
-    :type tags: list[str]
-    :param captions: A list of captions, sorted by confidence level.
-    :type captions:
-     list[~azure.cognitiveservices.vision.computervision.models.ImageCaption]
+    :param celebrities: An array of possible celebritied identified in the
+     image.
+    :type celebrities:
+     list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -29,15 +28,13 @@ class ImageDescriptionDetails(Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'captions': {'key': 'captions', 'type': '[ImageCaption]'},
+        'celebrities': {'key': 'result.celebrities', 'type': '[CelebritiesModel]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageDescriptionDetails, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.captions = kwargs.get('captions', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.metadata = kwargs.get('metadata', None)
+    def __init__(self, *, celebrities=None, request_id: str=None, metadata=None, **kwargs) -> None:
+        super(DomainModelResults, self).__init__(**kwargs)
+        self.celebrities = celebrities
+        self.request_id = request_id
+        self.metadata = metadata

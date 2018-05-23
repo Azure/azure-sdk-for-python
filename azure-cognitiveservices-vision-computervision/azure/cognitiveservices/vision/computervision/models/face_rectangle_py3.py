@@ -32,9 +32,9 @@ class FaceRectangle(Model):
         'height': {'key': 'height', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, left: int=None, top: int=None, width: int=None, height: int=None, **kwargs) -> None:
         super(FaceRectangle, self).__init__(**kwargs)
-        self.left = kwargs.get('left', None)
-        self.top = kwargs.get('top', None)
-        self.width = kwargs.get('width', None)
-        self.height = kwargs.get('height', None)
+        self.left = left
+        self.top = top
+        self.width = width
+        self.height = height

@@ -29,6 +29,6 @@ class ImageUrl(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, url: str, **kwargs) -> None:
         super(ImageUrl, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
+        self.url = url
