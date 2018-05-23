@@ -50,7 +50,7 @@ for package_list in [nspkg_packages, content_packages]:
         pip_command('install -e {}'.format(package_name))
 
 # install test requirements
-pip_command('install -r azure-sdk-testutils/test-requirements.txt')
+pip_command('install -r azure-sdk-tools/test-requirements.txt')
 
 # install packaging requirements
 pip_command('install -r scripts/packaging_requirements.txt')
