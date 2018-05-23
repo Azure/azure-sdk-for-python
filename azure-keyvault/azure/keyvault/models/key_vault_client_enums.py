@@ -23,10 +23,10 @@ class JsonWebKeyType(str, Enum):
 
 class JsonWebKeyCurveName(str, Enum):
 
-    p_256 = "P-256"
-    p_384 = "P-384"
-    p_521 = "P-521"
-    secp256_k1 = "SECP256K1"
+    p_256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+    p_384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    p_521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    secp256_k1 = "SECP256K1"  #: The SECG SECP256K1 elliptic curve.
 
 
 class DeletionRecoveryLevel(str, Enum):
