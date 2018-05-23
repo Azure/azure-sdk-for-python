@@ -18,8 +18,7 @@ class JobRecurrence(Model):
     :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.scheduler.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
     :param interval: Gets or sets the interval between retries.
     :type interval: int
     :param count: Gets or sets the maximum number of times that the job should
@@ -28,8 +27,7 @@ class JobRecurrence(Model):
     :param end_time: Gets or sets the time at which the job will complete.
     :type end_time: datetime
     :param schedule:
-    :type schedule: :class:`JobRecurrenceSchedule
-     <azure.mgmt.scheduler.models.JobRecurrenceSchedule>`
+    :type schedule: ~azure.mgmt.scheduler.models.JobRecurrenceSchedule
     """
 
     _attribute_map = {
@@ -40,9 +38,10 @@ class JobRecurrence(Model):
         'schedule': {'key': 'schedule', 'type': 'JobRecurrenceSchedule'},
     }
 
-    def __init__(self, frequency=None, interval=None, count=None, end_time=None, schedule=None):
-        self.frequency = frequency
-        self.interval = interval
-        self.count = count
-        self.end_time = end_time
-        self.schedule = schedule
+    def __init__(self, **kwargs):
+        super(JobRecurrence, self).__init__(**kwargs)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)
+        self.count = kwargs.get('count', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.schedule = kwargs.get('schedule', None)
