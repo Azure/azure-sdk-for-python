@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class LinkedIntegrationRuntimeProperties(Model):
-    """The base definition of a secret type.
+    """The base definition of a linked integration runtime properties.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: LinkedIntegrationRuntimeRbac, LinkedIntegrationRuntimeKey
