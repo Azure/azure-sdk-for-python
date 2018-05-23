@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
-class ShortTermRetentionPolicy(ProxyResource):
-    """A short term retention policy resource.
+class JobVersion(ProxyResource):
+    """A job version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,9 +24,6 @@ class ShortTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param retention_days: The backup retention period in days. This is how
-     many days Point-in-Time Restore will be supported.
-    :type retention_days: int
     """
 
     _validation = {
@@ -39,9 +36,7 @@ class ShortTermRetentionPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
     }
 
-    def __init__(self, *, retention_days: int=None, **kwargs) -> None:
-        super(ShortTermRetentionPolicy, self).__init__(**kwargs)
-        self.retention_days = retention_days
+    def __init__(self, **kwargs) -> None:
+        super(JobVersion, self).__init__(**kwargs)

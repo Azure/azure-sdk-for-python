@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class ShortTermRetentionPoliciesOperations(object):
-    """ShortTermRetentionPoliciesOperations operations.
+class BackupShortTermRetentionPoliciesOperations(object):
+    """BackupShortTermRetentionPoliciesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -58,8 +58,9 @@ class ShortTermRetentionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ShortTermRetentionPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.ShortTermRetentionPolicy or
+        :return: BackupShortTermRetentionPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -100,7 +101,7 @@ class ShortTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ShortTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupShortTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -112,7 +113,7 @@ class ShortTermRetentionPoliciesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ShortTermRetentionPolicy(retention_days=retention_days)
+        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -140,7 +141,7 @@ class ShortTermRetentionPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ShortTermRetentionPolicy')
+        body_content = self._serialize.body(parameters, 'BackupShortTermRetentionPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -155,7 +156,7 @@ class ShortTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ShortTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupShortTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -184,12 +185,12 @@ class ShortTermRetentionPoliciesOperations(object):
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         ShortTermRetentionPolicy or
-         ClientRawResponse<ShortTermRetentionPolicy> if raw==True
+         BackupShortTermRetentionPolicy or
+         ClientRawResponse<BackupShortTermRetentionPolicy> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ShortTermRetentionPolicy]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.BackupShortTermRetentionPolicy]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ShortTermRetentionPolicy]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.BackupShortTermRetentionPolicy]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -203,7 +204,7 @@ class ShortTermRetentionPoliciesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ShortTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupShortTermRetentionPolicy', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -223,7 +224,7 @@ class ShortTermRetentionPoliciesOperations(object):
 
     def _update_initial(
             self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ShortTermRetentionPolicy(retention_days=retention_days)
+        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -251,7 +252,7 @@ class ShortTermRetentionPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ShortTermRetentionPolicy')
+        body_content = self._serialize.body(parameters, 'BackupShortTermRetentionPolicy')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -266,7 +267,7 @@ class ShortTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ShortTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupShortTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -295,12 +296,12 @@ class ShortTermRetentionPoliciesOperations(object):
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         ShortTermRetentionPolicy or
-         ClientRawResponse<ShortTermRetentionPolicy> if raw==True
+         BackupShortTermRetentionPolicy or
+         ClientRawResponse<BackupShortTermRetentionPolicy> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ShortTermRetentionPolicy]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.BackupShortTermRetentionPolicy]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ShortTermRetentionPolicy]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.BackupShortTermRetentionPolicy]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -314,7 +315,7 @@ class ShortTermRetentionPoliciesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ShortTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupShortTermRetentionPolicy', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
