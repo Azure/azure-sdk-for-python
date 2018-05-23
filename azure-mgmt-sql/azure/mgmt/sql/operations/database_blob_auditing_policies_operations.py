@@ -49,8 +49,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which the blob
-         audit policy is defined.
+        :param database_name: The name of the database.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -118,8 +117,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which the blob
-         auditing policy will be defined.
+        :param database_name: The name of the database.
         :type database_name: str
         :param parameters: The database blob auditing policy.
         :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
