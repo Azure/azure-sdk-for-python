@@ -25,8 +25,8 @@ class JobHistoryDefinition(Model):
     :ivar name: Gets the job history name.
     :vartype name: str
     :ivar properties: Gets or sets the job history properties.
-    :vartype properties: :class:`JobHistoryDefinitionProperties
-     <azure.mgmt.scheduler.models.JobHistoryDefinitionProperties>`
+    :vartype properties:
+     ~azure.mgmt.scheduler.models.JobHistoryDefinitionProperties
     """
 
     _validation = {

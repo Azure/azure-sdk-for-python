@@ -15,11 +15,8 @@ from .http_authentication import HttpAuthentication
 class OAuthAuthentication(HttpAuthentication):
     """OAuthAuthentication.
 
-    :param type: Gets or sets the HTTP authentication type. Possible values
-     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
-     'Basic'
-    :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+    :param type: Constant filled by server.
+    :type type: str
     :param secret: Gets or sets the secret, return value will always be empty.
     :type secret: str
     :param tenant: Gets or sets the tenant.
@@ -30,17 +27,22 @@ class OAuthAuthentication(HttpAuthentication):
     :type client_id: str
     """
 
+    _validation = {
+        'type': {'required': True},
+    }
+
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+        'type': {'key': 'type', 'type': 'str'},
         'secret': {'key': 'secret', 'type': 'str'},
         'tenant': {'key': 'tenant', 'type': 'str'},
         'audience': {'key': 'audience', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, type=None, secret=None, tenant=None, audience=None, client_id=None):
-        super(OAuthAuthentication, self).__init__(type=type)
+    def __init__(self, secret=None, tenant=None, audience=None, client_id=None):
+        super(OAuthAuthentication, self).__init__()
         self.secret = secret
         self.tenant = tenant
         self.audience = audience
         self.client_id = client_id
+        self.type = 'ActiveDirectoryOAuth'

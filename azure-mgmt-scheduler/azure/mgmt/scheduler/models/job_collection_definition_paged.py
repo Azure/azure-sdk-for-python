@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class JobCollectionDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of JobCollectionDefinition object
+    A paging container for iterating over a list of :class:`JobCollectionDefinition <azure.mgmt.scheduler.models.JobCollectionDefinition>` object
     """
 
     _attribute_map = {

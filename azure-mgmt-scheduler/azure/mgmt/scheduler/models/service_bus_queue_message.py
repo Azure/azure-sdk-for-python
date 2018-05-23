@@ -16,24 +16,23 @@ class ServiceBusQueueMessage(ServiceBusMessage):
     """ServiceBusQueueMessage.
 
     :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: :class:`ServiceBusAuthentication
-     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
+    :type authentication:
+     ~azure.mgmt.scheduler.models.ServiceBusAuthentication
     :param brokered_message_properties: Gets or sets the brokered message
      properties.
     :type brokered_message_properties:
-     :class:`ServiceBusBrokeredMessageProperties
-     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
+     ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
     :param custom_message_properties: Gets or sets the custom message
      properties.
-    :type custom_message_properties: dict
+    :type custom_message_properties: dict[str, str]
     :param message: Gets or sets the message.
     :type message: str
     :param namespace: Gets or sets the namespace.
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str or :class:`ServiceBusTransportType
-     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
+    :type transport_type: str or
+     ~azure.mgmt.scheduler.models.ServiceBusTransportType
     :param queue_name: Gets or sets the queue name.
     :type queue_name: str
     """
