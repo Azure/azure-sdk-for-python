@@ -28,25 +28,16 @@ class AzureBotServiceConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param resource_group_name: The name of the Bot resource group in the user
-     subscription.
-    :type resource_group_name: str
-    :param resource_name: The name of the Bot resource.
-    :type resource_name: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, resource_group_name, resource_name, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
-        if resource_name is None:
-            raise ValueError("Parameter 'resource_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
@@ -58,8 +49,6 @@ class AzureBotServiceConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.resource_group_name = resource_group_name
-        self.resource_name = resource_name
         self.subscription_id = subscription_id
 
 
@@ -81,20 +70,15 @@ class AzureBotService(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param resource_group_name: The name of the Bot resource group in the user
-     subscription.
-    :type resource_group_name: str
-    :param resource_name: The name of the Bot resource.
-    :type resource_name: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, resource_group_name, resource_name, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureBotServiceConfiguration(credentials, resource_group_name, resource_name, subscription_id, base_url)
+        self.config = AzureBotServiceConfiguration(credentials, subscription_id, base_url)
         super(AzureBotService, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

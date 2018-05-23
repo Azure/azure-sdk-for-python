@@ -37,9 +37,12 @@ class BotConnectionOperations(object):
         self.config = config
 
     def list_service_providers(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists the available Service Providers for creating Connection Settings.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +57,7 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.list_service_providers.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -93,9 +96,14 @@ class BotConnectionOperations(object):
     list_service_providers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/BotServices/listServiceProviders'}
 
     def list_with_secrets(
-            self, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Get a Connection Setting registration for a Bot Service.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param connection_name: The name of the Bot Service Connection Setting
          resource
         :type connection_name: str
@@ -113,8 +121,8 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.list_with_secrets.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -154,9 +162,14 @@ class BotConnectionOperations(object):
     list_with_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}/listWithSecrets'}
 
     def create(
-            self, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Register a new Auth Connection for a Bot Service.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param connection_name: The name of the Bot Service Connection Setting
          resource
         :type connection_name: str
@@ -177,8 +190,8 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -224,9 +237,14 @@ class BotConnectionOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
 
     def update(
-            self, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Updates a Connection Setting registration for a Bot Service.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param connection_name: The name of the Bot Service Connection Setting
          resource
         :type connection_name: str
@@ -247,8 +265,8 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -294,9 +312,14 @@ class BotConnectionOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
 
     def get(
-            self, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Get a Connection Setting registration for a Bot Service.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param connection_name: The name of the Bot Service Connection Setting
          resource
         :type connection_name: str
@@ -314,8 +337,8 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -355,9 +378,14 @@ class BotConnectionOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
 
     def delete(
-            self, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a Connection Setting registration for a Bot Service.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param connection_name: The name of the Bot Service Connection Setting
          resource
         :type connection_name: str
@@ -374,8 +402,8 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -408,10 +436,15 @@ class BotConnectionOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/Connections/{connectionName}'}
 
     def list_by_bot_service(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Returns all the Connection Settings registered to a particular
         BotService resource.
 
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -429,8 +462,8 @@ class BotConnectionOperations(object):
                 # Construct URL
                 url = self.list_by_bot_service.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-                    'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
