@@ -81,7 +81,8 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         'x-ms-gateway-service-instanceid',
         'x-ms-ratelimit-remaining-tenant-reads',
         'x-ms-served-by',
-    ]
+        'x-ms-authorization-auxiliary'
+   ]
 
     def __init__(self,  # pylint: disable=too-many-arguments
                  method_name, config_file=None, recording_dir=None, recording_name=None, recording_processors=None,
