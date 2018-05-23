@@ -13,17 +13,13 @@ from msrest.serialization import Model
 
 
 class Action(Model):
-    """An alert action.
+    """Action.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AlertingAction
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_group_id: the id of the action group to use.
-    :type action_group_id: str
-    :param webhook_properties:
-    :type webhook_properties: dict[str, str]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
@@ -33,8 +29,6 @@ class Action(Model):
     }
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
@@ -42,8 +36,6 @@ class Action(Model):
         'odatatype': {'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction': 'AlertingAction'}
     }
 
-    def __init__(self, *, action_group_id: str=None, webhook_properties=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Action, self).__init__(**kwargs)
-        self.action_group_id = action_group_id
-        self.webhook_properties = webhook_properties
         self.odatatype = None

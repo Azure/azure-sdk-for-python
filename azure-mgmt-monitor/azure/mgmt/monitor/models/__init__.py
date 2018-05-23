@@ -87,8 +87,9 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
-    from .action_py3 import Action
+    from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
+    from .action_py3 import Action
     from .metric_alert_resource_py3 import MetricAlertResource
     from .metric_alert_resource_patch_py3 import MetricAlertResourcePatch
     from .metric_alert_status_properties_py3 import MetricAlertStatusProperties
@@ -181,8 +182,9 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
-    from .action import Action
+    from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
+    from .action import Action
     from .metric_alert_resource import MetricAlertResource
     from .metric_alert_resource_patch import MetricAlertResourcePatch
     from .metric_alert_status_properties import MetricAlertStatusProperties
@@ -310,8 +312,9 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
-    'Action',
+    'MetricAlertAction',
     'MetricAlertCriteria',
+    'Action',
     'MetricAlertResource',
     'MetricAlertResourcePatch',
     'MetricAlertStatusProperties',
