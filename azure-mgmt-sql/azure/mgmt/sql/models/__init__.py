@@ -85,20 +85,6 @@ try:
     from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
-    from .job_agent_py3 import JobAgent
-    from .job_agent_update_py3 import JobAgentUpdate
-    from .job_credential_py3 import JobCredential
-    from .job_execution_target_py3 import JobExecutionTarget
-    from .job_execution_py3 import JobExecution
-    from .job_schedule_py3 import JobSchedule
-    from .job_py3 import Job
-    from .job_step_action_py3 import JobStepAction
-    from .job_step_output_py3 import JobStepOutput
-    from .job_step_execution_options_py3 import JobStepExecutionOptions
-    from .job_step_py3 import JobStep
-    from .job_target_py3 import JobTarget
-    from .job_target_group_py3 import JobTargetGroup
-    from .job_version_py3 import JobVersion
     from .long_term_retention_backup_py3 import LongTermRetentionBackup
     from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
     from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
@@ -220,20 +206,6 @@ except (SyntaxError, ImportError):
     from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
-    from .job_agent import JobAgent
-    from .job_agent_update import JobAgentUpdate
-    from .job_credential import JobCredential
-    from .job_execution_target import JobExecutionTarget
-    from .job_execution import JobExecution
-    from .job_schedule import JobSchedule
-    from .job import Job
-    from .job_step_action import JobStepAction
-    from .job_step_output import JobStepOutput
-    from .job_step_execution_options import JobStepExecutionOptions
-    from .job_step import JobStep
-    from .job_target import JobTarget
-    from .job_target_group import JobTargetGroup
-    from .job_version import JobVersion
     from .long_term_retention_backup import LongTermRetentionBackup
     from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
     from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
@@ -315,13 +287,6 @@ from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .job_agent_paged import JobAgentPaged
-from .job_credential_paged import JobCredentialPaged
-from .job_execution_paged import JobExecutionPaged
-from .job_paged import JobPaged
-from .job_step_paged import JobStepPaged
-from .job_target_group_paged import JobTargetGroupPaged
-from .job_version_paged import JobVersionPaged
 from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
@@ -374,15 +339,6 @@ from .sql_management_client_enums import (
     SyncDirection,
     SyncMemberState,
     VirtualNetworkRuleState,
-    JobAgentState,
-    JobExecutionLifecycle,
-    ProvisioningState,
-    JobTargetType,
-    JobScheduleType,
-    JobStepActionType,
-    JobStepActionSource,
-    JobStepOutputType,
-    JobTargetGroupMembershipType,
     ManagedDatabaseStatus,
     CatalogCollationType,
     ManagedDatabaseCreateMode,
@@ -484,20 +440,6 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
     'DatabaseVulnerabilityAssessment',
-    'JobAgent',
-    'JobAgentUpdate',
-    'JobCredential',
-    'JobExecutionTarget',
-    'JobExecution',
-    'JobSchedule',
-    'Job',
-    'JobStepAction',
-    'JobStepOutput',
-    'JobStepExecutionOptions',
-    'JobStep',
-    'JobTarget',
-    'JobTargetGroup',
-    'JobVersion',
     'LongTermRetentionBackup',
     'BackupLongTermRetentionPolicy',
     'CompleteDatabaseRestoreDefinition',
@@ -579,13 +521,6 @@ __all__ = [
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
-    'JobAgentPaged',
-    'JobCredentialPaged',
-    'JobExecutionPaged',
-    'JobPaged',
-    'JobStepPaged',
-    'JobTargetGroupPaged',
-    'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
@@ -637,15 +572,6 @@ __all__ = [
     'SyncDirection',
     'SyncMemberState',
     'VirtualNetworkRuleState',
-    'JobAgentState',
-    'JobExecutionLifecycle',
-    'ProvisioningState',
-    'JobTargetType',
-    'JobScheduleType',
-    'JobStepActionType',
-    'JobStepActionSource',
-    'JobStepOutputType',
-    'JobTargetGroupMembershipType',
     'ManagedDatabaseStatus',
     'CatalogCollationType',
     'ManagedDatabaseCreateMode',

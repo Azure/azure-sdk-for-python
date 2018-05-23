@@ -46,15 +46,6 @@ from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
-from .job_agents_operations import JobAgentsOperations
-from .job_credentials_operations import JobCredentialsOperations
-from .job_executions_operations import JobExecutionsOperations
-from .jobs_operations import JobsOperations
-from .job_step_executions_operations import JobStepExecutionsOperations
-from .job_steps_operations import JobStepsOperations
-from .job_target_executions_operations import JobTargetExecutionsOperations
-from .job_target_groups_operations import JobTargetGroupsOperations
-from .job_versions_operations import JobVersionsOperations
 from .long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .managed_databases_operations import ManagedDatabasesOperations
@@ -106,15 +97,6 @@ __all__ = [
     'VirtualNetworkRulesOperations',
     'DatabaseVulnerabilityAssessmentRuleBaselinesOperations',
     'DatabaseVulnerabilityAssessmentsOperations',
-    'JobAgentsOperations',
-    'JobCredentialsOperations',
-    'JobExecutionsOperations',
-    'JobsOperations',
-    'JobStepExecutionsOperations',
-    'JobStepsOperations',
-    'JobTargetExecutionsOperations',
-    'JobTargetGroupsOperations',
-    'JobVersionsOperations',
     'LongTermRetentionBackupsOperations',
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedDatabasesOperations',

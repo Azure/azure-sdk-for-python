@@ -50,15 +50,6 @@ from .operations.subscription_usages_operations import SubscriptionUsagesOperati
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .operations.database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
-from .operations.job_agents_operations import JobAgentsOperations
-from .operations.job_credentials_operations import JobCredentialsOperations
-from .operations.job_executions_operations import JobExecutionsOperations
-from .operations.jobs_operations import JobsOperations
-from .operations.job_step_executions_operations import JobStepExecutionsOperations
-from .operations.job_steps_operations import JobStepsOperations
-from .operations.job_target_executions_operations import JobTargetExecutionsOperations
-from .operations.job_target_groups_operations import JobTargetGroupsOperations
-from .operations.job_versions_operations import JobVersionsOperations
 from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.managed_databases_operations import ManagedDatabasesOperations
@@ -187,24 +178,6 @@ class SqlManagementClient(SDKClient):
     :vartype database_vulnerability_assessment_rule_baselines: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentRuleBaselinesOperations
     :ivar database_vulnerability_assessments: DatabaseVulnerabilityAssessments operations
     :vartype database_vulnerability_assessments: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentsOperations
-    :ivar job_agents: JobAgents operations
-    :vartype job_agents: azure.mgmt.sql.operations.JobAgentsOperations
-    :ivar job_credentials: JobCredentials operations
-    :vartype job_credentials: azure.mgmt.sql.operations.JobCredentialsOperations
-    :ivar job_executions: JobExecutions operations
-    :vartype job_executions: azure.mgmt.sql.operations.JobExecutionsOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.sql.operations.JobsOperations
-    :ivar job_step_executions: JobStepExecutions operations
-    :vartype job_step_executions: azure.mgmt.sql.operations.JobStepExecutionsOperations
-    :ivar job_steps: JobSteps operations
-    :vartype job_steps: azure.mgmt.sql.operations.JobStepsOperations
-    :ivar job_target_executions: JobTargetExecutions operations
-    :vartype job_target_executions: azure.mgmt.sql.operations.JobTargetExecutionsOperations
-    :ivar job_target_groups: JobTargetGroups operations
-    :vartype job_target_groups: azure.mgmt.sql.operations.JobTargetGroupsOperations
-    :ivar job_versions: JobVersions operations
-    :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar long_term_retention_backups: LongTermRetentionBackups operations
     :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
@@ -322,24 +295,6 @@ class SqlManagementClient(SDKClient):
         self.database_vulnerability_assessment_rule_baselines = DatabaseVulnerabilityAssessmentRuleBaselinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_vulnerability_assessments = DatabaseVulnerabilityAssessmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_agents = JobAgentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_credentials = JobCredentialsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_executions = JobExecutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_step_executions = JobStepExecutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_steps = JobStepsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_target_executions = JobTargetExecutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_target_groups = JobTargetGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_versions = JobVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.long_term_retention_backups = LongTermRetentionBackupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
