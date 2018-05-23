@@ -16,7 +16,7 @@ from .operation import Operation
 from .resource import Resource
 from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
 from .forecast import Forecast
-from .forecasts_list_result import ForecastsListResult
+from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 
 __all__ = [
@@ -27,6 +27,6 @@ __all__ = [
     'Resource',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
-    'ForecastsListResult',
+    'ForecastPaged',
     'OperationPaged',
 ]
