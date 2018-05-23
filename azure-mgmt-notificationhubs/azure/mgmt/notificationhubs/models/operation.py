@@ -12,29 +12,28 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityRequestParameters(Model):
-    """Parameters supplied to the Check Name Availability for Namespace and
-    NotificationHubs.
+class Operation(Model):
+    """A NotificationHubs REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :vartype name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.notificationhubs.models.OperationDisplay
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'type': {'key': 'Type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, name):
-        self.name = name
-        self.type = None
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = kwargs.get('display', None)

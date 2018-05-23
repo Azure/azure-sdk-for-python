@@ -12,37 +12,30 @@
 from msrest.serialization import Model
 
 
-class CheckAvailabilityParameters(Model):
-    """Parameters supplied to the Check Name Availability for Namespace and
-    NotificationHubs.
+class Resource(Model):
+    """Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Required. Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Required. Resource location
+    :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku: The sku of the created namespace
     :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param is_availiable: True if the name is available and can be used to
-     create new Namespace/NotificationHub. Otherwise false.
-    :type is_availiable: bool
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -52,15 +45,13 @@ class CheckAvailabilityParameters(Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckAvailabilityParameters, self).__init__(**kwargs)
+    def __init__(self, *, location: str=None, tags=None, sku=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
         self.id = None
-        self.name = kwargs.get('name', None)
+        self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.is_availiable = kwargs.get('is_availiable', None)
+        self.location = location
+        self.tags = tags
+        self.sku = sku

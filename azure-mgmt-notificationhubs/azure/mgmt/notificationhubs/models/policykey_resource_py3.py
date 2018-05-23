@@ -12,17 +12,19 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """SubResource.
+class PolicykeyResource(Model):
+    """Namespace/NotificationHub Regenerate Keys.
 
-    :param id: Resource Id
-    :type id: str
+    :param policy_key: Name of the key that has to be regenerated for the
+     Namespace/Notification Hub Authorization Rule. The value can be Primary
+     Key/Secondary Key.
+    :type policy_key: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'policy_key': {'key': 'policyKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, policy_key: str=None, **kwargs) -> None:
+        super(PolicykeyResource, self).__init__(**kwargs)
+        self.policy_key = policy_key
