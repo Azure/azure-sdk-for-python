@@ -31,7 +31,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     :ivar state: Integration runtime state, only valid for managed dedicated
      integration runtime. Possible values include: 'Initial', 'Stopped',
      'Started', 'Starting', 'Stopping', 'NeedRegistration', 'Online',
-     'Limited', 'Offline'
+     'Limited', 'Offline', 'AccessDenied'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :param compute_properties: The compute resource for managed integration

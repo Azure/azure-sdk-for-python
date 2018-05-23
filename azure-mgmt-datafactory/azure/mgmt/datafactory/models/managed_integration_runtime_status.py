@@ -28,7 +28,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
-     'NeedRegistration', 'Online', 'Limited', 'Offline'
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :param type: Required. Constant filled by server.

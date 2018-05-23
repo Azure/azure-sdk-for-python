@@ -28,7 +28,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
-     'NeedRegistration', 'Online', 'Limited', 'Offline'
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :param type: Required. Constant filled by server.
@@ -72,6 +72,11 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :param links: The list of linked integration runtimes that are created to
      share with this integration runtime.
     :type links: list[~azure.mgmt.datafactory.models.LinkedIntegrationRuntime]
+    :ivar pushed_version: The version that the integration runtime is going to
+     update to.
+    :vartype pushed_version: str
+    :ivar latest_version: The latest version on download center.
+    :vartype latest_version: str
     """
 
     _validation = {
@@ -89,6 +94,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'service_urls': {'readonly': True},
         'auto_update': {'readonly': True},
         'version_status': {'readonly': True},
+        'pushed_version': {'readonly': True},
+        'latest_version': {'readonly': True},
     }
 
     _attribute_map = {
@@ -109,6 +116,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
         'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
         'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
+        'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
+        'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -126,4 +135,6 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.auto_update = None
         self.version_status = None
         self.links = kwargs.get('links', None)
+        self.pushed_version = None
+        self.latest_version = None
         self.type = 'SelfHosted'

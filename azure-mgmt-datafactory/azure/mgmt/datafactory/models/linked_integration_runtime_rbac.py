@@ -13,14 +13,14 @@ from .linked_integration_runtime_properties import LinkedIntegrationRuntimePrope
 
 
 class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
-    """The base definition of a secret type.
+    """The role based access control (RBAC) authorization type.
 
     All required parameters must be populated in order to send to Azure.
 
     :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param resource_id: Required. The resource ID of the integration runtime
-     to be shared.
+    :param resource_id: Required. The resource identifier of the integration
+     runtime to be shared.
     :type resource_id: str
     """
 
