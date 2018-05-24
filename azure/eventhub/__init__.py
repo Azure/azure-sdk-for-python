@@ -549,6 +549,15 @@ class EventData(object):
         return None
 
     @property
+    def device_id(self):
+        """
+        The device ID of the event data object. This is only used for
+        IoT Hub implementations.
+        :returns: bytes
+        """
+        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
+
+    @property
     def partition_key(self):
         """
         The partition key of the event data object.
@@ -558,15 +567,6 @@ class EventData(object):
             return self._annotations[self._partition_key]
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
-
-    @property
-    def device_id(self):
-        """
-        The device ID of the event data object. This is only used for
-        IoT Hub implementations.
-        :returns: bytes
-        """
-        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @partition_key.setter
     def partition_key(self, value):
@@ -578,6 +578,7 @@ class EventData(object):
         annotations = dict(self._annotations)
         annotations[self._partition_key] = value
         self.message.annotations = annotations
+        self.message.header = self._header
         self._annotations = annotations
 
     @property
