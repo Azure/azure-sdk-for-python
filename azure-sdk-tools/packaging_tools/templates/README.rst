@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Compute Management Client Library.
+This is the Microsoft Azure {{package_pprint_name}} Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -36,8 +36,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Compute Management
-<https://docs.microsoft.com/python/api/overview/azure/virtualmachines>`__
+For code examples, see `{{package_pprint_name}}
+<https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}>`__
 on docs.microsoft.com.
 
 
