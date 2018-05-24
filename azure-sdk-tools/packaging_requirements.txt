@@ -1,3 +1,4 @@
-cookiecutter
 packaging
 wheel
+Jinja2
+pytoml
