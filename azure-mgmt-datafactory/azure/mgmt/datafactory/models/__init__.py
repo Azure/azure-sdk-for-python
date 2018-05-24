@@ -20,10 +20,8 @@ try:
     from .factory_identity_py3 import FactoryIdentity
     from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
     from .factory_py3 import Factory
-    from .factory_list_response_py3 import FactoryListResponse
     from .integration_runtime_py3 import IntegrationRuntime
     from .integration_runtime_resource_py3 import IntegrationRuntimeResource
-    from .integration_runtime_list_response_py3 import IntegrationRuntimeListResponse
     from .integration_runtime_reference_py3 import IntegrationRuntimeReference
     from .integration_runtime_status_py3 import IntegrationRuntimeStatus
     from .integration_runtime_status_response_py3 import IntegrationRuntimeStatusResponse
@@ -350,10 +348,8 @@ except (SyntaxError, ImportError):
     from .factory_identity import FactoryIdentity
     from .factory_vsts_configuration import FactoryVSTSConfiguration
     from .factory import Factory
-    from .factory_list_response import FactoryListResponse
     from .integration_runtime import IntegrationRuntime
     from .integration_runtime_resource import IntegrationRuntimeResource
-    from .integration_runtime_list_response import IntegrationRuntimeListResponse
     from .integration_runtime_reference import IntegrationRuntimeReference
     from .integration_runtime_status import IntegrationRuntimeStatus
     from .integration_runtime_status_response import IntegrationRuntimeStatusResponse
@@ -749,10 +745,8 @@ __all__ = [
     'FactoryIdentity',
     'FactoryVSTSConfiguration',
     'Factory',
-    'FactoryListResponse',
     'IntegrationRuntime',
     'IntegrationRuntimeResource',
-    'IntegrationRuntimeListResponse',
     'IntegrationRuntimeReference',
     'IntegrationRuntimeStatus',
     'IntegrationRuntimeStatusResponse',
