@@ -3,19 +3,12 @@ from pathlib import Path
 from typing import Dict, Any
 
 from jinja2 import Template, PackageLoader, Environment
+from .conf import read_conf, build_default_conf, CONF_NAME
 
 _LOGGER = logging.getLogger(__name__)
 
 _CWD = Path(__file__).resolve().parent
 _TEMPLATE_PATH = _CWD / "template"
-
-# Example of configuration loaded from a package
-_CONFIG = {
-    "package_name": "azure-mgmt-scheduler",
-    "package_pprint_name": "Scheduler Management",
-    "package_doc_id": "scheduler",
-    "is_stable": True
-}
 
 def build_config(config : Dict[str, Any]) -> Dict[str, str]:
     """Will build the actual config for Jinja2, based on SDK config.
@@ -34,14 +27,22 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
     # Return result
     return result
 
-def build_packaging(package_name, output_folder):
+def build_packaging(package_name: str, output_folder: str, build_conf: bool = False) -> None:
     _LOGGER.info("Building template %s", package_name)
+    package_folder = Path(output_folder) / Path(package_name)
+
+    if build_conf:
+        build_default_conf(package_folder, package_name)
+
+    conf = read_conf(package_folder)
+    if not conf:
+        raise ValueError("Create a {} file before calling this script".format(package_folder / CONF_NAME))
 
     env = Environment(
         loader=PackageLoader('packaging_tools', 'templates'),
         keep_trailing_newline=True
     )
-    conf = build_config(_CONFIG)
+    conf = build_config(conf)
 
     for template_name in env.list_templates():
         future_filepath = Path(output_folder) / package_name / template_name
