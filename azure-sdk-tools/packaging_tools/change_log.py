@@ -73,12 +73,17 @@ class ChangeLog:
             return
 
         # That's a model signature change
-        if mtype == "enums":
+        if mtype in ["enums", "exceptions"]:
             # Don't change log anything for Enums for now
             return
 
+        _, *remaining_path = remaining_path
+        if not remaining_path: # This means massive signature changes, that we don't even try to list them
+            self.breaking_changes.append(_MODEL_SIGNATURE_CHANGE.format(model_name))
+            return
+
         # This is a real model
-        _, parameter_name, *remaining_path = remaining_path
+        parameter_name, *remaining_path = remaining_path
         is_required = lambda report, model_name, param_name: report["models"]["models"][model_name]["parameters"][param_name]["properties"]["required"]
         if not remaining_path:
             if is_deletion:
@@ -111,6 +116,7 @@ _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _SIGNATURE_CHANGE = "Operation {}.{} has a new signature"
+_MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
 _MODEL_PARAM_CHANGE_REQUIRED = "Parameter {} of model {} is now required"
@@ -166,9 +172,9 @@ if __name__ == "__main__":
     with open(args.base_input) as fd:
         old_report = json.load(fd)
 
-    change_log = build_change_log(old_report, new_report)
-    print(change_log.build_md())
-
     result = diff(old_report, new_report)
     with open("result.json", "w") as fd:
         json.dump(result, fd)
+
+    change_log = build_change_log(old_report, new_report)
+    print(change_log.build_md())
