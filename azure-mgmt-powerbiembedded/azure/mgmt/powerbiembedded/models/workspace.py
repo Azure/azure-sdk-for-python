@@ -32,8 +32,9 @@ class Workspace(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Workspace, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.properties = kwargs.get('properties', None)

@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class OperationList(Model):
-    """OperationList.
+class WorkspaceCollectionAccessKey(Model):
+    """WorkspaceCollectionAccessKey.
 
-    :param value:
-    :type value: list[~azure.mgmt.powerbiembedded.models.Operation]
+    :param key_name: Key name. Possible values include: 'key1', 'key2'
+    :type key_name: str or ~azure.mgmt.powerbiembedded.models.AccessKeyName
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'key_name': {'key': 'keyName', 'type': 'AccessKeyName'},
     }
 
-    def __init__(self, **kwargs):
-        super(OperationList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, key_name=None, **kwargs) -> None:
+        super(WorkspaceCollectionAccessKey, self).__init__(**kwargs)
+        self.key_name = key_name

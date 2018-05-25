@@ -48,10 +48,10 @@ class Display(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, origin: str=None, **kwargs) -> None:
         super(Display, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
-        self.origin = kwargs.get('origin', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
+        self.origin = origin
