@@ -52,6 +52,10 @@ class ChangeLog:
                 self.features.append(_ADD_OPERATION.format(operation_name, function_name))
             return
 
+        if remaining_path[0] == "metadata":
+            # Ignore change in metadata for now, they have no impact
+            return
+
         # So method signaure changed. Be vague for now
         self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
 
@@ -165,6 +169,6 @@ if __name__ == "__main__":
     change_log = build_change_log(old_report, new_report)
     print(change_log.build_md())
 
-    # result = diff(old_report, new_report)
-    # with open("result.json", "w") as fd:
-    #     json.dump(result, fd)
+    result = diff(old_report, new_report)
+    with open("result.json", "w") as fd:
+        json.dump(result, fd)
