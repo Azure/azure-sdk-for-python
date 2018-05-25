@@ -15,23 +15,25 @@ from .retention_policy import RetentionPolicy
 class LongTermRetentionPolicy(RetentionPolicy):
     """Long term retention policy.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param retention_policy_type: Required. Constant filled by server.
     :type retention_policy_type: str
     :param daily_schedule: Daily retention schedule of the protection policy.
-    :type daily_schedule: :class:`DailyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.DailyRetentionSchedule>`
+    :type daily_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.DailyRetentionSchedule
     :param weekly_schedule: Weekly retention schedule of the protection
      policy.
-    :type weekly_schedule: :class:`WeeklyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionSchedule>`
+    :type weekly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionSchedule
     :param monthly_schedule: Monthly retention schedule of the protection
      policy.
-    :type monthly_schedule: :class:`MonthlyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.MonthlyRetentionSchedule>`
+    :type monthly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.MonthlyRetentionSchedule
     :param yearly_schedule: Yearly retention schedule of the protection
      policy.
-    :type yearly_schedule: :class:`YearlyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.YearlyRetentionSchedule>`
+    :type yearly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.YearlyRetentionSchedule
     """
 
     _validation = {
@@ -46,10 +48,10 @@ class LongTermRetentionPolicy(RetentionPolicy):
         'yearly_schedule': {'key': 'yearlySchedule', 'type': 'YearlyRetentionSchedule'},
     }
 
-    def __init__(self, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, yearly_schedule=None):
-        super(LongTermRetentionPolicy, self).__init__()
-        self.daily_schedule = daily_schedule
-        self.weekly_schedule = weekly_schedule
-        self.monthly_schedule = monthly_schedule
-        self.yearly_schedule = yearly_schedule
+    def __init__(self, **kwargs):
+        super(LongTermRetentionPolicy, self).__init__(**kwargs)
+        self.daily_schedule = kwargs.get('daily_schedule', None)
+        self.weekly_schedule = kwargs.get('weekly_schedule', None)
+        self.monthly_schedule = kwargs.get('monthly_schedule', None)
+        self.yearly_schedule = kwargs.get('yearly_schedule', None)
         self.retention_policy_type = 'LongTermRetentionPolicy'

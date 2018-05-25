@@ -16,7 +16,13 @@ class RecoveryPoint(Model):
     """Base class for backup copies. Workload-specific backup copies are derived
     from this class.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint,
+    GenericRecoveryPoint, IaasVMRecoveryPoint
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     """
 
@@ -29,8 +35,9 @@ class RecoveryPoint(Model):
     }
 
     _subtype_map = {
-        'object_type': {'GenericRecoveryPoint': 'GenericRecoveryPoint', 'IaasVMRecoveryPoint': 'IaasVMRecoveryPoint'}
+        'object_type': {'AzureFileShareRecoveryPoint': 'AzureFileShareRecoveryPoint', 'AzureWorkloadRecoveryPoint': 'AzureWorkloadRecoveryPoint', 'GenericRecoveryPoint': 'GenericRecoveryPoint', 'IaasVMRecoveryPoint': 'IaasVMRecoveryPoint'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(RecoveryPoint, self).__init__(**kwargs)
         self.object_type = None
