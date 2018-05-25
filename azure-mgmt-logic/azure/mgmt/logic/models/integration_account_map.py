@@ -18,6 +18,8 @@ class IntegrationAccountMap(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: Gets the resource name.
@@ -27,15 +29,14 @@ class IntegrationAccountMap(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
-    :param map_type: The map type. Possible values include: 'NotSpecified',
-     'Xslt'
-    :type map_type: str or :class:`MapType <azure.mgmt.logic.models.MapType>`
+    :type tags: dict[str, str]
+    :param map_type: Required. The map type. Possible values include:
+     'NotSpecified', 'Xslt'
+    :type map_type: str or ~azure.mgmt.logic.models.MapType
     :param parameters_schema: The parameters schema of integration account
      map.
     :type parameters_schema:
-     :class:`IntegrationAccountMapPropertiesParametersSchema
-     <azure.mgmt.logic.models.IntegrationAccountMapPropertiesParametersSchema>`
+     ~azure.mgmt.logic.models.IntegrationAccountMapPropertiesParametersSchema
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -45,8 +46,7 @@ class IntegrationAccountMap(Resource):
     :param content_type: The content type.
     :type content_type: str
     :ivar content_link: The content link.
-    :vartype content_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     :param metadata: The metadata.
     :type metadata: object
     """
@@ -77,13 +77,13 @@ class IntegrationAccountMap(Resource):
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
     }
 
-    def __init__(self, map_type, location=None, tags=None, parameters_schema=None, content=None, content_type=None, metadata=None):
-        super(IntegrationAccountMap, self).__init__(location=location, tags=tags)
-        self.map_type = map_type
-        self.parameters_schema = parameters_schema
+    def __init__(self, **kwargs):
+        super(IntegrationAccountMap, self).__init__(**kwargs)
+        self.map_type = kwargs.get('map_type', None)
+        self.parameters_schema = kwargs.get('parameters_schema', None)
         self.created_time = None
         self.changed_time = None
-        self.content = content
-        self.content_type = content_type
+        self.content = kwargs.get('content', None)
+        self.content_type = kwargs.get('content_type', None)
         self.content_link = None
-        self.metadata = metadata
+        self.metadata = kwargs.get('metadata', None)

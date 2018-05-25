@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class EdifactSchemaReference(Model):
     """The Edifact schema reference.
 
-    :param message_id: The message id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_id: Required. The message id.
     :type message_id: str
-    :param message_version: The message version.
+    :param message_version: Required. The message version.
     :type message_version: str
-    :param message_release: The message release version.
+    :param message_release: Required. The message release version.
     :type message_release: str
     :param sender_application_id: The sender application id.
     :type sender_application_id: str
@@ -27,7 +29,7 @@ class EdifactSchemaReference(Model):
     :type sender_application_qualifier: str
     :param association_assigned_code: The association assigned code.
     :type association_assigned_code: str
-    :param schema_name: The schema name.
+    :param schema_name: Required. The schema name.
     :type schema_name: str
     """
 
@@ -48,11 +50,12 @@ class EdifactSchemaReference(Model):
         'schema_name': {'key': 'schemaName', 'type': 'str'},
     }
 
-    def __init__(self, message_id, message_version, message_release, schema_name, sender_application_id=None, sender_application_qualifier=None, association_assigned_code=None):
-        self.message_id = message_id
-        self.message_version = message_version
-        self.message_release = message_release
-        self.sender_application_id = sender_application_id
-        self.sender_application_qualifier = sender_application_qualifier
-        self.association_assigned_code = association_assigned_code
-        self.schema_name = schema_name
+    def __init__(self, **kwargs):
+        super(EdifactSchemaReference, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.message_version = kwargs.get('message_version', None)
+        self.message_release = kwargs.get('message_release', None)
+        self.sender_application_id = kwargs.get('sender_application_id', None)
+        self.sender_application_qualifier = kwargs.get('sender_application_qualifier', None)
+        self.association_assigned_code = kwargs.get('association_assigned_code', None)
+        self.schema_name = kwargs.get('schema_name', None)

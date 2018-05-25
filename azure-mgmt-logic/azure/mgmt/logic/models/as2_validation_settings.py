@@ -15,39 +15,40 @@ from msrest.serialization import Model
 class AS2ValidationSettings(Model):
     """The AS2 agreement validation settings.
 
-    :param override_message_properties: The value indicating whether to
-     override incoming message properties with those in agreement.
+    All required parameters must be populated in order to send to Azure.
+
+    :param override_message_properties: Required. The value indicating whether
+     to override incoming message properties with those in agreement.
     :type override_message_properties: bool
-    :param encrypt_message: The value indicating whether the message has to be
-     encrypted.
+    :param encrypt_message: Required. The value indicating whether the message
+     has to be encrypted.
     :type encrypt_message: bool
-    :param sign_message: The value indicating whether the message has to be
-     signed.
+    :param sign_message: Required. The value indicating whether the message
+     has to be signed.
     :type sign_message: bool
-    :param compress_message: The value indicating whether the message has to
-     be compressed.
+    :param compress_message: Required. The value indicating whether the
+     message has to be compressed.
     :type compress_message: bool
-    :param check_duplicate_message: The value indicating whether to check for
-     duplicate message.
+    :param check_duplicate_message: Required. The value indicating whether to
+     check for duplicate message.
     :type check_duplicate_message: bool
-    :param interchange_duplicates_validity_days: The number of days to look
-     back for duplicate interchange.
+    :param interchange_duplicates_validity_days: Required. The number of days
+     to look back for duplicate interchange.
     :type interchange_duplicates_validity_days: int
-    :param check_certificate_revocation_list_on_send: The value indicating
-     whether to check for certificate revocation list on send.
+    :param check_certificate_revocation_list_on_send: Required. The value
+     indicating whether to check for certificate revocation list on send.
     :type check_certificate_revocation_list_on_send: bool
-    :param check_certificate_revocation_list_on_receive: The value indicating
-     whether to check for certificate revocation list on receive.
+    :param check_certificate_revocation_list_on_receive: Required. The value
+     indicating whether to check for certificate revocation list on receive.
     :type check_certificate_revocation_list_on_receive: bool
-    :param encryption_algorithm: The encryption algorithm. Possible values
-     include: 'NotSpecified', 'None', 'DES3', 'RC2', 'AES128', 'AES192',
+    :param encryption_algorithm: Required. The encryption algorithm. Possible
+     values include: 'NotSpecified', 'None', 'DES3', 'RC2', 'AES128', 'AES192',
      'AES256'
-    :type encryption_algorithm: str or :class:`EncryptionAlgorithm
-     <azure.mgmt.logic.models.EncryptionAlgorithm>`
+    :type encryption_algorithm: str or
+     ~azure.mgmt.logic.models.EncryptionAlgorithm
     :param signing_algorithm: The signing algorithm. Possible values include:
      'NotSpecified', 'Default', 'SHA1', 'SHA2256', 'SHA2384', 'SHA2512'
-    :type signing_algorithm: str or :class:`SigningAlgorithm
-     <azure.mgmt.logic.models.SigningAlgorithm>`
+    :type signing_algorithm: str or ~azure.mgmt.logic.models.SigningAlgorithm
     """
 
     _validation = {
@@ -75,14 +76,15 @@ class AS2ValidationSettings(Model):
         'signing_algorithm': {'key': 'signingAlgorithm', 'type': 'str'},
     }
 
-    def __init__(self, override_message_properties, encrypt_message, sign_message, compress_message, check_duplicate_message, interchange_duplicates_validity_days, check_certificate_revocation_list_on_send, check_certificate_revocation_list_on_receive, encryption_algorithm, signing_algorithm=None):
-        self.override_message_properties = override_message_properties
-        self.encrypt_message = encrypt_message
-        self.sign_message = sign_message
-        self.compress_message = compress_message
-        self.check_duplicate_message = check_duplicate_message
-        self.interchange_duplicates_validity_days = interchange_duplicates_validity_days
-        self.check_certificate_revocation_list_on_send = check_certificate_revocation_list_on_send
-        self.check_certificate_revocation_list_on_receive = check_certificate_revocation_list_on_receive
-        self.encryption_algorithm = encryption_algorithm
-        self.signing_algorithm = signing_algorithm
+    def __init__(self, **kwargs):
+        super(AS2ValidationSettings, self).__init__(**kwargs)
+        self.override_message_properties = kwargs.get('override_message_properties', None)
+        self.encrypt_message = kwargs.get('encrypt_message', None)
+        self.sign_message = kwargs.get('sign_message', None)
+        self.compress_message = kwargs.get('compress_message', None)
+        self.check_duplicate_message = kwargs.get('check_duplicate_message', None)
+        self.interchange_duplicates_validity_days = kwargs.get('interchange_duplicates_validity_days', None)
+        self.check_certificate_revocation_list_on_send = kwargs.get('check_certificate_revocation_list_on_send', None)
+        self.check_certificate_revocation_list_on_receive = kwargs.get('check_certificate_revocation_list_on_receive', None)
+        self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
+        self.signing_algorithm = kwargs.get('signing_algorithm', None)

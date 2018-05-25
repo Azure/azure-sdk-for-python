@@ -15,29 +15,26 @@ from msrest.serialization import Model
 class AS2ProtocolSettings(Model):
     """The AS2 agreement protocol settings.
 
-    :param message_connection_settings: The message connection settings.
-    :type message_connection_settings: :class:`AS2MessageConnectionSettings
-     <azure.mgmt.logic.models.AS2MessageConnectionSettings>`
-    :param acknowledgement_connection_settings: The acknowledgement connection
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_connection_settings: Required. The message connection
      settings.
+    :type message_connection_settings:
+     ~azure.mgmt.logic.models.AS2MessageConnectionSettings
+    :param acknowledgement_connection_settings: Required. The acknowledgement
+     connection settings.
     :type acknowledgement_connection_settings:
-     :class:`AS2AcknowledgementConnectionSettings
-     <azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings>`
-    :param mdn_settings: The MDN settings.
-    :type mdn_settings: :class:`AS2MdnSettings
-     <azure.mgmt.logic.models.AS2MdnSettings>`
-    :param security_settings: The security settings.
-    :type security_settings: :class:`AS2SecuritySettings
-     <azure.mgmt.logic.models.AS2SecuritySettings>`
-    :param validation_settings: The validation settings.
-    :type validation_settings: :class:`AS2ValidationSettings
-     <azure.mgmt.logic.models.AS2ValidationSettings>`
-    :param envelope_settings: The envelope settings.
-    :type envelope_settings: :class:`AS2EnvelopeSettings
-     <azure.mgmt.logic.models.AS2EnvelopeSettings>`
-    :param error_settings: The error settings.
-    :type error_settings: :class:`AS2ErrorSettings
-     <azure.mgmt.logic.models.AS2ErrorSettings>`
+     ~azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings
+    :param mdn_settings: Required. The MDN settings.
+    :type mdn_settings: ~azure.mgmt.logic.models.AS2MdnSettings
+    :param security_settings: Required. The security settings.
+    :type security_settings: ~azure.mgmt.logic.models.AS2SecuritySettings
+    :param validation_settings: Required. The validation settings.
+    :type validation_settings: ~azure.mgmt.logic.models.AS2ValidationSettings
+    :param envelope_settings: Required. The envelope settings.
+    :type envelope_settings: ~azure.mgmt.logic.models.AS2EnvelopeSettings
+    :param error_settings: Required. The error settings.
+    :type error_settings: ~azure.mgmt.logic.models.AS2ErrorSettings
     """
 
     _validation = {
@@ -60,11 +57,12 @@ class AS2ProtocolSettings(Model):
         'error_settings': {'key': 'errorSettings', 'type': 'AS2ErrorSettings'},
     }
 
-    def __init__(self, message_connection_settings, acknowledgement_connection_settings, mdn_settings, security_settings, validation_settings, envelope_settings, error_settings):
-        self.message_connection_settings = message_connection_settings
-        self.acknowledgement_connection_settings = acknowledgement_connection_settings
-        self.mdn_settings = mdn_settings
-        self.security_settings = security_settings
-        self.validation_settings = validation_settings
-        self.envelope_settings = envelope_settings
-        self.error_settings = error_settings
+    def __init__(self, **kwargs):
+        super(AS2ProtocolSettings, self).__init__(**kwargs)
+        self.message_connection_settings = kwargs.get('message_connection_settings', None)
+        self.acknowledgement_connection_settings = kwargs.get('acknowledgement_connection_settings', None)
+        self.mdn_settings = kwargs.get('mdn_settings', None)
+        self.security_settings = kwargs.get('security_settings', None)
+        self.validation_settings = kwargs.get('validation_settings', None)
+        self.envelope_settings = kwargs.get('envelope_settings', None)
+        self.error_settings = kwargs.get('error_settings', None)
