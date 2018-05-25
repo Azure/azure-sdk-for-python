@@ -26,10 +26,10 @@ class ElasticPool(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param sku:
     :type sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of elastic pool. This is metadata used for the Azure
@@ -71,8 +71,8 @@ class ElasticPool(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
@@ -84,7 +84,7 @@ class ElasticPool(TrackedResource):
     }
 
     def __init__(self, *, location: str, tags=None, sku=None, max_size_bytes: int=None, per_database_settings=None, zone_redundant: bool=None, license_type=None, **kwargs) -> None:
-        super(ElasticPool, self).__init__(tags=tags, location=location, **kwargs)
+        super(ElasticPool, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
         self.state = None
