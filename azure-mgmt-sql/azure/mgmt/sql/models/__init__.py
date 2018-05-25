@@ -10,11 +10,11 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .proxy_resource_py3 import ProxyResource
     from .recoverable_database_py3 import RecoverableDatabase
     from .restorable_dropped_database_py3 import RestorableDroppedDatabase
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
     from .check_name_availability_request_py3 import CheckNameAvailabilityRequest
     from .check_name_availability_response_py3 import CheckNameAvailabilityResponse
     from .server_connection_policy_py3 import ServerConnectionPolicy
@@ -145,11 +145,11 @@ try:
     from .instance_failover_group_py3 import InstanceFailoverGroup
     from .backup_short_term_retention_policy_py3 import BackupShortTermRetentionPolicy
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .proxy_resource import ProxyResource
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .proxy_resource import ProxyResource
     from .check_name_availability_request import CheckNameAvailabilityRequest
     from .check_name_availability_response import CheckNameAvailabilityResponse
     from .server_connection_policy import ServerConnectionPolicy
@@ -409,11 +409,11 @@ from .sql_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'TrackedResource',
-    'ProxyResource',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
+    'TrackedResource',
+    'Resource',
+    'ProxyResource',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
     'ServerConnectionPolicy',

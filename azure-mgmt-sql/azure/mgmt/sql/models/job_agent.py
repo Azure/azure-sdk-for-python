@@ -26,10 +26,10 @@ class JobAgent(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param sku: The name and tier of the SKU.
     :type sku: ~azure.mgmt.sql.models.Sku
     :param database_id: Required. Resource ID of the database to store job
@@ -53,8 +53,8 @@ class JobAgent(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'database_id': {'key': 'properties.databaseId', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
