@@ -25,6 +25,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
     report = {}
     report["models"] = {
         "enums": {},
+        "exceptions": {},
         "models": {}
     }
     # Look for models first
@@ -33,6 +34,8 @@ def create_report(module_name: str) -> Dict[str, Any]:
         model_cls = getattr(module_to_generate.models, model_name)
         if hasattr(model_cls, "_attribute_map"):
             report["models"]["models"][model_name] = create_model_report(model_cls)
+        elif issubclass(model_cls, Exception): # If not, might be an exception
+            report["models"]["exceptions"][model_name] = create_model_report(model_cls)
         else:
             report["models"]["enums"][model_name] = create_model_report(model_cls)
     # Look for operation groups
@@ -68,6 +71,8 @@ def create_model_report(model_cls):
                     'readonly': attribute_validation.get('readonly', False)
                 }
             }
+    elif issubclass(model_cls, Exception): # If not, might be an exception
+        result['type'] = "Exception"
     else: # If not, it's an enum
         result['type'] = "Enum"
         result['values'] = list(model_cls.__members__)
