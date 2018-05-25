@@ -60,14 +60,14 @@ class MonitorConfig(Model):
         'expected_status_code_ranges': {'key': 'expectedStatusCodeRanges', 'type': '[MonitorConfigExpectedStatusCodeRangesItem]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, profile_monitor_status=None, protocol=None, port: int=None, path: str=None, interval_in_seconds: int=None, timeout_in_seconds: int=None, tolerated_number_of_failures: int=None, custom_headers=None, expected_status_code_ranges=None, **kwargs) -> None:
         super(MonitorConfig, self).__init__(**kwargs)
-        self.profile_monitor_status = kwargs.get('profile_monitor_status', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.port = kwargs.get('port', None)
-        self.path = kwargs.get('path', None)
-        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
-        self.timeout_in_seconds = kwargs.get('timeout_in_seconds', None)
-        self.tolerated_number_of_failures = kwargs.get('tolerated_number_of_failures', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
-        self.expected_status_code_ranges = kwargs.get('expected_status_code_ranges', None)
+        self.profile_monitor_status = profile_monitor_status
+        self.protocol = protocol
+        self.port = port
+        self.path = path
+        self.interval_in_seconds = interval_in_seconds
+        self.timeout_in_seconds = timeout_in_seconds
+        self.tolerated_number_of_failures = tolerated_number_of_failures
+        self.custom_headers = custom_headers
+        self.expected_status_code_ranges = expected_status_code_ranges
