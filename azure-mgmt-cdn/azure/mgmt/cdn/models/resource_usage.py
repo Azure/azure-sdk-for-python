@@ -42,8 +42,8 @@ class ResourceUsage(Model):
         'limit': {'key': 'limit', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(ResourceUsage, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceUsage, self).__init__(**kwargs)
         self.resource_type = None
         self.unit = None
         self.current_value = None
