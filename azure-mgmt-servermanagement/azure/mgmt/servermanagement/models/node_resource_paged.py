@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from msrest.paging import Paged
 
+
+class NodeResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NodeResource <azure.mgmt.servermanagement.models.NodeResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NodeResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NodeResourcePaged, self).__init__(*args, **kwargs)

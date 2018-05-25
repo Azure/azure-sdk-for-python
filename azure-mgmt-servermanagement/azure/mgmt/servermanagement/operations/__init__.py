@@ -9,5 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from .gateway_operations import GatewayOperations
+from .node_operations import NodeOperations
+from .session_operations import SessionOperations
+from .power_shell_operations import PowerShellOperations
 
+__all__ = [
+    'GatewayOperations',
+    'NodeOperations',
+    'SessionOperations',
+    'PowerShellOperations',
+]

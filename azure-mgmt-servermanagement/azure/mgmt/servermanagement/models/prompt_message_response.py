@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from msrest.serialization import Model
 
+
+class PromptMessageResponse(Model):
+    """The response to a prompt message.
+
+    :param response: The list of responses a cmdlet expects.
+    :type response: list[str]
+    """
+
+    _attribute_map = {
+        'response': {'key': 'response', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PromptMessageResponse, self).__init__(**kwargs)
+        self.response = kwargs.get('response', None)
