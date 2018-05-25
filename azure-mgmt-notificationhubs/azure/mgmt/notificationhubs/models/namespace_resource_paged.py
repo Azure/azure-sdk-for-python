@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NamespaceResourcePaged(Paged):
     """
-    A paging container for iterating over a list of NamespaceResource object
+    A paging container for iterating over a list of :class:`NamespaceResource <azure.mgmt.notificationhubs.models.NamespaceResource>` object
     """
 
     _attribute_map = {
