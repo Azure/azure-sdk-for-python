@@ -12,22 +12,23 @@
 from msrest.serialization import Model
 
 
-class CheckNameRequest(Model):
-    """CheckNameRequest.
+class Operation(Model):
+    """Operation.
 
-    :param name: Workspace collection name
+    :param name: The name of the operation being performed on this particular
+     object. This name should match the action name that appears in RBAC / the
+     event service.
     :type name: str
-    :param type: Resource type. Default value:
-     "Microsoft.PowerBI/workspaceCollections" .
-    :type type: str
+    :param display:
+    :type display: ~azure.mgmt.powerbiembedded.models.Display
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'Display'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', "Microsoft.PowerBI/workspaceCollections")
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = name
+        self.display = display

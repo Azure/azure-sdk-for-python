@@ -12,22 +12,29 @@
 from msrest.serialization import Model
 
 
-class CheckNameRequest(Model):
-    """CheckNameRequest.
+class Workspace(Model):
+    """Workspace.
 
-    :param name: Workspace collection name
+    :param id: Workspace id
+    :type id: str
+    :param name: Workspace name
     :type name: str
-    :param type: Resource type. Default value:
-     "Microsoft.PowerBI/workspaceCollections" .
+    :param type: Resource type
     :type type: str
+    :param properties: Property bag
+    :type properties: object
     """
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', "Microsoft.PowerBI/workspaceCollections")
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, properties=None, **kwargs) -> None:
+        super(Workspace, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.properties = properties

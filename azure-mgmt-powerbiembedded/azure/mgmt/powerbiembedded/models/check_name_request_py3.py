@@ -12,17 +12,22 @@
 from msrest.serialization import Model
 
 
-class OperationList(Model):
-    """OperationList.
+class CheckNameRequest(Model):
+    """CheckNameRequest.
 
-    :param value:
-    :type value: list[~azure.mgmt.powerbiembedded.models.Operation]
+    :param name: Workspace collection name
+    :type name: str
+    :param type: Resource type. Default value:
+     "Microsoft.PowerBI/workspaceCollections" .
+    :type type: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(OperationList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, name: str=None, type: str="Microsoft.PowerBI/workspaceCollections", **kwargs) -> None:
+        super(CheckNameRequest, self).__init__(**kwargs)
+        self.name = name
+        self.type = type

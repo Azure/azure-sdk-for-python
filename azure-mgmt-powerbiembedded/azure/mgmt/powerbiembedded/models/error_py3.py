@@ -33,12 +33,12 @@ class Error(Model):
         'details': {'key': 'details', 'type': '[ErrorDetail]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
 
 
 class ErrorException(HttpOperationError):
