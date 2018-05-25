@@ -439,6 +439,7 @@
       "azure.mgmt.resource.resources.v2016_02_01",
       "azure.mgmt.resource.resources.v2016_09_01",
       "azure.mgmt.resource.resources.v2017_05_10",
+      "azure.mgmt.resource.resources.v2018_02_01",
       "azure.mgmt.resource.policy.v2015_10_01_preview",
       "azure.mgmt.resource.policy.v2016_04_01",
       "azure.mgmt.resource.policy.v2016_12_01",
