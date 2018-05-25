@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class PowerShellCommandStatus(Resource):
-    """Result status from invoking a PowerShell command.
+class NodeResource(Resource):
+    """A Node Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,15 +30,15 @@ class PowerShellCommandStatus(Resource):
     :type tags: dict[str, str]
     :param etag:
     :type etag: str
-    :param results:
-    :type results:
-     list[~azure.mgmt.servermanager.models.PowerShellCommandResult]
-    :param pssession:
-    :type pssession: str
-    :param command:
-    :type command: str
-    :param completed:
-    :type completed: bool
+    :param gateway_id: ID of the gateway.
+    :type gateway_id: str
+    :param connection_name: myhost.domain.com
+    :type connection_name: str
+    :param created: UTC date and time when node was first added to management
+     service.
+    :type created: datetime
+    :param updated: UTC date and time when node was last updated.
+    :type updated: datetime
     """
 
     _validation = {
@@ -55,15 +55,15 @@ class PowerShellCommandStatus(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'results': {'key': 'properties.results', 'type': '[PowerShellCommandResult]'},
-        'pssession': {'key': 'properties.pssession', 'type': 'str'},
-        'command': {'key': 'properties.command', 'type': 'str'},
-        'completed': {'key': 'properties.completed', 'type': 'bool'},
+        'gateway_id': {'key': 'properties.gatewayId', 'type': 'str'},
+        'connection_name': {'key': 'properties.connectionName', 'type': 'str'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(PowerShellCommandStatus, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-        self.pssession = kwargs.get('pssession', None)
-        self.command = kwargs.get('command', None)
-        self.completed = kwargs.get('completed', None)
+    def __init__(self, *, tags=None, etag: str=None, gateway_id: str=None, connection_name: str=None, created=None, updated=None, **kwargs) -> None:
+        super(NodeResource, self).__init__(tags=tags, etag=etag, **kwargs)
+        self.gateway_id = gateway_id
+        self.connection_name = connection_name
+        self.created = created
+        self.updated = updated
