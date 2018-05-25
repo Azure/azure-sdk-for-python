@@ -29,7 +29,8 @@ class KEKDetails(Model):
         'key_backup_data': {'key': 'keyBackupData', 'type': 'str'},
     }
 
-    def __init__(self, key_url=None, key_vault_id=None, key_backup_data=None):
-        self.key_url = key_url
-        self.key_vault_id = key_vault_id
-        self.key_backup_data = key_backup_data
+    def __init__(self, **kwargs):
+        super(KEKDetails, self).__init__(**kwargs)
+        self.key_url = kwargs.get('key_url', None)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_backup_data = kwargs.get('key_backup_data', None)
