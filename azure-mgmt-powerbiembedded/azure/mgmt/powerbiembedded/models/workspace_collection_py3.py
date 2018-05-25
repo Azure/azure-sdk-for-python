@@ -51,11 +51,11 @@ class WorkspaceCollection(Model):
 
     sku = AzureSku()
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, location: str=None, tags=None, properties=None, **kwargs) -> None:
         super(WorkspaceCollection, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.tags = tags
+        self.properties = properties
