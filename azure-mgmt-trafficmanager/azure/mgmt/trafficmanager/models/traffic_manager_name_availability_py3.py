@@ -37,10 +37,10 @@ class TrafficManagerNameAvailability(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, type: str=None, name_available: bool=None, reason: str=None, message: str=None, **kwargs) -> None:
         super(TrafficManagerNameAvailability, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name = name
+        self.type = type
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message

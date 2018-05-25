@@ -43,8 +43,8 @@ class DnsConfig(Model):
         'ttl': {'key': 'ttl', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, relative_name: str=None, ttl: int=None, **kwargs) -> None:
         super(DnsConfig, self).__init__(**kwargs)
-        self.relative_name = kwargs.get('relative_name', None)
+        self.relative_name = relative_name
         self.fqdn = None
-        self.ttl = kwargs.get('ttl', None)
+        self.ttl = ttl
