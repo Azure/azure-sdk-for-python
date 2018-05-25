@@ -22,9 +22,11 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-08-10".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -44,18 +46,16 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ClientDiscoveryValueForSingleApi
-         <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi>`
-        :rtype: :class:`ClientDiscoveryValueForSingleApiPaged
-         <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApiPaged>`
+        :return: An iterator like instance of ClientDiscoveryValueForSingleApi
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApiPaged[~azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.RecoveryServices/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -78,7 +78,7 @@ class Operations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -96,3 +96,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.RecoveryServices/operations'}
