@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_reference import ResourceReference
+from .resource_reference_py3 import ResourceReference
 
 
 class KeyVaultReference(ResourceReference):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .run_correlation import RunCorrelation
+from .run_correlation_py3 import RunCorrelation
 
 
 class RunActionCorrelation(RunCorrelation):

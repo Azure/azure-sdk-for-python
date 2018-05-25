@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operation_result_properties import OperationResultProperties
+from .operation_result_properties_py3 import OperationResultProperties
 
 
 class OperationResult(OperationResultProperties):

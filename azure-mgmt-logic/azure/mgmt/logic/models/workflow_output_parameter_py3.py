@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .workflow_parameter import WorkflowParameter
+from .workflow_parameter_py3 import WorkflowParameter
 
 
 class WorkflowOutputParameter(WorkflowParameter):

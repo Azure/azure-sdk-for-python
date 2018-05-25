@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .expression import Expression
+from .expression_py3 import Expression
 
 
 class ExpressionRoot(Expression):

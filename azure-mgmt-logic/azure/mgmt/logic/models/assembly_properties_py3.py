@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .artifact_content_properties_definition import ArtifactContentPropertiesDefinition
+from .artifact_content_properties_definition_py3 import ArtifactContentPropertiesDefinition
 
 
 class AssemblyProperties(ArtifactContentPropertiesDefinition):

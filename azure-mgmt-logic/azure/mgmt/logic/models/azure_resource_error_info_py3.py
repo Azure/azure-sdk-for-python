@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error_info import ErrorInfo
+from .error_info_py3 import ErrorInfo
 
 
 class AzureResourceErrorInfo(ErrorInfo):

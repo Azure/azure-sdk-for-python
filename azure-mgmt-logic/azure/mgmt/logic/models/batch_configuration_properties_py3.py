@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .artifact_properties import ArtifactProperties
+from .artifact_properties_py3 import ArtifactProperties
 
 
 class BatchConfigurationProperties(ArtifactProperties):
