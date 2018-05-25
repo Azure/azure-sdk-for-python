@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class Database(TrackedResource):
@@ -26,10 +26,10 @@ class Database(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param sku: The name and tier of the SKU.
     :type sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of database. This is metadata used for the Azure portal
@@ -171,8 +171,8 @@ class Database(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
@@ -205,7 +205,7 @@ class Database(TrackedResource):
     }
 
     def __init__(self, *, location: str, tags=None, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, **kwargs) -> None:
-        super(Database, self).__init__(tags=tags, location=location, **kwargs)
+        super(Database, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
         self.managed_by = None
