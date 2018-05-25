@@ -22,9 +22,11 @@ class ProtectionContainerOperationResultsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -57,17 +59,14 @@ class ProtectionContainerOperationResultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProtectionContainerResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectionContainerResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProtectionContainerResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectionContainerResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProtectionContainerResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionContainerResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/operationResults/{operationId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -94,7 +93,7 @@ class ProtectionContainerOperationResultsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
@@ -111,3 +110,4 @@ class ProtectionContainerOperationResultsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/operationResults/{operationId}'}

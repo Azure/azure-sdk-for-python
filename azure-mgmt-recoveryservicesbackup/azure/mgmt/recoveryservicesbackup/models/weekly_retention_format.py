@@ -16,11 +16,11 @@ class WeeklyRetentionFormat(Model):
     """Weekly retention format.
 
     :param days_of_the_week: List of days of the week.
-    :type days_of_the_week: list of str or :class:`DayOfWeek
-     <azure.mgmt.recoveryservicesbackup.models.DayOfWeek>`
+    :type days_of_the_week: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.DayOfWeek]
     :param weeks_of_the_month: List of weeks of month.
-    :type weeks_of_the_month: list of str or :class:`WeekOfMonth
-     <azure.mgmt.recoveryservicesbackup.models.WeekOfMonth>`
+    :type weeks_of_the_month: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.WeekOfMonth]
     """
 
     _attribute_map = {
@@ -28,6 +28,7 @@ class WeeklyRetentionFormat(Model):
         'weeks_of_the_month': {'key': 'weeksOfTheMonth', 'type': '[WeekOfMonth]'},
     }
 
-    def __init__(self, days_of_the_week=None, weeks_of_the_month=None):
-        self.days_of_the_week = days_of_the_week
-        self.weeks_of_the_month = weeks_of_the_month
+    def __init__(self, **kwargs):
+        super(WeeklyRetentionFormat, self).__init__(**kwargs)
+        self.days_of_the_week = kwargs.get('days_of_the_week', None)
+        self.weeks_of_the_month = kwargs.get('weeks_of_the_month', None)

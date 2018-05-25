@@ -15,7 +15,12 @@ from msrest.serialization import Model
 class OperationResultInfoBase(Model):
     """Base class for operation result info.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExportJobsOperationResultInfo, OperationResultInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     """
 
@@ -31,5 +36,6 @@ class OperationResultInfoBase(Model):
         'object_type': {'ExportJobsOperationResultInfo': 'ExportJobsOperationResultInfo', 'OperationResultInfo': 'OperationResultInfo'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(OperationResultInfoBase, self).__init__(**kwargs)
         self.object_type = None
