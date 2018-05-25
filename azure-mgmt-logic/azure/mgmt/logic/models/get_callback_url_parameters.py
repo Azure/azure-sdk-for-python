@@ -19,7 +19,7 @@ class GetCallbackUrlParameters(Model):
     :type not_after: datetime
     :param key_type: The key type. Possible values include: 'NotSpecified',
      'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
+    :type key_type: str or ~azure.mgmt.logic.models.KeyType
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class GetCallbackUrlParameters(Model):
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, not_after=None, key_type=None):
-        self.not_after = not_after
-        self.key_type = key_type
+    def __init__(self, **kwargs):
+        super(GetCallbackUrlParameters, self).__init__(**kwargs)
+        self.not_after = kwargs.get('not_after', None)
+        self.key_type = kwargs.get('key_type', None)
