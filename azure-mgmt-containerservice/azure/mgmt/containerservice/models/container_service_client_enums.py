@@ -209,3 +209,15 @@ class OSType(str, Enum):
 
     linux = "Linux"
     windows = "Windows"
+
+
+class NetworkPlugin(str, Enum):
+
+    azure = "azure"
+    kubenet = "kubenet"
+
+
+class NetworkPolicy(str, Enum):
+
+    calico = "calico"
+    cilium = "cilium"
