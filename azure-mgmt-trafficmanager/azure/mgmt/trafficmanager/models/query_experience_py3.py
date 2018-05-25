@@ -39,8 +39,8 @@ class QueryExperience(Model):
         'latency': {'key': 'latency', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, endpoint_id: int, query_count: int, latency: float=None, **kwargs) -> None:
         super(QueryExperience, self).__init__(**kwargs)
-        self.endpoint_id = kwargs.get('endpoint_id', None)
-        self.query_count = kwargs.get('query_count', None)
-        self.latency = kwargs.get('latency', None)
+        self.endpoint_id = endpoint_id
+        self.query_count = query_count
+        self.latency = latency

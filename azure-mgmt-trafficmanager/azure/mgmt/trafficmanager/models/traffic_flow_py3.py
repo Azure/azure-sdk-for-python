@@ -37,9 +37,9 @@ class TrafficFlow(Model):
         'query_experiences': {'key': 'queryExperiences', 'type': '[QueryExperience]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_ip: str=None, latitude: float=None, longitude: float=None, query_experiences=None, **kwargs) -> None:
         super(TrafficFlow, self).__init__(**kwargs)
-        self.source_ip = kwargs.get('source_ip', None)
-        self.latitude = kwargs.get('latitude', None)
-        self.longitude = kwargs.get('longitude', None)
-        self.query_experiences = kwargs.get('query_experiences', None)
+        self.source_ip = source_ip
+        self.latitude = latitude
+        self.longitude = longitude
+        self.query_experiences = query_experiences

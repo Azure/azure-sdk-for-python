@@ -26,7 +26,7 @@ class MonitorConfigExpectedStatusCodeRangesItem(Model):
         'max': {'key': 'max', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, min: int=None, max: int=None, **kwargs) -> None:
         super(MonitorConfigExpectedStatusCodeRangesItem, self).__init__(**kwargs)
-        self.min = kwargs.get('min', None)
-        self.max = kwargs.get('max', None)
+        self.min = min
+        self.max = max

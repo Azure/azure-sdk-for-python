@@ -31,8 +31,8 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None):
-        super(Resource, self).__init__()
-        self.id = id
-        self.name = name
-        self.type = type
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)

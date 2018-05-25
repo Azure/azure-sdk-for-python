@@ -36,6 +36,6 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
         'geographic_hierarchy': {'key': 'properties.geographicHierarchy', 'type': 'Region'},
     }
 
-    def __init__(self, id=None, name=None, type=None, geographic_hierarchy=None):
-        super(TrafficManagerGeographicHierarchy, self).__init__(id=id, name=name, type=type)
-        self.geographic_hierarchy = geographic_hierarchy
+    def __init__(self, **kwargs):
+        super(TrafficManagerGeographicHierarchy, self).__init__(**kwargs)
+        self.geographic_hierarchy = kwargs.get('geographic_hierarchy', None)

@@ -26,5 +26,11 @@ class ProxyResource(Resource):
     :type type: str
     """
 
-    def __init__(self, id=None, name=None, type=None):
-        super(ProxyResource, self).__init__(id=id, name=name, type=type)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)

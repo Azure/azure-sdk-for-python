@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class HeatMapModel(ProxyResource):
@@ -46,9 +46,9 @@ class HeatMapModel(ProxyResource):
         'traffic_flows': {'key': 'properties.trafficFlows', 'type': '[TrafficFlow]'},
     }
 
-    def __init__(self, **kwargs):
-        super(HeatMapModel, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.endpoints = kwargs.get('endpoints', None)
-        self.traffic_flows = kwargs.get('traffic_flows', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, start_time=None, end_time=None, endpoints=None, traffic_flows=None, **kwargs) -> None:
+        super(HeatMapModel, self).__init__(id=id, name=name, type=type, **kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.endpoints = endpoints
+        self.traffic_flows = traffic_flows

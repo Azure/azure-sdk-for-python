@@ -27,7 +27,7 @@ class HeatMapEndpoint(Model):
         'endpoint_id': {'key': 'endpointId', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resource_id: str=None, endpoint_id: int=None, **kwargs) -> None:
         super(HeatMapEndpoint, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.endpoint_id = kwargs.get('endpoint_id', None)
+        self.resource_id = resource_id
+        self.endpoint_id = endpoint_id
