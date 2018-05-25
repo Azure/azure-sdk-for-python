@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class LinkedService(ProxyResource):
@@ -48,6 +48,6 @@ class LinkedService(ProxyResource):
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(LinkedService, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+    def __init__(self, *, resource_id: str, tags=None, **kwargs) -> None:
+        super(LinkedService, self).__init__(tags=tags, **kwargs)
+        self.resource_id = resource_id

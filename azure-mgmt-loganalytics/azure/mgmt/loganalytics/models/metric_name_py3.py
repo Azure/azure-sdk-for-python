@@ -12,20 +12,21 @@
 from msrest.serialization import Model
 
 
-class SearchError(Model):
-    """Details for a search error.
+class MetricName(Model):
+    """The name of a metric.
 
-    :param type: The error type.
-    :type type: str
-    :param message: The error message.
-    :type message: str
+    :param value: The system name of the metric.
+    :type value: str
+    :param localized_value: The localized name of the metric.
+    :type localized_value: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, type=None, message=None):
-        self.type = type
-        self.message = message
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
+        super(MetricName, self).__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value

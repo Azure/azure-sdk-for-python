@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class LinkedService(ProxyResource):
-    """The top level Linked service resource container.
+class ProxyResource(Model):
+    """Common properties of proxy resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -28,16 +26,12 @@ class LinkedService(ProxyResource):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param resource_id: Required. The resource id of the resource that will be
-     linked to the workspace.
-    :type resource_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'resource_id': {'required': True},
     }
 
     _attribute_map = {
@@ -45,9 +39,11 @@ class LinkedService(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(LinkedService, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = tags
