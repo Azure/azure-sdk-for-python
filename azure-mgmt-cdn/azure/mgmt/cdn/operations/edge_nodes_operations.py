@@ -22,7 +22,7 @@ class EdgeNodesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-10-12".
     """
 
     models = models
@@ -32,7 +32,7 @@ class EdgeNodesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-02"
+        self.api_version = "2017-10-12"
 
         self.config = config
 
