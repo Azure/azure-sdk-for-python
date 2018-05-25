@@ -26,10 +26,10 @@ class ManagedDatabase(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param collation: Collation of the managed database.
     :type collation: str
     :ivar status: Status for the database. Possible values include: 'Online',
@@ -91,8 +91,8 @@ class ManagedDatabase(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -108,7 +108,7 @@ class ManagedDatabase(TrackedResource):
     }
 
     def __init__(self, *, location: str, tags=None, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, storage_container_sas_token: str=None, **kwargs) -> None:
-        super(ManagedDatabase, self).__init__(tags=tags, location=location, **kwargs)
+        super(ManagedDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
         self.status = None
         self.creation_date = None
