@@ -54,7 +54,7 @@ class PatchVault(PatchTrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, e_tag=None, location=None, tags=None, properties=None, sku=None):
-        super(PatchVault, self).__init__(e_tag=e_tag, location=location, tags=tags)
-        self.properties = properties
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(PatchVault, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)

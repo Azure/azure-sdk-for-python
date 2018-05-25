@@ -33,7 +33,7 @@ class VaultProperties(Model):
         'upgrade_details': {'key': 'upgradeDetails', 'type': 'UpgradeDetails'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, upgrade_details=None, **kwargs) -> None:
         super(VaultProperties, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.upgrade_details = kwargs.get('upgrade_details', None)
+        self.upgrade_details = upgrade_details

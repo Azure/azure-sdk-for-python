@@ -23,6 +23,6 @@ class CertificateRequest(Model):
         'properties': {'key': 'properties', 'type': 'RawCertificateData'},
     }
 
-    def __init__(self, properties=None):
-        super(CertificateRequest, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CertificateRequest, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

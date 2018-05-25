@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class NameInfo(Model):
-    """The name of usage.
+class CertificateRequest(Model):
+    """Details of the certificate to be uploaded to the vault.
 
-    :param value: Value of usage.
-    :type value: str
-    :param localized_value: Localized value of usage.
-    :type localized_value: str
+    :param properties:
+    :type properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'RawCertificateData'},
     }
 
-    def __init__(self, **kwargs):
-        super(NameInfo, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(CertificateRequest, self).__init__(**kwargs)
+        self.properties = properties

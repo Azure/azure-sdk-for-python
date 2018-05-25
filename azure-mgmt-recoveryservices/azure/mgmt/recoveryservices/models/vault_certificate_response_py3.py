@@ -12,39 +12,41 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """ARM Resource.
+class VaultCertificateResponse(Model):
+    """Certificate corresponding to a vault that can be used by clients to
+    register themselves with the vault.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id represents the complete path to the resource.
-    :vartype id: str
     :ivar name: Resource name associated with the resource.
     :vartype name: str
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :param properties:
+    :type properties:
+     ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'id': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ResourceCertificateDetails'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(VaultCertificateResponse, self).__init__(**kwargs)
         self.name = None
         self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.id = None
+        self.properties = properties

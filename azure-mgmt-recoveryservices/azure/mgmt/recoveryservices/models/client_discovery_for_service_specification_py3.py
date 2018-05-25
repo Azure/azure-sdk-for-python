@@ -24,6 +24,6 @@ class ClientDiscoveryForServiceSpecification(Model):
         'log_specifications': {'key': 'logSpecifications', 'type': '[ClientDiscoveryForLogSpecification]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, log_specifications=None, **kwargs) -> None:
         super(ClientDiscoveryForServiceSpecification, self).__init__(**kwargs)
-        self.log_specifications = kwargs.get('log_specifications', None)
+        self.log_specifications = log_specifications

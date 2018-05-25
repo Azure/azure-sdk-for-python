@@ -26,7 +26,7 @@ class NameInfo(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
         super(NameInfo, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+        self.value = value
+        self.localized_value = localized_value

@@ -48,7 +48,7 @@ class PatchTrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, e_tag=None, location=None, tags=None):
-        super(PatchTrackedResource, self).__init__(e_tag=e_tag)
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(PatchTrackedResource, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

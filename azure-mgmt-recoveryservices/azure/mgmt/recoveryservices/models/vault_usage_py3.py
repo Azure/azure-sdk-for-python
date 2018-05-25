@@ -39,11 +39,11 @@ class VaultUsage(Model):
         'name': {'key': 'name', 'type': 'NameInfo'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, unit=None, quota_period: str=None, next_reset_time=None, current_value: int=None, limit: int=None, name=None, **kwargs) -> None:
         super(VaultUsage, self).__init__(**kwargs)
-        self.unit = kwargs.get('unit', None)
-        self.quota_period = kwargs.get('quota_period', None)
-        self.next_reset_time = kwargs.get('next_reset_time', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.unit = unit
+        self.quota_period = quota_period
+        self.next_reset_time = next_reset_time
+        self.current_value = current_value
+        self.limit = limit
+        self.name = name

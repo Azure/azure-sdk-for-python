@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_certificate_details import ResourceCertificateDetails
+from msrest.serialization import Model
 
 
-class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
-    """Certificate details representing the Vault credentials for ACS.
+class ResourceCertificateDetails(Model):
+    """Certificate details representing the Vault credentials.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ResourceCertificateAndAadDetails,
+    ResourceCertificateAndAcsDetails
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,20 +39,10 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
     :type valid_to: datetime
     :param auth_type: Required. Constant filled by server.
     :type auth_type: str
-    :param global_acs_namespace: Required. ACS namespace name - tenant for our
-     service.
-    :type global_acs_namespace: str
-    :param global_acs_host_name: Required. Acs mgmt host name to connect to.
-    :type global_acs_host_name: str
-    :param global_acs_rp_realm: Required. Global ACS namespace RP realm.
-    :type global_acs_rp_realm: str
     """
 
     _validation = {
         'auth_type': {'required': True},
-        'global_acs_namespace': {'required': True},
-        'global_acs_host_name': {'required': True},
-        'global_acs_rp_realm': {'required': True},
     }
 
     _attribute_map = {
@@ -61,14 +55,20 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_to': {'key': 'validTo', 'type': 'iso-8601'},
         'auth_type': {'key': 'authType', 'type': 'str'},
-        'global_acs_namespace': {'key': 'globalAcsNamespace', 'type': 'str'},
-        'global_acs_host_name': {'key': 'globalAcsHostName', 'type': 'str'},
-        'global_acs_rp_realm': {'key': 'globalAcsRPRealm', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceCertificateAndAcsDetails, self).__init__(**kwargs)
-        self.global_acs_namespace = kwargs.get('global_acs_namespace', None)
-        self.global_acs_host_name = kwargs.get('global_acs_host_name', None)
-        self.global_acs_rp_realm = kwargs.get('global_acs_rp_realm', None)
-        self.auth_type = 'AccessControlService'
+    _subtype_map = {
+        'auth_type': {'AzureActiveDirectory': 'ResourceCertificateAndAadDetails', 'AccessControlService': 'ResourceCertificateAndAcsDetails'}
+    }
+
+    def __init__(self, *, certificate: bytearray=None, friendly_name: str=None, issuer: str=None, resource_id: int=None, subject: str=None, thumbprint: str=None, valid_from=None, valid_to=None, **kwargs) -> None:
+        super(ResourceCertificateDetails, self).__init__(**kwargs)
+        self.certificate = certificate
+        self.friendly_name = friendly_name
+        self.issuer = issuer
+        self.resource_id = resource_id
+        self.subject = subject
+        self.thumbprint = thumbprint
+        self.valid_from = valid_from
+        self.valid_to = valid_to
+        self.auth_type = None

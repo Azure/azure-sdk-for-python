@@ -68,7 +68,7 @@ class UpgradeDetails(Model):
         'previous_resource_id': {'key': 'previousResourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpgradeDetails, self).__init__(**kwargs)
         self.operation_id = None
         self.start_time_utc = None

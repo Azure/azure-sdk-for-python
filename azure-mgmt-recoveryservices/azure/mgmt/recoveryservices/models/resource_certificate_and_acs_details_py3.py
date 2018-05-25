@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_certificate_details import ResourceCertificateDetails
+from .resource_certificate_details_py3 import ResourceCertificateDetails
 
 
 class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
@@ -66,9 +66,9 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
         'global_acs_rp_realm': {'key': 'globalAcsRPRealm', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceCertificateAndAcsDetails, self).__init__(**kwargs)
-        self.global_acs_namespace = kwargs.get('global_acs_namespace', None)
-        self.global_acs_host_name = kwargs.get('global_acs_host_name', None)
-        self.global_acs_rp_realm = kwargs.get('global_acs_rp_realm', None)
+    def __init__(self, *, global_acs_namespace: str, global_acs_host_name: str, global_acs_rp_realm: str, certificate: bytearray=None, friendly_name: str=None, issuer: str=None, resource_id: int=None, subject: str=None, thumbprint: str=None, valid_from=None, valid_to=None, **kwargs) -> None:
+        super(ResourceCertificateAndAcsDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to, **kwargs)
+        self.global_acs_namespace = global_acs_namespace
+        self.global_acs_host_name = global_acs_host_name
+        self.global_acs_rp_realm = global_acs_rp_realm
         self.auth_type = 'AccessControlService'

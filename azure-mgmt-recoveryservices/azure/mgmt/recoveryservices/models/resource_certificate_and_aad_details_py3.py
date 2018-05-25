@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_certificate_details import ResourceCertificateDetails
+from .resource_certificate_details_py3 import ResourceCertificateDetails
 
 
 class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
@@ -76,11 +76,11 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
         'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceCertificateAndAadDetails, self).__init__(**kwargs)
-        self.aad_authority = kwargs.get('aad_authority', None)
-        self.aad_tenant_id = kwargs.get('aad_tenant_id', None)
-        self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
-        self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
-        self.azure_management_endpoint_audience = kwargs.get('azure_management_endpoint_audience', None)
+    def __init__(self, *, aad_authority: str, aad_tenant_id: str, service_principal_client_id: str, service_principal_object_id: str, azure_management_endpoint_audience: str, certificate: bytearray=None, friendly_name: str=None, issuer: str=None, resource_id: int=None, subject: str=None, thumbprint: str=None, valid_from=None, valid_to=None, **kwargs) -> None:
+        super(ResourceCertificateAndAadDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to, **kwargs)
+        self.aad_authority = aad_authority
+        self.aad_tenant_id = aad_tenant_id
+        self.service_principal_client_id = service_principal_client_id
+        self.service_principal_object_id = service_principal_object_id
+        self.azure_management_endpoint_audience = azure_management_endpoint_audience
         self.auth_type = 'AzureActiveDirectory'

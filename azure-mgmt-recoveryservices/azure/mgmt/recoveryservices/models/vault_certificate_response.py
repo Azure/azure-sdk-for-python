@@ -44,9 +44,9 @@ class VaultCertificateResponse(Model):
         'properties': {'key': 'properties', 'type': 'ResourceCertificateDetails'},
     }
 
-    def __init__(self, properties=None):
-        super(VaultCertificateResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(VaultCertificateResponse, self).__init__(**kwargs)
         self.name = None
         self.type = None
         self.id = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

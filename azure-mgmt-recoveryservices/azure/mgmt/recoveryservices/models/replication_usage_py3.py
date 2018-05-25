@@ -44,11 +44,11 @@ class ReplicationUsage(Model):
         'recovery_services_provider_auth_type': {'key': 'recoveryServicesProviderAuthType', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, monitoring_summary=None, jobs_summary=None, protected_item_count: int=None, recovery_plan_count: int=None, registered_servers_count: int=None, recovery_services_provider_auth_type: int=None, **kwargs) -> None:
         super(ReplicationUsage, self).__init__(**kwargs)
-        self.monitoring_summary = kwargs.get('monitoring_summary', None)
-        self.jobs_summary = kwargs.get('jobs_summary', None)
-        self.protected_item_count = kwargs.get('protected_item_count', None)
-        self.recovery_plan_count = kwargs.get('recovery_plan_count', None)
-        self.registered_servers_count = kwargs.get('registered_servers_count', None)
-        self.recovery_services_provider_auth_type = kwargs.get('recovery_services_provider_auth_type', None)
+        self.monitoring_summary = monitoring_summary
+        self.jobs_summary = jobs_summary
+        self.protected_item_count = protected_item_count
+        self.recovery_plan_count = recovery_plan_count
+        self.registered_servers_count = registered_servers_count
+        self.recovery_services_provider_auth_type = recovery_services_provider_auth_type

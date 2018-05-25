@@ -29,8 +29,8 @@ class JobsSummary(Model):
         'in_progress_jobs': {'key': 'inProgressJobs', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, failed_jobs: int=None, suspended_jobs: int=None, in_progress_jobs: int=None, **kwargs) -> None:
         super(JobsSummary, self).__init__(**kwargs)
-        self.failed_jobs = kwargs.get('failed_jobs', None)
-        self.suspended_jobs = kwargs.get('suspended_jobs', None)
-        self.in_progress_jobs = kwargs.get('in_progress_jobs', None)
+        self.failed_jobs = failed_jobs
+        self.suspended_jobs = suspended_jobs
+        self.in_progress_jobs = in_progress_jobs

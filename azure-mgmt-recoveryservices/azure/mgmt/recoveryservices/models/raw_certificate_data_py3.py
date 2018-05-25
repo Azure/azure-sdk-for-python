@@ -28,7 +28,7 @@ class RawCertificateData(Model):
         'certificate': {'key': 'certificate', 'type': 'bytearray'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, auth_type=None, certificate: bytearray=None, **kwargs) -> None:
         super(RawCertificateData, self).__init__(**kwargs)
-        self.auth_type = kwargs.get('auth_type', None)
-        self.certificate = kwargs.get('certificate', None)
+        self.auth_type = auth_type
+        self.certificate = certificate

@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AuthType(Enum):
+class AuthType(str, Enum):
 
     invalid = "Invalid"
     acs = "ACS"
@@ -21,13 +21,13 @@ class AuthType(Enum):
     azure_active_directory = "AzureActiveDirectory"
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     standard = "Standard"
     rs0 = "RS0"
 
 
-class VaultUpgradeState(Enum):
+class VaultUpgradeState(str, Enum):
 
     unknown = "Unknown"
     in_progress = "InProgress"
@@ -35,13 +35,13 @@ class VaultUpgradeState(Enum):
     failed = "Failed"
 
 
-class TriggerType(Enum):
+class TriggerType(str, Enum):
 
     user_triggered = "UserTriggered"
     forced_upgrade = "ForcedUpgrade"
 
 
-class UsagesUnit(Enum):
+class UsagesUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"
