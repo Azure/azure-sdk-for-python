@@ -19,7 +19,9 @@ class DeliveryRuleCondition(Model):
     sub-classes are: DeliveryRuleUrlPathCondition,
     DeliveryRuleUrlFileExtensionCondition
 
-    :param name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Constant filled by server.
     :type name: str
     """
 
@@ -35,6 +37,6 @@ class DeliveryRuleCondition(Model):
         'name': {'UrlPath': 'DeliveryRuleUrlPathCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition'}
     }
 
-    def __init__(self):
-        super(DeliveryRuleCondition, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeliveryRuleCondition, self).__init__(**kwargs)
         self.name = None

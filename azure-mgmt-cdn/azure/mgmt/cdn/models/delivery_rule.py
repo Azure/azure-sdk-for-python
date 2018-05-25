@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class DeliveryRule(Model):
     """A rule that specifies a set of actions and conditions.
 
-    :param order: The order in which the rules are applied for the endpoint.
-     Possible values {0,1,2,3,………}. A rule with a lesser order will be applied
-     before a rule with a greater order. Rule with order 0 is a special rule.
-     It does not require any condition and actions listed in it will always be
-     applied.
+    All required parameters must be populated in order to send to Azure.
+
+    :param order: Required. The order in which the rules are applied for the
+     endpoint. Possible values {0,1,2,3,………}. A rule with a lesser order will
+     be applied before a rule with a greater order. Rule with order 0 is a
+     special rule. It does not require any condition and actions listed in it
+     will always be applied.
     :type order: int
-    :param actions: A list of actions that are executed when all the
+    :param actions: Required. A list of actions that are executed when all the
      conditions of a rule are satisfied.
     :type actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :param conditions: A list of conditions that must be matched for the
@@ -40,8 +42,8 @@ class DeliveryRule(Model):
         'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
     }
 
-    def __init__(self, order, actions, conditions=None):
-        super(DeliveryRule, self).__init__()
-        self.order = order
-        self.actions = actions
-        self.conditions = conditions
+    def __init__(self, **kwargs):
+        super(DeliveryRule, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.actions = kwargs.get('actions', None)
+        self.conditions = kwargs.get('conditions', None)

@@ -40,8 +40,8 @@ class ValidateCustomDomainOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ValidateCustomDomainOutput, self).__init__()
+    def __init__(self, **kwargs):
+        super(ValidateCustomDomainOutput, self).__init__(**kwargs)
         self.custom_domain_validated = None
         self.reason = None
         self.message = None

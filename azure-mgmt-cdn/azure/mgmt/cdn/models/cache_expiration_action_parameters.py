@@ -18,15 +18,17 @@ class CacheExpirationActionParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar odatatype:  Default value:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odatatype: Required.  Default value:
      "Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters" .
     :vartype odatatype: str
-    :param cache_behavior: Caching behavior for the requests that include
-     query strings. Possible values include: 'BypassCache', 'Override',
+    :param cache_behavior: Required. Caching behavior for the requests that
+     include query strings. Possible values include: 'BypassCache', 'Override',
      'SetIfMissing'
     :type cache_behavior: str or ~azure.mgmt.cdn.models.enum
-    :ivar cache_type: The level at which the content needs to be cached.
-     Default value: "All" .
+    :ivar cache_type: Required. The level at which the content needs to be
+     cached. Default value: "All" .
     :vartype cache_type: str
     :param cache_duration: The duration for which the the content needs to be
      cached. Allowed format is [d.]hh:mm:ss
@@ -50,7 +52,7 @@ class CacheExpirationActionParameters(Model):
 
     cache_type = "All"
 
-    def __init__(self, cache_behavior, cache_duration=None):
-        super(CacheExpirationActionParameters, self).__init__()
-        self.cache_behavior = cache_behavior
-        self.cache_duration = cache_duration
+    def __init__(self, **kwargs):
+        super(CacheExpirationActionParameters, self).__init__(**kwargs)
+        self.cache_behavior = kwargs.get('cache_behavior', None)
+        self.cache_duration = kwargs.get('cache_duration', None)

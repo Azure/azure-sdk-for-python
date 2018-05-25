@@ -15,9 +15,11 @@ from .delivery_rule_action import DeliveryRuleAction
 class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
     """Defines the cache expiration action for the delivery rule.
 
-    :param name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Constant filled by server.
     :type name: str
-    :param parameters: Defines the parameters for the action.
+    :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.CacheExpirationActionParameters
     """
 
@@ -31,7 +33,7 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
         'parameters': {'key': 'parameters', 'type': 'CacheExpirationActionParameters'},
     }
 
-    def __init__(self, parameters):
-        super(DeliveryRuleCacheExpirationAction, self).__init__()
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(DeliveryRuleCacheExpirationAction, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
         self.name = 'CacheExpiration'

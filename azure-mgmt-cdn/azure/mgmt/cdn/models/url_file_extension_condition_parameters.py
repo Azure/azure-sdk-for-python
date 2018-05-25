@@ -18,12 +18,14 @@ class UrlFileExtensionConditionParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar odatatype:  Default value:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odatatype: Required.  Default value:
      "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionConditionParameters"
      .
     :vartype odatatype: str
-    :param extensions: A list of extensions for the condition of the delivery
-     rule.
+    :param extensions: Required. A list of extensions for the condition of the
+     delivery rule.
     :type extensions: list[str]
     """
 
@@ -39,6 +41,6 @@ class UrlFileExtensionConditionParameters(Model):
 
     odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionConditionParameters"
 
-    def __init__(self, extensions):
-        super(UrlFileExtensionConditionParameters, self).__init__()
-        self.extensions = extensions
+    def __init__(self, **kwargs):
+        super(UrlFileExtensionConditionParameters, self).__init__(**kwargs)
+        self.extensions = kwargs.get('extensions', None)

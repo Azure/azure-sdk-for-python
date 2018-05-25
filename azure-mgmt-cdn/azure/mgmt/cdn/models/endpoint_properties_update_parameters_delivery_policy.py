@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class EndpointPropertiesUpdateParametersDeliveryPolicy(Model):
     """A policy that specifies the delivery rules to be used for an endpoint.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param description: User-friendly description of the policy.
     :type description: str
-    :param rules: A list of the delivery rules.
+    :param rules: Required. A list of the delivery rules.
     :type rules: list[~azure.mgmt.cdn.models.DeliveryRule]
     """
 
@@ -30,7 +32,7 @@ class EndpointPropertiesUpdateParametersDeliveryPolicy(Model):
         'rules': {'key': 'rules', 'type': '[DeliveryRule]'},
     }
 
-    def __init__(self, rules, description=None):
-        super(EndpointPropertiesUpdateParametersDeliveryPolicy, self).__init__()
-        self.description = description
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(EndpointPropertiesUpdateParametersDeliveryPolicy, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.rules = kwargs.get('rules', None)

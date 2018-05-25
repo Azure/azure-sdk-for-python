@@ -18,13 +18,15 @@ class UrlPathConditionParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar odatatype:  Default value:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odatatype: Required.  Default value:
      "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathConditionParameters" .
     :vartype odatatype: str
-    :param path: A URL path for the condition of the delivery rule
+    :param path: Required. A URL path for the condition of the delivery rule
     :type path: str
-    :param match_type: The match type for the condition of the delivery rule.
-     Possible values include: 'Literal', 'Wildcard'
+    :param match_type: Required. The match type for the condition of the
+     delivery rule. Possible values include: 'Literal', 'Wildcard'
     :type match_type: str or ~azure.mgmt.cdn.models.enum
     """
 
@@ -42,7 +44,7 @@ class UrlPathConditionParameters(Model):
 
     odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathConditionParameters"
 
-    def __init__(self, path, match_type):
-        super(UrlPathConditionParameters, self).__init__()
-        self.path = path
-        self.match_type = match_type
+    def __init__(self, **kwargs):
+        super(UrlPathConditionParameters, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.match_type = kwargs.get('match_type', None)

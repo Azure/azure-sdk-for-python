@@ -18,7 +18,9 @@ class DeliveryRuleAction(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DeliveryRuleCacheExpirationAction
 
-    :param name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Constant filled by server.
     :type name: str
     """
 
@@ -34,6 +36,6 @@ class DeliveryRuleAction(Model):
         'name': {'CacheExpiration': 'DeliveryRuleCacheExpirationAction'}
     }
 
-    def __init__(self):
-        super(DeliveryRuleAction, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeliveryRuleAction, self).__init__(**kwargs)
         self.name = None

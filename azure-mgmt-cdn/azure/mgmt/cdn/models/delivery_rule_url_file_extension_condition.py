@@ -15,9 +15,11 @@ from .delivery_rule_condition import DeliveryRuleCondition
 class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
     """Defines the URL file extension condition for the delivery rule.
 
-    :param name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Constant filled by server.
     :type name: str
-    :param parameters: Defines the parameters for the condition.
+    :param parameters: Required. Defines the parameters for the condition.
     :type parameters:
      ~azure.mgmt.cdn.models.UrlFileExtensionConditionParameters
     """
@@ -32,7 +34,7 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
         'parameters': {'key': 'parameters', 'type': 'UrlFileExtensionConditionParameters'},
     }
 
-    def __init__(self, parameters):
-        super(DeliveryRuleUrlFileExtensionCondition, self).__init__()
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(DeliveryRuleUrlFileExtensionCondition, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
         self.name = 'UrlFileExtension'
