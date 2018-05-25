@@ -27,7 +27,7 @@ class MigrateWorkspaceCollectionRequest(Model):
         'resources': {'key': 'resources', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, target_resource_group: str=None, resources=None, **kwargs) -> None:
         super(MigrateWorkspaceCollectionRequest, self).__init__(**kwargs)
-        self.target_resource_group = kwargs.get('target_resource_group', None)
-        self.resources = kwargs.get('resources', None)
+        self.target_resource_group = target_resource_group
+        self.resources = resources

@@ -9,9 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_operation import AzureOperationPoller
 import uuid
+from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -22,9 +23,11 @@ class WorkspaceCollectionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-01-29".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -49,15 +52,14 @@ class WorkspaceCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollection
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkspaceCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.powerbiembedded.models.WorkspaceCollection or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
+        url = self.get_by_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -81,7 +83,7 @@ class WorkspaceCollectionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -96,6 +98,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'}
 
     def create(
             self, resource_group_name, workspace_collection_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -112,23 +115,22 @@ class WorkspaceCollectionsOperations(object):
         :param location: Azure location
         :type location: str
         :param tags:
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollection
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkspaceCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.powerbiembedded.models.WorkspaceCollection or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CreateWorkspaceCollectionRequest(location=location, tags=tags)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -156,7 +158,7 @@ class WorkspaceCollectionsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -171,6 +173,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'}
 
     def update(
             self, resource_group_name, workspace_collection_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -183,23 +186,22 @@ class WorkspaceCollectionsOperations(object):
          Collection name
         :type workspace_collection_name: str
         :param tags:
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollection
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkspaceCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.powerbiembedded.models.WorkspaceCollection or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.UpdateWorkspaceCollectionRequest(tags=tags)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -227,7 +229,7 @@ class WorkspaceCollectionsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -242,29 +244,13 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, workspace_collection_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Power BI Workspace Collection.
-
-        :param resource_group_name: Azure resource group
-        :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded Workspace
-         Collection name
-        :type workspace_collection_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -287,38 +273,58 @@ class WorkspaceCollectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [202]:
+            raise models.ErrorException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+    def delete(
+            self, resource_group_name, workspace_collection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a Power BI Workspace Collection.
+
+        :param resource_group_name: Azure resource group
+        :type resource_group_name: str
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
+        :type workspace_collection_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            workspace_collection_name=workspace_collection_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorException(self._deserialize, response)
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'}
 
     def check_name_availability(
             self, location, name=None, type="Microsoft.PowerBI/workspaceCollections", custom_headers=None, raw=False, **operation_config):
@@ -336,17 +342,16 @@ class WorkspaceCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CheckNameResponse
-         <azure.mgmt.powerbiembedded.models.CheckNameResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CheckNameResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.powerbiembedded.models.CheckNameResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CheckNameRequest(name=name, type=type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.PowerBI/locations/{location}/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -373,7 +378,7 @@ class WorkspaceCollectionsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -388,6 +393,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PowerBI/locations/{location}/checkNameAvailability'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -401,8 +407,9 @@ class WorkspaceCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollectionPaged
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :return: An iterator like instance of WorkspaceCollection
+        :rtype:
+         ~azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged[~azure.mgmt.powerbiembedded.models.WorkspaceCollection]
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
@@ -410,7 +417,7 @@ class WorkspaceCollectionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -438,7 +445,7 @@ class WorkspaceCollectionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
@@ -454,6 +461,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections'}
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
@@ -465,8 +473,9 @@ class WorkspaceCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollectionPaged
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :return: An iterator like instance of WorkspaceCollection
+        :rtype:
+         ~azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged[~azure.mgmt.powerbiembedded.models.WorkspaceCollection]
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
@@ -474,7 +483,7 @@ class WorkspaceCollectionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.PowerBI/workspaceCollections'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -501,7 +510,7 @@ class WorkspaceCollectionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
@@ -517,6 +526,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PowerBI/workspaceCollections'}
 
     def get_access_keys(
             self, resource_group_name, workspace_collection_name, custom_headers=None, raw=False, **operation_config):
@@ -533,15 +543,16 @@ class WorkspaceCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollectionAccessKeys
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkspaceCollectionAccessKeys or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/listKeys'
+        url = self.get_access_keys.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -565,7 +576,7 @@ class WorkspaceCollectionsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -580,6 +591,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_access_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/listKeys'}
 
     def regenerate_key(
             self, resource_group_name, workspace_collection_name, key_name=None, custom_headers=None, raw=False, **operation_config):
@@ -592,24 +604,25 @@ class WorkspaceCollectionsOperations(object):
          Collection name
         :type workspace_collection_name: str
         :param key_name: Key name. Possible values include: 'key1', 'key2'
-        :type key_name: str or :class:`AccessKeyName
-         <azure.mgmt.powerbiembedded.models.AccessKeyName>`
+        :type key_name: str or
+         ~azure.mgmt.powerbiembedded.models.AccessKeyName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspaceCollectionAccessKeys
-         <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkspaceCollectionAccessKeys or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.WorkspaceCollectionAccessKey(key_name=key_name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/regenerateKey'
+        url = self.regenerate_key.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -637,7 +650,7 @@ class WorkspaceCollectionsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -652,6 +665,7 @@ class WorkspaceCollectionsOperations(object):
             return client_raw_response
 
         return deserialized
+    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/regenerateKey'}
 
     def migrate(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
@@ -664,22 +678,21 @@ class WorkspaceCollectionsOperations(object):
          workspace collections will be migrated to.
         :type target_resource_group: str
         :param resources:
-        :type resources: list of str
+        :type resources: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.MigrateWorkspaceCollectionRequest(target_resource_group=target_resource_group, resources=resources)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'
+        url = self.migrate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -706,7 +719,7 @@ class WorkspaceCollectionsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -714,3 +727,4 @@ class WorkspaceCollectionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    migrate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'}
