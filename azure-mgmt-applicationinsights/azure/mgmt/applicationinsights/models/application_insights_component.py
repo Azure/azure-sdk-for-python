@@ -18,27 +18,29 @@ class ApplicationInsightsComponent(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param kind: The kind of application that this component refers to, used
-     to customize UI. This value is a freeform string, values should typically
-     be one of the following: web, ios, other, store, java, phone.
+    :param kind: Required. The kind of application that this component refers
+     to, used to customize UI. This value is a freeform string, values should
+     typically be one of the following: web, ios, other, store, java, phone.
     :type kind: str
     :ivar application_id: The unique ID of your application. This field
      mirrors the 'Name' field and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
-    :param application_type: Type of application being monitored. Possible
-     values include: 'web', 'other'. Default value: "web" .
+    :param application_type: Required. Type of application being monitored.
+     Possible values include: 'web', 'other'. Default value: "web" .
     :type application_type: str or
      ~azure.mgmt.applicationinsights.models.ApplicationType
     :param flow_type: Used by the Application Insights system to determine
@@ -115,18 +117,18 @@ class ApplicationInsightsComponent(Resource):
         'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
     }
 
-    def __init__(self, location, kind, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id=None, sampling_percentage=None):
-        super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags)
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponent, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
         self.application_id = None
         self.app_id = None
-        self.application_type = application_type
-        self.flow_type = flow_type
-        self.request_source = request_source
+        self.application_type = kwargs.get('application_type', "web")
+        self.flow_type = kwargs.get('flow_type', "Bluefield")
+        self.request_source = kwargs.get('request_source', "rest")
         self.instrumentation_key = None
         self.creation_date = None
         self.tenant_id = None
-        self.hockey_app_id = hockey_app_id
+        self.hockey_app_id = kwargs.get('hockey_app_id', None)
         self.hockey_app_token = None
         self.provisioning_state = None
-        self.sampling_percentage = sampling_percentage
+        self.sampling_percentage = kwargs.get('sampling_percentage', None)

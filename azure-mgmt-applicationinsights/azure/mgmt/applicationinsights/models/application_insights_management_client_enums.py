@@ -12,23 +12,47 @@
 from enum import Enum
 
 
-class ApplicationType(Enum):
+class ApplicationType(str, Enum):
 
     web = "web"
     other = "other"
 
 
-class FlowType(Enum):
+class FlowType(str, Enum):
 
     bluefield = "Bluefield"
 
 
-class RequestSource(Enum):
+class RequestSource(str, Enum):
 
     rest = "rest"
 
 
-class WebTestKind(Enum):
+class PurgeState(str, Enum):
+
+    pending = "Pending"
+    completed = "Completed"
+
+
+class FavoriteType(str, Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class WebTestKind(str, Enum):
 
     ping = "ping"
     multistep = "multistep"
+
+
+class FavoriteSourceType(str, Enum):
+
+    retention = "retention"
+    notebook = "notebook"
+    sessions = "sessions"
+    events = "events"
+    userflows = "userflows"
+    funnel = "funnel"
+    impact = "impact"
+    segmentation = "segmentation"

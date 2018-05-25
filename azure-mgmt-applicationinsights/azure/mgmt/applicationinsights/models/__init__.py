@@ -9,60 +9,136 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error_response import ErrorResponse, ErrorResponseException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .resource import Resource
-from .tags_resource import TagsResource
-from .application_insights_component import ApplicationInsightsComponent
-from .web_test_geolocation import WebTestGeolocation
-from .web_test_properties_configuration import WebTestPropertiesConfiguration
-from .web_test import WebTest
-from .application_insights_component_export_request import ApplicationInsightsComponentExportRequest
-from .application_insights_component_export_configuration import ApplicationInsightsComponentExportConfiguration
-from .application_insights_component_proactive_detection_configuration_rule_definitions import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
-from .application_insights_component_proactive_detection_configuration import ApplicationInsightsComponentProactiveDetectionConfiguration
-from .application_insights_component_data_volume_cap import ApplicationInsightsComponentDataVolumeCap
-from .application_insights_component_billing_features import ApplicationInsightsComponentBillingFeatures
-from .application_insights_component_quota_status import ApplicationInsightsComponentQuotaStatus
-from .api_key_request import APIKeyRequest
-from .application_insights_component_api_key import ApplicationInsightsComponentAPIKey
+try:
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .annotation_py3 import Annotation
+    from .inner_error_py3 import InnerError
+    from .annotation_error_py3 import AnnotationError, AnnotationErrorException
+    from .api_key_request_py3 import APIKeyRequest
+    from .application_insights_component_api_key_py3 import ApplicationInsightsComponentAPIKey
+    from .application_insights_component_export_request_py3 import ApplicationInsightsComponentExportRequest
+    from .application_insights_component_export_configuration_py3 import ApplicationInsightsComponentExportConfiguration
+    from .application_insights_component_data_volume_cap_py3 import ApplicationInsightsComponentDataVolumeCap
+    from .application_insights_component_billing_features_py3 import ApplicationInsightsComponentBillingFeatures
+    from .application_insights_component_quota_status_py3 import ApplicationInsightsComponentQuotaStatus
+    from .application_insights_component_feature_capabilities_py3 import ApplicationInsightsComponentFeatureCapabilities
+    from .application_insights_component_feature_capability_py3 import ApplicationInsightsComponentFeatureCapability
+    from .application_insights_component_feature_py3 import ApplicationInsightsComponentFeature
+    from .application_insights_component_available_features_py3 import ApplicationInsightsComponentAvailableFeatures
+    from .application_insights_component_proactive_detection_configuration_rule_definitions_py3 import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
+    from .application_insights_component_proactive_detection_configuration_py3 import ApplicationInsightsComponentProactiveDetectionConfiguration
+    from .resource_py3 import Resource
+    from .tags_resource_py3 import TagsResource
+    from .application_insights_component_py3 import ApplicationInsightsComponent
+    from .component_purge_body_filters_py3 import ComponentPurgeBodyFilters
+    from .component_purge_body_py3 import ComponentPurgeBody
+    from .component_purge_response_py3 import ComponentPurgeResponse
+    from .component_purge_status_response_py3 import ComponentPurgeStatusResponse
+    from .work_item_configuration_py3 import WorkItemConfiguration
+    from .work_item_create_configuration_py3 import WorkItemCreateConfiguration
+    from .work_item_configuration_error_py3 import WorkItemConfigurationError, WorkItemConfigurationErrorException
+    from .application_insights_component_favorite_py3 import ApplicationInsightsComponentFavorite
+    from .application_insights_component_web_test_location_py3 import ApplicationInsightsComponentWebTestLocation
+    from .web_test_geolocation_py3 import WebTestGeolocation
+    from .web_test_properties_configuration_py3 import WebTestPropertiesConfiguration
+    from .web_test_py3 import WebTest
+except (SyntaxError, ImportError):
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .annotation import Annotation
+    from .inner_error import InnerError
+    from .annotation_error import AnnotationError, AnnotationErrorException
+    from .api_key_request import APIKeyRequest
+    from .application_insights_component_api_key import ApplicationInsightsComponentAPIKey
+    from .application_insights_component_export_request import ApplicationInsightsComponentExportRequest
+    from .application_insights_component_export_configuration import ApplicationInsightsComponentExportConfiguration
+    from .application_insights_component_data_volume_cap import ApplicationInsightsComponentDataVolumeCap
+    from .application_insights_component_billing_features import ApplicationInsightsComponentBillingFeatures
+    from .application_insights_component_quota_status import ApplicationInsightsComponentQuotaStatus
+    from .application_insights_component_feature_capabilities import ApplicationInsightsComponentFeatureCapabilities
+    from .application_insights_component_feature_capability import ApplicationInsightsComponentFeatureCapability
+    from .application_insights_component_feature import ApplicationInsightsComponentFeature
+    from .application_insights_component_available_features import ApplicationInsightsComponentAvailableFeatures
+    from .application_insights_component_proactive_detection_configuration_rule_definitions import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
+    from .application_insights_component_proactive_detection_configuration import ApplicationInsightsComponentProactiveDetectionConfiguration
+    from .resource import Resource
+    from .tags_resource import TagsResource
+    from .application_insights_component import ApplicationInsightsComponent
+    from .component_purge_body_filters import ComponentPurgeBodyFilters
+    from .component_purge_body import ComponentPurgeBody
+    from .component_purge_response import ComponentPurgeResponse
+    from .component_purge_status_response import ComponentPurgeStatusResponse
+    from .work_item_configuration import WorkItemConfiguration
+    from .work_item_create_configuration import WorkItemCreateConfiguration
+    from .work_item_configuration_error import WorkItemConfigurationError, WorkItemConfigurationErrorException
+    from .application_insights_component_favorite import ApplicationInsightsComponentFavorite
+    from .application_insights_component_web_test_location import ApplicationInsightsComponentWebTestLocation
+    from .web_test_geolocation import WebTestGeolocation
+    from .web_test_properties_configuration import WebTestPropertiesConfiguration
+    from .web_test import WebTest
 from .operation_paged import OperationPaged
-from .application_insights_component_paged import ApplicationInsightsComponentPaged
-from .web_test_paged import WebTestPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
+from .application_insights_component_paged import ApplicationInsightsComponentPaged
+from .application_insights_component_web_test_location_paged import ApplicationInsightsComponentWebTestLocationPaged
+from .web_test_paged import WebTestPaged
 from .application_insights_management_client_enums import (
     ApplicationType,
     FlowType,
     RequestSource,
+    PurgeState,
+    FavoriteType,
     WebTestKind,
+    FavoriteSourceType,
 )
 
 __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',
     'Operation',
-    'Resource',
-    'TagsResource',
-    'ApplicationInsightsComponent',
-    'WebTestGeolocation',
-    'WebTestPropertiesConfiguration',
-    'WebTest',
+    'Annotation',
+    'InnerError',
+    'AnnotationError', 'AnnotationErrorException',
+    'APIKeyRequest',
+    'ApplicationInsightsComponentAPIKey',
     'ApplicationInsightsComponentExportRequest',
     'ApplicationInsightsComponentExportConfiguration',
-    'ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions',
-    'ApplicationInsightsComponentProactiveDetectionConfiguration',
     'ApplicationInsightsComponentDataVolumeCap',
     'ApplicationInsightsComponentBillingFeatures',
     'ApplicationInsightsComponentQuotaStatus',
-    'APIKeyRequest',
-    'ApplicationInsightsComponentAPIKey',
+    'ApplicationInsightsComponentFeatureCapabilities',
+    'ApplicationInsightsComponentFeatureCapability',
+    'ApplicationInsightsComponentFeature',
+    'ApplicationInsightsComponentAvailableFeatures',
+    'ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions',
+    'ApplicationInsightsComponentProactiveDetectionConfiguration',
+    'Resource',
+    'TagsResource',
+    'ApplicationInsightsComponent',
+    'ComponentPurgeBodyFilters',
+    'ComponentPurgeBody',
+    'ComponentPurgeResponse',
+    'ComponentPurgeStatusResponse',
+    'WorkItemConfiguration',
+    'WorkItemCreateConfiguration',
+    'WorkItemConfigurationError', 'WorkItemConfigurationErrorException',
+    'ApplicationInsightsComponentFavorite',
+    'ApplicationInsightsComponentWebTestLocation',
+    'WebTestGeolocation',
+    'WebTestPropertiesConfiguration',
+    'WebTest',
     'OperationPaged',
-    'ApplicationInsightsComponentPaged',
-    'WebTestPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
+    'ApplicationInsightsComponentPaged',
+    'ApplicationInsightsComponentWebTestLocationPaged',
+    'WebTestPaged',
     'ApplicationType',
     'FlowType',
     'RequestSource',
+    'PurgeState',
+    'FavoriteType',
     'WebTestKind',
+    'FavoriteSourceType',
 ]
