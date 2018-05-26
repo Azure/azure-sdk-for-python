@@ -39,11 +39,11 @@ class UsageMetric(Model):
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name=None, unit: str=None, current_value: float=None, limit: float=None, next_reset_time=None, quota_period: str=None, **kwargs) -> None:
         super(UsageMetric, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.unit = kwargs.get('unit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.next_reset_time = kwargs.get('next_reset_time', None)
-        self.quota_period = kwargs.get('quota_period', None)
+        self.name = name
+        self.unit = unit
+        self.current_value = current_value
+        self.limit = limit
+        self.next_reset_time = next_reset_time
+        self.quota_period = quota_period

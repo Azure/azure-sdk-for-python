@@ -9,28 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class Tag(Model):
-    """A tag of a saved search.
-
-    :param name: The tag name.
-    :type name: str
-    :param value: The tag value.
-    :type value: str
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.loganalytics.models.Operation>` object
     """
 
-    _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

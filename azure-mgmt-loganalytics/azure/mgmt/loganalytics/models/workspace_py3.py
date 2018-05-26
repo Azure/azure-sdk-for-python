@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class Workspace(Resource):
@@ -78,12 +78,12 @@ class Workspace(Resource):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Workspace, self).__init__(**kwargs)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.source = kwargs.get('source', None)
-        self.customer_id = kwargs.get('customer_id', None)
-        self.portal_url = kwargs.get('portal_url', None)
-        self.sku = kwargs.get('sku', None)
-        self.retention_in_days = kwargs.get('retention_in_days', None)
-        self.e_tag = kwargs.get('e_tag', None)
+    def __init__(self, *, location: str=None, tags=None, provisioning_state=None, source: str=None, customer_id: str=None, portal_url: str=None, sku=None, retention_in_days: int=None, e_tag: str=None, **kwargs) -> None:
+        super(Workspace, self).__init__(location=location, tags=tags, **kwargs)
+        self.provisioning_state = provisioning_state
+        self.source = source
+        self.customer_id = customer_id
+        self.portal_url = portal_url
+        self.sku = sku
+        self.retention_in_days = retention_in_days
+        self.e_tag = e_tag

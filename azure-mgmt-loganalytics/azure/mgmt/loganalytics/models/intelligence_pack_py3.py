@@ -30,8 +30,8 @@ class IntelligencePack(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, enabled: bool=None, display_name: str=None, **kwargs) -> None:
         super(IntelligencePack, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.enabled = kwargs.get('enabled', None)
-        self.display_name = kwargs.get('display_name', None)
+        self.name = name
+        self.enabled = enabled
+        self.display_name = display_name

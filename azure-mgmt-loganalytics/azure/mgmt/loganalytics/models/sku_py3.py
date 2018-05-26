@@ -12,25 +12,25 @@
 from msrest.serialization import Model
 
 
-class StorageAccount(Model):
-    """Describes a storage account connection.
+class Sku(Model):
+    """The SKU (tier) of a workspace.
 
-    :param id: The Azure Resource Manager ID of the storage account resource.
-    :type id: str
-    :param key: The storage account key.
-    :type key: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the SKU. Possible values include:
+     'Free', 'Standard', 'Premium', 'Unlimited', 'PerNode', 'PerGB2018',
+     'Standalone'
+    :type name: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
     """
 
     _validation = {
-        'id': {'required': True},
-        'key': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, id, key):
-        self.id = id
-        self.key = key
+    def __init__(self, *, name, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name

@@ -12,13 +12,11 @@
 from .linked_services_operations import LinkedServicesOperations
 from .data_sources_operations import DataSourcesOperations
 from .workspaces_operations import WorkspacesOperations
-from .storage_insights_operations import StorageInsightsOperations
-from .saved_searches_operations import SavedSearchesOperations
+from .operations import Operations
 
 __all__ = [
     'LinkedServicesOperations',
     'DataSourcesOperations',
     'WorkspacesOperations',
-    'StorageInsightsOperations',
-    'SavedSearchesOperations',
+    'Operations',
 ]

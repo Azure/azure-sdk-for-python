@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class DataSource(ProxyResource):
@@ -60,8 +60,8 @@ class DataSource(ProxyResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(DataSource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-        self.e_tag = kwargs.get('e_tag', None)
-        self.kind = kwargs.get('kind', None)
+    def __init__(self, *, properties, kind, tags=None, e_tag: str=None, **kwargs) -> None:
+        super(DataSource, self).__init__(tags=tags, **kwargs)
+        self.properties = properties
+        self.e_tag = e_tag
+        self.kind = kind

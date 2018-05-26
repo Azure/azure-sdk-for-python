@@ -12,20 +12,21 @@
 from msrest.serialization import Model
 
 
-class SearchMetadataSchema(Model):
-    """Schema metadata for search.
+class Operation(Model):
+    """Supported operation of OperationalInsights resource provider.
 
-    :param name: The name of the metadata schema.
+    :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
-    :param version: The version of the metadata schema.
-    :type version: int
+    :param display: Display metadata associated with the operation.
+    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'int'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, name=None, version=None):
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
         self.name = name
-        self.version = version
+        self.display = display

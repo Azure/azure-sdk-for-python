@@ -28,6 +28,6 @@ class DataSourceFilter(Model):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, kind=None, **kwargs) -> None:
         super(DataSourceFilter, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        self.kind = kind
