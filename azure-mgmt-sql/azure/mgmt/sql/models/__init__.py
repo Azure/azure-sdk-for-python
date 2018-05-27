@@ -405,6 +405,7 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
+    VulnerabilityAssessmentPolicyBaselineName,
     CapabilityGroup,
 )
 
@@ -668,5 +669,6 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
+    'VulnerabilityAssessmentPolicyBaselineName',
     'CapabilityGroup',
 ]

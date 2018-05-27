@@ -657,6 +657,12 @@ class LongTermRetentionDatabaseState(str, Enum):
     deleted = "Deleted"
 
 
+class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
+
+    default = "default"
+    master = "master"
+
+
 class CapabilityGroup(str, Enum):
 
     supported_editions = "supportedEditions"
