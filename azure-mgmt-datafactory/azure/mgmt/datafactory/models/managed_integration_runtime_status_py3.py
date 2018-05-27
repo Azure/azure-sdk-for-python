@@ -20,9 +20,6 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :ivar data_factory_name: The data factory name which the integration
      runtime belong to.
     :vartype data_factory_name: str
@@ -33,6 +30,9 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :param type: Required. Constant filled by server.
     :type type: str
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
     :vartype create_time: datetime
@@ -59,10 +59,10 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'additional_properties': {'key': 'typeProperties.', 'type': '{object}'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
         'nodes': {'key': 'typeProperties.nodes', 'type': '[ManagedIntegrationRuntimeNode]'},
         'other_errors': {'key': 'typeProperties.otherErrors', 'type': '[ManagedIntegrationRuntimeError]'},
@@ -70,7 +70,8 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     }
 
     def __init__(self, *, additional_properties=None, **kwargs) -> None:
-        super(ManagedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
+        super(ManagedIntegrationRuntimeStatus, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.create_time = None
         self.nodes = None
         self.other_errors = None

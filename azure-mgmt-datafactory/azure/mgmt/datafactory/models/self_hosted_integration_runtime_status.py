@@ -20,9 +20,6 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :ivar data_factory_name: The data factory name which the integration
      runtime belong to.
     :vartype data_factory_name: str
@@ -99,7 +96,6 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
