@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class IpSecurityRestriction(Model):
     """IP security restriction on an app.
 
-    :param ip_address: IP address the security restriction is valid for.
+    All required parameters must be populated in order to send to Azure.
+
+    :param ip_address: Required. IP address the security restriction is valid
+     for.
     :type ip_address: str
     :param subnet_mask: Subnet mask for the range of IP addresses the
      restriction is valid for.
@@ -31,7 +34,7 @@ class IpSecurityRestriction(Model):
         'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
     }
 
-    def __init__(self, ip_address, subnet_mask=None):
-        super(IpSecurityRestriction, self).__init__()
-        self.ip_address = ip_address
-        self.subnet_mask = subnet_mask
+    def __init__(self, **kwargs):
+        super(IpSecurityRestriction, self).__init__(**kwargs)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.subnet_mask = kwargs.get('subnet_mask', None)

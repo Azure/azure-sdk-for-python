@@ -47,7 +47,7 @@ class DetectorResponse(ProxyOnlyResource):
         'dataset': {'key': 'properties.dataset', 'type': '[DiagnosticData]'},
     }
 
-    def __init__(self, kind=None, metadata=None, dataset=None):
-        super(DetectorResponse, self).__init__(kind=kind)
-        self.metadata = metadata
-        self.dataset = dataset
+    def __init__(self, **kwargs):
+        super(DetectorResponse, self).__init__(**kwargs)
+        self.metadata = kwargs.get('metadata', None)
+        self.dataset = kwargs.get('dataset', None)

@@ -31,8 +31,8 @@ class DefaultErrorResponse(Model):
         'error': {'key': 'error', 'type': 'DefaultErrorResponseError'},
     }
 
-    def __init__(self):
-        super(DefaultErrorResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(DefaultErrorResponse, self).__init__(**kwargs)
         self.error = None
 
 

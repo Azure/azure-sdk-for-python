@@ -49,7 +49,7 @@ class TopLevelDomain(ProxyOnlyResource):
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, privacy=None):
-        super(TopLevelDomain, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(TopLevelDomain, self).__init__(**kwargs)
         self.domain_name = None
-        self.privacy = privacy
+        self.privacy = kwargs.get('privacy', None)

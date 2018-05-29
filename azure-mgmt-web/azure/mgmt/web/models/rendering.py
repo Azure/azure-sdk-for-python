@@ -31,8 +31,8 @@ class Rendering(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, rendering_type=None, title=None, description=None):
-        super(Rendering, self).__init__()
-        self.rendering_type = rendering_type
-        self.title = title
-        self.description = description
+    def __init__(self, **kwargs):
+        super(Rendering, self).__init__(**kwargs)
+        self.rendering_type = kwargs.get('rendering_type', None)
+        self.title = kwargs.get('title', None)
+        self.description = kwargs.get('description', None)

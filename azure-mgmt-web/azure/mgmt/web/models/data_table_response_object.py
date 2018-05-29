@@ -29,8 +29,8 @@ class DataTableResponseObject(Model):
         'rows': {'key': 'rows', 'type': '[[str]]'},
     }
 
-    def __init__(self, table_name=None, columns=None, rows=None):
-        super(DataTableResponseObject, self).__init__()
-        self.table_name = table_name
-        self.columns = columns
-        self.rows = rows
+    def __init__(self, **kwargs):
+        super(DataTableResponseObject, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
+        self.columns = kwargs.get('columns', None)
+        self.rows = kwargs.get('rows', None)

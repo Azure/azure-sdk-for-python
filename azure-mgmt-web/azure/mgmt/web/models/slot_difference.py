@@ -72,8 +72,8 @@ class SlotDifference(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(SlotDifference, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(SlotDifference, self).__init__(**kwargs)
         self.slot_difference_type = None
         self.setting_type = None
         self.diff_rule = None

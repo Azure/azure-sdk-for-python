@@ -23,6 +23,6 @@ class Experiments(Model):
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
     }
 
-    def __init__(self, ramp_up_rules=None):
-        super(Experiments, self).__init__()
-        self.ramp_up_rules = ramp_up_rules
+    def __init__(self, **kwargs):
+        super(Experiments, self).__init__(**kwargs)
+        self.ramp_up_rules = kwargs.get('ramp_up_rules', None)

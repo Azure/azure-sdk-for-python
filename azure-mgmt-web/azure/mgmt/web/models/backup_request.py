@@ -18,6 +18,8 @@ class BackupRequest(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,12 +28,12 @@ class BackupRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param backup_request_name: Name of the backup.
+    :param backup_request_name: Required. Name of the backup.
     :type backup_request_name: str
     :param enabled: True if the backup schedule is enabled (must be included
      in that case), false if the backup schedule should be disabled.
     :type enabled: bool
-    :param storage_account_url: SAS URL to the container.
+    :param storage_account_url: Required. SAS URL to the container.
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
      periodically.
@@ -65,11 +67,11 @@ class BackupRequest(ProxyOnlyResource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, backup_request_name, storage_account_url, kind=None, enabled=None, backup_schedule=None, databases=None, backup_request_type=None):
-        super(BackupRequest, self).__init__(kind=kind)
-        self.backup_request_name = backup_request_name
-        self.enabled = enabled
-        self.storage_account_url = storage_account_url
-        self.backup_schedule = backup_schedule
-        self.databases = databases
-        self.backup_request_type = backup_request_type
+    def __init__(self, **kwargs):
+        super(BackupRequest, self).__init__(**kwargs)
+        self.backup_request_name = kwargs.get('backup_request_name', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.storage_account_url = kwargs.get('storage_account_url', None)
+        self.backup_schedule = kwargs.get('backup_schedule', None)
+        self.databases = kwargs.get('databases', None)
+        self.backup_request_type = kwargs.get('backup_request_type', None)

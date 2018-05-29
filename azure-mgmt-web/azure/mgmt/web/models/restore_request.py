@@ -18,6 +18,8 @@ class RestoreRequest(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,13 +28,13 @@ class RestoreRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param storage_account_url: SAS URL to the container.
+    :param storage_account_url: Required. SAS URL to the container.
     :type storage_account_url: str
     :param blob_name: Name of a blob which contains the backup.
     :type blob_name: str
-    :param overwrite: <code>true</code> if the restore operation can overwrite
-     target app; otherwise, <code>false</code>. <code>true</code> is needed if
-     trying to restore over an existing app.
+    :param overwrite: Required. <code>true</code> if the restore operation can
+     overwrite target app; otherwise, <code>false</code>. <code>true</code> is
+     needed if trying to restore over an existing app.
     :type overwrite: bool
     :param site_name: Name of an app.
     :type site_name: str
@@ -90,16 +92,16 @@ class RestoreRequest(ProxyOnlyResource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_url, overwrite, kind=None, blob_name=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, app_service_plan=None, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
-        super(RestoreRequest, self).__init__(kind=kind)
-        self.storage_account_url = storage_account_url
-        self.blob_name = blob_name
-        self.overwrite = overwrite
-        self.site_name = site_name
-        self.databases = databases
-        self.ignore_conflicting_host_names = ignore_conflicting_host_names
-        self.ignore_databases = ignore_databases
-        self.app_service_plan = app_service_plan
-        self.operation_type = operation_type
-        self.adjust_connection_strings = adjust_connection_strings
-        self.hosting_environment = hosting_environment
+    def __init__(self, **kwargs):
+        super(RestoreRequest, self).__init__(**kwargs)
+        self.storage_account_url = kwargs.get('storage_account_url', None)
+        self.blob_name = kwargs.get('blob_name', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.site_name = kwargs.get('site_name', None)
+        self.databases = kwargs.get('databases', None)
+        self.ignore_conflicting_host_names = kwargs.get('ignore_conflicting_host_names', False)
+        self.ignore_databases = kwargs.get('ignore_databases', False)
+        self.app_service_plan = kwargs.get('app_service_plan', None)
+        self.operation_type = kwargs.get('operation_type', "Default")
+        self.adjust_connection_strings = kwargs.get('adjust_connection_strings', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)

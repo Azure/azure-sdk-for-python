@@ -38,8 +38,8 @@ class ManagedServiceIdentity(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, type=None):
-        super(ManagedServiceIdentity, self).__init__()
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.tenant_id = None
         self.principal_id = None

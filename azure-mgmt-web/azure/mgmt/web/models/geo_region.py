@@ -53,8 +53,8 @@ class GeoRegion(ProxyOnlyResource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(GeoRegion, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(GeoRegion, self).__init__(**kwargs)
         self.geo_region_name = None
         self.description = None
         self.display_name = None

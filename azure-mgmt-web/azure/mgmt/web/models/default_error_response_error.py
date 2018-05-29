@@ -46,10 +46,10 @@ class DefaultErrorResponseError(Model):
         'innererror': {'key': 'innererror', 'type': 'str'},
     }
 
-    def __init__(self, details=None):
-        super(DefaultErrorResponseError, self).__init__()
+    def __init__(self, **kwargs):
+        super(DefaultErrorResponseError, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
-        self.details = details
+        self.details = kwargs.get('details', None)
         self.innererror = None

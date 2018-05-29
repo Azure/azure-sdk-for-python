@@ -31,8 +31,8 @@ class ConnStringInfo(Model):
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, name=None, connection_string=None, type=None):
-        super(ConnStringInfo, self).__init__()
-        self.name = name
-        self.connection_string = connection_string
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ConnStringInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.type = kwargs.get('type', None)

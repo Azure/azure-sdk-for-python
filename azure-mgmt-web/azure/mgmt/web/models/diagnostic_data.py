@@ -27,7 +27,7 @@ class DiagnosticData(Model):
         'rendering_properties': {'key': 'renderingProperties', 'type': 'Rendering'},
     }
 
-    def __init__(self, table=None, rendering_properties=None):
-        super(DiagnosticData, self).__init__()
-        self.table = table
-        self.rendering_properties = rendering_properties
+    def __init__(self, **kwargs):
+        super(DiagnosticData, self).__init__(**kwargs)
+        self.table = kwargs.get('table', None)
+        self.rendering_properties = kwargs.get('rendering_properties', None)

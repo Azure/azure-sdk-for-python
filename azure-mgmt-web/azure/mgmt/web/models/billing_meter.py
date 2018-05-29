@@ -57,10 +57,10 @@ class BillingMeter(ProxyOnlyResource):
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, meter_id=None, billing_location=None, short_name=None, friendly_name=None, resource_type=None):
-        super(BillingMeter, self).__init__(kind=kind)
-        self.meter_id = meter_id
-        self.billing_location = billing_location
-        self.short_name = short_name
-        self.friendly_name = friendly_name
-        self.resource_type = resource_type
+    def __init__(self, **kwargs):
+        super(BillingMeter, self).__init__(**kwargs)
+        self.meter_id = kwargs.get('meter_id', None)
+        self.billing_location = kwargs.get('billing_location', None)
+        self.short_name = kwargs.get('short_name', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.resource_type = kwargs.get('resource_type', None)

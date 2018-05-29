@@ -77,16 +77,16 @@ class TriggeredWebJob(ProxyOnlyResource):
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, kind=None, latest_run=None, history_url=None, scheduler_logs_url=None, run_command=None, url=None, extra_info_url=None, job_type=None, error=None, using_sdk=None, settings=None):
-        super(TriggeredWebJob, self).__init__(kind=kind)
-        self.latest_run = latest_run
-        self.history_url = history_url
-        self.scheduler_logs_url = scheduler_logs_url
+    def __init__(self, **kwargs):
+        super(TriggeredWebJob, self).__init__(**kwargs)
+        self.latest_run = kwargs.get('latest_run', None)
+        self.history_url = kwargs.get('history_url', None)
+        self.scheduler_logs_url = kwargs.get('scheduler_logs_url', None)
         self.triggered_web_job_name = None
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.job_type = job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.job_type = kwargs.get('job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)

@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
 from .operations.certificate_registration_provider_operations import CertificateRegistrationProviderOperations
@@ -68,7 +69,7 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class WebSiteManagementClient(object):
+class WebSiteManagementClient(SDKClient):
     """WebSite Management Client
 
     :ivar config: Configuration for client.
@@ -118,7 +119,7 @@ class WebSiteManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = WebSiteManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(WebSiteManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

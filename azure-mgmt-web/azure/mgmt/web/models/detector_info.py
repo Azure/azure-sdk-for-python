@@ -42,8 +42,8 @@ class DetectorInfo(Model):
         'support_topic_id': {'key': 'supportTopicId', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DetectorInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(DetectorInfo, self).__init__(**kwargs)
         self.description = None
         self.category = None
         self.sub_category = None

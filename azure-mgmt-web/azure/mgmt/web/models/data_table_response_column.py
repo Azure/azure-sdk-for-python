@@ -29,8 +29,8 @@ class DataTableResponseColumn(Model):
         'column_type': {'key': 'columnType', 'type': 'str'},
     }
 
-    def __init__(self, column_name=None, data_type=None, column_type=None):
-        super(DataTableResponseColumn, self).__init__()
-        self.column_name = column_name
-        self.data_type = data_type
-        self.column_type = column_type
+    def __init__(self, **kwargs):
+        super(DataTableResponseColumn, self).__init__(**kwargs)
+        self.column_name = kwargs.get('column_name', None)
+        self.data_type = kwargs.get('data_type', None)
+        self.column_type = kwargs.get('column_type', None)

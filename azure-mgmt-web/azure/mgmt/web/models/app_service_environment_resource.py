@@ -18,23 +18,25 @@ class AppServiceEnvironmentResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param app_service_environment_resource_name: Name of the App Service
-     Environment.
+    :param app_service_environment_resource_name: Required. Name of the App
+     Service Environment.
     :type app_service_environment_resource_name: str
-    :param app_service_environment_resource_location: Location of the App
-     Service Environment, e.g. "West US".
+    :param app_service_environment_resource_location: Required. Location of
+     the App Service Environment, e.g. "West US".
     :type app_service_environment_resource_location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
@@ -51,7 +53,7 @@ class AppServiceEnvironmentResource(Resource):
     :type vnet_resource_group_name: str
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
-    :param virtual_network: Description of the Virtual Network.
+    :param virtual_network: Required. Description of the Virtual Network.
     :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
@@ -62,8 +64,8 @@ class AppServiceEnvironmentResource(Resource):
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
-    :param worker_pools: Description of worker pools with worker size IDs, VM
-     sizes, and number of workers in each pool.
+    :param worker_pools: Required. Description of worker pools with worker
+     size IDs, VM sizes, and number of workers in each pool.
     :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
@@ -212,26 +214,26 @@ class AppServiceEnvironmentResource(Resource):
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
-        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
-        self.app_service_environment_resource_name = app_service_environment_resource_name
-        self.app_service_environment_resource_location = app_service_environment_resource_location
+    def __init__(self, **kwargs):
+        super(AppServiceEnvironmentResource, self).__init__(**kwargs)
+        self.app_service_environment_resource_name = kwargs.get('app_service_environment_resource_name', None)
+        self.app_service_environment_resource_location = kwargs.get('app_service_environment_resource_location', None)
         self.provisioning_state = None
         self.status = None
-        self.vnet_name = vnet_name
-        self.vnet_resource_group_name = vnet_resource_group_name
-        self.vnet_subnet_name = vnet_subnet_name
-        self.virtual_network = virtual_network
-        self.internal_load_balancing_mode = internal_load_balancing_mode
-        self.multi_size = multi_size
-        self.multi_role_count = multi_role_count
-        self.worker_pools = worker_pools
-        self.ipssl_address_count = ipssl_address_count
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_resource_group_name = kwargs.get('vnet_resource_group_name', None)
+        self.vnet_subnet_name = kwargs.get('vnet_subnet_name', None)
+        self.virtual_network = kwargs.get('virtual_network', None)
+        self.internal_load_balancing_mode = kwargs.get('internal_load_balancing_mode', None)
+        self.multi_size = kwargs.get('multi_size', None)
+        self.multi_role_count = kwargs.get('multi_role_count', None)
+        self.worker_pools = kwargs.get('worker_pools', None)
+        self.ipssl_address_count = kwargs.get('ipssl_address_count', None)
         self.database_edition = None
         self.database_service_objective = None
         self.upgrade_domains = None
         self.subscription_id = None
-        self.dns_suffix = dns_suffix
+        self.dns_suffix = kwargs.get('dns_suffix', None)
         self.last_action = None
         self.last_action_result = None
         self.allowed_multi_sizes = None
@@ -239,14 +241,14 @@ class AppServiceEnvironmentResource(Resource):
         self.maximum_number_of_machines = None
         self.vip_mappings = None
         self.environment_capacities = None
-        self.network_access_control_list = network_access_control_list
+        self.network_access_control_list = kwargs.get('network_access_control_list', None)
         self.environment_is_healthy = None
         self.environment_status = None
         self.resource_group = None
-        self.front_end_scale_factor = front_end_scale_factor
+        self.front_end_scale_factor = kwargs.get('front_end_scale_factor', None)
         self.default_front_end_scale_factor = None
-        self.api_management_account_id = api_management_account_id
-        self.suspended = suspended
-        self.dynamic_cache_enabled = dynamic_cache_enabled
-        self.cluster_settings = cluster_settings
-        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
+        self.api_management_account_id = kwargs.get('api_management_account_id', None)
+        self.suspended = kwargs.get('suspended', None)
+        self.dynamic_cache_enabled = kwargs.get('dynamic_cache_enabled', None)
+        self.cluster_settings = kwargs.get('cluster_settings', None)
+        self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)

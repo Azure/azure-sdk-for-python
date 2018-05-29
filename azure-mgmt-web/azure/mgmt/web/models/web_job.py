@@ -67,13 +67,13 @@ class WebJob(ProxyOnlyResource):
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, kind=None, run_command=None, url=None, extra_info_url=None, job_type=None, error=None, using_sdk=None, settings=None):
-        super(WebJob, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(WebJob, self).__init__(**kwargs)
         self.web_job_name = None
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.job_type = job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.job_type = kwargs.get('job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)

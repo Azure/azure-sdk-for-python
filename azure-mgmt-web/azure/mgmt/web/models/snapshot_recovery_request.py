@@ -18,6 +18,8 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -32,8 +34,8 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     :param recovery_target: Specifies the web app that snapshot contents will
      be written to.
     :type recovery_target: ~azure.mgmt.web.models.SnapshotRecoveryTarget
-    :param overwrite: If <code>true</code> the recovery operation can
-     overwrite source app; otherwise, <code>false</code>.
+    :param overwrite: Required. If <code>true</code> the recovery operation
+     can overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool
     :param recover_configuration: If true, site configuration, in addition to
      content, will be reverted.
@@ -63,10 +65,10 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
     }
 
-    def __init__(self, overwrite, kind=None, snapshot_time=None, recovery_target=None, recover_configuration=None, ignore_conflicting_host_names=None):
-        super(SnapshotRecoveryRequest, self).__init__(kind=kind)
-        self.snapshot_time = snapshot_time
-        self.recovery_target = recovery_target
-        self.overwrite = overwrite
-        self.recover_configuration = recover_configuration
-        self.ignore_conflicting_host_names = ignore_conflicting_host_names
+    def __init__(self, **kwargs):
+        super(SnapshotRecoveryRequest, self).__init__(**kwargs)
+        self.snapshot_time = kwargs.get('snapshot_time', None)
+        self.recovery_target = kwargs.get('recovery_target', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.recover_configuration = kwargs.get('recover_configuration', None)
+        self.ignore_conflicting_host_names = kwargs.get('ignore_conflicting_host_names', None)
