@@ -52,7 +52,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
     .. versionadded:: 1.1.6
 
     :param client_class: A SDK client class
-    :return: An instanciated client
+    :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
 
@@ -114,7 +114,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
 
     :param client_class: A SDK client class
     :param dict config_dict: A config dict.
-    :return: An instanciated client
+    :return: An instantiated client
     """
     parameters = {
         'subscription_id': config_dict.get('subscriptionId'),
@@ -183,7 +183,7 @@ def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
 
     :param client_class: A SDK client class
     :param str auth_path: Path to the file.
-    :return: An instanciated client
+    :return: An instantiated client
     :raises: KeyError if AZURE_AUTH_LOCATION is not an environment variable and no path is provided
     :raises: FileNotFoundError if provided file path does not exists
     :raises: json.JSONDecodeError if provided file is not JSON valid
