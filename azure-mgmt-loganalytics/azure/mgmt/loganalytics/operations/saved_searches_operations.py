@@ -12,14 +12,12 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class WorkspacesOperations(object):
-    """WorkspacesOperations operations.
+class SavedSearchesOperations(object):
+    """SavedSearchesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,25 +37,163 @@ class WorkspacesOperations(object):
 
         self.config = config
 
-    def list_link_targets(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get a list of workspaces which the current user has administrator
-        privileges and are not associated with an Azure Subscription. The
-        subscriptionId parameter in the Url is ignored.
+    def delete(
+            self, resource_group_name, workspace_name, saved_search_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified saved search in a given workspace.
 
+        :param resource_group_name: The name of the resource group to get. The
+         name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Log Analytics workspace name
+        :type workspace_name: str
+        :param saved_search_name: Name of the saved search.
+        :type saved_search_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.loganalytics.models.LinkTarget] or
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'savedSearchName': self._serialize.url("saved_search_name", saved_search_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches/{savedSearchName}'}
+
+    def create_or_update(
+            self, resource_group_name, workspace_name, saved_search_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a saved search for a given workspace.
+
+        :param resource_group_name: The name of the resource group to get. The
+         name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Log Analytics workspace name
+        :type workspace_name: str
+        :param saved_search_name: The id of the saved search.
+        :type saved_search_name: str
+        :param parameters: The parameters required to save a search.
+        :type parameters: ~azure.mgmt.loganalytics.models.SavedSearch
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SavedSearch or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.SavedSearch or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_link_targets.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'savedSearchName': self._serialize.url("saved_search_name", saved_search_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'SavedSearch')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SavedSearch', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches/{savedSearchName}'}
+
+    def get(
+            self, resource_group_name, workspace_name, saved_search_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified saved search for a given workspace.
+
+        :param resource_group_name: The name of the resource group to get. The
+         name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Log Analytics workspace name
+        :type workspace_name: str
+        :param saved_search_name: The id of the saved search.
+        :type saved_search_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SavedSearch or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.SavedSearch or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'savedSearchName': self._serialize.url("saved_search_name", saved_search_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -88,18 +224,18 @@ class WorkspacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[LinkTarget]', response)
+            deserialized = self._deserialize('SavedSearch', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_link_targets.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.OperationalInsights/linkTargets'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches/{savedSearchName}'}
 
-    def get_schema(
+    def list_by_workspace(
             self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the schema for a given workspace.
+        """Gets the saved searches for a given Log Analytics Workspace.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
@@ -111,13 +247,13 @@ class WorkspacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SearchGetSchemaResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.loganalytics.models.SearchGetSchemaResponse or
+        :return: SavedSearchesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.SavedSearchesListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_schema.metadata['url']
+        url = self.list_by_workspace.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
@@ -140,7 +276,7 @@ class WorkspacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -151,131 +287,26 @@ class WorkspacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SearchGetSchemaResponse', response)
+            deserialized = self._deserialize('SavedSearchesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_schema.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/schema'}
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches'}
 
-
-    def _get_search_results_initial(
-            self, resource_group_name, workspace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = self.get_search_results.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'SearchParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SearchResultsResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_search_results(
-            self, resource_group_name, workspace_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Submit a search for a given workspace. The response will contain an id
-        to track the search. User can use the id to poll the search status and
-        get the full search result later if the search takes long time to
-        finish. .
+    def get_results(
+            self, resource_group_name, workspace_name, saved_search_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the results from a saved search for a given workspace.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Log Analytics workspace name
         :type workspace_name: str
-        :param parameters: The parameters required to execute a search query.
-        :type parameters: ~azure.mgmt.loganalytics.models.SearchParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SearchResultsResponse
-         or ClientRawResponse<SearchResultsResponse> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.loganalytics.models.SearchResultsResponse]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.loganalytics.models.SearchResultsResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._get_search_results_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('SearchResultsResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    get_search_results.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/search'}
-
-    def update_search_results(
-            self, resource_group_name, workspace_name, id, custom_headers=None, raw=False, **operation_config):
-        """Gets updated search results for a given search query.
-
-        :param resource_group_name: The name of the resource group to get. The
-         name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Log Analytics workspace name
-        :type workspace_name: str
-        :param id: The id of the search that will have results updated. You
-         can get the id from the response of the GetResults call.
-        :type id: str
+        :param saved_search_name: The name of the saved search.
+        :type saved_search_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -287,11 +318,11 @@ class WorkspacesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.update_search_results.metadata['url']
+        url = self.get_results.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'id': self._serialize.url("id", id, 'str'),
+            'savedSearchName': self._serialize.url("saved_search_name", saved_search_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -311,7 +342,7 @@ class WorkspacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -329,113 +360,4 @@ class WorkspacesOperations(object):
             return client_raw_response
 
         return deserialized
-    update_search_results.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/search/{id}'}
-
-
-    def _purge_initial(
-            self, resource_group_name, workspace_name, table, filters, custom_headers=None, raw=False, **operation_config):
-        body = models.WorkspacePurgeBody(table=table, filters=filters)
-
-        # Construct URL
-        url = self.purge.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'WorkspacePurgeBody')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('WorkspacePurgeStatusResponse', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('WorkspacePurgeResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def purge(
-            self, resource_group_name, workspace_name, table, filters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Purges data in an Log Analytics workspace by a set of user-defined
-        filters.
-
-        :param resource_group_name: The name of the resource group to get. The
-         name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Log Analytics workspace name
-        :type workspace_name: str
-        :param table: Table from which to purge data.
-        :type table: str
-        :param filters: The set of columns and filters (queries) to run over
-         them to purge the resulting data.
-        :type filters:
-         list[~azure.mgmt.loganalytics.models.WorkspacePurgeBodyFilters]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._purge_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            table=table,
-            filters=filters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    purge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/purge'}
+    get_results.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches/{savedSearchName}/results'}

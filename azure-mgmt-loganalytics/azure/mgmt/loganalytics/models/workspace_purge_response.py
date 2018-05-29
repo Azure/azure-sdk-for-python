@@ -12,21 +12,24 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationsManagement resource provider.
+class WorkspacePurgeResponse(Model):
+    """Response containing operationId for a specific purge action.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation_id: Required. Id to use when querying for status for a
+     particular purge operation.
+    :type operation_id: str
     """
 
+    _validation = {
+        'operation_id': {'required': True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        super(WorkspacePurgeResponse, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)

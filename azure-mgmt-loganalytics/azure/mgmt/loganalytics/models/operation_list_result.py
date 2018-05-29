@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationsManagement resource provider.
+class OperationListResult(Model):
+    """Result of the request to list solution operations.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    :param value: List of solution operations supported by the
+     OperationsManagement resource provider.
+    :type value: list[~azure.mgmt.loganalytics.models.Operation]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'value': {'key': 'value', 'type': '[Operation]'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

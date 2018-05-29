@@ -12,41 +12,19 @@
 from enum import Enum
 
 
-class DataSourceKind(str, Enum):
+class SearchSortEnum(str, Enum):
 
-    azure_activity_log = "AzureActivityLog"
-    change_tracking_path = "ChangeTrackingPath"
-    change_tracking_default_path = "ChangeTrackingDefaultPath"
-    change_tracking_default_registry = "ChangeTrackingDefaultRegistry"
-    change_tracking_custom_registry = "ChangeTrackingCustomRegistry"
-    custom_log = "CustomLog"
-    custom_log_collection = "CustomLogCollection"
-    generic_data_source = "GenericDataSource"
-    iis_logs = "IISLogs"
-    linux_performance_object = "LinuxPerformanceObject"
-    linux_performance_collection = "LinuxPerformanceCollection"
-    linux_syslog = "LinuxSyslog"
-    linux_syslog_collection = "LinuxSyslogCollection"
-    windows_event = "WindowsEvent"
-    windows_performance_counter = "WindowsPerformanceCounter"
+    asc = "asc"
+    desc = "desc"
 
 
-class SkuNameEnum(str, Enum):
+class StorageInsightState(str, Enum):
 
-    free = "Free"
-    standard = "Standard"
-    premium = "Premium"
-    unlimited = "Unlimited"
-    per_node = "PerNode"
-    per_gb2018 = "PerGB2018"
-    standalone = "Standalone"
+    ok = "OK"
+    error = "ERROR"
 
 
-class EntityStatus(str, Enum):
+class PurgeState(str, Enum):
 
-    creating = "Creating"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-    deleting = "Deleting"
-    provisioning_account = "ProvisioningAccount"
+    pending = "Pending"
+    completed = "Completed"

@@ -12,21 +12,28 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationsManagement resource provider.
+class Tag(Model):
+    """A tag of a saved search.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The tag name.
     :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    :param value: Required. The tag value.
+    :type value: str
     """
+
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, name: str, value: str, **kwargs) -> None:
+        super(Tag, self).__init__(**kwargs)
         self.name = name
-        self.display = display
+        self.value = value

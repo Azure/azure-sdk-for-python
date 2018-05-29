@@ -12,21 +12,22 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationsManagement resource provider.
+class SearchSort(Model):
+    """The sort parameters for search.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
+    :param name: The name of the field the search query is sorted on.
     :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    :param order: The sort order of the search. Possible values include:
+     'asc', 'desc'
+    :type order: str or ~azure.mgmt.loganalytics.models.SearchSortEnum
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'order': {'key': 'order', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
-        super(Operation, self).__init__(**kwargs)
-        self.name = name
-        self.display = display
+    def __init__(self, **kwargs):
+        super(SearchSort, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.order = kwargs.get('order', None)

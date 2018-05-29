@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_services_operations import LinkedServicesOperations
-from .data_sources_operations import DataSourcesOperations
+from .storage_insights_operations import StorageInsightsOperations
 from .workspaces_operations import WorkspacesOperations
+from .saved_searches_operations import SavedSearchesOperations
 from .operations import Operations
 
 __all__ = [
-    'LinkedServicesOperations',
-    'DataSourcesOperations',
+    'StorageInsightsOperations',
     'WorkspacesOperations',
+    'SavedSearchesOperations',
     'Operations',
 ]
