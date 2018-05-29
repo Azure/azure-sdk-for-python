@@ -18,7 +18,8 @@ class IntegrationAccountMapFilter(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param map_type: Required. The map type of integration account map.
-     Possible values include: 'NotSpecified', 'Xslt'
+     Possible values include: 'NotSpecified', 'Xslt', 'Xslt20', 'Xslt30',
+     'Liquid'
     :type map_type: str or ~azure.mgmt.logic.models.MapType
     """
 
