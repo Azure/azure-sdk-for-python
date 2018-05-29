@@ -13,28 +13,31 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class ErrorResponse(Model):
-    """Error Response.
+class DefaultErrorResponse(Model):
+    """App Service error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: Error model.
+    :vartype error: ~azure.mgmt.web.models.DefaultErrorResponseError
     """
 
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'error': {'readonly': True},
     }
 
-    def __init__(self, code=None, message=None):
-        super(ErrorResponse, self).__init__()
-        self.code = code
-        self.message = message
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'DefaultErrorResponseError'},
+    }
+
+    def __init__(self):
+        super(DefaultErrorResponse, self).__init__()
+        self.error = None
 
 
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
+class DefaultErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'DefaultErrorResponse'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -42,4 +45,4 @@ class ErrorResponseException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+        super(DefaultErrorResponseException, self).__init__(deserialize, response, 'DefaultErrorResponse', *args)

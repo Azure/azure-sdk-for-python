@@ -62,6 +62,8 @@ class Site(Resource):
     :param reserved: <code>true</code> if reserved; otherwise,
      <code>false</code>. Default value: False .
     :type reserved: bool
+    :param is_xenon: Hyper-V sandbox. Default value: False .
+    :type is_xenon: bool
     :ivar last_modified_time_utc: Last time the app was modified, in UTC.
      Read-only.
     :vartype last_modified_time_utc: datetime
@@ -179,6 +181,7 @@ class Site(Resource):
         'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -204,7 +207,7 @@ class Site(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, identity=None):
+    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, is_xenon=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, identity=None):
         super(Site, self).__init__(kind=kind, location=location, tags=tags)
         self.state = None
         self.host_names = None
@@ -216,6 +219,7 @@ class Site(Resource):
         self.host_name_ssl_states = host_name_ssl_states
         self.server_farm_id = server_farm_id
         self.reserved = reserved
+        self.is_xenon = is_xenon
         self.last_modified_time_utc = None
         self.site_config = site_config
         self.traffic_manager_host_names = None

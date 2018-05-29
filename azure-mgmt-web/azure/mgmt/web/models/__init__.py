@@ -28,7 +28,6 @@ from .user import User
 from .snapshot_recovery_target import SnapshotRecoveryTarget
 from .snapshot_recovery_request import SnapshotRecoveryRequest
 from .resource_metric_availability import ResourceMetricAvailability
-from .resource_metric_name import ResourceMetricName
 from .resource_metric_definition import ResourceMetricDefinition
 from .push_settings import PushSettings
 from .identifier import Identifier
@@ -66,6 +65,9 @@ from .sku_capacity import SkuCapacity
 from .sku_description import SkuDescription
 from .app_service_plan import AppServicePlan
 from .resource import Resource
+from .default_error_response_error_details_item import DefaultErrorResponseErrorDetailsItem
+from .default_error_response_error import DefaultErrorResponseError
+from .default_error_response import DefaultErrorResponse, DefaultErrorResponseException
 from .name_identifier import NameIdentifier
 from .metric_availability import MetricAvailability
 from .dimension import Dimension
@@ -84,7 +86,6 @@ from .domain_control_center_sso_request import DomainControlCenterSsoRequest
 from .domain_ownership_identifier import DomainOwnershipIdentifier
 from .domain_patch_resource import DomainPatchResource
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-from .error_response import ErrorResponse, ErrorResponseException
 from .tld_legal_agreement import TldLegalAgreement
 from .top_level_domain import TopLevelDomain
 from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
@@ -100,6 +101,7 @@ from .localizable_string import LocalizableString
 from .csm_usage_quota import CsmUsageQuota
 from .error_entity import ErrorEntity
 from .operation import Operation
+from .resource_metric_name import ResourceMetricName
 from .resource_metric_property import ResourceMetricProperty
 from .resource_metric_value import ResourceMetricValue
 from .resource_metric import ResourceMetric
@@ -123,6 +125,7 @@ from .stack_major_version import StackMajorVersion
 from .application_stack import ApplicationStack
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
+from .billing_meter import BillingMeter
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .geo_region import GeoRegion
 from .hosting_environment_deployment_info import HostingEnvironmentDeploymentInfo
@@ -154,6 +157,7 @@ from .continuous_web_job import ContinuousWebJob
 from .csm_publishing_profile_options import CsmPublishingProfileOptions
 from .csm_slot_entity import CsmSlotEntity
 from .custom_hostname_analysis_result import CustomHostnameAnalysisResult
+from .deleted_app_restore_request import DeletedAppRestoreRequest
 from .deployment import Deployment
 from .enabled_config import EnabledConfig
 from .file_system_http_logs_config import FileSystemHttpLogsConfig
@@ -173,12 +177,14 @@ from .perf_mon_sample import PerfMonSample
 from .perf_mon_set import PerfMonSet
 from .perf_mon_response import PerfMonResponse
 from .premier_add_on import PremierAddOn
+from .private_access_subnet import PrivateAccessSubnet
+from .private_access_virtual_network import PrivateAccessVirtualNetwork
+from .private_access import PrivateAccess
 from .process_thread_info import ProcessThreadInfo
 from .process_module_info import ProcessModuleInfo
 from .process_info import ProcessInfo
 from .public_certificate import PublicCertificate
 from .restore_request import RestoreRequest
-from .restore_response import RestoreResponse
 from .site_auth_settings import SiteAuthSettings
 from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .site_cloneability import SiteCloneability
@@ -193,6 +199,8 @@ from .site_source_control import SiteSourceControl
 from .slot_config_names_resource import SlotConfigNamesResource
 from .slot_difference import SlotDifference
 from .snapshot import Snapshot
+from .snapshot_recovery_source import SnapshotRecoverySource
+from .snapshot_restore_request import SnapshotRestoreRequest
 from .storage_migration_options import StorageMigrationOptions
 from .storage_migration_response import StorageMigrationResponse
 from .string_dictionary import StringDictionary
@@ -225,7 +233,9 @@ from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
+from .recommendation_paged import RecommendationPaged
 from .source_control_paged import SourceControlPaged
+from .billing_meter_paged import BillingMeterPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
 from .premier_add_on_offer_paged import PremierAddOnOfferPaged
@@ -267,12 +277,14 @@ from .web_site_management_client_enums import (
     CertificateOrderStatus,
     CertificateOrderActionType,
     RouteType,
+    ManagedServiceIdentityType,
     AutoHealActionType,
     ConnectionStringType,
     ScmType,
     ManagedPipelineMode,
     SiteLoadBalancing,
     SupportedTlsVersions,
+    FtpsState,
     SslState,
     HostType,
     UsageState,
@@ -303,7 +315,6 @@ from .web_site_management_client_enums import (
     BackupItemStatus,
     DatabaseType,
     FrequencyUnit,
-    BackupRestoreOperationType,
     ContinuousWebJobStatus,
     WebJobType,
     PublishingProfileFormat,
@@ -312,6 +323,7 @@ from .web_site_management_client_enums import (
     MSDeployProvisioningState,
     MySqlMigrationType,
     PublicCertificateLocation,
+    BackupRestoreOperationType,
     UnauthenticatedClientAction,
     BuiltInAuthenticationProvider,
     CloneAbilityResult,
@@ -340,7 +352,6 @@ __all__ = [
     'SnapshotRecoveryTarget',
     'SnapshotRecoveryRequest',
     'ResourceMetricAvailability',
-    'ResourceMetricName',
     'ResourceMetricDefinition',
     'PushSettings',
     'Identifier',
@@ -378,6 +389,9 @@ __all__ = [
     'SkuDescription',
     'AppServicePlan',
     'Resource',
+    'DefaultErrorResponseErrorDetailsItem',
+    'DefaultErrorResponseError',
+    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'NameIdentifier',
     'MetricAvailability',
     'Dimension',
@@ -396,7 +410,6 @@ __all__ = [
     'DomainOwnershipIdentifier',
     'DomainPatchResource',
     'DomainRecommendationSearchParameters',
-    'ErrorResponse', 'ErrorResponseException',
     'TldLegalAgreement',
     'TopLevelDomain',
     'TopLevelDomainAgreementOption',
@@ -412,6 +425,7 @@ __all__ = [
     'CsmUsageQuota',
     'ErrorEntity',
     'Operation',
+    'ResourceMetricName',
     'ResourceMetricProperty',
     'ResourceMetricValue',
     'ResourceMetric',
@@ -435,6 +449,7 @@ __all__ = [
     'ApplicationStack',
     'Recommendation',
     'RecommendationRule',
+    'BillingMeter',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
     'HostingEnvironmentDeploymentInfo',
@@ -466,6 +481,7 @@ __all__ = [
     'CsmPublishingProfileOptions',
     'CsmSlotEntity',
     'CustomHostnameAnalysisResult',
+    'DeletedAppRestoreRequest',
     'Deployment',
     'EnabledConfig',
     'FileSystemHttpLogsConfig',
@@ -485,12 +501,14 @@ __all__ = [
     'PerfMonSet',
     'PerfMonResponse',
     'PremierAddOn',
+    'PrivateAccessSubnet',
+    'PrivateAccessVirtualNetwork',
+    'PrivateAccess',
     'ProcessThreadInfo',
     'ProcessModuleInfo',
     'ProcessInfo',
     'PublicCertificate',
     'RestoreRequest',
-    'RestoreResponse',
     'SiteAuthSettings',
     'SiteCloneabilityCriterion',
     'SiteCloneability',
@@ -505,6 +523,8 @@ __all__ = [
     'SlotConfigNamesResource',
     'SlotDifference',
     'Snapshot',
+    'SnapshotRecoverySource',
+    'SnapshotRestoreRequest',
     'StorageMigrationOptions',
     'StorageMigrationResponse',
     'StringDictionary',
@@ -537,7 +557,9 @@ __all__ = [
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
+    'RecommendationPaged',
     'SourceControlPaged',
+    'BillingMeterPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
     'PremierAddOnOfferPaged',
@@ -578,12 +600,14 @@ __all__ = [
     'CertificateOrderStatus',
     'CertificateOrderActionType',
     'RouteType',
+    'ManagedServiceIdentityType',
     'AutoHealActionType',
     'ConnectionStringType',
     'ScmType',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
     'SupportedTlsVersions',
+    'FtpsState',
     'SslState',
     'HostType',
     'UsageState',
@@ -614,7 +638,6 @@ __all__ = [
     'BackupItemStatus',
     'DatabaseType',
     'FrequencyUnit',
-    'BackupRestoreOperationType',
     'ContinuousWebJobStatus',
     'WebJobType',
     'PublishingProfileFormat',
@@ -623,6 +646,7 @@ __all__ = [
     'MSDeployProvisioningState',
     'MySqlMigrationType',
     'PublicCertificateLocation',
+    'BackupRestoreOperationType',
     'UnauthenticatedClientAction',
     'BuiltInAuthenticationProvider',
     'CloneAbilityResult',

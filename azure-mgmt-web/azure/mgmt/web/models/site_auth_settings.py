@@ -90,6 +90,9 @@ class SiteAuthSettings(ProxyOnlyResource):
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html
     :type issuer: str
+    :param validate_issuer: Gets a value indicating whether the issuer should
+     be a valid HTTPS url and be validated as such.
+    :type validate_issuer: bool
     :param allowed_audiences: Allowed audience values to consider when
      validating JWTs issued by
      Azure Active Directory. Note that the <code>ClientID</code> value is
@@ -188,6 +191,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'validate_issuer': {'key': 'properties.validateIssuer', 'type': 'bool'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
         'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
         'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
@@ -203,7 +207,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         'microsoft_account_oauth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
     }
 
-    def __init__(self, kind=None, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
+    def __init__(self, kind=None, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, validate_issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
         super(SiteAuthSettings, self).__init__(kind=kind)
         self.enabled = enabled
         self.runtime_version = runtime_version
@@ -215,6 +219,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         self.client_id = client_id
         self.client_secret = client_secret
         self.issuer = issuer
+        self.validate_issuer = validate_issuer
         self.allowed_audiences = allowed_audiences
         self.additional_login_params = additional_login_params
         self.google_client_id = google_client_id

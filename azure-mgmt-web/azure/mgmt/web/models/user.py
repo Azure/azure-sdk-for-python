@@ -26,8 +26,6 @@ class User(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param user_name: Username
-    :type user_name: str
     :param publishing_user_name: Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
@@ -37,6 +35,8 @@ class User(ProxyOnlyResource):
     :param publishing_password_hash_salt: Password hash salt used for
      publishing.
     :type publishing_password_hash_salt: str
+    :param scm_uri: Url of SCM site.
+    :type scm_uri: str
     """
 
     _validation = {
@@ -51,17 +51,17 @@ class User(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
+        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
-    def __init__(self, publishing_user_name, kind=None, user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
+    def __init__(self, publishing_user_name, kind=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None, scm_uri=None):
         super(User, self).__init__(kind=kind)
-        self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
         self.publishing_password_hash = publishing_password_hash
         self.publishing_password_hash_salt = publishing_password_hash_salt
+        self.scm_uri = scm_uri

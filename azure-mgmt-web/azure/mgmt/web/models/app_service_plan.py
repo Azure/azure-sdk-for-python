@@ -30,8 +30,6 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param app_service_plan_name: Name for the App Service plan.
-    :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -69,6 +67,9 @@ class AppServicePlan(Resource):
     :param reserved: If Linux app service plan <code>true</code>,
      <code>false</code> otherwise. Default value: False .
     :type reserved: bool
+    :param is_xenon: If Hyper-V container app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
+    :type is_xenon: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -87,7 +88,6 @@ class AppServicePlan(Resource):
         'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
-        'app_service_plan_name': {'required': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
         'maximum_number_of_workers': {'readonly': True},
@@ -104,7 +104,6 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -118,15 +117,15 @@ class AppServicePlan(Resource):
         'spot_expiration_time': {'key': 'properties.spotExpirationTime', 'type': 'iso-8601'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, app_service_plan_name, kind=None, tags=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
+    def __init__(self, location, kind=None, tags=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, is_xenon=False, target_worker_count=None, target_worker_size_id=None, sku=None):
         super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags)
-        self.app_service_plan_name = app_service_plan_name
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None
@@ -140,6 +139,7 @@ class AppServicePlan(Resource):
         self.spot_expiration_time = spot_expiration_time
         self.resource_group = None
         self.reserved = reserved
+        self.is_xenon = is_xenon
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None
