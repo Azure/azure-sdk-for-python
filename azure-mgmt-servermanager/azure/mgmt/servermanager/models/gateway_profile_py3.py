@@ -52,15 +52,15 @@ class GatewayProfile(Model):
         'status_blob_signature': {'key': 'statusBlobSignature', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, data_plane_service_base_address: str=None, gateway_id: str=None, environment: str=None, upgrade_manifest_url: str=None, messaging_namespace: str=None, messaging_account: str=None, messaging_key: str=None, request_queue: str=None, response_topic: str=None, status_blob_signature: str=None, **kwargs) -> None:
         super(GatewayProfile, self).__init__(**kwargs)
-        self.data_plane_service_base_address = kwargs.get('data_plane_service_base_address', None)
-        self.gateway_id = kwargs.get('gateway_id', None)
-        self.environment = kwargs.get('environment', None)
-        self.upgrade_manifest_url = kwargs.get('upgrade_manifest_url', None)
-        self.messaging_namespace = kwargs.get('messaging_namespace', None)
-        self.messaging_account = kwargs.get('messaging_account', None)
-        self.messaging_key = kwargs.get('messaging_key', None)
-        self.request_queue = kwargs.get('request_queue', None)
-        self.response_topic = kwargs.get('response_topic', None)
-        self.status_blob_signature = kwargs.get('status_blob_signature', None)
+        self.data_plane_service_base_address = data_plane_service_base_address
+        self.gateway_id = gateway_id
+        self.environment = environment
+        self.upgrade_manifest_url = upgrade_manifest_url
+        self.messaging_namespace = messaging_namespace
+        self.messaging_account = messaging_account
+        self.messaging_key = messaging_key
+        self.request_queue = request_queue
+        self.response_topic = response_topic
+        self.status_blob_signature = status_blob_signature
