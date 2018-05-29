@@ -23,6 +23,6 @@ class PowerShellTabCompletionParameters(Model):
         'command': {'key': 'command', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, command: str=None, **kwargs) -> None:
         super(PowerShellTabCompletionParameters, self).__init__(**kwargs)
-        self.command = kwargs.get('command', None)
+        self.command = command

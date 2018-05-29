@@ -38,10 +38,10 @@ class PromptFieldDescription(Model):
         'prompt_field_type': {'key': 'promptFieldType', 'type': 'PromptFieldType'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, label: str=None, help_message: str=None, prompt_field_type_is_list: bool=None, prompt_field_type=None, **kwargs) -> None:
         super(PromptFieldDescription, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.label = kwargs.get('label', None)
-        self.help_message = kwargs.get('help_message', None)
-        self.prompt_field_type_is_list = kwargs.get('prompt_field_type_is_list', None)
-        self.prompt_field_type = kwargs.get('prompt_field_type', None)
+        self.name = name
+        self.label = label
+        self.help_message = help_message
+        self.prompt_field_type_is_list = prompt_field_type_is_list
+        self.prompt_field_type = prompt_field_type

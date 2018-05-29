@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class PowerShellSessionResource(Resource):
@@ -71,12 +71,12 @@ class PowerShellSessionResource(Resource):
         'power_shell_session_resource_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PowerShellSessionResource, self).__init__(**kwargs)
-        self.session_id = kwargs.get('session_id', None)
-        self.state = kwargs.get('state', None)
-        self.runspace_availability = kwargs.get('runspace_availability', None)
-        self.disconnected_on = kwargs.get('disconnected_on', None)
-        self.expires_on = kwargs.get('expires_on', None)
-        self.version = kwargs.get('version', None)
-        self.power_shell_session_resource_name = kwargs.get('power_shell_session_resource_name', None)
+    def __init__(self, *, tags=None, etag: str=None, session_id: str=None, state: str=None, runspace_availability: str=None, disconnected_on=None, expires_on=None, version=None, power_shell_session_resource_name: str=None, **kwargs) -> None:
+        super(PowerShellSessionResource, self).__init__(tags=tags, etag=etag, **kwargs)
+        self.session_id = session_id
+        self.state = state
+        self.runspace_availability = runspace_availability
+        self.disconnected_on = disconnected_on
+        self.expires_on = expires_on
+        self.version = version
+        self.power_shell_session_resource_name = power_shell_session_resource_name

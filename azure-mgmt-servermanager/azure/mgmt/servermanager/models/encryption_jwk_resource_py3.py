@@ -32,9 +32,9 @@ class EncryptionJwkResource(Model):
         'n': {'key': 'n', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, kty: str=None, alg: str=None, e: str=None, n: str=None, **kwargs) -> None:
         super(EncryptionJwkResource, self).__init__(**kwargs)
-        self.kty = kwargs.get('kty', None)
-        self.alg = kwargs.get('alg', None)
-        self.e = kwargs.get('e', None)
-        self.n = kwargs.get('n', None)
+        self.kty = kty
+        self.alg = alg
+        self.e = e
+        self.n = n

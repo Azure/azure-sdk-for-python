@@ -30,11 +30,11 @@ class Error(Model):
         'fields': {'key': 'fields', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: int=None, message: str=None, fields: str=None, **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.fields = kwargs.get('fields', None)
+        self.code = code
+        self.message = message
+        self.fields = fields
 
 
 class ErrorException(HttpOperationError):

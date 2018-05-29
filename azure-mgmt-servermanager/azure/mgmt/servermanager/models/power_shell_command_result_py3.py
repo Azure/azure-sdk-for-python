@@ -55,15 +55,15 @@ class PowerShellCommandResult(Model):
         'descriptions': {'key': 'descriptions', 'type': '[PromptFieldDescription]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, message_type: int=None, foreground_color: str=None, background_color: str=None, value: str=None, prompt: str=None, exit_code: int=None, id: int=None, caption: str=None, message: str=None, descriptions=None, **kwargs) -> None:
         super(PowerShellCommandResult, self).__init__(**kwargs)
-        self.message_type = kwargs.get('message_type', None)
-        self.foreground_color = kwargs.get('foreground_color', None)
-        self.background_color = kwargs.get('background_color', None)
-        self.value = kwargs.get('value', None)
-        self.prompt = kwargs.get('prompt', None)
-        self.exit_code = kwargs.get('exit_code', None)
-        self.id = kwargs.get('id', None)
-        self.caption = kwargs.get('caption', None)
-        self.message = kwargs.get('message', None)
-        self.descriptions = kwargs.get('descriptions', None)
+        self.message_type = message_type
+        self.foreground_color = foreground_color
+        self.background_color = background_color
+        self.value = value
+        self.prompt = prompt
+        self.exit_code = exit_code
+        self.id = id
+        self.caption = caption
+        self.message = message
+        self.descriptions = descriptions

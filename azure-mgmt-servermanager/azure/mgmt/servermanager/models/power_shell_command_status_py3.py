@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class PowerShellCommandStatus(Resource):
@@ -61,9 +61,9 @@ class PowerShellCommandStatus(Resource):
         'completed': {'key': 'properties.completed', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(PowerShellCommandStatus, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-        self.pssession = kwargs.get('pssession', None)
-        self.command = kwargs.get('command', None)
-        self.completed = kwargs.get('completed', None)
+    def __init__(self, *, tags=None, etag: str=None, results=None, pssession: str=None, command: str=None, completed: bool=None, **kwargs) -> None:
+        super(PowerShellCommandStatus, self).__init__(tags=tags, etag=etag, **kwargs)
+        self.results = results
+        self.pssession = pssession
+        self.command = command
+        self.completed = completed
