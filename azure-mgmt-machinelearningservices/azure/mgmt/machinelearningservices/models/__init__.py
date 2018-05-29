@@ -21,7 +21,7 @@ try:
     from .list_workspace_keys_result_py3 import ListWorkspaceKeysResult
     from .error_detail_py3 import ErrorDetail
     from .error_response_py3 import ErrorResponse
-    from .error_response_wrapper_py3 import ErrorResponseWrapper, ErrorResponseWrapperException
+    from .machine_learning_service_error_py3 import MachineLearningServiceError, MachineLearningServiceErrorException
     from .compute_py3 import Compute
     from .compute_resource_py3 import ComputeResource
     from .system_service_py3 import SystemService
@@ -51,7 +51,7 @@ except (SyntaxError, ImportError):
     from .list_workspace_keys_result import ListWorkspaceKeysResult
     from .error_detail import ErrorDetail
     from .error_response import ErrorResponse
-    from .error_response_wrapper import ErrorResponseWrapper, ErrorResponseWrapperException
+    from .machine_learning_service_error import MachineLearningServiceError, MachineLearningServiceErrorException
     from .compute import Compute
     from .compute_resource import ComputeResource
     from .system_service import SystemService
@@ -90,7 +90,7 @@ __all__ = [
     'ListWorkspaceKeysResult',
     'ErrorDetail',
     'ErrorResponse',
-    'ErrorResponseWrapper', 'ErrorResponseWrapperException',
+    'MachineLearningServiceError', 'MachineLearningServiceErrorException',
     'Compute',
     'ComputeResource',
     'SystemService',

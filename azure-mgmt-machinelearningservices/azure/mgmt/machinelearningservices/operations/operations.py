@@ -50,7 +50,7 @@ class Operations(object):
         :rtype:
          ~azure.mgmt.machinelearningservices.models.OperationPaged[~azure.mgmt.machinelearningservices.models.Operation]
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -82,7 +82,7 @@ class Operations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseWrapperException(self._deserialize, response)
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
             return response
 

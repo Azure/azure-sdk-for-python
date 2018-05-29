@@ -54,7 +54,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -84,7 +84,7 @@ class WorkspacesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -119,7 +119,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -153,7 +153,7 @@ class WorkspacesOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -186,7 +186,7 @@ class WorkspacesOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -216,7 +216,7 @@ class WorkspacesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -245,7 +245,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -279,7 +279,7 @@ class WorkspacesOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -312,7 +312,7 @@ class WorkspacesOperations(object):
         :rtype:
          ~azure.mgmt.machinelearningservices.models.WorkspacePaged[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -351,7 +351,7 @@ class WorkspacesOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseWrapperException(self._deserialize, response)
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
             return response
 
@@ -387,7 +387,7 @@ class WorkspacesOperations(object):
          ~azure.mgmt.machinelearningservices.models.ListWorkspaceKeysResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.list_keys.metadata['url']
@@ -417,7 +417,7 @@ class WorkspacesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -450,7 +450,7 @@ class WorkspacesOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         # Construct URL
         url = self.resync_keys.metadata['url']
@@ -480,7 +480,7 @@ class WorkspacesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseWrapperException(self._deserialize, response)
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -503,7 +503,7 @@ class WorkspacesOperations(object):
         :rtype:
          ~azure.mgmt.machinelearningservices.models.WorkspacePaged[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises:
-         :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningservices.models.ErrorResponseWrapperException>`
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -541,7 +541,7 @@ class WorkspacesOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseWrapperException(self._deserialize, response)
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
             return response
 

@@ -36,7 +36,7 @@ class AKS(Compute):
     :type resource_id: str
     :ivar provisioning_errors: Errors during provisioning
     :vartype provisioning_errors:
-     list[~azure.mgmt.machinelearningservices.models.ErrorResponseWrapper]
+     list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties: AKS properties
@@ -57,7 +57,7 @@ class AKS(Compute):
         'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
         'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[ErrorResponseWrapper]'},
+        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'AKSProperties'},
     }

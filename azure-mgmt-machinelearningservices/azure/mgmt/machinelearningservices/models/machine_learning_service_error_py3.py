@@ -13,7 +13,7 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class ErrorResponseWrapper(Model):
+class MachineLearningServiceError(Model):
     """Wrapper for error response to follow ARM guidelines.
 
     :param error: The error response.
@@ -25,12 +25,12 @@ class ErrorResponseWrapper(Model):
     }
 
     def __init__(self, *, error=None, **kwargs) -> None:
-        super(ErrorResponseWrapper, self).__init__(**kwargs)
+        super(MachineLearningServiceError, self).__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseWrapperException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponseWrapper'.
+class MachineLearningServiceErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'MachineLearningServiceError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -38,4 +38,4 @@ class ErrorResponseWrapperException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorResponseWrapperException, self).__init__(deserialize, response, 'ErrorResponseWrapper', *args)
+        super(MachineLearningServiceErrorException, self).__init__(deserialize, response, 'MachineLearningServiceError', *args)
