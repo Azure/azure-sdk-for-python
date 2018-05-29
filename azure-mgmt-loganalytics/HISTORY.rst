@@ -8,7 +8,18 @@ Release History
 
 **Features**
 
+- Model IntelligencePack has a new parameter display_name
+- Model SavedSearch has a new parameter name
+- Model SavedSearch has a new parameter type
+- Added operation WorkspacesOperations.purge
+- Added operation WorkspacesOperations.update
+- Added operation group Operations
 - Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**Breaking changes**
+
+- Model SavedSearch no longer has parameter etag (replaced by e_tag)
+- Model SearchMetadata no longer has parameter etag (replaced by e_tag)
 
 **General Breaking changes**
 
