@@ -17,13 +17,13 @@ class ClientDiscoveryForProperties(Model):
 
     :param service_specification: Operation properties.
     :type service_specification:
-     :class:`ClientDiscoveryForServiceSpecification
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification>`
+     ~azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification
     """
 
     _attribute_map = {
         'service_specification': {'key': 'serviceSpecification', 'type': 'ClientDiscoveryForServiceSpecification'},
     }
 
-    def __init__(self, service_specification=None):
-        self.service_specification = service_specification
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryForProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)

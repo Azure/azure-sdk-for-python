@@ -26,6 +26,7 @@ class CognitiveServicesAccountKeys(Model):
         'key2': {'key': 'key2', 'type': 'str'},
     }
 
-    def __init__(self, key1=None, key2=None):
-        self.key1 = key1
-        self.key2 = key2
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccountKeys, self).__init__(**kwargs)
+        self.key1 = kwargs.get('key1', None)
+        self.key2 = kwargs.get('key2', None)
