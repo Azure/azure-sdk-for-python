@@ -15,16 +15,18 @@ from .protection_policy import ProtectionPolicy
 class MabProtectionPolicy(ProtectionPolicy):
     """Mab container-specific backup policy.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
-    :param backup_management_type: Polymorphic Discriminator
+    :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param schedule_policy: Backup schedule of backup policy.
-    :type schedule_policy: :class:`SchedulePolicy
-     <azure.mgmt.recoveryservicesbackup.models.SchedulePolicy>`
+    :type schedule_policy:
+     ~azure.mgmt.recoveryservicesbackup.models.SchedulePolicy
     :param retention_policy: Retention policy details.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.recoveryservicesbackup.models.RetentionPolicy>`
+    :type retention_policy:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionPolicy
     """
 
     _validation = {
@@ -38,8 +40,8 @@ class MabProtectionPolicy(ProtectionPolicy):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, protected_items_count=None, schedule_policy=None, retention_policy=None):
-        super(MabProtectionPolicy, self).__init__(protected_items_count=protected_items_count)
-        self.schedule_policy = schedule_policy
-        self.retention_policy = retention_policy
+    def __init__(self, **kwargs):
+        super(MabProtectionPolicy, self).__init__(**kwargs)
+        self.schedule_policy = kwargs.get('schedule_policy', None)
+        self.retention_policy = kwargs.get('retention_policy', None)
         self.backup_management_type = 'MAB'

@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class X12SecuritySettings(Model):
     """The X12 agreement security settings.
 
-    :param authorization_qualifier: The authorization qualifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_qualifier: Required. The authorization qualifier.
     :type authorization_qualifier: str
     :param authorization_value: The authorization value.
     :type authorization_value: str
-    :param security_qualifier: The security qualifier.
+    :param security_qualifier: Required. The security qualifier.
     :type security_qualifier: str
     :param password_value: The password value.
     :type password_value: str
@@ -37,8 +39,9 @@ class X12SecuritySettings(Model):
         'password_value': {'key': 'passwordValue', 'type': 'str'},
     }
 
-    def __init__(self, authorization_qualifier, security_qualifier, authorization_value=None, password_value=None):
-        self.authorization_qualifier = authorization_qualifier
-        self.authorization_value = authorization_value
-        self.security_qualifier = security_qualifier
-        self.password_value = password_value
+    def __init__(self, **kwargs):
+        super(X12SecuritySettings, self).__init__(**kwargs)
+        self.authorization_qualifier = kwargs.get('authorization_qualifier', None)
+        self.authorization_value = kwargs.get('authorization_value', None)
+        self.security_qualifier = kwargs.get('security_qualifier', None)
+        self.password_value = kwargs.get('password_value', None)

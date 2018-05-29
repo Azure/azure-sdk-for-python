@@ -15,37 +15,40 @@ from msrest.serialization import Model
 class X12ValidationSettings(Model):
     """The X12 agreement validation settings.
 
-    :param validate_character_set: The value indicating whether to validate
-     character set in the message.
+    All required parameters must be populated in order to send to Azure.
+
+    :param validate_character_set: Required. The value indicating whether to
+     validate character set in the message.
     :type validate_character_set: bool
-    :param check_duplicate_interchange_control_number: The value indicating
-     whether to check for duplicate interchange control number.
+    :param check_duplicate_interchange_control_number: Required. The value
+     indicating whether to check for duplicate interchange control number.
     :type check_duplicate_interchange_control_number: bool
-    :param interchange_control_number_validity_days: The validity period of
-     interchange control number.
+    :param interchange_control_number_validity_days: Required. The validity
+     period of interchange control number.
     :type interchange_control_number_validity_days: int
-    :param check_duplicate_group_control_number: The value indicating whether
-     to check for duplicate group control number.
+    :param check_duplicate_group_control_number: Required. The value
+     indicating whether to check for duplicate group control number.
     :type check_duplicate_group_control_number: bool
-    :param check_duplicate_transaction_set_control_number: The value
+    :param check_duplicate_transaction_set_control_number: Required. The value
      indicating whether to check for duplicate transaction set control number.
     :type check_duplicate_transaction_set_control_number: bool
-    :param validate_edi_types: The value indicating whether to Whether to
-     validate EDI types.
+    :param validate_edi_types: Required. The value indicating whether to
+     Whether to validate EDI types.
     :type validate_edi_types: bool
-    :param validate_xsd_types: The value indicating whether to Whether to
-     validate XSD types.
+    :param validate_xsd_types: Required. The value indicating whether to
+     Whether to validate XSD types.
     :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: The value indicating
-     whether to allow leading and trailing spaces and zeroes.
+    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value
+     indicating whether to allow leading and trailing spaces and zeroes.
     :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param trim_leading_and_trailing_spaces_and_zeroes: The value indicating
-     whether to trim leading and trailing spaces and zeroes.
+    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value
+     indicating whether to trim leading and trailing spaces and zeroes.
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: The trailing separator policy. Possible
-     values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
-    :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
-     <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
+    :param trailing_separator_policy: Required. The trailing separator policy.
+     Possible values include: 'NotSpecified', 'NotAllowed', 'Optional',
+     'Mandatory'
+    :type trailing_separator_policy: str or
+     ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -74,14 +77,15 @@ class X12ValidationSettings(Model):
         'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
     }
 
-    def __init__(self, validate_character_set, check_duplicate_interchange_control_number, interchange_control_number_validity_days, check_duplicate_group_control_number, check_duplicate_transaction_set_control_number, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
-        self.validate_character_set = validate_character_set
-        self.check_duplicate_interchange_control_number = check_duplicate_interchange_control_number
-        self.interchange_control_number_validity_days = interchange_control_number_validity_days
-        self.check_duplicate_group_control_number = check_duplicate_group_control_number
-        self.check_duplicate_transaction_set_control_number = check_duplicate_transaction_set_control_number
-        self.validate_edi_types = validate_edi_types
-        self.validate_xsd_types = validate_xsd_types
-        self.allow_leading_and_trailing_spaces_and_zeroes = allow_leading_and_trailing_spaces_and_zeroes
-        self.trim_leading_and_trailing_spaces_and_zeroes = trim_leading_and_trailing_spaces_and_zeroes
-        self.trailing_separator_policy = trailing_separator_policy
+    def __init__(self, **kwargs):
+        super(X12ValidationSettings, self).__init__(**kwargs)
+        self.validate_character_set = kwargs.get('validate_character_set', None)
+        self.check_duplicate_interchange_control_number = kwargs.get('check_duplicate_interchange_control_number', None)
+        self.interchange_control_number_validity_days = kwargs.get('interchange_control_number_validity_days', None)
+        self.check_duplicate_group_control_number = kwargs.get('check_duplicate_group_control_number', None)
+        self.check_duplicate_transaction_set_control_number = kwargs.get('check_duplicate_transaction_set_control_number', None)
+        self.validate_edi_types = kwargs.get('validate_edi_types', None)
+        self.validate_xsd_types = kwargs.get('validate_xsd_types', None)
+        self.allow_leading_and_trailing_spaces_and_zeroes = kwargs.get('allow_leading_and_trailing_spaces_and_zeroes', None)
+        self.trim_leading_and_trailing_spaces_and_zeroes = kwargs.get('trim_leading_and_trailing_spaces_and_zeroes', None)
+        self.trailing_separator_policy = kwargs.get('trailing_separator_policy', None)

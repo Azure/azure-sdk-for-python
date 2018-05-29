@@ -15,16 +15,28 @@ from msrest.serialization import Model
 class HttpAuthentication(Model):
     """HttpAuthentication.
 
-    :param type: Gets or sets the HTTP authentication type. Possible values
-     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
-     'Basic'
-    :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ClientCertAuthentication, BasicAuthentication,
+    OAuthAuthentication
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+    _validation = {
+        'type': {'required': True},
     }
 
-    def __init__(self, type=None):
-        self.type = type
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'ClientCertificate': 'ClientCertAuthentication', 'Basic': 'BasicAuthentication', 'ActiveDirectoryOAuth': 'OAuthAuthentication'}
+    }
+
+    def __init__(self, **kwargs):
+        super(HttpAuthentication, self).__init__(**kwargs)
+        self.type = None
