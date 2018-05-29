@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class DataSourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataSource <azure.mgmt.loganalytics.models.DataSource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataSource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataSourcePaged, self).__init__(*args, **kwargs)

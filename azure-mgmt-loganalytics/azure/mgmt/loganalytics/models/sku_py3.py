@@ -12,21 +12,25 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationalInsights resource provider.
+class Sku(Model):
+    """The SKU (tier) of a workspace.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the SKU. Possible values include:
+     'Free', 'Standard', 'Premium', 'Unlimited', 'PerNode', 'PerGB2018',
+     'Standalone'
+    :type name: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
     """
+
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, name, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
         self.name = name
-        self.display = display

@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class LinkedServicePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`LinkedService <azure.mgmt.loganalytics.models.LinkedService>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LinkedService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LinkedServicePaged, self).__init__(*args, **kwargs)

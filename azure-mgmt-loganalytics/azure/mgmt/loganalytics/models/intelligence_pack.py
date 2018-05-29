@@ -12,21 +12,26 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Supported operation of OperationalInsights resource provider.
+class IntelligencePack(Model):
+    """Intelligence Pack containing a string name and boolean indicating if it's
+    enabled.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
+    :param name: The name of the intelligence pack.
     :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.loganalytics.models.OperationDisplay
+    :param enabled: The enabled boolean for the intelligence pack.
+    :type enabled: bool
+    :param display_name: The display name of the intelligence pack.
+    :type display_name: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
+        super(IntelligencePack, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.display_name = kwargs.get('display_name', None)

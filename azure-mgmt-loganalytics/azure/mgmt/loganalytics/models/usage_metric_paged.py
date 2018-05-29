@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class UsageMetricPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`UsageMetric <azure.mgmt.loganalytics.models.UsageMetric>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[UsageMetric]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(UsageMetricPaged, self).__init__(*args, **kwargs)

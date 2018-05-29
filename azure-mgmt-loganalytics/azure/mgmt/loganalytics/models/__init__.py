@@ -10,9 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_result_py3 import OperationListResult
     from .link_target_py3 import LinkTarget
     from .tag_py3 import Tag
     from .core_summary_py3 import CoreSummary
@@ -36,10 +33,19 @@ try:
     from .workspace_purge_body_py3 import WorkspacePurgeBody
     from .workspace_purge_response_py3 import WorkspacePurgeResponse
     from .workspace_purge_status_response_py3 import WorkspacePurgeStatusResponse
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .linked_service_py3 import LinkedService
+    from .data_source_py3 import DataSource
+    from .data_source_filter_py3 import DataSourceFilter
+    from .intelligence_pack_py3 import IntelligencePack
+    from .shared_keys_py3 import SharedKeys
+    from .metric_name_py3 import MetricName
+    from .usage_metric_py3 import UsageMetric
+    from .management_group_py3 import ManagementGroup
+    from .sku_py3 import Sku
+    from .workspace_py3 import Workspace
 except (SyntaxError, ImportError):
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list_result import OperationListResult
     from .link_target import LinkTarget
     from .tag import Tag
     from .core_summary import CoreSummary
@@ -63,17 +69,35 @@ except (SyntaxError, ImportError):
     from .workspace_purge_body import WorkspacePurgeBody
     from .workspace_purge_response import WorkspacePurgeResponse
     from .workspace_purge_status_response import WorkspacePurgeStatusResponse
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .linked_service import LinkedService
+    from .data_source import DataSource
+    from .data_source_filter import DataSourceFilter
+    from .intelligence_pack import IntelligencePack
+    from .shared_keys import SharedKeys
+    from .metric_name import MetricName
+    from .usage_metric import UsageMetric
+    from .management_group import ManagementGroup
+    from .sku import Sku
+    from .workspace import Workspace
 from .storage_insight_paged import StorageInsightPaged
+from .usage_metric_paged import UsageMetricPaged
+from .management_group_paged import ManagementGroupPaged
+from .workspace_paged import WorkspacePaged
+from .linked_service_paged import LinkedServicePaged
+from .data_source_paged import DataSourcePaged
+from .operation_paged import OperationPaged
 from .log_analytics_management_client_enums import (
     SearchSortEnum,
     StorageInsightState,
     PurgeState,
+    DataSourceKind,
+    SkuNameEnum,
+    EntityStatus,
 )
 
 __all__ = [
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
     'LinkTarget',
     'Tag',
     'CoreSummary',
@@ -97,8 +121,29 @@ __all__ = [
     'WorkspacePurgeBody',
     'WorkspacePurgeResponse',
     'WorkspacePurgeStatusResponse',
+    'OperationDisplay',
+    'Operation',
+    'LinkedService',
+    'DataSource',
+    'DataSourceFilter',
+    'IntelligencePack',
+    'SharedKeys',
+    'MetricName',
+    'UsageMetric',
+    'ManagementGroup',
+    'Sku',
+    'Workspace',
     'StorageInsightPaged',
+    'UsageMetricPaged',
+    'ManagementGroupPaged',
+    'WorkspacePaged',
+    'LinkedServicePaged',
+    'DataSourcePaged',
+    'OperationPaged',
     'SearchSortEnum',
     'StorageInsightState',
     'PurgeState',
+    'DataSourceKind',
+    'SkuNameEnum',
+    'EntityStatus',
 ]

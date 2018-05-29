@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class WorkspacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workspace <azure.mgmt.loganalytics.models.Workspace>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workspace]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkspacePaged, self).__init__(*args, **kwargs)

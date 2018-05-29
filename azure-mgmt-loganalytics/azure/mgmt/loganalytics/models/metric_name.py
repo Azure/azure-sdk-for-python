@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class OperationListResult(Model):
-    """Result of the request to list solution operations.
+class MetricName(Model):
+    """The name of a metric.
 
-    :param value: List of solution operations supported by the
-     OperationsManagement resource provider.
-    :type value: list[~azure.mgmt.loganalytics.models.Operation]
+    :param value: The system name of the metric.
+    :type value: str
+    :param localized_value: The localized name of the metric.
+    :type localized_value: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(OperationListResult, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(MetricName, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.localized_value = kwargs.get('localized_value', None)

@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class OperationListResult(Model):
-    """Result of the request to list solution operations.
-
-    :param value: List of solution operations supported by the
-     OperationsManagement resource provider.
-    :type value: list[~azure.mgmt.loganalytics.models.Operation]
+class ManagementGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagementGroup <azure.mgmt.loganalytics.models.ManagementGroup>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagementGroup]'}
     }
 
-    def __init__(self, **kwargs):
-        super(OperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ManagementGroupPaged, self).__init__(*args, **kwargs)
