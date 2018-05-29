@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-batch"
+package_pprint_name = "Batch Management"
+package_doc_id = "batch"
+is_stable = true

@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class BusinessIdentity(Model):
     """The integration account partner's business identity.
 
-    :param qualifier: The business identity qualifier e.g. as2identity, ZZ,
-     ZZZ, 31, 32
+    All required parameters must be populated in order to send to Azure.
+
+    :param qualifier: Required. The business identity qualifier e.g.
+     as2identity, ZZ, ZZZ, 31, 32
     :type qualifier: str
-    :param value: The user defined business identity value.
+    :param value: Required. The user defined business identity value.
     :type value: str
     """
 
@@ -32,6 +34,7 @@ class BusinessIdentity(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, qualifier, value):
-        self.qualifier = qualifier
-        self.value = value
+    def __init__(self, **kwargs):
+        super(BusinessIdentity, self).__init__(**kwargs)
+        self.qualifier = kwargs.get('qualifier', None)
+        self.value = kwargs.get('value', None)

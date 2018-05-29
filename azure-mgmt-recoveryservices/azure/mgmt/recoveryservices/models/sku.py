@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class Sku(Model):
     """Identifies the unique system identifier for each Azure resource.
 
-    :param name: The Sku name. Possible values include: 'Standard', 'RS0'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.recoveryservices.models.SkuName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The Sku name. Possible values include: 'Standard',
+     'RS0'
+    :type name: str or ~azure.mgmt.recoveryservices.models.SkuName
     """
 
     _validation = {
@@ -28,5 +30,6 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

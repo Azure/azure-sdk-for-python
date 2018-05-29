@@ -32,8 +32,9 @@ class LinkTarget(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, customer_id=None, display_name=None, workspace_name=None, location=None):
-        self.customer_id = customer_id
-        self.display_name = display_name
-        self.workspace_name = workspace_name
-        self.location = location
+    def __init__(self, **kwargs):
+        super(LinkTarget, self).__init__(**kwargs)
+        self.customer_id = kwargs.get('customer_id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.workspace_name = kwargs.get('workspace_name', None)
+        self.location = kwargs.get('location', None)

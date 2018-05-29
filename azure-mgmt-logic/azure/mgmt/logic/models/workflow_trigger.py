@@ -26,31 +26,26 @@ class WorkflowTrigger(SubResource):
      'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
      'Unregistered', 'Completed'
     :vartype provisioning_state: str or
-     :class:`WorkflowTriggerProvisioningState
-     <azure.mgmt.logic.models.WorkflowTriggerProvisioningState>`
+     ~azure.mgmt.logic.models.WorkflowTriggerProvisioningState
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: datetime
     :ivar state: Gets the state. Possible values include: 'NotSpecified',
      'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :vartype state: str or :class:`WorkflowState
-     <azure.mgmt.logic.models.WorkflowState>`
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
-    :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar last_execution_time: Gets the last execution time.
     :vartype last_execution_time: datetime
     :ivar next_execution_time: Gets the next execution time.
     :vartype next_execution_time: datetime
     :ivar recurrence: Gets the workflow trigger recurrence.
-    :vartype recurrence: :class:`WorkflowTriggerRecurrence
-     <azure.mgmt.logic.models.WorkflowTriggerRecurrence>`
+    :vartype recurrence: ~azure.mgmt.logic.models.WorkflowTriggerRecurrence
     :ivar workflow: Gets the reference to workflow.
-    :vartype workflow: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :vartype workflow: ~azure.mgmt.logic.models.ResourceReference
     :ivar name: Gets the workflow trigger name.
     :vartype name: str
     :ivar type: Gets the workflow trigger type.
@@ -87,8 +82,8 @@ class WorkflowTrigger(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(WorkflowTrigger, self).__init__()
+    def __init__(self, **kwargs):
+        super(WorkflowTrigger, self).__init__(**kwargs)
         self.provisioning_state = None
         self.created_time = None
         self.changed_time = None

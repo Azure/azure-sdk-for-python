@@ -30,5 +30,6 @@ class DeleteOperationResult(Model):
         'operation_result': {'key': 'boolean', 'type': 'bool'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(DeleteOperationResult, self).__init__(**kwargs)
         self.operation_result = None

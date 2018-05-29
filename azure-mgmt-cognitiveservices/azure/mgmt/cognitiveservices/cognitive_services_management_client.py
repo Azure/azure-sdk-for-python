@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.accounts_operations import AccountsOperations
+from .operations.resource_skus_operations import ResourceSkusOperations
 from .operations.operations import Operations
 from .operations.check_sku_availability_operations import CheckSkuAvailabilityOperations
 from . import models
@@ -44,14 +45,14 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         super(CognitiveServicesManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cognitiveservicesmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cognitiveservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class CognitiveServicesManagementClient(object):
+class CognitiveServicesManagementClient(SDKClient):
     """Cognitive Services Management Client
 
     :ivar config: Configuration for client.
@@ -59,6 +60,8 @@ class CognitiveServicesManagementClient(object):
 
     :ivar accounts: Accounts operations
     :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
+    :ivar resource_skus: ResourceSkus operations
+    :vartype resource_skus: azure.mgmt.cognitiveservices.operations.ResourceSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
     :ivar check_sku_availability: CheckSkuAvailability operations
@@ -76,7 +79,7 @@ class CognitiveServicesManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(CognitiveServicesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-18'
@@ -84,6 +87,8 @@ class CognitiveServicesManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_skus = ResourceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

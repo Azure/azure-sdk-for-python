@@ -17,13 +17,13 @@ class JobStateFilter(Model):
 
     :param state: Gets or sets the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
-    :type state: str or :class:`JobState
-     <azure.mgmt.scheduler.models.JobState>`
+    :type state: str or ~azure.mgmt.scheduler.models.JobState
     """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'JobState'},
     }
 
-    def __init__(self, state=None):
-        self.state = state
+    def __init__(self, **kwargs):
+        super(JobStateFilter, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)

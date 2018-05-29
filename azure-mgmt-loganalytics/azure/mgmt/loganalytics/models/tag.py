@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class Tag(Model):
     """A tag of a saved search.
 
-    :param name: The tag name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The tag name.
     :type name: str
-    :param value: The tag value.
+    :param value: Required. The tag value.
     :type value: str
     """
 
@@ -27,10 +29,11 @@ class Tag(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

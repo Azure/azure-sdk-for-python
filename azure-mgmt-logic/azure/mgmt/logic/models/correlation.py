@@ -23,5 +23,6 @@ class Correlation(Model):
         'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},
     }
 
-    def __init__(self, client_tracking_id=None):
-        self.client_tracking_id = client_tracking_id
+    def __init__(self, **kwargs):
+        super(Correlation, self).__init__(**kwargs)
+        self.client_tracking_id = kwargs.get('client_tracking_id', None)

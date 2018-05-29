@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class WorkflowProvisioningState(Enum):
+class WorkflowProvisioningState(str, Enum):
 
     not_specified = "NotSpecified"
     accepted = "Accepted"
@@ -34,7 +34,7 @@ class WorkflowProvisioningState(Enum):
     completed = "Completed"
 
 
-class WorkflowState(Enum):
+class WorkflowState(str, Enum):
 
     not_specified = "NotSpecified"
     completed = "Completed"
@@ -44,7 +44,7 @@ class WorkflowState(Enum):
     suspended = "Suspended"
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     not_specified = "NotSpecified"
     free = "Free"
@@ -54,7 +54,7 @@ class SkuName(Enum):
     premium = "Premium"
 
 
-class ParameterType(Enum):
+class ParameterType(str, Enum):
 
     not_specified = "NotSpecified"
     string = "String"
@@ -67,7 +67,7 @@ class ParameterType(Enum):
     secure_object = "SecureObject"
 
 
-class WorkflowTriggerProvisioningState(Enum):
+class WorkflowTriggerProvisioningState(str, Enum):
 
     not_specified = "NotSpecified"
     accepted = "Accepted"
@@ -89,7 +89,7 @@ class WorkflowTriggerProvisioningState(Enum):
     completed = "Completed"
 
 
-class WorkflowStatus(Enum):
+class WorkflowStatus(str, Enum):
 
     not_specified = "NotSpecified"
     paused = "Paused"
@@ -106,7 +106,7 @@ class WorkflowStatus(Enum):
     ignored = "Ignored"
 
 
-class RecurrenceFrequency(Enum):
+class RecurrenceFrequency(str, Enum):
 
     not_specified = "NotSpecified"
     second = "Second"
@@ -118,7 +118,7 @@ class RecurrenceFrequency(Enum):
     year = "Year"
 
 
-class DaysOfWeek(Enum):
+class DaysOfWeek(str, Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -129,7 +129,7 @@ class DaysOfWeek(Enum):
     saturday = "Saturday"
 
 
-class DayOfWeek(Enum):
+class DayOfWeek(str, Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -140,39 +140,39 @@ class DayOfWeek(Enum):
     saturday = "Saturday"
 
 
-class KeyType(Enum):
+class KeyType(str, Enum):
 
     not_specified = "NotSpecified"
     primary = "Primary"
     secondary = "Secondary"
 
 
-class IntegrationAccountSkuName(Enum):
+class IntegrationAccountSkuName(str, Enum):
 
     not_specified = "NotSpecified"
     free = "Free"
     standard = "Standard"
 
 
-class SchemaType(Enum):
+class SchemaType(str, Enum):
 
     not_specified = "NotSpecified"
     xml = "Xml"
 
 
-class MapType(Enum):
+class MapType(str, Enum):
 
     not_specified = "NotSpecified"
     xslt = "Xslt"
 
 
-class PartnerType(Enum):
+class PartnerType(str, Enum):
 
     not_specified = "NotSpecified"
     b2_b = "B2B"
 
 
-class AgreementType(Enum):
+class AgreementType(str, Enum):
 
     not_specified = "NotSpecified"
     as2 = "AS2"
@@ -180,7 +180,7 @@ class AgreementType(Enum):
     edifact = "Edifact"
 
 
-class HashingAlgorithm(Enum):
+class HashingAlgorithm(str, Enum):
 
     not_specified = "NotSpecified"
     none = "None"
@@ -191,7 +191,7 @@ class HashingAlgorithm(Enum):
     sha2512 = "SHA2512"
 
 
-class EncryptionAlgorithm(Enum):
+class EncryptionAlgorithm(str, Enum):
 
     not_specified = "NotSpecified"
     none = "None"
@@ -202,7 +202,7 @@ class EncryptionAlgorithm(Enum):
     aes256 = "AES256"
 
 
-class SigningAlgorithm(Enum):
+class SigningAlgorithm(str, Enum):
 
     not_specified = "NotSpecified"
     default = "Default"
@@ -212,7 +212,7 @@ class SigningAlgorithm(Enum):
     sha2512 = "SHA2512"
 
 
-class TrailingSeparatorPolicy(Enum):
+class TrailingSeparatorPolicy(str, Enum):
 
     not_specified = "NotSpecified"
     not_allowed = "NotAllowed"
@@ -220,7 +220,7 @@ class TrailingSeparatorPolicy(Enum):
     mandatory = "Mandatory"
 
 
-class X12CharacterSet(Enum):
+class X12CharacterSet(str, Enum):
 
     not_specified = "NotSpecified"
     basic = "Basic"
@@ -228,7 +228,7 @@ class X12CharacterSet(Enum):
     utf8 = "UTF8"
 
 
-class SegmentTerminatorSuffix(Enum):
+class SegmentTerminatorSuffix(str, Enum):
 
     not_specified = "NotSpecified"
     none = "None"
@@ -237,14 +237,14 @@ class SegmentTerminatorSuffix(Enum):
     crlf = "CRLF"
 
 
-class X12DateFormat(Enum):
+class X12DateFormat(str, Enum):
 
     not_specified = "NotSpecified"
     ccyymmdd = "CCYYMMDD"
     yymmdd = "YYMMDD"
 
 
-class X12TimeFormat(Enum):
+class X12TimeFormat(str, Enum):
 
     not_specified = "NotSpecified"
     hhmm = "HHMM"
@@ -253,7 +253,7 @@ class X12TimeFormat(Enum):
     hhmms_sd = "HHMMSSd"
 
 
-class UsageIndicator(Enum):
+class UsageIndicator(str, Enum):
 
     not_specified = "NotSpecified"
     test = "Test"
@@ -261,14 +261,14 @@ class UsageIndicator(Enum):
     production = "Production"
 
 
-class MessageFilterType(Enum):
+class MessageFilterType(str, Enum):
 
     not_specified = "NotSpecified"
     include = "Include"
     exclude = "Exclude"
 
 
-class EdifactCharacterSet(Enum):
+class EdifactCharacterSet(str, Enum):
 
     not_specified = "NotSpecified"
     unob = "UNOB"
@@ -287,8 +287,51 @@ class EdifactCharacterSet(Enum):
     keca = "KECA"
 
 
-class EdifactDecimalIndicator(Enum):
+class EdifactDecimalIndicator(str, Enum):
 
     not_specified = "NotSpecified"
     comma = "Comma"
     decimal_enum = "Decimal"
+
+
+class TrackEventsOperationOptions(str, Enum):
+
+    none = "None"
+    disable_source_info_enrich = "DisableSourceInfoEnrich"
+
+
+class EventLevel(str, Enum):
+
+    log_always = "LogAlways"
+    critical = "Critical"
+    error = "Error"
+    warning = "Warning"
+    informational = "Informational"
+    verbose = "Verbose"
+
+
+class TrackingRecordType(str, Enum):
+
+    not_specified = "NotSpecified"
+    custom = "Custom"
+    as2_message = "AS2Message"
+    as2_mdn = "AS2MDN"
+    x12_interchange = "X12Interchange"
+    x12_functional_group = "X12FunctionalGroup"
+    x12_transaction_set = "X12TransactionSet"
+    x12_interchange_acknowledgment = "X12InterchangeAcknowledgment"
+    x12_functional_group_acknowledgment = "X12FunctionalGroupAcknowledgment"
+    x12_transaction_set_acknowledgment = "X12TransactionSetAcknowledgment"
+    edifact_interchange = "EdifactInterchange"
+    edifact_functional_group = "EdifactFunctionalGroup"
+    edifact_transaction_set = "EdifactTransactionSet"
+    edifact_interchange_acknowledgment = "EdifactInterchangeAcknowledgment"
+    edifact_functional_group_acknowledgment = "EdifactFunctionalGroupAcknowledgment"
+    edifact_transaction_set_acknowledgment = "EdifactTransactionSetAcknowledgment"
+
+
+class AccessKeyType(str, Enum):
+
+    not_specified = "NotSpecified"
+    primary = "Primary"
+    secondary = "Secondary"
