@@ -26,6 +26,7 @@ class SharedKeys(Model):
         'secondary_shared_key': {'key': 'secondarySharedKey', 'type': 'str'},
     }
 
-    def __init__(self, primary_shared_key=None, secondary_shared_key=None):
-        self.primary_shared_key = primary_shared_key
-        self.secondary_shared_key = secondary_shared_key
+    def __init__(self, **kwargs):
+        super(SharedKeys, self).__init__(**kwargs)
+        self.primary_shared_key = kwargs.get('primary_shared_key', None)
+        self.secondary_shared_key = kwargs.get('secondary_shared_key', None)

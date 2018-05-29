@@ -313,6 +313,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-mgmt-loganalytics": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.loganalytics"
+    ],
+    "service_name": "Log Analytics"
+  },
   "azure-mgmt-logic": {
     "category ": "Management",
     "namespaces": [
