@@ -45,6 +45,6 @@ class SiteInstance(ProxyOnlyResource):
         'site_instance_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(SiteInstance, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(SiteInstance, self).__init__(**kwargs)
         self.site_instance_name = None

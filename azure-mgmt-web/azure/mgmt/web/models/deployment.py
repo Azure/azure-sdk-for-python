@@ -72,15 +72,15 @@ class Deployment(ProxyOnlyResource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(kind=kind)
-        self.deployment_id = deployment_id
-        self.status = status
-        self.message = message
-        self.author = author
-        self.deployer = deployer
-        self.author_email = author_email
-        self.start_time = start_time
-        self.end_time = end_time
-        self.active = active
-        self.details = details
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.deployment_id = kwargs.get('deployment_id', None)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
+        self.author = kwargs.get('author', None)
+        self.deployer = kwargs.get('deployer', None)
+        self.author_email = kwargs.get('author_email', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.active = kwargs.get('active', None)
+        self.details = kwargs.get('details', None)

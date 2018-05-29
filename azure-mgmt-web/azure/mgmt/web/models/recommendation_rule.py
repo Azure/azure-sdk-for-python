@@ -9,15 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class RecommendationRule(Model):
+class RecommendationRule(ProxyOnlyResource):
     """Represents a recommendation rule that the recommendation engine can
     perform.
 
-    :param name: Unique name of the rule.
-    :type name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param recommendation_rule_name: Unique name of the rule.
+    :type recommendation_rule_name: str
     :param display_name: UI friendly name of the rule.
     :type display_name: str
     :param message: Localized name of the rule (Good for UI).
@@ -54,34 +65,44 @@ class RecommendationRule(Model):
     :type forward_link: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'recommendation_id': {'key': 'recommendationId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'action_name': {'key': 'actionName', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'NotificationLevel'},
-        'channels': {'key': 'channels', 'type': 'Channels'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
-        'extension_name': {'key': 'extensionName', 'type': 'str'},
-        'blade_name': {'key': 'bladeName', 'type': 'str'},
-        'forward_link': {'key': 'forwardLink', 'type': 'str'},
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
-    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
-        super(RecommendationRule, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.message = message
-        self.recommendation_id = recommendation_id
-        self.description = description
-        self.action_name = action_name
-        self.level = level
-        self.channels = channels
-        self.tags = tags
-        self.is_dynamic = is_dynamic
-        self.extension_name = extension_name
-        self.blade_name = blade_name
-        self.forward_link = forward_link
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'recommendation_rule_name': {'key': 'properties.name', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'recommendation_id': {'key': 'properties.recommendationId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'action_name': {'key': 'properties.actionName', 'type': 'str'},
+        'level': {'key': 'properties.level', 'type': 'NotificationLevel'},
+        'channels': {'key': 'properties.channels', 'type': 'Channels'},
+        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'is_dynamic': {'key': 'properties.isDynamic', 'type': 'bool'},
+        'extension_name': {'key': 'properties.extensionName', 'type': 'str'},
+        'blade_name': {'key': 'properties.bladeName', 'type': 'str'},
+        'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendationRule, self).__init__(**kwargs)
+        self.recommendation_rule_name = kwargs.get('recommendation_rule_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.message = kwargs.get('message', None)
+        self.recommendation_id = kwargs.get('recommendation_id', None)
+        self.description = kwargs.get('description', None)
+        self.action_name = kwargs.get('action_name', None)
+        self.level = kwargs.get('level', None)
+        self.channels = kwargs.get('channels', None)
+        self.tags = kwargs.get('tags', None)
+        self.is_dynamic = kwargs.get('is_dynamic', None)
+        self.extension_name = kwargs.get('extension_name', None)
+        self.blade_name = kwargs.get('blade_name', None)
+        self.forward_link = kwargs.get('forward_link', None)

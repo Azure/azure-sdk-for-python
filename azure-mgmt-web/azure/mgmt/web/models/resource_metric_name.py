@@ -34,7 +34,7 @@ class ResourceMetricName(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceMetricName, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceMetricName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None

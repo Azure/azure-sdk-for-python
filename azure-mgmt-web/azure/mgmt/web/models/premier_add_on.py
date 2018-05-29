@@ -18,13 +18,15 @@ class PremierAddOn(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
     :ivar type: Resource type.
     :vartype type: str
@@ -72,13 +74,13 @@ class PremierAddOn(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_name=None, premier_add_on_location=None, premier_add_on_tags=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.premier_add_on_name = premier_add_on_name
-        self.premier_add_on_location = premier_add_on_location
-        self.premier_add_on_tags = premier_add_on_tags
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOn, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.premier_add_on_name = kwargs.get('premier_add_on_name', None)
+        self.premier_add_on_location = kwargs.get('premier_add_on_location', None)
+        self.premier_add_on_tags = kwargs.get('premier_add_on_tags', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)

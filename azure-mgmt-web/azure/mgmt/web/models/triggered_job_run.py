@@ -76,16 +76,16 @@ class TriggeredJobRun(ProxyOnlyResource):
         'trigger': {'key': 'properties.trigger', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, triggered_job_run_id=None, status=None, start_time=None, end_time=None, duration=None, output_url=None, error_url=None, url=None, job_name=None, trigger=None):
-        super(TriggeredJobRun, self).__init__(kind=kind)
-        self.triggered_job_run_id = triggered_job_run_id
+    def __init__(self, **kwargs):
+        super(TriggeredJobRun, self).__init__(**kwargs)
+        self.triggered_job_run_id = kwargs.get('triggered_job_run_id', None)
         self.triggered_job_run_name = None
-        self.status = status
-        self.start_time = start_time
-        self.end_time = end_time
-        self.duration = duration
-        self.output_url = output_url
-        self.error_url = error_url
-        self.url = url
-        self.job_name = job_name
-        self.trigger = trigger
+        self.status = kwargs.get('status', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.duration = kwargs.get('duration', None)
+        self.output_url = kwargs.get('output_url', None)
+        self.error_url = kwargs.get('error_url', None)
+        self.url = kwargs.get('url', None)
+        self.job_name = kwargs.get('job_name', None)
+        self.trigger = kwargs.get('trigger', None)

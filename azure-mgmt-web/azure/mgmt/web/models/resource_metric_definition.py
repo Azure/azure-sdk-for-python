@@ -72,8 +72,8 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
-    def __init__(self, kind=None):
-        super(ResourceMetricDefinition, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(ResourceMetricDefinition, self).__init__(**kwargs)
         self.resource_metric_definition_name = None
         self.unit = None
         self.primary_aggregation_type = None

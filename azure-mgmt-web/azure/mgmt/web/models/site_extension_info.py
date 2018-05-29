@@ -104,25 +104,25 @@ class SiteExtensionInfo(ProxyOnlyResource):
         'comment': {'key': 'properties.comment', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, site_extension_info_id=None, title=None, site_extension_info_type=None, summary=None, description=None, version=None, extension_url=None, project_url=None, icon_url=None, license_url=None, feed_url=None, authors=None, installation_args=None, published_date_time=None, download_count=None, local_is_latest_version=None, local_path=None, installed_date_time=None, provisioning_state=None, comment=None):
-        super(SiteExtensionInfo, self).__init__(kind=kind)
-        self.site_extension_info_id = site_extension_info_id
-        self.title = title
-        self.site_extension_info_type = site_extension_info_type
-        self.summary = summary
-        self.description = description
-        self.version = version
-        self.extension_url = extension_url
-        self.project_url = project_url
-        self.icon_url = icon_url
-        self.license_url = license_url
-        self.feed_url = feed_url
-        self.authors = authors
-        self.installation_args = installation_args
-        self.published_date_time = published_date_time
-        self.download_count = download_count
-        self.local_is_latest_version = local_is_latest_version
-        self.local_path = local_path
-        self.installed_date_time = installed_date_time
-        self.provisioning_state = provisioning_state
-        self.comment = comment
+    def __init__(self, **kwargs):
+        super(SiteExtensionInfo, self).__init__(**kwargs)
+        self.site_extension_info_id = kwargs.get('site_extension_info_id', None)
+        self.title = kwargs.get('title', None)
+        self.site_extension_info_type = kwargs.get('site_extension_info_type', None)
+        self.summary = kwargs.get('summary', None)
+        self.description = kwargs.get('description', None)
+        self.version = kwargs.get('version', None)
+        self.extension_url = kwargs.get('extension_url', None)
+        self.project_url = kwargs.get('project_url', None)
+        self.icon_url = kwargs.get('icon_url', None)
+        self.license_url = kwargs.get('license_url', None)
+        self.feed_url = kwargs.get('feed_url', None)
+        self.authors = kwargs.get('authors', None)
+        self.installation_args = kwargs.get('installation_args', None)
+        self.published_date_time = kwargs.get('published_date_time', None)
+        self.download_count = kwargs.get('download_count', None)
+        self.local_is_latest_version = kwargs.get('local_is_latest_version', None)
+        self.local_path = kwargs.get('local_path', None)
+        self.installed_date_time = kwargs.get('installed_date_time', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.comment = kwargs.get('comment', None)

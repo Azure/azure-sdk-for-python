@@ -50,8 +50,8 @@ class VnetParameters(ProxyOnlyResource):
         'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, vnet_resource_group=None, vnet_name=None, vnet_subnet_name=None):
-        super(VnetParameters, self).__init__(kind=kind)
-        self.vnet_resource_group = vnet_resource_group
-        self.vnet_name = vnet_name
-        self.vnet_subnet_name = vnet_subnet_name
+    def __init__(self, **kwargs):
+        super(VnetParameters, self).__init__(**kwargs)
+        self.vnet_resource_group = kwargs.get('vnet_resource_group', None)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_subnet_name = kwargs.get('vnet_subnet_name', None)

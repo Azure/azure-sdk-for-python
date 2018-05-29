@@ -47,7 +47,7 @@ class FunctionSecrets(ProxyOnlyResource):
         'trigger_url': {'key': 'properties.triggerUrl', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, key=None, trigger_url=None):
-        super(FunctionSecrets, self).__init__(kind=kind)
-        self.key = key
-        self.trigger_url = trigger_url
+    def __init__(self, **kwargs):
+        super(FunctionSecrets, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.trigger_url = kwargs.get('trigger_url', None)
