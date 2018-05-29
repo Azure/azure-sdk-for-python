@@ -548,7 +548,7 @@ class ComputerVisionAPI(SDKClient):
     tag_image.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain(
-            self, model, url, custom_headers=None, raw=False, **operation_config):
+            self, model, url, language="en", custom_headers=None, raw=False, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model.  The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -558,12 +558,16 @@ class ComputerVisionAPI(SDKClient):
         returned in JSON.  If the request failed, the response will contain an
         error code and a message to help understand what went wrong.
 
-        :param model: The domain-specific content to recognize. Possible
-         values include: 'Celebrities', 'Landmarks'
-        :type model: str or
-         ~azure.cognitiveservices.vision.computervision.models.DomainModels
+        :param model: The domain-specific content to recognize.
+        :type model: str
         :param url: Publicly reachable URL of an image
         :type url: str
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
+         pt - Portuguese zh - Simplified Chinese. Possible values include:
+         'en', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -582,12 +586,14 @@ class ComputerVisionAPI(SDKClient):
         url = self.analyze_image_by_domain.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'model': self._serialize.url("model", model, 'DomainModels')
+            'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1077,7 +1083,7 @@ class ComputerVisionAPI(SDKClient):
     describe_image_in_stream.metadata = {'url': '/describe'}
 
     def tag_image_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a list of words, or tags, that are relevant to
         the content of the supplied image. The Computer Vision API can return
         tags based on objects, living beings, scenery or actions found in
@@ -1089,6 +1095,12 @@ class ComputerVisionAPI(SDKClient):
 
         :param image: An image stream.
         :type image: Generator
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
+         pt - Portuguese zh - Simplified Chinese. Possible values include:
+         'en', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1115,6 +1127,8 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1146,7 +1160,7 @@ class ComputerVisionAPI(SDKClient):
     tag_image_in_stream.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain_in_stream(
-            self, model, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, model, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model.  The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -1160,6 +1174,12 @@ class ComputerVisionAPI(SDKClient):
         :type model: str
         :param image: An image stream.
         :type image: Generator
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
+         pt - Portuguese zh - Simplified Chinese. Possible values include:
+         'en', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1187,6 +1207,8 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}

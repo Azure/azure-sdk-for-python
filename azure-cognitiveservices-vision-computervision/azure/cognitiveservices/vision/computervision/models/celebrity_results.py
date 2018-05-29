@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class DomainModelResults(Model):
-    """Result of image analysis using a specific domain model including additional
-    metadata.
+class CelebrityResults(Model):
+    """List of celebrities recognized in the image.
 
-    :param result: Model-specific response
-    :type result: object
+    :param celebrities:
+    :type celebrities:
+     list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -26,13 +26,13 @@ class DomainModelResults(Model):
     """
 
     _attribute_map = {
-        'result': {'key': 'result', 'type': 'object'},
+        'celebrities': {'key': 'celebrities', 'type': '[CelebritiesModel]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, *, result=None, request_id: str=None, metadata=None, **kwargs) -> None:
-        super(DomainModelResults, self).__init__(**kwargs)
-        self.result = result
-        self.request_id = request_id
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(CelebrityResults, self).__init__(**kwargs)
+        self.celebrities = kwargs.get('celebrities', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.metadata = kwargs.get('metadata', None)

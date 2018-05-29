@@ -105,9 +105,3 @@ class Details(str, Enum):
 
     celebrities = "Celebrities"
     landmarks = "Landmarks"
-
-
-class DomainModels(str, Enum):
-
-    celebrities = "Celebrities"
-    landmarks = "Landmarks"

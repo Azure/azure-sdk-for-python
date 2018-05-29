@@ -34,6 +34,9 @@ try:
     from .model_description_py3 import ModelDescription
     from .list_models_result_py3 import ListModelsResult
     from .domain_model_results_py3 import DomainModelResults
+    from .celebrity_results_py3 import CelebrityResults
+    from .landmark_results_landmarks_item_py3 import LandmarkResultsLandmarksItem
+    from .landmark_results_py3 import LandmarkResults
     from .image_description_py3 import ImageDescription
     from .tag_result_py3 import TagResult
     from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
@@ -63,6 +66,9 @@ except (SyntaxError, ImportError):
     from .model_description import ModelDescription
     from .list_models_result import ListModelsResult
     from .domain_model_results import DomainModelResults
+    from .celebrity_results import CelebrityResults
+    from .landmark_results_landmarks_item import LandmarkResultsLandmarksItem
+    from .landmark_results import LandmarkResults
     from .image_description import ImageDescription
     from .tag_result import TagResult
     from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
@@ -75,7 +81,6 @@ from .computer_vision_api_enums import (
     OcrLanguages,
     AzureRegions,
     Details,
-    DomainModels,
 )
 
 __all__ = [
@@ -103,6 +108,9 @@ __all__ = [
     'ModelDescription',
     'ListModelsResult',
     'DomainModelResults',
+    'CelebrityResults',
+    'LandmarkResultsLandmarksItem',
+    'LandmarkResults',
     'ImageDescription',
     'TagResult',
     'ComputerVisionError', 'ComputerVisionErrorException',
@@ -114,5 +122,4 @@ __all__ = [
     'OcrLanguages',
     'AzureRegions',
     'Details',
-    'DomainModels',
 ]
