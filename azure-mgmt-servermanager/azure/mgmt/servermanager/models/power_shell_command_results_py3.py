@@ -33,9 +33,9 @@ class PowerShellCommandResults(Model):
         'completed': {'key': 'completed', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, results=None, pssession: str=None, command: str=None, completed: bool=None, **kwargs) -> None:
         super(PowerShellCommandResults, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-        self.pssession = kwargs.get('pssession', None)
-        self.command = kwargs.get('command', None)
-        self.completed = kwargs.get('completed', None)
+        self.results = results
+        self.pssession = pssession
+        self.command = command
+        self.completed = completed

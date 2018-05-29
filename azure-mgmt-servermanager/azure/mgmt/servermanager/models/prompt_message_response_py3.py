@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class PowerShellTabCompletionParameters(Model):
-    """Collection of parameters for PowerShell tab completion.
+class PromptMessageResponse(Model):
+    """The response to a prompt message.
 
-    :param command: Command to get tab completion for.
-    :type command: str
+    :param response: The list of responses a cmdlet expects.
+    :type response: list[str]
     """
 
     _attribute_map = {
-        'command': {'key': 'command', 'type': 'str'},
+        'response': {'key': 'response', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(PowerShellTabCompletionParameters, self).__init__(**kwargs)
-        self.command = kwargs.get('command', None)
+    def __init__(self, *, response=None, **kwargs) -> None:
+        super(PromptMessageResponse, self).__init__(**kwargs)
+        self.response = response

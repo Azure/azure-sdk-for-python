@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class GatewayResource(Resource):
@@ -84,15 +84,15 @@ class GatewayResource(Resource):
         'minimum_version': {'key': 'properties.minimumVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(GatewayResource, self).__init__(**kwargs)
-        self.created = kwargs.get('created', None)
-        self.updated = kwargs.get('updated', None)
-        self.upgrade_mode = kwargs.get('upgrade_mode', None)
-        self.desired_version = kwargs.get('desired_version', None)
-        self.instances = kwargs.get('instances', None)
-        self.active_message_count = kwargs.get('active_message_count', None)
-        self.latest_published_msi_version = kwargs.get('latest_published_msi_version', None)
-        self.published_time_utc = kwargs.get('published_time_utc', None)
+    def __init__(self, *, tags=None, etag: str=None, created=None, updated=None, upgrade_mode=None, desired_version: str=None, instances=None, active_message_count: int=None, latest_published_msi_version: str=None, published_time_utc=None, **kwargs) -> None:
+        super(GatewayResource, self).__init__(tags=tags, etag=etag, **kwargs)
+        self.created = created
+        self.updated = updated
+        self.upgrade_mode = upgrade_mode
+        self.desired_version = desired_version
+        self.instances = instances
+        self.active_message_count = active_message_count
+        self.latest_published_msi_version = latest_published_msi_version
+        self.published_time_utc = published_time_utc
         self.installer_download = None
         self.minimum_version = None

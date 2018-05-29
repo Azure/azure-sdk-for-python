@@ -40,10 +40,10 @@ class SessionParameters(Model):
         'encryption_certificate_thumbprint': {'key': 'properties.EncryptionCertificateThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, user_name: str=None, password: str=None, retention_period=None, credential_data_format=None, encryption_certificate_thumbprint: str=None, **kwargs) -> None:
         super(SessionParameters, self).__init__(**kwargs)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.retention_period = kwargs.get('retention_period', None)
-        self.credential_data_format = kwargs.get('credential_data_format', None)
-        self.encryption_certificate_thumbprint = kwargs.get('encryption_certificate_thumbprint', None)
+        self.user_name = user_name
+        self.password = password
+        self.retention_period = retention_period
+        self.credential_data_format = credential_data_format
+        self.encryption_certificate_thumbprint = encryption_certificate_thumbprint

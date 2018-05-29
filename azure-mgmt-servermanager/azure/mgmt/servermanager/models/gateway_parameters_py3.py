@@ -32,8 +32,8 @@ class GatewayParameters(Model):
         'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'UpgradeMode'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str=None, tags=None, upgrade_mode=None, **kwargs) -> None:
         super(GatewayParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.upgrade_mode = kwargs.get('upgrade_mode', None)
+        self.location = location
+        self.tags = tags
+        self.upgrade_mode = upgrade_mode
