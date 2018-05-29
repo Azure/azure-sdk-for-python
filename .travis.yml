@@ -1,0 +1,12 @@
+language: python
+cache: pip
+python:
+  - "3.6"
+# command to install dependencies
+install:
+  - pip install -r dev_requirements.txt
+  - pip install -e .
+script: 
+  - pytest
+  - python ./setup.py check -r -s
+  - pylint azure

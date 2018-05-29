@@ -215,6 +215,7 @@ async def test_epoch_receiver_async(connection_str, senders):
 
 @pytest.mark.asyncio
 async def test_multiple_receiver_async(connection_str, senders):
+    pytest.skip("")
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
     receivers = []
     for i in range(2):

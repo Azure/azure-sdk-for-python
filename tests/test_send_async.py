@@ -16,19 +16,18 @@ from azure.eventhub.async import EventHubClientAsync
 
 @pytest.mark.asyncio
 async def test_send_with_partition_key_async(connection_str, receivers):
-    pytest.skip("")
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     sender = client.add_async_sender()
     await client.run_async()
 
     data_val = 0
-    for partition in [b"a", b"b", b"c"]:
+    for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
         partition_key = b"test_partition_" + partition
-        for i in range(5):
+        for i in range(50):
             data = EventData(str(data_val))
             data.partition_key = partition_key
             data_val += 1
-            sender.send(data)
+            await sender.send(data)
     await client.stop_async()
 
     found_partition_keys = {}

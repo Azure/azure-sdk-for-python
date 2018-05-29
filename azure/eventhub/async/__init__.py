@@ -7,6 +7,7 @@ import logging
 import queue
 import asyncio
 import time
+import datetime
 
 from azure import eventhub
 from azure.eventhub import (
@@ -111,7 +112,15 @@ class EventHubClientAsync(EventHubClient):
                 op_type=b'com.microsoft:eventhub',
                 status_code_field=b'status-code',
                 description_fields=b'status-description')
-            return response.get_data()
+            eh_info = response.get_data()
+            output = {}
+            if eh_info:
+                output['name'] = eh_info[b'name'].decode('utf-8')
+                output['type'] = eh_info[b'type'].decode('utf-8')
+                output['created_at'] = datetime.datetime.fromtimestamp(float(eh_info[b'created_at'])/1000)
+                output['partition_count'] = eh_info[b'partition_count']
+                output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
+            return output
 
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
         """

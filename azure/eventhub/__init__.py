@@ -20,13 +20,14 @@ except Exception:
 import uamqp
 from uamqp import Connection
 from uamqp import SendClient, ReceiveClient
-from uamqp import Message, BatchMessage, MessageHeader
+from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
 from uamqp import constants, types, errors
+from uamqp.message import MessageHeader
 
 
-__version__ = "0.2.0b1"
+__version__ = "0.2.0b2"
 
 log = logging.getLogger(__name__)
 
@@ -219,7 +220,15 @@ class EventHubClient(object):
                 op_type=b'com.microsoft:eventhub',
                 status_code_field=b'status-code',
                 description_fields=b'status-description')
-            return response.get_data()
+            eh_info = response.get_data()
+            output = {}
+            if eh_info:
+                output['name'] = eh_info[b'name'].decode('utf-8')
+                output['type'] = eh_info[b'type'].decode('utf-8')
+                output['created_at'] = datetime.datetime.fromtimestamp(float(eh_info[b'created_at'])/1000)
+                output['partition_count'] = eh_info[b'partition_count']
+                output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
+            return output
         except:
             raise
         finally:
@@ -510,6 +519,7 @@ class EventData(object):
             self.message = message
             self._annotations = message.annotations
             self._properties = message.application_properties
+            self._header = message.header
         else:
             if isinstance(body, list) and len(body) > 0:
                 self.message = Message(body[0])
@@ -535,7 +545,10 @@ class EventData(object):
         The offset of the event data object.
         :returns: int
         """
-        return self._annotations.get(EventData.PROP_OFFSET, None)
+        try:
+            return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
+        except (KeyError, AttributeError):
+            return None
 
     @property
     def enqueued_time(self):

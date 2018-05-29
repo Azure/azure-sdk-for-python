@@ -48,7 +48,7 @@ class EventHubConfig:
             urllib.parse.quote_plus(self.policy),
             urllib.parse.quote_plus(self.sas_key),
             self.sb_name,
-            self.namespace_suffix
+            self.namespace_suffix,
             self.eh_name)
 
     def get_rest_token(self):

@@ -93,7 +93,6 @@ def test_long_running_receive():
         raise
     finally:
         loop.run_until_complete(client.stop_async())
-        loop.close()
 
 
 if __name__ == '__main__':

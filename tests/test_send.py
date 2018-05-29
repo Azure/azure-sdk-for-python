@@ -19,9 +19,9 @@ def test_send_with_partition_key(connection_str, receivers):
         client.run()
 
         data_val = 0
-        for partition in [b"a", b"b", b"c"]:
+        for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
             partition_key = b"test_partition_" + partition
-            for i in range(5):
+            for i in range(50):
                 data = EventData(str(data_val))
                 data.partition_key = partition_key
                 data_val += 1
