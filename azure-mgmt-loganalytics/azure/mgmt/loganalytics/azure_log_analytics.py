@@ -20,8 +20,8 @@ from .operations.operations import Operations
 from . import models
 
 
-class OperationalInsightsManagementClientConfiguration(AzureConfiguration):
-    """Configuration for OperationalInsightsManagementClient
+class AzureLogAnalyticsConfiguration(AzureConfiguration):
+    """Configuration for AzureLogAnalytics
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -45,7 +45,7 @@ class OperationalInsightsManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(OperationalInsightsManagementClientConfiguration, self).__init__(base_url)
+        super(AzureLogAnalyticsConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-loganalytics/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -54,11 +54,11 @@ class OperationalInsightsManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class OperationalInsightsManagementClient(SDKClient):
-    """Operational Insights Client
+class AzureLogAnalytics(SDKClient):
+    """Azure Log Analytics API reference
 
     :ivar config: Configuration for client.
-    :vartype config: OperationalInsightsManagementClientConfiguration
+    :vartype config: AzureLogAnalyticsConfiguration
 
     :ivar linked_services: LinkedServices operations
     :vartype linked_services: azure.mgmt.loganalytics.operations.LinkedServicesOperations
@@ -82,8 +82,8 @@ class OperationalInsightsManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = OperationalInsightsManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(OperationalInsightsManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = AzureLogAnalyticsConfiguration(credentials, subscription_id, base_url)
+        super(AzureLogAnalytics, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-11-01-preview'

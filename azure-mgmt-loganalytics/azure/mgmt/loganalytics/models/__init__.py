@@ -45,7 +45,7 @@ from .usage_metric_paged import UsageMetricPaged
 from .management_group_paged import ManagementGroupPaged
 from .workspace_paged import WorkspacePaged
 from .operation_paged import OperationPaged
-from .operational_insights_management_client_enums import (
+from .azure_log_analytics_enums import (
     DataSourceKind,
     SkuNameEnum,
     EntityStatus,
