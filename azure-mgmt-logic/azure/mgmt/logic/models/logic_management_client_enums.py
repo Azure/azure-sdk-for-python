@@ -164,6 +164,9 @@ class MapType(str, Enum):
 
     not_specified = "NotSpecified"
     xslt = "Xslt"
+    xslt20 = "Xslt20"
+    xslt30 = "Xslt30"
+    liquid = "Liquid"
 
 
 class PartnerType(str, Enum):
