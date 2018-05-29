@@ -16,11 +16,15 @@ import time
 import os
 from urllib.parse import quote_plus
 
-import tests
 from azure.eventhub import Offset
 from azure.eventhub.async import EventHubClientAsync
 
-logger = tests.get_logger("recv_test.log", logging.INFO)
+try:
+    import tests
+    logger = tests.get_logger("recv_test.log", logging.INFO)
+except ImportError:
+    logger = logging.getLogger("uamqp")
+    logger.setLevel(logging.INFO)
 
 
 async def pump(_pid, receiver, _args, _dl):

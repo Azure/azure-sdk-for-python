@@ -10,10 +10,14 @@ import time
 import threading
 import os
 
-import tests
 from azure.eventhub import EventHubClient, Sender, EventData
 
-logger = tests.get_logger("send_test.log", logging.INFO)
+try:
+    import tests
+    logger = tests.get_logger("send_test.log", logging.INFO)
+except ImportError:
+    logger = logging.getLogger("uamqp")
+    logger.setLevel(logging.INFO)
 
 
 def check_send_successful(outcome, condition):
