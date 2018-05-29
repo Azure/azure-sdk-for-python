@@ -57,10 +57,14 @@ class State(str, Enum):
     closed = "closed"  #: The issue was closed.
 
 
-class LoggerType(str, Enum):
+class SamplingType(str, Enum):
 
-    azure_event_hub = "azureEventHub"  #: Azure Event Hub as log destination.
-    application_insights = "applicationInsights"  #: Azure Application Insights as log destination.
+    fixed = "fixed"  #: Fixed-rate sampling.
+
+
+class AlwaysLog(str, Enum):
+
+    all_errors = "allErrors"  #: Always log all erroneous request regardless of sampling settings.
 
 
 class ProductState(str, Enum):
@@ -166,6 +170,12 @@ class IdentityProviderType(str, Enum):
     twitter = "twitter"  #: Twitter as Identity provider.
     aad = "aad"  #: Azure Active Directory as Identity provider.
     aad_b2_c = "aadB2C"  #: Azure Active Directory B2C as Identity provider.
+
+
+class LoggerType(str, Enum):
+
+    azure_event_hub = "azureEventHub"  #: Azure Event Hub as log destination.
+    application_insights = "applicationInsights"  #: Azure Application Insights as log destination.
 
 
 class ConnectivityStatusType(str, Enum):

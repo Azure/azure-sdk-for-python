@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .apim_resource import ApimResource
+from .apim_resource_py3 import ApimResource
 
 
 class ApiManagementServiceResource(ApimResource):

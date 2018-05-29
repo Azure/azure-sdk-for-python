@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error Body contract.
+    """Error Response.
 
     :param code: Service-defined error code. This code serves as a sub-status
      for the HTTP error code specified in the response.
@@ -27,9 +27,9 @@ class ErrorResponse(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+        'code': {'key': 'error.code', 'type': 'str'},
+        'message': {'key': 'error.message', 'type': 'str'},
+        'details': {'key': 'error.details', 'type': '[ErrorFieldContract]'},
     }
 
     def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
