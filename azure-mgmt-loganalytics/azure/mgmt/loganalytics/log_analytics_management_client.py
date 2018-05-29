@@ -20,8 +20,8 @@ from .operations.operations import Operations
 from . import models
 
 
-class AzureLogAnalyticsConfiguration(AzureConfiguration):
-    """Configuration for AzureLogAnalytics
+class LogAnalyticsManagementClientConfiguration(AzureConfiguration):
+    """Configuration for LogAnalyticsManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -45,7 +45,7 @@ class AzureLogAnalyticsConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(AzureLogAnalyticsConfiguration, self).__init__(base_url)
+        super(LogAnalyticsManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-loganalytics/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -54,11 +54,11 @@ class AzureLogAnalyticsConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AzureLogAnalytics(SDKClient):
-    """Azure Log Analytics API reference
+class LogAnalyticsManagementClient(SDKClient):
+    """The Log Analytics Client.
 
     :ivar config: Configuration for client.
-    :vartype config: AzureLogAnalyticsConfiguration
+    :vartype config: LogAnalyticsManagementClientConfiguration
 
     :ivar linked_services: LinkedServices operations
     :vartype linked_services: azure.mgmt.loganalytics.operations.LinkedServicesOperations
@@ -82,8 +82,8 @@ class AzureLogAnalytics(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureLogAnalyticsConfiguration(credentials, subscription_id, base_url)
-        super(AzureLogAnalytics, self).__init__(self.config.credentials, self.config)
+        self.config = LogAnalyticsManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(LogAnalyticsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-11-01-preview'

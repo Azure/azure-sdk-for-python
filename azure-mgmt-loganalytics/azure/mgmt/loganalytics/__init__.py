@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_log_analytics import AzureLogAnalytics
+from .log_analytics_management_client import LogAnalyticsManagementClient
 from .version import VERSION
 
-__all__ = ['AzureLogAnalytics']
+__all__ = ['LogAnalyticsManagementClient']
 
 __version__ = VERSION
 
