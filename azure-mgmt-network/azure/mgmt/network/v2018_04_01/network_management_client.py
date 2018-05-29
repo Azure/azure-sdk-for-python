@@ -310,7 +310,7 @@ class NetworkManagementClient(SDKClient):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-04-01"
+        api_version = "2018-05-01"
 
         # Construct URL
         url = self.check_dns_name_availability.metadata['url']
