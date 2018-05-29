@@ -76,7 +76,11 @@ def test_long_running_send():
             username=args.sas_policy,
             password=args.sas_key)
     else:
-        raise ValueError("Must specify either '--conn-str' or '--address'")
+        try:
+            import pytest
+            pytest.skip("Must specify either '--conn-str' or '--address'")
+        except ImportError:
+            raise ValueError("Must specify either '--conn-str' or '--address'")
 
     try:
         main(client, args)
