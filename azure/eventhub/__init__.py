@@ -13,7 +13,7 @@ import asyncio
 try:
     from urllib import urlparse
     from urllib import unquote_plus
-except Exception:
+except ImportError:
     from urllib.parse import unquote_plus
     from urllib.parse import urlparse
 
@@ -116,7 +116,7 @@ class EventHubClient(object):
         address = _build_uri(address, entity)
         return cls(address, username=policy, password=key, **kwargs)
 
-    def _create_auth(self, auth_uri, username, password):
+    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
@@ -130,7 +130,7 @@ class EventHubClient(object):
         """
         return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
 
-    def _create_properties(self):
+    def _create_properties(self):  # pylint: disable=no-self-use
         """
         Format the properties with which to instantiate the connection.
         This acts like a user agent over HTTP.
@@ -253,7 +253,7 @@ class EventHubClient(object):
         if offset is not None:
             source.set_filter(offset.selector())
         handler = Receiver(self, source, prefetch=prefetch)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
     def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300):
@@ -275,7 +275,7 @@ class EventHubClient(object):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
         handler = Receiver(self, source_url, prefetch=prefetch, epoch=epoch)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
     def add_sender(self, partition=None):
@@ -290,7 +290,7 @@ class EventHubClient(object):
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         handler = Sender(self, target, partition=partition)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
 
@@ -420,6 +420,7 @@ class Receiver:
         The current size of the unprocessed message queue.
         :returns: int
         """
+        # pylint: disable=protected-access
         if self._handler._received_messages:
             return self._handler._received_messages.qsize()
         return 0
@@ -466,7 +467,7 @@ class Receiver:
             message += "\nPlease check that the partition key is valid "
             if self.epoch:
                 message += ("and that a higher epoch receiver is not "
-                           "already running for this partition.")
+                            "already running for this partition.")
             else:
                 message += ("and whether an epoch receiver is "
                             "already running for this partition.")
@@ -496,7 +497,7 @@ class EventData(object):
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    PROP_DEVICE_ID = b"iothub-connection-device-id" 
+    PROP_DEVICE_ID = b"iothub-connection-device-id"
 
     def __init__(self, body=None, batch=None, message=None):
         """
@@ -521,10 +522,10 @@ class EventData(object):
             self._properties = message.application_properties
             self._header = message.header
         else:
-            if isinstance(body, list) and len(body) > 0:
+            if isinstance(body, list) and body:
                 self.message = Message(body[0])
                 for more in body[1:]:
-                    self.message._body.append(more)
+                    self.message._body.append(more)  # pylint: disable=protected-access
             elif body is None:
                 raise ValueError("EventData cannot be None.")
             else:
@@ -661,8 +662,7 @@ class Offset(object):
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
         elif isinstance(self.value, int):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
-        else:
-            return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
+        return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
 
 class EventHubError(Exception):

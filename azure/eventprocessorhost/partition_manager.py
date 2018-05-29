@@ -6,10 +6,7 @@
 import logging
 import asyncio
 from queue import Queue
-import concurrent.futures
 from collections import Counter
-
-import requests
 
 from azure.eventhub.async import EventHubClientAsync
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
@@ -42,7 +39,7 @@ class PartitionManager:
             try:
                 eh_info = await eh_client.get_eventhub_info_async()
                 self.partition_ids = eh_info['partition_ids']
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 raise Exception("Failed to get partition ids", repr(err))
 
         return self.partition_ids
@@ -72,13 +69,13 @@ class PartitionManager:
         """
         try:
             await self.run_loop_async()
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             _logger.error("Run loop failed {!r}".format(err))
 
         try:
             _logger.info("Shutting down all pumps {}".format(self.host.guid))
             await self.remove_all_pumps_async("Shutdown")
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             raise Exception("Failed to remove all pumps {!r}".format(err))
 
     async def initialize_stores_async(self):
@@ -122,7 +119,7 @@ class PartitionManager:
             try:
                 await func(partition_id)
                 created_okay = True
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 _logger.error("{} {} {} {!r}".format(retry_message, host_id, partition_id, err))
                 retry_count += 1
         if not created_okay:
@@ -174,7 +171,7 @@ class PartitionManager:
                         else:
                             _logger.info("Failed to steal lease for partition {} {}".format(
                                 self.host.guid, steal_this_lease.partition_id))
-                    except Exception as err:
+                    except Exception as err:  # pylint: disable=broad-except
                         _logger.error("Failed to steal lease {!r}".format(err))
 
             for partition_id in all_leases:
@@ -186,7 +183,7 @@ class PartitionManager:
                         await self.check_and_add_pump_async(partition_id, updated_lease)
                     else:
                         await self.remove_pump_async(partition_id, "LeaseLost")
-                except Exception as err:
+                except Exception as err:  # pylint: disable=broad-except
                     _logger.error("Failed to update lease {!r}".format(err))
             await asyncio.sleep(lease_manager.lease_renew_interval)
 
@@ -279,7 +276,7 @@ class PartitionManager:
 
         return steal_this_lease
 
-    def count_leases_by_owner(self, leases):
+    def count_leases_by_owner(self, leases):  # pylint: disable=no-self-use
         """
         Returns a dictionary of leases by current owner
         """
@@ -316,13 +313,14 @@ class PartitionManager:
                         owned_by_others_q.put((False, possible_lease))
                     else:
                         owned_by_others_q.put((True, possible_lease))
-                except Exception as err:  # Update to LeaseLostException:
+                except Exception as err:  # pylint: disable=broad-except
+                    # Update to 'Lease Lost' exception.
                     _logger.error("Lease lost exception {!r} {} {}".format(
                         err, self.host.guid, possible_lease.partition_id))
                     owned_by_others_q.put((True, possible_lease))
             else:
                 owned_by_others_q.put((True, possible_lease))
 
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             _logger.error(
                 "Failure during getting/acquiring/renewing lease, skipping {!r}".format(err))

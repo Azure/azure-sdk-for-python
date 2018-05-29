@@ -57,7 +57,8 @@ class EventProcessorHost:
         Stops the host
         """
         await self.partition_manager.stop_async()
-        
+
+
 class EPHOptions:
     """
     Class that contains default and overidable EPH option

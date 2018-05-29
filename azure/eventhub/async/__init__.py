@@ -9,6 +9,11 @@ import asyncio
 import time
 import datetime
 
+from uamqp.async import SASTokenAsync
+from uamqp.async import ConnectionAsync
+from uamqp import Message, AMQPClientAsync, SendClientAsync, ReceiveClientAsync, Source
+from uamqp import constants, types, errors
+
 from azure import eventhub
 from azure.eventhub import (
     Sender,
@@ -17,10 +22,6 @@ from azure.eventhub import (
     EventData,
     EventHubError)
 
-from uamqp.async import SASTokenAsync
-from uamqp.async import ConnectionAsync
-from uamqp import Message, AMQPClientAsync, SendClientAsync, ReceiveClientAsync, Source
-from uamqp import constants, types, errors
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class EventHubClientAsync(EventHubClient):
     sending events to and receiving events from the Azure Event Hubs service.
     """
 
-    def _create_auth(self, auth_uri, username, password):
+    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -141,7 +142,7 @@ class EventHubClientAsync(EventHubClient):
         if offset is not None:
             source.set_filter(offset.selector())
         handler = AsyncReceiver(self, source, prefetch=prefetch, loop=loop)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
     def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, loop=None):
@@ -163,7 +164,7 @@ class EventHubClientAsync(EventHubClient):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
         handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
     def add_async_sender(self, partition=None, loop=None):
@@ -178,7 +179,7 @@ class EventHubClientAsync(EventHubClient):
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         handler = AsyncSender(self, target, partition=partition, loop=loop)
-        self.clients.append(handler._handler)
+        self.clients.append(handler._handler)  # pylint: disable=protected-access
         return handler
 
 class AsyncSender(Sender):
@@ -186,7 +187,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, partition=None, loop=None):
+    def __init__(self, client, target, partition=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an EventHub event SenderAsync client.
         :param client: The parent EventHubClient.
@@ -210,7 +211,7 @@ class AsyncSender(Sender):
 
     async def send(self, event_data):
         """
-        Sends an event data and asynchronously waits until 
+        Sends an event data and asynchronously waits until
         acknowledgement is received or operation times out.
         :param event_data: The event to be sent.
         :type event_data: ~azure.eventhub.EventData
@@ -233,7 +234,7 @@ class AsyncReceiver(Receiver):
     Implements the async API of a Receiver.
     """
 
-    def __init__(self, client, source, prefetch=300, epoch=None, loop=None):
+    def __init__(self, client, source, prefetch=300, epoch=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an async receiver.
         :param client: The parent EventHubClient.

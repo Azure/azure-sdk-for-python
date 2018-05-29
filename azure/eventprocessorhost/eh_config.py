@@ -28,8 +28,8 @@ class EventHubConfig:
     :type namespace_suffix: str
     """
     def __init__(self, sb_name, eh_name, policy, sas_key,
-            consumer_group="$default",
-            namespace_suffix="servicebus.windows.net"):
+                 consumer_group="$default",
+                 namespace_suffix="servicebus.windows.net"):
         self.sb_name = sb_name
         self.eh_name = eh_name
         self.policy = policy
@@ -59,7 +59,7 @@ class EventHubConfig:
             "https://{}.{}/{}".format(self.sb_name, self.namespace_suffix, self.eh_name))
         sas = self.sas_key.encode('utf-8')
         expiry = str(int(time.time() + 10000))
-        string_to_sign = ('{}\n{}'.format(uri,expiry)).encode('utf-8')
+        string_to_sign = ('{}\n{}'.format(uri, expiry)).encode('utf-8')
         signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
         signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
         return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}' \

@@ -35,7 +35,7 @@ class EventHubPartitionPump(PartitionPump):
             try:
                 await self.open_clients_async()
                 _opened_ok = True
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 _logger.warning(
                     "{},{} PartitionPumpWarning: Failure creating client or receiver, "
                     "retrying: {!r}".format(self.host.guid, self.partition_context.partition_id, err))
@@ -117,9 +117,9 @@ class PartitionReceiver:
             if self.eh_partition_pump.partition_receive_handler:
                 try:
                     msgs = await self.eh_partition_pump.partition_receive_handler.receive(
-                            max_batch_size=self.max_batch_size,
-                            timeout=self.recieve_timeout)
-                except Exception as e:
+                        max_batch_size=self.max_batch_size,
+                        timeout=self.recieve_timeout)
+                except Exception as e:  # pylint: disable=broad-except
                     await self.process_error_async(e)
                 else:
                     if not msgs:

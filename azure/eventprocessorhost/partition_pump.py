@@ -61,7 +61,7 @@ class PartitionPump():
         self.processor = self.host.event_processor(self.host.event_processor_params)
         try:
             await self.processor.open_async(self.partition_context)
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             # If the processor won't create or open, only thing we can do here is pass the buck.
             # Null it out so we don't try to operate on it further.
             await self.process_error_async(err)
@@ -101,7 +101,7 @@ class PartitionPump():
                 await self.processor.close_async(self.partition_context, reason)
                 _logger.info("PartitionPumpInvokeProcessorCloseStart {} {}".format(
                     self.host.guid, self.partition_context.partition_id))
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             await self.process_error_async(err)
             _logger.error("{} {} {!r}".format(
                 self.host.guid, self.partition_context.partition_id, err))
@@ -111,7 +111,7 @@ class PartitionPump():
             try:
                 _logger.info("Lease Lost releasing ownership")
                 await self.host.storage_manager.release_lease_async(self.partition_context.lease)
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 _logger.error("{} {} {!r}".format(
                     self.host.guid, self.partition_context.partition_id, err))
                 raise err
@@ -143,7 +143,7 @@ class PartitionPump():
                 if last != None:
                     self.partition_context.set_offset_and_sequence_number(last)
                     await self.processor.process_events_async(self.partition_context, events)
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 await self.process_error_async(err)
 
     async def process_error_async(self, error):
