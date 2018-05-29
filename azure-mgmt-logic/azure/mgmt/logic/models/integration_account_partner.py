@@ -18,6 +18,8 @@ class IntegrationAccountPartner(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: Gets the resource name.
@@ -27,20 +29,18 @@ class IntegrationAccountPartner(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
-    :param partner_type: The partner type. Possible values include:
+    :type tags: dict[str, str]
+    :param partner_type: Required. The partner type. Possible values include:
      'NotSpecified', 'B2B'
-    :type partner_type: str or :class:`PartnerType
-     <azure.mgmt.logic.models.PartnerType>`
+    :type partner_type: str or ~azure.mgmt.logic.models.PartnerType
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: datetime
     :param metadata: The metadata.
     :type metadata: object
-    :param content: The partner content.
-    :type content: :class:`PartnerContent
-     <azure.mgmt.logic.models.PartnerContent>`
+    :param content: Required. The partner content.
+    :type content: ~azure.mgmt.logic.models.PartnerContent
     """
 
     _validation = {
@@ -66,10 +66,10 @@ class IntegrationAccountPartner(Resource):
         'content': {'key': 'properties.content', 'type': 'PartnerContent'},
     }
 
-    def __init__(self, partner_type, content, location=None, tags=None, metadata=None):
-        super(IntegrationAccountPartner, self).__init__(location=location, tags=tags)
-        self.partner_type = partner_type
+    def __init__(self, **kwargs):
+        super(IntegrationAccountPartner, self).__init__(**kwargs)
+        self.partner_type = kwargs.get('partner_type', None)
         self.created_time = None
         self.changed_time = None
-        self.metadata = metadata
-        self.content = content
+        self.metadata = kwargs.get('metadata', None)
+        self.content = kwargs.get('content', None)

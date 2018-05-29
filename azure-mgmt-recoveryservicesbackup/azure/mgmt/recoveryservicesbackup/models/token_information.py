@@ -29,7 +29,8 @@ class TokenInformation(Model):
         'security_pin': {'key': 'securityPIN', 'type': 'str'},
     }
 
-    def __init__(self, token=None, expiry_time_in_utc_ticks=None, security_pin=None):
-        self.token = token
-        self.expiry_time_in_utc_ticks = expiry_time_in_utc_ticks
-        self.security_pin = security_pin
+    def __init__(self, **kwargs):
+        super(TokenInformation, self).__init__(**kwargs)
+        self.token = kwargs.get('token', None)
+        self.expiry_time_in_utc_ticks = kwargs.get('expiry_time_in_utc_ticks', None)
+        self.security_pin = kwargs.get('security_pin', None)

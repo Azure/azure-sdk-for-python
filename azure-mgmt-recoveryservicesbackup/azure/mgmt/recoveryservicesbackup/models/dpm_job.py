@@ -15,14 +15,17 @@ from .job import Job
 class DpmJob(Job):
     """DPM workload-specifc job object.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param entity_friendly_name: Friendly name of the entity on which the
      current job is executing.
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,7 +36,7 @@ class DpmJob(Job):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Required. Constant filled by server.
     :type job_type: str
     :param duration: Time elapsed for job.
     :type duration: timedelta
@@ -49,14 +52,14 @@ class DpmJob(Job):
     :type workload_type: str
     :param actions_info: The state/actions applicable on this job like
      cancel/retry.
-    :type actions_info: list of str or :class:`JobSupportedAction
-     <azure.mgmt.recoveryservicesbackup.models.JobSupportedAction>`
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
     :param error_details: The errors.
-    :type error_details: list of :class:`DpmErrorInfo
-     <azure.mgmt.recoveryservicesbackup.models.DpmErrorInfo>`
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.DpmErrorInfo]
     :param extended_info: Additional information for this job.
-    :type extended_info: :class:`DpmJobExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.DpmJobExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.DpmJobExtendedInfo
     """
 
     _validation = {
@@ -82,14 +85,14 @@ class DpmJob(Job):
         'extended_info': {'key': 'extendedInfo', 'type': 'DpmJobExtendedInfo'},
     }
 
-    def __init__(self, entity_friendly_name=None, backup_management_type=None, operation=None, status=None, start_time=None, end_time=None, activity_id=None, duration=None, dpm_server_name=None, container_name=None, container_type=None, workload_type=None, actions_info=None, error_details=None, extended_info=None):
-        super(DpmJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id)
-        self.duration = duration
-        self.dpm_server_name = dpm_server_name
-        self.container_name = container_name
-        self.container_type = container_type
-        self.workload_type = workload_type
-        self.actions_info = actions_info
-        self.error_details = error_details
-        self.extended_info = extended_info
+    def __init__(self, **kwargs):
+        super(DpmJob, self).__init__(**kwargs)
+        self.duration = kwargs.get('duration', None)
+        self.dpm_server_name = kwargs.get('dpm_server_name', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.container_type = kwargs.get('container_type', None)
+        self.workload_type = kwargs.get('workload_type', None)
+        self.actions_info = kwargs.get('actions_info', None)
+        self.error_details = kwargs.get('error_details', None)
+        self.extended_info = kwargs.get('extended_info', None)
         self.job_type = 'DpmJob'

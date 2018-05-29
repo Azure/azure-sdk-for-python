@@ -22,8 +22,7 @@ class ContentLink(Model):
     :param content_size: The content size.
     :type content_size: long
     :param content_hash: The content hash.
-    :type content_hash: :class:`ContentHash
-     <azure.mgmt.logic.models.ContentHash>`
+    :type content_hash: ~azure.mgmt.logic.models.ContentHash
     :param metadata: The metadata.
     :type metadata: object
     """
@@ -36,9 +35,10 @@ class ContentLink(Model):
         'metadata': {'key': 'metadata', 'type': 'object'},
     }
 
-    def __init__(self, uri=None, content_version=None, content_size=None, content_hash=None, metadata=None):
-        self.uri = uri
-        self.content_version = content_version
-        self.content_size = content_size
-        self.content_hash = content_hash
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(ContentLink, self).__init__(**kwargs)
+        self.uri = kwargs.get('uri', None)
+        self.content_version = kwargs.get('content_version', None)
+        self.content_size = kwargs.get('content_size', None)
+        self.content_hash = kwargs.get('content_hash', None)
+        self.metadata = kwargs.get('metadata', None)

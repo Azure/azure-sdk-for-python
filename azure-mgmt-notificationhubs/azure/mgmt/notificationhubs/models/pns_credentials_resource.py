@@ -27,35 +27,29 @@ class PnsCredentialsResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param apns_credential: The ApnsCredential of the created NotificationHub
-    :type apns_credential: :class:`ApnsCredential
-     <azure.mgmt.notificationhubs.models.ApnsCredential>`
+    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
     :param wns_credential: The WnsCredential of the created NotificationHub
-    :type wns_credential: :class:`WnsCredential
-     <azure.mgmt.notificationhubs.models.WnsCredential>`
+    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
     :param gcm_credential: The GcmCredential of the created NotificationHub
-    :type gcm_credential: :class:`GcmCredential
-     <azure.mgmt.notificationhubs.models.GcmCredential>`
+    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
     :param mpns_credential: The MpnsCredential of the created NotificationHub
-    :type mpns_credential: :class:`MpnsCredential
-     <azure.mgmt.notificationhubs.models.MpnsCredential>`
+    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
     :param adm_credential: The AdmCredential of the created NotificationHub
-    :type adm_credential: :class:`AdmCredential
-     <azure.mgmt.notificationhubs.models.AdmCredential>`
+    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
-    :type baidu_credential: :class:`BaiduCredential
-     <azure.mgmt.notificationhubs.models.BaiduCredential>`
+    :type baidu_credential:
+     ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -73,11 +67,11 @@ class PnsCredentialsResource(Resource):
         'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, location, tags=None, sku=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
-        super(PnsCredentialsResource, self).__init__(location=location, tags=tags, sku=sku)
-        self.apns_credential = apns_credential
-        self.wns_credential = wns_credential
-        self.gcm_credential = gcm_credential
-        self.mpns_credential = mpns_credential
-        self.adm_credential = adm_credential
-        self.baidu_credential = baidu_credential
+    def __init__(self, **kwargs):
+        super(PnsCredentialsResource, self).__init__(**kwargs)
+        self.apns_credential = kwargs.get('apns_credential', None)
+        self.wns_credential = kwargs.get('wns_credential', None)
+        self.gcm_credential = kwargs.get('gcm_credential', None)
+        self.mpns_credential = kwargs.get('mpns_credential', None)
+        self.adm_credential = kwargs.get('adm_credential', None)
+        self.baidu_credential = kwargs.get('baidu_credential', None)

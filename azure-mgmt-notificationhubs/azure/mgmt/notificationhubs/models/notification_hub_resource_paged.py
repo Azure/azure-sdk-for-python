@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NotificationHubResourcePaged(Paged):
     """
-    A paging container for iterating over a list of NotificationHubResource object
+    A paging container for iterating over a list of :class:`NotificationHubResource <azure.mgmt.notificationhubs.models.NotificationHubResource>` object
     """
 
     _attribute_map = {

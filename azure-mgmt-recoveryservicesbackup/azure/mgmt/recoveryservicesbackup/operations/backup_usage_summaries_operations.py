@@ -22,16 +22,18 @@ class BackupUsageSummariesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
@@ -53,17 +55,16 @@ class BackupUsageSummariesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackupManagementUsage
-         <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage>`
-        :rtype: :class:`BackupManagementUsagePaged
-         <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsagePaged>`
+        :return: An iterator like instance of BackupManagementUsage
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsagePaged[~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupUsageSummaries'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -96,7 +97,7 @@ class BackupUsageSummariesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -114,3 +115,4 @@ class BackupUsageSummariesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupUsageSummaries'}

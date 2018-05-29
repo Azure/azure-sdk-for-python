@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class Server(TrackedResource):
@@ -26,10 +26,10 @@ class Server(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the server.
     :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
@@ -64,8 +64,8 @@ class Server(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -76,7 +76,7 @@ class Server(TrackedResource):
     }
 
     def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, **kwargs) -> None:
-        super(Server, self).__init__(tags=tags, location=location, **kwargs)
+        super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.kind = None
         self.administrator_login = administrator_login
