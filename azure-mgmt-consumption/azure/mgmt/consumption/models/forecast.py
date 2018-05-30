@@ -28,15 +28,17 @@ class Forecast(Resource):
     :vartype tags: dict[str, str]
     :ivar usage_date: The usage date of the forecast.
     :vartype usage_date: str
-    :ivar grain: The granularity of forecast. i.e. Daily, Monthly
-    :vartype grain: str
+    :param grain: The granularity of forecast. Possible values include:
+     'Daily', 'Monthly', 'Yearly'
+    :type grain: str or ~azure.mgmt.consumption.models.Grain
     :ivar charge: The amount of charge
     :vartype charge: decimal.Decimal
     :ivar currency: The ISO currency in which the meter is charged, for
      example, USD.
     :vartype currency: str
-    :ivar charge_type: The type of the charge. Could be actual or forecast
-    :vartype charge_type: str
+    :param charge_type: The type of the charge. Could be actual or forecast.
+     Possible values include: 'Actual', 'Forecast'
+    :type charge_type: str or ~azure.mgmt.consumption.models.ChargeType
     :ivar confidence_levels: The details about the forecast confidence levels.
      This is populated only when chargeType is Forecast.
     :vartype confidence_levels:
@@ -49,10 +51,8 @@ class Forecast(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'usage_date': {'readonly': True},
-        'grain': {'readonly': True},
         'charge': {'readonly': True},
         'currency': {'readonly': True},
-        'charge_type': {'readonly': True},
         'confidence_levels': {'readonly': True},
     }
 
@@ -69,11 +69,11 @@ class Forecast(Resource):
         'confidence_levels': {'key': 'properties.confidenceLevels', 'type': '[ForecastPropertiesConfidenceLevelsItem]'},
     }
 
-    def __init__(self):
+    def __init__(self, grain=None, charge_type=None):
         super(Forecast, self).__init__()
         self.usage_date = None
-        self.grain = None
+        self.grain = grain
         self.charge = None
         self.currency = None
-        self.charge_type = None
+        self.charge_type = charge_type
         self.confidence_levels = None

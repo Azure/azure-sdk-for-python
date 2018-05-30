@@ -18,6 +18,11 @@ from .forecast_properties_confidence_levels_item import ForecastPropertiesConfid
 from .forecast import Forecast
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
+from .consumption_management_client_enums import (
+    Grain,
+    ChargeType,
+    Bound,
+)
 
 __all__ = [
     'ErrorDetails',
@@ -29,4 +34,7 @@ __all__ = [
     'Forecast',
     'ForecastPaged',
     'OperationPaged',
+    'Grain',
+    'ChargeType',
+    'Bound',
 ]

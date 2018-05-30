@@ -20,16 +20,15 @@ class ForecastPropertiesConfidenceLevelsItem(Model):
 
     :ivar percentage: The percentage level of the confidence
     :vartype percentage: decimal.Decimal
-    :ivar bound: The boundary of the percentage, values could be 'Upper' or
-     'Lower'
-    :vartype bound: str
+    :param bound: The boundary of the percentage, values could be 'Upper' or
+     'Lower'. Possible values include: 'Upper', 'Lower'
+    :type bound: str or ~azure.mgmt.consumption.models.Bound
     :ivar value: The amount of forecast within the percentage level
     :vartype value: decimal.Decimal
     """
 
     _validation = {
         'percentage': {'readonly': True},
-        'bound': {'readonly': True},
         'value': {'readonly': True},
     }
 
@@ -39,8 +38,8 @@ class ForecastPropertiesConfidenceLevelsItem(Model):
         'value': {'key': 'value', 'type': 'decimal'},
     }
 
-    def __init__(self):
+    def __init__(self, bound=None):
         super(ForecastPropertiesConfidenceLevelsItem, self).__init__()
         self.percentage = None
-        self.bound = None
+        self.bound = bound
         self.value = None
