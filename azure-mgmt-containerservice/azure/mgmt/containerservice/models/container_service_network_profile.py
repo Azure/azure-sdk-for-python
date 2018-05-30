@@ -21,11 +21,11 @@ class ContainerServiceNetworkProfile(Model):
     :type network_plugin: str or
      ~azure.mgmt.containerservice.models.NetworkPlugin
     :param network_policy: Network policy used for building Kubernetes
-     network. Possible values include: 'calico', 'cilium'
+     network. Possible values include: 'calico'
     :type network_policy: str or
      ~azure.mgmt.containerservice.models.NetworkPolicy
     :param pod_cidr: A CIDR notation IP range from which to assign pod IPs
-     when kubenet is used.
+     when kubenet is used. Default value: "10.244.0.0/16" .
     :type pod_cidr: str
     :param service_cidr: A CIDR notation IP range from which to assign service
      cluster IPs. It must not overlap with any Subnet IP ranges. Default value:
@@ -61,7 +61,7 @@ class ContainerServiceNetworkProfile(Model):
         super(ContainerServiceNetworkProfile, self).__init__(**kwargs)
         self.network_plugin = kwargs.get('network_plugin', "kubenet")
         self.network_policy = kwargs.get('network_policy', None)
-        self.pod_cidr = kwargs.get('pod_cidr', None)
+        self.pod_cidr = kwargs.get('pod_cidr', "10.244.0.0/16")
         self.service_cidr = kwargs.get('service_cidr', "10.0.0.0/16")
         self.dns_service_ip = kwargs.get('dns_service_ip', "10.0.0.10")
         self.docker_bridge_cidr = kwargs.get('docker_bridge_cidr', "172.17.0.1/16")

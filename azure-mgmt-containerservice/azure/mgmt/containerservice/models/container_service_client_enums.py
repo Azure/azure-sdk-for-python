@@ -220,4 +220,3 @@ class NetworkPlugin(str, Enum):
 class NetworkPolicy(str, Enum):
 
     calico = "calico"
-    cilium = "cilium"

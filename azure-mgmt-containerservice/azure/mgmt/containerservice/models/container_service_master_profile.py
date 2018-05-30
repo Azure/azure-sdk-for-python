@@ -84,8 +84,7 @@ class ContainerServiceMasterProfile(Model):
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
-     identifier. If you specify either master VNet Subnet, or agent VNet
-     Subnet, you need to specify both. And they have to be in the same VNet.
+     identifier.
     :type vnet_subnet_id: str
     :param first_consecutive_static_ip: FirstConsecutiveStaticIP used to
      specify the first static ip of masters. Default value: "10.240.255.5" .
