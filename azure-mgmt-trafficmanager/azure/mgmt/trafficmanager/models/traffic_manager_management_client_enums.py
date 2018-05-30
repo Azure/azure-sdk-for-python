@@ -56,6 +56,8 @@ class TrafficRoutingMethod(str, Enum):
     priority = "Priority"
     weighted = "Weighted"
     geographic = "Geographic"
+    multi_value = "MultiValue"
+    subnet = "Subnet"
 
 
 class TrafficViewEnrollmentStatus(str, Enum):
