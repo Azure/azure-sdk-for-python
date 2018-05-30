@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ReservationRecommendationsOperations(object):
-    """ReservationRecommendationsOperations operations.
+class ForecastsOperations(object):
+    """ForecastsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-31. Constant value: "2018-03-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2018-05-31".
     """
 
     models = models
@@ -32,25 +32,27 @@ class ReservationRecommendationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31"
+        self.api_version = "2018-05-31"
 
         self.config = config
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """List of recomendations for purchasing reserved instances.
+        """Lists the forecast charges by subscriptionId.
 
-        :param filter: May be used to filter reservationRecommendations by
-         properties/scope and properties/lookBackPeriod.
+        :param filter: May be used to filter forecasts by properties/usageDate
+         (Utc time), properties/chargeType or properties/grain. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationRecommendations
+        :return: An iterator like instance of Forecast
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationRecommendationsPaged[~azure.mgmt.consumption.models.ReservationRecommendations]
+         ~azure.mgmt.consumption.models.ForecastPaged[~azure.mgmt.consumption.models.Forecast]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -95,12 +97,12 @@ class ReservationRecommendationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationRecommendationsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ForecastPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationRecommendationsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ForecastPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/reservationRecommendations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/forecasts'}
