@@ -55,7 +55,7 @@ class MetricAlertResource(Resource):
     :type auto_mitigate: bool
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
-    :type actions: list[~azure.mgmt.monitor.models.Action]
+    :type actions: list[~azure.mgmt.monitor.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: datetime
     """
@@ -88,7 +88,7 @@ class MetricAlertResource(Resource):
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
-        'actions': {'key': 'properties.actions', 'type': '[Action]'},
+        'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 

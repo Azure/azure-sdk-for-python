@@ -17,19 +17,15 @@ class AlertingAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_group_id: the id of the action group to use.
-    :type action_group_id: str
-    :param webhook_properties:
-    :type webhook_properties: dict[str, str]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param severity: Required. Severity of the alert. Possible values include:
      '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-    :param azns_action: Required. azns notification group reference.
+    :param azns_action: Required. Azure action group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
     :param throttling_in_min: time (in minutes) for which Alerts should be
-     throttled
+     throttled or suppressed.
     :type throttling_in_min: int
     :param trigger: Required. The trigger condition that results in the alert
      rule being.
@@ -44,8 +40,6 @@ class AlertingAction(Action):
     }
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'severity': {'key': 'severity', 'type': 'str'},
         'azns_action': {'key': 'aznsAction', 'type': 'AzNsActionGroup'},
@@ -53,8 +47,8 @@ class AlertingAction(Action):
         'trigger': {'key': 'trigger', 'type': 'TriggerCondition'},
     }
 
-    def __init__(self, *, severity, azns_action, trigger, action_group_id: str=None, webhook_properties=None, throttling_in_min: int=None, **kwargs) -> None:
-        super(AlertingAction, self).__init__(action_group_id=action_group_id, webhook_properties=webhook_properties, **kwargs)
+    def __init__(self, *, severity, azns_action, trigger, throttling_in_min: int=None, **kwargs) -> None:
+        super(AlertingAction, self).__init__(**kwargs)
         self.severity = severity
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min

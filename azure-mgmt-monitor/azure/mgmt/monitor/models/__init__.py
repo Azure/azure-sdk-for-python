@@ -87,7 +87,7 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
-    from .action_py3 import Action
+    from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
     from .metric_alert_resource_py3 import MetricAlertResource
     from .metric_alert_resource_patch_py3 import MetricAlertResourcePatch
@@ -99,6 +99,7 @@ try:
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
     from .source_py3 import Source
     from .schedule_py3 import Schedule
+    from .action_py3 import Action
     from .log_search_rule_resource_py3 import LogSearchRuleResource
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
@@ -181,7 +182,7 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
-    from .action import Action
+    from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
     from .metric_alert_resource import MetricAlertResource
     from .metric_alert_resource_patch import MetricAlertResourcePatch
@@ -193,6 +194,7 @@ except (SyntaxError, ImportError):
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
     from .source import Source
     from .schedule import Schedule
+    from .action import Action
     from .log_search_rule_resource import LogSearchRuleResource
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
@@ -310,7 +312,7 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
-    'Action',
+    'MetricAlertAction',
     'MetricAlertCriteria',
     'MetricAlertResource',
     'MetricAlertResourcePatch',
@@ -322,6 +324,7 @@ __all__ = [
     'MetricAlertSingleResourceMultipleMetricCriteria',
     'Source',
     'Schedule',
+    'Action',
     'LogSearchRuleResource',
     'TriggerCondition',
     'AzNsActionGroup',
