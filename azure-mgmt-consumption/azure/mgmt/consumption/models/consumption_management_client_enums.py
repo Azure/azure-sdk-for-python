@@ -12,27 +12,20 @@
 from enum import Enum
 
 
-class CategoryType(Enum):
+class Grain(Enum):
 
-    cost = "Cost"
-    usage = "Usage"
-
-
-class TimeGrainType(Enum):
-
+    daily = "Daily"
     monthly = "Monthly"
-    quarterly = "Quarterly"
-    annually = "Annually"
+    yearly = "Yearly"
 
 
-class OperatorType(Enum):
+class ChargeType(Enum):
 
-    equal_to = "EqualTo"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+    actual = "Actual"
+    forecast = "Forecast"
 
 
-class Datagrain(Enum):
+class Bound(Enum):
 
-    daily_grain = "daily"
-    monthly_grain = "monthly"
+    upper = "Upper"
+    lower = "Lower"
