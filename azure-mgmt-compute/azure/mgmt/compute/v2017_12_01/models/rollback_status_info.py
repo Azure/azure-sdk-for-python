@@ -25,7 +25,7 @@ class RollbackStatusInfo(Model):
     :ivar failed_rolledback_instance_count: The number of instances which
      failed to rollback.
     :vartype failed_rolledback_instance_count: int
-    :ivar rollback_error: Error Details if OS rollback failed.
+    :ivar rollback_error: Error details if OS rollback failed.
     :vartype rollback_error: ~azure.mgmt.compute.v2017_12_01.models.ApiError
     """
 
