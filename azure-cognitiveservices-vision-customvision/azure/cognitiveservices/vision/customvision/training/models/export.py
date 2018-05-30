@@ -18,26 +18,32 @@ class Export(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar platform: Possible values include: 'CoreML', 'TensorFlow'
+    :ivar platform: Possible values include: 'CoreML', 'TensorFlow',
+     'DockerFile', 'ONNX'
     :vartype platform: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.enum
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
     :ivar status: Possible values include: 'Exporting', 'Failed', 'Done'
     :vartype status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.enum
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportStatusModel
     :ivar download_uri:
     :vartype download_uri: str
+    :ivar flavor: Possible values include: 'Linux', 'Windows'
+    :vartype flavor: str or
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
     """
 
     _validation = {
         'platform': {'readonly': True},
         'status': {'readonly': True},
         'download_uri': {'readonly': True},
+        'flavor': {'readonly': True},
     }
 
     _attribute_map = {
-        'platform': {'key': 'Platform', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'download_uri': {'key': 'DownloadUri', 'type': 'str'},
+        'platform': {'key': 'platform', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'download_uri': {'key': 'downloadUri', 'type': 'str'},
+        'flavor': {'key': 'flavor', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -45,3 +51,4 @@ class Export(Model):
         self.platform = None
         self.status = None
         self.download_uri = None
+        self.flavor = None

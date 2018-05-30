@@ -42,6 +42,6 @@ class ServerDnsAlias(ProxyResource):
         'azure_dns_record': {'key': 'properties.azureDnsRecord', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ServerDnsAlias, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServerDnsAlias, self).__init__(**kwargs)
         self.azure_dns_record = None

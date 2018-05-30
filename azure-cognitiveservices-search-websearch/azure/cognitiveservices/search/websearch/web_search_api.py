@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.web_operations import WebOperations
@@ -42,7 +42,7 @@ class WebSearchAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class WebSearchAPI(object):
+class WebSearchAPI(SDKClient):
     """The Web Search API lets you send a search query to Bing and get back search results that include links to webpages, images, and more.
 
     :ivar config: Configuration for client.
@@ -61,7 +61,7 @@ class WebSearchAPI(object):
             self, credentials, base_url=None):
 
         self.config = WebSearchAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(WebSearchAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

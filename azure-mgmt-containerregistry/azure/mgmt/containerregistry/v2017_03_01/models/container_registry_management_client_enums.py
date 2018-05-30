@@ -12,18 +12,18 @@
 from enum import Enum
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     basic = "Basic"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     succeeded = "Succeeded"
 
 
-class PasswordName(Enum):
+class PasswordName(str, Enum):
 
     password = "password"
     password2 = "password2"

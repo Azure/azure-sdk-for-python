@@ -76,8 +76,8 @@ class RestorableDroppedDatabase(ProxyResource):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(RestorableDroppedDatabase, self).__init__()
+    def __init__(self, **kwargs):
+        super(RestorableDroppedDatabase, self).__init__(**kwargs)
         self.location = None
         self.database_name = None
         self.edition = None

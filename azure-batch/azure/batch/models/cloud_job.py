@@ -99,7 +99,9 @@ class CloudJob(Model):
     :param execution_info: The execution information for the job.
     :type execution_info: ~azure.batch.models.JobExecutionInformation
     :param stats: Resource usage statistics for the entire lifetime of the
-     job.
+     job. The statistics may not be immediately available. The Batch service
+     performs periodic roll-up of statistics. The typical delay is about 30
+     minutes.
     :type stats: ~azure.batch.models.JobStatistics
     """
 

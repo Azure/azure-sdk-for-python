@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -61,7 +61,7 @@ class CosmosDBConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class CosmosDB(object):
+class CosmosDB(SDKClient):
     """Azure Cosmos DB Database Service Resource Provider REST API
 
     :ivar config: Configuration for client.
@@ -106,7 +106,7 @@ class CosmosDB(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(CosmosDB, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-04-08'

@@ -39,8 +39,8 @@ class ResourceIdentity(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, type=None):
-        super(ResourceIdentity, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceIdentity, self).__init__(**kwargs)
         self.principal_id = None
-        self.type = type
+        self.type = kwargs.get('type', None)
         self.tenant_id = None

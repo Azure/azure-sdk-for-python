@@ -32,8 +32,8 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         # Create a Namespace
         namespace_name = "testingpythontestcasequeue"
 
-        namespaceparameter = SBNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, SBSku(SkuName.standard))
-        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter,None,True).output
+        namespaceparameter = SBNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=SBSku(name=SkuName.standard))
+        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
         self.assertEqual(creatednamespace.name, namespace_name)
 
         while (self.servicebus_client.namespaces.get(resource_group_name, namespace_name).provisioning_state != 'Succeeded'):
@@ -56,7 +56,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(listbynamespacequeueresponse[0].name, queue_name)
 
         # update queue
-        updatequeueresponse = self.servicebus_client.queues.create_or_update(resource_group_name, namespace_name, queue_name, SBQueue( enable_express=True, max_delivery_count=5, max_size_in_megabytes=1024 ))
+        updatequeueresponse = self.servicebus_client.queues.create_or_update(resource_group_name, namespace_name, queue_name, SBQueue(enable_express=True, max_delivery_count=5, max_size_in_megabytes=1024 ))
         self.assertEqual(updatequeueresponse.name, queue_name)
         self.assertEqual(updatequeueresponse.max_delivery_count, 5)
         self.assertEqual(updatequeueresponse.max_size_in_megabytes, 1024)
@@ -93,7 +93,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
 
         # regenerate Keys for authorizationrule - Primary
         regenrateSecondarykeyauthorizationrule = self.servicebus_client.queues.regenerate_keys(resource_group_name,namespace_name, queue_name, authoRule_name,'SecondaryKey')
-        self.assertNotEqual(listkeysauthorizationrule.secondary_key,regenrateSecondarykeyauthorizationrule.secondary_key)
+        self.assertNotEqual(listkeysauthorizationrule.secondary_key, regenrateSecondarykeyauthorizationrule.secondary_key)
 
         # delete the authorizationrule
         self.servicebus_client.queues.delete_authorization_rule(resource_group_name, namespace_name, queue_name, authoRule_name)
@@ -106,7 +106,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.servicebus_client.queues.delete(resource_group_name, namespace_name, queue_name)
 
         # Delete the create namespace
-        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name,None,True).output
+        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name).result()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

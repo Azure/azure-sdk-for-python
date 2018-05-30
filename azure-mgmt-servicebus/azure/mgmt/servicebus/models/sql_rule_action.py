@@ -26,5 +26,11 @@ class SqlRuleAction(Action):
     :type requires_preprocessing: bool
     """
 
-    def __init__(self, sql_expression=None, compatibility_level=None, requires_preprocessing=True):
-        super(SqlRuleAction, self).__init__(sql_expression=sql_expression, compatibility_level=compatibility_level, requires_preprocessing=requires_preprocessing)
+    _attribute_map = {
+        'sql_expression': {'key': 'sqlExpression', 'type': 'str'},
+        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'int'},
+        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SqlRuleAction, self).__init__(**kwargs)

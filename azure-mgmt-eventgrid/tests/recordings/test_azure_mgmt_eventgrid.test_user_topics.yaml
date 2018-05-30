@@ -1,0 +1,258 @@
+interactions:
+- request:
+    body: '{"location": "westcentralus", "properties": {"inputSchema": "EventGridSchema"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['79']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"properties":{"provisioningState":"Creating","endpoint":null,"inputSchema":"EventGridSchema"},"location":"westcentralus","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1","name":"kalspython1","type":"Microsoft.EventGrid/topics"}'}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/44C4CF5C-8A0B-409F-A2A2-E6FA165CDE36?api-version=2018-05-01-preview']
+      cache-control: [no-cache]
+      content-length: ['365']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/44C4CF5C-8A0B-409F-A2A2-E6FA165CDE36?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/44C4CF5C-8A0B-409F-A2A2-E6FA165CDE36?api-version=2018-05-01-preview","name":"44c4cf5c-8a0b-409f-a2a2-e6fa165cde36","status":"Succeeded"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['294']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"properties":{"provisioningState":"Succeeded","endpoint":"https://kalspython1.westcentralus-1.eventgrid.azure.net/api/events","inputSchema":"EventGridSchema"},"location":"westcentralus","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1","name":"kalspython1","type":"Microsoft.EventGrid/topics"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['430']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:41 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"destination": {"endpointType": "WebHook", "properties":
+      {"endpointUrl": "https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1?code=69AbujfvYn77Ccf5OySDcTk9CYM1b9Ua2lO37ayoWb97fGRWELGbnA=="}},
+      "filter": {"isSubjectCaseSensitive": false}, "eventDeliverySchema": "EventGridSchema"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['302']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1/providers/Microsoft.EventGrid/eventSubscriptions/kalspythonEventSubscription2?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"properties":{"topic":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/microsoft.eventgrid/topics/kalspython1","provisioningState":"Creating","destination":{"properties":{"endpointUrl":null,"endpointBaseUrl":"https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1"},"endpointType":"WebHook"},"filter":{},"labels":null,"eventDeliverySchema":"EventGridSchema"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1/providers/Microsoft.EventGrid/eventSubscriptions/kalspythonEventSubscription2","name":"kalspythonEventSubscription2","type":"Microsoft.EventGrid/eventSubscriptions"}'}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/C6641190-B450-41B4-B60D-40A9126BF707?api-version=2018-05-01-preview']
+      cache-control: [no-cache]
+      content-length: ['782']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:41 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/C6641190-B450-41B4-B60D-40A9126BF707?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationsStatus/C6641190-B450-41B4-B60D-40A9126BF707?api-version=2018-05-01-preview","name":"c6641190-b450-41b4-b60d-40a9126bf707","status":"Succeeded"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['294']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1/providers/Microsoft.EventGrid/eventSubscriptions/kalspythonEventSubscription2?api-version=2018-05-01-preview
+  response:
+    body: {string: '{"properties":{"topic":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/microsoft.eventgrid/topics/kalspython1","provisioningState":"Succeeded","destination":{"properties":{"endpointUrl":null,"endpointBaseUrl":"https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1"},"endpointType":"WebHook"},"filter":{"subjectBeginsWith":"","subjectEndsWith":"","includedEventTypes":["All"]},"labels":null,"eventDeliverySchema":"EventGridSchema"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1/providers/Microsoft.EventGrid/eventSubscriptions/kalspythonEventSubscription2","name":"kalspythonEventSubscription2","type":"Microsoft.EventGrid/eventSubscriptions"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['855']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 May 2018 05:36:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1/providers/Microsoft.EventGrid/eventSubscriptions/kalspythonEventSubscription2?api-version=2018-05-01-preview
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 02 May 2018 05:36:54 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationResults/5D0C64CC-A970-49B4-BADD-67A8ECF7FD39?api-version=2018-05-01-preview']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationResults/5D0C64CC-A970-49B4-BADD-67A8ECF7FD39?api-version=2018-05-01-preview
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 02 May 2018 05:37:04 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventgrid_test_user_topics7929117f/providers/Microsoft.EventGrid/topics/kalspython1?api-version=2018-05-01-preview
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 02 May 2018 05:37:05 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationResults/31508444-2625-4E19-9879-56C52082E701?api-version=2018-05-01-preview']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventgrid/2.0.0b1 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westcentralus/operationResults/31508444-2625-4E19-9879-56C52082E701?api-version=2018-05-01-preview
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 02 May 2018 05:37:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
