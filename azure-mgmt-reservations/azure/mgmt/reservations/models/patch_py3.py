@@ -30,8 +30,8 @@ class Patch(Model):
         'auto_fit': {'key': 'properties.autoFit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, applied_scope_type=None, applied_scopes=None, auto_fit=None, **kwargs) -> None:
         super(Patch, self).__init__(**kwargs)
-        self.applied_scope_type = kwargs.get('applied_scope_type', None)
-        self.applied_scopes = kwargs.get('applied_scopes', None)
-        self.auto_fit = kwargs.get('auto_fit', None)
+        self.applied_scope_type = applied_scope_type
+        self.applied_scopes = applied_scopes
+        self.auto_fit = auto_fit

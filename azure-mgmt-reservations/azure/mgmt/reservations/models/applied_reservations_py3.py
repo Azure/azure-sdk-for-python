@@ -42,9 +42,9 @@ class AppliedReservations(Model):
         'reservation_order_ids': {'key': 'properties.reservationOrderIds', 'type': 'AppliedReservationList'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, reservation_order_ids=None, **kwargs) -> None:
         super(AppliedReservations, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.reservation_order_ids = kwargs.get('reservation_order_ids', None)
+        self.reservation_order_ids = reservation_order_ids

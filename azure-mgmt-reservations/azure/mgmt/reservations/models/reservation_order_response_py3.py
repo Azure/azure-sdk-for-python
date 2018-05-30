@@ -73,17 +73,17 @@ class ReservationOrderResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, etag: int=None, display_name: str=None, request_date_time=None, created_date_time=None, expiry_date=None, original_quantity: int=None, term=None, provisioning_state=None, reservations=None, **kwargs) -> None:
         super(ReservationOrderResponse, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
+        self.etag = etag
         self.id = None
         self.name = None
-        self.display_name = kwargs.get('display_name', None)
-        self.request_date_time = kwargs.get('request_date_time', None)
-        self.created_date_time = kwargs.get('created_date_time', None)
-        self.expiry_date = kwargs.get('expiry_date', None)
-        self.original_quantity = kwargs.get('original_quantity', None)
-        self.term = kwargs.get('term', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.reservations = kwargs.get('reservations', None)
+        self.display_name = display_name
+        self.request_date_time = request_date_time
+        self.created_date_time = created_date_time
+        self.expiry_date = expiry_date
+        self.original_quantity = original_quantity
+        self.term = term
+        self.provisioning_state = provisioning_state
+        self.reservations = reservations
         self.type = None
