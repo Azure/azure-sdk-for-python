@@ -17,7 +17,7 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param name: Name of Ssl predefined policy.
+    :param name: Name of the Ssl predefined policy.
     :type name: str
     :param cipher_suites: Ssl cipher suites to be enabled in the specified
      order for application gateway.

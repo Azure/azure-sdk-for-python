@@ -25,8 +25,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
      application gateway.
     :type backend_address_pool:
      ~azure.mgmt.network.v2018_04_01.models.SubResource
-    :param backend_http_settings: Frontend port resource of the application
-     gateway.
+    :param backend_http_settings: Backend http settings resource of the
+     application gateway.
     :type backend_http_settings:
      ~azure.mgmt.network.v2018_04_01.models.SubResource
     :param http_listener: Http listener resource of the application gateway.
@@ -40,8 +40,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param provisioning_state: Provisioning state of the request routing rule
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource.
+    :param name: Name of the request routing rule that is unique within an
+     Application Gateway.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.

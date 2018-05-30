@@ -448,6 +448,12 @@ class VirtualNetworkGatewaySkuName(str, Enum):
     vpn_gw1 = "VpnGw1"
     vpn_gw2 = "VpnGw2"
     vpn_gw3 = "VpnGw3"
+    vpn_gw1_az = "VpnGw1AZ"
+    vpn_gw2_az = "VpnGw2AZ"
+    vpn_gw3_az = "VpnGw3AZ"
+    er_gw1_az = "ErGw1AZ"
+    er_gw2_az = "ErGw2AZ"
+    er_gw3_az = "ErGw3AZ"
 
 
 class VirtualNetworkGatewaySkuTier(str, Enum):
@@ -459,6 +465,12 @@ class VirtualNetworkGatewaySkuTier(str, Enum):
     vpn_gw1 = "VpnGw1"
     vpn_gw2 = "VpnGw2"
     vpn_gw3 = "VpnGw3"
+    vpn_gw1_az = "VpnGw1AZ"
+    vpn_gw2_az = "VpnGw2AZ"
+    vpn_gw3_az = "VpnGw3AZ"
+    er_gw1_az = "ErGw1AZ"
+    er_gw2_az = "ErGw2AZ"
+    er_gw3_az = "ErGw3AZ"
 
 
 class VpnClientProtocol(str, Enum):

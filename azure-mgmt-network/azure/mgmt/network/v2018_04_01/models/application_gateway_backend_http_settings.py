@@ -17,9 +17,11 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param port: Port
+    :param port: The destination port on the backend.
     :type port: int
-    :param protocol: Protocol. Possible values include: 'Http', 'Https'
+    :param protocol: The protocol used to communicate with the backend.
+     Possible values are 'Http' and 'Https'. Possible values include: 'Http',
+     'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayProtocol
     :param cookie_based_affinity: Cookie based affinity. Possible values
@@ -57,8 +59,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource.
+    :param name: Name of the backend http settings that is unique within an
+     Application Gateway.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
