@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ManagementGroup(Model):
-    """The management group details.
+class ManagementGroupInfo(Model):
+    """The management group resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -21,7 +21,7 @@ class ManagementGroup(Model):
     :ivar id: The fully qualified ID for the management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
-    :ivar type: The type of the resource.  For example,
+    :ivar type: The type of the resource. For example,
      /providers/Microsoft.Management/managementGroups
     :vartype type: str
     :ivar name: The name of the management group. For example,
@@ -32,13 +32,6 @@ class ManagementGroup(Model):
     :type tenant_id: str
     :param display_name: The friendly name of the management group.
     :type display_name: str
-    :param roles: The role definitions associated with the management group.
-    :type roles: list[str]
-    :param details: Details.
-    :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
-    :param children: The list of children.
-    :type children:
-     list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
     """
 
     _validation = {
@@ -53,18 +46,12 @@ class ManagementGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[str]'},
-        'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
-        'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagementGroup, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: str=None, display_name: str=None, **kwargs) -> None:
+        super(ManagementGroupInfo, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.roles = kwargs.get('roles', None)
-        self.details = kwargs.get('details', None)
-        self.children = kwargs.get('children', None)
+        self.tenant_id = tenant_id
+        self.display_name = display_name

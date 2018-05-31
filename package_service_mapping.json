@@ -334,6 +334,13 @@
     ],
     "service_name": "Machine Learning Compute"
   },
+  "azure-mgmt-managementgroups": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.managementgroups"
+    ],
+    "service_name": "Management Groups"
+  },
   "azure-mgmt-media": {
     "category ": "Management",
     "namespaces": [
