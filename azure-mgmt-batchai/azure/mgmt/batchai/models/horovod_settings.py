@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class HorovodSettings(Model):
-    """Specifies the settings for Chainer job.
+    """Specifies the settings for Horovod job.
 
     All required parameters must be populated in order to send to Azure.
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CustomMpiSettings(Model):
-    """Specifies the settings for a custom tool kit job.
+    """Specifies the settings for a custom MPI job.
 
     All required parameters must be populated in order to send to Azure.
 
