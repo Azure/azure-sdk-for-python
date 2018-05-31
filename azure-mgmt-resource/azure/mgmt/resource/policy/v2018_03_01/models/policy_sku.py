@@ -12,24 +12,28 @@
 from msrest.serialization import Model
 
 
-class Deployment(Model):
-    """Deployment operation parameters.
+class PolicySku(Model):
+    """The policy sku.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param properties: Required. The deployment properties.
-    :type properties:
-     ~azure.mgmt.resource.resources.v2018_02_01.models.DeploymentProperties
+    :param name: Required. The name of the policy sku. Possible values are A0
+     and A1.
+    :type name: str
+    :param tier: The policy sku tier. Possible values are Free and Standard.
+    :type tier: str
     """
 
     _validation = {
-        'properties': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Deployment, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        super(PolicySku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)

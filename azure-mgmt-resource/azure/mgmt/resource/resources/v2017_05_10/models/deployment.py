@@ -17,8 +17,6 @@ class Deployment(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: The location to store the deployment data.
-    :type location: str
     :param properties: Required. The deployment properties.
     :type properties:
      ~azure.mgmt.resource.resources.v2017_05_10.models.DeploymentProperties
@@ -29,11 +27,9 @@ class Deployment(Model):
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
     def __init__(self, **kwargs):
         super(Deployment, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
         self.properties = kwargs.get('properties', None)
