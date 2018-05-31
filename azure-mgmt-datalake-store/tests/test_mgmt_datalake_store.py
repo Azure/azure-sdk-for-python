@@ -6,9 +6,12 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
-
+import adal
 import azure.mgmt.datalake.store
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from msrestazure.azure_active_directory import AADTokenCredentials
+from msrestazure.azure_exceptions import CloudError
+from azure.mgmt.datalake.store import models
 
 # this is the ADL produciton region for now
 _REGION = 'East US 2'
@@ -22,24 +25,115 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=_REGION)
+    def test_vnet_operations(self, location):
+        account_name = self.get_resource_name('adlsacct')
+        vnet_rule_name = self.get_resource_name('vnetrule1')
+        resource_group = 'lewu-rg'
+        subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/default'
+        subscription_id = '9e1f0ab2-2f85-49de-9677-9da6f829b914'
+
+        authority_host_uri = 'https://login.microsoftonline.com'
+        tenant = '72f988bf-86f1-41af-91ab-2d7cd011db47'
+        authority_uri = authority_host_uri + '/' + tenant
+        RESOURCE = 'https://management.core.windows.net/'
+        client_id = '565a758f-4919-40b8-af45-765cbb13664a'
+        client_secret = 'ycCDVcjcBuOwwroCdtlo4ZNzMoJ3iQ70JQExHmL8LnA='
+
+        context = adal.AuthenticationContext(authority_uri, api_version=None)
+        mgmt_token = context.acquire_token_with_client_credentials(RESOURCE, client_id, client_secret)
+        armCreds = AADTokenCredentials(mgmt_token, client_id, resource=RESOURCE)
+
+        adls_mgmt_account_client = azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient(armCreds, subscription_id)
+
+        virtual_network_rule = models.CreateVirtualNetworkRuleWithAccountParameters(
+            name = vnet_rule_name,
+            subnet_id = subnet_id
+        )
+
+        params_create = models.CreateDataLakeStoreAccountParameters(
+            location = location,
+            firewall_state = models.FirewallState.enabled,
+            firewall_allow_azure_ips = models.FirewallAllowAzureIpsState.enabled,
+            virtual_network_rules = [virtual_network_rule]
+        )
+
+        # create and validate an ADLS account
+        response_create = adls_mgmt_account_client.accounts.create(
+            resource_group,
+            account_name,
+            params_create,
+        ).result()
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, response_create.provisioning_state)
+
+        # get the account and ensure that all the values are properly set
+        response_get = adls_mgmt_account_client.accounts.get(
+            resource_group,
+            account_name
+        )
+
+        # Validate the account creation process
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, response_get.provisioning_state)
+        self.assertEqual(response_get.name, account_name)
+
+        # Validate firewall state
+        self.assertEqual(models.FirewallState.enabled, response_get.firewall_state)
+        self.assertEqual(models.FirewallAllowAzureIpsState.enabled, response_get.firewall_allow_azure_ips)
+
+        # Validate virtual network state
+        self.assertEqual(1, len(response_get.virtual_network_rules))
+        self.assertEqual(vnet_rule_name, response_get.virtual_network_rules[0].name)
+        self.assertEqual(subnet_id, response_get.virtual_network_rules[0].subnet_id)
+
+        vnet_rule = adls_mgmt_account_client.virtual_network_rules.get(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        )
+        self.assertEqual(vnet_rule_name, vnet_rule.name)
+        self.assertEqual(subnet_id, vnet_rule.subnet_id)
+
+        updated_subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/updatedSubnetId'
+
+        # Update the virtual network rule to change the subnetId
+        vnet_rule = adls_mgmt_account_client.virtual_network_rules.create_or_update(
+            resource_group,
+            account_name,
+            vnet_rule_name,
+            updated_subnet_id
+        )
+        self.assertEqual(updated_subnet_id, vnet_rule.subnet_id)
+
+        # Remove the virtual network rule and verify it is gone
+        adls_mgmt_account_client.virtual_network_rules.delete(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        )
+        self.assertRaises(CloudError, lambda: adls_mgmt_account_client.virtual_network_rules.get(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        ))
+
+    @ResourceGroupPreparer(location=_REGION)
     def test_adls_accounts(self, resource_group, location):
         # define account params
         account_name = self.get_resource_name('pyarmadls')
         account_name_no_encryption = self.get_resource_name('pyarmadls2')
 
-        params_create = azure.mgmt.datalake.store.models.CreateDataLakeStoreAccountParameters(
+        params_create = models.CreateDataLakeStoreAccountParameters(
             location = location,
-            identity = azure.mgmt.datalake.store.models.EncryptionIdentity(),
-            encryption_config = azure.mgmt.datalake.store.models.EncryptionConfig(
-                type = azure.mgmt.datalake.store.models.EncryptionConfigType.service_managed
+            identity = models.EncryptionIdentity(),
+            encryption_config = models.EncryptionConfig(
+                type = models.EncryptionConfigType.service_managed
             ),
-            encryption_state = azure.mgmt.datalake.store.models.EncryptionState.enabled,
+            encryption_state = models.EncryptionState.enabled,
             tags = {
                 'tag1' : 'value1'
             }
         )
 
-        params_create_no_encryption = azure.mgmt.datalake.store.models.CreateDataLakeStoreAccountParameters(
+        params_create_no_encryption = models.CreateDataLakeStoreAccountParameters(
             location = location,
             tags = {
                 'tag1' : 'value1'
@@ -48,7 +142,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # ensure that the account name is available
         name_availability = self.adls_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertTrue(name_availability.name_available)
@@ -62,20 +156,20 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # ensure that the account name is no longer available
         name_availability = self.adls_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertFalse(name_availability.name_available)
-        
+
         # full validation of the create
         self.assertEqual(adls_account.name, account_name)
-        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
         self.assertIsNotNone(adls_account.id)
         self.assertIn(account_name, adls_account.id)
         self.assertIn(account_name, adls_account.endpoint)
         self.assertEqual(location, adls_account.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account.type)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
+        self.assertEqual(models.EncryptionState.enabled, adls_account.encryption_state)
         self.assertEqual('SystemAssigned', adls_account.identity.type)
         self.assertIsNotNone(adls_account.identity.principal_id)
         self.assertIsNotNone(adls_account.identity.tenant_id)
@@ -89,13 +183,13 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # full validation
         self.assertEqual(adls_account.name, account_name)
-        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
         self.assertIsNotNone(adls_account.id)
         self.assertIn(account_name, adls_account.id)
         self.assertIn(account_name, adls_account.endpoint)
         self.assertEqual(location, adls_account.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account.type)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
+        self.assertEqual(models.EncryptionState.enabled, adls_account.encryption_state)
         self.assertEqual('SystemAssigned', adls_account.identity.type)
         self.assertIsNotNone(adls_account.identity.principal_id)
         self.assertIsNotNone(adls_account.identity.tenant_id)
@@ -116,13 +210,13 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # full validation of the create
         self.assertEqual(adls_account_no_encryption.name, account_name_no_encryption)
-        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account_no_encryption.provisioning_state)
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, adls_account_no_encryption.provisioning_state)
         self.assertIsNotNone(adls_account_no_encryption.id)
         self.assertIn(account_name_no_encryption, adls_account_no_encryption.id)
         self.assertIn(account_name_no_encryption, adls_account_no_encryption.endpoint)
         self.assertEqual(location, adls_account_no_encryption.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account_no_encryption.type)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account_no_encryption.encryption_state)
+        self.assertEqual(models.EncryptionState.enabled, adls_account_no_encryption.encryption_state)
         self.assertIsNone(adls_account_no_encryption.identity)
         self.assertEqual(adls_account_no_encryption.tags['tag1'], 'value1')
 
@@ -137,7 +231,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         adls_account = self.adls_account_client.accounts.update(
             resource_group.name,
             account_name,
-            azure.mgmt.datalake.store.models.UpdateDataLakeStoreAccountParameters(
+            models.UpdateDataLakeStoreAccountParameters(
                 tags = {
                     'tag2' : 'value2'
                 }
@@ -145,15 +239,15 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         ).result()
 
         self.assertEqual(adls_account.tags['tag2'], 'value2')
-        
-        # confirm that 'locations.get_capability' is functional 
+
+        # confirm that 'locations.get_capability' is functional
         get_capability = self.adls_account_client.locations.get_capability(location.replace(" ", ""))
         self.assertIsNotNone(get_capability)
 
         # confirm that 'operations.list' is functional
         operations_list = self.adls_account_client.operations.list()
         self.assertIsNotNone(operations_list)
-        
+
         self.adls_account_client.accounts.delete(
             resource_group.name,
             account_name
