@@ -55,8 +55,8 @@ class DatabaseUsage(Model):
         'next_reset_time': {'key': 'nextResetTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(DatabaseUsage, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseUsage, self).__init__(**kwargs)
         self.name = None
         self.resource_name = None
         self.display_name = None

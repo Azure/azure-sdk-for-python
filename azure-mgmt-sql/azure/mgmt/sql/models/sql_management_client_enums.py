@@ -12,59 +12,67 @@
 from enum import Enum
 
 
-class BackupLongTermRetentionPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class CapabilityStatus(Enum):
-
-    visible = "Visible"
-    available = "Available"
-    default = "Default"
-    disabled = "Disabled"
-
-
-class MaxSizeUnits(Enum):
-
-    megabytes = "Megabytes"
-    gigabytes = "Gigabytes"
-    terabytes = "Terabytes"
-    petabytes = "Petabytes"
-
-
-class PerformanceLevelUnit(Enum):
-
-    dtu = "DTU"
-
-
-class CheckNameAvailabilityReason(Enum):
+class CheckNameAvailabilityReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
 
 
-class ServerConnectionType(Enum):
+class ServerConnectionType(str, Enum):
 
     default = "Default"
     proxy = "Proxy"
     redirect = "Redirect"
 
 
-class CreateMode(Enum):
+class SecurityAlertPolicyState(str, Enum):
 
-    copy = "Copy"
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyEmailAccountAdmins(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyUseServerDefault(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class DataMaskingState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingRuleState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingFunction(str, Enum):
+
     default = "Default"
-    non_readable_secondary = "NonReadableSecondary"
-    online_secondary = "OnlineSecondary"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-    restore = "Restore"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+    ccn = "CCN"
+    email = "Email"
+    number = "Number"
+    ssn = "SSN"
+    text = "Text"
 
 
-class DatabaseEdition(Enum):
+class GeoBackupPolicyState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DatabaseEdition(str, Enum):
 
     web = "Web"
     business = "Business"
@@ -79,7 +87,7 @@ class DatabaseEdition(Enum):
     system2 = "System2"
 
 
-class ServiceObjectiveName(Enum):
+class ServiceObjectiveName(str, Enum):
 
     system = "System"
     system0 = "System0"
@@ -148,20 +156,80 @@ class ServiceObjectiveName(Enum):
     elastic_pool = "ElasticPool"
 
 
-class TransparentDataEncryptionStatus(Enum):
+class StorageKeyType(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    storage_access_key = "StorageAccessKey"
+    shared_access_key = "SharedAccessKey"
 
 
-class RecommendedIndexAction(Enum):
+class AuthenticationType(str, Enum):
+
+    sql = "SQL"
+    ad_password = "ADPassword"
+
+
+class UnitType(str, Enum):
+
+    count = "count"
+    bytes = "bytes"
+    seconds = "seconds"
+    percent = "percent"
+    count_per_second = "countPerSecond"
+    bytes_per_second = "bytesPerSecond"
+
+
+class PrimaryAggregationType(str, Enum):
+
+    none = "None"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+
+class UnitDefinitionType(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+
+
+class ElasticPoolEdition(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class ReplicationRole(str, Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+    non_readable_secondary = "NonReadableSecondary"
+    source = "Source"
+    copy = "Copy"
+
+
+class ReplicationState(str, Enum):
+
+    pending = "PENDING"
+    seeding = "SEEDING"
+    catch_up = "CATCH_UP"
+    suspended = "SUSPENDED"
+
+
+class RecommendedIndexAction(str, Enum):
 
     create = "Create"
     drop = "Drop"
     rebuild = "Rebuild"
 
 
-class RecommendedIndexState(Enum):
+class RecommendedIndexState(str, Enum):
 
     active = "Active"
     pending = "Pending"
@@ -176,7 +244,7 @@ class RecommendedIndexState(Enum):
     success = "Success"
 
 
-class RecommendedIndexType(Enum):
+class RecommendedIndexType(str, Enum):
 
     clustered = "CLUSTERED"
     nonclustered = "NONCLUSTERED"
@@ -184,150 +252,25 @@ class RecommendedIndexType(Enum):
     clusteredcolumnstore = "CLUSTERED COLUMNSTORE"
 
 
-class ReadScale(Enum):
+class TransparentDataEncryptionStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class SampleName(Enum):
-
-    adventure_works_lt = "AdventureWorksLT"
-
-
-class TransparentDataEncryptionActivityStatus(Enum):
+class TransparentDataEncryptionActivityStatus(str, Enum):
 
     encrypting = "Encrypting"
     decrypting = "Decrypting"
 
 
-class ElasticPoolEdition(Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-
-class SecurityAlertPolicyState(Enum):
-
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(Enum):
+class BlobAuditingPolicyState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class SecurityAlertPolicyUseServerDefault(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class DataMaskingState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class DataMaskingRuleState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class DataMaskingFunction(Enum):
-
-    default = "Default"
-    ccn = "CCN"
-    email = "Email"
-    number = "Number"
-    ssn = "SSN"
-    text = "Text"
-
-
-class ElasticPoolState(Enum):
-
-    creating = "Creating"
-    ready = "Ready"
-    disabled = "Disabled"
-
-
-class GeoBackupPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class StorageKeyType(Enum):
-
-    storage_access_key = "StorageAccessKey"
-    shared_access_key = "SharedAccessKey"
-
-
-class AuthenticationType(Enum):
-
-    sql = "SQL"
-    ad_password = "ADPassword"
-
-
-class UnitType(Enum):
-
-    count = "count"
-    bytes = "bytes"
-    seconds = "seconds"
-    percent = "percent"
-    count_per_second = "countPerSecond"
-    bytes_per_second = "bytesPerSecond"
-
-
-class PrimaryAggregationType(Enum):
-
-    none = "None"
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-
-
-class UnitDefinitionType(Enum):
-
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    percent = "Percent"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-
-
-class ReplicationRole(Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
-    non_readable_secondary = "NonReadableSecondary"
-    source = "Source"
-    copy = "Copy"
-
-
-class ReplicationState(Enum):
-
-    pending = "PENDING"
-    seeding = "SEEDING"
-    catch_up = "CATCH_UP"
-    suspended = "SUSPENDED"
-
-
-class BlobAuditingPolicyState(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class AutomaticTuningMode(Enum):
+class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
     custom = "Custom"
@@ -335,20 +278,20 @@ class AutomaticTuningMode(Enum):
     unspecified = "Unspecified"
 
 
-class AutomaticTuningOptionModeDesired(Enum):
+class AutomaticTuningOptionModeDesired(str, Enum):
 
     off = "Off"
     on = "On"
     default = "Default"
 
 
-class AutomaticTuningOptionModeActual(Enum):
+class AutomaticTuningOptionModeActual(str, Enum):
 
     off = "Off"
     on = "On"
 
 
-class AutomaticTuningDisabledReason(Enum):
+class AutomaticTuningDisabledReason(str, Enum):
 
     default = "Default"
     disabled = "Disabled"
@@ -359,55 +302,55 @@ class AutomaticTuningDisabledReason(Enum):
     not_supported = "NotSupported"
 
 
-class ServerKeyType(Enum):
+class ServerKeyType(str, Enum):
 
     service_managed = "ServiceManaged"
     azure_key_vault = "AzureKeyVault"
 
 
-class ReadWriteEndpointFailoverPolicy(Enum):
+class ReadWriteEndpointFailoverPolicy(str, Enum):
 
     manual = "Manual"
     automatic = "Automatic"
 
 
-class ReadOnlyEndpointFailoverPolicy(Enum):
+class ReadOnlyEndpointFailoverPolicy(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
 
 
-class FailoverGroupReplicationRole(Enum):
+class FailoverGroupReplicationRole(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"
 
 
-class OperationOrigin(Enum):
+class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
 
 
-class IdentityType(Enum):
+class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
 
 
-class SyncAgentState(Enum):
+class SyncAgentState(str, Enum):
 
     online = "Online"
     offline = "Offline"
     never_connected = "NeverConnected"
 
 
-class SyncMemberDbType(Enum):
+class SyncMemberDbType(str, Enum):
 
     azure_sql_database = "AzureSqlDatabase"
     sql_server_database = "SqlServerDatabase"
 
 
-class SyncGroupLogType(Enum):
+class SyncGroupLogType(str, Enum):
 
     all = "All"
     error = "Error"
@@ -415,13 +358,13 @@ class SyncGroupLogType(Enum):
     success = "Success"
 
 
-class SyncConflictResolutionPolicy(Enum):
+class SyncConflictResolutionPolicy(str, Enum):
 
     hub_win = "HubWin"
     member_win = "MemberWin"
 
 
-class SyncGroupState(Enum):
+class SyncGroupState(str, Enum):
 
     not_ready = "NotReady"
     error = "Error"
@@ -430,14 +373,14 @@ class SyncGroupState(Enum):
     good = "Good"
 
 
-class SyncDirection(Enum):
+class SyncDirection(str, Enum):
 
     bidirectional = "Bidirectional"
     one_way_member_to_hub = "OneWayMemberToHub"
     one_way_hub_to_member = "OneWayHubToMember"
 
 
-class SyncMemberState(Enum):
+class SyncMemberState(str, Enum):
 
     sync_in_progress = "SyncInProgress"
     sync_succeeded = "SyncSucceeded"
@@ -459,7 +402,7 @@ class SyncMemberState(Enum):
     un_reprovisioned = "UnReprovisioned"
 
 
-class VirtualNetworkRuleState(Enum):
+class VirtualNetworkRuleState(str, Enum):
 
     initializing = "Initializing"
     in_progress = "InProgress"
@@ -468,27 +411,27 @@ class VirtualNetworkRuleState(Enum):
     unknown = "Unknown"
 
 
-class AutomaticTuningServerMode(Enum):
+class AutomaticTuningServerMode(str, Enum):
 
     custom = "Custom"
     auto = "Auto"
     unspecified = "Unspecified"
 
 
-class AutomaticTuningServerReason(Enum):
+class AutomaticTuningServerReason(str, Enum):
 
     default = "Default"
     disabled = "Disabled"
     auto_configured = "AutoConfigured"
 
 
-class RestorePointType(Enum):
+class RestorePointType(str, Enum):
 
     continuous = "CONTINUOUS"
     discrete = "DISCRETE"
 
 
-class ManagementOperationState(Enum):
+class ManagementOperationState(str, Enum):
 
     pending = "Pending"
     in_progress = "InProgress"
@@ -496,3 +439,122 @@ class ManagementOperationState(Enum):
     failed = "Failed"
     cancel_in_progress = "CancelInProgress"
     cancelled = "Cancelled"
+
+
+class MaxSizeUnit(str, Enum):
+
+    megabytes = "Megabytes"
+    gigabytes = "Gigabytes"
+    terabytes = "Terabytes"
+    petabytes = "Petabytes"
+
+
+class LogSizeUnit(str, Enum):
+
+    megabytes = "Megabytes"
+    gigabytes = "Gigabytes"
+    terabytes = "Terabytes"
+    petabytes = "Petabytes"
+    percent = "Percent"
+
+
+class CapabilityStatus(str, Enum):
+
+    visible = "Visible"
+    available = "Available"
+    default = "Default"
+    disabled = "Disabled"
+
+
+class PerformanceLevelUnit(str, Enum):
+
+    dtu = "DTU"
+    vcores = "VCores"
+
+
+class CreateMode(str, Enum):
+
+    default = "Default"
+    copy = "Copy"
+    secondary = "Secondary"
+    point_in_time_restore = "PointInTimeRestore"
+    restore = "Restore"
+    recovery = "Recovery"
+    restore_external_backup = "RestoreExternalBackup"
+    restore_external_backup_secondary = "RestoreExternalBackupSecondary"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+    online_secondary = "OnlineSecondary"
+
+
+class SampleName(str, Enum):
+
+    adventure_works_lt = "AdventureWorksLT"
+    wide_world_importers_std = "WideWorldImportersStd"
+    wide_world_importers_full = "WideWorldImportersFull"
+
+
+class DatabaseStatus(str, Enum):
+
+    online = "Online"
+    restoring = "Restoring"
+    recovery_pending = "RecoveryPending"
+    recovering = "Recovering"
+    suspect = "Suspect"
+    offline = "Offline"
+    standby = "Standby"
+    shutdown = "Shutdown"
+    emergency_mode = "EmergencyMode"
+    auto_closed = "AutoClosed"
+    copying = "Copying"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    offline_secondary = "OfflineSecondary"
+    pausing = "Pausing"
+    paused = "Paused"
+    resuming = "Resuming"
+    scaling = "Scaling"
+
+
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
+class DatabaseLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class DatabaseReadScale(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ElasticPoolState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    disabled = "Disabled"
+
+
+class ElasticPoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class LongTermRetentionDatabaseState(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class CapabilityGroup(str, Enum):
+
+    supported_editions = "supportedEditions"
+    supported_elastic_pool_editions = "supportedElasticPoolEditions"
+    supported_managed_instance_versions = "supportedManagedInstanceVersions"

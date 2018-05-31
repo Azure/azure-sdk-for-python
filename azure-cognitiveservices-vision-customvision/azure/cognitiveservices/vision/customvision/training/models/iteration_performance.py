@@ -31,6 +31,8 @@ class IterationPerformance(Model):
     :vartype recall: float
     :ivar recall_std_deviation: Gets the standard deviation for the recall
     :vartype recall_std_deviation: float
+    :ivar average_precision: Gets the average precision when applicable
+    :vartype average_precision: float
     """
 
     _validation = {
@@ -39,14 +41,16 @@ class IterationPerformance(Model):
         'precision_std_deviation': {'readonly': True},
         'recall': {'readonly': True},
         'recall_std_deviation': {'readonly': True},
+        'average_precision': {'readonly': True},
     }
 
     _attribute_map = {
-        'per_tag_performance': {'key': 'PerTagPerformance', 'type': '[TagPerformance]'},
-        'precision': {'key': 'Precision', 'type': 'float'},
-        'precision_std_deviation': {'key': 'PrecisionStdDeviation', 'type': 'float'},
-        'recall': {'key': 'Recall', 'type': 'float'},
-        'recall_std_deviation': {'key': 'RecallStdDeviation', 'type': 'float'},
+        'per_tag_performance': {'key': 'perTagPerformance', 'type': '[TagPerformance]'},
+        'precision': {'key': 'precision', 'type': 'float'},
+        'precision_std_deviation': {'key': 'precisionStdDeviation', 'type': 'float'},
+        'recall': {'key': 'recall', 'type': 'float'},
+        'recall_std_deviation': {'key': 'recallStdDeviation', 'type': 'float'},
+        'average_precision': {'key': 'averagePrecision', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -56,3 +60,4 @@ class IterationPerformance(Model):
         self.precision_std_deviation = None
         self.recall = None
         self.recall_std_deviation = None
+        self.average_precision = None

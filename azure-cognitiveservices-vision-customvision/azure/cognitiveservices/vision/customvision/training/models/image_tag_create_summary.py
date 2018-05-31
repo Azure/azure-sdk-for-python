@@ -27,9 +27,9 @@ class ImageTagCreateSummary(Model):
     """
 
     _attribute_map = {
-        'created': {'key': 'Created', 'type': '[ImageTagCreateEntry]'},
-        'duplicated': {'key': 'Duplicated', 'type': '[ImageTagCreateEntry]'},
-        'exceeded': {'key': 'Exceeded', 'type': '[ImageTagCreateEntry]'},
+        'created': {'key': 'created', 'type': '[ImageTagCreateEntry]'},
+        'duplicated': {'key': 'duplicated', 'type': '[ImageTagCreateEntry]'},
+        'exceeded': {'key': 'exceeded', 'type': '[ImageTagCreateEntry]'},
     }
 
     def __init__(self, **kwargs):

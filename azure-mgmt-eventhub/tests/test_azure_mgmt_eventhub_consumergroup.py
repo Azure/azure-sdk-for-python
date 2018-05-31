@@ -33,7 +33,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         # Create a Namespace
         namespace_name = "pythontestcaseeventhubnamespaceConsumerGroup"
 
-        namespaceparameter = EHNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, Sku(SkuName.standard))
+        namespaceparameter = EHNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=Sku(name=SkuName.standard))
         poller = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name,
                                                                   namespaceparameter)
         creatednamespace = poller.result()

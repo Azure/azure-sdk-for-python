@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class ErrorType(Enum):
+class ErrorType(str, Enum):
 
     unknown_token = "UnknownToken"
     repeated_token = "RepeatedToken"
 
 
-class ErrorCode(Enum):
+class ErrorCode(str, Enum):
 
     none = "None"
     server_error = "ServerError"
@@ -28,7 +28,7 @@ class ErrorCode(Enum):
     insufficient_authorization = "InsufficientAuthorization"
 
 
-class ErrorSubCode(Enum):
+class ErrorSubCode(str, Enum):
 
     unexpected_error = "UnexpectedError"
     resource_error = "ResourceError"
@@ -43,7 +43,7 @@ class ErrorSubCode(Enum):
     authorization_expired = "AuthorizationExpired"
 
 
-class ActionType(Enum):
+class ActionType(str, Enum):
 
     edit = "Edit"
     load = "Load"

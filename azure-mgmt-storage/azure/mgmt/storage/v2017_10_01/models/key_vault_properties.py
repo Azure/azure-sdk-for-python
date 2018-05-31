@@ -29,8 +29,8 @@ class KeyVaultProperties(Model):
         'key_vault_uri': {'key': 'keyvaulturi', 'type': 'str'},
     }
 
-    def __init__(self, key_name=None, key_version=None, key_vault_uri=None):
-        super(KeyVaultProperties, self).__init__()
-        self.key_name = key_name
-        self.key_version = key_version
-        self.key_vault_uri = key_vault_uri
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+        self.key_vault_uri = kwargs.get('key_vault_uri', None)

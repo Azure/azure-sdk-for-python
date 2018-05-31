@@ -230,7 +230,7 @@ class EntitiesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.entitysearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/entities'
+        url = self.search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -284,3 +284,4 @@ class EntitiesOperations(object):
             return client_raw_response
 
         return deserialized
+    search.metadata = {'url': '/entities'}

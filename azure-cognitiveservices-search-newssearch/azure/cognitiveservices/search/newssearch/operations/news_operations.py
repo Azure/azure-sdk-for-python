@@ -320,7 +320,7 @@ class NewsOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/news/search'
+        url = self.search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -382,6 +382,7 @@ class NewsOperations(object):
             return client_raw_response
 
         return deserialized
+    search.metadata = {'url': '/news/search'}
 
     def category(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, category=None, count=None, headline_count=None, market=None, offset=None, original_image=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
@@ -555,7 +556,7 @@ class NewsOperations(object):
          by 20 (for example, 0, 20, 40). It is possible for multiple pages to
          include some overlap in results. If you do not specify the
          [category](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#category)
-         parameter, Bing ignores this paramter.
+         parameter, Bing ignores this parameter.
         :type count: int
         :param headline_count: The number of headline articles to return in
          the response. The default is 12. Specify this parameter only if you do
@@ -591,7 +592,7 @@ class NewsOperations(object):
          example, 0, 20, 40). It is possible for multiple pages to include some
          overlap in results. If you do not specify the
          [category](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#category)
-         parameter, Bing ignores this paramter.
+         parameter, Bing ignores this parameter.
         :type offset: int
         :param original_image: A Boolean value that determines whether the
          image's contentUrl contains a URL that points to a thumbnail of the
@@ -665,7 +666,7 @@ class NewsOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/news'
+        url = self.category.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -726,6 +727,7 @@ class NewsOperations(object):
             return client_raw_response
 
         return deserialized
+    category.metadata = {'url': '/news'}
 
     def trending(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, market=None, offset=None, safe_search=None, set_lang=None, since=None, sort_by=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
@@ -992,7 +994,7 @@ class NewsOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/news/trendingtopics'
+        url = self.trending.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1051,3 +1053,4 @@ class NewsOperations(object):
             return client_raw_response
 
         return deserialized
+    trending.metadata = {'url': '/news/trendingtopics'}

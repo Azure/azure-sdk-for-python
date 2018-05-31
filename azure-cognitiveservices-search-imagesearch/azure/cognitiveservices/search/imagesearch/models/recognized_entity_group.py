@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class RecognizedEntityGroup(Model):
     """Defines a group of previously recognized entities.
 
-    :param recognized_entity_regions: The regions of the image that contain
-     entities.
+    All required parameters must be populated in order to send to Azure.
+
+    :param recognized_entity_regions: Required. The regions of the image that
+     contain entities.
     :type recognized_entity_regions:
      list[~azure.cognitiveservices.search.imagesearch.models.RecognizedEntityRegion]
-    :param name: The name of the group where images of the entity were also
-     found. The following are possible groups. CelebRecognitionAnnotations:
-     Similar to CelebrityAnnotations but provides a higher probability of an
-     accurate match. CelebrityAnnotations: Contains celebrities such as actors,
-     politicians, athletes, and historical figures.
+    :param name: Required. The name of the group where images of the entity
+     were also found. The following are possible groups.
+     CelebRecognitionAnnotations: Similar to CelebrityAnnotations but provides
+     a higher probability of an accurate match. CelebrityAnnotations: Contains
+     celebrities such as actors, politicians, athletes, and historical figures.
     :type name: str
     """
 
@@ -37,7 +39,7 @@ class RecognizedEntityGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, recognized_entity_regions, name):
-        super(RecognizedEntityGroup, self).__init__()
-        self.recognized_entity_regions = recognized_entity_regions
-        self.name = name
+    def __init__(self, **kwargs):
+        super(RecognizedEntityGroup, self).__init__(**kwargs)
+        self.recognized_entity_regions = kwargs.get('recognized_entity_regions', None)
+        self.name = kwargs.get('name', None)

@@ -19,14 +19,19 @@ class ImageUrlCreateEntry(Model):
     :type url: str
     :param tag_ids:
     :type tag_ids: list[str]
+    :param regions:
+    :type regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.Region]
     """
 
     _attribute_map = {
-        'url': {'key': 'Url', 'type': 'str'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+        'url': {'key': 'url', 'type': 'str'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
+        'regions': {'key': 'regions', 'type': '[Region]'},
     }
 
-    def __init__(self, *, url: str=None, tag_ids=None, **kwargs) -> None:
+    def __init__(self, *, url: str=None, tag_ids=None, regions=None, **kwargs) -> None:
         super(ImageUrlCreateEntry, self).__init__(**kwargs)
         self.url = url
         self.tag_ids = tag_ids
+        self.regions = regions

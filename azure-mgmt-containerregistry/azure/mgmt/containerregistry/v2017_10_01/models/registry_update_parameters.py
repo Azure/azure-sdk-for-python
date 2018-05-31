@@ -37,8 +37,9 @@ class RegistryUpdateParameters(Model):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, tags=None, sku=None, admin_user_enabled=None, storage_account=None):
-        self.tags = tags
-        self.sku = sku
-        self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
+    def __init__(self, **kwargs):
+        super(RegistryUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
+        self.storage_account = kwargs.get('storage_account', None)

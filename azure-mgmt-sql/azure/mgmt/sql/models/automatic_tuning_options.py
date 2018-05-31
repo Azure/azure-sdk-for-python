@@ -49,9 +49,9 @@ class AutomaticTuningOptions(Model):
         'reason_desc': {'key': 'reasonDesc', 'type': 'AutomaticTuningDisabledReason'},
     }
 
-    def __init__(self, desired_state=None):
-        super(AutomaticTuningOptions, self).__init__()
-        self.desired_state = desired_state
+    def __init__(self, **kwargs):
+        super(AutomaticTuningOptions, self).__init__(**kwargs)
+        self.desired_state = kwargs.get('desired_state', None)
         self.actual_state = None
         self.reason_code = None
         self.reason_desc = None

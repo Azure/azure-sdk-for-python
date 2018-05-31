@@ -18,6 +18,8 @@ class ServerCommunicationLink(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,7 +28,7 @@ class ServerCommunicationLink(ProxyResource):
     :vartype type: str
     :ivar state: The state.
     :vartype state: str
-    :param partner_server: The name of the partner server.
+    :param partner_server: Required. The name of the partner server.
     :type partner_server: str
     :ivar location: Communication link location.
     :vartype location: str
@@ -55,9 +57,9 @@ class ServerCommunicationLink(ProxyResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, partner_server):
-        super(ServerCommunicationLink, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServerCommunicationLink, self).__init__(**kwargs)
         self.state = None
-        self.partner_server = partner_server
+        self.partner_server = kwargs.get('partner_server', None)
         self.location = None
         self.kind = None

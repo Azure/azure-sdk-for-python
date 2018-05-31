@@ -67,7 +67,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.storage_accounts.delete(group.name, name)
+            self.client.storage_accounts.delete(group.name, name, polling=False)
 
     def _get_resource_group(self, **kwargs):
         try:

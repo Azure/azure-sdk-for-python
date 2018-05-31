@@ -1,8 +1,0 @@
-adal
-azure-mgmt-compute==0.30.0rc5
-azure-mgmt-network==0.30.0rc5
-azure-mgmt-storage==0.30.0rc5
-azure-mgmt-resource==0.30.0rc5
-azure-storage==0.20.2
-Flask<1
-python-dateutil

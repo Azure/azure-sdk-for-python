@@ -21,10 +21,12 @@ class ContractualRulesContractualRule(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     """
 
@@ -42,7 +44,7 @@ class ContractualRulesContractualRule(Model):
         '_type': {'ContractualRules/Attribution': 'ContractualRulesAttribution'}
     }
 
-    def __init__(self):
-        super(ContractualRulesContractualRule, self).__init__()
+    def __init__(self, **kwargs):
+        super(ContractualRulesContractualRule, self).__init__(**kwargs)
         self.target_property_name = None
         self._type = None

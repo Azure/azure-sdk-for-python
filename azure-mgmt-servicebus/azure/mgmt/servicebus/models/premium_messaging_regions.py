@@ -48,6 +48,6 @@ class PremiumMessagingRegions(ResourceNamespacePatch):
         'properties': {'key': 'properties', 'type': 'PremiumMessagingRegionsProperties'},
     }
 
-    def __init__(self, location=None, tags=None, properties=None):
-        super(PremiumMessagingRegions, self).__init__(location=location, tags=tags)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(PremiumMessagingRegions, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

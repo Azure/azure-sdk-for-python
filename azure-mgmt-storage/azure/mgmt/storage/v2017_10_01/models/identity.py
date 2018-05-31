@@ -18,11 +18,13 @@ class Identity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned" .
+    :ivar type: Required. The identity type. Default value: "SystemAssigned" .
     :vartype type: str
     """
 
@@ -40,7 +42,7 @@ class Identity(Model):
 
     type = "SystemAssigned"
 
-    def __init__(self):
-        super(Identity, self).__init__()
+    def __init__(self, **kwargs):
+        super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
