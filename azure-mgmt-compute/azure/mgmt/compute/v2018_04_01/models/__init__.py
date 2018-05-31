@@ -12,7 +12,6 @@
 try:
     from .resource_py3 import Resource
     from .disk_sku_py3 import DiskSku
-    from .resource_update_py3 import ResourceUpdate
     from .image_disk_reference_py3 import ImageDiskReference
     from .creation_data_py3 import CreationData
     from .source_vault_py3 import SourceVault
@@ -29,7 +28,6 @@ try:
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .disk_sku import DiskSku
-    from .resource_update import ResourceUpdate
     from .image_disk_reference import ImageDiskReference
     from .creation_data import CreationData
     from .source_vault import SourceVault
@@ -56,7 +54,6 @@ from .compute_management_client_enums import (
 __all__ = [
     'Resource',
     'DiskSku',
-    'ResourceUpdate',
     'ImageDiskReference',
     'CreationData',
     'SourceVault',
