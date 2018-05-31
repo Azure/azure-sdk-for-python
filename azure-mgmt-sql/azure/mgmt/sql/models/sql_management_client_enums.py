@@ -659,8 +659,8 @@ class LongTermRetentionDatabaseState(str, Enum):
 
 class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
 
-    master = "Master"
-    default = "Default"
+    master = "master"
+    default = "default"
 
 
 class CapabilityGroup(str, Enum):
