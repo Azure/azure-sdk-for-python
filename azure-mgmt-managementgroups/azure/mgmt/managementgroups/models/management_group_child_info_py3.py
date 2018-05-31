@@ -45,11 +45,11 @@ class ManagementGroupChildInfo(Model):
         'children': {'key': 'children', 'type': '[ManagementGroupChildInfo]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, id: str=None, name: str=None, display_name: str=None, roles=None, children=None, **kwargs) -> None:
         super(ManagementGroupChildInfo, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.roles = kwargs.get('roles', None)
-        self.children = kwargs.get('children', None)
+        self.type = type
+        self.id = id
+        self.name = name
+        self.display_name = display_name
+        self.roles = roles
+        self.children = children
