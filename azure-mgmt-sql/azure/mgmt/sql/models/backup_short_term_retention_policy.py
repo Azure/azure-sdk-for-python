@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class ShortTermRetentionPolicy(ProxyResource):
-    """A short term retention policy resource.
+class BackupShortTermRetentionPolicy(ProxyResource):
+    """A short term retention policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -43,5 +43,5 @@ class ShortTermRetentionPolicy(ProxyResource):
     }
 
     def __init__(self, **kwargs):
-        super(ShortTermRetentionPolicy, self).__init__(**kwargs)
+        super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = kwargs.get('retention_days', None)

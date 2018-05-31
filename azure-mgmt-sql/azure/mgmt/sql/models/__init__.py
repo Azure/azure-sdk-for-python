@@ -10,11 +10,11 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .proxy_resource_py3 import ProxyResource
     from .recoverable_database_py3 import RecoverableDatabase
     from .restorable_dropped_database_py3 import RestorableDroppedDatabase
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
     from .check_name_availability_request_py3 import CheckNameAvailabilityRequest
     from .check_name_availability_response_py3 import CheckNameAvailabilityResponse
     from .server_connection_policy_py3 import ServerConnectionPolicy
@@ -48,7 +48,6 @@ try:
     from .transparent_data_encryption_activity_py3 import TransparentDataEncryptionActivity
     from .server_usage_py3 import ServerUsage
     from .database_usage_py3 import DatabaseUsage
-    from .database_blob_auditing_policy_py3 import DatabaseBlobAuditingPolicy
     from .automatic_tuning_options_py3 import AutomaticTuningOptions
     from .database_automatic_tuning_py3 import DatabaseAutomaticTuning
     from .encryption_protector_py3 import EncryptionProtector
@@ -81,6 +80,10 @@ try:
     from .sync_member_py3 import SyncMember
     from .subscription_usage_py3 import SubscriptionUsage
     from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .extended_database_blob_auditing_policy_py3 import ExtendedDatabaseBlobAuditingPolicy
+    from .extended_server_blob_auditing_policy_py3 import ExtendedServerBlobAuditingPolicy
+    from .server_blob_auditing_policy_py3 import ServerBlobAuditingPolicy
+    from .database_blob_auditing_policy_py3 import DatabaseBlobAuditingPolicy
     from .database_vulnerability_assessment_rule_baseline_item_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
@@ -143,13 +146,13 @@ try:
     from .partner_region_info_py3 import PartnerRegionInfo
     from .managed_instance_pair_info_py3 import ManagedInstancePairInfo
     from .instance_failover_group_py3 import InstanceFailoverGroup
-    from .short_term_retention_policy_py3 import ShortTermRetentionPolicy
+    from .backup_short_term_retention_policy_py3 import BackupShortTermRetentionPolicy
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .proxy_resource import ProxyResource
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .proxy_resource import ProxyResource
     from .check_name_availability_request import CheckNameAvailabilityRequest
     from .check_name_availability_response import CheckNameAvailabilityResponse
     from .server_connection_policy import ServerConnectionPolicy
@@ -183,7 +186,6 @@ except (SyntaxError, ImportError):
     from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
     from .server_usage import ServerUsage
     from .database_usage import DatabaseUsage
-    from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
     from .automatic_tuning_options import AutomaticTuningOptions
     from .database_automatic_tuning import DatabaseAutomaticTuning
     from .encryption_protector import EncryptionProtector
@@ -216,6 +218,10 @@ except (SyntaxError, ImportError):
     from .sync_member import SyncMember
     from .subscription_usage import SubscriptionUsage
     from .virtual_network_rule import VirtualNetworkRule
+    from .extended_database_blob_auditing_policy import ExtendedDatabaseBlobAuditingPolicy
+    from .extended_server_blob_auditing_policy import ExtendedServerBlobAuditingPolicy
+    from .server_blob_auditing_policy import ServerBlobAuditingPolicy
+    from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
     from .database_vulnerability_assessment_rule_baseline_item import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
@@ -278,7 +284,7 @@ except (SyntaxError, ImportError):
     from .partner_region_info import PartnerRegionInfo
     from .managed_instance_pair_info import ManagedInstancePairInfo
     from .instance_failover_group import InstanceFailoverGroup
-    from .short_term_retention_policy import ShortTermRetentionPolicy
+    from .backup_short_term_retention_policy import BackupShortTermRetentionPolicy
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -355,7 +361,6 @@ from .sql_management_client_enums import (
     RecommendedIndexType,
     TransparentDataEncryptionStatus,
     TransparentDataEncryptionActivityStatus,
-    BlobAuditingPolicyState,
     AutomaticTuningMode,
     AutomaticTuningOptionModeDesired,
     AutomaticTuningOptionModeActual,
@@ -374,6 +379,7 @@ from .sql_management_client_enums import (
     SyncDirection,
     SyncMemberState,
     VirtualNetworkRuleState,
+    BlobAuditingPolicyState,
     JobAgentState,
     JobExecutionLifecycle,
     ProvisioningState,
@@ -409,11 +415,11 @@ from .sql_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'TrackedResource',
-    'ProxyResource',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
+    'TrackedResource',
+    'Resource',
+    'ProxyResource',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
     'ServerConnectionPolicy',
@@ -447,7 +453,6 @@ __all__ = [
     'TransparentDataEncryptionActivity',
     'ServerUsage',
     'DatabaseUsage',
-    'DatabaseBlobAuditingPolicy',
     'AutomaticTuningOptions',
     'DatabaseAutomaticTuning',
     'EncryptionProtector',
@@ -480,6 +485,10 @@ __all__ = [
     'SyncMember',
     'SubscriptionUsage',
     'VirtualNetworkRule',
+    'ExtendedDatabaseBlobAuditingPolicy',
+    'ExtendedServerBlobAuditingPolicy',
+    'ServerBlobAuditingPolicy',
+    'DatabaseBlobAuditingPolicy',
     'DatabaseVulnerabilityAssessmentRuleBaselineItem',
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
@@ -542,7 +551,7 @@ __all__ = [
     'PartnerRegionInfo',
     'ManagedInstancePairInfo',
     'InstanceFailoverGroup',
-    'ShortTermRetentionPolicy',
+    'BackupShortTermRetentionPolicy',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -618,7 +627,6 @@ __all__ = [
     'RecommendedIndexType',
     'TransparentDataEncryptionStatus',
     'TransparentDataEncryptionActivityStatus',
-    'BlobAuditingPolicyState',
     'AutomaticTuningMode',
     'AutomaticTuningOptionModeDesired',
     'AutomaticTuningOptionModeActual',
@@ -637,6 +645,7 @@ __all__ = [
     'SyncDirection',
     'SyncMemberState',
     'VirtualNetworkRuleState',
+    'BlobAuditingPolicyState',
     'JobAgentState',
     'JobExecutionLifecycle',
     'ProvisioningState',
