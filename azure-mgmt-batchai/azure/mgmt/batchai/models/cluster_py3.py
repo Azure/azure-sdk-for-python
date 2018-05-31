@@ -9,25 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .proxy_resource_py3 import ProxyResource
 
 
-class Cluster(Resource):
+class Cluster(ProxyResource):
     """Contains information about a Cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource
-    :vartype location: str
-    :ivar tags: The tags of the resource
-    :vartype tags: dict[str, str]
     :param vm_size: The size of the virtual machines in the cluster. All
      virtual machines in a cluster are the same size. For information about
      available VM sizes for clusters using images from the Virtual Machines
@@ -96,8 +92,6 @@ class Cluster(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
         'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'provisioning_state_transition_time': {'readonly': True},
@@ -112,8 +106,6 @@ class Cluster(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
         'vm_priority': {'key': 'properties.vmPriority', 'type': 'VmPriority'},
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},

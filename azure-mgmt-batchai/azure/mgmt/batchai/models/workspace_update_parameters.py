@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class FileServersListOptions(Model):
-    """Additional parameters for list operation.
+class WorkspaceUpdateParameters(Model):
+    """Parameters supplied to the Update operation.
 
-    :param max_results: The maximum number of items to return in the response.
-     A maximum of 1000 files can be returned. Default value: 1000 .
-    :type max_results: int
+    :param tags: The user specified tags associated with the Workspace.
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'max_results': {'key': '', 'type': 'int'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
-        super(FileServersListOptions, self).__init__(**kwargs)
-        self.max_results = kwargs.get('max_results', 1000)
+        super(WorkspaceUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
