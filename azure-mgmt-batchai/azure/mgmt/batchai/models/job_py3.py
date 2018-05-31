@@ -24,10 +24,10 @@ class Job(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param priority: Priority associated with the job. Priority associated
-     with the job. Possible values include: 'low', 'normal', 'high'. Default
-     value: "normal" .
-    :type priority: str or ~azure.mgmt.batchai.models.JobPriority
+    :param scheduling_priority: Scheduling priority associated with the job.
+     Scheduling priority associated with the job. Possible values include:
+     'low', 'normal', 'high'. Default value: "normal" .
+    :type scheduling_priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
@@ -65,6 +65,8 @@ class Job(ProxyResource):
     :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
     :param caffe_settings: Specifies the settings for Caffe job.
     :type caffe_settings: ~azure.mgmt.batchai.models.CaffeSettings
+    :param caffe2_settings: Specifies the settings for Caffe2 job.
+    :type caffe2_settings: ~azure.mgmt.batchai.models.Caffe2Settings
     :param chainer_settings: Specifies the settings for Chainer job.
     :type chainer_settings: ~azure.mgmt.batchai.models.ChainerSettings
     :param custom_toolkit_settings: Specifies the settings for custom tool kit
@@ -150,7 +152,7 @@ class Job(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'scheduling_priority': {'key': 'properties.schedulingPriority', 'type': 'str'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
         'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'job_output_directory_path_segment': {'key': 'properties.jobOutputDirectoryPathSegment', 'type': 'str'},
@@ -161,6 +163,7 @@ class Job(ProxyResource):
         'py_torch_settings': {'key': 'properties.pyTorchSettings', 'type': 'PyTorchSettings'},
         'tensor_flow_settings': {'key': 'properties.tensorFlowSettings', 'type': 'TensorFlowSettings'},
         'caffe_settings': {'key': 'properties.caffeSettings', 'type': 'CaffeSettings'},
+        'caffe2_settings': {'key': 'properties.caffe2Settings', 'type': 'Caffe2Settings'},
         'chainer_settings': {'key': 'properties.chainerSettings', 'type': 'ChainerSettings'},
         'custom_toolkit_settings': {'key': 'properties.customToolkitSettings', 'type': 'CustomToolkitSettings'},
         'custom_mpi_settings': {'key': 'properties.customMpiSettings', 'type': 'CustomMpiSettings'},
@@ -180,9 +183,9 @@ class Job(ProxyResource):
         'execution_info': {'key': 'properties.executionInfo', 'type': 'JobPropertiesExecutionInfo'},
     }
 
-    def __init__(self, *, priority="normal", cluster=None, mount_volumes=None, node_count: int=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, std_out_err_path_prefix: str=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_info=None, **kwargs) -> None:
+    def __init__(self, *, scheduling_priority="normal", cluster=None, mount_volumes=None, node_count: int=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, std_out_err_path_prefix: str=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_info=None, **kwargs) -> None:
         super(Job, self).__init__(**kwargs)
-        self.priority = priority
+        self.scheduling_priority = scheduling_priority
         self.cluster = cluster
         self.mount_volumes = mount_volumes
         self.job_output_directory_path_segment = None
@@ -193,6 +196,7 @@ class Job(ProxyResource):
         self.py_torch_settings = py_torch_settings
         self.tensor_flow_settings = tensor_flow_settings
         self.caffe_settings = caffe_settings
+        self.caffe2_settings = caffe2_settings
         self.chainer_settings = chainer_settings
         self.custom_toolkit_settings = custom_toolkit_settings
         self.custom_mpi_settings = custom_mpi_settings
