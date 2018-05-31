@@ -9,14 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_groups_operations import ManagementGroupsOperations
-from .management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
-from .operations import Operations
-from .entities_operations import EntitiesOperations
+from enum import Enum
 
-__all__ = [
-    'ManagementGroupsOperations',
-    'ManagementGroupSubscriptionsOperations',
-    'Operations',
-    'EntitiesOperations',
-]
+
+class Reason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class Status(str, Enum):
+
+    not_started = "NotStarted"
+    not_started_but_groups_exist = "NotStartedButGroupsExist"
+    started = "Started"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    completed = "Completed"
+
+
+class Type(str, Enum):
+
+    providers_microsoft_managementmanagement_groups = "/providers/Microsoft.Management/managementGroups"

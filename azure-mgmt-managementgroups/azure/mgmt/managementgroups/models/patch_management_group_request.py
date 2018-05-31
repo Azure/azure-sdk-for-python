@@ -12,27 +12,23 @@
 from msrest.serialization import Model
 
 
-class ParentGroupInfo(Model):
-    """(Optional) The ID of the parent management group.
+class PatchManagementGroupRequest(Model):
+    """Management group patch parameters.
 
-    :param id: The fully qualified ID for the parent management group.  For
-     example,
-     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
-    :type id: str
-    :param name: The name of the parent management group
-    :type name: str
-    :param display_name: The friendly name of the parent management group.
+    :param display_name: The friendly name of the management group.
     :type display_name: str
+    :param parent_id: (Optional) The fully qualified ID for the parent
+     management group.  For example,
+     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
+    :type parent_id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'parent_id': {'key': 'parentId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ParentGroupInfo, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
+        super(PatchManagementGroupRequest, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
+        self.parent_id = kwargs.get('parent_id', None)

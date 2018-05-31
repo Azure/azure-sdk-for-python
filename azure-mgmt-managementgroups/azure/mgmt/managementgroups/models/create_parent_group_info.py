@@ -12,29 +12,35 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """Operation supported by the Microsoft.Management resource provider.
+class CreateParentGroupInfo(Model):
+    """(Optional) The ID of the parent management group used during creation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :param id: The fully qualified ID for the parent management group.  For
+     example,
+     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
+    :type id: str
+    :ivar name: The name of the parent management group
     :vartype name: str
-    :param display: Display.
-    :type display:
-     ~azure.mgmt.managementgroups.models.OperationDisplayProperties
+    :ivar display_name: The friendly name of the parent management group.
+    :vartype display_name: str
     """
 
     _validation = {
         'name': {'readonly': True},
+        'display_name': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplayProperties'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
+        super(CreateParentGroupInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.name = None
-        self.display = kwargs.get('display', None)
+        self.display_name = None

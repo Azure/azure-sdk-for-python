@@ -29,8 +29,8 @@ class ErrorDetails(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, message: str=None, details: str=None, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.details = kwargs.get('details', None)
+        self.code = code
+        self.message = message
+        self.details = details
