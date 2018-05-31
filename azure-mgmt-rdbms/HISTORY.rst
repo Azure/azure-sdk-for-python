@@ -10,6 +10,7 @@ Release History
 
 - Added operation group VirtualNetworkRulesOperations
 - Added operation group ServerSecurityAlertPoliciesOperations (PostgreSQL only)
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
 
 1.1.1 (2018-04-17)
 ++++++++++++++++++
