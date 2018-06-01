@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from .operations.images_operations import ImagesOperations
+from .operations.bing_operations import BingOperations
 from . import models
 
 
@@ -48,8 +48,8 @@ class VisualSearchAPI(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: VisualSearchAPIConfiguration
 
-    :ivar images: Images operations
-    :vartype images: azure.cognitiveservices.search.visualsearch.operations.ImagesOperations
+    :ivar bing: Bing operations
+    :vartype bing: azure.cognitiveservices.search.visualsearch.operations.BingOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -68,5 +68,5 @@ class VisualSearchAPI(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.images = ImagesOperations(
+        self.bing = BingOperations(
             self._client, self.config, self._serialize, self._deserialize)

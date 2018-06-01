@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ImagesOperations(object):
-    """ImagesOperations operations.
+class BingOperations(object):
+    """BingOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,8 +35,8 @@ class ImagesOperations(object):
         self.config = config
         self.x_bing_apis_sdk = "true"
 
-    def visual_search(
-            self, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, knowledge_request=None, image=None, custom_headers=None, raw=False, **operation_config):
+    def visual_search_v7(
+            self, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, market=None, knowledge_request=None, image=None, custom_headers=None, raw=False, **operation_config):
         """Visual Search API lets you discover insights about an image such as
         visually similar images, shopping sources, and related searches. The
         API can also perform text recognition, identify entities (people,
@@ -176,6 +176,21 @@ class ImagesOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
+        :param market: The market where the results come from. Typically, mkt
+         is the country where the user is making the request from. However, it
+         could be a different country if the user is not located in a country
+         where Bing delivers results. The market must be in the form <language
+         code>-<country code>. For example, en-US. The string is case
+         insensitive. For a list of possible market values, see [Market
+         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets).
+         NOTE: If known, you are encouraged to always specify the market.
+         Specifying the market helps Bing route the request and return an
+         appropriate and optimal response. If you specify a market that is not
+         listed in [Market
+         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets),
+         Bing uses a best fit market code based on an internal mapping that is
+         subject to change.
+        :type market: str
         :param knowledge_request: The form data is a JSON object that
          identifies the image using an insights token or URL to the image. The
          object may also include an optional crop area that identifies an area
@@ -207,10 +222,12 @@ class ImagesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.visualsearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.visual_search.metadata['url']
+        url = self.visual_search_v7.metadata['url']
 
         # Construct parameters
         query_parameters = {}
+        if market is not None:
+            query_parameters['mkt'] = self._serialize.query("market", market, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -255,4 +272,4 @@ class ImagesOperations(object):
             return client_raw_response
 
         return deserialized
-    visual_search.metadata = {'url': '/images/visualsearch'}
+    visual_search_v7.metadata = {'url': '/images/visualsearch'}
