@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class Logs(Model):
-    """The logs.
+class ContainerExec(Model):
+    """The container execution command, for liveness or readiness probe.
 
-    :param content: The content of the log.
-    :type content: str
+    :param command: The commands to execute within the container.
+    :type command: list[str]
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        'command': {'key': 'command', 'type': '[str]'},
     }
 
-    def __init__(self, *, content: str=None, **kwargs) -> None:
-        super(Logs, self).__init__(**kwargs)
-        self.content = content
+    def __init__(self, *, command=None, **kwargs) -> None:
+        super(ContainerExec, self).__init__(**kwargs)
+        self.command = command

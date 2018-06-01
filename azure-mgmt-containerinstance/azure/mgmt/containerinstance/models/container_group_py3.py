@@ -61,6 +61,9 @@ class ContainerGroup(Resource):
      in response.
     :vartype instance_view:
      ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView
+    :param diagnostics: The diagnostic information for a container group.
+    :type diagnostics:
+     ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
     """
 
     _validation = {
@@ -87,9 +90,10 @@ class ContainerGroup(Resource):
         'os_type': {'key': 'properties.osType', 'type': 'str'},
         'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
+        'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
     }
 
-    def __init__(self, *, containers, os_type, location: str=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, **kwargs) -> None:
+    def __init__(self, *, containers, os_type, location: str=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, diagnostics=None, **kwargs) -> None:
         super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.containers = containers
@@ -99,3 +103,4 @@ class ContainerGroup(Resource):
         self.os_type = os_type
         self.volumes = volumes
         self.instance_view = None
+        self.diagnostics = diagnostics
