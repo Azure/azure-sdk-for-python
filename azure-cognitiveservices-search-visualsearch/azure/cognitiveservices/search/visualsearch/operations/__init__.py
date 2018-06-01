@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .images_operations import ImagesOperations
+from .bing_operations import BingOperations
 
 __all__ = [
-    'ImagesOperations',
+    'BingOperations',
 ]
