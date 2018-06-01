@@ -12,16 +12,6 @@
 from enum import Enum
 
 
-class JobResourceType(Enum):
-
-    vertex_resource = "VertexResource"
-    job_manager_resource = "JobManagerResource"
-    statistics_resource = "StatisticsResource"
-    vertex_resource_in_user_folder = "VertexResourceInUserFolder"
-    job_manager_resource_in_user_folder = "JobManagerResourceInUserFolder"
-    statistics_resource_in_user_folder = "StatisticsResourceInUserFolder"
-
-
 class SeverityTypes(Enum):
 
     warning = "Warning"
@@ -30,13 +20,6 @@ class SeverityTypes(Enum):
     severe_warning = "SevereWarning"
     deprecated = "Deprecated"
     user_warning = "UserWarning"
-
-
-class CompileMode(Enum):
-
-    semantic = "Semantic"
-    full = "Full"
-    single_box = "SingleBox"
 
 
 class JobType(Enum):
@@ -66,3 +49,20 @@ class JobResult(Enum):
     succeeded = "Succeeded"
     cancelled = "Cancelled"
     failed = "Failed"
+
+
+class JobResourceType(Enum):
+
+    vertex_resource = "VertexResource"
+    job_manager_resource = "JobManagerResource"
+    statistics_resource = "StatisticsResource"
+    vertex_resource_in_user_folder = "VertexResourceInUserFolder"
+    job_manager_resource_in_user_folder = "JobManagerResourceInUserFolder"
+    statistics_resource_in_user_folder = "StatisticsResourceInUserFolder"
+
+
+class CompileMode(Enum):
+
+    semantic = "Semantic"
+    full = "Full"
+    single_box = "SingleBox"

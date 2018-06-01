@@ -16,22 +16,22 @@ class JobRelationshipProperties(Model):
     """Job relationship information properties including pipeline information,
     correlation information, etc.
 
-    :param pipeline_id: the job relationship pipeline identifier (a GUID).
+    :param pipeline_id: The job relationship pipeline identifier (a GUID).
     :type pipeline_id: str
-    :param pipeline_name: the friendly name of the job relationship pipeline,
+    :param pipeline_name: The friendly name of the job relationship pipeline,
      which does not need to be unique.
     :type pipeline_name: str
-    :param pipeline_uri: the pipeline uri, unique, links to the originating
+    :param pipeline_uri: The pipeline uri, unique, links to the originating
      service for this pipeline.
     :type pipeline_uri: str
-    :param run_id: the run identifier (a GUID), unique identifier of the
+    :param run_id: The run identifier (a GUID), unique identifier of the
      iteration of this pipeline.
     :type run_id: str
-    :param recurrence_id: the recurrence identifier (a GUID), unique per
+    :param recurrence_id: The recurrence identifier (a GUID), unique per
      activity/script, regardless of iterations. This is something to link
      different occurrences of the same job together.
     :type recurrence_id: str
-    :param recurrence_name: the recurrence name, user friendly name for the
+    :param recurrence_name: The recurrence name, user friendly name for the
      correlation between jobs.
     :type recurrence_name: str
     """

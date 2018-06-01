@@ -73,6 +73,13 @@ CREATE TABLE {0}.dbo.{1}
 
 ALTER TABLE {0}.dbo.{1} ADD IF NOT EXISTS PARTITION (1);
 
+INSERT INTO {0}.dbo.{1}
+(UserId, Start, Region, Query, Duration, Urls, ClickedUrls)
+ON INTEGRITY VIOLATION MOVE TO PARTITION (1)
+VALUES
+(1, new DateTime(2018, 04, 25), "US", @"fake query", 34, "http://url1.fake.com", "http://clickedUrl1.fake.com"),
+(1, new DateTime(2018, 04, 26), "EN", @"fake query", 23, "http://url2.fake.com", "http://clickedUrl2.fake.com");
+
 DROP FUNCTION IF EXISTS {0}.dbo.{2};
 
 CREATE FUNCTION {0}.dbo.{2}()
@@ -484,6 +491,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         partition_to_get = partition_list[0]
         specific_partition= self.adla_catalog_client.catalog.get_table_partition(self.job_account_name, self.db_name, self.schema_name, self.table_name, partition_to_get.name)
         self.assertEqual(specific_partition.name, partition_to_get.name)
+
+        # get the table fragment list
+        fragment_list = list(self.adla_catalog_client.catalog.list_table_fragments(self.job_account_name, self.db_name, self.schema_name, self.table_name))
+        self.assertIsNotNone(fragment_list)
+        self.assertGreater(len(fragment_list), 0)
 
         # get all the types
         type_list = list(self.adla_catalog_client.catalog.list_types(self.job_account_name, self.db_name, self.schema_name))

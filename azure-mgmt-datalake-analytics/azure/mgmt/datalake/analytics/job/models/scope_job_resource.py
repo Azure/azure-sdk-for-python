@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ScopeJobResource(Model):
     """The Scope job resources. (Only for use internally with Scope job type.).
 
-    :param name: the name of the resource.
+    :param name: The name of the resource.
     :type name: str
-    :param path: the path to the resource.
+    :param path: The path to the resource.
     :type path: str
     """
 

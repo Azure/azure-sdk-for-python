@@ -24,7 +24,7 @@ class JobOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
     """
 
@@ -82,7 +82,7 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True)
@@ -140,6 +140,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/jobs'}
 
     def create(
             self, account_name, job_identity, parameters, custom_headers=None, raw=False, **operation_config):
@@ -165,7 +166,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -210,6 +211,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/jobs/{jobIdentity}'}
 
     def get(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -231,7 +233,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -272,12 +274,13 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/jobs/{jobIdentity}'}
 
 
     def _update_initial(
             self, account_name, job_identity, parameters=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -396,6 +399,7 @@ class JobOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/jobs/{jobIdentity}'}
 
     def get_statistics(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -417,7 +421,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}/GetStatistics'
+        url = self.get_statistics.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -458,6 +462,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_statistics.metadata = {'url': '/jobs/{jobIdentity}/GetStatistics'}
 
     def get_debug_data_path(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -480,7 +485,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}/GetDebugDataPath'
+        url = self.get_debug_data_path.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -521,12 +526,13 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_debug_data_path.metadata = {'url': '/jobs/{jobIdentity}/GetDebugDataPath'}
 
 
     def _cancel_initial(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}/CancelJob'
+        url = self.cancel.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -621,12 +627,13 @@ class JobOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    cancel.metadata = {'url': '/jobs/{jobIdentity}/CancelJob'}
 
 
     def _yield_method_initial(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}/YieldJob'
+        url = self.yield_method.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -723,6 +730,7 @@ class JobOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    yield_method.metadata = {'url': '/jobs/{jobIdentity}/YieldJob'}
 
     def build(
             self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -746,7 +754,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/buildJob'
+        url = self.build.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True)
@@ -790,3 +798,4 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    build.metadata = {'url': '/buildJob'}

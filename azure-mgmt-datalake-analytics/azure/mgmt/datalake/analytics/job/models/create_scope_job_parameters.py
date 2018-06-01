@@ -16,31 +16,31 @@ class CreateScopeJobParameters(CreateJobParameters):
     """The parameters used to submit a new Data Lake Analytics Scope job. (Only
     for use internally with Scope job type.).
 
-    :param type: the job type of the current job (Hive, USql, or Scope (for
+    :param type: The job type of the current job (Hive, USql, or Scope (for
      internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
-    :param properties: the job specific properties.
+    :param properties: The job specific properties.
     :type properties:
      ~azure.mgmt.datalake.analytics.job.models.CreateJobProperties
-    :param name: the friendly name of the job to submit.
+    :param name: The friendly name of the job to submit.
     :type name: str
-    :param degree_of_parallelism: the degree of parallelism to use for this
+    :param degree_of_parallelism: The degree of parallelism to use for this
      job. This must be greater than 0, if set to less than 0 it will default to
      1. Default value: 1 .
     :type degree_of_parallelism: int
-    :param priority: the priority value to use for the current job. Lower
+    :param priority: The priority value to use for the current job. Lower
      numbers have a higher priority. By default, a job has a priority of 1000.
      This must be greater than 0.
     :type priority: int
-    :param log_file_patterns: the list of log file name patterns to find in
+    :param log_file_patterns: The list of log file name patterns to find in
      the logFolder. '*' is the only matching character allowed. Example format:
      jobExecution*.log or *mylog*.txt
     :type log_file_patterns: list[str]
-    :param related: the recurring job relationship information properties.
+    :param related: The recurring job relationship information properties.
     :type related:
      ~azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties
-    :param tags: the key-value pairs used to add additional metadata to the
-     job information. (Only for use internally with Scope job type.)
+    :param tags: The key-value pairs used to add additional metadata to the
+     job information.
     :type tags: dict[str, str]
     """
 
