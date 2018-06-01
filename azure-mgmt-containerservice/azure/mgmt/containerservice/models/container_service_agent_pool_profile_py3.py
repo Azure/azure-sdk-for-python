@@ -99,8 +99,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :type storage_profile: str or
      ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
-     identifier. If you specify either master VNet Subnet, or agent VNet
-     Subnet, you need to specify both. And they have to be in the same VNet.
+     identifier.
     :type vnet_subnet_id: str
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',

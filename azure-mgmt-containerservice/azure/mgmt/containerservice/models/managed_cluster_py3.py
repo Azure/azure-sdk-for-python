@@ -33,16 +33,16 @@ class ManagedCluster(Resource):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param kubernetes_version: Version of Kubernetes specified when creating
+     the managed cluster.
+    :type kubernetes_version: str
     :param dns_prefix: DNS prefix specified when creating the managed cluster.
     :type dns_prefix: str
     :ivar fqdn: FDQN for the master pool.
     :vartype fqdn: str
-    :param kubernetes_version: Version of Kubernetes specified when creating
-     the managed cluster.
-    :type kubernetes_version: str
     :param agent_pool_profiles: Properties of the agent pool.
     :type agent_pool_profiles:
-     list[~azure.mgmt.containerservice.models.ContainerServiceAgentPoolProfile]
+     list[~azure.mgmt.containerservice.models.ManagedClusterAgentPoolProfile]
     :param linux_profile: Profile for Linux VMs in the container service
      cluster.
     :type linux_profile:
@@ -52,6 +52,18 @@ class ManagedCluster(Resource):
      or keyVaultSecretRef must be specified.
     :type service_principal_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile
+    :param addon_profiles: Profile of managed cluster add-on.
+    :type addon_profiles: dict[str,
+     ~azure.mgmt.containerservice.models.ManagedClusterAddonProfile]
+    :param enable_rbac: Whether to enable Kubernetes Role-Based Access
+     Control.
+    :type enable_rbac: bool
+    :param network_profile: Profile of network configuration.
+    :type network_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceNetworkProfile
+    :param aad_profile: Profile of Azure Active Directory configuration.
+    :type aad_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterAADProfile
     """
 
     _validation = {
@@ -70,20 +82,28 @@ class ManagedCluster(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
         'dns_prefix': {'key': 'properties.dnsPrefix', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
-        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ContainerServiceAgentPoolProfile]'},
+        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterAgentPoolProfile]'},
         'linux_profile': {'key': 'properties.linuxProfile', 'type': 'ContainerServiceLinuxProfile'},
         'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
+        'addon_profiles': {'key': 'properties.addonProfiles', 'type': '{ManagedClusterAddonProfile}'},
+        'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
+        'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
     }
 
-    def __init__(self, *, location: str, tags=None, dns_prefix: str=None, kubernetes_version: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, kubernetes_version: str=None, dns_prefix: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, addon_profiles=None, enable_rbac: bool=None, network_profile=None, aad_profile=None, **kwargs) -> None:
         super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
+        self.kubernetes_version = kubernetes_version
         self.dns_prefix = dns_prefix
         self.fqdn = None
-        self.kubernetes_version = kubernetes_version
         self.agent_pool_profiles = agent_pool_profiles
         self.linux_profile = linux_profile
         self.service_principal_profile = service_principal_profile
+        self.addon_profiles = addon_profiles
+        self.enable_rbac = enable_rbac
+        self.network_profile = network_profile
+        self.aad_profile = aad_profile

@@ -24,6 +24,11 @@ try:
     from .container_service_vm_diagnostics_py3 import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .container_service_py3 import ContainerService
+    from .compute_operation_value_py3 import ComputeOperationValue
+    from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
+    from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
+    from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
+    from .managed_cluster_aad_profile_py3 import ManagedClusterAADProfile
     from .managed_cluster_py3 import ManagedCluster
     from .orchestrator_profile_py3 import OrchestratorProfile
     from .managed_cluster_access_profile_py3 import ManagedClusterAccessProfile
@@ -46,6 +51,11 @@ except (SyntaxError, ImportError):
     from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .container_service import ContainerService
+    from .compute_operation_value import ComputeOperationValue
+    from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
+    from .container_service_network_profile import ContainerServiceNetworkProfile
+    from .managed_cluster_addon_profile import ManagedClusterAddonProfile
+    from .managed_cluster_aad_profile import ManagedClusterAADProfile
     from .managed_cluster import ManagedCluster
     from .orchestrator_profile import OrchestratorProfile
     from .managed_cluster_access_profile import ManagedClusterAccessProfile
@@ -54,12 +64,15 @@ except (SyntaxError, ImportError):
     from .orchestrator_version_profile import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
+from .compute_operation_value_paged import ComputeOperationValuePaged
 from .managed_cluster_paged import ManagedClusterPaged
 from .container_service_client_enums import (
     ContainerServiceStorageProfileTypes,
     ContainerServiceVMSizeTypes,
     ContainerServiceOrchestratorTypes,
     OSType,
+    NetworkPlugin,
+    NetworkPolicy,
 )
 
 __all__ = [
@@ -77,6 +90,11 @@ __all__ = [
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
+    'ComputeOperationValue',
+    'ManagedClusterAgentPoolProfile',
+    'ContainerServiceNetworkProfile',
+    'ManagedClusterAddonProfile',
+    'ManagedClusterAADProfile',
     'ManagedCluster',
     'OrchestratorProfile',
     'ManagedClusterAccessProfile',
@@ -85,9 +103,12 @@ __all__ = [
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
+    'ComputeOperationValuePaged',
     'ManagedClusterPaged',
     'ContainerServiceStorageProfileTypes',
     'ContainerServiceVMSizeTypes',
     'ContainerServiceOrchestratorTypes',
     'OSType',
+    'NetworkPlugin',
+    'NetworkPolicy',
 ]

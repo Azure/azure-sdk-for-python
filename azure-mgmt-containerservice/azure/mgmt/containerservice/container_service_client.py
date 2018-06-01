@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import warnings
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.container_services_operations import ContainerServicesOperations
+from .operations.operations import Operations
 from .operations.managed_clusters_operations import ManagedClustersOperations
 from . import models
 
@@ -61,6 +61,8 @@ class ContainerServiceClient(SDKClient):
 
     :ivar container_services: ContainerServices operations
     :vartype container_services: azure.mgmt.containerservice.operations.ContainerServicesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.containerservice.operations.Operations
     :ivar managed_clusters: ManagedClusters operations
     :vartype managed_clusters: azure.mgmt.containerservice.operations.ManagedClustersOperations
 
@@ -85,6 +87,8 @@ class ContainerServiceClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.container_services = ContainerServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_clusters = ManagedClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
