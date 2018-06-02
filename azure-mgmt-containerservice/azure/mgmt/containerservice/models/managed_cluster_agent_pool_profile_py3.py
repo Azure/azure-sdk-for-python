@@ -101,8 +101,7 @@ class ManagedClusterAgentPoolProfile(Model):
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier.
     :type vnet_subnet_id: str
-    :param max_pods: Maximum number of pods that can run on a node. Default
-     value: 30 .
+    :param max_pods: Maximum number of pods that can run on a node.
     :type max_pods: int
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',
@@ -131,7 +130,7 @@ class ManagedClusterAgentPoolProfile(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, ports=None, storage_profile=None, vnet_subnet_id: str=None, max_pods: int=30, os_type="Linux", **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, ports=None, storage_profile=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
