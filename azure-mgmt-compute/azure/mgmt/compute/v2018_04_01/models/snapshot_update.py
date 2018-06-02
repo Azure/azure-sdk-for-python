@@ -9,12 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_update import ResourceUpdate
 
 
-class SnapshotUpdate(Model):
+class SnapshotUpdate(ResourceUpdate):
     """Snapshot update resource.
 
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku:
+    :type sku: ~azure.mgmt.compute.v2018_04_01.models.DiskSku
     :param os_type: the Operating System type. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or
@@ -28,18 +32,14 @@ class SnapshotUpdate(Model):
     :param encryption_settings: Encryption settings for disk or snapshot
     :type encryption_settings:
      ~azure.mgmt.compute.v2018_04_01.models.EncryptionSettings
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2018_04_01.models.SnapshotSku
     """
 
     _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'DiskSku'},
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
         'encryption_settings': {'key': 'properties.encryptionSettings', 'type': 'EncryptionSettings'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
     }
 
     def __init__(self, **kwargs):
@@ -47,5 +47,3 @@ class SnapshotUpdate(Model):
         self.os_type = kwargs.get('os_type', None)
         self.disk_size_gb = kwargs.get('disk_size_gb', None)
         self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
