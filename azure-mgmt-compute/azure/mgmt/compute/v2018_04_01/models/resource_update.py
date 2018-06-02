@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class VirtualMachineExtensionsListResult(Model):
-    """The List Extension operation response.
+class ResourceUpdate(Model):
+    """The Resource model definition.
 
-    :param value: The list of extensions
-    :type value:
-     list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtension]
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku:
+    :type sku: ~azure.mgmt.compute.v2018_04_01.models.DiskSku
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineExtension]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(VirtualMachineExtensionsListResult, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ResourceUpdate, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
