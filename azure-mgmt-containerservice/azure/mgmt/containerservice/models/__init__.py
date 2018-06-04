@@ -24,7 +24,7 @@ try:
     from .container_service_vm_diagnostics_py3 import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .container_service_py3 import ContainerService
-    from .compute_operation_value_py3 import ComputeOperationValue
+    from .operation_value_py3 import OperationValue
     from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
     from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
@@ -51,7 +51,7 @@ except (SyntaxError, ImportError):
     from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .container_service import ContainerService
-    from .compute_operation_value import ComputeOperationValue
+    from .operation_value import OperationValue
     from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
     from .container_service_network_profile import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile import ManagedClusterAddonProfile
@@ -64,7 +64,7 @@ except (SyntaxError, ImportError):
     from .orchestrator_version_profile import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
-from .compute_operation_value_paged import ComputeOperationValuePaged
+from .operation_value_paged import OperationValuePaged
 from .managed_cluster_paged import ManagedClusterPaged
 from .container_service_client_enums import (
     ContainerServiceStorageProfileTypes,
@@ -90,7 +90,7 @@ __all__ = [
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
-    'ComputeOperationValue',
+    'OperationValue',
     'ManagedClusterAgentPoolProfile',
     'ContainerServiceNetworkProfile',
     'ManagedClusterAddonProfile',
@@ -103,7 +103,7 @@ __all__ = [
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
-    'ComputeOperationValuePaged',
+    'OperationValuePaged',
     'ManagedClusterPaged',
     'ContainerServiceStorageProfileTypes',
     'ContainerServiceVMSizeTypes',
