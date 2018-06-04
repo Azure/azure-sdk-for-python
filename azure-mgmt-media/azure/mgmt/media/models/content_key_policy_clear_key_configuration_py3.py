@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_key_policy_configuration import ContentKeyPolicyConfiguration
+from .content_key_policy_configuration_py3 import ContentKeyPolicyConfiguration
 
 
 class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
