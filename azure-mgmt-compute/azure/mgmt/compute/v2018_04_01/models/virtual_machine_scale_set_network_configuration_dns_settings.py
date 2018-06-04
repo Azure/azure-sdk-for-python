@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class ResourceUpdate(Model):
-    """The Resource model definition.
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
+    """Describes a virtual machines scale sets network configuration's DNS
+    settings.
 
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2018_04_01.models.DiskSku
+    :param dns_servers: List of DNS servers IP addresses
+    :type dns_servers: list[str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
+        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, sku=None, **kwargs) -> None:
-        super(ResourceUpdate, self).__init__(**kwargs)
-        self.tags = tags
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__(**kwargs)
+        self.dns_servers = kwargs.get('dns_servers', None)
