@@ -32,6 +32,9 @@ class Application(DirectoryObject):
     :type app_id: str
     :param app_permissions: The application permissions.
     :type app_permissions: list[str]
+    :param app_roles: The collection of application roles that an application
+     may declare.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param available_to_other_tenants: Whether the application is be available
      to other tenants.
     :type available_to_other_tenants: bool
@@ -61,6 +64,7 @@ class Application(DirectoryObject):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
@@ -69,10 +73,11 @@ class Application(DirectoryObject):
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, additional_properties=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
+    def __init__(self, additional_properties=None, app_id=None, app_permissions=None, app_roles=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
         super(Application, self).__init__(additional_properties=additional_properties)
         self.app_id = app_id
         self.app_permissions = app_permissions
+        self.app_roles = app_roles
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.identifier_uris = identifier_uris
