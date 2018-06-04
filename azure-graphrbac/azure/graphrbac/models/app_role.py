@@ -23,22 +23,26 @@ class AppRole(Model):
      deserialized this collection
     :type additional_properties: dict[str, object]
     :param allowed_member_types: Specifies whether this app role definition
-     can be assigned to users and groups, to other applications, or to both.
+     can be assigned to users and groups by setting to "User", or to other
+     applications by setting to "Application", or to both.
     :type allowed_member_types: list[str]
     :param description: Permission help text that appears in the admin app
      assignment and consent experiences.
     :type description: str
     :param display_name: Display name for the permission that appears in the
-     admin consent and app assignment experiences.
+     admin consent and app assignment experiences. For example, "Read Only" or
+     "Admin".
     :type display_name: str
-    :param id: Unique role identifier inside the appRoles collection.
+    :param id: Unique role identifier inside the appRoles collection, such as
+     "c20e145e-5459-4a6c-a074-b942bbd4cfe1".
     :type id: str
     :param is_enabled: When creating or updating a role definition, this must
      be set to true (which is the default). To delete a role, this must first
      be set to false.
     :type is_enabled: bool
     :param value: Specifies the value of the roles claim that the application
-     should expect in the authentication and access tokens.
+     should expect in the authentication and access tokens, such as "ReadOnly"
+     or "Admin".
     :type value: str
     """
 
