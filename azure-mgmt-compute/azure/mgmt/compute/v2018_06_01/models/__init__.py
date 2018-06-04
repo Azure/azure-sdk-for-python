@@ -31,8 +31,7 @@ try:
     from .gallery_disk_image_py3 import GalleryDiskImage
     from .api_error_base_py3 import ApiErrorBase
     from .inner_error_py3 import InnerError
-    from .api_error_py3 import ApiError
-    from .operation_status_response_py3 import OperationStatusResponse
+    from .api_error_py3 import ApiError, ApiErrorException
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .gallery_identifier import GalleryIdentifier
@@ -56,8 +55,7 @@ except (SyntaxError, ImportError):
     from .gallery_disk_image import GalleryDiskImage
     from .api_error_base import ApiErrorBase
     from .inner_error import InnerError
-    from .api_error import ApiError
-    from .operation_status_response import OperationStatusResponse
+    from .api_error import ApiError, ApiErrorException
     from .resource import Resource
 from .gallery_paged import GalleryPaged
 from .gallery_image_paged import GalleryImagePaged
@@ -65,6 +63,7 @@ from .gallery_image_version_paged import GalleryImageVersionPaged
 from .compute_management_client_enums import (
     OperatingSystemTypes,
     OperatingSystemStateTypes,
+    ScaleTier,
     AggregatedReplicationState,
     ReplicationState,
     HostCaching,
@@ -93,14 +92,14 @@ __all__ = [
     'GalleryDiskImage',
     'ApiErrorBase',
     'InnerError',
-    'ApiError',
-    'OperationStatusResponse',
+    'ApiError', 'ApiErrorException',
     'Resource',
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
     'OperatingSystemTypes',
     'OperatingSystemStateTypes',
+    'ScaleTier',
     'AggregatedReplicationState',
     'ReplicationState',
     'HostCaching',

@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class ApiError(Model):
@@ -42,3 +43,15 @@ class ApiError(Model):
         self.code = code
         self.target = target
         self.message = message
+
+
+class ApiErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'ApiError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ApiErrorException, self).__init__(deserialize, response, 'ApiError', *args)

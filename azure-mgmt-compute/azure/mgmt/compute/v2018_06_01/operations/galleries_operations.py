@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -73,16 +72,16 @@ class GalleriesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 201, 202]:
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('Gallery', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('Gallery', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('Gallery', response)
 
         if raw:
@@ -113,7 +112,8 @@ class GalleriesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_06_01.models.Gallery]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_06_01.models.Gallery]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -158,7 +158,8 @@ class GalleriesOperations(object):
         :return: Gallery or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.Gallery or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -188,9 +189,7 @@ class GalleriesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -235,20 +234,11 @@ class GalleriesOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', response)
+            raise models.ApiErrorException(self._deserialize, response)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
 
     def delete(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, polling=True, **operation_config):
@@ -263,13 +253,12 @@ class GalleriesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns OperationStatusResponse
-         or ClientRawResponse<OperationStatusResponse> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -280,13 +269,9 @@ class GalleriesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('OperationStatusResponse', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
@@ -311,7 +296,8 @@ class GalleriesOperations(object):
         :return: An iterator like instance of Gallery
         :rtype:
          ~azure.mgmt.compute.v2018_06_01.models.GalleryPaged[~azure.mgmt.compute.v2018_06_01.models.Gallery]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -348,9 +334,7 @@ class GalleriesOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ApiErrorException(self._deserialize, response)
 
             return response
 
@@ -365,7 +349,7 @@ class GalleriesOperations(object):
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries'}
 
-    def list_by_subscription(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """List galleries under a subscription.
 
@@ -377,13 +361,14 @@ class GalleriesOperations(object):
         :return: An iterator like instance of Gallery
         :rtype:
          ~azure.mgmt.compute.v2018_06_01.models.GalleryPaged[~azure.mgmt.compute.v2018_06_01.models.Gallery]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -413,9 +398,7 @@ class GalleriesOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ApiErrorException(self._deserialize, response)
 
             return response
 
@@ -428,4 +411,4 @@ class GalleriesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/galleries'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/galleries'}
