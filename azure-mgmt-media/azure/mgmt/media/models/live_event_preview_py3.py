@@ -25,6 +25,12 @@ class LiveEventPreview(Model):
     :param streaming_policy_name: The name of streaming policy used for
      LiveEvent preview
     :type streaming_policy_name: str
+    :param alternative_media_id: An Alternative Media Identifier associated
+     with the preview url.  This identifier can be used to distinguish the
+     preview of different live events for authorization purposes in the
+     CustomLicenseAcquisitionUrlTemplate or the CustomKeyAcquisitionUrlTemplate
+     of the StreamingPolicy specified in the StreamingPolicyName field.
+    :type alternative_media_id: str
     """
 
     _attribute_map = {
@@ -32,11 +38,13 @@ class LiveEventPreview(Model):
         'access_control': {'key': 'accessControl', 'type': 'LiveEventPreviewAccessControl'},
         'preview_locator': {'key': 'previewLocator', 'type': 'str'},
         'streaming_policy_name': {'key': 'streamingPolicyName', 'type': 'str'},
+        'alternative_media_id': {'key': 'alternativeMediaId', 'type': 'str'},
     }
 
-    def __init__(self, *, endpoints=None, access_control=None, preview_locator: str=None, streaming_policy_name: str=None, **kwargs) -> None:
+    def __init__(self, *, endpoints=None, access_control=None, preview_locator: str=None, streaming_policy_name: str=None, alternative_media_id: str=None, **kwargs) -> None:
         super(LiveEventPreview, self).__init__(**kwargs)
         self.endpoints = endpoints
         self.access_control = access_control
         self.preview_locator = preview_locator
         self.streaming_policy_name = streaming_policy_name
+        self.alternative_media_id = alternative_media_id

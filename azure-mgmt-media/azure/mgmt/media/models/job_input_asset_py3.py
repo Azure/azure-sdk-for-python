@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_input_clip import JobInputClip
+from .job_input_clip_py3 import JobInputClip
 
 
 class JobInputAsset(JobInputClip):
