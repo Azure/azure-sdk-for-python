@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ComputeOperationValue(Model):
+class OperationValue(Model):
     """Describes the properties of a Compute Operation value.
 
     Variables are only populated by the server, and will be ignored when
@@ -51,7 +51,7 @@ class ComputeOperationValue(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ComputeOperationValue, self).__init__(**kwargs)
+        super(OperationValue, self).__init__(**kwargs)
         self.origin = None
         self.name = None
         self.operation = None

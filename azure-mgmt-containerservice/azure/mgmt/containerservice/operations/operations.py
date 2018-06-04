@@ -46,9 +46,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ComputeOperationValue
+        :return: An iterator like instance of OperationValue
         :rtype:
-         ~azure.mgmt.containerservice.models.ComputeOperationValuePaged[~azure.mgmt.containerservice.models.ComputeOperationValue]
+         ~azure.mgmt.containerservice.models.OperationValuePaged[~azure.mgmt.containerservice.models.OperationValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -88,11 +88,11 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ComputeOperationValuePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationValuePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ComputeOperationValuePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationValuePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

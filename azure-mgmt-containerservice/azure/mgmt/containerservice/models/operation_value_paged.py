@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ComputeOperationValuePaged(Paged):
+class OperationValuePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ComputeOperationValue <azure.mgmt.containerservice.models.ComputeOperationValue>` object
+    A paging container for iterating over a list of :class:`OperationValue <azure.mgmt.containerservice.models.OperationValue>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ComputeOperationValue]'}
+        'current_page': {'key': 'value', 'type': '[OperationValue]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ComputeOperationValuePaged, self).__init__(*args, **kwargs)
+        super(OperationValuePaged, self).__init__(*args, **kwargs)
