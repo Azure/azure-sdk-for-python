@@ -19,19 +19,19 @@ class Patch(Model):
     :type applied_scope_type: str or ~azure.mgmt.reservations.models.enum
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param auto_fit: Possible values include: 'InstanceFlexibilityOn',
-     'CapacityPriority', 'InstanceFlexibilityOff'
-    :type auto_fit: str or ~azure.mgmt.reservations.models.enum
+    :param instance_flexibility: Possible values include: 'On', 'Off',
+     'NotSupported'
+    :type instance_flexibility: str or ~azure.mgmt.reservations.models.enum
     """
 
     _attribute_map = {
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'auto_fit': {'key': 'properties.autoFit', 'type': 'str'},
+        'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
     }
 
-    def __init__(self, *, applied_scope_type=None, applied_scopes=None, auto_fit=None, **kwargs) -> None:
+    def __init__(self, *, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, **kwargs) -> None:
         super(Patch, self).__init__(**kwargs)
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
-        self.auto_fit = auto_fit
+        self.instance_flexibility = instance_flexibility

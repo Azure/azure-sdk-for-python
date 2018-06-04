@@ -21,9 +21,9 @@ class ReservationProperties(Model):
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
      'SqlDatabases', 'SuseLinux'
     :type reserved_resource_type: str or ~azure.mgmt.reservations.models.enum
-    :param auto_fit: Possible values include: 'InstanceFlexibilityOn',
-     'CapacityPriority', 'InstanceFlexibilityOff'
-    :type auto_fit: str or ~azure.mgmt.reservations.models.enum
+    :param instance_flexibility: Possible values include: 'On', 'Off',
+     'NotSupported'
+    :type instance_flexibility: str or ~azure.mgmt.reservations.models.enum
     :param display_name: Friendly name for user to easily identify the
      reservation
     :type display_name: str
@@ -65,7 +65,7 @@ class ReservationProperties(Model):
 
     _attribute_map = {
         'reserved_resource_type': {'key': 'reservedResourceType', 'type': 'str'},
-        'auto_fit': {'key': 'autoFit', 'type': 'str'},
+        'instance_flexibility': {'key': 'instanceFlexibility', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'applied_scopes': {'key': 'appliedScopes', 'type': '[str]'},
         'applied_scope_type': {'key': 'appliedScopeType', 'type': 'str'},
@@ -80,10 +80,10 @@ class ReservationProperties(Model):
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
     }
 
-    def __init__(self, *, reserved_resource_type=None, auto_fit=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
-        self.auto_fit = auto_fit
+        self.instance_flexibility = instance_flexibility
         self.display_name = display_name
         self.applied_scopes = applied_scopes
         self.applied_scope_type = applied_scope_type

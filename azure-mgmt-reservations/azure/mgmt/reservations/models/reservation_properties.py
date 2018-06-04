@@ -21,9 +21,9 @@ class ReservationProperties(Model):
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
      'SqlDatabases', 'SuseLinux'
     :type reserved_resource_type: str or ~azure.mgmt.reservations.models.enum
-    :param auto_fit: Possible values include: 'InstanceFlexibilityOn',
-     'CapacityPriority', 'InstanceFlexibilityOff'
-    :type auto_fit: str or ~azure.mgmt.reservations.models.enum
+    :param instance_flexibility: Possible values include: 'On', 'Off',
+     'NotSupported'
+    :type instance_flexibility: str or ~azure.mgmt.reservations.models.enum
     :param display_name: Friendly name for user to easily identify the
      reservation
     :type display_name: str
@@ -65,7 +65,7 @@ class ReservationProperties(Model):
 
     _attribute_map = {
         'reserved_resource_type': {'key': 'reservedResourceType', 'type': 'str'},
-        'auto_fit': {'key': 'autoFit', 'type': 'str'},
+        'instance_flexibility': {'key': 'instanceFlexibility', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'applied_scopes': {'key': 'appliedScopes', 'type': '[str]'},
         'applied_scope_type': {'key': 'appliedScopeType', 'type': 'str'},
@@ -83,7 +83,7 @@ class ReservationProperties(Model):
     def __init__(self, **kwargs):
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = kwargs.get('reserved_resource_type', None)
-        self.auto_fit = kwargs.get('auto_fit', None)
+        self.instance_flexibility = kwargs.get('instance_flexibility', None)
         self.display_name = kwargs.get('display_name', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
