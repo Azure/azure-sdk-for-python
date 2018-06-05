@@ -11,8 +11,22 @@
 
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
+from .report_config_operations import ReportConfigOperations
+from .billing_account_dimensions_operations import BillingAccountDimensionsOperations
+from .subscription_dimensions_operations import SubscriptionDimensionsOperations
+from .resource_group_dimensions_operations import ResourceGroupDimensionsOperations
+from .subscription_insights_operations import SubscriptionInsightsOperations
+from .resource_group_insights_operations import ResourceGroupInsightsOperations
+from .billing_account_insights_operations import BillingAccountInsightsOperations
 
 __all__ = [
     'ForecastsOperations',
     'Operations',
+    'ReportConfigOperations',
+    'BillingAccountDimensionsOperations',
+    'SubscriptionDimensionsOperations',
+    'ResourceGroupDimensionsOperations',
+    'SubscriptionInsightsOperations',
+    'ResourceGroupInsightsOperations',
+    'BillingAccountInsightsOperations',
 ]

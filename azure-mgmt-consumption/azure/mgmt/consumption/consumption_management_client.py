@@ -15,6 +15,13 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
+from .operations.report_config_operations import ReportConfigOperations
+from .operations.billing_account_dimensions_operations import BillingAccountDimensionsOperations
+from .operations.subscription_dimensions_operations import SubscriptionDimensionsOperations
+from .operations.resource_group_dimensions_operations import ResourceGroupDimensionsOperations
+from .operations.subscription_insights_operations import SubscriptionInsightsOperations
+from .operations.resource_group_insights_operations import ResourceGroupInsightsOperations
+from .operations.billing_account_insights_operations import BillingAccountInsightsOperations
 from . import models
 
 
@@ -60,6 +67,20 @@ class ConsumptionManagementClient(object):
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
+    :ivar report_config: ReportConfig operations
+    :vartype report_config: azure.mgmt.consumption.operations.ReportConfigOperations
+    :ivar billing_account_dimensions: BillingAccountDimensions operations
+    :vartype billing_account_dimensions: azure.mgmt.consumption.operations.BillingAccountDimensionsOperations
+    :ivar subscription_dimensions: SubscriptionDimensions operations
+    :vartype subscription_dimensions: azure.mgmt.consumption.operations.SubscriptionDimensionsOperations
+    :ivar resource_group_dimensions: ResourceGroupDimensions operations
+    :vartype resource_group_dimensions: azure.mgmt.consumption.operations.ResourceGroupDimensionsOperations
+    :ivar subscription_insights: SubscriptionInsights operations
+    :vartype subscription_insights: azure.mgmt.consumption.operations.SubscriptionInsightsOperations
+    :ivar resource_group_insights: ResourceGroupInsights operations
+    :vartype resource_group_insights: azure.mgmt.consumption.operations.ResourceGroupInsightsOperations
+    :ivar billing_account_insights: BillingAccountInsights operations
+    :vartype billing_account_insights: azure.mgmt.consumption.operations.BillingAccountInsightsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,4 +104,18 @@ class ConsumptionManagementClient(object):
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.report_config = ReportConfigOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_account_dimensions = BillingAccountDimensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_dimensions = SubscriptionDimensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_group_dimensions = ResourceGroupDimensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_insights = SubscriptionInsightsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_group_insights = ResourceGroupInsightsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_account_insights = BillingAccountInsightsOperations(
             self._client, self.config, self._serialize, self._deserialize)

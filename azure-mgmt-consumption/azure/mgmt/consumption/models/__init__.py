@@ -16,12 +16,37 @@ from .operation import Operation
 from .resource import Resource
 from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
 from .forecast import Forecast
+from .report_config_recurrence_period import ReportConfigRecurrencePeriod
+from .report_config_schedule import ReportConfigSchedule
+from .report_config_delivery_destination import ReportConfigDeliveryDestination
+from .report_config_delivery_info import ReportConfigDeliveryInfo
+from .report_config_time_period import ReportConfigTimePeriod
+from .report_config_dataset_configuration import ReportConfigDatasetConfiguration
+from .report_config_aggregation import ReportConfigAggregation
+from .report_config_grouping import ReportConfigGrouping
+from .report_config_comparison_expression import ReportConfigComparisonExpression
+from .report_config_filter import ReportConfigFilter
+from .report_config_dataset import ReportConfigDataset
+from .report_config_definition import ReportConfigDefinition
+from .report_config import ReportConfig
+from .report_config_list_result import ReportConfigListResult
+from .dimension import Dimension
+from .insight_column import InsightColumn
+from .insight import Insight
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
+from .dimension_paged import DimensionPaged
+from .insight_paged import InsightPaged
 from .consumption_management_client_enums import (
     Grain,
     ChargeType,
     Bound,
+    StatusType,
+    RecurrenceType,
+    FormatType,
+    TimeframeType,
+    GranularityType,
+    ReportConfigColumnType,
 )
 
 __all__ = [
@@ -32,9 +57,34 @@ __all__ = [
     'Resource',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
+    'ReportConfigRecurrencePeriod',
+    'ReportConfigSchedule',
+    'ReportConfigDeliveryDestination',
+    'ReportConfigDeliveryInfo',
+    'ReportConfigTimePeriod',
+    'ReportConfigDatasetConfiguration',
+    'ReportConfigAggregation',
+    'ReportConfigGrouping',
+    'ReportConfigComparisonExpression',
+    'ReportConfigFilter',
+    'ReportConfigDataset',
+    'ReportConfigDefinition',
+    'ReportConfig',
+    'ReportConfigListResult',
+    'Dimension',
+    'InsightColumn',
+    'Insight',
     'ForecastPaged',
     'OperationPaged',
+    'DimensionPaged',
+    'InsightPaged',
     'Grain',
     'ChargeType',
     'Bound',
+    'StatusType',
+    'RecurrenceType',
+    'FormatType',
+    'TimeframeType',
+    'GranularityType',
+    'ReportConfigColumnType',
 ]
