@@ -15,49 +15,72 @@ from msrest.serialization import Model
 class Database(Model):
     """Information about a single database.
 
-    :param id: Unique identifier for the database
-    :type id: str
-    :param name: Name of the database
-    :type name: str
-    :param compatibility_level: SQL Server compatibility level of database.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Unique identifier for the database
+    :vartype id: str
+    :ivar name: Name of the database
+    :vartype name: str
+    :ivar compatibility_level: SQL Server compatibility level of database.
      Possible values include: 'CompatLevel80', 'CompatLevel90',
      'CompatLevel100', 'CompatLevel110', 'CompatLevel120', 'CompatLevel130',
      'CompatLevel140'
-    :type compatibility_level: str or
+    :vartype compatibility_level: str or
      ~azure.mgmt.datamigration.models.DatabaseCompatLevel
-    :param collation: Collation name of the database
-    :type collation: str
-    :param server_name: Name of the server
-    :type server_name: str
-    :param fqdn: Fully qualified name
-    :type fqdn: str
-    :param install_id: Install id of the database
-    :type install_id: str
-    :param server_version: Version of the server
-    :type server_version: str
-    :param server_edition: Edition of the server
-    :type server_edition: str
-    :param server_level: Product level of the server (RTM, SP, CTP).
-    :type server_level: str
-    :param server_default_data_path: Default path of the data files
-    :type server_default_data_path: str
-    :param server_default_log_path: Default path of the log files
-    :type server_default_log_path: str
-    :param server_default_backup_path: Default path of the backup folder
-    :type server_default_backup_path: str
-    :param server_core_count: Number of cores on the server
-    :type server_core_count: int
-    :param server_visible_online_core_count: Number of cores on the server
-     that have VISIBLE ONLINE status
-    :type server_visible_online_core_count: int
-    :param database_state: State of the database. Possible values include:
+    :ivar collation: Collation name of the database
+    :vartype collation: str
+    :ivar server_name: Name of the server
+    :vartype server_name: str
+    :ivar fqdn: Fully qualified name
+    :vartype fqdn: str
+    :ivar install_id: Install id of the database
+    :vartype install_id: str
+    :ivar server_version: Version of the server
+    :vartype server_version: str
+    :ivar server_edition: Edition of the server
+    :vartype server_edition: str
+    :ivar server_level: Product level of the server (RTM, SP, CTP).
+    :vartype server_level: str
+    :ivar server_default_data_path: Default path of the data files
+    :vartype server_default_data_path: str
+    :ivar server_default_log_path: Default path of the log files
+    :vartype server_default_log_path: str
+    :ivar server_default_backup_path: Default path of the backup folder
+    :vartype server_default_backup_path: str
+    :ivar server_core_count: Number of cores on the server
+    :vartype server_core_count: int
+    :ivar server_visible_online_core_count: Number of cores on the server that
+     have VISIBLE ONLINE status
+    :vartype server_visible_online_core_count: int
+    :ivar database_state: State of the database. Possible values include:
      'Online', 'Restoring', 'Recovering', 'RecoveryPending', 'Suspect',
      'Emergency', 'Offline', 'Copying', 'OfflineSecondary'
-    :type database_state: str or
+    :vartype database_state: str or
      ~azure.mgmt.datamigration.models.DatabaseState
-    :param server_id: The unique Server Id
-    :type server_id: str
+    :ivar server_id: The unique Server Id
+    :vartype server_id: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'compatibility_level': {'readonly': True},
+        'collation': {'readonly': True},
+        'server_name': {'readonly': True},
+        'fqdn': {'readonly': True},
+        'install_id': {'readonly': True},
+        'server_version': {'readonly': True},
+        'server_edition': {'readonly': True},
+        'server_level': {'readonly': True},
+        'server_default_data_path': {'readonly': True},
+        'server_default_log_path': {'readonly': True},
+        'server_default_backup_path': {'readonly': True},
+        'server_core_count': {'readonly': True},
+        'server_visible_online_core_count': {'readonly': True},
+        'database_state': {'readonly': True},
+        'server_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -81,20 +104,20 @@ class Database(Model):
 
     def __init__(self, **kwargs):
         super(Database, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.compatibility_level = kwargs.get('compatibility_level', None)
-        self.collation = kwargs.get('collation', None)
-        self.server_name = kwargs.get('server_name', None)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.install_id = kwargs.get('install_id', None)
-        self.server_version = kwargs.get('server_version', None)
-        self.server_edition = kwargs.get('server_edition', None)
-        self.server_level = kwargs.get('server_level', None)
-        self.server_default_data_path = kwargs.get('server_default_data_path', None)
-        self.server_default_log_path = kwargs.get('server_default_log_path', None)
-        self.server_default_backup_path = kwargs.get('server_default_backup_path', None)
-        self.server_core_count = kwargs.get('server_core_count', None)
-        self.server_visible_online_core_count = kwargs.get('server_visible_online_core_count', None)
-        self.database_state = kwargs.get('database_state', None)
-        self.server_id = kwargs.get('server_id', None)
+        self.id = None
+        self.name = None
+        self.compatibility_level = None
+        self.collation = None
+        self.server_name = None
+        self.fqdn = None
+        self.install_id = None
+        self.server_version = None
+        self.server_edition = None
+        self.server_level = None
+        self.server_default_data_path = None
+        self.server_default_log_path = None
+        self.server_default_backup_path = None
+        self.server_core_count = None
+        self.server_visible_online_core_count = None
+        self.database_state = None
+        self.server_id = None
