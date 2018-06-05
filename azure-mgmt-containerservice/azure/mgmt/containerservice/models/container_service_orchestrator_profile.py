@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ContainerServiceOrchestratorProfile(Model):
     """Profile for the container service orchestrator.
 
-    :param orchestrator_type: The orchestrator to use to manage container
-     service cluster resources. Valid values are Kubernetes, Swarm, DCOS,
-     DockerCE and Custom. Possible values include: 'Kubernetes', 'Swarm',
+    All required parameters must be populated in order to send to Azure.
+
+    :param orchestrator_type: Required. The orchestrator to use to manage
+     container service cluster resources. Valid values are Kubernetes, Swarm,
+     DCOS, DockerCE and Custom. Possible values include: 'Kubernetes', 'Swarm',
      'DCOS', 'DockerCE', 'Custom'
     :type orchestrator_type: str or
      ~azure.mgmt.containerservice.models.ContainerServiceOrchestratorTypes
@@ -36,7 +38,7 @@ class ContainerServiceOrchestratorProfile(Model):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
     }
 
-    def __init__(self, orchestrator_type, orchestrator_version=None):
-        super(ContainerServiceOrchestratorProfile, self).__init__()
-        self.orchestrator_type = orchestrator_type
-        self.orchestrator_version = orchestrator_version
+    def __init__(self, **kwargs):
+        super(ContainerServiceOrchestratorProfile, self).__init__(**kwargs)
+        self.orchestrator_type = kwargs.get('orchestrator_type', None)
+        self.orchestrator_version = kwargs.get('orchestrator_version', None)
