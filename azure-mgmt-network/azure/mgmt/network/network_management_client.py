@@ -179,6 +179,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :mod:`v2017_11_01.models<azure.mgmt.network.v2017_11_01.models>`
            * 2018-01-01: :mod:`v2018_01_01.models<azure.mgmt.network.v2018_01_01.models>`
            * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.network.v2018_02_01.models>`
+           * 2018-04-01: :mod:`v2018_04_01.models<azure.mgmt.network.v2018_04_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -213,6 +214,9 @@ class NetworkManagementClient(MultiApiClientMixin):
         elif api_version == '2018-02-01':
             from .v2018_02_01 import models
             return models
+        elif api_version == '2018-04-01':
+            from .v2018_04_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
     @property
@@ -230,6 +234,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_11_01.operations.ApplicationGatewaysOperations>`
            * 2018-01-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_01_01.operations.ApplicationGatewaysOperations>`
            * 2018-02-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_02_01.operations.ApplicationGatewaysOperations>`
+           * 2018-04-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_04_01.operations.ApplicationGatewaysOperations>`
         """
         api_version = self._get_api_version('application_gateways')
         if api_version == '2015-06-15':
@@ -254,6 +259,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ApplicationGatewaysOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ApplicationGatewaysOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -267,6 +274,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2017_11_01.operations.ApplicationSecurityGroupsOperations>`
            * 2018-01-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2018_01_01.operations.ApplicationSecurityGroupsOperations>`
            * 2018-02-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2018_02_01.operations.ApplicationSecurityGroupsOperations>`
+           * 2018-04-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2018_04_01.operations.ApplicationSecurityGroupsOperations>`
         """
         api_version = self._get_api_version('application_security_groups')
         if api_version == '2017-09-01':
@@ -279,6 +287,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ApplicationSecurityGroupsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ApplicationSecurityGroupsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ApplicationSecurityGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -294,6 +304,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_11_01.operations.AvailableEndpointServicesOperations>`
            * 2018-01-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2018_01_01.operations.AvailableEndpointServicesOperations>`
            * 2018-02-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2018_02_01.operations.AvailableEndpointServicesOperations>`
+           * 2018-04-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2018_04_01.operations.AvailableEndpointServicesOperations>`
         """
         api_version = self._get_api_version('available_endpoint_services')
         if api_version == '2017-06-01':
@@ -310,6 +321,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import AvailableEndpointServicesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import AvailableEndpointServicesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import AvailableEndpointServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -327,6 +340,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_11_01.operations.BgpServiceCommunitiesOperations>`
            * 2018-01-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2018_01_01.operations.BgpServiceCommunitiesOperations>`
            * 2018-02-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2018_02_01.operations.BgpServiceCommunitiesOperations>`
+           * 2018-04-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2018_04_01.operations.BgpServiceCommunitiesOperations>`
         """
         api_version = self._get_api_version('bgp_service_communities')
         if api_version == '2016-12-01':
@@ -347,6 +361,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import BgpServiceCommunitiesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import BgpServiceCommunitiesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import BgpServiceCommunitiesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -359,6 +375,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2017_11_01.operations.ConnectionMonitorsOperations>`
            * 2018-01-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2018_01_01.operations.ConnectionMonitorsOperations>`
            * 2018-02-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2018_02_01.operations.ConnectionMonitorsOperations>`
+           * 2018-04-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2018_04_01.operations.ConnectionMonitorsOperations>`
         """
         api_version = self._get_api_version('connection_monitors')
         if api_version == '2017-10-01':
@@ -369,6 +386,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ConnectionMonitorsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ConnectionMonitorsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ConnectionMonitorsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -378,10 +397,13 @@ class NetworkManagementClient(MultiApiClientMixin):
         """Instance depends on the API version:
 
            * 2018-02-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2018_02_01.operations.DdosProtectionPlansOperations>`
+           * 2018-04-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2018_04_01.operations.DdosProtectionPlansOperations>`
         """
         api_version = self._get_api_version('ddos_protection_plans')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import DdosProtectionPlansOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import DdosProtectionPlansOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -397,6 +419,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_11_01.operations.DefaultSecurityRulesOperations>`
            * 2018-01-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2018_01_01.operations.DefaultSecurityRulesOperations>`
            * 2018-02-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2018_02_01.operations.DefaultSecurityRulesOperations>`
+           * 2018-04-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2018_04_01.operations.DefaultSecurityRulesOperations>`
         """
         api_version = self._get_api_version('default_security_rules')
         if api_version == '2017-06-01':
@@ -413,6 +436,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import DefaultSecurityRulesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DefaultSecurityRulesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import DefaultSecurityRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -432,6 +457,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_11_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2018-01-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2018_01_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2018-02-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_authorizations')
         if api_version == '2015-06-15':
@@ -456,6 +482,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -465,10 +493,13 @@ class NetworkManagementClient(MultiApiClientMixin):
         """Instance depends on the API version:
 
            * 2018-02-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCircuitConnectionsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCircuitConnectionsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_connections')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -488,6 +519,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_11_01.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2018-01-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2018_01_01.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2018-02-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCircuitPeeringsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCircuitPeeringsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_peerings')
         if api_version == '2015-06-15':
@@ -512,6 +544,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -531,6 +565,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_11_01.operations.ExpressRouteCircuitsOperations>`
            * 2018-01-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2018_01_01.operations.ExpressRouteCircuitsOperations>`
            * 2018-02-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCircuitsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCircuitsOperations>`
         """
         api_version = self._get_api_version('express_route_circuits')
         if api_version == '2015-06-15':
@@ -555,6 +590,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ExpressRouteCircuitsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCircuitsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -564,10 +601,13 @@ class NetworkManagementClient(MultiApiClientMixin):
         """Instance depends on the API version:
 
            * 2018-02-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
         """
         api_version = self._get_api_version('express_route_cross_connection_peerings')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -577,10 +617,13 @@ class NetworkManagementClient(MultiApiClientMixin):
         """Instance depends on the API version:
 
            * 2018-02-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCrossConnectionsOperations>`
+           * 2018-04-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteCrossConnectionsOperations>`
         """
         api_version = self._get_api_version('express_route_cross_connections')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -600,6 +643,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_11_01.operations.ExpressRouteServiceProvidersOperations>`
            * 2018-01-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2018_01_01.operations.ExpressRouteServiceProvidersOperations>`
            * 2018-02-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteServiceProvidersOperations>`
+           * 2018-04-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2018_04_01.operations.ExpressRouteServiceProvidersOperations>`
         """
         api_version = self._get_api_version('express_route_service_providers')
         if api_version == '2015-06-15':
@@ -624,6 +668,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -639,6 +685,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_11_01.operations.InboundNatRulesOperations>`
            * 2018-01-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2018_01_01.operations.InboundNatRulesOperations>`
            * 2018-02-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2018_02_01.operations.InboundNatRulesOperations>`
+           * 2018-04-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2018_04_01.operations.InboundNatRulesOperations>`
         """
         api_version = self._get_api_version('inbound_nat_rules')
         if api_version == '2017-06-01':
@@ -655,6 +702,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import InboundNatRulesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import InboundNatRulesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import InboundNatRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -670,6 +719,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2018-01-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2018-02-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancerBackendAddressPoolsOperations>`
+           * 2018-04-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancerBackendAddressPoolsOperations>`
         """
         api_version = self._get_api_version('load_balancer_backend_address_pools')
         if api_version == '2017-06-01':
@@ -686,6 +736,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -701,6 +753,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2018-01-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2018-02-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
+           * 2018-04-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
         """
         api_version = self._get_api_version('load_balancer_frontend_ip_configurations')
         if api_version == '2017-06-01':
@@ -717,6 +770,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -732,6 +787,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2018-01-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2018-02-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancerLoadBalancingRulesOperations>`
+           * 2018-04-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancerLoadBalancingRulesOperations>`
         """
         api_version = self._get_api_version('load_balancer_load_balancing_rules')
         if api_version == '2017-06-01':
@@ -748,6 +804,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -763,6 +821,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2018-01-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2018-02-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancerNetworkInterfacesOperations>`
+           * 2018-04-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancerNetworkInterfacesOperations>`
         """
         api_version = self._get_api_version('load_balancer_network_interfaces')
         if api_version == '2017-06-01':
@@ -779,6 +838,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -794,6 +855,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancerProbesOperations>`
            * 2018-01-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancerProbesOperations>`
            * 2018-02-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancerProbesOperations>`
+           * 2018-04-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancerProbesOperations>`
         """
         api_version = self._get_api_version('load_balancer_probes')
         if api_version == '2017-06-01':
@@ -810,6 +872,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancerProbesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancerProbesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancerProbesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -829,6 +893,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_11_01.operations.LoadBalancersOperations>`
            * 2018-01-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2018_01_01.operations.LoadBalancersOperations>`
            * 2018-02-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2018_02_01.operations.LoadBalancersOperations>`
+           * 2018-04-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2018_04_01.operations.LoadBalancersOperations>`
         """
         api_version = self._get_api_version('load_balancers')
         if api_version == '2015-06-15':
@@ -853,6 +918,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LoadBalancersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LoadBalancersOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LoadBalancersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -872,6 +939,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_11_01.operations.LocalNetworkGatewaysOperations>`
            * 2018-01-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2018_01_01.operations.LocalNetworkGatewaysOperations>`
            * 2018-02-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2018_02_01.operations.LocalNetworkGatewaysOperations>`
+           * 2018-04-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2018_04_01.operations.LocalNetworkGatewaysOperations>`
         """
         api_version = self._get_api_version('local_network_gateways')
         if api_version == '2015-06-15':
@@ -896,6 +964,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import LocalNetworkGatewaysOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -911,6 +981,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_11_01.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2018-01-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2018_01_01.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2018-02-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2018_02_01.operations.NetworkInterfaceIPConfigurationsOperations>`
+           * 2018-04-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2018_04_01.operations.NetworkInterfaceIPConfigurationsOperations>`
         """
         api_version = self._get_api_version('network_interface_ip_configurations')
         if api_version == '2017-06-01':
@@ -927,6 +998,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -942,6 +1015,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_11_01.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2018-01-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2018_01_01.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2018-02-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2018_02_01.operations.NetworkInterfaceLoadBalancersOperations>`
+           * 2018-04-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2018_04_01.operations.NetworkInterfaceLoadBalancersOperations>`
         """
         api_version = self._get_api_version('network_interface_load_balancers')
         if api_version == '2017-06-01':
@@ -958,6 +1032,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -977,6 +1053,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_11_01.operations.NetworkInterfacesOperations>`
            * 2018-01-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2018_01_01.operations.NetworkInterfacesOperations>`
            * 2018-02-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2018_02_01.operations.NetworkInterfacesOperations>`
+           * 2018-04-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2018_04_01.operations.NetworkInterfacesOperations>`
         """
         api_version = self._get_api_version('network_interfaces')
         if api_version == '2015-06-15':
@@ -1001,6 +1078,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import NetworkInterfacesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import NetworkInterfacesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import NetworkInterfacesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1020,6 +1099,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_11_01.operations.NetworkSecurityGroupsOperations>`
            * 2018-01-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2018_01_01.operations.NetworkSecurityGroupsOperations>`
            * 2018-02-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2018_02_01.operations.NetworkSecurityGroupsOperations>`
+           * 2018-04-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2018_04_01.operations.NetworkSecurityGroupsOperations>`
         """
         api_version = self._get_api_version('network_security_groups')
         if api_version == '2015-06-15':
@@ -1044,6 +1124,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import NetworkSecurityGroupsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import NetworkSecurityGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1062,6 +1144,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_11_01.operations.NetworkWatchersOperations>`
            * 2018-01-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2018_01_01.operations.NetworkWatchersOperations>`
            * 2018-02-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2018_02_01.operations.NetworkWatchersOperations>`
+           * 2018-04-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2018_04_01.operations.NetworkWatchersOperations>`
         """
         api_version = self._get_api_version('network_watchers')
         if api_version == '2016-09-01':
@@ -1084,6 +1167,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import NetworkWatchersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import NetworkWatchersOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import NetworkWatchersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1097,6 +1182,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`Operations<azure.mgmt.network.v2017_11_01.operations.Operations>`
            * 2018-01-01: :class:`Operations<azure.mgmt.network.v2018_01_01.operations.Operations>`
            * 2018-02-01: :class:`Operations<azure.mgmt.network.v2018_02_01.operations.Operations>`
+           * 2018-04-01: :class:`Operations<azure.mgmt.network.v2018_04_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-09-01':
@@ -1109,6 +1195,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import Operations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import Operations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1127,6 +1215,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_11_01.operations.PacketCapturesOperations>`
            * 2018-01-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2018_01_01.operations.PacketCapturesOperations>`
            * 2018-02-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2018_02_01.operations.PacketCapturesOperations>`
+           * 2018-04-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2018_04_01.operations.PacketCapturesOperations>`
         """
         api_version = self._get_api_version('packet_captures')
         if api_version == '2016-09-01':
@@ -1149,6 +1238,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import PacketCapturesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import PacketCapturesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import PacketCapturesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1168,6 +1259,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_11_01.operations.PublicIPAddressesOperations>`
            * 2018-01-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2018_01_01.operations.PublicIPAddressesOperations>`
            * 2018-02-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2018_02_01.operations.PublicIPAddressesOperations>`
+           * 2018-04-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2018_04_01.operations.PublicIPAddressesOperations>`
         """
         api_version = self._get_api_version('public_ip_addresses')
         if api_version == '2015-06-15':
@@ -1192,6 +1284,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import PublicIPAddressesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import PublicIPAddressesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import PublicIPAddressesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1209,6 +1303,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_11_01.operations.RouteFilterRulesOperations>`
            * 2018-01-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2018_01_01.operations.RouteFilterRulesOperations>`
            * 2018-02-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2018_02_01.operations.RouteFilterRulesOperations>`
+           * 2018-04-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2018_04_01.operations.RouteFilterRulesOperations>`
         """
         api_version = self._get_api_version('route_filter_rules')
         if api_version == '2016-12-01':
@@ -1229,6 +1324,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import RouteFilterRulesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import RouteFilterRulesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import RouteFilterRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1246,6 +1343,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_11_01.operations.RouteFiltersOperations>`
            * 2018-01-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2018_01_01.operations.RouteFiltersOperations>`
            * 2018-02-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2018_02_01.operations.RouteFiltersOperations>`
+           * 2018-04-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2018_04_01.operations.RouteFiltersOperations>`
         """
         api_version = self._get_api_version('route_filters')
         if api_version == '2016-12-01':
@@ -1266,6 +1364,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import RouteFiltersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import RouteFiltersOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import RouteFiltersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1285,6 +1385,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_11_01.operations.RouteTablesOperations>`
            * 2018-01-01: :class:`RouteTablesOperations<azure.mgmt.network.v2018_01_01.operations.RouteTablesOperations>`
            * 2018-02-01: :class:`RouteTablesOperations<azure.mgmt.network.v2018_02_01.operations.RouteTablesOperations>`
+           * 2018-04-01: :class:`RouteTablesOperations<azure.mgmt.network.v2018_04_01.operations.RouteTablesOperations>`
         """
         api_version = self._get_api_version('route_tables')
         if api_version == '2015-06-15':
@@ -1309,6 +1410,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import RouteTablesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import RouteTablesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import RouteTablesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1328,6 +1431,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`RoutesOperations<azure.mgmt.network.v2017_11_01.operations.RoutesOperations>`
            * 2018-01-01: :class:`RoutesOperations<azure.mgmt.network.v2018_01_01.operations.RoutesOperations>`
            * 2018-02-01: :class:`RoutesOperations<azure.mgmt.network.v2018_02_01.operations.RoutesOperations>`
+           * 2018-04-01: :class:`RoutesOperations<azure.mgmt.network.v2018_04_01.operations.RoutesOperations>`
         """
         api_version = self._get_api_version('routes')
         if api_version == '2015-06-15':
@@ -1352,6 +1456,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import RoutesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import RoutesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import RoutesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1371,6 +1477,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_11_01.operations.SecurityRulesOperations>`
            * 2018-01-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2018_01_01.operations.SecurityRulesOperations>`
            * 2018-02-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2018_02_01.operations.SecurityRulesOperations>`
+           * 2018-04-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2018_04_01.operations.SecurityRulesOperations>`
         """
         api_version = self._get_api_version('security_rules')
         if api_version == '2015-06-15':
@@ -1395,6 +1502,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import SecurityRulesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import SecurityRulesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import SecurityRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1414,6 +1523,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_11_01.operations.SubnetsOperations>`
            * 2018-01-01: :class:`SubnetsOperations<azure.mgmt.network.v2018_01_01.operations.SubnetsOperations>`
            * 2018-02-01: :class:`SubnetsOperations<azure.mgmt.network.v2018_02_01.operations.SubnetsOperations>`
+           * 2018-04-01: :class:`SubnetsOperations<azure.mgmt.network.v2018_04_01.operations.SubnetsOperations>`
         """
         api_version = self._get_api_version('subnets')
         if api_version == '2015-06-15':
@@ -1438,6 +1548,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import SubnetsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import SubnetsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import SubnetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1457,6 +1569,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`UsagesOperations<azure.mgmt.network.v2017_11_01.operations.UsagesOperations>`
            * 2018-01-01: :class:`UsagesOperations<azure.mgmt.network.v2018_01_01.operations.UsagesOperations>`
            * 2018-02-01: :class:`UsagesOperations<azure.mgmt.network.v2018_02_01.operations.UsagesOperations>`
+           * 2018-04-01: :class:`UsagesOperations<azure.mgmt.network.v2018_04_01.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
         if api_version == '2015-06-15':
@@ -1481,6 +1594,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import UsagesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import UsagesOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import UsagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1500,6 +1615,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_11_01.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2018-01-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2018_01_01.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2018-02-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2018_02_01.operations.VirtualNetworkGatewayConnectionsOperations>`
+           * 2018-04-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2018_04_01.operations.VirtualNetworkGatewayConnectionsOperations>`
         """
         api_version = self._get_api_version('virtual_network_gateway_connections')
         if api_version == '2015-06-15':
@@ -1524,6 +1640,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1543,6 +1661,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_11_01.operations.VirtualNetworkGatewaysOperations>`
            * 2018-01-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2018_01_01.operations.VirtualNetworkGatewaysOperations>`
            * 2018-02-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2018_02_01.operations.VirtualNetworkGatewaysOperations>`
+           * 2018-04-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2018_04_01.operations.VirtualNetworkGatewaysOperations>`
         """
         api_version = self._get_api_version('virtual_network_gateways')
         if api_version == '2015-06-15':
@@ -1567,6 +1686,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1585,6 +1706,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_11_01.operations.VirtualNetworkPeeringsOperations>`
            * 2018-01-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2018_01_01.operations.VirtualNetworkPeeringsOperations>`
            * 2018-02-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2018_02_01.operations.VirtualNetworkPeeringsOperations>`
+           * 2018-04-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2018_04_01.operations.VirtualNetworkPeeringsOperations>`
         """
         api_version = self._get_api_version('virtual_network_peerings')
         if api_version == '2016-09-01':
@@ -1607,6 +1729,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1626,6 +1750,7 @@ class NetworkManagementClient(MultiApiClientMixin):
            * 2017-11-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_11_01.operations.VirtualNetworksOperations>`
            * 2018-01-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2018_01_01.operations.VirtualNetworksOperations>`
            * 2018-02-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2018_02_01.operations.VirtualNetworksOperations>`
+           * 2018-04-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2018_04_01.operations.VirtualNetworksOperations>`
         """
         api_version = self._get_api_version('virtual_networks')
         if api_version == '2015-06-15':
@@ -1650,6 +1775,8 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_01_01.operations import VirtualNetworksOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import VirtualNetworksOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualNetworksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
