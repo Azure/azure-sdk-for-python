@@ -15,14 +15,17 @@ from .job import Job
 class MabJob(Job):
     """MAB workload-specific job.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param entity_friendly_name: Friendly name of the entity on which the
      current job is executing.
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,33 +36,36 @@ class MabJob(Job):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Required. Constant filled by server.
     :type job_type: str
     :param duration: Time taken by job to run.
     :type duration: timedelta
     :param actions_info: The state/actions applicable on jobs like
      cancel/retry.
-    :type actions_info: list of str or :class:`JobSupportedAction
-     <azure.mgmt.recoveryservicesbackup.models.JobSupportedAction>`
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
     :param mab_server_name: Name of server protecting the DS.
     :type mab_server_name: str
     :param mab_server_type: Server type of MAB container. Possible values
      include: 'Invalid', 'Unknown', 'IaasVMContainer',
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
-     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter'
-    :type mab_server_type: str or :class:`MabServerType
-     <azure.mgmt.recoveryservicesbackup.models.MabServerType>`
+     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter',
+     'VMAppContainer', 'SQLAGWorkLoadContainer', 'StorageContainer',
+     'GenericContainer'
+    :type mab_server_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.MabServerType
     :param workload_type: Workload type of backup item. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
-     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource'
-    :type workload_type: str or :class:`WorkloadType
-     <azure.mgmt.recoveryservicesbackup.models.WorkloadType>`
+     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
+     'SQLDataBase', 'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param error_details: The errors.
-    :type error_details: list of :class:`MabErrorInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabErrorInfo>`
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.MabErrorInfo]
     :param extended_info: Additional information on the job.
-    :type extended_info: :class:`MabJobExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabJobExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.MabJobExtendedInfo
     """
 
     _validation = {
@@ -84,13 +90,13 @@ class MabJob(Job):
         'extended_info': {'key': 'extendedInfo', 'type': 'MabJobExtendedInfo'},
     }
 
-    def __init__(self, entity_friendly_name=None, backup_management_type=None, operation=None, status=None, start_time=None, end_time=None, activity_id=None, duration=None, actions_info=None, mab_server_name=None, mab_server_type=None, workload_type=None, error_details=None, extended_info=None):
-        super(MabJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id)
-        self.duration = duration
-        self.actions_info = actions_info
-        self.mab_server_name = mab_server_name
-        self.mab_server_type = mab_server_type
-        self.workload_type = workload_type
-        self.error_details = error_details
-        self.extended_info = extended_info
+    def __init__(self, **kwargs):
+        super(MabJob, self).__init__(**kwargs)
+        self.duration = kwargs.get('duration', None)
+        self.actions_info = kwargs.get('actions_info', None)
+        self.mab_server_name = kwargs.get('mab_server_name', None)
+        self.mab_server_type = kwargs.get('mab_server_type', None)
+        self.workload_type = kwargs.get('workload_type', None)
+        self.error_details = kwargs.get('error_details', None)
+        self.extended_info = kwargs.get('extended_info', None)
         self.job_type = 'MabJob'

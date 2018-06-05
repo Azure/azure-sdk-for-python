@@ -50,13 +50,10 @@ for package_list in [nspkg_packages, content_packages]:
         pip_command('install -e {}'.format(package_name))
 
 # install test requirements
-pip_command('install -r azure-sdk-testutils/test-requirements.txt')
+pip_command('install -r azure-sdk-tools/test-requirements.txt')
 
 # install packaging requirements
-pip_command('install -r scripts/packaging_requirements.txt')
-
-# install storage for tests
-pip_command('install azure-storage')
+pip_command('install -r azure-sdk-tools/packaging_requirements.txt')
 
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package

@@ -26,6 +26,7 @@ class SearchError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, type=None, message=None):
-        self.type = type
-        self.message = message
+    def __init__(self, **kwargs):
+        super(SearchError, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.message = kwargs.get('message', None)

@@ -9,9 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identity import Identity
-from .operation_display import OperationDisplay
-from .operation import Operation
+try:
+    from .identity_py3 import Identity
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+except (SyntaxError, ImportError):
+    from .identity import Identity
+    from .operation_display import OperationDisplay
+    from .operation import Operation
 from .operation_paged import OperationPaged
 from .identity_paged import IdentityPaged
 from .managed_service_identity_client_enums import (

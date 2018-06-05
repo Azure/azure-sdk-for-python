@@ -16,9 +16,10 @@ class RepairTaskUpdateHealthPolicyDescription(Model):
     """Describes a request to update the health policy of a repair task.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
-    :param task_id: The ID of the repair task to be updated.
+    All required parameters must be populated in order to send to Azure.
+
+    :param task_id: Required. The ID of the repair task to be updated.
     :type task_id: str
     :param version: The current version number of the repair task. If
      non-zero, then the request will only succeed if this value matches the
@@ -48,9 +49,9 @@ class RepairTaskUpdateHealthPolicyDescription(Model):
         'perform_restoring_health_check': {'key': 'PerformRestoringHealthCheck', 'type': 'bool'},
     }
 
-    def __init__(self, task_id, version=None, perform_preparing_health_check=None, perform_restoring_health_check=None):
-        super(RepairTaskUpdateHealthPolicyDescription, self).__init__()
-        self.task_id = task_id
-        self.version = version
-        self.perform_preparing_health_check = perform_preparing_health_check
-        self.perform_restoring_health_check = perform_restoring_health_check
+    def __init__(self, **kwargs):
+        super(RepairTaskUpdateHealthPolicyDescription, self).__init__(**kwargs)
+        self.task_id = kwargs.get('task_id', None)
+        self.version = kwargs.get('version', None)
+        self.perform_preparing_health_check = kwargs.get('perform_preparing_health_check', None)
+        self.perform_restoring_health_check = kwargs.get('perform_restoring_health_check', None)

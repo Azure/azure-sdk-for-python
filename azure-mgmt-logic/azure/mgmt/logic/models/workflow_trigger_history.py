@@ -27,8 +27,7 @@ class WorkflowTriggerHistory(SubResource):
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
-    :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
@@ -36,19 +35,15 @@ class WorkflowTriggerHistory(SubResource):
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The run correlation.
-    :type correlation: :class:`Correlation
-     <azure.mgmt.logic.models.Correlation>`
+    :type correlation: ~azure.mgmt.logic.models.Correlation
     :ivar inputs_link: Gets the link to input parameters.
-    :vartype inputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs_link: Gets the link to output parameters.
-    :vartype outputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar fired: Gets a value indicating whether trigger was fired.
     :vartype fired: bool
     :ivar run: Gets the reference to workflow run.
-    :vartype run: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :vartype run: ~azure.mgmt.logic.models.ResourceReference
     :ivar name: Gets the workflow trigger history name.
     :vartype name: str
     :ivar type: Gets the workflow trigger history type.
@@ -88,15 +83,15 @@ class WorkflowTriggerHistory(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, correlation=None):
-        super(WorkflowTriggerHistory, self).__init__()
+    def __init__(self, **kwargs):
+        super(WorkflowTriggerHistory, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.status = None
         self.code = None
         self.error = None
         self.tracking_id = None
-        self.correlation = correlation
+        self.correlation = kwargs.get('correlation', None)
         self.inputs_link = None
         self.outputs_link = None
         self.fired = None

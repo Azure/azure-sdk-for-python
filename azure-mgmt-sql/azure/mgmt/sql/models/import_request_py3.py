@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .export_request import ExportRequest
+from .export_request_py3 import ExportRequest
 
 
 class ImportRequest(ExportRequest):

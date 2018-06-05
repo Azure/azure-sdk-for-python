@@ -15,6 +15,8 @@ from .service_partition_info import ServicePartitionInfo
 class StatelessServicePartitionInfo(ServicePartitionInfo):
     """Information about a partition of a stateless Service Fabric service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
@@ -28,7 +30,7 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
      partitioning scheme and keys supported by it.
     :type partition_information:
      ~azure.servicefabric.models.PartitionInformation
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: Number of instances of this partition.
     :type instance_count: long
@@ -46,7 +48,7 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
         'instance_count': {'key': 'InstanceCount', 'type': 'long'},
     }
 
-    def __init__(self, health_state=None, partition_status=None, partition_information=None, instance_count=None):
-        super(StatelessServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information)
-        self.instance_count = instance_count
+    def __init__(self, **kwargs):
+        super(StatelessServicePartitionInfo, self).__init__(**kwargs)
+        self.instance_count = kwargs.get('instance_count', None)
         self.service_kind = 'Stateless'

@@ -522,10 +522,10 @@ def create_batchai_client(preparer):
     :returns BatchAIManagementClient: an instance of Batch AI management client
     """
     try:
-        from . import custom_client
+        from custom_client import create as create_custom_client
     except ImportError:
-        custom_client = None
-    if custom_client is not None:
-        return custom_client.create()
+        create_custom_client = None
+    if create_custom_client is not None:
+        return create_custom_client()
     else:
         return preparer.create_mgmt_client(BatchAIManagementClient)

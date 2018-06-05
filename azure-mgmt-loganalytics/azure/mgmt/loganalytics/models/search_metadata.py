@@ -26,19 +26,17 @@ class SearchMetadata(Model):
     :param id: The id of the search results request.
     :type id: str
     :param core_summaries: The core summaries.
-    :type core_summaries: list of :class:`CoreSummary
-     <azure.mgmt.loganalytics.models.CoreSummary>`
+    :type core_summaries: list[~azure.mgmt.loganalytics.models.CoreSummary]
     :param status: The status of the search results.
     :type status: str
     :param start_time: The start time for the search.
     :type start_time: datetime
     :param last_updated: The time of last update.
     :type last_updated: datetime
-    :param etag: The ETag of the search results.
-    :type etag: str
+    :param e_tag: The ETag of the search results.
+    :type e_tag: str
     :param sort: How the results are sorted.
-    :type sort: list of :class:`SearchSort
-     <azure.mgmt.loganalytics.models.SearchSort>`
+    :type sort: list[~azure.mgmt.loganalytics.models.SearchSort]
     :param request_time: The request time.
     :type request_time: long
     :param aggregated_value_field: The aggregated value field.
@@ -50,21 +48,20 @@ class SearchMetadata(Model):
     :param max: The max of all aggregates returned in the result set.
     :type max: long
     :param schema: The schema.
-    :type schema: :class:`SearchMetadataSchema
-     <azure.mgmt.loganalytics.models.SearchMetadataSchema>`
+    :type schema: ~azure.mgmt.loganalytics.models.SearchMetadataSchema
     """
 
     _attribute_map = {
-        'search_id': {'key': 'RequestId', 'type': 'str'},
+        'search_id': {'key': 'requestId', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'total': {'key': 'total', 'type': 'long'},
         'top': {'key': 'top', 'type': 'long'},
         'id': {'key': 'id', 'type': 'str'},
-        'core_summaries': {'key': 'CoreSummaries', 'type': '[CoreSummary]'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
-        'last_updated': {'key': 'LastUpdated', 'type': 'iso-8601'},
-        'etag': {'key': 'ETag', 'type': 'str'},
+        'core_summaries': {'key': 'coreSummaries', 'type': '[CoreSummary]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'sort': {'key': 'sort', 'type': '[SearchSort]'},
         'request_time': {'key': 'requestTime', 'type': 'long'},
         'aggregated_value_field': {'key': 'aggregatedValueField', 'type': 'str'},
@@ -74,21 +71,22 @@ class SearchMetadata(Model):
         'schema': {'key': 'schema', 'type': 'SearchMetadataSchema'},
     }
 
-    def __init__(self, search_id=None, result_type=None, total=None, top=None, id=None, core_summaries=None, status=None, start_time=None, last_updated=None, etag=None, sort=None, request_time=None, aggregated_value_field=None, aggregated_grouping_fields=None, sum=None, max=None, schema=None):
-        self.search_id = search_id
-        self.result_type = result_type
-        self.total = total
-        self.top = top
-        self.id = id
-        self.core_summaries = core_summaries
-        self.status = status
-        self.start_time = start_time
-        self.last_updated = last_updated
-        self.etag = etag
-        self.sort = sort
-        self.request_time = request_time
-        self.aggregated_value_field = aggregated_value_field
-        self.aggregated_grouping_fields = aggregated_grouping_fields
-        self.sum = sum
-        self.max = max
-        self.schema = schema
+    def __init__(self, **kwargs):
+        super(SearchMetadata, self).__init__(**kwargs)
+        self.search_id = kwargs.get('search_id', None)
+        self.result_type = kwargs.get('result_type', None)
+        self.total = kwargs.get('total', None)
+        self.top = kwargs.get('top', None)
+        self.id = kwargs.get('id', None)
+        self.core_summaries = kwargs.get('core_summaries', None)
+        self.status = kwargs.get('status', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.last_updated = kwargs.get('last_updated', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.sort = kwargs.get('sort', None)
+        self.request_time = kwargs.get('request_time', None)
+        self.aggregated_value_field = kwargs.get('aggregated_value_field', None)
+        self.aggregated_grouping_fields = kwargs.get('aggregated_grouping_fields', None)
+        self.sum = kwargs.get('sum', None)
+        self.max = kwargs.get('max', None)
+        self.schema = kwargs.get('schema', None)

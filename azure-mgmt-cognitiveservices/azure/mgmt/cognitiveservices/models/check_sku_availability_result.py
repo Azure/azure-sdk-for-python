@@ -16,10 +16,11 @@ class CheckSkuAvailabilityResult(Model):
     """Check SKU availability result.
 
     :param kind: The Kind of the resource. Possible values include:
-     'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
-     'Bing.SpellCheck', 'ComputerVision', 'ContentModerator', 'CustomSpeech',
-     'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
-     'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
+     'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
+     'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision', 'ContentModerator',
+     'CustomSpeech', 'CustomVision.Prediction', 'CustomVision.Training',
+     'Emotion', 'Face', 'LUIS', 'QnAMaker', 'SpeakerRecognition',
+     'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
     :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
     :param type: The Type of the resource.
     :type type: str
@@ -43,10 +44,11 @@ class CheckSkuAvailabilityResult(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, type=None, sku_name=None, sku_available=None, reason=None, message=None):
-        self.kind = kind
-        self.type = type
-        self.sku_name = sku_name
-        self.sku_available = sku_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, **kwargs):
+        super(CheckSkuAvailabilityResult, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.type = kwargs.get('type', None)
+        self.sku_name = kwargs.get('sku_name', None)
+        self.sku_available = kwargs.get('sku_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)

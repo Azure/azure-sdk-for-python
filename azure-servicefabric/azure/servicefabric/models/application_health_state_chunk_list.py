@@ -16,7 +16,6 @@ class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
     """The list of application health state chunks in the cluster that respect the
     input filters in the chunk query. Returned by get cluster health state
     chunks query.
-    .
 
     :param total_count: Total number of entity health state objects that match
      the specified filters from the cluster health chunk query description.
@@ -31,6 +30,6 @@ class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
         'items': {'key': 'Items', 'type': '[ApplicationHealthStateChunk]'},
     }
 
-    def __init__(self, total_count=None, items=None):
-        super(ApplicationHealthStateChunkList, self).__init__(total_count=total_count)
-        self.items = items
+    def __init__(self, **kwargs):
+        super(ApplicationHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

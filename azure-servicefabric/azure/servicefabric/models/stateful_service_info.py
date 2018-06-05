@@ -15,6 +15,8 @@ from .service_info import ServiceInfo
 class StatefulServiceInfo(ServiceInfo):
     """Information about a stateful Service Fabric service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The identity of the service. This is an encoded representation
      of the service name. This is used in the REST APIs to identify the service
      resource.
@@ -40,7 +42,7 @@ class StatefulServiceInfo(ServiceInfo):
     :type service_status: str or ~azure.servicefabric.models.ServiceStatus
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param has_persisted_state: Whether the service has persisted state.
     :type has_persisted_state: bool
@@ -62,7 +64,7 @@ class StatefulServiceInfo(ServiceInfo):
         'has_persisted_state': {'key': 'HasPersistedState', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None, has_persisted_state=None):
-        super(StatefulServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group)
-        self.has_persisted_state = has_persisted_state
+    def __init__(self, **kwargs):
+        super(StatefulServiceInfo, self).__init__(**kwargs)
+        self.has_persisted_state = kwargs.get('has_persisted_state', None)
         self.service_kind = 'Stateful'

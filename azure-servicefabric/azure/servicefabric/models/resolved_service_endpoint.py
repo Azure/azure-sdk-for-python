@@ -30,7 +30,7 @@ class ResolvedServiceEndpoint(Model):
         'address': {'key': 'Address', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, address=None):
-        super(ResolvedServiceEndpoint, self).__init__()
-        self.kind = kind
-        self.address = address
+    def __init__(self, **kwargs):
+        super(ResolvedServiceEndpoint, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.address = kwargs.get('address', None)

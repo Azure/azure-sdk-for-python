@@ -23,13 +23,14 @@ class CheckSequencePropertyBatchOperation(PropertyBatchOperation):
     the write operations in the batch.
     Note that if one PropertyBatchOperation in a PropertyBatch fails,
     the entire batch fails and cannot be committed in a transactional manner.
-    .
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
-    :param sequence_number: The expected sequence number.
+    :param sequence_number: Required. The expected sequence number.
     :type sequence_number: str
     """
 
@@ -45,7 +46,7 @@ class CheckSequencePropertyBatchOperation(PropertyBatchOperation):
         'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
     }
 
-    def __init__(self, property_name, sequence_number):
-        super(CheckSequencePropertyBatchOperation, self).__init__(property_name=property_name)
-        self.sequence_number = sequence_number
+    def __init__(self, **kwargs):
+        super(CheckSequencePropertyBatchOperation, self).__init__(**kwargs)
+        self.sequence_number = kwargs.get('sequence_number', None)
         self.kind = 'CheckSequence'

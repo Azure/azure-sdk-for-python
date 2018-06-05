@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class X12MessageIdentifier(Model):
     """The X12 message identifier.
 
-    :param message_id: The message id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_id: Required. The message id.
     :type message_id: str
     """
 
@@ -27,5 +29,6 @@ class X12MessageIdentifier(Model):
         'message_id': {'key': 'messageId', 'type': 'str'},
     }
 
-    def __init__(self, message_id):
-        self.message_id = message_id
+    def __init__(self, **kwargs):
+        super(X12MessageIdentifier, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)

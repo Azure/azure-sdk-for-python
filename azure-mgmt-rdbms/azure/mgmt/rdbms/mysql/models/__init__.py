@@ -22,6 +22,7 @@ try:
     from .server_for_create_py3 import ServerForCreate
     from .server_update_parameters_py3 import ServerUpdateParameters
     from .firewall_rule_py3 import FirewallRule
+    from .virtual_network_rule_py3 import VirtualNetworkRule
     from .database_py3 import Database
     from .configuration_py3 import Configuration
     from .operation_display_py3 import OperationDisplay
@@ -45,6 +46,7 @@ except (SyntaxError, ImportError):
     from .server_for_create import ServerForCreate
     from .server_update_parameters import ServerUpdateParameters
     from .firewall_rule import FirewallRule
+    from .virtual_network_rule import VirtualNetworkRule
     from .database import Database
     from .configuration import Configuration
     from .operation_display import OperationDisplay
@@ -57,6 +59,7 @@ except (SyntaxError, ImportError):
     from .name_availability import NameAvailability
 from .server_paged import ServerPaged
 from .firewall_rule_paged import FirewallRulePaged
+from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_paged import DatabasePaged
 from .configuration_paged import ConfigurationPaged
 from .log_file_paged import LogFilePaged
@@ -67,6 +70,7 @@ from .my_sql_management_client_enums import (
     ServerState,
     GeoRedundantBackup,
     SkuTier,
+    VirtualNetworkRuleState,
     OperationOrigin,
 )
 
@@ -83,6 +87,7 @@ __all__ = [
     'ServerForCreate',
     'ServerUpdateParameters',
     'FirewallRule',
+    'VirtualNetworkRule',
     'Database',
     'Configuration',
     'OperationDisplay',
@@ -95,6 +100,7 @@ __all__ = [
     'NameAvailability',
     'ServerPaged',
     'FirewallRulePaged',
+    'VirtualNetworkRulePaged',
     'DatabasePaged',
     'ConfigurationPaged',
     'LogFilePaged',
@@ -104,5 +110,6 @@ __all__ = [
     'ServerState',
     'GeoRedundantBackup',
     'SkuTier',
+    'VirtualNetworkRuleState',
     'OperationOrigin',
 ]

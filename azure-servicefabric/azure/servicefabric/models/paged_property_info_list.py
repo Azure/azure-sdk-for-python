@@ -39,8 +39,8 @@ class PagedPropertyInfoList(Model):
         'properties': {'key': 'Properties', 'type': '[PropertyInfo]'},
     }
 
-    def __init__(self, continuation_token=None, is_consistent=None, properties=None):
-        super(PagedPropertyInfoList, self).__init__()
-        self.continuation_token = continuation_token
-        self.is_consistent = is_consistent
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(PagedPropertyInfoList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.is_consistent = kwargs.get('is_consistent', None)
+        self.properties = kwargs.get('properties', None)

@@ -15,32 +15,35 @@ from msrest.serialization import Model
 class AS2MdnSettings(Model):
     """The AS2 agreement mdn settings.
 
-    :param need_mdn: The value indicating whether to send or request a MDN.
+    All required parameters must be populated in order to send to Azure.
+
+    :param need_mdn: Required. The value indicating whether to send or request
+     a MDN.
     :type need_mdn: bool
-    :param sign_mdn: The value indicating whether the MDN needs to be signed
-     or not.
+    :param sign_mdn: Required. The value indicating whether the MDN needs to
+     be signed or not.
     :type sign_mdn: bool
-    :param send_mdn_asynchronously: The value indicating whether to send the
-     asynchronous MDN.
+    :param send_mdn_asynchronously: Required. The value indicating whether to
+     send the asynchronous MDN.
     :type send_mdn_asynchronously: bool
     :param receipt_delivery_url: The receipt delivery URL.
     :type receipt_delivery_url: str
     :param disposition_notification_to: The disposition notification to header
      value.
     :type disposition_notification_to: str
-    :param sign_outbound_mdn_if_optional: The value indicating whether to sign
-     the outbound MDN if optional.
+    :param sign_outbound_mdn_if_optional: Required. The value indicating
+     whether to sign the outbound MDN if optional.
     :type sign_outbound_mdn_if_optional: bool
     :param mdn_text: The MDN text.
     :type mdn_text: str
-    :param send_inbound_mdn_to_message_box: The value indicating whether to
-     send inbound MDN to message box.
+    :param send_inbound_mdn_to_message_box: Required. The value indicating
+     whether to send inbound MDN to message box.
     :type send_inbound_mdn_to_message_box: bool
-    :param mic_hashing_algorithm: The signing or hashing algorithm. Possible
-     values include: 'NotSpecified', 'None', 'MD5', 'SHA1', 'SHA2256',
+    :param mic_hashing_algorithm: Required. The signing or hashing algorithm.
+     Possible values include: 'NotSpecified', 'None', 'MD5', 'SHA1', 'SHA2256',
      'SHA2384', 'SHA2512'
-    :type mic_hashing_algorithm: str or :class:`HashingAlgorithm
-     <azure.mgmt.logic.models.HashingAlgorithm>`
+    :type mic_hashing_algorithm: str or
+     ~azure.mgmt.logic.models.HashingAlgorithm
     """
 
     _validation = {
@@ -64,13 +67,14 @@ class AS2MdnSettings(Model):
         'mic_hashing_algorithm': {'key': 'micHashingAlgorithm', 'type': 'HashingAlgorithm'},
     }
 
-    def __init__(self, need_mdn, sign_mdn, send_mdn_asynchronously, sign_outbound_mdn_if_optional, send_inbound_mdn_to_message_box, mic_hashing_algorithm, receipt_delivery_url=None, disposition_notification_to=None, mdn_text=None):
-        self.need_mdn = need_mdn
-        self.sign_mdn = sign_mdn
-        self.send_mdn_asynchronously = send_mdn_asynchronously
-        self.receipt_delivery_url = receipt_delivery_url
-        self.disposition_notification_to = disposition_notification_to
-        self.sign_outbound_mdn_if_optional = sign_outbound_mdn_if_optional
-        self.mdn_text = mdn_text
-        self.send_inbound_mdn_to_message_box = send_inbound_mdn_to_message_box
-        self.mic_hashing_algorithm = mic_hashing_algorithm
+    def __init__(self, **kwargs):
+        super(AS2MdnSettings, self).__init__(**kwargs)
+        self.need_mdn = kwargs.get('need_mdn', None)
+        self.sign_mdn = kwargs.get('sign_mdn', None)
+        self.send_mdn_asynchronously = kwargs.get('send_mdn_asynchronously', None)
+        self.receipt_delivery_url = kwargs.get('receipt_delivery_url', None)
+        self.disposition_notification_to = kwargs.get('disposition_notification_to', None)
+        self.sign_outbound_mdn_if_optional = kwargs.get('sign_outbound_mdn_if_optional', None)
+        self.mdn_text = kwargs.get('mdn_text', None)
+        self.send_inbound_mdn_to_message_box = kwargs.get('send_inbound_mdn_to_message_box', None)
+        self.mic_hashing_algorithm = kwargs.get('mic_hashing_algorithm', None)
