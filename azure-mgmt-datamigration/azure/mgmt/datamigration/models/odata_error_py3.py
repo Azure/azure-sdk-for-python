@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class ODataError(Model):
     """Error information in OData format.
 
-    :param code: The machine-readable description of the error, such as
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The machine-readable description of the error, such as
      'InvalidRequest' or 'InternalServerError'
-    :type code: str
-    :param message: The human-readable description of the error
-    :type message: str
-    :param details: Inner errors that caused this error
-    :type details: list[~azure.mgmt.datamigration.models.ODataError]
+    :vartype code: str
+    :ivar message: The human-readable description of the error
+    :vartype message: str
+    :ivar details: Inner errors that caused this error
+    :vartype details: list[~azure.mgmt.datamigration.models.ODataError]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'details': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -30,8 +39,8 @@ class ODataError(Model):
         'details': {'key': 'details', 'type': '[ODataError]'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ODataError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.details = details
+        self.code = None
+        self.message = None
+        self.details = None

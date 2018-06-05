@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
+from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
 
 
 class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOutput):
@@ -56,8 +56,8 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
-        'logins': {'key': 'Logins', 'type': '{str}'},
-        'agent_jobs': {'key': 'AgentJobs', 'type': '{str}'},
+        'logins': {'key': 'logins', 'type': '{str}'},
+        'agent_jobs': {'key': 'agentJobs', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
