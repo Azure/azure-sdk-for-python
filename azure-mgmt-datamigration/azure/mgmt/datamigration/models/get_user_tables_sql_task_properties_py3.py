@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .project_task_properties import ProjectTaskProperties
+from .project_task_properties_py3 import ProjectTaskProperties
 
 
 class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
