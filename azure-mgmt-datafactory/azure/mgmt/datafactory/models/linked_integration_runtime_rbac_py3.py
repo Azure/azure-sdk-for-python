@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
+from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
 
 
 class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
@@ -35,6 +35,6 @@ class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
     }
 
     def __init__(self, *, resource_id: str, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeRbac, self).__init__(, **kwargs)
+        super(LinkedIntegrationRuntimeRbac, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.authorization_type = 'RBAC'

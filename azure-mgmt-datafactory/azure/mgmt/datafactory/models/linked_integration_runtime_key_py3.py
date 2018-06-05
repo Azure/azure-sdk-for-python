@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
+from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
 
 
 class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
@@ -34,6 +34,6 @@ class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
     }
 
     def __init__(self, *, key, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeKey, self).__init__(, **kwargs)
+        super(LinkedIntegrationRuntimeKey, self).__init__(**kwargs)
         self.key = key
         self.authorization_type = 'Key'

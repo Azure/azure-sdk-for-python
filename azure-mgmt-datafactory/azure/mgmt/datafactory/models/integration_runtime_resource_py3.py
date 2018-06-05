@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sub_resource_py3 import SubResource
 
 
 class IntegrationRuntimeResource(SubResource):
@@ -49,5 +49,5 @@ class IntegrationRuntimeResource(SubResource):
     }
 
     def __init__(self, *, properties, **kwargs) -> None:
-        super(IntegrationRuntimeResource, self).__init__(, **kwargs)
+        super(IntegrationRuntimeResource, self).__init__(**kwargs)
         self.properties = properties

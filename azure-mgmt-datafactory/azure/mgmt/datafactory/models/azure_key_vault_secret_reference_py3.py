@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .secret_base import SecretBase
+from .secret_base_py3 import SecretBase
 
 
 class AzureKeyVaultSecretReference(SecretBase):
@@ -44,7 +44,7 @@ class AzureKeyVaultSecretReference(SecretBase):
     }
 
     def __init__(self, *, store, secret_name, secret_version=None, **kwargs) -> None:
-        super(AzureKeyVaultSecretReference, self).__init__(, **kwargs)
+        super(AzureKeyVaultSecretReference, self).__init__(**kwargs)
         self.store = store
         self.secret_name = secret_name
         self.secret_version = secret_version

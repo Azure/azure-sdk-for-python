@@ -21,7 +21,7 @@ class TumblingWindowTriggerReference(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Required. Tumbling window trigger reference type. Default
-     value: "TumblingWindowTriggerReference" .
+     value: "TriggerReference" .
     :vartype type: str
     :param reference_name: Required. Reference TumblingWindowTrigger name.
     :type reference_name: str
@@ -37,7 +37,7 @@ class TumblingWindowTriggerReference(Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "TumblingWindowTriggerReference"
+    type = "TriggerReference"
 
     def __init__(self, **kwargs):
         super(TumblingWindowTriggerReference, self).__init__(**kwargs)

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sub_resource_py3 import SubResource
 
 
 class LinkedServiceResource(SubResource):
@@ -49,5 +49,5 @@ class LinkedServiceResource(SubResource):
     }
 
     def __init__(self, *, properties, **kwargs) -> None:
-        super(LinkedServiceResource, self).__init__(, **kwargs)
+        super(LinkedServiceResource, self).__init__(**kwargs)
         self.properties = properties

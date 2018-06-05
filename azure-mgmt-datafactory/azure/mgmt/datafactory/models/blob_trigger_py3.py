@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .multiple_pipeline_trigger import MultiplePipelineTrigger
+from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
 
 
 class BlobTrigger(MultiplePipelineTrigger):
