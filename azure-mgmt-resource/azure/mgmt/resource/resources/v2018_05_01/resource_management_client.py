@@ -15,8 +15,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.deployments_operations import DeploymentsOperations
 from .operations.providers_operations import ProvidersOperations
-from .operations.resource_groups_operations import ResourceGroupsOperations
 from .operations.resources_operations import ResourcesOperations
+from .operations.resource_groups_operations import ResourceGroupsOperations
 from .operations.tags_operations import TagsOperations
 from .operations.deployment_operations import DeploymentOperations
 from . import models
@@ -55,23 +55,23 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
 
 
 class ResourceManagementClient(SDKClient):
-    """ResourceManagementClient
+    """Provides operations for working with resources and resource groups.
 
     :ivar config: Configuration for client.
     :vartype config: ResourceManagementClientConfiguration
 
     :ivar deployments: Deployments operations
-    :vartype deployments: azure.mgmt.resource.resources.v2016_02_01.operations.DeploymentsOperations
+    :vartype deployments: azure.mgmt.resource.resources.v2018_05_01.operations.DeploymentsOperations
     :ivar providers: Providers operations
-    :vartype providers: azure.mgmt.resource.resources.v2016_02_01.operations.ProvidersOperations
-    :ivar resource_groups: ResourceGroups operations
-    :vartype resource_groups: azure.mgmt.resource.resources.v2016_02_01.operations.ResourceGroupsOperations
+    :vartype providers: azure.mgmt.resource.resources.v2018_05_01.operations.ProvidersOperations
     :ivar resources: Resources operations
-    :vartype resources: azure.mgmt.resource.resources.v2016_02_01.operations.ResourcesOperations
+    :vartype resources: azure.mgmt.resource.resources.v2018_05_01.operations.ResourcesOperations
+    :ivar resource_groups: ResourceGroups operations
+    :vartype resource_groups: azure.mgmt.resource.resources.v2018_05_01.operations.ResourceGroupsOperations
     :ivar tags: Tags operations
-    :vartype tags: azure.mgmt.resource.resources.v2016_02_01.operations.TagsOperations
+    :vartype tags: azure.mgmt.resource.resources.v2018_05_01.operations.TagsOperations
     :ivar deployment_operations: DeploymentOperations operations
-    :vartype deployment_operations: azure.mgmt.resource.resources.v2016_02_01.operations.DeploymentOperations
+    :vartype deployment_operations: azure.mgmt.resource.resources.v2018_05_01.operations.DeploymentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,7 +88,7 @@ class ResourceManagementClient(SDKClient):
         super(ResourceManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-02-01'
+        self.api_version = '2018-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -96,9 +96,9 @@ class ResourceManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.providers = ProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.resource_groups = ResourceGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.resources = ResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_groups = ResourceGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
