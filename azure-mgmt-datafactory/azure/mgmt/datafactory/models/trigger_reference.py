@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class TumblingWindowTriggerReference(Model):
+class TriggerReference(Model):
     """Tumbling window trigger reference type.
 
     Variables are only populated by the server, and will be ignored when
@@ -23,7 +23,7 @@ class TumblingWindowTriggerReference(Model):
     :ivar type: Required. Tumbling window trigger reference type. Default
      value: "TriggerReference" .
     :vartype type: str
-    :param reference_name: Required. Reference TumblingWindowTrigger name.
+    :param reference_name: Required. Reference trigger name.
     :type reference_name: str
     """
 
@@ -40,5 +40,5 @@ class TumblingWindowTriggerReference(Model):
     type = "TriggerReference"
 
     def __init__(self, **kwargs):
-        super(TumblingWindowTriggerReference, self).__init__(**kwargs)
+        super(TriggerReference, self).__init__(**kwargs)
         self.reference_name = kwargs.get('reference_name', None)

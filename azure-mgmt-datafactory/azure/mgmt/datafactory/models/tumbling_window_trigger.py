@@ -64,8 +64,8 @@ class TumblingWindowTrigger(Trigger):
      runs.
     :type retry_policy: ~azure.mgmt.datafactory.models.RetryPolicy
     :param depends_on: Tumbling window triggers that this trigger depends on.
-    :type depends_on:
-     list[~azure.mgmt.datafactory.models.TumblingWindowTriggerReference]
+     Only tumbling window triggers are supported.
+    :type depends_on: list[~azure.mgmt.datafactory.models.TriggerReference]
     """
 
     _validation = {
@@ -91,7 +91,7 @@ class TumblingWindowTrigger(Trigger):
         'delay': {'key': 'typeProperties.delay', 'type': 'object'},
         'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
         'retry_policy': {'key': 'typeProperties.retryPolicy', 'type': 'RetryPolicy'},
-        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[TumblingWindowTriggerReference]'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[TriggerReference]'},
     }
 
     def __init__(self, **kwargs):
