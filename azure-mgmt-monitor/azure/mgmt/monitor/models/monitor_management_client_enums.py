@@ -39,19 +39,6 @@ class ComparisonOperationType(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
 
 
-class ConditionalOperator(str, Enum):
-
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
-
-
-class MetricTriggerType(str, Enum):
-
-    consecutive = "Consecutive"
-    total = "Total"
-
-
 class ScaleDirection(str, Enum):
 
     none = "None"
@@ -164,6 +151,19 @@ class ProvisioningState(str, Enum):
 class QueryType(str, Enum):
 
     result_count = "ResultCount"
+
+
+class ConditionalOperator(str, Enum):
+
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+
+
+class MetricTriggerType(str, Enum):
+
+    consecutive = "Consecutive"
+    total = "Total"
 
 
 class AlertSeverity(str, Enum):

@@ -17,10 +17,6 @@ class AlertingAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_group_id: the id of the action group to use.
-    :type action_group_id: str
-    :param webhook_properties:
-    :type webhook_properties: dict[str, str]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param severity: Required. Severity of the alert. Possible values include:
@@ -44,8 +40,6 @@ class AlertingAction(Action):
     }
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'severity': {'key': 'severity', 'type': 'str'},
         'azns_action': {'key': 'aznsAction', 'type': 'AzNsActionGroup'},

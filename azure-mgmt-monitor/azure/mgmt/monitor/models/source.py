@@ -24,8 +24,8 @@ class Source(Model):
     :param data_source_id: Required. The resource uri over which log search
      query is to be run.
     :type data_source_id: str
-    :param query_type: Set value to ResultCount if query should be returning
-     search result count. Possible values include: 'ResultCount'
+    :param query_type: Set value to 'ResultCount'. Possible values include:
+     'ResultCount'
     :type query_type: str or ~azure.mgmt.monitor.models.QueryType
     """
 

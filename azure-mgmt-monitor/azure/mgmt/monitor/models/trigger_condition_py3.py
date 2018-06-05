@@ -26,7 +26,7 @@ class TriggerCondition(Model):
      should be triggered.
     :type threshold: float
     :param metric_trigger: Trigger condition for metric query rule
-    :type metric_trigger: ~azure.mgmt.monitor.models.MetricTrigger
+    :type metric_trigger: ~azure.mgmt.monitor.models.LogMetricTrigger
     """
 
     _validation = {
@@ -37,7 +37,7 @@ class TriggerCondition(Model):
     _attribute_map = {
         'threshold_operator': {'key': 'thresholdOperator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
-        'metric_trigger': {'key': 'metricTrigger', 'type': 'MetricTrigger'},
+        'metric_trigger': {'key': 'metricTrigger', 'type': 'LogMetricTrigger'},
     }
 
     def __init__(self, *, threshold_operator, threshold: float, metric_trigger=None, **kwargs) -> None:
