@@ -15,14 +15,22 @@ from msrest.serialization import Model
 class WaitStatistics(Model):
     """Wait statistics gathered during query batch execution.
 
-    :param wait_type: Type of the Wait
-    :type wait_type: str
-    :param wait_time_ms: Total wait time in millisecond(s) . Default value: 0
-     .
-    :type wait_time_ms: float
-    :param wait_count: Total no. of waits
-    :type wait_count: long
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar wait_type: Type of the Wait
+    :vartype wait_type: str
+    :ivar wait_time_ms: Total wait time in millisecond(s). Default value: 0 .
+    :vartype wait_time_ms: float
+    :ivar wait_count: Total no. of waits
+    :vartype wait_count: long
     """
+
+    _validation = {
+        'wait_type': {'readonly': True},
+        'wait_time_ms': {'readonly': True},
+        'wait_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'wait_type': {'key': 'waitType', 'type': 'str'},
@@ -32,6 +40,6 @@ class WaitStatistics(Model):
 
     def __init__(self, **kwargs):
         super(WaitStatistics, self).__init__(**kwargs)
-        self.wait_type = kwargs.get('wait_type', None)
-        self.wait_time_ms = kwargs.get('wait_time_ms', 0)
-        self.wait_count = kwargs.get('wait_count', None)
+        self.wait_type = None
+        self.wait_time_ms = None
+        self.wait_count = None

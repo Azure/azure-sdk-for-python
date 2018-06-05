@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_migration_task_input import SqlMigrationTaskInput
+from .sql_migration_task_input_py3 import SqlMigrationTaskInput
 
 
 class MigrateSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
