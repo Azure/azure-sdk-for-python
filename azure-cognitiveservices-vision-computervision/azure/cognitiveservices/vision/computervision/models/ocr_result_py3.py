@@ -15,9 +15,8 @@ from msrest.serialization import Model
 class OcrResult(Model):
     """OcrResult.
 
-    :param language:
-    :type language:
-     ~azure.cognitiveservices.vision.computervision.models.OcrResult
+    :param language: The BCP-47 language code of the text in the image.
+    :type language: str
     :param text_angle: The angle, in degrees, of the detected text with
      respect to the closest horizontal or vertical direction. After rotating
      the input image clockwise by this angle, the recognized text lines become
@@ -41,13 +40,13 @@ class OcrResult(Model):
     """
 
     _attribute_map = {
-        'language': {'key': 'language', 'type': 'OcrResult'},
+        'language': {'key': 'language', 'type': 'str'},
         'text_angle': {'key': 'textAngle', 'type': 'float'},
         'orientation': {'key': 'orientation', 'type': 'str'},
         'regions': {'key': 'regions', 'type': '[OcrRegion]'},
     }
 
-    def __init__(self, *, language=None, text_angle: float=None, orientation: str=None, regions=None, **kwargs) -> None:
+    def __init__(self, *, language: str=None, text_angle: float=None, orientation: str=None, regions=None, **kwargs) -> None:
         super(OcrResult, self).__init__(**kwargs)
         self.language = language
         self.text_angle = text_angle
