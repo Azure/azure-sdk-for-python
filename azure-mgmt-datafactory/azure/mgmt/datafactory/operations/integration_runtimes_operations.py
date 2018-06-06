@@ -275,8 +275,10 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+        :return: IntegrationRuntimeStatusResponse or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
@@ -321,7 +323,7 @@ class IntegrationRuntimesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationRuntimeResource', response)
+            deserialized = self._deserialize('IntegrationRuntimeStatusResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

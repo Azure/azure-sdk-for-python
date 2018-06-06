@@ -30,6 +30,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :param type: Required. Constant filled by server.
     :type type: str
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
     :vartype create_time: datetime
@@ -99,6 +102,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'additional_properties': {'key': 'typeProperties.', 'type': '{object}'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
         'task_queue_id': {'key': 'typeProperties.taskQueueId', 'type': 'str'},
         'internal_channel_encryption': {'key': 'typeProperties.internalChannelEncryption', 'type': 'str'},
@@ -116,8 +120,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, nodes=None, links=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, nodes=None, links=None, **kwargs) -> None:
         super(SelfHostedIntegrationRuntimeStatus, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.create_time = None
         self.task_queue_id = None
         self.internal_channel_encryption = None

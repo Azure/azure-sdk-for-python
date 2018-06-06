@@ -484,7 +484,7 @@ class FactoriesOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}'}
 
-    def list_shared_factory(
+    def list_shared_factories(
             self, resource_group_name, factory_name, custom_headers=None, raw=False, **operation_config):
         """List data factories which the given data factory has access.
 
@@ -507,7 +507,7 @@ class FactoriesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_shared_factory.metadata['url']
+                url = self.list_shared_factories.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -552,9 +552,9 @@ class FactoriesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_shared_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/sharedFactory'}
+    list_shared_factories.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/listSharedFactories'}
 
-    def list_shared_integration_runtime(
+    def list_shared_integration_runtimes(
             self, resource_group_name, factory_name, data_factory_resource_id=None, custom_headers=None, raw=False, **operation_config):
         """List integration runtimes which the given data factory has access.
 
@@ -579,7 +579,7 @@ class FactoriesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_shared_integration_runtime.metadata['url']
+                url = self.list_shared_integration_runtimes.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -626,7 +626,7 @@ class FactoriesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_shared_integration_runtime.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/sharedIntegrationRuntime'}
+    list_shared_integration_runtimes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/listSharedIntegrationRuntimes'}
 
     def cancel_pipeline_run(
             self, resource_group_name, factory_name, run_id, custom_headers=None, raw=False, **operation_config):
