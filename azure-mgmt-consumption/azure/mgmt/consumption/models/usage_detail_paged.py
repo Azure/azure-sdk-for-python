@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .price_sheet_operations import PriceSheetOperations
-from .usage_details_operations import UsageDetailsOperations
-from .forecasts_operations import ForecastsOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'PriceSheetOperations',
-    'UsageDetailsOperations',
-    'ForecastsOperations',
-    'Operations',
-]
+
+class UsageDetailPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`UsageDetail <azure.mgmt.consumption.models.UsageDetail>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[UsageDetail]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(UsageDetailPaged, self).__init__(*args, **kwargs)

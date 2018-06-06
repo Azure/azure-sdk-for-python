@@ -13,6 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.price_sheet_operations import PriceSheetOperations
+from .operations.usage_details_operations import UsageDetailsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from . import models
@@ -56,6 +58,10 @@ class ConsumptionManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ConsumptionManagementClientConfiguration
 
+    :ivar price_sheet: PriceSheet operations
+    :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
+    :ivar usage_details: UsageDetails operations
+    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
     :ivar forecasts: Forecasts operations
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
@@ -80,6 +86,10 @@ class ConsumptionManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.price_sheet = PriceSheetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details = UsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

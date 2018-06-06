@@ -9,14 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .price_sheet_operations import PriceSheetOperations
-from .usage_details_operations import UsageDetailsOperations
-from .forecasts_operations import ForecastsOperations
-from .operations import Operations
+from msrest.serialization import Model
 
-__all__ = [
-    'PriceSheetOperations',
-    'UsageDetailsOperations',
-    'ForecastsOperations',
-    'Operations',
-]
+
+class QueryOptions(Model):
+    """Additional parameters for a set of operations.
+
+    :param apply: OData apply expression to aggregate usageDetails by tags or
+     (tags and properties/usageStart)
+    :type apply: str
+    """
+
+    def __init__(self, apply=None):
+        super(QueryOptions, self).__init__()
+        self.apply = apply
