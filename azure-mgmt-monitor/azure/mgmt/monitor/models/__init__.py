@@ -101,6 +101,8 @@ try:
     from .schedule_py3 import Schedule
     from .action_py3 import Action
     from .log_search_rule_resource_py3 import LogSearchRuleResource
+    from .log_search_rule_resource_patch_py3 import LogSearchRuleResourcePatch
+    from .log_metric_trigger_py3 import LogMetricTrigger
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
     from .alerting_action_py3 import AlertingAction
@@ -196,6 +198,8 @@ except (SyntaxError, ImportError):
     from .schedule import Schedule
     from .action import Action
     from .log_search_rule_resource import LogSearchRuleResource
+    from .log_search_rule_resource_patch import LogSearchRuleResourcePatch
+    from .log_metric_trigger import LogMetricTrigger
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
     from .alerting_action import AlertingAction
@@ -214,8 +218,6 @@ from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
     ComparisonOperationType,
-    ConditionalOperator,
-    MetricTriggerType,
     ScaleDirection,
     ScaleType,
     RecurrenceFrequency,
@@ -230,6 +232,8 @@ from .monitor_management_client_enums import (
     Enabled,
     ProvisioningState,
     QueryType,
+    ConditionalOperator,
+    MetricTriggerType,
     AlertSeverity,
     ResultType,
 )
@@ -326,6 +330,8 @@ __all__ = [
     'Schedule',
     'Action',
     'LogSearchRuleResource',
+    'LogSearchRuleResourcePatch',
+    'LogMetricTrigger',
     'TriggerCondition',
     'AzNsActionGroup',
     'AlertingAction',
@@ -343,8 +349,6 @@ __all__ = [
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
-    'ConditionalOperator',
-    'MetricTriggerType',
     'ScaleDirection',
     'ScaleType',
     'RecurrenceFrequency',
@@ -359,6 +363,8 @@ __all__ = [
     'Enabled',
     'ProvisioningState',
     'QueryType',
+    'ConditionalOperator',
+    'MetricTriggerType',
     'AlertSeverity',
     'ResultType',
 ]

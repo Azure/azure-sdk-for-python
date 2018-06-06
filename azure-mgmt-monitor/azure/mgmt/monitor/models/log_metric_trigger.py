@@ -12,36 +12,34 @@
 from msrest.serialization import Model
 
 
-class TriggerCondition(Model):
-    """The condition that results in the Log Search rule.
+class LogMetricTrigger(Model):
+    """LogMetricTrigger.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param threshold_operator: Required. Evaluation operation for rule -
-     'GreaterThan' or 'LessThan. Possible values include: 'GreaterThan',
+    :param threshold_operator: Evaluation operation for Metric -'GreaterThan'
+     or 'LessThan' or 'Equal'. Possible values include: 'GreaterThan',
      'LessThan', 'Equal'
     :type threshold_operator: str or
      ~azure.mgmt.monitor.models.ConditionalOperator
-    :param threshold: Required. Result or count threshold based on which rule
-     should be triggered.
+    :param threshold:
     :type threshold: float
-    :param metric_trigger: Trigger condition for metric query rule
-    :type metric_trigger: ~azure.mgmt.monitor.models.LogMetricTrigger
+    :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or
+     'Total'. Possible values include: 'Consecutive', 'Total'
+    :type metric_trigger_type: str or
+     ~azure.mgmt.monitor.models.MetricTriggerType
+    :param metric_column: Evaluation of metric on a particular column
+    :type metric_column: str
     """
-
-    _validation = {
-        'threshold_operator': {'required': True},
-        'threshold': {'required': True},
-    }
 
     _attribute_map = {
         'threshold_operator': {'key': 'thresholdOperator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
-        'metric_trigger': {'key': 'metricTrigger', 'type': 'LogMetricTrigger'},
+        'metric_trigger_type': {'key': 'metricTriggerType', 'type': 'str'},
+        'metric_column': {'key': 'metricColumn', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(TriggerCondition, self).__init__(**kwargs)
+        super(LogMetricTrigger, self).__init__(**kwargs)
         self.threshold_operator = kwargs.get('threshold_operator', None)
         self.threshold = kwargs.get('threshold', None)
-        self.metric_trigger = kwargs.get('metric_trigger', None)
+        self.metric_trigger_type = kwargs.get('metric_trigger_type', None)
+        self.metric_column = kwargs.get('metric_column', None)

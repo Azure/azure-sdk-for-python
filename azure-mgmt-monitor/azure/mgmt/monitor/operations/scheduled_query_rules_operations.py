@@ -166,6 +166,79 @@ class ScheduledQueryRulesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
+    def update(
+            self, resource_group_name, rule_name, tags=None, enabled=None, custom_headers=None, raw=False, **operation_config):
+        """Update log search Rule.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param enabled: The flag which indicates whether the Log Search rule
+         is enabled. Value should be true or false. Possible values include:
+         'true', 'false'
+        :type enabled: str or ~azure.mgmt.monitor.models.Enabled
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        """
+        parameters = models.LogSearchRuleResourcePatch(tags=tags, enabled=enabled)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'LogSearchRuleResourcePatch')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('LogSearchRuleResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
+
     def delete(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a Log Search rule.
