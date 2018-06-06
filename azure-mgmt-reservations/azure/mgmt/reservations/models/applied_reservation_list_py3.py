@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class MergeRequest(Model):
-    """MergeRequest.
+class AppliedReservationList(Model):
+    """AppliedReservationList.
 
-    :param sources: Format of the resource id should be
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}
-    :type sources: list[str]
+    :param value:
+    :type value: list[str]
+    :param next_link: Url to get the next page of reservations
+    :type next_link: str
     """
 
     _attribute_map = {
-        'sources': {'key': 'properties.sources', 'type': '[str]'},
+        'value': {'key': 'value', 'type': '[str]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(MergeRequest, self).__init__(**kwargs)
-        self.sources = kwargs.get('sources', None)
+    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
+        super(AppliedReservationList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link

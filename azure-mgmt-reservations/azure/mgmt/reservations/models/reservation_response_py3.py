@@ -57,12 +57,12 @@ class ReservationResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location=None, etag: int=None, sku=None, properties=None, **kwargs) -> None:
         super(ReservationResponse, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.etag = kwargs.get('etag', None)
+        self.location = location
+        self.etag = etag
         self.id = None
         self.name = None
-        self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
+        self.sku = sku
+        self.properties = properties
         self.type = None

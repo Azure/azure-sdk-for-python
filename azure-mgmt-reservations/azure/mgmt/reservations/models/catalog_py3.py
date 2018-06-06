@@ -51,7 +51,7 @@ class Catalog(Model):
         'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Catalog, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
