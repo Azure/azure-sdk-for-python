@@ -12,6 +12,17 @@
 from enum import Enum
 
 
+class ScenarioType(str, Enum):
+
+    unknown = "Unknown"
+    web = "Web"
+    store_apps = "StoreApps"
+    search_history = "SearchHistory"
+    personal_search_documents = "PersonalSearchDocuments"
+    personal_search_tags = "PersonalSearchTags"
+    custom = "Custom"
+
+
 class SearchKind(str, Enum):
 
     web_search = "WebSearch"

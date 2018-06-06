@@ -40,6 +40,7 @@ except (SyntaxError, ImportError):
     from .response_base import ResponseBase
     from .creative_work import CreativeWork
 from .auto_suggest_search_api_enums import (
+    ScenarioType,
     SearchKind,
     ErrorCode,
     SafeSearch,
@@ -61,6 +62,7 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'ResponseBase',
     'CreativeWork',
+    'ScenarioType',
     'SearchKind',
     'ErrorCode',
     'SafeSearch',

@@ -17,19 +17,27 @@ class SuggestionsSuggestionGroup(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param name: Required. Possible values include: 'Unknown', 'Web',
+     'StoreApps', 'SearchHistory', 'PersonalSearchDocuments',
+     'PersonalSearchTags', 'Custom'. Default value: "Unknown" .
+    :type name: str or
+     ~azure.cognitiveservices.search.autosuggest.models.ScenarioType
     :param search_suggestions: Required.
     :type search_suggestions:
      list[~azure.cognitiveservices.search.autosuggest.models.SearchAction]
     """
 
     _validation = {
+        'name': {'required': True},
         'search_suggestions': {'required': True},
     }
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'search_suggestions': {'key': 'searchSuggestions', 'type': '[SearchAction]'},
     }
 
     def __init__(self, **kwargs):
         super(SuggestionsSuggestionGroup, self).__init__(**kwargs)
+        self.name = kwargs.get('name', "Unknown")
         self.search_suggestions = kwargs.get('search_suggestions', None)
