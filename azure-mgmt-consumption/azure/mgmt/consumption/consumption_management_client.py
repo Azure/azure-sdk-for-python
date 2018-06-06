@@ -13,6 +13,11 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.price_sheet_operations import PriceSheetOperations
+from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.usage_details_by_billing_account_operations import UsageDetailsByBillingAccountOperations
+from .operations.usage_details_by_department_operations import UsageDetailsByDepartmentOperations
+from .operations.usage_details_by_enrollment_account_operations import UsageDetailsByEnrollmentAccountOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from . import models
@@ -56,6 +61,16 @@ class ConsumptionManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ConsumptionManagementClientConfiguration
 
+    :ivar price_sheet: PriceSheet operations
+    :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
+    :ivar usage_details: UsageDetails operations
+    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar usage_details_by_billing_account: UsageDetailsByBillingAccount operations
+    :vartype usage_details_by_billing_account: azure.mgmt.consumption.operations.UsageDetailsByBillingAccountOperations
+    :ivar usage_details_by_department: UsageDetailsByDepartment operations
+    :vartype usage_details_by_department: azure.mgmt.consumption.operations.UsageDetailsByDepartmentOperations
+    :ivar usage_details_by_enrollment_account: UsageDetailsByEnrollmentAccount operations
+    :vartype usage_details_by_enrollment_account: azure.mgmt.consumption.operations.UsageDetailsByEnrollmentAccountOperations
     :ivar forecasts: Forecasts operations
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
@@ -80,6 +95,16 @@ class ConsumptionManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.price_sheet = PriceSheetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details = UsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_billing_account = UsageDetailsByBillingAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_department = UsageDetailsByDepartmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_enrollment_account = UsageDetailsByEnrollmentAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

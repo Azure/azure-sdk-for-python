@@ -14,8 +14,14 @@ from .error_response import ErrorResponse, ErrorResponseException
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .resource import Resource
+from .meter_details import MeterDetails
+from .price_sheet_properties import PriceSheetProperties
+from .price_sheet_result import PriceSheetResult
 from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
 from .forecast import Forecast
+from .usage_detail import UsageDetail
+from .query_options import QueryOptions
+from .usage_detail_paged import UsageDetailPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
@@ -30,8 +36,14 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'Resource',
+    'MeterDetails',
+    'PriceSheetProperties',
+    'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
+    'UsageDetail',
+    'QueryOptions',
+    'UsageDetailPaged',
     'ForecastPaged',
     'OperationPaged',
     'Grain',
