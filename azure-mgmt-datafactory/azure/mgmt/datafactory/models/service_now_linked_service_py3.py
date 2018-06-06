@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
 class ServiceNowLinkedService(LinkedService):
@@ -34,7 +34,7 @@ class ServiceNowLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param endpoint: Required. The endpoint of the ServiceNow server. (i.e.
-     ServiceNowData.com)
+     <instance>.service-now.com)
     :type endpoint: object
     :param authentication_type: Required. The authentication type to use.
      Possible values include: 'Basic', 'OAuth2'

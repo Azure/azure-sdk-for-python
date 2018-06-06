@@ -17,7 +17,7 @@ class MultiplePipelineTrigger(Trigger):
     pipeline.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobTrigger, ScheduleTrigger
+    sub-classes are: BlobEventsTrigger, BlobTrigger, ScheduleTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -55,7 +55,7 @@ class MultiplePipelineTrigger(Trigger):
     }
 
     _subtype_map = {
-        'type': {'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
+        'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
     }
 
     def __init__(self, **kwargs):

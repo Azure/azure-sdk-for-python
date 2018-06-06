@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_linked_service_type_properties import WebLinkedServiceTypeProperties
+from .web_linked_service_type_properties_py3 import WebLinkedServiceTypeProperties
 
 
 class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):

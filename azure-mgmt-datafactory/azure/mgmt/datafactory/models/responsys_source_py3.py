@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_source import CopySource
+from .copy_source_py3 import CopySource
 
 
 class ResponsysSource(CopySource):

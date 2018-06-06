@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
 class QuickBooksLinkedService(LinkedService):
@@ -39,10 +39,17 @@ class QuickBooksLinkedService(LinkedService):
     :param company_id: Required. The company ID of the QuickBooks company to
      authorize.
     :type company_id: object
-    :param access_token: The access token for OAuth 1.0 authentication.
-    :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token_secret: The access token secret for OAuth 1.0
+    :param consumer_key: Required. The consumer key for OAuth 1.0
      authentication.
+    :type consumer_key: object
+    :param consumer_secret: Required. The consumer secret for OAuth 1.0
+     authentication.
+    :type consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :param access_token: Required. The access token for OAuth 1.0
+     authentication.
+    :type access_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param access_token_secret: Required. The access token secret for OAuth
+     1.0 authentication.
     :type access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -57,6 +64,10 @@ class QuickBooksLinkedService(LinkedService):
         'type': {'required': True},
         'endpoint': {'required': True},
         'company_id': {'required': True},
+        'consumer_key': {'required': True},
+        'consumer_secret': {'required': True},
+        'access_token': {'required': True},
+        'access_token_secret': {'required': True},
     }
 
     _attribute_map = {
@@ -68,16 +79,20 @@ class QuickBooksLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'company_id': {'key': 'typeProperties.companyId', 'type': 'object'},
+        'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'object'},
+        'consumer_secret': {'key': 'typeProperties.consumerSecret', 'type': 'SecretBase'},
         'access_token': {'key': 'typeProperties.accessToken', 'type': 'SecretBase'},
         'access_token_secret': {'key': 'typeProperties.accessTokenSecret', 'type': 'SecretBase'},
         'use_encrypted_endpoints': {'key': 'typeProperties.useEncryptedEndpoints', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, endpoint, company_id, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, access_token=None, access_token_secret=None, use_encrypted_endpoints=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, endpoint, company_id, consumer_key, consumer_secret, access_token, access_token_secret, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, use_encrypted_endpoints=None, encrypted_credential=None, **kwargs) -> None:
         super(QuickBooksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.endpoint = endpoint
         self.company_id = company_id
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         self.use_encrypted_endpoints = use_encrypted_endpoints

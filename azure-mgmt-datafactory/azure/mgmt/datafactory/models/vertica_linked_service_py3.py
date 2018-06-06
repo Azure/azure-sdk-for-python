@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
 class VerticaLinkedService(LinkedService):

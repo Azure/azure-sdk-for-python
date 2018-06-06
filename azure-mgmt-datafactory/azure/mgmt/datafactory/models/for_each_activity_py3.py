@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .control_activity import ControlActivity
+from .control_activity_py3 import ControlActivity
 
 
 class ForEachActivity(ControlActivity):
