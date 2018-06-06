@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class MergeRequest(Model):
-    """MergeRequest.
+class SkuProperty(Model):
+    """SkuProperty.
 
-    :param sources: Format of the resource id should be
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}
-    :type sources: list[str]
+    :param name: An invariant to describe the feature.
+    :type name: str
+    :param value: An invariant if the feature is measured by quantity.
+    :type value: str
     """
 
     _attribute_map = {
-        'sources': {'key': 'properties.sources', 'type': '[str]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(MergeRequest, self).__init__(**kwargs)
-        self.sources = kwargs.get('sources', None)
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(SkuProperty, self).__init__(**kwargs)
+        self.name = name
+        self.value = value

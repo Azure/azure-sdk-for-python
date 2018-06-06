@@ -29,7 +29,7 @@ class SplitRequest(Model):
         'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, quantities=None, reservation_id: str=None, **kwargs) -> None:
         super(SplitRequest, self).__init__(**kwargs)
-        self.quantities = kwargs.get('quantities', None)
-        self.reservation_id = kwargs.get('reservation_id', None)
+        self.quantities = quantities
+        self.reservation_id = reservation_id

@@ -80,19 +80,19 @@ class ReservationProperties(Model):
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
-        self.reserved_resource_type = kwargs.get('reserved_resource_type', None)
-        self.instance_flexibility = kwargs.get('instance_flexibility', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.applied_scopes = kwargs.get('applied_scopes', None)
-        self.applied_scope_type = kwargs.get('applied_scope_type', None)
-        self.quantity = kwargs.get('quantity', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.effective_date_time = kwargs.get('effective_date_time', None)
+        self.reserved_resource_type = reserved_resource_type
+        self.instance_flexibility = instance_flexibility
+        self.display_name = display_name
+        self.applied_scopes = applied_scopes
+        self.applied_scope_type = applied_scope_type
+        self.quantity = quantity
+        self.provisioning_state = provisioning_state
+        self.effective_date_time = effective_date_time
         self.last_updated_date_time = None
-        self.expiry_date = kwargs.get('expiry_date', None)
-        self.sku_description = kwargs.get('sku_description', None)
-        self.extended_status_info = kwargs.get('extended_status_info', None)
-        self.split_properties = kwargs.get('split_properties', None)
-        self.merge_properties = kwargs.get('merge_properties', None)
+        self.expiry_date = expiry_date
+        self.sku_description = sku_description
+        self.extended_status_info = extended_status_info
+        self.split_properties = split_properties
+        self.merge_properties = merge_properties

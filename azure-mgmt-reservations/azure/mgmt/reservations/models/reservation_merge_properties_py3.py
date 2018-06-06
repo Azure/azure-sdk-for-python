@@ -30,7 +30,7 @@ class ReservationMergeProperties(Model):
         'merge_sources': {'key': 'mergeSources', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, merge_destination: str=None, merge_sources=None, **kwargs) -> None:
         super(ReservationMergeProperties, self).__init__(**kwargs)
-        self.merge_destination = kwargs.get('merge_destination', None)
-        self.merge_sources = kwargs.get('merge_sources', None)
+        self.merge_destination = merge_destination
+        self.merge_sources = merge_sources
