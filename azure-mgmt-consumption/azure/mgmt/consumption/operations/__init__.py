@@ -11,18 +11,12 @@
 
 from .price_sheet_operations import PriceSheetOperations
 from .usage_details_operations import UsageDetailsOperations
-from .usage_details_by_billing_account_operations import UsageDetailsByBillingAccountOperations
-from .usage_details_by_department_operations import UsageDetailsByDepartmentOperations
-from .usage_details_by_enrollment_account_operations import UsageDetailsByEnrollmentAccountOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
 
 __all__ = [
     'PriceSheetOperations',
     'UsageDetailsOperations',
-    'UsageDetailsByBillingAccountOperations',
-    'UsageDetailsByDepartmentOperations',
-    'UsageDetailsByEnrollmentAccountOperations',
     'ForecastsOperations',
     'Operations',
 ]
