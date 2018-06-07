@@ -25,8 +25,8 @@ class ApplicationGatewayIPConfiguration(SubResource):
      subnet resource. Possible values are: 'Updating', 'Deleting', and
      'Failed'.
     :type provisioning_state: str
-    :param name: Name of the IP configuration that is unique within an
-     Application Gateway.
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.

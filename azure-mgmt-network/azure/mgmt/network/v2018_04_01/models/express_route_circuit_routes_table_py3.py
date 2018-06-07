@@ -15,16 +15,15 @@ from msrest.serialization import Model
 class ExpressRouteCircuitRoutesTable(Model):
     """The routes table associated with the ExpressRouteCircuit.
 
-    :param network: IP address of a network entity
+    :param network: network
     :type network: str
-    :param next_hop: NextHop address
+    :param next_hop: nextHop
     :type next_hop: str
-    :param loc_prf: Local preference value as set with the set
-     local-preference route-map configuration command
+    :param loc_prf: locPrf
     :type loc_prf: str
-    :param weight: Route Weight.
+    :param weight: weight.
     :type weight: int
-    :param path: Autonomous system paths to the destination network.
+    :param path: path
     :type path: str
     """
 

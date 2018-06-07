@@ -17,8 +17,7 @@ class ApplicationGatewayProbe(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param protocol: The protocol used for the probe. Possible values are
-     'Http' and 'Https'. Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
@@ -50,8 +49,8 @@ class ApplicationGatewayProbe(SubResource):
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Name of the probe that is unique within an Application
-     Gateway.
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.

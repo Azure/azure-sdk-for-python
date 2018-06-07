@@ -133,8 +133,6 @@ try:
     from .troubleshooting_result_py3 import TroubleshootingResult
     from .retention_policy_parameters_py3 import RetentionPolicyParameters
     from .flow_log_status_parameters_py3 import FlowLogStatusParameters
-    from .traffic_analytics_configuration_properties_py3 import TrafficAnalyticsConfigurationProperties
-    from .traffic_analytics_properties_py3 import TrafficAnalyticsProperties
     from .flow_log_information_py3 import FlowLogInformation
     from .connectivity_source_py3 import ConnectivitySource
     from .connectivity_destination_py3 import ConnectivityDestination
@@ -328,8 +326,6 @@ except (SyntaxError, ImportError):
     from .troubleshooting_result import TroubleshootingResult
     from .retention_policy_parameters import RetentionPolicyParameters
     from .flow_log_status_parameters import FlowLogStatusParameters
-    from .traffic_analytics_configuration_properties import TrafficAnalyticsConfigurationProperties
-    from .traffic_analytics_properties import TrafficAnalyticsProperties
     from .flow_log_information import FlowLogInformation
     from .connectivity_source import ConnectivitySource
     from .connectivity_destination import ConnectivityDestination
@@ -638,8 +634,6 @@ __all__ = [
     'TroubleshootingResult',
     'RetentionPolicyParameters',
     'FlowLogStatusParameters',
-    'TrafficAnalyticsConfigurationProperties',
-    'TrafficAnalyticsProperties',
     'FlowLogInformation',
     'ConnectivitySource',
     'ConnectivityDestination',
