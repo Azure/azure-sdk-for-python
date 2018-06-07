@@ -22,8 +22,8 @@ try:
     from .identifiable_py3 import Identifiable
     from .error_py3 import Error
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .response_base_py3 import ResponseBase
     from .creative_work_py3 import CreativeWork
+    from .response_base_py3 import ResponseBase
 except (SyntaxError, ImportError):
     from .search_action import SearchAction
     from .suggestions_suggestion_group import SuggestionsSuggestionGroup
@@ -37,8 +37,8 @@ except (SyntaxError, ImportError):
     from .identifiable import Identifiable
     from .error import Error
     from .error_response import ErrorResponse, ErrorResponseException
-    from .response_base import ResponseBase
     from .creative_work import CreativeWork
+    from .response_base import ResponseBase
 from .auto_suggest_search_api_enums import (
     ScenarioType,
     SearchKind,
@@ -60,8 +60,8 @@ __all__ = [
     'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'ResponseBase',
     'CreativeWork',
+    'ResponseBase',
     'ScenarioType',
     'SearchKind',
     'ErrorCode',

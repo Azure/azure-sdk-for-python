@@ -28,30 +28,25 @@ class CreativeWork(Thing):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
+    :ivar read_link: The URL that returns this resource.
+    :vartype read_link: str
+    :ivar web_search_url: The URL To Bing's search result for this item.
+    :vartype web_search_url: str
     :ivar potential_action:
     :vartype potential_action:
      list[~azure.cognitiveservices.search.autosuggest.models.Action]
     :ivar immediate_action:
     :vartype immediate_action:
      list[~azure.cognitiveservices.search.autosuggest.models.Action]
+    :ivar preferred_clickthrough_url:
+    :vartype preferred_clickthrough_url: str
     :ivar adaptive_card:
     :vartype adaptive_card: str
-    :ivar name: The name of the thing represented by this object.
-    :vartype name: str
-    :ivar description: A short description of the item.
-    :vartype description: str
-    :ivar wikipedia_id:
-    :vartype wikipedia_id: str
-    :ivar freebase_id:
-    :vartype freebase_id: str
-    :ivar alternate_name: An alias for the item
-    :vartype alternate_name: str
-    :ivar bing_id: An ID that uniquely identifies this item.
-    :vartype bing_id: str
-    :ivar satori_id:
-    :vartype satori_id: str
-    :ivar yp_id:
-    :vartype yp_id: str
+    :ivar url: The URL to get more information about the thing represented by
+     this object.
+    :vartype url: str
+    :ivar thumbnail_url: The URL to a thumbnail of the item.
+    :vartype thumbnail_url: str
     :ivar about: For internal use only.
     :vartype about:
      list[~azure.cognitiveservices.search.autosuggest.models.Thing]
@@ -65,6 +60,8 @@ class CreativeWork(Thing):
     :vartype creator: ~azure.cognitiveservices.search.autosuggest.models.Thing
     :ivar text: Text content of this creative work
     :vartype text: str
+    :ivar discussion_url:
+    :vartype discussion_url: str
     :ivar comment_count:
     :vartype comment_count: int
     :ivar main_entity:
@@ -90,22 +87,20 @@ class CreativeWork(Thing):
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
+        'read_link': {'readonly': True},
+        'web_search_url': {'readonly': True},
         'potential_action': {'readonly': True},
         'immediate_action': {'readonly': True},
+        'preferred_clickthrough_url': {'readonly': True},
         'adaptive_card': {'readonly': True},
-        'name': {'readonly': True},
-        'description': {'readonly': True},
-        'wikipedia_id': {'readonly': True},
-        'freebase_id': {'readonly': True},
-        'alternate_name': {'readonly': True},
-        'bing_id': {'readonly': True},
-        'satori_id': {'readonly': True},
-        'yp_id': {'readonly': True},
+        'url': {'readonly': True},
+        'thumbnail_url': {'readonly': True},
         'about': {'readonly': True},
         'mentions': {'readonly': True},
         'provider': {'readonly': True},
         'creator': {'readonly': True},
         'text': {'readonly': True},
+        'discussion_url': {'readonly': True},
         'comment_count': {'readonly': True},
         'main_entity': {'readonly': True},
         'head_line': {'readonly': True},
@@ -120,22 +115,20 @@ class CreativeWork(Thing):
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'read_link': {'key': 'readLink', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
         'potential_action': {'key': 'potentialAction', 'type': '[Action]'},
         'immediate_action': {'key': 'immediateAction', 'type': '[Action]'},
+        'preferred_clickthrough_url': {'key': 'preferredClickthroughUrl', 'type': 'str'},
         'adaptive_card': {'key': 'adaptiveCard', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'wikipedia_id': {'key': 'wikipediaId', 'type': 'str'},
-        'freebase_id': {'key': 'freebaseId', 'type': 'str'},
-        'alternate_name': {'key': 'alternateName', 'type': 'str'},
-        'bing_id': {'key': 'bingId', 'type': 'str'},
-        'satori_id': {'key': 'satoriId', 'type': 'str'},
-        'yp_id': {'key': 'ypId', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
         'about': {'key': 'about', 'type': '[Thing]'},
         'mentions': {'key': 'mentions', 'type': '[Thing]'},
         'provider': {'key': 'provider', 'type': '[Thing]'},
         'creator': {'key': 'creator', 'type': 'Thing'},
         'text': {'key': 'text', 'type': 'str'},
+        'discussion_url': {'key': 'discussionUrl', 'type': 'str'},
         'comment_count': {'key': 'commentCount', 'type': 'int'},
         'main_entity': {'key': 'mainEntity', 'type': 'Thing'},
         'head_line': {'key': 'headLine', 'type': 'str'},
@@ -153,11 +146,13 @@ class CreativeWork(Thing):
 
     def __init__(self, **kwargs):
         super(CreativeWork, self).__init__(**kwargs)
+        self.thumbnail_url = None
         self.about = None
         self.mentions = None
         self.provider = None
         self.creator = None
         self.text = None
+        self.discussion_url = None
         self.comment_count = None
         self.main_entity = None
         self.head_line = None

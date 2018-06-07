@@ -27,12 +27,18 @@ class SearchResultsAnswer(Answer):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
+    :ivar read_link: The URL that returns this resource.
+    :vartype read_link: str
+    :ivar web_search_url: The URL To Bing's search result for this item.
+    :vartype web_search_url: str
     :ivar potential_action:
     :vartype potential_action:
      list[~azure.cognitiveservices.search.autosuggest.models.Action]
     :ivar immediate_action:
     :vartype immediate_action:
      list[~azure.cognitiveservices.search.autosuggest.models.Action]
+    :ivar preferred_clickthrough_url:
+    :vartype preferred_clickthrough_url: str
     :ivar adaptive_card:
     :vartype adaptive_card: str
     :ivar query_context:
@@ -43,8 +49,11 @@ class SearchResultsAnswer(Answer):
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
+        'read_link': {'readonly': True},
+        'web_search_url': {'readonly': True},
         'potential_action': {'readonly': True},
         'immediate_action': {'readonly': True},
+        'preferred_clickthrough_url': {'readonly': True},
         'adaptive_card': {'readonly': True},
         'query_context': {'readonly': True},
     }
@@ -52,8 +61,11 @@ class SearchResultsAnswer(Answer):
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'read_link': {'key': 'readLink', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
         'potential_action': {'key': 'potentialAction', 'type': '[Action]'},
         'immediate_action': {'key': 'immediateAction', 'type': '[Action]'},
+        'preferred_clickthrough_url': {'key': 'preferredClickthroughUrl', 'type': 'str'},
         'adaptive_card': {'key': 'adaptiveCard', 'type': 'str'},
         'query_context': {'key': 'queryContext', 'type': 'QueryContext'},
     }
