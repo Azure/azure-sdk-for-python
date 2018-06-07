@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class DatabaseSecurityAlertPolicy(ProxyResource):
-    """Contains information about a database Threat Detection policy.
+class ServerSecurityAlertPolicy(ProxyResource):
+    """A server security alert policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,48 +26,35 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The geo-location where the resource lives
-    :type location: str
-    :ivar kind: Resource kind.
-    :vartype kind: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint and storageAccountAccessKey are required.
-     Possible values include: 'Enabled', 'Disabled'
+    :param state: Required. Specifies the state of the policy, whether it is
+     enabled or disabled. Possible values include: 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
-    :param disabled_alerts: Specifies the semicolon-separated list of alerts
-     that are disabled, or empty string to disable no alerts. Possible values:
-     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly; Usage_Anomaly.
-    :type disabled_alerts: str
-    :param email_addresses: Specifies the semicolon-separated list of e-mail
-     addresses to which the alert is sent.
-    :type email_addresses: str
+    :param disabled_alerts: Specifies an array of alerts that are disabled.
+     Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
+     Access_Anomaly
+    :type disabled_alerts: list[str]
+    :param email_addresses: Specifies an array of e-mail addresses to which
+     the alert is sent.
+    :type email_addresses: list[str]
     :param email_account_admins: Specifies that the alert is sent to the
-     account administrators. Possible values include: 'Enabled', 'Disabled'
-    :type email_account_admins: str or
-     ~azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins
+     account administrators.
+    :type email_account_admins: bool
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all
-     Threat Detection audit logs. If state is Enabled, storageEndpoint is
-     required.
+     Threat Detection audit logs.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     Threat Detection audit storage account. If state is Enabled,
-     storageAccountAccessKey is required.
+     Threat Detection audit storage account.
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the Threat
      Detection audit logs.
     :type retention_days: int
-    :param use_server_default: Specifies whether to use the default server
-     policy. Possible values include: 'Enabled', 'Disabled'
-    :type use_server_default: str or
-     ~azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
         'state': {'required': True},
     }
 
@@ -75,22 +62,17 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
-        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': 'str'},
-        'email_addresses': {'key': 'properties.emailAddresses', 'type': 'str'},
-        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'SecurityAlertPolicyEmailAccountAdmins'},
+        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
+        'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
+        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
-        'use_server_default': {'key': 'properties.useServerDefault', 'type': 'SecurityAlertPolicyUseServerDefault'},
     }
 
     def __init__(self, **kwargs):
-        super(DatabaseSecurityAlertPolicy, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.kind = None
+        super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = kwargs.get('state', None)
         self.disabled_alerts = kwargs.get('disabled_alerts', None)
         self.email_addresses = kwargs.get('email_addresses', None)
@@ -98,4 +80,3 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
         self.storage_endpoint = kwargs.get('storage_endpoint', None)
         self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
-        self.use_server_default = kwargs.get('use_server_default', None)

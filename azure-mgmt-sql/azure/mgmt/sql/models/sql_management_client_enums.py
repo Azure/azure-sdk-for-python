@@ -27,7 +27,6 @@ class ServerConnectionType(str, Enum):
 
 class SecurityAlertPolicyState(str, Enum):
 
-    new = "New"
     enabled = "Enabled"
     disabled = "Disabled"
 

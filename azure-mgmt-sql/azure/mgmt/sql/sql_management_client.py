@@ -64,6 +64,7 @@ from .operations.backup_long_term_retention_policies_operations import BackupLon
 from .operations.managed_databases_operations import ManagedDatabasesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.restore_points_operations import RestorePointsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
@@ -215,6 +216,8 @@ class SqlManagementClient(SDKClient):
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar database_operations: DatabaseOperations operations
@@ -350,6 +353,8 @@ class SqlManagementClient(SDKClient):
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
