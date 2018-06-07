@@ -66,7 +66,7 @@ class AutoSuggestSearchAPI(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def auto_suggest_method(
+    def auto_suggest(
             self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market="en-us", safe_search=None, set_lang=None, response_format=None, custom_headers=None, raw=False, **operation_config):
         """The AutoSuggest API lets you send a search query to Bing and get back a
         list of suggestions. This section provides technical details about the
@@ -260,8 +260,8 @@ class AutoSuggestSearchAPI(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AutoSuggest or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.search.autosuggest.models.AutoSuggest
+        :return: Suggestions or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.search.autosuggest.models.Suggestions
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.search.autosuggest.models.ErrorResponseException>`
@@ -269,7 +269,7 @@ class AutoSuggestSearchAPI(SDKClient):
         x_bing_apis_sdk = "true"
 
         # Construct URL
-        url = self.auto_suggest_method.metadata['url']
+        url = self.auto_suggest.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -314,11 +314,11 @@ class AutoSuggestSearchAPI(SDKClient):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoSuggest', response)
+            deserialized = self._deserialize('Suggestions', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    auto_suggest_method.metadata = {'url': '/Suggestions'}
+    auto_suggest.metadata = {'url': '/Suggestions'}

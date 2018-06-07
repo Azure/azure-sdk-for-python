@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_results_answer import SearchResultsAnswer
+from .search_results_answer_py3 import SearchResultsAnswer
 
 
-class AutoSuggest(SearchResultsAnswer):
+class Suggestions(SearchResultsAnswer):
     """Defines an AutoSuggest answer.
 
     Variables are only populated by the server, and will be ignored when
@@ -60,7 +60,7 @@ class AutoSuggest(SearchResultsAnswer):
         'suggestion_groups': {'key': 'suggestionGroups', 'type': '[SuggestionsSuggestionGroup]'},
     }
 
-    def __init__(self, **kwargs):
-        super(AutoSuggest, self).__init__(**kwargs)
-        self.suggestion_groups = kwargs.get('suggestion_groups', None)
-        self._type = 'AutoSuggest'
+    def __init__(self, *, suggestion_groups, **kwargs) -> None:
+        super(Suggestions, self).__init__(**kwargs)
+        self.suggestion_groups = suggestion_groups
+        self._type = 'Suggestions'

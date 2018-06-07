@@ -16,7 +16,7 @@ class SearchResultsAnswer(Answer):
     """Defines a search result answer.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutoSuggest
+    sub-classes are: Suggestions
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -59,7 +59,7 @@ class SearchResultsAnswer(Answer):
     }
 
     _subtype_map = {
-        '_type': {'AutoSuggest': 'AutoSuggest'}
+        '_type': {'Suggestions': 'Suggestions'}
     }
 
     def __init__(self, **kwargs):

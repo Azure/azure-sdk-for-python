@@ -15,9 +15,6 @@ from .creative_work_py3 import CreativeWork
 class Action(CreativeWork):
     """Action.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchAction
-
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -157,10 +154,6 @@ class Action(CreativeWork):
         'result': {'key': 'result', 'type': '[Thing]'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'is_top_action': {'key': 'isTopAction', 'type': 'bool'},
-    }
-
-    _subtype_map = {
-        '_type': {'SearchAction': 'SearchAction'}
     }
 
     def __init__(self, **kwargs) -> None:

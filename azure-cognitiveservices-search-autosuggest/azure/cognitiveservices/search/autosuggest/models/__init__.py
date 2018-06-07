@@ -12,7 +12,7 @@
 try:
     from .search_action_py3 import SearchAction
     from .suggestions_suggestion_group_py3 import SuggestionsSuggestionGroup
-    from .auto_suggest_py3 import AutoSuggest
+    from .suggestions_py3 import Suggestions
     from .query_context_py3 import QueryContext
     from .search_results_answer_py3 import SearchResultsAnswer
     from .answer_py3 import Answer
@@ -27,7 +27,7 @@ try:
 except (SyntaxError, ImportError):
     from .search_action import SearchAction
     from .suggestions_suggestion_group import SuggestionsSuggestionGroup
-    from .auto_suggest import AutoSuggest
+    from .suggestions import Suggestions
     from .query_context import QueryContext
     from .search_results_answer import SearchResultsAnswer
     from .answer import Answer
@@ -50,7 +50,7 @@ from .auto_suggest_search_api_enums import (
 __all__ = [
     'SearchAction',
     'SuggestionsSuggestionGroup',
-    'AutoSuggest',
+    'Suggestions',
     'QueryContext',
     'SearchResultsAnswer',
     'Answer',
