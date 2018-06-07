@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ClusterUpdateParameters(Model):
-    """Parameters supplied to the Update operation.
-
-    :param scale_settings: Desired scale for the cluster.
-    :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
+class ExperimentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Experiment <azure.mgmt.batchai.models.Experiment>` object
     """
 
     _attribute_map = {
-        'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Experiment]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ClusterUpdateParameters, self).__init__(**kwargs)
-        self.scale_settings = kwargs.get('scale_settings', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ExperimentPaged, self).__init__(*args, **kwargs)

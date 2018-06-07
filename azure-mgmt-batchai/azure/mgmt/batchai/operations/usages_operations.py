@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class UsageOperations(object):
-    """UsageOperations operations.
+class UsagesOperations(object):
+    """UsagesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-05-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class UsageOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
+        self.api_version = "2018-05-01"
 
         self.config = config
 

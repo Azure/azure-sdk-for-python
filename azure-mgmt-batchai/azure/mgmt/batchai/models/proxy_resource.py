@@ -12,29 +12,34 @@
 from msrest.serialization import Model
 
 
-class UsageName(Model):
-    """The Usage Names.
+class ProxyResource(Model):
+    """A definition of an Azure proxy resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The name of the resource.
-    :vartype value: str
-    :ivar localized_value: The localized name of the resource.
-    :vartype localized_value: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(UsageName, self).__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
