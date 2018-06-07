@@ -65,7 +65,6 @@ try:
     from .password_management_settings_py3 import PasswordManagementSettings
     from .password_hash_sync_configuration_py3 import PasswordHashSyncConfiguration
     from .replication_summary_py3 import ReplicationSummary
-    from .replication_details_list_py3 import ReplicationDetailsList
     from .replication_status_py3 import ReplicationStatus
     from .result_py3 import Result
     from .run_profiles_py3 import RunProfiles
@@ -132,7 +131,6 @@ except (SyntaxError, ImportError):
     from .password_management_settings import PasswordManagementSettings
     from .password_hash_sync_configuration import PasswordHashSyncConfiguration
     from .replication_summary import ReplicationSummary
-    from .replication_details_list import ReplicationDetailsList
     from .replication_status import ReplicationStatus
     from .result import Result
     from .run_profiles import RunProfiles
@@ -230,7 +228,6 @@ __all__ = [
     'PasswordManagementSettings',
     'PasswordHashSyncConfiguration',
     'ReplicationSummary',
-    'ReplicationDetailsList',
     'ReplicationStatus',
     'Result',
     'RunProfiles',
