@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class Logs(Model):
-    """The logs.
+class ContainerGroupDiagnostics(Model):
+    """Container group diagnostic information.
 
-    :param content: The content of the log.
-    :type content: str
+    :param log_analytics: Container group log analytics information.
+    :type log_analytics: ~azure.mgmt.containerinstance.models.LogAnalytics
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        'log_analytics': {'key': 'logAnalytics', 'type': 'LogAnalytics'},
     }
 
-    def __init__(self, *, content: str=None, **kwargs) -> None:
-        super(Logs, self).__init__(**kwargs)
-        self.content = content
+    def __init__(self, *, log_analytics=None, **kwargs) -> None:
+        super(ContainerGroupDiagnostics, self).__init__(**kwargs)
+        self.log_analytics = log_analytics

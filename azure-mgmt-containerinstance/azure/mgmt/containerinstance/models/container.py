@@ -45,6 +45,10 @@ class Container(Model):
      instance.
     :type volume_mounts:
      list[~azure.mgmt.containerinstance.models.VolumeMount]
+    :param liveness_probe: The liveness probe.
+    :type liveness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
+    :param readiness_probe: The readiness probe.
+    :type readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
     """
 
     _validation = {
@@ -63,6 +67,8 @@ class Container(Model):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerPropertiesInstanceView'},
         'resources': {'key': 'properties.resources', 'type': 'ResourceRequirements'},
         'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
+        'liveness_probe': {'key': 'properties.livenessProbe', 'type': 'ContainerProbe'},
+        'readiness_probe': {'key': 'properties.readinessProbe', 'type': 'ContainerProbe'},
     }
 
     def __init__(self, **kwargs):
@@ -75,3 +81,5 @@ class Container(Model):
         self.instance_view = None
         self.resources = kwargs.get('resources', None)
         self.volume_mounts = kwargs.get('volume_mounts', None)
+        self.liveness_probe = kwargs.get('liveness_probe', None)
+        self.readiness_probe = kwargs.get('readiness_probe', None)

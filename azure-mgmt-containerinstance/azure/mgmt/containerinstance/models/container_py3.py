@@ -45,6 +45,10 @@ class Container(Model):
      instance.
     :type volume_mounts:
      list[~azure.mgmt.containerinstance.models.VolumeMount]
+    :param liveness_probe: The liveness probe.
+    :type liveness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
+    :param readiness_probe: The readiness probe.
+    :type readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
     """
 
     _validation = {
@@ -63,9 +67,11 @@ class Container(Model):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerPropertiesInstanceView'},
         'resources': {'key': 'properties.resources', 'type': 'ResourceRequirements'},
         'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
+        'liveness_probe': {'key': 'properties.livenessProbe', 'type': 'ContainerProbe'},
+        'readiness_probe': {'key': 'properties.readinessProbe', 'type': 'ContainerProbe'},
     }
 
-    def __init__(self, *, name: str, image: str, resources, command=None, ports=None, environment_variables=None, volume_mounts=None, **kwargs) -> None:
+    def __init__(self, *, name: str, image: str, resources, command=None, ports=None, environment_variables=None, volume_mounts=None, liveness_probe=None, readiness_probe=None, **kwargs) -> None:
         super(Container, self).__init__(**kwargs)
         self.name = name
         self.image = image
@@ -75,3 +81,5 @@ class Container(Model):
         self.instance_view = None
         self.resources = resources
         self.volume_mounts = volume_mounts
+        self.liveness_probe = liveness_probe
+        self.readiness_probe = readiness_probe

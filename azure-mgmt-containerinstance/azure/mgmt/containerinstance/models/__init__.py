@@ -19,6 +19,9 @@ try:
     from .resource_limits_py3 import ResourceLimits
     from .resource_requirements_py3 import ResourceRequirements
     from .volume_mount_py3 import VolumeMount
+    from .container_exec_py3 import ContainerExec
+    from .container_http_get_py3 import ContainerHttpGet
+    from .container_probe_py3 import ContainerProbe
     from .container_py3 import Container
     from .azure_file_volume_py3 import AzureFileVolume
     from .git_repo_volume_py3 import GitRepoVolume
@@ -27,6 +30,8 @@ try:
     from .port_py3 import Port
     from .ip_address_py3 import IpAddress
     from .container_group_properties_instance_view_py3 import ContainerGroupPropertiesInstanceView
+    from .log_analytics_py3 import LogAnalytics
+    from .container_group_diagnostics_py3 import ContainerGroupDiagnostics
     from .container_group_py3 import ContainerGroup
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -49,6 +54,9 @@ except (SyntaxError, ImportError):
     from .resource_limits import ResourceLimits
     from .resource_requirements import ResourceRequirements
     from .volume_mount import VolumeMount
+    from .container_exec import ContainerExec
+    from .container_http_get import ContainerHttpGet
+    from .container_probe import ContainerProbe
     from .container import Container
     from .azure_file_volume import AzureFileVolume
     from .git_repo_volume import GitRepoVolume
@@ -57,6 +65,8 @@ except (SyntaxError, ImportError):
     from .port import Port
     from .ip_address import IpAddress
     from .container_group_properties_instance_view import ContainerGroupPropertiesInstanceView
+    from .log_analytics import LogAnalytics
+    from .container_group_diagnostics import ContainerGroupDiagnostics
     from .container_group import ContainerGroup
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -88,6 +98,9 @@ __all__ = [
     'ResourceLimits',
     'ResourceRequirements',
     'VolumeMount',
+    'ContainerExec',
+    'ContainerHttpGet',
+    'ContainerProbe',
     'Container',
     'AzureFileVolume',
     'GitRepoVolume',
@@ -96,6 +109,8 @@ __all__ = [
     'Port',
     'IpAddress',
     'ContainerGroupPropertiesInstanceView',
+    'LogAnalytics',
+    'ContainerGroupDiagnostics',
     'ContainerGroup',
     'OperationDisplay',
     'Operation',

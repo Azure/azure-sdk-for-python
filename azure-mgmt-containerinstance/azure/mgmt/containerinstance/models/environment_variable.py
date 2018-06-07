@@ -19,21 +19,24 @@ class EnvironmentVariable(Model):
 
     :param name: Required. The name of the environment variable.
     :type name: str
-    :param value: Required. The value of the environment variable.
+    :param value: The value of the environment variable.
     :type value: str
+    :param secure_value: The value of the secure environment variable.
+    :type secure_value: str
     """
 
     _validation = {
         'name': {'required': True},
-        'value': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'secure_value': {'key': 'secureValue', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(EnvironmentVariable, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
+        self.secure_value = kwargs.get('secure_value', None)
