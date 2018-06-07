@@ -103,7 +103,9 @@ class GalleryImageVersionsOperations(object):
         :param gallery_image_name: The name of the gallery image.
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery image
-         version.
+         version. Needs to follow semantic version name pattern: The allowed
+         characters are digit and period. Digits must be within the range of a
+         32-bit integer. Format: <MajorVersion>.<MinorVersion>.<Patch>
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or
          update gallery image version operation.
