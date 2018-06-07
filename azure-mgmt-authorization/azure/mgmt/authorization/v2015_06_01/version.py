@@ -9,14 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+VERSION = "2015-06-01"
 
-__all__ = [
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]

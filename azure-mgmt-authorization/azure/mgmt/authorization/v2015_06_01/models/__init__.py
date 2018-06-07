@@ -9,14 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+try:
+    from .classic_administrator_py3 import ClassicAdministrator
+except (SyntaxError, ImportError):
+    from .classic_administrator import ClassicAdministrator
+from .classic_administrator_paged import ClassicAdministratorPaged
 
 __all__ = [
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
+    'ClassicAdministrator',
+    'ClassicAdministratorPaged',
 ]

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ClassicAdministratorPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ClassicAdministrator <azure.mgmt.authorization.v2015_07_01.models.ClassicAdministrator>` object
+    A paging container for iterating over a list of :class:`ClassicAdministrator <azure.mgmt.authorization.v2015_06_01.models.ClassicAdministrator>` object
     """
 
     _attribute_map = {

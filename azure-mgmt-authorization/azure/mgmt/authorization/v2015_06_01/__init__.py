@@ -9,14 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from .authorization_management_client import AuthorizationManagementClient
+from .version import VERSION
 
-__all__ = [
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+__all__ = ['AuthorizationManagementClient']
+
+__version__ = VERSION
+

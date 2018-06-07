@@ -13,10 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.permissions_operations import PermissionsOperations
-from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .operations.role_assignments_operations import RoleAssignmentsOperations
-from .operations.role_definitions_operations import RoleDefinitionsOperations
+from .operations.classic_administrators_operations import ClassicAdministratorsOperations
 from . import models
 
 
@@ -58,14 +55,8 @@ class AuthorizationManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AuthorizationManagementClientConfiguration
 
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.mgmt.authorization.v2015_07_01.operations.PermissionsOperations
-    :ivar provider_operations_metadata: ProviderOperationsMetadata operations
-    :vartype provider_operations_metadata: azure.mgmt.authorization.v2015_07_01.operations.ProviderOperationsMetadataOperations
-    :ivar role_assignments: RoleAssignments operations
-    :vartype role_assignments: azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations
-    :ivar role_definitions: RoleDefinitions operations
-    :vartype role_definitions: azure.mgmt.authorization.v2015_07_01.operations.RoleDefinitionsOperations
+    :ivar classic_administrators: ClassicAdministrators operations
+    :vartype classic_administrators: azure.mgmt.authorization.v2015_06_01.operations.ClassicAdministratorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,15 +73,9 @@ class AuthorizationManagementClient(SDKClient):
         super(AuthorizationManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-07-01'
+        self.api_version = '2015-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.permissions = PermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.provider_operations_metadata = ProviderOperationsMetadataOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.role_assignments = RoleAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.role_definitions = RoleDefinitionsOperations(
+        self.classic_administrators = ClassicAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -82,7 +82,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.authorization.AuthorizationManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
-            'classic_administrators': '2015-07-01',
+            'classic_administrators': '2015-06-01',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
@@ -107,26 +107,30 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2015-06-01: :mod:`v2015_06_01.models<azure.mgmt.authorization.v2015_06_01.models>`
            * 2015-07-01: :mod:`v2015_07_01.models<azure.mgmt.authorization.v2015_07_01.models>`
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.authorization.v2018_01_01_preview.models>`
         """
-        if api_version == '2015-07-01':
+        if api_version == '2015-06-01':
+            from .v2015_06_01 import models
+            return models
+        elif api_version == '2015-07-01':
             from .v2015_07_01 import models
             return models
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def classic_administrators(self):
         """Instance depends on the API version:
 
-           * 2015-07-01: :class:`ClassicAdministratorsOperations<azure.mgmt.authorization.v2015_07_01.operations.ClassicAdministratorsOperations>`
+           * 2015-06-01: :class:`ClassicAdministratorsOperations<azure.mgmt.authorization.v2015_06_01.operations.ClassicAdministratorsOperations>`
         """
         api_version = self._get_api_version('classic_administrators')
-        if api_version == '2015-07-01':
-            from .v2015_07_01.operations import ClassicAdministratorsOperations as OperationClass
+        if api_version == '2015-06-01':
+            from .v2015_06_01.operations import ClassicAdministratorsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

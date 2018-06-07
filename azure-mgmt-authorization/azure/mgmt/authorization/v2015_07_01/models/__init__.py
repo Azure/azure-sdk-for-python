@@ -12,8 +12,6 @@
 try:
     from .role_assignment_filter_py3 import RoleAssignmentFilter
     from .role_definition_filter_py3 import RoleDefinitionFilter
-    from .classic_administrator_properties_py3 import ClassicAdministratorProperties
-    from .classic_administrator_py3 import ClassicAdministrator
     from .permission_py3 import Permission
     from .provider_operation_py3 import ProviderOperation
     from .resource_type_py3 import ResourceType
@@ -27,8 +25,6 @@ try:
 except (SyntaxError, ImportError):
     from .role_assignment_filter import RoleAssignmentFilter
     from .role_definition_filter import RoleDefinitionFilter
-    from .classic_administrator_properties import ClassicAdministratorProperties
-    from .classic_administrator import ClassicAdministrator
     from .permission import Permission
     from .provider_operation import ProviderOperation
     from .resource_type import ResourceType
@@ -39,7 +35,6 @@ except (SyntaxError, ImportError):
     from .role_assignment_create_parameters import RoleAssignmentCreateParameters
     from .role_definition_properties import RoleDefinitionProperties
     from .role_definition import RoleDefinition
-from .classic_administrator_paged import ClassicAdministratorPaged
 from .permission_paged import PermissionPaged
 from .provider_operations_metadata_paged import ProviderOperationsMetadataPaged
 from .role_assignment_paged import RoleAssignmentPaged
@@ -48,8 +43,6 @@ from .role_definition_paged import RoleDefinitionPaged
 __all__ = [
     'RoleAssignmentFilter',
     'RoleDefinitionFilter',
-    'ClassicAdministratorProperties',
-    'ClassicAdministrator',
     'Permission',
     'ProviderOperation',
     'ResourceType',
@@ -60,7 +53,6 @@ __all__ = [
     'RoleAssignmentCreateParameters',
     'RoleDefinitionProperties',
     'RoleDefinition',
-    'ClassicAdministratorPaged',
     'PermissionPaged',
     'ProviderOperationsMetadataPaged',
     'RoleAssignmentPaged',
