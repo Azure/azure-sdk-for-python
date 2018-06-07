@@ -20,6 +20,7 @@ from .operations.dimensions_operations import DimensionsOperations
 from .operations.adds_service_members_operations import AddsServiceMembersOperations
 from .operations.ad_domain_service_members_operations import AdDomainServiceMembersOperations
 from .operations.adds_service_operations import AddsServiceOperations
+from .operations.adds_services_service_members_operations import AddsServicesServiceMembersOperations
 from .operations.operations import Operations
 from .operations.reports_operations import ReportsOperations
 from .operations.services_operations import ServicesOperations
@@ -75,6 +76,8 @@ class ADHybridHealthService(SDKClient):
     :vartype ad_domain_service_members: azure.mgmt.adhybridhealthservice.operations.AdDomainServiceMembersOperations
     :ivar adds_service: AddsService operations
     :vartype adds_service: azure.mgmt.adhybridhealthservice.operations.AddsServiceOperations
+    :ivar adds_services_service_members: AddsServicesServiceMembers operations
+    :vartype adds_services_service_members: azure.mgmt.adhybridhealthservice.operations.AddsServicesServiceMembersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.adhybridhealthservice.operations.Operations
     :ivar reports: Reports operations
@@ -116,6 +119,8 @@ class ADHybridHealthService(SDKClient):
         self.ad_domain_service_members = AdDomainServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.adds_service = AddsServiceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adds_services_service_members = AddsServicesServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

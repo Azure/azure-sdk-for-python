@@ -64,8 +64,9 @@ try:
     from .operation_py3 import Operation
     from .password_management_settings_py3 import PasswordManagementSettings
     from .password_hash_sync_configuration_py3 import PasswordHashSyncConfiguration
-    from .replication_status_py3 import ReplicationStatus
     from .replication_summary_py3 import ReplicationSummary
+    from .replication_details_list_py3 import ReplicationDetailsList
+    from .replication_status_py3 import ReplicationStatus
     from .result_py3 import Result
     from .run_profiles_py3 import RunProfiles
     from .service_configuration_py3 import ServiceConfiguration
@@ -130,8 +131,9 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .password_management_settings import PasswordManagementSettings
     from .password_hash_sync_configuration import PasswordHashSyncConfiguration
-    from .replication_status import ReplicationStatus
     from .replication_summary import ReplicationSummary
+    from .replication_details_list import ReplicationDetailsList
+    from .replication_status import ReplicationStatus
     from .result import Result
     from .run_profiles import RunProfiles
     from .service_configuration import ServiceConfiguration
@@ -148,8 +150,8 @@ from .replication_summary_paged import ReplicationSummaryPaged
 from .alert_paged import AlertPaged
 from .dimension_paged import DimensionPaged
 from .adds_service_member_paged import AddsServiceMemberPaged
-from .service_member_paged import ServiceMemberPaged
 from .credential_paged import CredentialPaged
+from .service_member_paged import ServiceMemberPaged
 from .operation_paged import OperationPaged
 from .error_count_paged import ErrorCountPaged
 from .merged_export_error_paged import MergedExportErrorPaged
@@ -227,8 +229,9 @@ __all__ = [
     'Operation',
     'PasswordManagementSettings',
     'PasswordHashSyncConfiguration',
-    'ReplicationStatus',
     'ReplicationSummary',
+    'ReplicationDetailsList',
+    'ReplicationStatus',
     'Result',
     'RunProfiles',
     'ServiceConfiguration',
@@ -245,8 +248,8 @@ __all__ = [
     'AlertPaged',
     'DimensionPaged',
     'AddsServiceMemberPaged',
-    'ServiceMemberPaged',
     'CredentialPaged',
+    'ServiceMemberPaged',
     'OperationPaged',
     'ErrorCountPaged',
     'MergedExportErrorPaged',
