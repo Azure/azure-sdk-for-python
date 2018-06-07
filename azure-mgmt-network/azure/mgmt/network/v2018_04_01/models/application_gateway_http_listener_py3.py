@@ -23,8 +23,7 @@ class ApplicationGatewayHttpListener(SubResource):
      ~azure.mgmt.network.v2018_04_01.models.SubResource
     :param frontend_port: Frontend port resource of an application gateway.
     :type frontend_port: ~azure.mgmt.network.v2018_04_01.models.SubResource
-    :param protocol: Protocol of the HTTP listener. Possible values are 'Http'
-     and 'Https'. Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayProtocol
     :param host_name: Host name of HTTP listener.
@@ -38,8 +37,8 @@ class ApplicationGatewayHttpListener(SubResource):
     :param provisioning_state: Provisioning state of the HTTP listener
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Name of the HTTP listener that is unique within an
-     Application Gateway.
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.

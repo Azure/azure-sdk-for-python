@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ExpressRouteCircuitRoutesTableSummary(Model):
     """The routes table associated with the ExpressRouteCircuit.
 
-    :param neighbor: IP address of the neighbor.
+    :param neighbor: Neighbor
     :type neighbor: str
     :param v: BGP version number spoken to the neighbor.
     :type v: int

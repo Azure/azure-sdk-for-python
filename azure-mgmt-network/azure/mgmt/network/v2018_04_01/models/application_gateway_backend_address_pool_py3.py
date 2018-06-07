@@ -27,8 +27,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :param provisioning_state: Provisioning state of the backend address pool
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Name of the backend address pool that is unique within an
-     Application Gateway.
+    :param name: Resource that is unique within a resource group. This name
+     can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.

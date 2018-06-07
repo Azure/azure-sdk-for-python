@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class FlowLogInformation(Model):
-    """Information on the configuration of flow log and traffic analytics
-    (optional) .
+    """Information on the configuration of flow log.
 
     All required parameters must be populated in order to send to Azure.
 
     :param target_resource_id: Required. The ID of the resource to configure
-     for flow log and traffic analytics (optional) .
+     for flow logging.
     :type target_resource_id: str
     :param storage_id: Required. ID of the storage account which is used to
      store the flow log.
@@ -29,9 +28,6 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_04_01.models.RetentionPolicyParameters
-    :param flow_analytics_configuration:
-    :type flow_analytics_configuration:
-     ~azure.mgmt.network.v2018_04_01.models.TrafficAnalyticsProperties
     """
 
     _validation = {
@@ -45,7 +41,6 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
-        'flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -54,4 +49,3 @@ class FlowLogInformation(Model):
         self.storage_id = kwargs.get('storage_id', None)
         self.enabled = kwargs.get('enabled', None)
         self.retention_policy = kwargs.get('retention_policy', None)
-        self.flow_analytics_configuration = kwargs.get('flow_analytics_configuration', None)
