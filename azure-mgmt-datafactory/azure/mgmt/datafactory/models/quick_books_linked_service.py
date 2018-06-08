@@ -39,10 +39,17 @@ class QuickBooksLinkedService(LinkedService):
     :param company_id: Required. The company ID of the QuickBooks company to
      authorize.
     :type company_id: object
-    :param access_token: The access token for OAuth 1.0 authentication.
-    :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token_secret: The access token secret for OAuth 1.0
+    :param consumer_key: Required. The consumer key for OAuth 1.0
      authentication.
+    :type consumer_key: object
+    :param consumer_secret: Required. The consumer secret for OAuth 1.0
+     authentication.
+    :type consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :param access_token: Required. The access token for OAuth 1.0
+     authentication.
+    :type access_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param access_token_secret: Required. The access token secret for OAuth
+     1.0 authentication.
     :type access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -57,6 +64,10 @@ class QuickBooksLinkedService(LinkedService):
         'type': {'required': True},
         'endpoint': {'required': True},
         'company_id': {'required': True},
+        'consumer_key': {'required': True},
+        'consumer_secret': {'required': True},
+        'access_token': {'required': True},
+        'access_token_secret': {'required': True},
     }
 
     _attribute_map = {
@@ -68,6 +79,8 @@ class QuickBooksLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'company_id': {'key': 'typeProperties.companyId', 'type': 'object'},
+        'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'object'},
+        'consumer_secret': {'key': 'typeProperties.consumerSecret', 'type': 'SecretBase'},
         'access_token': {'key': 'typeProperties.accessToken', 'type': 'SecretBase'},
         'access_token_secret': {'key': 'typeProperties.accessTokenSecret', 'type': 'SecretBase'},
         'use_encrypted_endpoints': {'key': 'typeProperties.useEncryptedEndpoints', 'type': 'object'},
@@ -78,6 +91,8 @@ class QuickBooksLinkedService(LinkedService):
         super(QuickBooksLinkedService, self).__init__(**kwargs)
         self.endpoint = kwargs.get('endpoint', None)
         self.company_id = kwargs.get('company_id', None)
+        self.consumer_key = kwargs.get('consumer_key', None)
+        self.consumer_secret = kwargs.get('consumer_secret', None)
         self.access_token = kwargs.get('access_token', None)
         self.access_token_secret = kwargs.get('access_token_secret', None)
         self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
