@@ -35,6 +35,8 @@ class Error(Model):
     :vartype parameter: str
     :ivar value: The parameter's value in the request that was not valid.
     :vartype value: str
+    :param _type: Required. Constant filled by server.
+    :type _type: str
     """
 
     _validation = {
@@ -43,6 +45,7 @@ class Error(Model):
         'more_details': {'readonly': True},
         'parameter': {'readonly': True},
         'value': {'readonly': True},
+        '_type': {'required': True},
     }
 
     _attribute_map = {
@@ -51,6 +54,7 @@ class Error(Model):
         'more_details': {'key': 'moreDetails', 'type': 'str'},
         'parameter': {'key': 'parameter', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        '_type': {'key': '_type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -60,3 +64,4 @@ class Error(Model):
         self.more_details = None
         self.parameter = None
         self.value = None
+        self._type = None

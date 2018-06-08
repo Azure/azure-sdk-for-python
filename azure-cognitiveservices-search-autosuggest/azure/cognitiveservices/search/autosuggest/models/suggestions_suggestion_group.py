@@ -25,19 +25,24 @@ class SuggestionsSuggestionGroup(Model):
     :param search_suggestions: Required.
     :type search_suggestions:
      list[~azure.cognitiveservices.search.autosuggest.models.SearchAction]
+    :param _type: Required. Constant filled by server.
+    :type _type: str
     """
 
     _validation = {
         'name': {'required': True},
         'search_suggestions': {'required': True},
+        '_type': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'search_suggestions': {'key': 'searchSuggestions', 'type': '[SearchAction]'},
+        '_type': {'key': '_type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SuggestionsSuggestionGroup, self).__init__(**kwargs)
         self.name = kwargs.get('name', "Unknown")
         self.search_suggestions = kwargs.get('search_suggestions', None)
+        self._type = None

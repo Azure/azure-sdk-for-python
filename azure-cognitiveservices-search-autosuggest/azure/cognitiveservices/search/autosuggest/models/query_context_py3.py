@@ -52,6 +52,8 @@ class QueryContext(Model):
     :vartype ask_user_for_location: bool
     :ivar is_transactional:
     :vartype is_transactional: bool
+    :param _type: Required. Constant filled by server.
+    :type _type: str
     """
 
     _validation = {
@@ -61,6 +63,7 @@ class QueryContext(Model):
         'adult_intent': {'readonly': True},
         'ask_user_for_location': {'readonly': True},
         'is_transactional': {'readonly': True},
+        '_type': {'required': True},
     }
 
     _attribute_map = {
@@ -70,6 +73,7 @@ class QueryContext(Model):
         'adult_intent': {'key': 'adultIntent', 'type': 'bool'},
         'ask_user_for_location': {'key': 'askUserForLocation', 'type': 'bool'},
         'is_transactional': {'key': 'isTransactional', 'type': 'bool'},
+        '_type': {'key': '_type', 'type': 'str'},
     }
 
     def __init__(self, *, original_query: str, **kwargs) -> None:
@@ -80,3 +84,4 @@ class QueryContext(Model):
         self.adult_intent = None
         self.ask_user_for_location = None
         self.is_transactional = None
+        self._type = None
