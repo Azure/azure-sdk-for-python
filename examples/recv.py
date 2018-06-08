@@ -6,51 +6,49 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition and processing
-the event in on_event_data callback.
-
+An example to show receiving events from an Event Hub partition.
 """
-
+import os
 import sys
 import logging
-from eventhubs import EventHubClient, Receiver, Offset
+import time
+from azure.eventhub import EventHubClient, Receiver, Offset
 
 import examples
 logger = examples.get_logger(logging.INFO)
 
-class MyReceiver(Receiver):
-    def __init__(self, partition):
-        super(MyReceiver, self).__init__()
-        self.partition = partition
-        self.total = 0
-        self.last_sn = -1
-        self.last_offset = "-1"
+# Address can be in either of these formats:
+# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
+# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
+ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 
-    def on_event_data(self, event_data):
-        self.last_offset = event_data.offset
-        self.last_sn = event_data.sequence_number
-        self.total += 1
-        logger.info("Partition %s, Received %s, sn=%d offset=%s",
-                     self.partition,
-                     self.total,
-                     self.last_sn,
-                     self.last_offset)
+# SAS policy and key are not required if they are encoded in the URL
+USER = os.environ.get('EVENT_HUB_SAS_POLICY')
+KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+CONSUMER_GROUP = "$default"
+OFFSET = Offset("-1")
+PARTITION = "0"
 
+
+total = 0
+last_sn = -1
+last_offset = "-1"
+client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
 try:
-    ADDRESS = ("amqps://"
-               "<URL-encoded-SAS-policy>"
-               ":"
-               "<URL-encoded-SAS-key>"
-               "@"
-               "<mynamespace>.servicebus.windows.net"
-               "/"
-               "myeventhub")
-    CONSUMER_GROUP = "$default"
-    OFFSET = Offset("-1")
+    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
+    client.run()
+    start_time = time.time()
+    for event_data in receiver.receive(timeout=10):
+        last_offset = event_data.offset
+        last_sn = event_data.sequence_number
+        total += 1
 
-    EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
-        .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \
-        .run()
+    end_time = time.time()
+    client.stop()
+    run_time = end_time - start_time
+    print("Received {} messages in {} seconds".format(total, run_time))
 
 except KeyboardInterrupt:
     pass
+finally:
+    client.stop()

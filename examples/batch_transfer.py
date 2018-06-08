@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show sending events to an Event Hub partition.
+An example to show batch sending events to an Event Hub.
 """
 
 # pylint: disable=C0111
@@ -17,7 +17,6 @@ from azure.eventhub import EventHubClient, Sender, EventData
 import examples
 logger = examples.get_logger(logging.INFO)
 
-
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
 # "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
@@ -27,17 +26,29 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
+
+def callback(outcome, condition):
+    logger.info("Message sent. Outcome: {}, Condition: {}".format(
+        outcome, condition))
+
+
+def data_generator():
+    for i in range(15000):
+        yield b"Hello world"
+
+
 try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-    sender = client.add_sender(partition="1")
+    sender = client.add_sender()
     client.run()
     try:
         start_time = time.time()
-        for i in range(100):
-            sender.send(EventData(str(i)))
+        data = EventData(batch=data_generator())
+        sender.transfer(data, callback=callback)
+        sender.wait()
     except:
         raise
     finally:

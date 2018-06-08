@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running concurrent receivers.
+An example to show receiving events from an Event Hub partition as an epoch receiver.
 """
 
 import os
@@ -29,21 +29,22 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 CONSUMER_GROUP = "$default"
-OFFSET = Offset("-1")
+EPOCH = 42
 PARTITION = "0"
 
 
-async def pump(client):
-    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, OFFSET, prefetch=5)
+async def pump(client, epoch):
+    receiver = client.add_async_epoch_receiver(CONSUMER_GROUP, PARTITION, epoch=epoch)
     await client.run_async()
     total = 0
     start_time = time.time()
-    for event_data in await receiver.receive(timeout=10):
+    for event_data in await receiver.receive(timeout=5):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
     end_time = time.time()
     run_time = end_time - start_time
+    await client.stop_async()
     print("Received {} messages in {} seconds".format(total, run_time))
 
 try:
@@ -52,11 +53,7 @@ try:
 
     loop = asyncio.get_event_loop()
     client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
-    tasks = [
-        asyncio.ensure_future(pump(client)),
-        asyncio.ensure_future(pump(client))]
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.run_until_complete(client.stop_async())
+    loop.run_until_complete(pump(client, 20))
     loop.close()
 
 except KeyboardInterrupt:

@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+env*/
 build/
 develop-eggs/
 dist/
@@ -36,6 +36,10 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+azure/storage/
+azure/common/
+azure/profiles/
+
 htmlcov/
 .tox/
 .coverage
@@ -99,3 +103,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+.pytest_cache/v/cache/lastfailed
+.pytest_cache/v/cache/nodeids

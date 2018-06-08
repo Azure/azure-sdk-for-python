@@ -6,16 +6,14 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running concurrent receivers.
-"""
+An example to show receiving events from an Event Hub partition and processing
+the event in on_event_data callback.
 
+"""
 import os
 import sys
-import time
 import logging
-import asyncio
-from azure.eventhub import Offset
-from azure.eventhub.async import EventHubClientAsync, AsyncReceiver
+from azure.eventhub import EventHubClient, Receiver, Offset
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -33,31 +31,29 @@ OFFSET = Offset("-1")
 PARTITION = "0"
 
 
-async def pump(client):
-    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, OFFSET, prefetch=5)
-    await client.run_async()
-    total = 0
-    start_time = time.time()
-    for event_data in await receiver.receive(timeout=10):
+def on_event_data(event_data):
+    logger.debug("Got event no. {}".format(event_data.sequence_number))
+
+
+total = 0
+last_sn = -1
+last_offset = "-1"
+client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
+try:
+    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=100, offset=OFFSET)
+    client.run()
+    batched_events = receiver.receive(max_batch_size=10, callback=on_event_data)
+    for event_data in batched_events:
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
-    end_time = time.time()
-    run_time = end_time - start_time
-    print("Received {} messages in {} seconds".format(total, run_time))
-
-try:
-    if not ADDRESS:
-        raise ValueError("No EventHubs URL supplied.")
-
-    loop = asyncio.get_event_loop()
-    client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
-    tasks = [
-        asyncio.ensure_future(pump(client)),
-        asyncio.ensure_future(pump(client))]
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.run_until_complete(client.stop_async())
-    loop.close()
+        print("Partition {}, Received {}, sn={} offset={}".format(
+            PARTITION,
+            total,
+            last_sn,
+            last_offset))
 
 except KeyboardInterrupt:
     pass
+finally:
+    client.stop()
