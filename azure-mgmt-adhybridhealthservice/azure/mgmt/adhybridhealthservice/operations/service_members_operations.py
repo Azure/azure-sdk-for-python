@@ -805,7 +805,7 @@ class ServiceMembersOperations(object):
         return deserialized
     list_global_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/globalconfiguration'}
 
-    def list_metrics(
+    def get_metrics(
             self, service_name, metric_name, group_name, service_member_id, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
         """Gets the server related metrics for a given metric and group
         combination.
@@ -835,7 +835,7 @@ class ServiceMembersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_metrics.metadata['url']
+        url = self.get_metrics.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'metricName': self._serialize.url("metric_name", metric_name, 'str'),
@@ -883,7 +883,7 @@ class ServiceMembersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_metrics.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/{metricName}/groups/{groupName}'}
+    get_metrics.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/{metricName}/groups/{groupName}'}
 
     def get_service_configuration(
             self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):

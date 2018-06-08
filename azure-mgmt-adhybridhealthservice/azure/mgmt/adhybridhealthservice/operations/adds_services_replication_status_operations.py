@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ServiceOperations(object):
-    """ServiceOperations operations.
+class AddsServicesReplicationStatusOperations(object):
+    """AddsServicesReplicationStatusOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,50 +37,32 @@ class ServiceOperations(object):
 
         self.config = config
 
-    def get_metrics(
-            self, service_name, metric_name, group_name, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the server related metrics for a given metric and group
-        combination.
+    def get(
+            self, service_name, custom_headers=None, raw=False, **operation_config):
+        """Gets Replication status for a given Active Directory Domain Service,
+        that is onboarded to Azure Active Directory Connect Health.
 
         :param service_name: The name of the service.
         :type service_name: str
-        :param metric_name: The metric name
-        :type metric_name: str
-        :param group_name: The group name
-        :type group_name: str
-        :param group_key: The group key
-        :type group_key: str
-        :param from_date: The start date.
-        :type from_date: datetime
-        :param to_date: The end date.
-        :type to_date: datetime
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MetricSets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.adhybridhealthservice.models.MetricSets or
+        :return: ReplicationStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.ReplicationStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_metrics.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'metricName': self._serialize.url("metric_name", metric_name, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if group_key is not None:
-            query_parameters['groupKey'] = self._serialize.query("group_key", group_key, 'str')
-        if from_date is not None:
-            query_parameters['fromDate'] = self._serialize.query("from_date", from_date, 'iso-8601')
-        if to_date is not None:
-            query_parameters['toDate'] = self._serialize.query("to_date", to_date, 'iso-8601')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -105,11 +87,11 @@ class ServiceOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MetricSets', response)
+            deserialized = self._deserialize('ReplicationStatus', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_metrics.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/metrics/{metricName}/groups/{groupName}'}
+    get.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/replicationstatus'}

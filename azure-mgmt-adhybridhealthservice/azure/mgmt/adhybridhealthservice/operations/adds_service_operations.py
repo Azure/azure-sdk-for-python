@@ -37,7 +37,7 @@ class AddsServiceOperations(object):
 
         self.config = config
 
-    def list_metrics(
+    def get_metrics(
             self, service_name, metric_name, group_name, group_key=None, from_date=None, to_date=None, custom_headers=None, raw=False, **operation_config):
         """Gets the server related metrics for a given metric and group
         combination.
@@ -65,7 +65,7 @@ class AddsServiceOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_metrics.metadata['url']
+        url = self.get_metrics.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
             'metricName': self._serialize.url("metric_name", metric_name, 'str'),
@@ -112,4 +112,4 @@ class AddsServiceOperations(object):
             return client_raw_response
 
         return deserialized
-    list_metrics.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/metrics/{metricName}/groups/{groupName}'}
+    get_metrics.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/metrics/{metricName}/groups/{groupName}'}

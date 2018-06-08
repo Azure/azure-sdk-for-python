@@ -19,7 +19,9 @@ from .operations.configuration_operations import ConfigurationOperations
 from .operations.dimensions_operations import DimensionsOperations
 from .operations.adds_service_members_operations import AddsServiceMembersOperations
 from .operations.ad_domain_service_members_operations import AdDomainServiceMembersOperations
+from .operations.adds_services_user_preference_operations import AddsServicesUserPreferenceOperations
 from .operations.adds_service_operations import AddsServiceOperations
+from .operations.adds_services_replication_status_operations import AddsServicesReplicationStatusOperations
 from .operations.adds_services_service_members_operations import AddsServicesServiceMembersOperations
 from .operations.operations import Operations
 from .operations.reports_operations import ReportsOperations
@@ -74,8 +76,12 @@ class ADHybridHealthService(SDKClient):
     :vartype adds_service_members: azure.mgmt.adhybridhealthservice.operations.AddsServiceMembersOperations
     :ivar ad_domain_service_members: AdDomainServiceMembers operations
     :vartype ad_domain_service_members: azure.mgmt.adhybridhealthservice.operations.AdDomainServiceMembersOperations
+    :ivar adds_services_user_preference: AddsServicesUserPreference operations
+    :vartype adds_services_user_preference: azure.mgmt.adhybridhealthservice.operations.AddsServicesUserPreferenceOperations
     :ivar adds_service: AddsService operations
     :vartype adds_service: azure.mgmt.adhybridhealthservice.operations.AddsServiceOperations
+    :ivar adds_services_replication_status: AddsServicesReplicationStatus operations
+    :vartype adds_services_replication_status: azure.mgmt.adhybridhealthservice.operations.AddsServicesReplicationStatusOperations
     :ivar adds_services_service_members: AddsServicesServiceMembers operations
     :vartype adds_services_service_members: azure.mgmt.adhybridhealthservice.operations.AddsServicesServiceMembersOperations
     :ivar operations: Operations operations
@@ -118,7 +124,11 @@ class ADHybridHealthService(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.ad_domain_service_members = AdDomainServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.adds_services_user_preference = AddsServicesUserPreferenceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.adds_service = AddsServiceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adds_services_replication_status = AddsServicesReplicationStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.adds_services_service_members = AddsServicesServiceMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
