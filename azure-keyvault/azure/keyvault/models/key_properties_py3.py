@@ -25,6 +25,10 @@ class KeyProperties(Model):
     :param reuse_key: Indicates if the same key pair will be used on
      certificate renewal.
     :type reuse_key: bool
+    :param curve: Elliptic curve name. For valid values, see
+     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
+     'SECP256K1'
+    :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -32,11 +36,13 @@ class KeyProperties(Model):
         'key_type': {'key': 'kty', 'type': 'str'},
         'key_size': {'key': 'key_size', 'type': 'int'},
         'reuse_key': {'key': 'reuse_key', 'type': 'bool'},
+        'curve': {'key': 'crv', 'type': 'str'},
     }
 
-    def __init__(self, *, exportable: bool=None, key_type: str=None, key_size: int=None, reuse_key: bool=None, **kwargs) -> None:
+    def __init__(self, *, exportable: bool=None, key_type: str=None, key_size: int=None, reuse_key: bool=None, curve=None, **kwargs) -> None:
         super(KeyProperties, self).__init__(**kwargs)
         self.exportable = exportable
         self.key_type = key_type
         self.key_size = key_size
         self.reuse_key = reuse_key
+        self.curve = curve
