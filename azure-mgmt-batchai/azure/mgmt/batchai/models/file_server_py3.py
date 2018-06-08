@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class FileServer(Resource):
@@ -84,7 +84,7 @@ class FileServer(Resource):
         'mount_settings': {'key': 'properties.mountSettings', 'type': 'MountSettings'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, vm_size: str=None, ssh_configuration=None, data_disks=None, subnet=None, **kwargs) -> None:

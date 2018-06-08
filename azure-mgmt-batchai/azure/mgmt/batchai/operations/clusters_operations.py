@@ -25,7 +25,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-05-01".
     """
 
     models = models
@@ -35,18 +35,172 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
+        self.api_version = "2018-05-01"
 
         self.config = config
 
+    def list(
+            self, clusters_list_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Clusters associated with the given subscription.
+
+        :param clusters_list_options: Additional parameters for the operation
+        :type clusters_list_options:
+         ~azure.mgmt.batchai.models.ClustersListOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Cluster
+        :rtype:
+         ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        max_results = None
+        if clusters_list_options is not None:
+            max_results = clusters_list_options.max_results
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if max_results is not None:
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'}
+
+    def list_by_resource_group(
+            self, resource_group_name, clusters_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Clusters within the specified resource group.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param clusters_list_by_resource_group_options: Additional parameters
+         for the operation
+        :type clusters_list_by_resource_group_options:
+         ~azure.mgmt.batchai.models.ClustersListByResourceGroupOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Cluster
+        :rtype:
+         ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        max_results = None
+        if clusters_list_by_resource_group_options is not None:
+            max_results = clusters_list_by_resource_group_options.max_results
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if max_results is not None:
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'}
+
 
     def _create_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -90,19 +244,23 @@ class ClustersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Adds a cluster. A cluster is a collection of compute nodes. Multiple
-        jobs can be run on the same cluster.
+            self, resource_group_name, workspace_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a Cluster in the given Workspace.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
         :param cluster_name: The name of the cluster within the specified
          resource group. Cluster names can only contain a combination of
          alphanumeric characters along with dash (-) and underscore (_). The
          name must be from 1 through 64 characters long.
         :type cluster_name: str
-        :param parameters: The parameters to provide for cluster creation.
+        :param parameters: The parameters to provide for the Cluster creation.
         :type parameters: ~azure.mgmt.batchai.models.ClusterCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -119,6 +277,7 @@ class ClustersOperations(object):
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
             cluster_name=cluster_name,
             parameters=parameters,
             custom_headers=custom_headers,
@@ -142,15 +301,20 @@ class ClustersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}'}
 
     def update(
-            self, resource_group_name, cluster_name, tags=None, scale_settings=None, custom_headers=None, raw=False, **operation_config):
-        """Update the properties of a given cluster.
+            self, resource_group_name, workspace_name, cluster_name, tags=None, scale_settings=None, custom_headers=None, raw=False, **operation_config):
+        """Updates properties of a Cluster.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
         :param cluster_name: The name of the cluster within the specified
          resource group. Cluster names can only contain a combination of
          alphanumeric characters along with dash (-) and underscore (_). The
@@ -176,7 +340,8 @@ class ClustersOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -218,16 +383,17 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -260,12 +426,17 @@ class ClustersOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, workspace_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a Cluster.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
         :param cluster_name: The name of the cluster within the specified
          resource group. Cluster names can only contain a combination of
          alphanumeric characters along with dash (-) and underscore (_). The
@@ -284,6 +455,7 @@ class ClustersOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
             cluster_name=cluster_name,
             custom_headers=custom_headers,
             raw=True,
@@ -302,15 +474,20 @@ class ClustersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}'}
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the specified Cluster.
+            self, resource_group_name, workspace_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a Cluster.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
         :param cluster_name: The name of the cluster within the specified
          resource group. Cluster names can only contain a combination of
          alphanumeric characters along with dash (-) and underscore (_). The
@@ -330,7 +507,8 @@ class ClustersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -368,15 +546,20 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}'}
 
     def list_remote_login_information(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """Get the IP address, port of all the compute nodes in the cluster.
+            self, resource_group_name, workspace_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Get the IP address, port of all the compute nodes in the Cluster.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
         :param cluster_name: The name of the cluster within the specified
          resource group. Cluster names can only contain a combination of
          alphanumeric characters along with dash (-) and underscore (_). The
@@ -399,7 +582,8 @@ class ClustersOperations(object):
                 url = self.list_remote_login_information.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -443,104 +627,24 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_remote_login_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}/listRemoteLoginInformation'}
+    list_remote_login_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters/{clusterName}/listRemoteLoginInformation'}
 
-    def list(
-            self, clusters_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Clusters associated with the subscription.
-
-        :param clusters_list_options: Additional parameters for the operation
-        :type clusters_list_options:
-         ~azure.mgmt.batchai.models.ClustersListOptions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Cluster
-        :rtype:
-         ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        filter = None
-        if clusters_list_options is not None:
-            filter = clusters_list_options.filter
-        select = None
-        if clusters_list_options is not None:
-            select = clusters_list_options.select
-        max_results = None
-        if clusters_list_options is not None:
-            max_results = clusters_list_options.max_results
-
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if select is not None:
-                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
-                if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'}
-
-    def list_by_resource_group(
-            self, resource_group_name, clusters_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Clusters associated within the specified
-        resource group.
+    def list_by_workspace(
+            self, resource_group_name, workspace_name, clusters_list_by_workspace_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets information about Clusters associated with the given Workspace.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param clusters_list_by_resource_group_options: Additional parameters
-         for the operation
-        :type clusters_list_by_resource_group_options:
-         ~azure.mgmt.batchai.models.ClustersListByResourceGroupOptions
+        :param workspace_name: The name of the workspace. Workspace names can
+         only contain a combination of alphanumeric characters along with dash
+         (-) and underscore (_). The name must be from 1 through 64 characters
+         long.
+        :type workspace_name: str
+        :param clusters_list_by_workspace_options: Additional parameters for
+         the operation
+        :type clusters_list_by_workspace_options:
+         ~azure.mgmt.batchai.models.ClustersListByWorkspaceOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -551,23 +655,18 @@ class ClustersOperations(object):
          ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        filter = None
-        if clusters_list_by_resource_group_options is not None:
-            filter = clusters_list_by_resource_group_options.filter
-        select = None
-        if clusters_list_by_resource_group_options is not None:
-            select = clusters_list_by_resource_group_options.select
         max_results = None
-        if clusters_list_by_resource_group_options is not None:
-            max_results = clusters_list_by_resource_group_options.max_results
+        if clusters_list_by_workspace_options is not None:
+            max_results = clusters_list_by_workspace_options.max_results
 
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource_group.metadata['url']
+                url = self.list_by_workspace.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -575,10 +674,6 @@ class ClustersOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if select is not None:
-                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if max_results is not None:
                     query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
 
@@ -617,4 +712,4 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'}
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/clusters'}

@@ -84,7 +84,7 @@ class FileServer(Resource):
         'mount_settings': {'key': 'properties.mountSettings', 'type': 'MountSettings'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
