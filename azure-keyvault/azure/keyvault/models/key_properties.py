@@ -17,8 +17,9 @@ class KeyProperties(Model):
 
     :param exportable: Indicates if the private key can be exported.
     :type exportable: bool
-    :param key_type: The key type.
-    :type key_type: str
+    :param kty: The type of key pair to be used for the certificate. Possible
+     values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :type kty: str or ~azure.keyvault.models.JsonWebKeyType
     :param key_size: The key size in bits. For example: 2048, 3072, or 4096
      for RSA.
     :type key_size: int
@@ -29,7 +30,7 @@ class KeyProperties(Model):
 
     _attribute_map = {
         'exportable': {'key': 'exportable', 'type': 'bool'},
-        'key_type': {'key': 'kty', 'type': 'str'},
+        'kty': {'key': 'kty', 'type': 'str'},
         'key_size': {'key': 'key_size', 'type': 'int'},
         'reuse_key': {'key': 'reuse_key', 'type': 'bool'},
     }
@@ -37,6 +38,6 @@ class KeyProperties(Model):
     def __init__(self, **kwargs):
         super(KeyProperties, self).__init__(**kwargs)
         self.exportable = kwargs.get('exportable', None)
-        self.key_type = kwargs.get('key_type', None)
+        self.kty = kwargs.get('kty', None)
         self.key_size = kwargs.get('key_size', None)
         self.reuse_key = kwargs.get('reuse_key', None)
