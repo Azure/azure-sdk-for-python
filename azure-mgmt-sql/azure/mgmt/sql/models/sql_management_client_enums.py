@@ -27,6 +27,7 @@ class ServerConnectionType(str, Enum):
 
 class SecurityAlertPolicyState(str, Enum):
 
+    new = "New"
     enabled = "Enabled"
     disabled = "Disabled"
 
@@ -263,12 +264,6 @@ class TransparentDataEncryptionActivityStatus(str, Enum):
     decrypting = "Decrypting"
 
 
-class BlobAuditingPolicyState(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
@@ -410,6 +405,12 @@ class VirtualNetworkRuleState(str, Enum):
     unknown = "Unknown"
 
 
+class BlobAuditingPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class JobAgentState(str, Enum):
 
     creating = "Creating"
@@ -512,6 +513,12 @@ class AutomaticTuningServerReason(str, Enum):
     default = "Default"
     disabled = "Disabled"
     auto_configured = "AutoConfigured"
+
+
+class SecurityAlertState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class RestorePointType(str, Enum):

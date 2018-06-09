@@ -32,7 +32,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :vartype kind: str
     :param state: Required. Specifies the state of the policy. If state is
      Enabled, storageEndpoint and storageAccountAccessKey are required.
-     Possible values include: 'Enabled', 'Disabled'
+     Possible values include: 'New', 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies the semicolon-separated list of alerts
      that are disabled, or empty string to disable no alerts. Possible values:

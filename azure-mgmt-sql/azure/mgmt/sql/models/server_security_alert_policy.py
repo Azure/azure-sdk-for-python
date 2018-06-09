@@ -28,7 +28,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :vartype type: str
     :param state: Required. Specifies the state of the policy, whether it is
      enabled or disabled. Possible values include: 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
      Access_Anomaly
@@ -62,7 +62,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
+        'state': {'key': 'properties.state', 'type': 'SecurityAlertState'},
         'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
         'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
         'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
