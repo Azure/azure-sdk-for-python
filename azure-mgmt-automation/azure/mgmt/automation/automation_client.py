@@ -51,6 +51,7 @@ from .operations.node_reports_operations import NodeReportsOperations
 from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
 from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
+from .operations.watcher_operations import WatcherOperations
 from . import models
 
 
@@ -170,6 +171,8 @@ class AutomationClient(object):
     :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_node_configuration: DscNodeConfiguration operations
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
+    :ivar watcher: Watcher operations
+    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -266,4 +269,6 @@ class AutomationClient(object):
         self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.dsc_node_configuration = DscNodeConfigurationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.watcher = WatcherOperations(
             self._client, self.config, self._serialize, self._deserialize)

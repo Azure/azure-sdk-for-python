@@ -43,7 +43,7 @@ class TestJobStreamsOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
         :type runbook_name: str
@@ -110,7 +110,7 @@ class TestJobStreamsOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
         :type runbook_name: str

@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SubResource(Model):
-    """The Sub Resource definition.
-
-    :param id: Resource Id
-    :type id: str
+class WatcherPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Watcher <azure.mgmt.automation.models.Watcher>` object
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Watcher]'}
     }
 
-    def __init__(self, id=None):
-        super(SubResource, self).__init__()
-        self.id = id
+    def __init__(self, *args, **kwargs):
+
+        super(WatcherPaged, self).__init__(*args, **kwargs)

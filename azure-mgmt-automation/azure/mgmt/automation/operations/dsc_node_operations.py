@@ -165,7 +165,7 @@ class DscNodeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def update(
-            self, resource_group_name, automation_account_name, node_id, dsc_node_update_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, node_id, node_id1=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Update the dsc node.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -174,10 +174,11 @@ class DscNodeOperations(object):
         :type automation_account_name: str
         :param node_id: Parameters supplied to the update dsc node.
         :type node_id: str
-        :param dsc_node_update_parameters: Parameters supplied to the update
-         dsc node.
-        :type dsc_node_update_parameters:
-         ~azure.mgmt.automation.models.DscNodeUpdateParameters
+        :param node_id1: Gets or sets the id of the dsc node.
+        :type node_id1: str
+        :param properties:
+        :type properties:
+         ~azure.mgmt.automation.models.DscNodeUpdateParametersProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -189,6 +190,8 @@ class DscNodeOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        dsc_node_update_parameters = models.DscNodeUpdateParameters(properties=properties)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

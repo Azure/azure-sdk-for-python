@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class SourceControl(Model):
+class SourceControl(ProxyResource):
     """Definition of the source control.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar type: Resource type.
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource.
     :vartype type: str
     :param repo_url: Gets or sets the repo url of the source control.
     :type repo_url: str
@@ -49,14 +49,14 @@ class SourceControl(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
@@ -71,9 +71,6 @@ class SourceControl(Model):
 
     def __init__(self, repo_url=None, branch=None, folder_path=None, auto_sync=None, publish_runbook=None, source_type=None, description=None, creation_time=None, last_modified_time=None):
         super(SourceControl, self).__init__()
-        self.name = None
-        self.id = None
-        self.type = None
         self.repo_url = repo_url
         self.branch = branch
         self.folder_path = folder_path

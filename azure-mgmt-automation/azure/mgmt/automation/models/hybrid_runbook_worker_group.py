@@ -26,6 +26,9 @@ class HybridRunbookWorkerGroup(Model):
     :param credential: Sets the credential of a worker group.
     :type credential:
      ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
+    :param group_type: Type of the HybridWorkerGroup. Possible values include:
+     'User', 'System'
+    :type group_type: str or ~azure.mgmt.automation.models.GroupTypeEnum
     """
 
     _attribute_map = {
@@ -33,11 +36,13 @@ class HybridRunbookWorkerGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
         'hybrid_runbook_workers': {'key': 'hybridRunbookWorkers', 'type': '[HybridRunbookWorker]'},
         'credential': {'key': 'credential', 'type': 'RunAsCredentialAssociationProperty'},
+        'group_type': {'key': 'groupType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, hybrid_runbook_workers=None, credential=None):
+    def __init__(self, id=None, name=None, hybrid_runbook_workers=None, credential=None, group_type=None):
         super(HybridRunbookWorkerGroup, self).__init__()
         self.id = id
         self.name = name
         self.hybrid_runbook_workers = hybrid_runbook_workers
         self.credential = credential
+        self.group_type = group_type

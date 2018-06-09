@@ -12,17 +12,22 @@
 from msrest.serialization import Model
 
 
-class DscNodeConfigurationAssociationProperty(Model):
-    """The dsc nodeconfiguration property associated with the entity.
+class WatcherUpdateParameters(Model):
+    """WatcherUpdateParameters.
 
-    :param name: Gets or sets the name of the dsc nodeconfiguration.
+    :param execution_frequency_in_seconds: Gets or sets the frequency at which
+     the watcher is invoked.
+    :type execution_frequency_in_seconds: long
+    :param name: Gets or sets the name of the resource.
     :type name: str
     """
 
     _attribute_map = {
+        'execution_frequency_in_seconds': {'key': 'properties.executionFrequencyInSeconds', 'type': 'long'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(DscNodeConfigurationAssociationProperty, self).__init__()
+    def __init__(self, execution_frequency_in_seconds=None, name=None):
+        super(WatcherUpdateParameters, self).__init__()
+        self.execution_frequency_in_seconds = execution_frequency_in_seconds
         self.name = name

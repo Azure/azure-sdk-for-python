@@ -24,17 +24,13 @@ class JobCreateParameters(Model):
     :type run_on: str
     """
 
-    _validation = {
-        'runbook': {'required': True},
-    }
-
     _attribute_map = {
         'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'run_on': {'key': 'properties.runOn', 'type': 'str'},
     }
 
-    def __init__(self, runbook, parameters=None, run_on=None):
+    def __init__(self, runbook=None, parameters=None, run_on=None):
         super(JobCreateParameters, self).__init__()
         self.runbook = runbook
         self.parameters = parameters

@@ -42,7 +42,7 @@ class ScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
         :type schedule_name: str
@@ -93,12 +93,12 @@ class ScheduleOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201, 409]:
+        if response.status_code not in [200, 409]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
+        if response.status_code == 200:
             deserialized = self._deserialize('Schedule', response)
 
         if raw:
@@ -114,7 +114,7 @@ class ScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
         :type schedule_name: str
@@ -186,7 +186,7 @@ class ScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
         :type schedule_name: str
@@ -250,7 +250,7 @@ class ScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
         :type schedule_name: str
@@ -306,7 +306,7 @@ class ScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

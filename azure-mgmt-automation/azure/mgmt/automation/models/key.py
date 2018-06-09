@@ -15,16 +15,25 @@ from msrest.serialization import Model
 class Key(Model):
     """Automation key which is used to register a DSC Node.
 
-    :param key_name: Automation key name. Possible values include: 'primary',
-     'secondary'
-    :type key_name: str or ~azure.mgmt.automation.models.AutomationKeyName
-    :param permissions: Automation key permissions. Possible values include:
-     'Full'
-    :type permissions: str or
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar key_name: Automation key name. Possible values include: 'Primary',
+     'Secondary'
+    :vartype key_name: str or ~azure.mgmt.automation.models.AutomationKeyName
+    :ivar permissions: Automation key permissions. Possible values include:
+     'Read', 'Full'
+    :vartype permissions: str or
      ~azure.mgmt.automation.models.AutomationKeyPermissions
-    :param value: Value of the Automation Key used for registration.
-    :type value: str
+    :ivar value: Value of the Automation Key used for registration.
+    :vartype value: str
     """
+
+    _validation = {
+        'key_name': {'readonly': True},
+        'permissions': {'readonly': True},
+        'value': {'readonly': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
@@ -32,8 +41,8 @@ class Key(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, key_name=None, permissions=None, value=None):
+    def __init__(self):
         super(Key, self).__init__()
-        self.key_name = key_name
-        self.permissions = permissions
-        self.value = value
+        self.key_name = None
+        self.permissions = None
+        self.value = None

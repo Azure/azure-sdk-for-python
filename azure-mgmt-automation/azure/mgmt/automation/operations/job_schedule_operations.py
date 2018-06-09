@@ -42,7 +42,7 @@ class JobScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_schedule_id: The job schedule name.
         :type job_schedule_id: str
@@ -98,7 +98,7 @@ class JobScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_schedule_id: The job schedule name.
         :type job_schedule_id: str
@@ -162,7 +162,7 @@ class JobScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_schedule_id: The job schedule name.
         :type job_schedule_id: str
@@ -234,7 +234,7 @@ class JobScheduleOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str

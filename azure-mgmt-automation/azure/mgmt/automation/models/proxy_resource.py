@@ -13,8 +13,7 @@ from .resource import Resource
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """ARM proxy resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
