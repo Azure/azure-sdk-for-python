@@ -165,15 +165,6 @@ class HttpStatusCode(Enum):
     http_version_not_supported = "HttpVersionNotSupported"
 
 
-class ScheduleFrequency(Enum):
-
-    one_time = "OneTime"
-    day = "Day"
-    hour = "Hour"
-    week = "Week"
-    month = "Month"
-
-
 class ScheduleDay(Enum):
 
     monday = "Monday"
@@ -183,6 +174,15 @@ class ScheduleDay(Enum):
     friday = "Friday"
     saturday = "Saturday"
     sunday = "Sunday"
+
+
+class ScheduleFrequency(Enum):
+
+    one_time = "OneTime"
+    day = "Day"
+    hour = "Hour"
+    week = "Week"
+    month = "Month"
 
 
 class OperatingSystemType(Enum):
