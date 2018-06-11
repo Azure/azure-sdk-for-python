@@ -20,7 +20,8 @@ class PolicyAssignment(Model):
 
     :param display_name: The display name of the policy assignment.
     :type display_name: str
-    :param policy_definition_id: The ID of the policy definition.
+    :param policy_definition_id: The ID of the policy definition or policy set
+     definition being assigned.
     :type policy_definition_id: str
     :param scope: The scope for the policy assignment.
     :type scope: str
@@ -39,7 +40,8 @@ class PolicyAssignment(Model):
     :vartype type: str
     :ivar name: The name of the policy assignment.
     :vartype name: str
-    :param sku: The policy sku.
+    :param sku: The policy sku. This property is optional, obsolete, and will
+     be ignored.
     :type sku: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySku
     """
 
