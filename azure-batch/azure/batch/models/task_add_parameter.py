@@ -26,26 +26,28 @@ class TaskAddParameter(Model):
     data. The best practice for long running tasks is to use some form of
     checkpointing.
 
-    :param id: A string that uniquely identifies the task within the job. The
-     ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The
-     ID is case-preserving and case-insensitive (that is, you may not have two
-     IDs within a job that differ only by case).
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the task within the
+     job. The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores, and cannot contain more than 64
+     characters. The ID is case-preserving and case-insensitive (that is, you
+     may not have two IDs within a job that differ only by case).
     :type id: str
     :param display_name: A display name for the task. The display name need
      not be unique and can contain any Unicode characters up to a maximum
      length of 1024.
     :type display_name: str
-    :param command_line: The command line of the task. For multi-instance
-     tasks, the command line is executed as the primary task, after the primary
-     task and all subtasks have finished executing the coordination command
-     line. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion.
-     If you want to take advantage of such features, you should invoke the
-     shell in the command line, for example using "cmd /c MyCommand" in Windows
-     or "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-     paths, it should use a relative path (relative to the task working
-     directory), or use the Batch provided environment variable
+    :param command_line: Required. The command line of the task. For
+     multi-instance tasks, the command line is executed as the primary task,
+     after the primary task and all subtasks have finished executing the
+     coordination command line. The command line does not run under a shell,
+     and therefore cannot take advantage of shell features such as environment
+     variable expansion. If you want to take advantage of such features, you
+     should invoke the shell in the command line, for example using "cmd /c
+     MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command
+     line refers to file paths, it should use a relative path (relative to the
+     task working directory), or use the Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -63,7 +65,10 @@ class TaskAddParameter(Model):
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. For
      multi-instance tasks, the resource files will only be downloaded to the
-     compute node on which the primary task is executed.
+     compute node on which the primary task is executed. There is a maximum
+     size for the list of resource files.  When this is exceeded, the task
+     cannot be added and the response error code will be RequestEntityTooLarge.
+     If this occurs the recommended solution is to use an ApplicationPackage.
     :type resource_files: list[~azure.batch.models.ResourceFile]
     :param output_files: A list of files that the Batch service will upload
      from the compute node after running the command line. For multi-instance
@@ -141,20 +146,20 @@ class TaskAddParameter(Model):
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id, command_line, display_name=None, container_settings=None, exit_conditions=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, multi_instance_settings=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
-        super(TaskAddParameter, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.exit_conditions = exit_conditions
-        self.resource_files = resource_files
-        self.output_files = output_files
-        self.environment_settings = environment_settings
-        self.affinity_info = affinity_info
-        self.constraints = constraints
-        self.user_identity = user_identity
-        self.multi_instance_settings = multi_instance_settings
-        self.depends_on = depends_on
-        self.application_package_references = application_package_references
-        self.authentication_token_settings = authentication_token_settings
+    def __init__(self, **kwargs):
+        super(TaskAddParameter, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.exit_conditions = kwargs.get('exit_conditions', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.output_files = kwargs.get('output_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.affinity_info = kwargs.get('affinity_info', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.multi_instance_settings = kwargs.get('multi_instance_settings', None)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.authentication_token_settings = kwargs.get('authentication_token_settings', None)

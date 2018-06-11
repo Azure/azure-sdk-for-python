@@ -16,8 +16,10 @@ class AffinityInformation(Model):
     """A locality hint that can be used by the Batch service to select a compute
     node on which to start a task.
 
-    :param affinity_id: An opaque string representing the location of a
-     compute node or a task that has run previously. You can pass the
+    All required parameters must be populated in order to send to Azure.
+
+    :param affinity_id: Required. An opaque string representing the location
+     of a compute node or a task that has run previously. You can pass the
      affinityId of a compute node to indicate that this task needs to run on
      that compute node. Note that this is just a soft affinity. If the target
      node is busy or unavailable at the time the task is scheduled, then the
@@ -33,6 +35,6 @@ class AffinityInformation(Model):
         'affinity_id': {'key': 'affinityId', 'type': 'str'},
     }
 
-    def __init__(self, affinity_id):
-        super(AffinityInformation, self).__init__()
-        self.affinity_id = affinity_id
+    def __init__(self, **kwargs):
+        super(AffinityInformation, self).__init__(**kwargs)
+        self.affinity_id = kwargs.get('affinity_id', None)
