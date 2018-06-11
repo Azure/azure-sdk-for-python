@@ -1091,7 +1091,7 @@ class IntegrationRuntimesOperations(object):
     upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade'}
 
     def grant_access(
-            self, resource_group_name, factory_name, integration_runtime_name, factory_identity, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, factory_identity, factory_name1=None, custom_headers=None, raw=False, **operation_config):
         """Grant integration runtime access to other data factory.
 
         :param resource_group_name: The resource group name.
@@ -1102,13 +1102,18 @@ class IntegrationRuntimesOperations(object):
         :type integration_runtime_name: str
         :param factory_identity: The data factory identity.
         :type factory_identity: str
+        :param factory_name1: The data factory name.
+        :type factory_name1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: IntegrationRuntimePermissionResponse or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimePermissionResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -1149,13 +1154,20 @@ class IntegrationRuntimesOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('IntegrationRuntimePermissionResponse', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     grant_access.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/grantAccess'}
 
     def revoke_access(
-            self, resource_group_name, factory_name, integration_runtime_name, factory_identity, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, factory_identity, factory_name1=None, custom_headers=None, raw=False, **operation_config):
         """Revoke the integration runtime access from other data factory.
 
         :param resource_group_name: The resource group name.
@@ -1166,13 +1178,18 @@ class IntegrationRuntimesOperations(object):
         :type integration_runtime_name: str
         :param factory_identity: The data factory identity.
         :type factory_identity: str
+        :param factory_name1: The data factory name.
+        :type factory_name1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: IntegrationRuntimePermissionResponse or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimePermissionResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -1213,7 +1230,14 @@ class IntegrationRuntimesOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('IntegrationRuntimePermissionResponse', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     revoke_access.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/revokeAccess'}

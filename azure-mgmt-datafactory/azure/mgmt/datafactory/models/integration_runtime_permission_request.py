@@ -17,6 +17,8 @@ class IntegrationRuntimePermissionRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param factory_name: The data factory name.
+    :type factory_name: str
     :param factory_identity: Required. The data factory identity.
     :type factory_identity: str
     """
@@ -26,9 +28,11 @@ class IntegrationRuntimePermissionRequest(Model):
     }
 
     _attribute_map = {
+        'factory_name': {'key': 'factoryName', 'type': 'str'},
         'factory_identity': {'key': 'factoryIdentity', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IntegrationRuntimePermissionRequest, self).__init__(**kwargs)
+        self.factory_name = kwargs.get('factory_name', None)
         self.factory_identity = kwargs.get('factory_identity', None)
