@@ -515,6 +515,12 @@ class AutomaticTuningServerReason(str, Enum):
     auto_configured = "AutoConfigured"
 
 
+class SecurityAlertState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class RestorePointType(str, Enum):
 
     continuous = "CONTINUOUS"
