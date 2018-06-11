@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PolicySku(Model):
-    """The policy sku.
+    """The policy sku. This property is optional, obsolete, and will be ignored.
 
     All required parameters must be populated in order to send to Azure.
 
