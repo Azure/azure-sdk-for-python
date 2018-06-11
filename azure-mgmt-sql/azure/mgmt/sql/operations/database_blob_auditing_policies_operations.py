@@ -24,7 +24,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar blob_auditing_policy_name: The name of the blob auditing policy. Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.blob_auditing_policy_name = "default"
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2015-05-01-preview"
 
         self.config = config
 
@@ -49,7 +49,8 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database.
+        :param database_name: The name of the database for which the blob
+         audit policy is defined.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -117,7 +118,8 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database.
+        :param database_name: The name of the database for which the blob
+         auditing policy will be defined.
         :type database_name: str
         :param parameters: The database blob auditing policy.
         :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy

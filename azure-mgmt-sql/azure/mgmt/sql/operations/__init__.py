@@ -32,6 +32,7 @@ from .transparent_data_encryptions_operations import TransparentDataEncryptionsO
 from .transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from .server_usages_operations import ServerUsagesOperations
 from .database_usages_operations import DatabaseUsagesOperations
+from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .encryption_protectors_operations import EncryptionProtectorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
@@ -43,10 +44,6 @@ from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
-from .extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
-from .server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
-from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
 from .job_agents_operations import JobAgentsOperations
@@ -96,6 +93,7 @@ __all__ = [
     'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
     'DatabaseUsagesOperations',
+    'DatabaseBlobAuditingPoliciesOperations',
     'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
@@ -107,10 +105,6 @@ __all__ = [
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
-    'ExtendedDatabaseBlobAuditingPoliciesOperations',
-    'ExtendedServerBlobAuditingPoliciesOperations',
-    'ServerBlobAuditingPoliciesOperations',
-    'DatabaseBlobAuditingPoliciesOperations',
     'DatabaseVulnerabilityAssessmentRuleBaselinesOperations',
     'DatabaseVulnerabilityAssessmentsOperations',
     'JobAgentsOperations',
