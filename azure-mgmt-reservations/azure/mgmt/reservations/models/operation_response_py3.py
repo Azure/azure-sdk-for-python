@@ -12,17 +12,25 @@
 from msrest.serialization import Model
 
 
-class SkuName(Model):
-    """SkuName.
+class OperationResponse(Model):
+    """OperationResponse.
 
     :param name:
     :type name: str
+    :param display:
+    :type display: ~azure.mgmt.reservations.models.OperationDisplay
+    :param origin:
+    :type origin: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SkuName, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, name: str=None, display=None, origin: str=None, **kwargs) -> None:
+        super(OperationResponse, self).__init__(**kwargs)
+        self.name = name
+        self.display = display
+        self.origin = origin

@@ -30,7 +30,7 @@ class ReservationSplitProperties(Model):
         'split_source': {'key': 'splitSource', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, split_destinations=None, split_source: str=None, **kwargs) -> None:
         super(ReservationSplitProperties, self).__init__(**kwargs)
-        self.split_destinations = kwargs.get('split_destinations', None)
-        self.split_source = kwargs.get('split_source', None)
+        self.split_destinations = split_destinations
+        self.split_source = split_source
