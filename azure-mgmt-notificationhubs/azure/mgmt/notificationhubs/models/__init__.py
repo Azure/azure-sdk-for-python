@@ -32,6 +32,7 @@ try:
     from .adm_credential_py3 import AdmCredential
     from .baidu_credential_py3 import BaiduCredential
     from .notification_hub_create_or_update_parameters_py3 import NotificationHubCreateOrUpdateParameters
+    from .notification_hub_patch_parameters_py3 import NotificationHubPatchParameters
     from .notification_hub_resource_py3 import NotificationHubResource
     from .pns_credentials_resource_py3 import PnsCredentialsResource
     from .resource_py3 import Resource
@@ -59,6 +60,7 @@ except (SyntaxError, ImportError):
     from .adm_credential import AdmCredential
     from .baidu_credential import BaiduCredential
     from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
+    from .notification_hub_patch_parameters import NotificationHubPatchParameters
     from .notification_hub_resource import NotificationHubResource
     from .pns_credentials_resource import PnsCredentialsResource
     from .resource import Resource
@@ -96,6 +98,7 @@ __all__ = [
     'AdmCredential',
     'BaiduCredential',
     'NotificationHubCreateOrUpdateParameters',
+    'NotificationHubPatchParameters',
     'NotificationHubResource',
     'PnsCredentialsResource',
     'Resource',
