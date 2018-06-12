@@ -396,8 +396,8 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NotificationHubResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource or
+        :return: DebugSendResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.DebugSendResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -441,7 +441,7 @@ class NotificationHubsOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('NotificationHubResource', response)
+            deserialized = self._deserialize('DebugSendResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

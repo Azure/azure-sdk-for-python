@@ -34,6 +34,7 @@ try:
     from .notification_hub_create_or_update_parameters_py3 import NotificationHubCreateOrUpdateParameters
     from .notification_hub_patch_parameters_py3 import NotificationHubPatchParameters
     from .notification_hub_resource_py3 import NotificationHubResource
+    from .debug_send_response_py3 import DebugSendResponse
     from .pns_credentials_resource_py3 import PnsCredentialsResource
     from .resource_py3 import Resource
     from .sub_resource_py3 import SubResource
@@ -62,6 +63,7 @@ except (SyntaxError, ImportError):
     from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
     from .notification_hub_patch_parameters import NotificationHubPatchParameters
     from .notification_hub_resource import NotificationHubResource
+    from .debug_send_response import DebugSendResponse
     from .pns_credentials_resource import PnsCredentialsResource
     from .resource import Resource
     from .sub_resource import SubResource
@@ -100,6 +102,7 @@ __all__ = [
     'NotificationHubCreateOrUpdateParameters',
     'NotificationHubPatchParameters',
     'NotificationHubResource',
+    'DebugSendResponse',
     'PnsCredentialsResource',
     'Resource',
     'SubResource',
