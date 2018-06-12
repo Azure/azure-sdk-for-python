@@ -182,7 +182,7 @@ class NotificationHubsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'}
 
     def patch(
-            self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Patch a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -230,7 +230,10 @@ class NotificationHubsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'NotificationHubPatchParameters')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'NotificationHubPatchParameters')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
