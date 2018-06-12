@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.bots_operations import BotsOperations
 from .operations.channels_operations import ChannelsOperations
 from .operations.operations import Operations
+from .operations.operation_result_operations import OperationResultOperations
 from .operations.bot_connection_operations import BotConnectionOperations
 from . import models
 
@@ -64,6 +65,8 @@ class AzureBotService(SDKClient):
     :vartype channels: azure.mgmt.botservice.operations.ChannelsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.operations.Operations
+    :ivar operation_result: OperationResult operations
+    :vartype operation_result: azure.mgmt.botservice.operations.OperationResultOperations
     :ivar bot_connection: BotConnection operations
     :vartype bot_connection: azure.mgmt.botservice.operations.BotConnectionOperations
 
@@ -91,6 +94,8 @@ class AzureBotService(SDKClient):
         self.channels = ChannelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operation_result = OperationResultOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.bot_connection = BotConnectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
