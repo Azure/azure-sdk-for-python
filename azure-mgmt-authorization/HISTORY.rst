@@ -11,10 +11,6 @@ Release History
 - Support Azure Stack (multi API versionning)
 - Client class can be used as a context manager to keep the underlying HTTP session open for performance
 
-**Breaking changes**
-
-- Classic Administrators is back to 2015-07-01 API version (from 2015-06-01) which creates some breaking changes for this API.
-
 **Bugfixes**
 
 - Compatibility of the sdist with wheel 0.31.0
