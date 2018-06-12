@@ -9,9 +9,12 @@ import unittest
 
 import azure.mgmt.datalake.store
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils.mgmt_settings_real import get_credentials
+from msrestazure.azure_exceptions import CloudError
+from azure.mgmt.datalake.store import models
 
 # this is the ADL produciton region for now
-_REGION = 'East US 2'
+_REGION = 'eastus2'
 
 class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
@@ -20,6 +23,88 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.adls_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient
         )
+
+    @ResourceGroupPreparer(location=_REGION)
+    def test_vnet_operations(self, location):
+        account_name = self.get_resource_name('adlsacct')
+        vnet_rule_name = self.get_resource_name('vnetrule1')
+
+        subscription_id = '9e1f0ab2-2f85-49de-9677-9da6f829b914'
+        credentials = get_credentials()
+
+        adls_mgmt_account_client = azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient(credentials, subscription_id)
+
+        subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/default'
+        resource_group = 'lewu-rg'
+        virtual_network_rule = models.CreateVirtualNetworkRuleWithAccountParameters(
+            name = vnet_rule_name,
+            subnet_id = subnet_id
+        )
+
+        params_create = models.CreateDataLakeStoreAccountParameters(
+            location = location,
+            firewall_state = models.FirewallState.enabled,
+            firewall_allow_azure_ips = models.FirewallAllowAzureIpsState.enabled,
+            virtual_network_rules = [virtual_network_rule]
+        )
+
+        # create and validate an ADLS account
+        response_create = adls_mgmt_account_client.accounts.create(
+            resource_group,
+            account_name,
+            params_create,
+        ).result()
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, response_create.provisioning_state)
+
+        # get the account and ensure that all the values are properly set
+        response_get = adls_mgmt_account_client.accounts.get(
+            resource_group,
+            account_name
+        )
+
+        # Validate the account creation process
+        self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, response_get.provisioning_state)
+        self.assertEqual(response_get.name, account_name)
+
+        # Validate firewall state
+        self.assertEqual(models.FirewallState.enabled, response_get.firewall_state)
+        self.assertEqual(models.FirewallAllowAzureIpsState.enabled, response_get.firewall_allow_azure_ips)
+
+        # Validate virtual network state
+        self.assertEqual(1, len(response_get.virtual_network_rules))
+        self.assertEqual(vnet_rule_name, response_get.virtual_network_rules[0].name)
+        self.assertEqual(subnet_id, response_get.virtual_network_rules[0].subnet_id)
+
+        vnet_rule = adls_mgmt_account_client.virtual_network_rules.get(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        )
+        self.assertEqual(vnet_rule_name, vnet_rule.name)
+        self.assertEqual(subnet_id, vnet_rule.subnet_id)
+
+        updated_subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/updatedSubnetId'
+
+        # Update the virtual network rule to change the subnetId
+        vnet_rule = adls_mgmt_account_client.virtual_network_rules.create_or_update(
+            resource_group,
+            account_name,
+            vnet_rule_name,
+            updated_subnet_id
+        )
+        self.assertEqual(updated_subnet_id, vnet_rule.subnet_id)
+
+        # Remove the virtual network rule and verify it is gone
+        adls_mgmt_account_client.virtual_network_rules.delete(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        )
+        self.assertRaises(CloudError, lambda: adls_mgmt_account_client.virtual_network_rules.get(
+            resource_group,
+            account_name,
+            vnet_rule_name
+        ))
 
     @ResourceGroupPreparer(location=_REGION)
     def test_adls_accounts(self, resource_group, location):
