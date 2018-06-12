@@ -11,8 +11,10 @@
 
 from .applications_operations import ApplicationsOperations
 from .application_definitions_operations import ApplicationDefinitionsOperations
+from .solutions_operations import SolutionsOperations
 
 __all__ = [
     'ApplicationsOperations',
     'ApplicationDefinitionsOperations',
+    'SolutionsOperations',
 ]
