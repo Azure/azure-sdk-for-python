@@ -35,7 +35,7 @@ class DebugSendResponse(Resource):
     :param failure: send failure
     :type failure: float
     :param results: actual failure description
-    :type results: str
+    :type results: object
     """
 
     _validation = {
@@ -53,7 +53,7 @@ class DebugSendResponse(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'success': {'key': 'properties.success', 'type': 'float'},
         'failure': {'key': 'properties.failure', 'type': 'float'},
-        'results': {'key': 'properties.results', 'type': 'str'},
+        'results': {'key': 'properties.results', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

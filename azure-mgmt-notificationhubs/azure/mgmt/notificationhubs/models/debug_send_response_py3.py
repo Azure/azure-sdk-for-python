@@ -35,7 +35,7 @@ class DebugSendResponse(Resource):
     :param failure: send failure
     :type failure: float
     :param results: actual failure description
-    :type results: str
+    :type results: object
     """
 
     _validation = {
@@ -53,10 +53,10 @@ class DebugSendResponse(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'success': {'key': 'properties.success', 'type': 'float'},
         'failure': {'key': 'properties.failure', 'type': 'float'},
-        'results': {'key': 'properties.results', 'type': 'str'},
+        'results': {'key': 'properties.results', 'type': 'object'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, sku=None, success: float=None, failure: float=None, results: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, success: float=None, failure: float=None, results=None, **kwargs) -> None:
         super(DebugSendResponse, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.success = success
         self.failure = failure
