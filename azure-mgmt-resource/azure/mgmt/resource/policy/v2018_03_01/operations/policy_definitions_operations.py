@@ -619,7 +619,10 @@ class PolicyDefinitionsOperations(object):
 
     def list_by_management_group(
             self, management_group_id, custom_headers=None, raw=False, **operation_config):
-        """Gets all the policy definitions in a management group.
+        """Retrieve policy definitions in a management group.
+
+        This operation retrieves a list of all the policy definitions in a
+        given management group.
 
         :param management_group_id: The ID of the management group.
         :type management_group_id: str
