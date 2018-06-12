@@ -20,17 +20,20 @@ class ReservationProperties(Model):
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
      'SqlDatabases', 'SuseLinux'
-    :type reserved_resource_type: str or ~azure.mgmt.reservations.models.enum
+    :type reserved_resource_type: str or
+     ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off',
      'NotSupported'
-    :type instance_flexibility: str or ~azure.mgmt.reservations.models.enum
+    :type instance_flexibility: str or
+     ~azure.mgmt.reservations.models.InstanceFlexibility
     :param display_name: Friendly name for user to easily identify the
      reservation
     :type display_name: str
     :param applied_scopes:
     :type applied_scopes: list[str]
     :param applied_scope_type: Possible values include: 'Single', 'Shared'
-    :type applied_scope_type: str or ~azure.mgmt.reservations.models.enum
+    :type applied_scope_type: str or
+     ~azure.mgmt.reservations.models.AppliedScopeType
     :param quantity: Quantity of the SKUs that are part of the Reservation.
     :type quantity: int
     :param provisioning_state: Possible values include: 'Creating',
