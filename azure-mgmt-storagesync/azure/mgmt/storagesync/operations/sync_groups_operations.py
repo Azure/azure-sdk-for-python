@@ -133,7 +133,7 @@ class SyncGroupsOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        body = models.SyncGroup(unique_id=unique_id)
+        parameters = models.SyncGroup(unique_id=unique_id)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -160,7 +160,7 @@ class SyncGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'SyncGroup')
+        body_content = self._serialize.body(parameters, 'SyncGroup')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)

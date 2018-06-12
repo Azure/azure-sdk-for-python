@@ -184,7 +184,7 @@ class RegisteredServersOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, storage_sync_service_name, server_id, body, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, server_id, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -210,7 +210,7 @@ class RegisteredServersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'RegisteredServer')
+        body_content = self._serialize.body(parameters, 'RegisteredServer')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -240,7 +240,7 @@ class RegisteredServersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, storage_sync_service_name, server_id, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, server_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Add a new registered server.
 
         :param resource_group_name: The name of the resource group within the
@@ -251,8 +251,8 @@ class RegisteredServersOperations(object):
         :type storage_sync_service_name: str
         :param server_id: GUID identifying the on-premises server.
         :type server_id: str
-        :param body: Body of Registered Server object.
-        :type body: ~azure.mgmt.storagesync.models.RegisteredServer
+        :param parameters: Body of Registered Server object.
+        :type parameters: ~azure.mgmt.storagesync.models.RegisteredServer
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -271,7 +271,7 @@ class RegisteredServersOperations(object):
             resource_group_name=resource_group_name,
             storage_sync_service_name=storage_sync_service_name,
             server_id=server_id,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

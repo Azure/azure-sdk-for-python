@@ -40,7 +40,7 @@ class ServerEndpointsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, body, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -67,7 +67,7 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'ServerEndpoint')
+        body_content = self._serialize.body(parameters, 'ServerEndpoint')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -97,7 +97,7 @@ class ServerEndpointsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new ServerEndpoint.
 
         :param resource_group_name: The name of the resource group within the
@@ -110,8 +110,8 @@ class ServerEndpointsOperations(object):
         :type sync_group_name: str
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
-        :param body: Body of Server Endpoint object.
-        :type body: ~azure.mgmt.storagesync.models.ServerEndpoint
+        :param parameters: Body of Server Endpoint object.
+        :type parameters: ~azure.mgmt.storagesync.models.ServerEndpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -131,7 +131,7 @@ class ServerEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             server_endpoint_name=server_endpoint_name,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -164,7 +164,7 @@ class ServerEndpointsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, body=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -191,8 +191,8 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if body is not None:
-            body_content = self._serialize.body(body, 'ServerEndpoint')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'ServerEndpoint')
         else:
             body_content = None
 
@@ -224,7 +224,7 @@ class ServerEndpointsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, body=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Patch a given ServerEndpoint.
 
         :param resource_group_name: The name of the resource group within the
@@ -237,8 +237,8 @@ class ServerEndpointsOperations(object):
         :type sync_group_name: str
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
-        :param body: Any of the properties applicable in PUT request.
-        :type body: ~azure.mgmt.storagesync.models.ServerEndpoint
+        :param parameters: Any of the properties applicable in PUT request.
+        :type parameters: ~azure.mgmt.storagesync.models.ServerEndpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -258,7 +258,7 @@ class ServerEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             server_endpoint_name=server_endpoint_name,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

@@ -61,7 +61,7 @@ class StorageSyncServicesOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        body = models.StorageSyncService(location=location, tags=tags)
+        parameters = models.StorageSyncService(location=location, tags=tags)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -87,7 +87,7 @@ class StorageSyncServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'StorageSyncService')
+        body_content = self._serialize.body(parameters, 'StorageSyncService')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -203,9 +203,9 @@ class StorageSyncServicesOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        body = None
+        parameters = None
         if location is not None or tags is not None:
-            body = models.StorageSyncService(location=location, tags=tags)
+            parameters = models.StorageSyncService(location=location, tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -231,8 +231,8 @@ class StorageSyncServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if body is not None:
-            body_content = self._serialize.body(body, 'StorageSyncService')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'StorageSyncService')
         else:
             body_content = None
 

@@ -40,7 +40,7 @@ class CloudEndpointsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -67,7 +67,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'CloudEndpoint')
+        body_content = self._serialize.body(parameters, 'CloudEndpoint')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -98,7 +98,7 @@ class CloudEndpointsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new CloudEndpoint.
 
         :param resource_group_name: The name of the resource group within the
@@ -111,8 +111,8 @@ class CloudEndpointsOperations(object):
         :type sync_group_name: str
         :param cloud_endpoint_name: Name of Cloud Endpoint object.
         :type cloud_endpoint_name: str
-        :param body: Body of Cloud Endpoint resource.
-        :type body: ~azure.mgmt.storagesync.models.CloudEndpoint
+        :param parameters: Body of Cloud Endpoint resource.
+        :type parameters: ~azure.mgmt.storagesync.models.CloudEndpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -132,7 +132,7 @@ class CloudEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             cloud_endpoint_name=cloud_endpoint_name,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -421,7 +421,7 @@ class CloudEndpointsOperations(object):
 
     def _pre_backup_initial(
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, azure_file_share=None, custom_headers=None, raw=False, **operation_config):
-        body = models.BackupRequest(azure_file_share=azure_file_share)
+        parameters = models.BackupRequest(azure_file_share=azure_file_share)
 
         # Construct URL
         url = self.pre_backup.metadata['url']
@@ -449,7 +449,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'BackupRequest')
+        body_content = self._serialize.body(parameters, 'BackupRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -530,7 +530,7 @@ class CloudEndpointsOperations(object):
 
     def _post_backup_initial(
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, azure_file_share=None, custom_headers=None, raw=False, **operation_config):
-        body = models.BackupRequest(azure_file_share=azure_file_share)
+        parameters = models.BackupRequest(azure_file_share=azure_file_share)
 
         # Construct URL
         url = self.post_backup.metadata['url']
@@ -558,7 +558,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'BackupRequest')
+        body_content = self._serialize.body(parameters, 'BackupRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -653,7 +653,7 @@ class CloudEndpointsOperations(object):
 
 
     def _pre_restore_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.pre_restore.metadata['url']
         path_format_arguments = {
@@ -680,7 +680,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'PreRestoreRequest')
+        body_content = self._serialize.body(parameters, 'PreRestoreRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -701,7 +701,7 @@ class CloudEndpointsOperations(object):
             return client_raw_response
 
     def pre_restore(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Pre Restore a given CloudEndpoint.
 
         :param resource_group_name: The name of the resource group within the
@@ -714,8 +714,8 @@ class CloudEndpointsOperations(object):
         :type sync_group_name: str
         :param cloud_endpoint_name: Name of Cloud Endpoint object.
         :type cloud_endpoint_name: str
-        :param body: Body of Cloud Endpoint object.
-        :type body: ~azure.mgmt.storagesync.models.PreRestoreRequest
+        :param parameters: Body of Cloud Endpoint object.
+        :type parameters: ~azure.mgmt.storagesync.models.PreRestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -733,7 +733,7 @@ class CloudEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             cloud_endpoint_name=cloud_endpoint_name,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -825,7 +825,7 @@ class CloudEndpointsOperations(object):
 
 
     def _post_restore_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.post_restore.metadata['url']
         path_format_arguments = {
@@ -852,7 +852,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'PostRestoreRequest')
+        body_content = self._serialize.body(parameters, 'PostRestoreRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -873,7 +873,7 @@ class CloudEndpointsOperations(object):
             return client_raw_response
 
     def post_restore(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Post Restore a given CloudEndpoint.
 
         :param resource_group_name: The name of the resource group within the
@@ -886,8 +886,8 @@ class CloudEndpointsOperations(object):
         :type sync_group_name: str
         :param cloud_endpoint_name: Name of Cloud Endpoint object.
         :type cloud_endpoint_name: str
-        :param body: Body of Cloud Endpoint object.
-        :type body: ~azure.mgmt.storagesync.models.PostRestoreRequest
+        :param parameters: Body of Cloud Endpoint object.
+        :type parameters: ~azure.mgmt.storagesync.models.PostRestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -905,7 +905,7 @@ class CloudEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             cloud_endpoint_name=cloud_endpoint_name,
-            body=body,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
