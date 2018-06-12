@@ -22,6 +22,9 @@ try:
     from .generic_resource_py3 import GenericResource
     from .resource_py3 import Resource
     from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_definition_py3 import OperationDefinition
+    from .operations_list_py3 import OperationsList
 except (SyntaxError, ImportError):
     from .plan import Plan
     from .application import Application
@@ -35,6 +38,9 @@ except (SyntaxError, ImportError):
     from .generic_resource import GenericResource
     from .resource import Resource
     from .error_response import ErrorResponse, ErrorResponseException
+    from .operation_display import OperationDisplay
+    from .operation_definition import OperationDefinition
+    from .operations_list import OperationsList
 from .application_paged import ApplicationPaged
 from .application_definition_paged import ApplicationDefinitionPaged
 from .application_client_enums import (
@@ -57,6 +63,9 @@ __all__ = [
     'GenericResource',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
+    'OperationDisplay',
+    'OperationDefinition',
+    'OperationsList',
     'ApplicationPaged',
     'ApplicationDefinitionPaged',
     'ProvisioningState',
