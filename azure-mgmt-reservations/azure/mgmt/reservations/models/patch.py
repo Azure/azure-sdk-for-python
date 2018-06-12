@@ -16,12 +16,14 @@ class Patch(Model):
     """Patch.
 
     :param applied_scope_type: Possible values include: 'Single', 'Shared'
-    :type applied_scope_type: str or ~azure.mgmt.reservations.models.enum
+    :type applied_scope_type: str or
+     ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
     :param instance_flexibility: Possible values include: 'On', 'Off',
      'NotSupported'
-    :type instance_flexibility: str or ~azure.mgmt.reservations.models.enum
+    :type instance_flexibility: str or
+     ~azure.mgmt.reservations.models.InstanceFlexibility
     """
 
     _attribute_map = {
