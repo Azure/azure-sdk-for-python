@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class RecordSetUpdateParameters(Model):
-    """Parameters supplied to update a record set.
+class MxRecord(Model):
+    """An MX record.
 
-    :param record_set: Specifies information about the record set being
-     updated.
-    :type record_set: ~azure.mgmt.dns.models.RecordSet
+    :param preference: The preference value for this MX record.
+    :type preference: int
+    :param exchange: The domain name of the mail host for this MX record.
+    :type exchange: str
     """
 
     _attribute_map = {
-        'record_set': {'key': 'RecordSet', 'type': 'RecordSet'},
+        'preference': {'key': 'preference', 'type': 'int'},
+        'exchange': {'key': 'exchange', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RecordSetUpdateParameters, self).__init__(**kwargs)
-        self.record_set = kwargs.get('record_set', None)
+    def __init__(self, *, preference: int=None, exchange: str=None, **kwargs) -> None:
+        super(MxRecord, self).__init__(**kwargs)
+        self.preference = preference
+        self.exchange = exchange

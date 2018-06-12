@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -51,7 +51,7 @@ class DnsManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DnsManagementClient(object):
+class DnsManagementClient(SDKClient):
     """The DNS Management Client.
 
     :ivar config: Configuration for client.
@@ -75,7 +75,7 @@ class DnsManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DnsManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DnsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01-preview'
