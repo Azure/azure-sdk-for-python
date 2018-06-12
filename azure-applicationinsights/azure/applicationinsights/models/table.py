@@ -20,7 +20,7 @@ class Table(Model):
     :param name: The name of the table.
     :type name: str
     :param columns: The list of columns in this table.
-    :type columns: list[~azure.operationalinsights.models.Column]
+    :type columns: list[~azure.applicationinsights.models.Column]
     :param rows: The resulting rows from this query.
     :type rows: list[list[str]]
     """

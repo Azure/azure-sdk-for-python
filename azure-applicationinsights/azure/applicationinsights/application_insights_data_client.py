@@ -13,17 +13,16 @@ from msrest.service_client import ServiceClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from .operations.metrics_operations import MetricsOperations
+from .operations.events_operations import EventsOperations
 from . import models
 
 
-class OperationalInsightsDataClientConfiguration(Configuration):
-    """Configuration for OperationalInsightsDataClient
+class ApplicationInsightsDataClientConfiguration(Configuration):
+    """Configuration for ApplicationInsightsDataClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param workspaces: Comma separated workspace IDs to include in
-     cross-workspace queries.
-    :type workspaces: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
@@ -31,30 +30,31 @@ class OperationalInsightsDataClientConfiguration(Configuration):
     """
 
     def __init__(
-            self, credentials, workspaces=None, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'https://api.loganalytics.io/v1'
+            base_url = 'https://api.applicationinsights.io/v1'
 
-        super(OperationalInsightsDataClientConfiguration, self).__init__(base_url)
+        super(ApplicationInsightsDataClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-operationalinsights/{}'.format(VERSION))
+        self.add_user_agent('azure-applicationinsights/{}'.format(VERSION))
 
-        self.workspaces = workspaces
         self.credentials = credentials
 
 
-class OperationalInsightsDataClient(object):
-    """Operational Insights Data Client
+class ApplicationInsightsDataClient(object):
+    """Composite Swagger for Application Insights Data Client
 
     :ivar config: Configuration for client.
-    :vartype config: OperationalInsightsDataClientConfiguration
+    :vartype config: ApplicationInsightsDataClientConfiguration
 
-    :param workspaces: Comma separated workspace IDs to include in
-     cross-workspace queries.
-    :type workspaces: str
+    :ivar metrics: Metrics operations
+    :vartype metrics: azure.applicationinsights.operations.MetricsOperations
+    :ivar events: Events operations
+    :vartype events: azure.applicationinsights.operations.EventsOperations
+
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
@@ -62,9 +62,9 @@ class OperationalInsightsDataClient(object):
     """
 
     def __init__(
-            self, credentials, workspaces=None, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = OperationalInsightsDataClientConfiguration(credentials, workspaces, base_url)
+        self.config = ApplicationInsightsDataClientConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -72,44 +72,46 @@ class OperationalInsightsDataClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.metrics = MetricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.events = EventsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def query(
-            self, workspace_id, body, custom_headers=None, raw=False, **operation_config):
+            self, app_id, body, custom_headers=None, raw=False, **operation_config):
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
-        [Here](/documentation/2-Using-the-API/Query) is an example for using
-        POST with an Analytics query.
+        [Here](https://dev.applicationinsights.io/documentation/Using-the-API/Query)
+        is an example for using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from
-         the Properties blade in the Azure portal.
-        :type workspace_id: str
+        :param app_id: ID of the application. This is Application ID from the
+         API Access settings blade in the Azure portal.
+        :type app_id: str
         :param body: The Analytics query. Learn more about the [Analytics
          query
          syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/)
-        :type body: ~azure.operationalinsights.models.QueryBody
+        :type body: ~azure.applicationinsights.models.QueryBody
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: QueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.operationalinsights.models.QueryResults or
+        :rtype: ~azure.applicationinsights.models.QueryResults or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.operationalinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/workspaces/{workspaceId}/query'
+        url = '/apps/{appId}/query'
         path_format_arguments = {
-            'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
+            'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if self.config.workspaces is not None:
-            query_parameters['workspaces'] = self._serialize.query("self.config.workspaces", self.config.workspaces, 'str')
 
         # Construct headers
         header_parameters = {}

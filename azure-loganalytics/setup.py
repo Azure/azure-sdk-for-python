@@ -18,8 +18,8 @@ except ImportError:
     cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-operationalinsights"
-PACKAGE_PPRINT_NAME = "Log Analytics"
+PACKAGE_NAME = "azure-loganalytics"
+PACKAGE_PPRINT_NAME = "Log Analytics Data Plane"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -77,7 +77,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure>=0.4.27,<2.0.0',
+        'msrest>=0.4.27,<2.0.0',
         'azure-common~=1.1',
     ],
     cmdclass=cmdclass

@@ -19,7 +19,7 @@ class ErrorResponse(Model):
     Contains details when the response code indicates an error.
 
     :param error: The error details.
-    :type error: ~azure.operationalinsights.models.ErrorInfo
+    :type error: ~azure.loganalytics.models.ErrorInfo
     """
 
     _validation = {

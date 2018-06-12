@@ -18,7 +18,7 @@ class QueryResults(Model):
     Contains the tables, columns & rows resulting from a query.
 
     :param tables: The list of tables, columns and rows.
-    :type tables: list[~azure.operationalinsights.models.Table]
+    :type tables: list[~azure.applicationinsights.models.Table]
     """
 
     _validation = {

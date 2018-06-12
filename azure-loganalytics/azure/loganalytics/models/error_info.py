@@ -20,9 +20,9 @@ class ErrorInfo(Model):
     :param message: A human readable error message.
     :type message: str
     :param details: error details.
-    :type details: list[~azure.operationalinsights.models.ErrorDetail]
+    :type details: list[~azure.loganalytics.models.ErrorDetail]
     :param innererror: Inner error details if they exist.
-    :type innererror: ~azure.operationalinsights.models.ErrorInfo
+    :type innererror: ~azure.loganalytics.models.ErrorInfo
     :param additional_properties:
     :type additional_properties: object
     """
