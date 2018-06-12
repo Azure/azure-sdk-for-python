@@ -11,8 +11,10 @@
 
 from .metrics_operations import MetricsOperations
 from .events_operations import EventsOperations
+from .query_operations import QueryOperations
 
 __all__ = [
     'MetricsOperations',
     'EventsOperations',
+    'QueryOperations',
 ]

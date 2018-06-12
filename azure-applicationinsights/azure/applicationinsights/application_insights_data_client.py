@@ -12,9 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
 from .operations.metrics_operations import MetricsOperations
 from .operations.events_operations import EventsOperations
+from .operations.query_operations import QueryOperations
 from . import models
 
 
@@ -54,6 +54,8 @@ class ApplicationInsightsDataClient(object):
     :vartype metrics: azure.applicationinsights.operations.MetricsOperations
     :ivar events: Events operations
     :vartype events: azure.applicationinsights.operations.EventsOperations
+    :ivar query: Query operations
+    :vartype query: azure.applicationinsights.operations.QueryOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -76,67 +78,5 @@ class ApplicationInsightsDataClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.events = EventsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def query(
-            self, app_id, body, custom_headers=None, raw=False, **operation_config):
-        """Execute an Analytics query.
-
-        Executes an Analytics query for data.
-        [Here](https://dev.applicationinsights.io/documentation/Using-the-API/Query)
-        is an example for using POST with an Analytics query.
-
-        :param app_id: ID of the application. This is Application ID from the
-         API Access settings blade in the Azure portal.
-        :type app_id: str
-        :param body: The Analytics query. Learn more about the [Analytics
-         query
-         syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/)
-        :type body: ~azure.applicationinsights.models.QueryBody
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: QueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.applicationinsights.models.QueryResults or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = '/apps/{appId}/query'
-        path_format_arguments = {
-            'appId': self._serialize.url("app_id", app_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(body, 'QueryBody')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('QueryResults', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+        self.query = QueryOperations(
+            self._client, self.config, self._serialize, self._deserialize)
