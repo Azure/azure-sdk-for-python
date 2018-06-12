@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.50.0"
+from msrest.serialization import Model
 
+
+class RoleAssignmentFilter(Model):
+    """Role Assignments filter.
+
+    :param principal_id: Returns role assignment of the specific principal.
+    :type principal_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RoleAssignmentFilter, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)

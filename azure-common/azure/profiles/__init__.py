@@ -72,6 +72,9 @@ class KnownProfiles(Enum):
     latest = ProfileDefinition(None, "latest")
     v2017_03_09_profile = ProfileDefinition(
         {
+            "azure.mgmt.authorization.AuthorizationManagementClient": {
+                None: "2015-07-01"
+            },
             "azure.mgmt.compute.ComputeManagementClient": {
                 None: "2016-03-30"
             },
