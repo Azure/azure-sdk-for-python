@@ -403,12 +403,14 @@ class NotificationHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str')
+            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
