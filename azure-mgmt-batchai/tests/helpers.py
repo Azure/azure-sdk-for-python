@@ -55,10 +55,16 @@ STDOUTERR_FOLDER_NAME = 'stdouterr'
 OUTPUT_DIRECTORIES_FOLDER_NAME = 'outputs'
 
 # Location to run tests.
-LOCATION = 'westeurope'
+LOCATION = 'northeurope'
 
 # Regular expression to validate IP address (we don't need strict validation, just a smoke test enough).
 RE_ID_ADDRESS = '\d+(?:\.\d+){3}'
+
+# The workspace to create clusters.
+DEFAULT_WORKSPACE_NAME = 'workspace'
+
+# Experiment to create jobs.
+DEFAULT_EXPERIMENT_NAME = 'experiment'
 
 
 def sleep_before_next_poll(is_live):
@@ -94,20 +100,21 @@ def create_file_server(client, location, resource_group, nfs_name, subnet_id=Non
     :param models.ResourceId subnet_id: id of the subnet.
     :return models.FileServer: created file server.
     """
-    return client.file_servers.create(resource_group, nfs_name, models.FileServerCreateParameters(
-        location=location,
-        vm_size='STANDARD_D1',
-        ssh_configuration=models.SshConfiguration(
-            user_account_settings=models.UserAccountSettings(
-                admin_user_name=ADMIN_USER_NAME,
-                admin_user_password=ADMIN_USER_PASSWORD,
-            )
-        ),
-        data_disks=models.DataDisks(
-            disk_size_in_gb=10,
-            disk_count=2,
-            storage_account_type='Standard_LRS'),
-        subnet=subnet_id)).result()
+    client.workspaces.create(resource_group, DEFAULT_WORKSPACE_NAME, location).result()
+    return client.file_servers.create(
+        resource_group, DEFAULT_WORKSPACE_NAME, nfs_name, models.FileServerCreateParameters(
+            vm_size='STANDARD_D1',
+            ssh_configuration=models.SshConfiguration(
+                user_account_settings=models.UserAccountSettings(
+                    admin_user_name=ADMIN_USER_NAME,
+                    admin_user_password=ADMIN_USER_PASSWORD,
+                )
+            ),
+            data_disks=models.DataDisks(
+                disk_size_in_gb=10,
+                disk_count=2,
+                storage_account_type='Standard_LRS'),
+            subnet=subnet_id)).result()
 
 
 def create_cluster(client, location, resource_group, cluster_name, vm_size, target_nodes,
@@ -140,15 +147,15 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
             environment_variables=[models.EnvironmentVariable(name=k, value=v) for k, v in setup_task_env.items()],
             secrets=[models.EnvironmentVariableWithSecretValue(name=k, value=v) for k, v in setup_task_secrets.items()],
             std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH))
+    client.workspaces.create(resource_group, DEFAULT_WORKSPACE_NAME, location).result()
     return client.clusters.create(
         resource_group,
+        DEFAULT_WORKSPACE_NAME,
         cluster_name,
         parameters=models.ClusterCreateParameters(
-            location=location,
             vm_size=vm_size,
             scale_settings=models.ScaleSettings(
-                manual=models.ManualScaleSettings(
-                    target_node_count=target_nodes)),
+                manual=models.ManualScaleSettings(target_node_count=target_nodes)),
             node_setup=models.NodeSetup(
                 mount_volumes=models.MountVolumes(
                     azure_file_shares=[models.AzureFileShareReference(
@@ -174,13 +181,12 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
         )).result()
 
 
-def create_custom_job(client, resource_group, location, cluster_id, job_name, nodes, cmd, job_preparation_cmd=None,
+def create_custom_job(client, resource_group, cluster_id, job_name, nodes, cmd, job_preparation_cmd=None,
                       container=None):
     """Creates custom toolkit job
 
     :param BatchAIManagementClient client: client instance.
     :param str resource_group: resource group name.
-    :param str location: location.
     :param str cluster_id: resource Id of the cluster.
     :param str job_name: job name.
     :param int nodes: number of nodes to execute the job.
@@ -192,11 +198,13 @@ def create_custom_job(client, resource_group, location, cluster_id, job_name, no
     job_preparation = None
     if job_preparation_cmd:
         job_preparation = models.JobPreparation(command_line=job_preparation_cmd)
+    client.experiments.create(resource_group, DEFAULT_WORKSPACE_NAME, DEFAULT_EXPERIMENT_NAME).result()
     return client.jobs.create(
         resource_group,
+        DEFAULT_WORKSPACE_NAME,
+        DEFAULT_EXPERIMENT_NAME,
         job_name,
         parameters=models.JobCreateParameters(
-            location=location,
             cluster=models.ResourceId(id=cluster_id),
             node_count=nodes,
             std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
@@ -229,7 +237,7 @@ def wait_for_nodes(is_live, client, resource_group, cluster_name, target, timeou
     """
     wait_time = 0
     while True:
-        cluster = client.clusters.get(resource_group, cluster_name)
+        cluster = client.clusters.get(resource_group, DEFAULT_WORKSPACE_NAME, cluster_name)
         counts = cluster.node_state_counts  # type: models.NodeStateCounts
         if counts.idle_node_count == target and cluster.allocation_state != models.AllocationState.resizing:
             return counts.idle_node_count
@@ -253,7 +261,7 @@ def wait_for_job_completion(is_live, client, resource_group, job_name, timeout_s
     """
     wait_time = 0
     while True:
-        job = client.jobs.get(resource_group, job_name)
+        job = client.jobs.get(resource_group, DEFAULT_WORKSPACE_NAME, DEFAULT_EXPERIMENT_NAME, job_name)
         if job.execution_state in [models.ExecutionState.succeeded, models.ExecutionState.failed]:
             return job.execution_state
         if wait_time < timeout_sec:
@@ -276,7 +284,7 @@ def wait_for_job_start_running(is_live, client, resource_group, job_name, timeou
     """
     wait_time = 0
     while True:
-        job = client.jobs.get(resource_group, job_name)
+        job = client.jobs.get(resource_group, DEFAULT_WORKSPACE_NAME, DEFAULT_EXPERIMENT_NAME, job_name)
         if job.execution_state != models.ExecutionState.queued:
             return job.execution_state
         if wait_time < timeout_sec:
@@ -308,7 +316,8 @@ def wait_for_file_server(is_live, client, resource_group, file_server_name, time
     """
     wait_time = 0
     while True:
-        server = client.file_servers.get(resource_group, file_server_name)  # type: models.FileServer
+        server = client.file_servers.get(resource_group, DEFAULT_WORKSPACE_NAME,
+                                         file_server_name)  # type: models.FileServer
         if server.provisioning_state == models.FileServerProvisioningState.succeeded:
             return True
         if wait_time < timeout_sec:
@@ -327,7 +336,7 @@ def assert_remote_login_info_reported_for_nodes(test, client, resource_group, cl
     :param str cluster_name: cluster
     :param int expected: expected number of nodes.
     """
-    nodes = list(client.clusters.list_remote_login_information(resource_group, cluster_name))
+    nodes = list(client.clusters.list_remote_login_information(resource_group, DEFAULT_WORKSPACE_NAME, cluster_name))
     test.assertEqual(len(nodes), expected)
     # Check if there is a reasonable information about nodes.
     for n in nodes:  # type: models.RemoteLoginInformation
@@ -346,7 +355,8 @@ def get_node_ids(client, resource_group, cluster_name):
     :param str cluster_name: cluster
     :return list(str): list of node Ids
     """
-    return [n.node_id for n in list(client.clusters.list_remote_login_information(resource_group, cluster_name))]
+    return [n.node_id for n in
+            list(client.clusters.list_remote_login_information(resource_group, DEFAULT_WORKSPACE_NAME, cluster_name))]
 
 
 def assert_job_files_in_path_are(test, client, resource_group, job_name, output_directory_id, path, expected):
@@ -360,9 +370,9 @@ def assert_job_files_in_path_are(test, client, resource_group, job_name, output_
     :param str path: a path inside of output directory.
     :param dict(str, str or None) expected: expected content, directories must have None value.
     """
-    paged = client.jobs.list_output_files(resource_group, job_name, models.JobsListOutputFilesOptions(
-        outputdirectoryid=output_directory_id, directory=path))
-    files = paged.get(paged.current_page)
+    files = client.jobs.list_output_files(resource_group, DEFAULT_WORKSPACE_NAME, DEFAULT_EXPERIMENT_NAME, job_name,
+                                          models.JobsListOutputFilesOptions(outputdirectoryid=output_directory_id,
+                                                                            directory=path))
     actual = dict()
     execution_log_found = False
     for f in files:
@@ -371,7 +381,7 @@ def assert_job_files_in_path_are(test, client, resource_group, job_name, output_
             execution_log_found = True
             continue
         actual[f.name] = None
-        if not f.is_directory:
+        if f.file_type == models.FileType.file:
             v = requests.get(f.download_url).content
             actual[f.name] = v if isinstance(v, six.string_types) else v.decode()
     test.assertEquals(sorted(actual.keys()), sorted(expected.keys()))
@@ -413,7 +423,7 @@ def assert_existing_clusters_are(test, client, resource_group, expected):
     :param str resource_group: resource group name.
     :param list[str] expected: list of cluster names.
     """
-    actual = [c.name for c in list(client.clusters.list_by_resource_group(resource_group))]
+    actual = [c.name for c in list(client.clusters.list_by_workspace(resource_group, DEFAULT_WORKSPACE_NAME))]
     test.assertListEqual(sorted(expected), sorted(actual))
 
 
@@ -425,7 +435,7 @@ def assert_existing_file_servers_are(test, client, resource_group, expected):
     :param str resource_group: resource group name.
     :param list[str] expected: list of file servers names.
     """
-    actual = [s.name for s in list(client.file_servers.list_by_resource_group(resource_group))]
+    actual = [s.name for s in list(client.file_servers.list_by_workspace(resource_group, DEFAULT_WORKSPACE_NAME))]
     test.assertListEqual(sorted(expected), sorted(actual))
 
 
@@ -448,6 +458,7 @@ def assert_file_in_file_share(test, storage_account, storage_account_key, direct
 
 class ClusterPreparer(AzureMgmtPreparer):
     """Batch AI cluster preparer"""
+
     def __init__(self,
                  location=LOCATION,
                  vm_size='STANDARD_D1',
@@ -475,6 +486,7 @@ class ClusterPreparer(AzureMgmtPreparer):
             self.resource = create_cluster(self.client, self.location, group.name, name, self.vm_size,
                                            self.target_nodes, self._get_storage_account(**kwargs).name,
                                            self._get_storage_account_key(**kwargs))
+            self.client.experiments.create(group.name, DEFAULT_WORKSPACE_NAME, DEFAULT_EXPERIMENT_NAME).result()
             if self.wait:
                 wait_for_nodes(self.is_live, self.client, group.name, name, self.target_nodes, NODE_STARTUP_TIMEOUT_SEC)
         else:
@@ -485,7 +497,7 @@ class ClusterPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.clusters.delete(group.name, name).result()
+            self.client.clusters.delete(group.name, DEFAULT_WORKSPACE_NAME, name).result()
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -522,10 +534,10 @@ def create_batchai_client(preparer):
     :returns BatchAIManagementClient: an instance of Batch AI management client
     """
     try:
-        from custom_client import create as create_custom_client
+        from . import custom_client
     except ImportError:
-        create_custom_client = None
-    if create_custom_client is not None:
-        return create_custom_client()
+        custom_client = None
+    if custom_client is not None:
+        return custom_client.create()
     else:
         return preparer.create_mgmt_client(BatchAIManagementClient)
