@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ServerEndpointsGetOperations(object):
-    """ServerEndpointsGetOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,41 +36,26 @@ class ServerEndpointsGetOperations(object):
 
         self.config = config
 
-    def list_by_sync_group(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a ServerEndpoint list.
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available Storage Sync Rest API operations.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param storage_sync_service_name: Name of Storage Sync Service
-         resource.
-        :type storage_sync_service_name: str
-        :param sync_group_name: Name of Sync Group resource.
-        :type sync_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ServerEndpoint
+        :return: An iterator like instance of OperationEntity
         :rtype:
-         ~azure.mgmt.storagesync.models.ServerEndpointPaged[~azure.mgmt.storagesync.models.ServerEndpoint]
+         ~azure.mgmt.storagesync.models.OperationEntityPaged[~azure.mgmt.storagesync.models.OperationEntity]
         :raises:
-         :class:`ErrorException<azure.mgmt.storagesync.models.ErrorException>`
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_sync_group.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
-                    'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -96,17 +81,17 @@ class ServerEndpointsGetOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                raise models.StorageSyncErrorException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.ServerEndpointPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ServerEndpointPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_sync_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/serverEndpoints'}
+    list.metadata = {'url': '/providers/Microsoft.StorageSync/operations'}

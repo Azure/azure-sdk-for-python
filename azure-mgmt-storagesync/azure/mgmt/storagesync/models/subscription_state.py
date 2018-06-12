@@ -15,14 +15,21 @@ from msrest.serialization import Model
 class SubscriptionState(Model):
     """Subscription State object.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param state: State of Azure Subscription. Possible values include:
      'Registered', 'Unregistered', 'Warned', 'Suspended', 'Deleted'
     :type state: str or ~azure.mgmt.storagesync.models.Reason
-    :param istransitioning: Is Transitioning
-    :type istransitioning: bool
+    :ivar istransitioning: Is Transitioning
+    :vartype istransitioning: bool
     :param properties: Subscription state properties.
     :type properties: object
     """
+
+    _validation = {
+        'istransitioning': {'readonly': True},
+    }
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},
@@ -33,5 +40,5 @@ class SubscriptionState(Model):
     def __init__(self, **kwargs):
         super(SubscriptionState, self).__init__(**kwargs)
         self.state = kwargs.get('state', None)
-        self.istransitioning = kwargs.get('istransitioning', None)
+        self.istransitioning = None
         self.properties = kwargs.get('properties', None)

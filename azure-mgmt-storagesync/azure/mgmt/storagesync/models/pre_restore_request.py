@@ -34,9 +34,9 @@ class PreRestoreRequest(Model):
     :param restore_file_spec: Pre Restore restore file spec array.
     :type restore_file_spec:
      list[~azure.mgmt.storagesync.models.RestoreFileSpec]
-    :param pausewaitforsyncdraintimeperiodinseconds: Pre Restore pause wait
-     for sync drain time period in seconds.
-    :type pausewaitforsyncdraintimeperiodinseconds: int
+    :param pause_wait_for_sync_drain_time_period_in_seconds: Pre Restore pause
+     wait for sync drain time period in seconds.
+    :type pause_wait_for_sync_drain_time_period_in_seconds: int
     """
 
     _attribute_map = {
@@ -48,7 +48,7 @@ class PreRestoreRequest(Model):
         'source_azure_file_share_uri': {'key': 'sourceAzureFileShareUri', 'type': 'str'},
         'backup_metadata_property_bag': {'key': 'backupMetadataPropertyBag', 'type': 'str'},
         'restore_file_spec': {'key': 'restoreFileSpec', 'type': '[RestoreFileSpec]'},
-        'pausewaitforsyncdraintimeperiodinseconds': {'key': 'pausewaitforsyncdraintimeperiodinseconds', 'type': 'int'},
+        'pause_wait_for_sync_drain_time_period_in_seconds': {'key': 'pauseWaitForSyncDrainTimePeriodInSeconds', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -61,4 +61,4 @@ class PreRestoreRequest(Model):
         self.source_azure_file_share_uri = kwargs.get('source_azure_file_share_uri', None)
         self.backup_metadata_property_bag = kwargs.get('backup_metadata_property_bag', None)
         self.restore_file_spec = kwargs.get('restore_file_spec', None)
-        self.pausewaitforsyncdraintimeperiodinseconds = kwargs.get('pausewaitforsyncdraintimeperiodinseconds', None)
+        self.pause_wait_for_sync_drain_time_period_in_seconds = kwargs.get('pause_wait_for_sync_drain_time_period_in_seconds', None)

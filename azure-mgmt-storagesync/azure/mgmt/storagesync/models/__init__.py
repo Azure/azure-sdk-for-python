@@ -10,8 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error, ErrorException
+    from .storage_sync_error_details_py3 import StorageSyncErrorDetails
+    from .storage_sync_error_py3 import StorageSyncError, StorageSyncErrorException
     from .resource_py3 import Resource
     from .tracked_resource_py3 import TrackedResource
     from .subscription_state_py3 import SubscriptionState
@@ -32,8 +32,8 @@ try:
     from .post_backup_response_py3 import PostBackupResponse
     from .workflow_array_py3 import WorkflowArray
 except (SyntaxError, ImportError):
-    from .error_details import ErrorDetails
-    from .error import Error, ErrorException
+    from .storage_sync_error_details import StorageSyncErrorDetails
+    from .storage_sync_error import StorageSyncError, StorageSyncErrorException
     from .resource import Resource
     from .tracked_resource import TrackedResource
     from .subscription_state import SubscriptionState
@@ -59,13 +59,13 @@ from .sync_group_paged import SyncGroupPaged
 from .cloud_endpoint_paged import CloudEndpointPaged
 from .server_endpoint_paged import ServerEndpointPaged
 from .registered_server_paged import RegisteredServerPaged
-from .microsoft_storage_sync_enums import (
+from .storage_sync_management_client_enums import (
     Reason,
 )
 
 __all__ = [
-    'ErrorDetails',
-    'Error', 'ErrorException',
+    'StorageSyncErrorDetails',
+    'StorageSyncError', 'StorageSyncErrorException',
     'Resource',
     'TrackedResource',
     'SubscriptionState',

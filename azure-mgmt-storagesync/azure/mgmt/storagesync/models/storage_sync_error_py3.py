@@ -13,7 +13,7 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class Error(Model):
+class StorageSyncError(Model):
     """Error type.
 
     :param code: Error code of the given entry.
@@ -21,24 +21,24 @@ class Error(Model):
     :param message: Error message of the given entry.
     :type message: str
     :param details: Error details of the given entry.
-    :type details: ~azure.mgmt.storagesync.models.ErrorDetails
+    :type details: ~azure.mgmt.storagesync.models.StorageSyncErrorDetails
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'ErrorDetails'},
+        'details': {'key': 'details', 'type': 'StorageSyncErrorDetails'},
     }
 
     def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
-        super(Error, self).__init__(**kwargs)
+        super(StorageSyncError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class ErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'Error'.
+class StorageSyncErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'StorageSyncError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -46,4 +46,4 @@ class ErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
+        super(StorageSyncErrorException, self).__init__(deserialize, response, 'StorageSyncError', *args)

@@ -34,9 +34,9 @@ class PreRestoreRequest(Model):
     :param restore_file_spec: Pre Restore restore file spec array.
     :type restore_file_spec:
      list[~azure.mgmt.storagesync.models.RestoreFileSpec]
-    :param pausewaitforsyncdraintimeperiodinseconds: Pre Restore pause wait
-     for sync drain time period in seconds.
-    :type pausewaitforsyncdraintimeperiodinseconds: int
+    :param pause_wait_for_sync_drain_time_period_in_seconds: Pre Restore pause
+     wait for sync drain time period in seconds.
+    :type pause_wait_for_sync_drain_time_period_in_seconds: int
     """
 
     _attribute_map = {
@@ -48,10 +48,10 @@ class PreRestoreRequest(Model):
         'source_azure_file_share_uri': {'key': 'sourceAzureFileShareUri', 'type': 'str'},
         'backup_metadata_property_bag': {'key': 'backupMetadataPropertyBag', 'type': 'str'},
         'restore_file_spec': {'key': 'restoreFileSpec', 'type': '[RestoreFileSpec]'},
-        'pausewaitforsyncdraintimeperiodinseconds': {'key': 'pausewaitforsyncdraintimeperiodinseconds', 'type': 'int'},
+        'pause_wait_for_sync_drain_time_period_in_seconds': {'key': 'pauseWaitForSyncDrainTimePeriodInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, *, partition: str=None, replica_group: str=None, request_id: str=None, azure_file_share_uri: str=None, status: str=None, source_azure_file_share_uri: str=None, backup_metadata_property_bag: str=None, restore_file_spec=None, pausewaitforsyncdraintimeperiodinseconds: int=None, **kwargs) -> None:
+    def __init__(self, *, partition: str=None, replica_group: str=None, request_id: str=None, azure_file_share_uri: str=None, status: str=None, source_azure_file_share_uri: str=None, backup_metadata_property_bag: str=None, restore_file_spec=None, pause_wait_for_sync_drain_time_period_in_seconds: int=None, **kwargs) -> None:
         super(PreRestoreRequest, self).__init__(**kwargs)
         self.partition = partition
         self.replica_group = replica_group
@@ -61,4 +61,4 @@ class PreRestoreRequest(Model):
         self.source_azure_file_share_uri = source_azure_file_share_uri
         self.backup_metadata_property_bag = backup_metadata_property_bag
         self.restore_file_spec = restore_file_spec
-        self.pausewaitforsyncdraintimeperiodinseconds = pausewaitforsyncdraintimeperiodinseconds
+        self.pause_wait_for_sync_drain_time_period_in_seconds = pause_wait_for_sync_drain_time_period_in_seconds

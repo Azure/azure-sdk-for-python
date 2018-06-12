@@ -38,8 +38,8 @@ class CloudEndpoint(Resource):
     :type partnership_id: str
     :param friendly_name: Friendly Name
     :type friendly_name: str
-    :param backup_enabled: Backup Enabled
-    :type backup_enabled: bool
+    :ivar backup_enabled: Backup Enabled
+    :vartype backup_enabled: bool
     :param provisioning_state: CloudEndpoint Provisioning State
     :type provisioning_state: str
     :param last_workflow_id: CloudEndpoint lastWorkflowId
@@ -50,6 +50,7 @@ class CloudEndpoint(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'backup_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -77,6 +78,6 @@ class CloudEndpoint(Resource):
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
         self.partnership_id = kwargs.get('partnership_id', None)
         self.friendly_name = kwargs.get('friendly_name', None)
-        self.backup_enabled = kwargs.get('backup_enabled', None)
+        self.backup_enabled = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)

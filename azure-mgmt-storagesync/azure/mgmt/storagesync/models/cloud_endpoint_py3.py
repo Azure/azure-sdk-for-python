@@ -38,8 +38,8 @@ class CloudEndpoint(Resource):
     :type partnership_id: str
     :param friendly_name: Friendly Name
     :type friendly_name: str
-    :param backup_enabled: Backup Enabled
-    :type backup_enabled: bool
+    :ivar backup_enabled: Backup Enabled
+    :vartype backup_enabled: bool
     :param provisioning_state: CloudEndpoint Provisioning State
     :type provisioning_state: str
     :param last_workflow_id: CloudEndpoint lastWorkflowId
@@ -50,6 +50,7 @@ class CloudEndpoint(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'backup_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,7 +69,7 @@ class CloudEndpoint(Resource):
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_key: str=None, storage_account: str=None, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, backup_enabled: bool=None, provisioning_state: str=None, last_workflow_id: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_key: str=None, storage_account: str=None, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, **kwargs) -> None:
         super(CloudEndpoint, self).__init__(**kwargs)
         self.storage_account_key = storage_account_key
         self.storage_account = storage_account
@@ -77,6 +78,6 @@ class CloudEndpoint(Resource):
         self.storage_account_tenant_id = storage_account_tenant_id
         self.partnership_id = partnership_id
         self.friendly_name = friendly_name
-        self.backup_enabled = backup_enabled
+        self.backup_enabled = None
         self.provisioning_state = provisioning_state
         self.last_workflow_id = last_workflow_id

@@ -15,18 +15,25 @@ from msrest.serialization import Model
 class RestoreFileSpec(Model):
     """Restore file spec.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param path: Restore file spec path
     :type path: str
-    :param isdir: Restore file spec isdir
-    :type isdir: bool
+    :ivar isdir: Restore file spec isdir
+    :vartype isdir: bool
     """
+
+    _validation = {
+        'isdir': {'readonly': True},
+    }
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'isdir': {'key': 'isdir', 'type': 'bool'},
     }
 
-    def __init__(self, *, path: str=None, isdir: bool=None, **kwargs) -> None:
+    def __init__(self, *, path: str=None, **kwargs) -> None:
         super(RestoreFileSpec, self).__init__(**kwargs)
         self.path = path
-        self.isdir = isdir
+        self.isdir = None

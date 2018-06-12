@@ -9,46 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operation_get_operations import OperationGetOperations
+from .operations import Operations
 from .storage_sync_services_operations import StorageSyncServicesOperations
-from .storage_sync_service_by_resource_group_get_operations import StorageSyncServiceByResourceGroupGetOperations
-from .storage_sync_service_get_operations import StorageSyncServiceGetOperations
-from .get_sync_groups_operations import GetSyncGroupsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .cloud_endpoints_operations import CloudEndpointsOperations
-from .cloud_endpoints_get_operations import CloudEndpointsGetOperations
-from .cloud_endpoint_pre_backup_operations import CloudEndpointPreBackupOperations
-from .cloud_endpoint_post_backup_operations import CloudEndpointPostBackupOperations
-from .cloud_endpoint_pre_restore_operations import CloudEndpointPreRestoreOperations
-from .cloud_endpoint_restore_heatbeat_operations import CloudEndpointRestoreHeatbeatOperations
-from .cloud_endpoint_post_restore_operations import CloudEndpointPostRestoreOperations
 from .server_endpoints_operations import ServerEndpointsOperations
-from .server_endpoints_get_operations import ServerEndpointsGetOperations
-from .server_endpoint_recall_operations import ServerEndpointRecallOperations
-from .registered_servers_get_operations import RegisteredServersGetOperations
 from .registered_servers_operations import RegisteredServersOperations
 from .workflows_operations import WorkflowsOperations
-from .abort_workflows_operations import AbortWorkflowsOperations
 
 __all__ = [
-    'OperationGetOperations',
+    'Operations',
     'StorageSyncServicesOperations',
-    'StorageSyncServiceByResourceGroupGetOperations',
-    'StorageSyncServiceGetOperations',
-    'GetSyncGroupsOperations',
     'SyncGroupsOperations',
     'CloudEndpointsOperations',
-    'CloudEndpointsGetOperations',
-    'CloudEndpointPreBackupOperations',
-    'CloudEndpointPostBackupOperations',
-    'CloudEndpointPreRestoreOperations',
-    'CloudEndpointRestoreHeatbeatOperations',
-    'CloudEndpointPostRestoreOperations',
     'ServerEndpointsOperations',
-    'ServerEndpointsGetOperations',
-    'ServerEndpointRecallOperations',
-    'RegisteredServersGetOperations',
     'RegisteredServersOperations',
     'WorkflowsOperations',
-    'AbortWorkflowsOperations',
 ]

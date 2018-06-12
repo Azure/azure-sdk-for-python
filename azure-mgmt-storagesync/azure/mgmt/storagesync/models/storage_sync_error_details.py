@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
+class StorageSyncErrorDetails(Model):
     """Error Details object.
 
     :param code: Error code of the given entry.
@@ -30,7 +30,7 @@ class ErrorDetails(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
+        super(StorageSyncErrorDetails, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
         self.target = kwargs.get('target', None)

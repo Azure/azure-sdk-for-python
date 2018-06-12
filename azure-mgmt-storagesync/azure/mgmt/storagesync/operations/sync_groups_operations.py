@@ -36,6 +36,78 @@ class SyncGroupsOperations(object):
 
         self.config = config
 
+    def list_by_storage_sync_service(
+            self, resource_group_name, storage_sync_service_name, custom_headers=None, raw=False, **operation_config):
+        """Get a SyncGroup List.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param storage_sync_service_name: Name of Storage Sync Service
+         resource.
+        :type storage_sync_service_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of SyncGroup
+        :rtype:
+         ~azure.mgmt.storagesync.models.SyncGroupPaged[~azure.mgmt.storagesync.models.SyncGroup]
+        :raises:
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_storage_sync_service.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.StorageSyncErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SyncGroupPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.SyncGroupPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_storage_sync_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups'}
+
     def create(
             self, resource_group_name, storage_sync_service_name, sync_group_name, unique_id=None, custom_headers=None, raw=False, **operation_config):
         """Create a new SyncGroup.
@@ -59,7 +131,7 @@ class SyncGroupsOperations(object):
         :rtype: ~azure.mgmt.storagesync.models.SyncGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorException<azure.mgmt.storagesync.models.ErrorException>`
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         body = models.SyncGroup(unique_id=unique_id)
 
@@ -96,7 +168,7 @@ class SyncGroupsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            raise models.StorageSyncErrorException(self._deserialize, response)
 
         deserialized = None
         header_dict = {}
@@ -137,7 +209,7 @@ class SyncGroupsOperations(object):
         :rtype: ~azure.mgmt.storagesync.models.SyncGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorException<azure.mgmt.storagesync.models.ErrorException>`
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -168,7 +240,7 @@ class SyncGroupsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            raise models.StorageSyncErrorException(self._deserialize, response)
 
         deserialized = None
         header_dict = {}
@@ -208,7 +280,7 @@ class SyncGroupsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorException<azure.mgmt.storagesync.models.ErrorException>`
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -239,7 +311,7 @@ class SyncGroupsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorException(self._deserialize, response)
+            raise models.StorageSyncErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
