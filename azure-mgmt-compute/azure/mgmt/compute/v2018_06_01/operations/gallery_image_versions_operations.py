@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -75,7 +76,9 @@ class GalleryImageVersionsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -122,8 +125,7 @@ class GalleryImageVersionsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion]]
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -179,8 +181,7 @@ class GalleryImageVersionsOperations(object):
         :return: GalleryImageVersion or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -214,7 +215,9 @@ class GalleryImageVersionsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -261,7 +264,9 @@ class GalleryImageVersionsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ApiErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -289,8 +294,7 @@ class GalleryImageVersionsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -334,8 +338,7 @@ class GalleryImageVersionsOperations(object):
         :return: An iterator like instance of GalleryImageVersion
         :rtype:
          ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersionPaged[~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion]
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.compute.v2018_06_01.models.ApiErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -374,7 +377,9 @@ class GalleryImageVersionsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 

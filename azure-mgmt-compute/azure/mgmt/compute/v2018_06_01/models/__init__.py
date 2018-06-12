@@ -31,7 +31,7 @@ try:
     from .gallery_disk_image_py3 import GalleryDiskImage
     from .api_error_base_py3 import ApiErrorBase
     from .inner_error_py3 import InnerError
-    from .api_error_py3 import ApiError, ApiErrorException
+    from .api_error_py3 import ApiError
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .gallery_identifier import GalleryIdentifier
@@ -55,7 +55,7 @@ except (SyntaxError, ImportError):
     from .gallery_disk_image import GalleryDiskImage
     from .api_error_base import ApiErrorBase
     from .inner_error import InnerError
-    from .api_error import ApiError, ApiErrorException
+    from .api_error import ApiError
     from .resource import Resource
 from .gallery_paged import GalleryPaged
 from .gallery_image_paged import GalleryImagePaged
@@ -92,7 +92,7 @@ __all__ = [
     'GalleryDiskImage',
     'ApiErrorBase',
     'InnerError',
-    'ApiError', 'ApiErrorException',
+    'ApiError',
     'Resource',
     'GalleryPaged',
     'GalleryImagePaged',
