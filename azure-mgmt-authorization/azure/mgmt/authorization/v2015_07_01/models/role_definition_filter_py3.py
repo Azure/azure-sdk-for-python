@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.50.0"
+from msrest.serialization import Model
 
+
+class RoleDefinitionFilter(Model):
+    """Role Definitions filter.
+
+    :param role_name: Returns role definition with the specific name.
+    :type role_name: str
+    """
+
+    _attribute_map = {
+        'role_name': {'key': 'roleName', 'type': 'str'},
+    }
+
+    def __init__(self, *, role_name: str=None, **kwargs) -> None:
+        super(RoleDefinitionFilter, self).__init__(**kwargs)
+        self.role_name = role_name

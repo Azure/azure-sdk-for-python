@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.50.0"
+from .classic_administrators_operations import ClassicAdministratorsOperations
 
+__all__ = [
+    'ClassicAdministratorsOperations',
+]

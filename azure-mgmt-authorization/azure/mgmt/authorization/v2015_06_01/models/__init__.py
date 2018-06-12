@@ -9,5 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.50.0"
+try:
+    from .classic_administrator_py3 import ClassicAdministrator
+except (SyntaxError, ImportError):
+    from .classic_administrator import ClassicAdministrator
+from .classic_administrator_paged import ClassicAdministratorPaged
 
+__all__ = [
+    'ClassicAdministrator',
+    'ClassicAdministratorPaged',
+]

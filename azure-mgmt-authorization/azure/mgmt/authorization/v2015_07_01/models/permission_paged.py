@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.50.0"
+from msrest.paging import Paged
 
+
+class PermissionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Permission <azure.mgmt.authorization.v2015_07_01.models.Permission>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Permission]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PermissionPaged, self).__init__(*args, **kwargs)
