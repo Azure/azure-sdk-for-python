@@ -24,6 +24,6 @@ class MergeRequest(Model):
         'sources': {'key': 'properties.sources', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, sources=None, **kwargs) -> None:
         super(MergeRequest, self).__init__(**kwargs)
-        self.sources = kwargs.get('sources', None)
+        self.sources = sources

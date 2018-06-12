@@ -29,7 +29,7 @@ class ExtendedStatusInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status_code=None, message: str=None, **kwargs) -> None:
         super(ExtendedStatusInfo, self).__init__(**kwargs)
-        self.status_code = kwargs.get('status_code', None)
-        self.message = kwargs.get('message', None)
+        self.status_code = status_code
+        self.message = message

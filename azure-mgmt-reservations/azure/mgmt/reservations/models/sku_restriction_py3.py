@@ -31,8 +31,8 @@ class SkuRestriction(Model):
         'reason_code': {'key': 'reasonCode', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type: str=None, values=None, reason_code: str=None, **kwargs) -> None:
         super(SkuRestriction, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.values = kwargs.get('values', None)
-        self.reason_code = kwargs.get('reason_code', None)
+        self.type = type
+        self.values = values
+        self.reason_code = reason_code

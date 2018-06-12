@@ -3,6 +3,10 @@ from azure.mgmt.reservations.models import Patch, SplitRequest, MergeRequest
 from devtools_testutils import AzureMgmtTestCase
 import unittest
 
+
+# change the custom endpoint to set the environment
+_CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
+
 class MgmtReservationsTest(AzureMgmtTestCase):
 
     def _validate_reservation_order(self, reservation_order):
@@ -18,12 +22,24 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         self.assertIsNotNone(reservation.name)
         self.assertIsNotNone(reservation.sku)
         self.assertIsNotNone(reservation.type)
+        self.assertIsNotNone(reservation.etag)
+        self.assertIsNotNone(reservation.properties)
+        self.assertIsNotNone(reservation.properties.applied_scope_type)
+        self.assertIsNotNone(reservation.properties.quantity)
+        self.assertIsNotNone(reservation.properties.provisioning_state)
+        self.assertIsNotNone(reservation.properties.expiry_date)
+        self.assertIsNotNone(reservation.properties.display_name)
+        self.assertIsNotNone(reservation.properties.effective_date_time)
+        self.assertIsNotNone(reservation.properties.last_updated_date_time)
+        self.assertIsNotNone(reservation.properties.reserved_resource_type)
+        self.assertIsNotNone(reservation.properties.instance_flexibility)
+        self.assertIsNotNone(reservation.properties.sku_description)
 
     def setUp(self):
         super(MgmtReservationsTest, self).setUp()
-        self.reservation_client = self.create_basic_client(AzureReservationAPI)
-        self.reservation_order_id = "55793bc2-e5c2-4a98-9d5c-0a0bce6cf998"
-        self.reservation_id = "b2c5c792-3695-46e8-b65e-0f2f74ed9d24"
+        self.reservation_client = self.create_basic_client(AzureReservationAPI, base_url=_CUSTOM_ENDPOINT)
+        self.reservation_order_id = "ffa7538a-2251-489d-82bf-7efcb8b346d7"
+        self.reservation_id = "db71960f-25c2-4327-b8c4-ecce06a14fa8"
 
     def test_reservation_order_get(self):
         reservation_order = self.reservation_client.reservation_order.get(self.reservation_order_id)
@@ -52,24 +68,46 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             self._validate_reservation(reservation)
 
     def test_update_reservation_to_single(self):
-        patch = Patch("Single", ["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)])
-        reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
+        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
+        for reservation in reservation_list:
+            if "Succeeded" in reservation.properties.provisioning_state:
+                reservation_to_update = reservation
+        reservation_id = reservation_to_update.id.split('/')[6];
+        patch = Patch(applied_scope_type="Single", applied_scopes=["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)], instance_flexibility="On")
+        reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def test_update_reservation_to_shared(self):
-        patch = Patch("Shared")
-        reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
+        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
+        for reservation in reservation_list:
+            if "Succeeded" in reservation.properties.provisioning_state:
+                reservation_to_update = reservation
+        reservation_id = reservation_to_update.id.split('/')[6];
+        patch = Patch(applied_scope_type="Shared", applied_scopes=None, instance_flexibility="On")
+        reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def test_get_catalog(self):
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID)
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "VirtualMachines", "westus")
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
-            self.assertIsNotNone(item.tier)
-            self.assertIsNotNone(item.size)
             self.assertTrue(len(item.terms) > 0)
             self.assertTrue(len(item.locations) > 0)
+            self.assertTrue(len(item.sku_properties) > 0)
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "SqlDatabases", "southeastasia")
+        for item in catalog_items:
+            self.assertIsNotNone(item.resource_type)
+            self.assertIsNotNone(item.name)
+            self.assertTrue(len(item.terms) > 0)
+            self.assertTrue(len(item.locations) > 0)
+            self.assertTrue(len(item.sku_properties) > 0)
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "SuseLinux")
+        for item in catalog_items:
+            self.assertIsNotNone(item.resource_type)
+            self.assertIsNotNone(item.name)
+            self.assertTrue(len(item.terms) > 0)
+            self.assertTrue(len(item.sku_properties) > 0)
 
     def test_applied_reservation(self):
         applied_reservation = self.reservation_client.get_applied_reservation_list(self.settings.SUBSCRIPTION_ID)
@@ -87,34 +125,41 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             self.assertIsNotNone(operation.display)
 
     def test_split(self):
-        split_reservation_order_id = "86d9870a-bf1e-4635-94c8-b0f08932bc3a"
-        split_reservation_id = "97830c1b-372b-4787-8b86-a54eb55be675"
-        reservation_id = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(split_reservation_order_id, split_reservation_id)
-        split_body = SplitRequest([2, 3], reservation_id)
-        split_response = self.reservation_client.reservation.split(split_reservation_order_id, split_body).result()
+        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
+        for reservation in reservation_list:
+            if "Succeeded" in reservation.properties.provisioning_state:
+                reservation_to_update = reservation
+        split_reservation_id = reservation_to_update.id.split('/')[6]
+        reservation_id = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(self.reservation_order_id, split_reservation_id)
+        split_response = self.reservation_client.reservation.split(self.reservation_order_id, [1, 1], reservation_id).result()
 
         split_quantity = 0
         for reservation in split_response:
             self._validate_reservation(reservation)
             if "Succeeded" in reservation.properties.provisioning_state:
                 split_quantity += reservation.properties.quantity
-        self.assertTrue(split_quantity == 5)
+        self.assertTrue(split_quantity == 2)
 
     def test_merge(self):
-        merge_reservation_order_id = "86d9870a-bf1e-4635-94c8-b0f08932bc3a"
-        split_id1 = "36beb8e4-db5f-4502-ae42-630e464a5437"
-        split_id2 = "7f08f1bc-0f4a-4bb7-9d50-d1d8d656179b"
-        merge_id1 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(merge_reservation_order_id, split_id1)
-        merge_id2 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(merge_reservation_order_id, split_id2)
-        merge_body = MergeRequest([merge_id1, merge_id2])
-        merge_response = self.reservation_client.reservation.merge(merge_reservation_order_id, merge_body).result()
+        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
+        split_id1 = None
+        split_id2 = None
+        for reservation in reservation_list:
+            if "Succeeded" in reservation.properties.provisioning_state:
+                if split_id1 is None:
+                    split_id1 = reservation.id.split('/')[6]
+                else:
+                    split_id2 = reservation.id.split('/')[6]
+        merge_id1 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(self.reservation_order_id, split_id1)
+        merge_id2 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(self.reservation_order_id, split_id2)
+        merge_response = self.reservation_client.reservation.merge(self.reservation_order_id, [merge_id1, merge_id2]).result()
         
         merge_quantity = 0
         for reservation in merge_response:
             self._validate_reservation(reservation)
             if "Succeeded" in reservation.properties.provisioning_state:
                 merge_quantity += reservation.properties.quantity
-        self.assertTrue(merge_quantity == 5)
+        self.assertTrue(merge_quantity == 2)
 
 
 #------------------------------------------------------------------------------
