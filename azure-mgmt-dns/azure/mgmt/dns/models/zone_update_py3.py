@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class ZoneUpdate(Model):
+    """Describes a request to update a DNS zone.
 
-    public = "Public"
-    private = "Private"
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
 
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(ZoneUpdate, self).__init__(**kwargs)
+        self.tags = tags

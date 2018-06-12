@@ -82,22 +82,22 @@ class RecordSet(Model):
         'caa_records': {'key': 'properties.caaRecords', 'type': '[CaaRecord]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, etag: str=None, metadata=None, ttl: int=None, arecords=None, aaaa_records=None, mx_records=None, ns_records=None, ptr_records=None, srv_records=None, txt_records=None, cname_record=None, soa_record=None, caa_records=None, **kwargs) -> None:
         super(RecordSet, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.etag = kwargs.get('etag', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.ttl = kwargs.get('ttl', None)
+        self.etag = etag
+        self.metadata = metadata
+        self.ttl = ttl
         self.fqdn = None
-        self.arecords = kwargs.get('arecords', None)
-        self.aaaa_records = kwargs.get('aaaa_records', None)
-        self.mx_records = kwargs.get('mx_records', None)
-        self.ns_records = kwargs.get('ns_records', None)
-        self.ptr_records = kwargs.get('ptr_records', None)
-        self.srv_records = kwargs.get('srv_records', None)
-        self.txt_records = kwargs.get('txt_records', None)
-        self.cname_record = kwargs.get('cname_record', None)
-        self.soa_record = kwargs.get('soa_record', None)
-        self.caa_records = kwargs.get('caa_records', None)
+        self.arecords = arecords
+        self.aaaa_records = aaaa_records
+        self.mx_records = mx_records
+        self.ns_records = ns_records
+        self.ptr_records = ptr_records
+        self.srv_records = srv_records
+        self.txt_records = txt_records
+        self.cname_record = cname_record
+        self.soa_record = soa_record
+        self.caa_records = caa_records

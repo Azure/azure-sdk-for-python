@@ -41,7 +41,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, relative_record_set_name, record_type, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Updates a record set within a DNS zone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -72,7 +73,7 @@ class RecordSetsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'RecordType'),
@@ -125,7 +126,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, relative_record_set_name, record_type, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a record set within a DNS zone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -162,7 +164,7 @@ class RecordSetsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'RecordType'),
@@ -219,7 +221,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, relative_record_set_name, record_type, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a record set from a DNS zone. This operation cannot be undone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -248,7 +251,7 @@ class RecordSetsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'RecordType'),
@@ -290,7 +293,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, relative_record_set_name, record_type, custom_headers=None, raw=False, **operation_config):
         """Gets a record set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -315,7 +319,7 @@ class RecordSetsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'RecordType'),
@@ -362,7 +366,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, record_type, top=None, recordsetnamesuffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists the record sets of a specified type in a DNS zone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -395,7 +400,7 @@ class RecordSetsOperations(object):
                 # Construct URL
                 url = self.list_by_type.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'recordType': self._serialize.url("record_type", record_type, 'RecordType'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -451,7 +456,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, top=None, recordsetnamesuffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists all record sets in a DNS zone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -480,7 +486,7 @@ class RecordSetsOperations(object):
                 # Construct URL
                 url = self.list_by_dns_zone.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -535,7 +541,8 @@ class RecordSetsOperations(object):
             self, resource_group_name, zone_name, top=None, record_set_name_suffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists all record sets in a DNS zone.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
@@ -564,7 +571,7 @@ class RecordSetsOperations(object):
                 # Construct URL
                 url = self.list_all_by_dns_zone.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
