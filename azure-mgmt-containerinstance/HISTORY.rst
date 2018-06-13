@@ -12,6 +12,7 @@ Release History
 - Model Container has a new parameter readiness_probe
 - Model ContainerGroup has a new parameter diagnostics
 - Model EnvironmentVariable has a new parameter secure_value
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
 
 **General Breaking changes**
 
