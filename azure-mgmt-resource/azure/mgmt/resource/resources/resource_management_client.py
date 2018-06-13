@@ -68,7 +68,7 @@ class ResourceManagementClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2018-02-01'
+    DEFAULT_API_VERSION='2018-05-01'
     _PROFILE_TAG = "azure.mgmt.resource.resources.ResourceManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -121,7 +121,7 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2018_05_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def deployment_operations(self):
         """Instance depends on the API version:
