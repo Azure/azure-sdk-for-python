@@ -14,8 +14,12 @@ from .error_response import ErrorResponse, ErrorResponseException
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .resource import Resource
+from .meter_details import MeterDetails
+from .price_sheet_properties import PriceSheetProperties
+from .price_sheet_result import PriceSheetResult
 from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
 from .forecast import Forecast
+from .usage_detail import UsageDetail
 from .report_config_recurrence_period import ReportConfigRecurrencePeriod
 from .report_config_schedule import ReportConfigSchedule
 from .report_config_delivery_destination import ReportConfigDeliveryDestination
@@ -31,12 +35,14 @@ from .report_config_definition import ReportConfigDefinition
 from .report_config import ReportConfig
 from .report_config_list_result import ReportConfigListResult
 from .dimension import Dimension
-from .insight_column import InsightColumn
-from .insight import Insight
+from .usage_analysis_column import UsageAnalysisColumn
+from .usage_analysis import UsageAnalysis
+from .query_options import QueryOptions
+from .usage_detail_paged import UsageDetailPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 from .dimension_paged import DimensionPaged
-from .insight_paged import InsightPaged
+from .usage_analysis_paged import UsageAnalysisPaged
 from .consumption_management_client_enums import (
     Grain,
     ChargeType,
@@ -55,8 +61,12 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'Resource',
+    'MeterDetails',
+    'PriceSheetProperties',
+    'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
+    'UsageDetail',
     'ReportConfigRecurrencePeriod',
     'ReportConfigSchedule',
     'ReportConfigDeliveryDestination',
@@ -72,12 +82,14 @@ __all__ = [
     'ReportConfig',
     'ReportConfigListResult',
     'Dimension',
-    'InsightColumn',
-    'Insight',
+    'UsageAnalysisColumn',
+    'UsageAnalysis',
+    'QueryOptions',
+    'UsageDetailPaged',
     'ForecastPaged',
     'OperationPaged',
     'DimensionPaged',
-    'InsightPaged',
+    'UsageAnalysisPaged',
     'Grain',
     'ChargeType',
     'Bound',

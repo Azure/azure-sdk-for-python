@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class InsightColumn(Model):
-    """InsightColumn.
-
-    :param name:
-    :type name: str
-    :param type:
-    :type type: str
+class UsageAnalysisPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`UsageAnalysis <azure.mgmt.consumption.models.UsageAnalysis>` object
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[UsageAnalysis]'}
     }
 
-    def __init__(self, name=None, type=None):
-        super(InsightColumn, self).__init__()
-        self.name = name
-        self.type = type
+    def __init__(self, *args, **kwargs):
+
+        super(UsageAnalysisPaged, self).__init__(*args, **kwargs)

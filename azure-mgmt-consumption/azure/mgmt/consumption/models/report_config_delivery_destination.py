@@ -15,48 +15,30 @@ from msrest.serialization import Model
 class ReportConfigDeliveryDestination(Model):
     """The destination information for the delivery of the report.
 
-    :param subscription_id: The subscription id of the storage account where
-     reports will be delivered.
-    :type subscription_id: str
-    :param resource_group: The resource group of the storage account here
-     reports will be delivered.
-    :type resource_group: str
-    :param storage_account: The storage account here reports will be
-     delivered.
-    :type storage_account: str
-    :param endpoint: The endpoint of the storage service where reports will be
-     delivered.
-    :type endpoint: str
+    :param resource_id: The resource id of the storage account where reports
+     will be delivered.
+    :type resource_id: str
     :param container: The name of the container where reports will be
      uploaded.
     :type container: str
-    :param category: The name of the directory where reports will be uploaded.
-    :type category: str
+    :param root_folder_path: The name of the directory where reports will be
+     uploaded.
+    :type root_folder_path: str
     """
 
     _validation = {
-        'subscription_id': {'required': True},
-        'resource_group': {'required': True},
-        'storage_account': {'required': True},
-        'endpoint': {'required': True},
+        'resource_id': {'required': True},
         'container': {'required': True},
-        'category': {'required': True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'storage_account': {'key': 'storageAccount', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
         'container': {'key': 'container', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
+        'root_folder_path': {'key': 'rootFolderPath', 'type': 'str'},
     }
 
-    def __init__(self, subscription_id, resource_group, storage_account, endpoint, container, category):
+    def __init__(self, resource_id, container, root_folder_path=None):
         super(ReportConfigDeliveryDestination, self).__init__()
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
-        self.storage_account = storage_account
-        self.endpoint = endpoint
+        self.resource_id = resource_id
         self.container = container
-        self.category = category
+        self.root_folder_path = root_folder_path

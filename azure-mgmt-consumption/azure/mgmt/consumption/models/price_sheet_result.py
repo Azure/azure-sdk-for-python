@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class Insight(Resource):
-    """Insight.
+class PriceSheetResult(Resource):
+    """An pricesheet resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,12 +26,11 @@ class Insight(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :param next_link:
-    :type next_link: str
-    :param columns: Array of columns
-    :type columns: list[~azure.mgmt.consumption.models.InsightColumn]
-    :param rows:
-    :type rows: list[list[object]]
+    :ivar pricesheets: Price sheet
+    :vartype pricesheets:
+     list[~azure.mgmt.consumption.models.PriceSheetProperties]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -39,6 +38,8 @@ class Insight(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'pricesheets': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,13 +47,11 @@ class Insight(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'pricesheets': {'key': 'properties.pricesheets', 'type': '[PriceSheetProperties]'},
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
-        'columns': {'key': 'properties.columns', 'type': '[InsightColumn]'},
-        'rows': {'key': 'properties.rows', 'type': '[[object]]'},
     }
 
-    def __init__(self, next_link=None, columns=None, rows=None):
-        super(Insight, self).__init__()
-        self.next_link = next_link
-        self.columns = columns
-        self.rows = rows
+    def __init__(self):
+        super(PriceSheetResult, self).__init__()
+        self.pricesheets = None
+        self.next_link = None
