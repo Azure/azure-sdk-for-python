@@ -25,6 +25,8 @@ try:
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_entity_py3 import OperationEntity
     from .operation_display_resource_py3 import OperationDisplayResource
+    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
     from .restore_file_spec_py3 import RestoreFileSpec
     from .post_restore_request_py3 import PostRestoreRequest
     from .pre_restore_request_py3 import PreRestoreRequest
@@ -47,6 +49,8 @@ except (SyntaxError, ImportError):
     from .operation_display_info import OperationDisplayInfo
     from .operation_entity import OperationEntity
     from .operation_display_resource import OperationDisplayResource
+    from .check_name_availability_parameters import CheckNameAvailabilityParameters
+    from .check_name_availability_result import CheckNameAvailabilityResult
     from .restore_file_spec import RestoreFileSpec
     from .post_restore_request import PostRestoreRequest
     from .pre_restore_request import PreRestoreRequest
@@ -61,6 +65,7 @@ from .server_endpoint_paged import ServerEndpointPaged
 from .registered_server_paged import RegisteredServerPaged
 from .storage_sync_management_client_enums import (
     Reason,
+    NameAvailabilityReason,
 )
 
 __all__ = [
@@ -79,6 +84,8 @@ __all__ = [
     'OperationDisplayInfo',
     'OperationEntity',
     'OperationDisplayResource',
+    'CheckNameAvailabilityParameters',
+    'CheckNameAvailabilityResult',
     'RestoreFileSpec',
     'PostRestoreRequest',
     'PreRestoreRequest',
@@ -92,4 +99,5 @@ __all__ = [
     'ServerEndpointPaged',
     'RegisteredServerPaged',
     'Reason',
+    'NameAvailabilityReason',
 ]

@@ -24,7 +24,7 @@ class ServerEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-06-05-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-04-02".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ServerEndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-05-preview"
+        self.api_version = "2018-04-02"
 
         self.config = config
 
@@ -540,10 +540,10 @@ class ServerEndpointsOperations(object):
     list_by_sync_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/serverEndpoints'}
 
 
-    def _recall_initial(
+    def _recall_action_initial(
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.recall.metadata['url']
+        url = self.recall_action.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -584,7 +584,7 @@ class ServerEndpointsOperations(object):
             client_raw_response.add_headers(header_dict)
             return client_raw_response
 
-    def recall(
+    def recall_action(
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Recall a serverendpoint.
 
@@ -610,7 +610,7 @@ class ServerEndpointsOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        raw_result = self._recall_initial(
+        raw_result = self._recall_action_initial(
             resource_group_name=resource_group_name,
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
@@ -637,4 +637,4 @@ class ServerEndpointsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    recall.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/serverEndpoints/{serverEndpointName}/recallAction'}
+    recall_action.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/serverEndpoints/{serverEndpointName}/recallAction'}
