@@ -3,6 +3,38 @@
 Release History
 ===============
 
+2.0.0rc2 (2018-06-13)
++++++++++++++++++++++
+
+**Features on Policy**
+
+- New API version for Policy 2018-03-01. This a merge of 2017-06-01-preview and 2016-12-01 and has no external API breaking.
+
+**Features on Resources**
+
+- Resources new Api Version 2018-05-01
+- Model Deployment has a new parameter location
+- Model DeploymentExtended has a new parameter location
+- Added operation DeploymentsOperations.export_template_at_subscription_scope
+- Added operation DeploymentsOperations.get_at_subscription_scope
+- Added operation DeploymentsOperations.cancel_at_subscription_scope
+- Added operation DeploymentsOperations.delete_at_subscription_scope
+- Added operation DeploymentsOperations.create_or_update_at_subscription_scope
+- Added operation DeploymentsOperations.validate_at_subscription_scope
+- Added operation DeploymentsOperations.check_existence_at_subscription_scope
+- Added operation DeploymentsOperations.list_at_subscription_scope
+- Added operation DeploymentOperations.get_at_subscription_scope
+- Added operation DeploymentOperations.list_at_subscription_scope
+
+**Breaking changes on Resources**
+
+- Operation DeploymentsOperations.create_or_update lost its ignored "location" parameter.
+- Operation DeploymentsOperations.validate lost its ignored "location" parameter.
+
+**Common features**
+
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
 2.0.0rc1 (2018-04-23)
 +++++++++++++++++++++
 
