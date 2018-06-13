@@ -111,7 +111,6 @@ try:
     from .server_automatic_tuning_py3 import ServerAutomaticTuning
     from .server_dns_alias_py3 import ServerDnsAlias
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
-    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .database_operation_py3 import DatabaseOperation
@@ -250,7 +249,6 @@ except (SyntaxError, ImportError):
     from .server_automatic_tuning import ServerAutomaticTuning
     from .server_dns_alias import ServerDnsAlias
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
-    from .server_security_alert_policy import ServerSecurityAlertPolicy
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .database_operation import DatabaseOperation
@@ -396,7 +394,6 @@ from .sql_management_client_enums import (
     ManagedDatabaseCreateMode,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
-    SecurityAlertState,
     RestorePointType,
     ManagementOperationState,
     MaxSizeUnit,
@@ -520,7 +517,6 @@ __all__ = [
     'ServerAutomaticTuning',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
-    'ServerSecurityAlertPolicy',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
     'DatabaseOperation',
@@ -665,7 +661,6 @@ __all__ = [
     'ManagedDatabaseCreateMode',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
-    'SecurityAlertState',
     'RestorePointType',
     'ManagementOperationState',
     'MaxSizeUnit',
