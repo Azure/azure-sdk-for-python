@@ -2,6 +2,13 @@
 
 Release History
 ===============
+0.4.1 (2018-06-12)
+++++++++++++++++++
+
+**Notes**
+
+* Added virtual network CRUD operations for account management
+
 0.4.0 (2018-02-12)
 ++++++++++++++++++
 
