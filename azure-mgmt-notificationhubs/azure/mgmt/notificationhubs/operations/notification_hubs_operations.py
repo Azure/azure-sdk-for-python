@@ -389,8 +389,8 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
-        :param parameters: Debug send message payload
-        :type parameters: str
+        :param parameters: Debug send parameters
+        :type parameters: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -427,7 +427,7 @@ class NotificationHubsOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'str')
+            body_content = self._serialize.body(parameters, 'object')
         else:
             body_content = None
 
