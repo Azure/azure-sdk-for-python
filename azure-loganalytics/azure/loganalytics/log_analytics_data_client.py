@@ -43,7 +43,7 @@ class LogAnalyticsDataClientConfiguration(Configuration):
 
 
 class LogAnalyticsDataClient(object):
-    """Log Analytics Data Client
+    """This API exposes Azure Log Analytics query capabilities
 
     :ivar config: Configuration for client.
     :vartype config: LogAnalyticsDataClientConfiguration
