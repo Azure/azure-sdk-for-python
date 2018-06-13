@@ -21,6 +21,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Required. Constant filled by server.
@@ -46,6 +49,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},

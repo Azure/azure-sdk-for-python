@@ -21,6 +21,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Required. Constant filled by server.
@@ -46,6 +49,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
@@ -53,8 +57,8 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
     }
 
-    def __init__(self, *, description: str=None, compute_properties=None, ssis_properties=None, **kwargs) -> None:
-        super(ManagedIntegrationRuntime, self).__init__(description=description, **kwargs)
+    def __init__(self, *, additional_properties=None, description: str=None, compute_properties=None, ssis_properties=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.state = None
         self.compute_properties = compute_properties
         self.ssis_properties = ssis_properties

@@ -21,6 +21,9 @@ class IntegrationRuntime(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Required. Constant filled by server.
@@ -32,6 +35,7 @@ class IntegrationRuntime(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -40,7 +44,8 @@ class IntegrationRuntime(Model):
         'type': {'SelfHosted': 'SelfHostedIntegrationRuntime', 'Managed': 'ManagedIntegrationRuntime'}
     }
 
-    def __init__(self, *, description: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, **kwargs) -> None:
         super(IntegrationRuntime, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.description = description
         self.type = None

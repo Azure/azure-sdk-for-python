@@ -17,6 +17,9 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Required. Constant filled by server.
@@ -31,12 +34,13 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeProperties'},
     }
 
-    def __init__(self, *, description: str=None, linked_info=None, **kwargs) -> None:
-        super(SelfHostedIntegrationRuntime, self).__init__(description=description, **kwargs)
+    def __init__(self, *, additional_properties=None, description: str=None, linked_info=None, **kwargs) -> None:
+        super(SelfHostedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.linked_info = linked_info
         self.type = 'SelfHosted'
