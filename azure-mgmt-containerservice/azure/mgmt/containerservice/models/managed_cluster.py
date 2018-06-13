@@ -55,6 +55,9 @@ class ManagedCluster(Resource):
     :param addon_profiles: Profile of managed cluster add-on.
     :type addon_profiles: dict[str,
      ~azure.mgmt.containerservice.models.ManagedClusterAddonProfile]
+    :ivar node_resource_group: Name of the resource group containing agent
+     pool nodes.
+    :vartype node_resource_group: str
     :param enable_rbac: Whether to enable Kubernetes Role-Based Access
      Control.
     :type enable_rbac: bool
@@ -73,6 +76,7 @@ class ManagedCluster(Resource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'fqdn': {'readonly': True},
+        'node_resource_group': {'readonly': True},
     }
 
     _attribute_map = {
@@ -89,6 +93,7 @@ class ManagedCluster(Resource):
         'linux_profile': {'key': 'properties.linuxProfile', 'type': 'ContainerServiceLinuxProfile'},
         'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
         'addon_profiles': {'key': 'properties.addonProfiles', 'type': '{ManagedClusterAddonProfile}'},
+        'node_resource_group': {'key': 'properties.nodeResourceGroup', 'type': 'str'},
         'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
@@ -104,6 +109,7 @@ class ManagedCluster(Resource):
         self.linux_profile = kwargs.get('linux_profile', None)
         self.service_principal_profile = kwargs.get('service_principal_profile', None)
         self.addon_profiles = kwargs.get('addon_profiles', None)
+        self.node_resource_group = None
         self.enable_rbac = kwargs.get('enable_rbac', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.aad_profile = kwargs.get('aad_profile', None)
