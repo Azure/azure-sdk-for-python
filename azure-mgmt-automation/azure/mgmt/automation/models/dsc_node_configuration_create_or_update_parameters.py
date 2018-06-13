@@ -38,7 +38,7 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
     _attribute_map = {
         'source': {'key': 'properties.source', 'type': 'ContentSource'},
         'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
+        'increment_node_configuration_build': {'key': 'properties.IncrementNodeConfigurationBuild', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }

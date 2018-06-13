@@ -20,9 +20,9 @@ class DscCompilationJobCreateParameters(Model):
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
     :param parameters: Gets or sets the parameters of the job.
     :type parameters: dict[str, str]
-    :param new_node_configuration_build_version_required: If a new build
-     version of NodeConfiguration is required.
-    :type new_node_configuration_build_version_required: bool
+    :param increment_node_configuration_build: If a new build version of
+     NodeConfiguration is required.
+    :type increment_node_configuration_build: bool
     :param name: Gets or sets name of the resource.
     :type name: str
     :param location: Gets or sets the location of the resource.
@@ -38,17 +38,17 @@ class DscCompilationJobCreateParameters(Model):
     _attribute_map = {
         'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'new_node_configuration_build_version_required': {'key': 'properties.newNodeConfigurationBuildVersionRequired', 'type': 'bool'},
+        'increment_node_configuration_build': {'key': 'properties.IncrementNodeConfigurationBuild', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, configuration, parameters=None, new_node_configuration_build_version_required=None, name=None, location=None, tags=None):
+    def __init__(self, configuration, parameters=None, increment_node_configuration_build=None, name=None, location=None, tags=None):
         super(DscCompilationJobCreateParameters, self).__init__()
         self.configuration = configuration
         self.parameters = parameters
-        self.new_node_configuration_build_version_required = new_node_configuration_build_version_required
+        self.increment_node_configuration_build = increment_node_configuration_build
         self.name = name
         self.location = location
         self.tags = tags
