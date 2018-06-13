@@ -39,10 +39,6 @@ This version uses a next-generation code generator that *might* introduce breaki
   - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
 
-**Breaking changes**
-
-- Model ContainerExecRequestTerminalSize attribtues renamed from "rows/cols" to "row/column"
-
 0.4.0 (2018-03-19)
 ++++++++++++++++++
 
