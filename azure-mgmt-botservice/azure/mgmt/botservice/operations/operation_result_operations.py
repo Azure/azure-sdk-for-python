@@ -11,8 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -38,9 +36,25 @@ class OperationResultOperations(object):
 
         self.config = config
 
-
-    def _get_initial(
+    def get(
             self, location, operation_id, custom_headers=None, raw=False, **operation_config):
+        """List the result of the specified operation.
+
+        :param location: The region name which the operation will lookup into.
+         including 'global'
+        :type location: str
+        :param operation_id: The target operation Id.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+        """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -74,46 +88,4 @@ class OperationResultOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-    def get(
-            self, location, operation_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """List the result of the specified operation.
-
-        :param location: The region name which the operation will lookup into.
-         including 'global'
-        :type location: str
-        :param operation_id: The target operation Id.
-        :type operation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
-        """
-        raw_result = self._get_initial(
-            location=location,
-            operation_id=operation_id,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/locations/{location}/operationresults/{operationId}'}
