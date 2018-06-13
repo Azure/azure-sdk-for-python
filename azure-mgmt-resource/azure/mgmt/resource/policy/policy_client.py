@@ -68,7 +68,7 @@ class PolicyClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2016-12-01'
+    DEFAULT_API_VERSION='2018-03-01'
     _PROFILE_TAG = "azure.mgmt.resource.policy.PolicyClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -121,7 +121,7 @@ class PolicyClient(MultiApiClientMixin):
             from .v2018_03_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def policy_assignments(self):
         """Instance depends on the API version:
