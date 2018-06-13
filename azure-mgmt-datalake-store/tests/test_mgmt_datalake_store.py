@@ -9,7 +9,6 @@ import unittest
 
 import azure.mgmt.datalake.store
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from devtools_testutils.mgmt_settings_real import get_credentials
 from msrestazure.azure_exceptions import CloudError
 from azure.mgmt.datalake.store import models
 
@@ -29,12 +28,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('adlsacct')
         vnet_rule_name = self.get_resource_name('vnetrule1')
 
-        subscription_id = '9e1f0ab2-2f85-49de-9677-9da6f829b914'
-        credentials = get_credentials()
-
-        adls_mgmt_account_client = azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient(credentials, subscription_id)
-
-        subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/default'
+        subnet_id = '/subscriptions/{}/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/default'.format(self.settings.SUBSCRIPTION_ID)
         resource_group = 'lewu-rg'
         virtual_network_rule = models.CreateVirtualNetworkRuleWithAccountParameters(
             name = vnet_rule_name,
@@ -49,7 +43,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         )
 
         # create and validate an ADLS account
-        response_create = adls_mgmt_account_client.accounts.create(
+        response_create = self.adls_account_client.accounts.create(
             resource_group,
             account_name,
             params_create,
@@ -57,7 +51,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(models.DataLakeStoreAccountStatus.succeeded, response_create.provisioning_state)
 
         # get the account and ensure that all the values are properly set
-        response_get = adls_mgmt_account_client.accounts.get(
+        response_get = self.adls_account_client.accounts.get(
             resource_group,
             account_name
         )
@@ -75,7 +69,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(vnet_rule_name, response_get.virtual_network_rules[0].name)
         self.assertEqual(subnet_id, response_get.virtual_network_rules[0].subnet_id)
 
-        vnet_rule = adls_mgmt_account_client.virtual_network_rules.get(
+        vnet_rule = self.adls_account_client.virtual_network_rules.get(
             resource_group,
             account_name,
             vnet_rule_name
@@ -83,10 +77,10 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(vnet_rule_name, vnet_rule.name)
         self.assertEqual(subnet_id, vnet_rule.subnet_id)
 
-        updated_subnet_id = '/subscriptions/9e1f0ab2-2f85-49de-9677-9da6f829b914/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/updatedSubnetId'
+        updated_subnet_id = '/subscriptions/{}/resourceGroups/lewu-rg/providers/Microsoft.Network/virtualNetworks/lewuVNET/subnets/updatedSubnetId'.format(self.settings.SUBSCRIPTION_ID)
 
         # Update the virtual network rule to change the subnetId
-        vnet_rule = adls_mgmt_account_client.virtual_network_rules.create_or_update(
+        vnet_rule = self.adls_account_client.virtual_network_rules.create_or_update(
             resource_group,
             account_name,
             vnet_rule_name,
@@ -95,12 +89,12 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(updated_subnet_id, vnet_rule.subnet_id)
 
         # Remove the virtual network rule and verify it is gone
-        adls_mgmt_account_client.virtual_network_rules.delete(
+        self.adls_account_client.virtual_network_rules.delete(
             resource_group,
             account_name,
             vnet_rule_name
         )
-        self.assertRaises(CloudError, lambda: adls_mgmt_account_client.virtual_network_rules.get(
+        self.assertRaises(CloudError, lambda: self.adls_account_client.virtual_network_rules.get(
             resource_group,
             account_name,
             vnet_rule_name
@@ -133,7 +127,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # ensure that the account name is available
         name_availability = self.adls_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertTrue(name_availability.name_available)
@@ -147,11 +141,11 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # ensure that the account name is no longer available
         name_availability = self.adls_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertFalse(name_availability.name_available)
-        
+
         # full validation of the create
         self.assertEqual(adls_account.name, account_name)
         self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
@@ -230,15 +224,15 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         ).result()
 
         self.assertEqual(adls_account.tags['tag2'], 'value2')
-        
-        # confirm that 'locations.get_capability' is functional 
+
+        # confirm that 'locations.get_capability' is functional
         get_capability = self.adls_account_client.locations.get_capability(location.replace(" ", ""))
         self.assertIsNotNone(get_capability)
 
         # confirm that 'operations.list' is functional
         operations_list = self.adls_account_client.operations.list()
         self.assertIsNotNone(operations_list)
-        
+
         self.adls_account_client.accounts.delete(
             resource_group.name,
             account_name
