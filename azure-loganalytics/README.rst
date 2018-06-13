@@ -36,7 +36,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Log Analytics Data Plane 
+For code examples, see `Log Analytics Data Plane
 <https://docs.microsoft.com/python/azure/>`__
 on docs.microsoft.com.
 

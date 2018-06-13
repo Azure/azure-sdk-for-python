@@ -16,8 +16,8 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class OperationalInsightsDataClientConfiguration(Configuration):
-    """Configuration for OperationalInsightsDataClient
+class LogAnalyticsDataClientConfiguration(Configuration):
+    """Configuration for LogAnalyticsDataClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,18 +35,18 @@ class OperationalInsightsDataClientConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.loganalytics.io/v1'
 
-        super(OperationalInsightsDataClientConfiguration, self).__init__(base_url)
+        super(LogAnalyticsDataClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-loganalytics/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class OperationalInsightsDataClient(object):
-    """Operational Insights Data Client
+class LogAnalyticsDataClient(object):
+    """Log Analytics Data Client
 
     :ivar config: Configuration for client.
-    :vartype config: OperationalInsightsDataClientConfiguration
+    :vartype config: LogAnalyticsDataClientConfiguration
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -57,7 +57,7 @@ class OperationalInsightsDataClient(object):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = OperationalInsightsDataClientConfiguration(credentials, base_url)
+        self.config = LogAnalyticsDataClientConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -93,7 +93,7 @@ class OperationalInsightsDataClient(object):
          :class:`ErrorResponseException<azure.loganalytics.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/workspaces/{workspaceId}/query'
+        url = self.query.metadata['url']
         path_format_arguments = {
             'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
         }
@@ -129,3 +129,4 @@ class OperationalInsightsDataClient(object):
             return client_raw_response
 
         return deserialized
+    query.metadata = {'url': '/workspaces/{workspaceId}/query'}
