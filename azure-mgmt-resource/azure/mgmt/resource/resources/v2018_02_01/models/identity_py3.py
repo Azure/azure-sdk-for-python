@@ -22,6 +22,9 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
+    :param identities:
+    :type identities: dict[str,
+     ~azure.mgmt.resource.resources.v2018_02_01.models.UserDefinedIdentity]
     :param type: The identity type. Possible values include: 'SystemAssigned',
      'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
@@ -36,11 +39,13 @@ class Identity(Model):
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'identities': {'key': 'identities', 'type': '{UserDefinedIdentity}'},
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
     }
 
-    def __init__(self, *, type=None, **kwargs) -> None:
+    def __init__(self, *, identities=None, type=None, **kwargs) -> None:
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.identities = identities
         self.type = type
