@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2016-07-01-preview"
+from msrest.serialization import Model
 
+
+class BackupRequest(Model):
+    """Backup request.
+
+    :param azure_file_share: Azure File Share.
+    :type azure_file_share: str
+    """
+
+    _attribute_map = {
+        'azure_file_share': {'key': 'azureFileShare', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupRequest, self).__init__(**kwargs)
+        self.azure_file_share = kwargs.get('azure_file_share', None)

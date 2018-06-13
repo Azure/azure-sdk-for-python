@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2016-07-01-preview"
+from .storage_sync_management_client import StorageSyncManagementClient
+from .version import VERSION
+
+__all__ = ['StorageSyncManagementClient']
+
+__version__ = VERSION
 

@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2016-07-01-preview"
+from msrest.paging import Paged
 
+
+class CloudEndpointPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CloudEndpoint <azure.mgmt.storagesync.models.CloudEndpoint>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CloudEndpoint]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CloudEndpointPaged, self).__init__(*args, **kwargs)
