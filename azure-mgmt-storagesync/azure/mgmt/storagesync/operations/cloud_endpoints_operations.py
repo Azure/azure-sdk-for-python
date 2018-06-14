@@ -24,7 +24,7 @@ class CloudEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-06-05-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-04-02".
     """
 
     models = models
@@ -34,7 +34,7 @@ class CloudEndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-05-preview"
+        self.api_version = "2018-04-02"
 
         self.config = config
 
@@ -758,7 +758,7 @@ class CloudEndpointsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     pre_restore.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/cloudEndpoints/{cloudEndpointName}/prerestore'}
 
-    def restore_heatbeat(
+    def restoreheartbeat(
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Restore Heartbeat a given CloudEndpoint.
 
@@ -783,7 +783,7 @@ class CloudEndpointsOperations(object):
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         # Construct URL
-        url = self.restore_heatbeat.metadata['url']
+        url = self.restoreheartbeat.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -821,7 +821,7 @@ class CloudEndpointsOperations(object):
                 'x-ms-correlation-request-id': 'str',
             })
             return client_raw_response
-    restore_heatbeat.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/cloudEndpoints/{cloudEndpointName}/restoreheartbeat'}
+    restoreheartbeat.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/cloudEndpoints/{cloudEndpointName}/restoreheartbeat'}
 
 
     def _post_restore_initial(
