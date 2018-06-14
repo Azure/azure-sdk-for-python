@@ -85,6 +85,12 @@ class OcrLanguages(str, Enum):
     sk = "sk"
 
 
+class TextRecognitionMode(str, Enum):
+
+    handwritten = "Handwritten"
+    printed = "Printed"
+
+
 class AzureRegions(str, Enum):
 
     westus = "westus"

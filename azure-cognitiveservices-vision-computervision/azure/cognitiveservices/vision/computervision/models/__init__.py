@@ -79,6 +79,7 @@ from .computer_vision_api_enums import (
     ComputerVisionErrorCodes,
     VisualFeatureTypes,
     OcrLanguages,
+    TextRecognitionMode,
     AzureRegions,
     Details,
 )
@@ -120,6 +121,7 @@ __all__ = [
     'ComputerVisionErrorCodes',
     'VisualFeatureTypes',
     'OcrLanguages',
+    'TextRecognitionMode',
     'AzureRegions',
     'Details',
 ]
