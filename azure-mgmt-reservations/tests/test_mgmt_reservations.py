@@ -32,7 +32,6 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         self.assertIsNotNone(reservation.properties.applied_scope_type)
         self.assertIsNotNone(reservation.properties.quantity)
         self.assertIsNotNone(reservation.properties.provisioning_state)
-        self.assertIsNotNone(reservation.properties.expiry_date)
         self.assertIsNotNone(reservation.properties.display_name)
         self.assertIsNotNone(reservation.properties.effective_date_time)
         self.assertIsNotNone(reservation.properties.last_updated_date_time)
@@ -42,9 +41,10 @@ class MgmtReservationsTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtReservationsTest, self).setUp()
-        self.reservation_client = self.create_basic_client(AzureReservationAPI, base_url=_CUSTOM_ENDPOINT)
-        self.reservation_order_id = "ffa7538a-2251-489d-82bf-7efcb8b346d7"
-        self.reservation_id = "db71960f-25c2-4327-b8c4-ecce06a14fa8"
+        # self.reservation_client = self.create_basic_client(AzureReservationAPI, base_url=_CUSTOM_ENDPOINT)
+        self.reservation_client = self.create_basic_client(AzureReservationAPI)
+        self.reservation_order_id = "9f530eb9-16eb-4e3a-8965-8a1aecee3591"
+        self.reservation_id = "408ddb33-6363-43b9-adbb-bb7ce22f2c10"
 
     def test_reservation_order_get(self):
         reservation_order = self.reservation_client.reservation_order.get(self.reservation_order_id)
@@ -73,24 +73,14 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             self._validate_reservation(reservation)
 
     def test_update_reservation_to_single(self):
-        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
-        for reservation in reservation_list:
-            if "Succeeded" in reservation.properties.provisioning_state:
-                reservation_to_update = reservation
-        reservation_id = reservation_to_update.id.split('/')[6];
         scope = ["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)]
         patch = Patch(applied_scope_type=AppliedScopeType.single, applied_scopes=scope, instance_flexibility=InstanceFlexibility.on)
-        reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
+        reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def test_update_reservation_to_shared(self):
-        reservation_list = self.reservation_client.reservation.list(self.reservation_order_id)
-        for reservation in reservation_list:
-            if "Succeeded" in reservation.properties.provisioning_state:
-                reservation_to_update = reservation
-        reservation_id = reservation_to_update.id.split('/')[6];
         patch = Patch(applied_scope_type=AppliedScopeType.shared, applied_scopes=None, instance_flexibility=InstanceFlexibility.on)
-        reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
+        reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def test_get_catalog(self):
