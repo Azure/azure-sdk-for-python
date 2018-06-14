@@ -18,7 +18,8 @@ class ExtendedStatusInfo(Model):
     :param status_code: Possible values include: 'None', 'Pending', 'Active',
      'PurchaseError', 'PaymentInstrumentError', 'Split', 'Merged', 'Expired',
      'Succeeded'
-    :type status_code: str or ~azure.mgmt.reservations.models.enum
+    :type status_code: str or
+     ~azure.mgmt.reservations.models.ReservationStatusCode
     :param message: The message giving detailed information about the status
      code.
     :type message: str
