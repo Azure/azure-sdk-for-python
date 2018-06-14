@@ -18,14 +18,8 @@ class ReservationResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param location: Possible values include: 'westus', 'eastus', 'eastus2',
-     'northcentralus', 'westus2', 'southcentralus', 'centralus', 'westeurope',
-     'northeurope', 'eastasia', 'southeastasia', 'japaneast', 'japanwest',
-     'brazilsouth', 'australiaeast', 'australiasoutheast', 'southindia',
-     'westindia', 'centralindia', 'canadacentral', 'canadaeast', 'uksouth',
-     'westcentralus', 'ukwest', 'francecentral', 'francesouth', 'australiac',
-     'australiac2'
-    :type location: str or ~azure.mgmt.reservations.models.enum
+    :ivar location: The Azure Region where the reserved resource lives.
+    :vartype location: str
     :param etag:
     :type etag: int
     :ivar id: Identifier of the reservation
@@ -42,6 +36,7 @@ class ReservationResponse(Model):
     """
 
     _validation = {
+        'location': {'readonly': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
@@ -59,7 +54,7 @@ class ReservationResponse(Model):
 
     def __init__(self, **kwargs):
         super(ReservationResponse, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = None
         self.etag = kwargs.get('etag', None)
         self.id = None
         self.name = None
