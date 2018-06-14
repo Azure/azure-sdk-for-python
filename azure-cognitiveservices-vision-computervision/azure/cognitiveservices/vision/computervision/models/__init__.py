@@ -16,6 +16,7 @@ try:
     from .text_operation_result_py3 import TextOperationResult
     from .face_rectangle_py3 import FaceRectangle
     from .celebrities_model_py3 import CelebritiesModel
+    from .landmarks_model_py3 import LandmarksModel
     from .category_detail_py3 import CategoryDetail
     from .category_py3 import Category
     from .adult_info_py3 import AdultInfo
@@ -23,9 +24,9 @@ try:
     from .image_type_py3 import ImageType
     from .image_tag_py3 import ImageTag
     from .image_caption_py3 import ImageCaption
-    from .image_metadata_py3 import ImageMetadata
     from .image_description_details_py3 import ImageDescriptionDetails
     from .face_description_py3 import FaceDescription
+    from .image_metadata_py3 import ImageMetadata
     from .image_analysis_py3 import ImageAnalysis
     from .ocr_word_py3 import OcrWord
     from .ocr_line_py3 import OcrLine
@@ -35,7 +36,6 @@ try:
     from .list_models_result_py3 import ListModelsResult
     from .domain_model_results_py3 import DomainModelResults
     from .celebrity_results_py3 import CelebrityResults
-    from .landmark_results_landmarks_item_py3 import LandmarkResultsLandmarksItem
     from .landmark_results_py3 import LandmarkResults
     from .image_description_py3 import ImageDescription
     from .tag_result_py3 import TagResult
@@ -48,6 +48,7 @@ except (SyntaxError, ImportError):
     from .text_operation_result import TextOperationResult
     from .face_rectangle import FaceRectangle
     from .celebrities_model import CelebritiesModel
+    from .landmarks_model import LandmarksModel
     from .category_detail import CategoryDetail
     from .category import Category
     from .adult_info import AdultInfo
@@ -55,9 +56,9 @@ except (SyntaxError, ImportError):
     from .image_type import ImageType
     from .image_tag import ImageTag
     from .image_caption import ImageCaption
-    from .image_metadata import ImageMetadata
     from .image_description_details import ImageDescriptionDetails
     from .face_description import FaceDescription
+    from .image_metadata import ImageMetadata
     from .image_analysis import ImageAnalysis
     from .ocr_word import OcrWord
     from .ocr_line import OcrLine
@@ -67,7 +68,6 @@ except (SyntaxError, ImportError):
     from .list_models_result import ListModelsResult
     from .domain_model_results import DomainModelResults
     from .celebrity_results import CelebrityResults
-    from .landmark_results_landmarks_item import LandmarkResultsLandmarksItem
     from .landmark_results import LandmarkResults
     from .image_description import ImageDescription
     from .tag_result import TagResult
@@ -91,6 +91,7 @@ __all__ = [
     'TextOperationResult',
     'FaceRectangle',
     'CelebritiesModel',
+    'LandmarksModel',
     'CategoryDetail',
     'Category',
     'AdultInfo',
@@ -98,9 +99,9 @@ __all__ = [
     'ImageType',
     'ImageTag',
     'ImageCaption',
-    'ImageMetadata',
     'ImageDescriptionDetails',
     'FaceDescription',
+    'ImageMetadata',
     'ImageAnalysis',
     'OcrWord',
     'OcrLine',
@@ -110,7 +111,6 @@ __all__ = [
     'ListModelsResult',
     'DomainModelResults',
     'CelebrityResults',
-    'LandmarkResultsLandmarksItem',
     'LandmarkResults',
     'ImageDescription',
     'TagResult',
