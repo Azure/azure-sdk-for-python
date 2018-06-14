@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ContainerExecRequest(Model):
-    """The start container exec request.
+    """The container exec request.
 
     :param command: The command to be executed.
     :type command: str
