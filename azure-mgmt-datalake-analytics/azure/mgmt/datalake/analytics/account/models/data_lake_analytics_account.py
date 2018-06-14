@@ -177,8 +177,8 @@ class DataLakeAnalyticsAccount(Resource):
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(DataLakeAnalyticsAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsAccount, self).__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
