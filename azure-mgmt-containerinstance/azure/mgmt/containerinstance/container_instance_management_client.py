@@ -16,8 +16,7 @@ from .version import VERSION
 from .operations.container_groups_operations import ContainerGroupsOperations
 from .operations.operations import Operations
 from .operations.container_group_usage_operations import ContainerGroupUsageOperations
-from .operations.container_logs_operations import ContainerLogsOperations
-from .operations.start_container_operations import StartContainerOperations
+from .operations.container_operations import ContainerOperations
 from . import models
 
 
@@ -67,10 +66,8 @@ class ContainerInstanceManagementClient(SDKClient):
     :vartype operations: azure.mgmt.containerinstance.operations.Operations
     :ivar container_group_usage: ContainerGroupUsage operations
     :vartype container_group_usage: azure.mgmt.containerinstance.operations.ContainerGroupUsageOperations
-    :ivar container_logs: ContainerLogs operations
-    :vartype container_logs: azure.mgmt.containerinstance.operations.ContainerLogsOperations
-    :ivar start_container: StartContainer operations
-    :vartype start_container: azure.mgmt.containerinstance.operations.StartContainerOperations
+    :ivar container: Container operations
+    :vartype container: azure.mgmt.containerinstance.operations.ContainerOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -99,7 +96,5 @@ class ContainerInstanceManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.container_group_usage = ContainerGroupUsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.container_logs = ContainerLogsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.start_container = StartContainerOperations(
+        self.container = ContainerOperations(
             self._client, self.config, self._serialize, self._deserialize)
