@@ -36,9 +36,9 @@ class Key(Model):
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'permissions': {'key': 'permissions', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'key_name': {'key': 'KeyName', 'type': 'str'},
+        'permissions': {'key': 'Permissions', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
     def __init__(self):

@@ -38,7 +38,7 @@ class DscCompilationJobCreateParameters(Model):
     _attribute_map = {
         'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'increment_node_configuration_build': {'key': 'properties.IncrementNodeConfigurationBuild', 'type': 'bool'},
+        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
