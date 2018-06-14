@@ -169,9 +169,9 @@ class ComputerVisionAPI(SDKClient):
          ~azure.cognitiveservices.vision.computervision.models.Details]
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -412,9 +412,9 @@ class ComputerVisionAPI(SDKClient):
         :type max_candidates: str
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -488,9 +488,9 @@ class ComputerVisionAPI(SDKClient):
         :type url: str
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -564,9 +564,9 @@ class ComputerVisionAPI(SDKClient):
         :type url: str
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -770,9 +770,9 @@ class ComputerVisionAPI(SDKClient):
         :type details: str
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1017,9 +1017,9 @@ class ComputerVisionAPI(SDKClient):
         :type max_candidates: str
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1096,9 +1096,9 @@ class ComputerVisionAPI(SDKClient):
         :type image: Generator
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1175,9 +1175,9 @@ class ComputerVisionAPI(SDKClient):
         :type image: Generator
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.ja - Japanese
-         pt - Portuguese zh - Simplified Chinese. Possible values include:
-         'en', 'ja', 'pt', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
