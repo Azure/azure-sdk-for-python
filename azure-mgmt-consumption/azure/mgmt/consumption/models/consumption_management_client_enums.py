@@ -29,3 +29,41 @@ class Bound(Enum):
 
     upper = "Upper"
     lower = "Lower"
+
+
+class StatusType(Enum):
+
+    active = "Active"
+    inactive = "Inactive"
+
+
+class RecurrenceType(Enum):
+
+    daily = "Daily"
+    weekly = "Weekly"
+    monthly = "Monthly"
+    annually = "Annually"
+
+
+class FormatType(Enum):
+
+    csv = "Csv"
+
+
+class TimeframeType(Enum):
+
+    week_to_date = "WeekToDate"
+    month_to_date = "MonthToDate"
+    year_to_date = "YearToDate"
+    custom = "Custom"
+
+
+class GranularityType(Enum):
+
+    daily = "Daily"
+
+
+class ReportConfigColumnType(Enum):
+
+    tag = "Tag"
+    dimension = "Dimension"
