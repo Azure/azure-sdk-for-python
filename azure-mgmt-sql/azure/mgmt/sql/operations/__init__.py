@@ -63,6 +63,7 @@ from .backup_long_term_retention_policies_operations import BackupLongTermRetent
 from .managed_databases_operations import ManagedDatabasesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
+from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .restore_points_operations import RestorePointsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
@@ -126,6 +127,7 @@ __all__ = [
     'ManagedDatabasesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
+    'ServerSecurityAlertPoliciesOperations',
     'RestorePointsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
