@@ -9,10 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .price_sheet_operations import PriceSheetOperations
+from .usage_details_operations import UsageDetailsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
+from .report_config_operations import ReportConfigOperations
+from .billing_account_dimensions_operations import BillingAccountDimensionsOperations
+from .subscription_dimensions_operations import SubscriptionDimensionsOperations
+from .resource_group_dimensions_operations import ResourceGroupDimensionsOperations
 
 __all__ = [
+    'PriceSheetOperations',
+    'UsageDetailsOperations',
     'ForecastsOperations',
     'Operations',
+    'ReportConfigOperations',
+    'BillingAccountDimensionsOperations',
+    'SubscriptionDimensionsOperations',
+    'ResourceGroupDimensionsOperations',
 ]
