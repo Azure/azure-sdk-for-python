@@ -1,6 +1,11 @@
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.reservations.models import Patch, SplitRequest, MergeRequest
 from devtools_testutils import AzureMgmtTestCase
+from azure.mgmt.reservations.models.azure_reservation_api_enums import (
+    ReservedResourceType,
+    InstanceFlexibility,
+    AppliedScopeType
+)
 import unittest
 
 
@@ -73,7 +78,8 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             if "Succeeded" in reservation.properties.provisioning_state:
                 reservation_to_update = reservation
         reservation_id = reservation_to_update.id.split('/')[6];
-        patch = Patch(applied_scope_type="Single", applied_scopes=["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)], instance_flexibility="On")
+        scope = ["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)]
+        patch = Patch(applied_scope_type=AppliedScopeType.single, applied_scopes=scope, instance_flexibility=InstanceFlexibility.on)
         reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
@@ -83,26 +89,26 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             if "Succeeded" in reservation.properties.provisioning_state:
                 reservation_to_update = reservation
         reservation_id = reservation_to_update.id.split('/')[6];
-        patch = Patch(applied_scope_type="Shared", applied_scopes=None, instance_flexibility="On")
+        patch = Patch(applied_scope_type=AppliedScopeType.shared, applied_scopes=None, instance_flexibility=InstanceFlexibility.on)
         reservation = self.reservation_client.reservation.update(self.reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def test_get_catalog(self):
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "VirtualMachines", "westus")
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.virtual_machines, "westus")
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
             self.assertTrue(len(item.terms) > 0)
             self.assertTrue(len(item.locations) > 0)
             self.assertTrue(len(item.sku_properties) > 0)
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "SqlDatabases", "southeastasia")
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.sql_databases, "southeastasia")
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
             self.assertTrue(len(item.terms) > 0)
             self.assertTrue(len(item.locations) > 0)
             self.assertTrue(len(item.sku_properties) > 0)
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, "SuseLinux")
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.suse_linux)
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
