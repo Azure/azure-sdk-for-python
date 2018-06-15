@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class LandmarkResultsLandmarksItem(Model):
+class LandmarksModel(Model):
     """A landmark recognized in the image.
 
     :param name: Name of the landmark.
@@ -26,7 +26,7 @@ class LandmarkResultsLandmarksItem(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
-        super(LandmarkResultsLandmarksItem, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.confidence = kwargs.get('confidence', None)
+    def __init__(self, *, name: str=None, confidence: float=None, **kwargs) -> None:
+        super(LandmarksModel, self).__init__(**kwargs)
+        self.name = name
+        self.confidence = confidence
