@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class BudgetPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
+class QueryOptions(Model):
+    """Additional parameters for a set of operations.
+
+    :param apply: OData apply expression to aggregate usageDetails by tags or
+     (tags and properties/usageStart)
+    :type apply: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Budget]'}
+        'apply': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(BudgetPaged, self).__init__(*args, **kwargs)
+    def __init__(self, *, apply: str=None, **kwargs) -> None:
+        super(QueryOptions, self).__init__(**kwargs)
+        self.apply = apply
