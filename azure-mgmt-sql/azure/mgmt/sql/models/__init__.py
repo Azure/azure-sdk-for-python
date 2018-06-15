@@ -148,6 +148,7 @@ try:
     from .managed_instance_pair_info_py3 import ManagedInstancePairInfo
     from .instance_failover_group_py3 import InstanceFailoverGroup
     from .backup_short_term_retention_policy_py3 import BackupShortTermRetentionPolicy
+    from .tde_certificate_py3 import TdeCertificate
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -287,6 +288,7 @@ except (SyntaxError, ImportError):
     from .managed_instance_pair_info import ManagedInstancePairInfo
     from .instance_failover_group import InstanceFailoverGroup
     from .backup_short_term_retention_policy import BackupShortTermRetentionPolicy
+    from .tde_certificate import TdeCertificate
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -557,6 +559,7 @@ __all__ = [
     'ManagedInstancePairInfo',
     'InstanceFailoverGroup',
     'BackupShortTermRetentionPolicy',
+    'TdeCertificate',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',

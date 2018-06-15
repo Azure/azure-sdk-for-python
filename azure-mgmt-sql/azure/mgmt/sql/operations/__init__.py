@@ -71,6 +71,8 @@ from .capabilities_operations import CapabilitiesOperations
 from .database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 from .instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
+from .tde_certificates_operations import TdeCertificatesOperations
+from .managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -135,4 +137,6 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentScansOperations',
     'InstanceFailoverGroupsOperations',
     'BackupShortTermRetentionPoliciesOperations',
+    'TdeCertificatesOperations',
+    'ManagedInstanceTdeCertificatesOperations',
 ]

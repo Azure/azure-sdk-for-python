@@ -75,6 +75,8 @@ from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 from .operations.instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .operations.backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
+from .operations.tde_certificates_operations import TdeCertificatesOperations
+from .operations.managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from . import models
 
 
@@ -241,6 +243,10 @@ class SqlManagementClient(SDKClient):
     :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
     :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
     :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
+    :ivar tde_certificates: TdeCertificates operations
+    :vartype tde_certificates: azure.mgmt.sql.operations.TdeCertificatesOperations
+    :ivar managed_instance_tde_certificates: ManagedInstanceTdeCertificates operations
+    :vartype managed_instance_tde_certificates: azure.mgmt.sql.operations.ManagedInstanceTdeCertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -384,4 +390,8 @@ class SqlManagementClient(SDKClient):
         self.instance_failover_groups = InstanceFailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tde_certificates = TdeCertificatesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
