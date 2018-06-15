@@ -26,8 +26,6 @@ class TdeCertificate(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar certificate_name: The name of the certificate
-    :vartype certificate_name: str
     :param private_blob: Required. The base64 encoded certificate private
      blob.
     :type private_blob: str
@@ -39,7 +37,6 @@ class TdeCertificate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'certificate_name': {'readonly': True},
         'private_blob': {'required': True},
     }
 
@@ -47,13 +44,11 @@ class TdeCertificate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'certificate_name': {'key': 'properties.certificateName', 'type': 'str'},
         'private_blob': {'key': 'properties.privateBlob', 'type': 'str'},
         'cert_password': {'key': 'properties.certPassword', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(TdeCertificate, self).__init__(**kwargs)
-        self.certificate_name = None
         self.private_blob = kwargs.get('private_blob', None)
         self.cert_password = kwargs.get('cert_password', None)
