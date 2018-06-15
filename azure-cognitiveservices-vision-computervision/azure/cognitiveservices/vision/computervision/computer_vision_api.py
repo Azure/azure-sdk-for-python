@@ -41,7 +41,7 @@ class ComputerVisionAPIConfiguration(Configuration):
             raise ValueError("Parameter 'azure_region' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v1.0'
+        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v2.0'
 
         super(ComputerVisionAPIConfiguration, self).__init__(base_url)
 
@@ -76,7 +76,7 @@ class ComputerVisionAPI(SDKClient):
         super(ComputerVisionAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0'
+        self.api_version = '2.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -625,18 +625,18 @@ class ComputerVisionAPI(SDKClient):
     analyze_image_by_domain.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text(
-            self, url, detect_handwriting=False, custom_headers=None, raw=False, **operation_config):
+            self, url, mode, custom_headers=None, raw=False, **operation_config):
         """Recognize Text operation. When you use the Recognize Text interface,
         the response contains a field called 'Operation-Location'. The
         'Operation-Location' field contains the URL that you must use for your
-        Get Handwritten Text Operation Result operation.
+        Get Recognize Text Operation Result operation.
 
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param url: Publicly reachable URL of an image
         :type url: str
-        :param detect_handwriting: If 'true' is specified, handwriting
-         recognition is performed. If this parameter is set to 'false' or is
-         not specified, printed text recognition is performed.
-        :type detect_handwriting: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -658,8 +658,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        if detect_handwriting is not None:
-            query_parameters['detectHandwriting'] = self._serialize.query("detect_handwriting", detect_handwriting, 'bool')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
@@ -693,7 +692,7 @@ class ComputerVisionAPI(SDKClient):
         returned from Recognize Text interface.
 
         :param operation_id: Id of the text operation returned in the response
-         of the 'Recognize Handwritten Text'
+         of the 'Recognize Text'
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1240,18 +1239,18 @@ class ComputerVisionAPI(SDKClient):
     analyze_image_by_domain_in_stream.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text_in_stream(
-            self, image, detect_handwriting=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, mode, custom_headers=None, raw=False, callback=None, **operation_config):
         """Recognize Text operation. When you use the Recognize Text interface,
         the response contains a field called 'Operation-Location'. The
         'Operation-Location' field contains the URL that you must use for your
-        Get Handwritten Text Operation Result operation.
+        Get Recognize Text Operation Result operation.
 
         :param image: An image stream.
         :type image: Generator
-        :param detect_handwriting: If 'true' is specified, handwriting
-         recognition is performed. If this parameter is set to 'false' or is
-         not specified, printed text recognition is performed.
-        :type detect_handwriting: bool
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1276,8 +1275,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        if detect_handwriting is not None:
-            query_parameters['detectHandwriting'] = self._serialize.query("detect_handwriting", detect_handwriting, 'bool')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}

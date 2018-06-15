@@ -17,7 +17,7 @@ class LandmarkResults(Model):
 
     :param landmarks:
     :type landmarks:
-     list[~azure.cognitiveservices.vision.computervision.models.LandmarkResultsLandmarksItem]
+     list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -26,7 +26,7 @@ class LandmarkResults(Model):
     """
 
     _attribute_map = {
-        'landmarks': {'key': 'landmarks', 'type': '[LandmarkResultsLandmarksItem]'},
+        'landmarks': {'key': 'landmarks', 'type': '[LandmarksModel]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }

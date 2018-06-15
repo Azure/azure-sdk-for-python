@@ -18,12 +18,17 @@ class CategoryDetail(Model):
     :param celebrities: An array of celebrities if any identified.
     :type celebrities:
      list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
+    :param landmarks: An array of landmarks if any identified.
+    :type landmarks:
+     list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
     """
 
     _attribute_map = {
         'celebrities': {'key': 'celebrities', 'type': '[CelebritiesModel]'},
+        'landmarks': {'key': 'landmarks', 'type': '[LandmarksModel]'},
     }
 
-    def __init__(self, *, celebrities=None, **kwargs) -> None:
+    def __init__(self, *, celebrities=None, landmarks=None, **kwargs) -> None:
         super(CategoryDetail, self).__init__(**kwargs)
         self.celebrities = celebrities
+        self.landmarks = landmarks

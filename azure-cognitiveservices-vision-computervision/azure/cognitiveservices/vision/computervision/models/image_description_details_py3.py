@@ -21,23 +21,14 @@ class ImageDescriptionDetails(Model):
     :param captions: A list of captions, sorted by confidence level.
     :type captions:
      list[~azure.cognitiveservices.vision.computervision.models.ImageCaption]
-    :param request_id: Id of the REST API request.
-    :type request_id: str
-    :param metadata:
-    :type metadata:
-     ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '[str]'},
         'captions': {'key': 'captions', 'type': '[ImageCaption]'},
-        'request_id': {'key': 'requestId', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, *, tags=None, captions=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, captions=None, **kwargs) -> None:
         super(ImageDescriptionDetails, self).__init__(**kwargs)
         self.tags = tags
         self.captions = captions
-        self.request_id = request_id
-        self.metadata = metadata
