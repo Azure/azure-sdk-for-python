@@ -1090,7 +1090,7 @@ class IntegrationRuntimesOperations(object):
             return client_raw_response
     upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade'}
 
-    def grant_access(
+    def add_identity(
             self, resource_group_name, factory_name, integration_runtime_name, factory_identity, factory_name1=None, custom_headers=None, raw=False, **operation_config):
         """Grant integration runtime access to other data factory.
 
@@ -1120,7 +1120,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_permission_request = models.IntegrationRuntimePermissionRequest(factory_identity=factory_identity)
 
         # Construct URL
-        url = self.grant_access.metadata['url']
+        url = self.add_identity.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -1164,9 +1164,9 @@ class IntegrationRuntimesOperations(object):
             return client_raw_response
 
         return deserialized
-    grant_access.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/grantAccess'}
+    add_identity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/addIdentity'}
 
-    def revoke_access(
+    def remove_identity(
             self, resource_group_name, factory_name, integration_runtime_name, factory_identity, factory_name1=None, custom_headers=None, raw=False, **operation_config):
         """Revoke the integration runtime access from other data factory.
 
@@ -1196,7 +1196,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_permission_request = models.IntegrationRuntimePermissionRequest(factory_identity=factory_identity)
 
         # Construct URL
-        url = self.revoke_access.metadata['url']
+        url = self.remove_identity.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -1240,4 +1240,4 @@ class IntegrationRuntimesOperations(object):
             return client_raw_response
 
         return deserialized
-    revoke_access.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/revokeAccess'}
+    remove_identity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/removeIdentity'}
