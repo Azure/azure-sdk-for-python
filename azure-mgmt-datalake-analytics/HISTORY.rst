@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.6.0 (2018-06-15)
+++++++++++++++++++
+
+* Added new Catalog APIs:
+    - Catalog_ListTableFragments
+    - Catalog_PreviewTable
+    - Catalog_PreviewTablePartition
+
 0.5.0 (2018-06-14)
 ++++++++++++++++++
 
