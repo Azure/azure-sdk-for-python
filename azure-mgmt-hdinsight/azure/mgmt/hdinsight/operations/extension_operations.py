@@ -26,7 +26,6 @@ class ExtensionOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
-    :ivar extension_name: The name of the cluster extension. Constant value: "clustermonitoring".
     """
 
     models = models
@@ -37,21 +36,20 @@ class ExtensionOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2015-03-01-preview"
-        self.extension_name = "clustermonitoring"
 
         self.config = config
 
 
     def _enable_monitoring_initial(
-            self, resource_group_name, cluster_name, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
+            self, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.ClusterMonitoringRequest(workspace_id=workspace_id, primary_key=primary_key)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'
+        url = self.enable_monitoring.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -77,7 +75,7 @@ class ExtensionOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -87,13 +85,9 @@ class ExtensionOperations(object):
             return client_raw_response
 
     def enable_monitoring(
-            self, resource_group_name, cluster_name, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
+            self, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
         """Enables the Operations Management Suite (OMS) on the HDInsight cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param workspace_id: The Operations Management Suite (OMS) workspace
          ID.
         :type workspace_id: str
@@ -110,8 +104,6 @@ class ExtensionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._enable_monitoring_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             workspace_id=workspace_id,
             primary_key=primary_key,
             custom_headers=custom_headers,
@@ -137,7 +129,7 @@ class ExtensionOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -152,16 +144,13 @@ class ExtensionOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    enable_monitoring.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'}
 
     def get_monitoring_status(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets the status of Operations Management Suite (OMS) on the HDInsight
         cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -173,11 +162,11 @@ class ExtensionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'
+        url = self.get_monitoring_status.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -214,16 +203,17 @@ class ExtensionOperations(object):
             return client_raw_response
 
         return deserialized
+    get_monitoring_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'}
 
 
     def _disable_monitoring_initial(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'
+        url = self.disable_monitoring.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -245,7 +235,7 @@ class ExtensionOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -255,14 +245,10 @@ class ExtensionOperations(object):
             return client_raw_response
 
     def disable_monitoring(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Disables the Operations Management Suite (OMS) on the HDInsight
         cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -273,8 +259,6 @@ class ExtensionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._disable_monitoring_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -298,7 +282,7 @@ class ExtensionOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -313,15 +297,12 @@ class ExtensionOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    disable_monitoring.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/clustermonitoring'}
 
     def create(
-            self, resource_group_name, cluster_name, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
+            self, workspace_id=None, primary_key=None, custom_headers=None, raw=False, **operation_config):
         """Creates an HDInsight cluster extension.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param workspace_id: The workspace ID for the cluster monitoring
          extension.
         :type workspace_id: str
@@ -340,12 +321,12 @@ class ExtensionOperations(object):
         parameters = models.Extension(workspace_id=workspace_id, primary_key=primary_key)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'extensionName': self._serialize.url("self.extension_name", self.extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'extensionName': self._serialize.url("self.config.extension_name", self.config.extension_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -379,16 +360,13 @@ class ExtensionOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'}
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets the extension properties for the specified HDInsight cluster
         extension.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -400,12 +378,12 @@ class ExtensionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'extensionName': self._serialize.url("self.extension_name", self.extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'extensionName': self._serialize.url("self.config.extension_name", self.config.extension_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -442,15 +420,12 @@ class ExtensionOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'}
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified extension for HDInsight cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -461,12 +436,12 @@ class ExtensionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'extensionName': self._serialize.url("self.extension_name", self.extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'extensionName': self._serialize.url("self.config.extension_name", self.config.extension_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -496,3 +471,4 @@ class ExtensionOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'}

@@ -43,13 +43,13 @@ class ClustersOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,13 +92,9 @@ class ClustersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a new HDInsight cluster with the specified parameters.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param parameters: The cluster create request.
         :type parameters:
          ~azure.mgmt.hdinsight.models.ClusterCreateParametersExtended
@@ -113,8 +109,6 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -158,15 +152,12 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'}
 
     def update(
-            self, resource_group_name, cluster_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, tags=None, custom_headers=None, raw=False, **operation_config):
         """Patch HDInsight cluster with the specified parameters.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param tags: The resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -182,11 +173,11 @@ class ClustersOperations(object):
         parameters = models.ClusterPatchParameters(tags=tags)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -227,16 +218,17 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -268,13 +260,9 @@ class ClustersOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified HDInsight cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -285,8 +273,6 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -325,15 +311,12 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'}
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets the specified cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -345,11 +328,11 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -386,13 +369,12 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists the HDInsight clusters in a resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -407,10 +389,10 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -453,19 +435,20 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters'}
 
 
     def _resize_initial(
-            self, resource_group_name, cluster_name, target_instance_count=None, custom_headers=None, raw=False, **operation_config):
+            self, target_instance_count=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.ClusterResizeParameters(target_instance_count=target_instance_count)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/roles/{roleName}/resize'
+        url = self.resize.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'roleName': self._serialize.url("self.role_name", self.role_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'roleName': self._serialize.url("self.role_name", self.role_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -501,13 +484,9 @@ class ClustersOperations(object):
             return client_raw_response
 
     def resize(
-            self, resource_group_name, cluster_name, target_instance_count=None, custom_headers=None, raw=False, **operation_config):
+            self, target_instance_count=None, custom_headers=None, raw=False, **operation_config):
         """Resizes the specified HDInsight cluster to the specified size.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param target_instance_count: The target instance count for the
          operation.
         :type target_instance_count: int
@@ -521,8 +500,6 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._resize_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             target_instance_count=target_instance_count,
             custom_headers=custom_headers,
             raw=True,
@@ -562,6 +539,7 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    resize.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/roles/{roleName}/resize'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -581,7 +559,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/clusters'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -626,18 +604,19 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/clusters'}
 
 
     def _execute_script_actions_initial(
-            self, resource_group_name, cluster_name, persist_on_success, script_actions=None, custom_headers=None, raw=False, **operation_config):
+            self, persist_on_success, script_actions=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.ExecuteScriptActionParameters(script_actions=script_actions, persist_on_success=persist_on_success)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/executeScriptActions'
+        url = self.execute_script_actions.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -673,13 +652,9 @@ class ClustersOperations(object):
             return client_raw_response
 
     def execute_script_actions(
-            self, resource_group_name, cluster_name, persist_on_success, script_actions=None, custom_headers=None, raw=False, **operation_config):
+            self, persist_on_success, script_actions=None, custom_headers=None, raw=False, **operation_config):
         """Executes script actions on the specified HDInsight cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param persist_on_success: Gets or sets if the scripts needs to be
          persisted.
         :type persist_on_success: bool
@@ -696,8 +671,6 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._execute_script_actions_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             persist_on_success=persist_on_success,
             script_actions=script_actions,
             custom_headers=custom_headers,
@@ -738,3 +711,4 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    execute_script_actions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/executeScriptActions'}

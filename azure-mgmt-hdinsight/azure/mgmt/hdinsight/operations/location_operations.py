@@ -38,11 +38,9 @@ class LocationOperations(object):
         self.config = config
 
     def get_capabilities(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets the capabilities for the specified location.
 
-        :param location: The location to get capabilities for.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,10 +52,10 @@ class LocationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/capabilities'
+        url = self.get_capabilities.metadata['url']
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("self.config.location", self.config.location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,3 +92,4 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    get_capabilities.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/capabilities'}

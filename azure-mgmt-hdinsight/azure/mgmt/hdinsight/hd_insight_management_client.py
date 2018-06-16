@@ -36,16 +36,48 @@ class HDInsightManagementClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group.
+    :type resource_group_name: str
+    :param cluster_name: The name of the cluster.
+    :type cluster_name: str
+    :param application_name: The constant value for the application name.
+    :type application_name: str
+    :param location: The location to get capabilities for.
+    :type location: str
+    :param configuration_name: The name of the cluster configuration.
+    :type configuration_name: str
+    :param extension_name: The name of the cluster extension.
+    :type extension_name: str
+    :param script_name: The name of the script.
+    :type script_name: str
+    :param script_execution_id: The script execution Id
+    :type script_execution_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, cluster_name, application_name, location, configuration_name, extension_name, script_name, script_execution_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if cluster_name is None:
+            raise ValueError("Parameter 'cluster_name' must not be None.")
+        if application_name is None:
+            raise ValueError("Parameter 'application_name' must not be None.")
+        if location is None:
+            raise ValueError("Parameter 'location' must not be None.")
+        if configuration_name is None:
+            raise ValueError("Parameter 'configuration_name' must not be None.")
+        if extension_name is None:
+            raise ValueError("Parameter 'extension_name' must not be None.")
+        if script_name is None:
+            raise ValueError("Parameter 'script_name' must not be None.")
+        if script_execution_id is None:
+            raise ValueError("Parameter 'script_execution_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -56,6 +88,14 @@ class HDInsightManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.cluster_name = cluster_name
+        self.application_name = application_name
+        self.location = location
+        self.configuration_name = configuration_name
+        self.extension_name = extension_name
+        self.script_name = script_name
+        self.script_execution_id = script_execution_id
 
 
 class HDInsightManagementClient(object):
@@ -88,13 +128,29 @@ class HDInsightManagementClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group.
+    :type resource_group_name: str
+    :param cluster_name: The name of the cluster.
+    :type cluster_name: str
+    :param application_name: The constant value for the application name.
+    :type application_name: str
+    :param location: The location to get capabilities for.
+    :type location: str
+    :param configuration_name: The name of the cluster configuration.
+    :type configuration_name: str
+    :param extension_name: The name of the cluster extension.
+    :type extension_name: str
+    :param script_name: The name of the script.
+    :type script_name: str
+    :param script_execution_id: The script execution Id
+    :type script_execution_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, cluster_name, application_name, location, configuration_name, extension_name, script_name, script_execution_id, base_url=None):
 
-        self.config = HDInsightManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = HDInsightManagementClientConfiguration(credentials, subscription_id, resource_group_name, cluster_name, application_name, location, configuration_name, extension_name, script_name, script_execution_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

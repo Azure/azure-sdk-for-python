@@ -25,7 +25,6 @@ class ConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar configuration_name: The constant for configuration type of gateway. Constant value: "gateway".
     :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
     """
 
@@ -36,21 +35,20 @@ class ConfigurationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.configuration_name = "gateway"
         self.api_version = "2015-03-01-preview"
 
         self.config = config
 
 
     def _update_http_settings_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'
+        url = self.update_http_settings.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("self.configuration_name", self.configuration_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'configurationName': self._serialize.url("self.config.configuration_name", self.config.configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -86,13 +84,9 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
     def update_http_settings(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Configures the HTTP settings on the specified cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
         :param parameters: The name of the resource group.
         :type parameters:
          ~azure.mgmt.hdinsight.models.HttpConnectivitySettings
@@ -106,8 +100,6 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_http_settings_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -147,18 +139,12 @@ class ConfigurationsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update_http_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}
 
     def get(
-            self, resource_group_name, cluster_name, configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """The configuration object for the specified cluster.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
-        :param configuration_name: The constant for configuration type of
-         gateway.
-        :type configuration_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -169,12 +155,12 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'clusterName': self._serialize.url("self.config.cluster_name", self.config.cluster_name, 'str'),
+            'configurationName': self._serialize.url("self.config.configuration_name", self.config.configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -211,3 +197,4 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}
