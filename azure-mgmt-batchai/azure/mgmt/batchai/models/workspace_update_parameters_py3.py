@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class WorkspaceUpdateParameters(Model):
-    """Parameters supplied to the Update operation.
+    """Workspace update parameters.
 
-    :param tags: The user specified tags associated with the Workspace.
+    :param tags: Tags. The user specified tags associated with the Workspace.
     :type tags: dict[str, str]
     """
 

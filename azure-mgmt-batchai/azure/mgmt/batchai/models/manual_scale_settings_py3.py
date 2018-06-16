@@ -17,13 +17,12 @@ class ManualScaleSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_node_count: Required. The desired number of compute nodes in
-     the Cluster. Default is 0. If autoScaleSettings are not specified, then
-     the Cluster starts with this target. Default value: 0 .
+    :param target_node_count: Required. Target node count. The desired number
+     of compute nodes in the Cluster. Default is 0. Default value: 0 .
     :type target_node_count: int
-    :param node_deallocation_option: Determines what to do with the job(s)
-     running on compute node if the Cluster size is decreasing. The default
-     value is requeue. Possible values include: 'requeue', 'terminate',
+    :param node_deallocation_option: Node deallocation options. An action to
+     be performed when the cluster size is decreasing. The default value is
+     requeue. Possible values include: 'requeue', 'terminate',
      'waitforjobcompletion'. Default value: "requeue" .
     :type node_deallocation_option: str or
      ~azure.mgmt.batchai.models.DeallocationOption

@@ -13,17 +13,18 @@ from msrest.serialization import Model
 
 
 class Caffe2Settings(Model):
-    """Specifies the settings for Caffe2 job.
+    """Caffe2 job settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param python_script_file_path: Required. The path and file name of the
-     python script to execute the job.
+    :param python_script_file_path: Required. Python script file path. The
+     python script to execute.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter.
+    :param python_interpreter_path: Python interpreter path. The path to the
+     Python interpreter.
     :type python_interpreter_path: str
-    :param command_line_args: Command line arguments that needs to be passed
-     to the python script.
+    :param command_line_args: Command line arguments. Command line arguments
+     that needs to be passed to the python script.
     :type command_line_args: str
     """
 

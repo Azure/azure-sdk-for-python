@@ -13,35 +13,41 @@ from msrest.serialization import Model
 
 
 class ClusterCreateParameters(Model):
-    """Parameters supplied to the Create operation.
+    """Cluster creation operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_size: Required. The size of the virtual machines in the cluster.
-     All virtual machines in a cluster are the same size. For information about
-     available VM sizes for clusters using images from the Virtual Machines
-     Marketplace (see Sizes for Virtual Machines (Linux) or Sizes for Virtual
-     Machines (Windows). Batch AI service supports all Azure VM sizes except
-     STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series).
+    :param vm_size: Required. VM size. The size of the virtual machines in the
+     cluster. All nodes in a cluster have the same VM size. For information
+     about available VM sizes for clusters using images from the Virtual
+     Machines Marketplace see Sizes for Virtual Machines (Linux). Batch AI
+     service supports all Azure VM sizes except STANDARD_A0 and those with
+     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
     :type vm_size: str
-    :param vm_priority: dedicated or lowpriority. Default is dedicated.
-     Possible values include: 'dedicated', 'lowpriority'. Default value:
-     "dedicated" .
+    :param vm_priority: VM priority. VM priority. Allowed values are:
+     dedicated (default) and lowpriority. Possible values include: 'dedicated',
+     'lowpriority'. Default value: "dedicated" .
     :type vm_priority: str or ~azure.mgmt.batchai.models.VmPriority
-    :param scale_settings: Desired scale for the cluster.
+    :param scale_settings: Scale settings. Scale settings for the cluster.
+     Batch AI service supports manual and auto scale clusters.
     :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
-    :param virtual_machine_configuration: Settings for OS image and mounted
-     data volumes.
+    :param virtual_machine_configuration: VM configuration. OS image
+     configuration for cluster nodes. All nodes in a cluster have the same OS
+     image.
     :type virtual_machine_configuration:
      ~azure.mgmt.batchai.models.VirtualMachineConfiguration
-    :param node_setup: Setup to be done on all compute nodes in the cluster.
+    :param node_setup: Node setup. Setup (mount file systems, performance
+     counters settings and custom setup task) to be performed on each compute
+     node in the cluster.
     :type node_setup: ~azure.mgmt.batchai.models.NodeSetup
-    :param user_account_settings: Required. Settings for user account that
-     will be created on all compute nodes of the cluster.
+    :param user_account_settings: Required. User account settings. Settings
+     for an administrator user account that will be created on each compute
+     node in the cluster.
     :type user_account_settings:
      ~azure.mgmt.batchai.models.UserAccountSettings
-    :param subnet: Specifies the identifier of the subnet. .
+    :param subnet: Subnet. Existing virtual network subnet to put the cluster
+     nodes in. Note, if a File Server mount configured in node setup, the File
+     Server's subnet will be used automatically.
     :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 

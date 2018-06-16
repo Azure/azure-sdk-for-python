@@ -13,71 +13,71 @@ from msrest.serialization import Model
 
 
 class JobCreateParameters(Model):
-    """Parameters supplied to the Create operation.
+    """Job creation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scheduling_priority: Scheduling priority associated with the job.
-     Scheduling priority associated with the job. Possible values include:
-     'low', 'normal', 'high'. Default value: "normal" .
+    :param scheduling_priority: Scheduling priority. Scheduling priority
+     associated with the job. Possible values include: 'low', 'normal', 'high'.
+     Default value: "normal" .
     :type scheduling_priority: str or ~azure.mgmt.batchai.models.JobPriority
-    :param cluster: Required. Specifies the Id of the cluster on which this
-     job will run.
+    :param cluster: Required. Cluster. Resource ID of the cluster on which
+     this job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
-    :param mount_volumes: Information on mount volumes to be used by the job.
-     These volumes will be mounted before the job execution and will be
-     unmouted after the job completion. The volumes will be mounted at location
-     specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
+    :param mount_volumes: Mount volumes. Information on mount volumes to be
+     used by the job. These volumes will be mounted before the job execution
+     and will be unmouted after the job completion. The volumes will be mounted
+     at location specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
-    :param node_count: Required. Number of compute nodes to run the job on.
-     The job will be gang scheduled on that many compute nodes
+    :param node_count: Required. Node count. Number of compute nodes to run
+     the job on. The job will be gang scheduled on that many compute nodes.
     :type node_count: int
-    :param container_settings: If provided the job will run in the specified
-     container. If the container was downloaded as part of cluster setup then
-     the same container image will be used. If not provided, the job will run
-     on the VM.
+    :param container_settings: Container settings. Docker container settings
+     for the job. If not provided, the job will run directly on the node.
     :type container_settings: ~azure.mgmt.batchai.models.ContainerSettings
-    :param cntk_settings: Specifies the settings for CNTK (aka Microsoft
+    :param cntk_settings: CNTK settings. Settings for CNTK (aka Microsoft
      Cognitive Toolkit) job.
     :type cntk_settings: ~azure.mgmt.batchai.models.CNTKsettings
-    :param py_torch_settings: Specifies the settings for pyTorch job.
+    :param py_torch_settings: pyTorch settings. Settings for pyTorch job.
     :type py_torch_settings: ~azure.mgmt.batchai.models.PyTorchSettings
-    :param tensor_flow_settings: Specifies the settings for Tensor Flow job.
-    :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
-    :param caffe_settings: Specifies the settings for Caffe job.
-    :type caffe_settings: ~azure.mgmt.batchai.models.CaffeSettings
-    :param caffe2_settings: Specifies the settings for Caffe2 job.
-    :type caffe2_settings: ~azure.mgmt.batchai.models.Caffe2Settings
-    :param chainer_settings: Specifies the settings for Chainer job.
-    :type chainer_settings: ~azure.mgmt.batchai.models.ChainerSettings
-    :param custom_toolkit_settings: Specifies the settings for custom tool kit
+    :param tensor_flow_settings: TensorFlow settings. Settings for Tensor Flow
      job.
+    :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
+    :param caffe_settings: Caffe settings. Settings for Caffe job.
+    :type caffe_settings: ~azure.mgmt.batchai.models.CaffeSettings
+    :param caffe2_settings: Caffe2 settings. Settings for Caffe2 job.
+    :type caffe2_settings: ~azure.mgmt.batchai.models.Caffe2Settings
+    :param chainer_settings: Chainer settings. Settings for Chainer job.
+    :type chainer_settings: ~azure.mgmt.batchai.models.ChainerSettings
+    :param custom_toolkit_settings: Custom tool kit job. Settings for custom
+     tool kit job.
     :type custom_toolkit_settings:
      ~azure.mgmt.batchai.models.CustomToolkitSettings
-    :param custom_mpi_settings: Specifies the settings for custom MPI job.
+    :param custom_mpi_settings: Custom MPI settings. Settings for custom MPI
+     job.
     :type custom_mpi_settings: ~azure.mgmt.batchai.models.CustomMpiSettings
-    :param horovod_settings: Specifies the settings for Horovod job.
+    :param horovod_settings: Horovod settings. Settings for Horovod job.
     :type horovod_settings: ~azure.mgmt.batchai.models.HorovodSettings
-    :param job_preparation: Specifies the command line to be executed before
-     tool kit is launched. The specified actions will run on all the nodes that
-     are part of the job
+    :param job_preparation: Job preparation. A command line to be executed on
+     each node allocated for the job before tool kit is launched.
     :type job_preparation: ~azure.mgmt.batchai.models.JobPreparation
-    :param std_out_err_path_prefix: Required. The path where the Batch AI
-     service will upload stdout and stderror of the job.
+    :param std_out_err_path_prefix: Required. Standard output path prefix. The
+     path where the Batch AI service will store stdout, stderror and execution
+     log of the job.
     :type std_out_err_path_prefix: str
-    :param input_directories: Specifies the list of input directories for the
-     Job.
+    :param input_directories: Input directories. A list of input directories
+     for the job.
     :type input_directories: list[~azure.mgmt.batchai.models.InputDirectory]
-    :param output_directories: Specifies the list of output directories.
+    :param output_directories: Output directories. A list of output
+     directories for the job.
     :type output_directories: list[~azure.mgmt.batchai.models.OutputDirectory]
-    :param environment_variables: Additional environment variables to set on
-     the job. Batch AI will setup these additional environment variables for
-     the job.
+    :param environment_variables: Environment variables. A list of user
+     defined environment variables which will be setup for the job.
     :type environment_variables:
      list[~azure.mgmt.batchai.models.EnvironmentVariable]
-    :param secrets: Additional environment variables with secret values to set
-     on the job. Batch AI will setup these additional environment variables for
-     the job. Server will never report values of these variables back.
+    :param secrets: Secrets. A list of user defined environment variables with
+     secret values which will be setup for the job. Server will never report
+     values of these variables back.
     :type secrets:
      list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
     :param constraints: Constraints associated with the Job.

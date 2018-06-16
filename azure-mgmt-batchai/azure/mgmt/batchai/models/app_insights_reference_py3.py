@@ -13,21 +13,19 @@ from msrest.serialization import Model
 
 
 class AppInsightsReference(Model):
-    """Specifies Azure Application Insights information for performance counters
-    reporting.
+    """Azure Application Insights information for performance counters reporting.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param component: Required. Specifies the Azure Application Insights
-     component resource id.
+    :param component: Required. Component ID. Azure Application Insights
+     component resource ID.
     :type component: ~azure.mgmt.batchai.models.ResourceId
-    :param instrumentation_key: Value of the Azure Application Insights
-     instrumentation key.
+    :param instrumentation_key: Instrumentation Key. Value of the Azure
+     Application Insights instrumentation key.
     :type instrumentation_key: str
-    :param instrumentation_key_secret_reference: Specifies a KeyVault Secret
-     containing Azure Application Insights instrumentation key. Specifies
-     KeyVault Store and Secret which contains Azure Application Insights
-     instrumentation key. One of instumentationKey or
+    :param instrumentation_key_secret_reference: Instrumentation key KeyVault
+     Secret reference. KeyVault Store and Secret which contains Azure
+     Application Insights instrumentation key. One of instrumentationKey or
      instrumentationKeySecretReference must be specified.
     :type instrumentation_key_secret_reference:
      ~azure.mgmt.batchai.models.KeyVaultSecretReference

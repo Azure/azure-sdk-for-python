@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class ContainerSettings(Model):
-    """Settings for the container to be downloaded.
+    """Docker container settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param image_source_registry: Required. Registry to download the container
-     from.
+    :param image_source_registry: Required. Image source registry. Information
+     about docker image and docker registry to download the container from.
     :type image_source_registry:
      ~azure.mgmt.batchai.models.ImageSourceRegistry
-    :param shm_size: Size of /dev/shm. Please refer to docker documentation
-     for supported argument formats.
+    :param shm_size: /dev/shm size. Size of /dev/shm. Please refer to docker
+     documentation for supported argument formats.
     :type shm_size: str
     """
 

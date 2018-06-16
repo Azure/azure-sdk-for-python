@@ -13,13 +13,14 @@ from msrest.serialization import Model
 
 
 class WorkspaceCreateParameters(Model):
-    """Parameters supplied to the Create operation.
+    """Workspace creation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The region in which to create the Workspace.
+    :param location: Required. Location. The region in which to create the
+     Workspace.
     :type location: str
-    :param tags: The user specified tags associated with the Workspace.
+    :param tags: Tags. The user specified tags associated with the Workspace.
     :type tags: dict[str, str]
     """
 

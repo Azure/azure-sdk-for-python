@@ -18,7 +18,7 @@ class BatchAIError(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: An identifier for the error. Codes are invariant and are
+    :ivar code: An identifier of the error. Codes are invariant and are
      intended to be consumed programmatically.
     :vartype code: str
     :ivar message: A message describing the error, intended to be suitable for

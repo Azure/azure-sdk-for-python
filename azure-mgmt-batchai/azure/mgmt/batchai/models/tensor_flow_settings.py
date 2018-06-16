@@ -13,35 +13,39 @@ from msrest.serialization import Model
 
 
 class TensorFlowSettings(Model):
-    """Specifies the settings for TensorFlow job.
+    """TensorFlow job settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param python_script_file_path: Required. The path and file name of the
-     python script to execute the job.
+    :param python_script_file_path: Required. Python script file path. The
+     python script to execute.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter.
+    :param python_interpreter_path: Python interpreter path. The path to the
+     Python interpreter.
     :type python_interpreter_path: str
-    :param master_command_line_args: Specifies the command line arguments for
-     the master task.
+    :param master_command_line_args: Master command line arguments. Command
+     line arguments that needs to be passed to the python script for the master
+     task.
     :type master_command_line_args: str
-    :param worker_command_line_args: Specifies the command line arguments for
-     the worker task. This property is optional for single machine training.
+    :param worker_command_line_args: Worker command line arguments. Command
+     line arguments that needs to be passed to the python script for the worker
+     task. Optional for single process jobs.
     :type worker_command_line_args: str
-    :param parameter_server_command_line_args: Specifies the command line
-     arguments for the parameter server task. This property is optional for
-     single machine training.
+    :param parameter_server_command_line_args: Parameter server command line
+     arguments. Command line arguments that needs to be passed to the python
+     script for the parameter server. Optional for single process jobs.
     :type parameter_server_command_line_args: str
-    :param worker_count: The number of worker tasks. If specified, the value
-     must be less than or equal to (nodeCount * numberOfGPUs per VM). If not
-     specified, the default value is equal to nodeCount. This property can be
-     specified only for distributed TensorFlow training
+    :param worker_count: Worker count. The number of worker tasks. If
+     specified, the value must be less than or equal to (nodeCount *
+     numberOfGPUs per VM). If not specified, the default value is equal to
+     nodeCount. This property can be specified only for distributed TensorFlow
+     training.
     :type worker_count: int
-    :param parameter_server_count: The number of parmeter server tasks. If
-     specified, the value must be less than or equal to nodeCount. If not
-     specified, the default value is equal to 1 for distributed TensorFlow
-     training (This property is not applicable for single machine training).
-     This property can be specified only for distributed TensorFlow training.
+    :param parameter_server_count: Parameter server count. The number of
+     parameter server tasks. If specified, the value must be less than or equal
+     to nodeCount. If not specified, the default value is equal to 1 for
+     distributed TensorFlow training. This property can be specified only for
+     distributed TensorFlow training.
     :type parameter_server_count: int
     """
 

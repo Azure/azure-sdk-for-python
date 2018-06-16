@@ -13,27 +13,29 @@ from msrest.serialization import Model
 
 
 class CNTKsettings(Model):
-    """Specifies the settings for CNTK (aka Microsoft Cognitive Toolkit) job.
+    """CNTK (aka Microsoft Cognitive Toolkit) job settings.
 
-    :param language_type: Specifies the language type to use for launching
+    :param language_type: Language type. The language to use for launching
      CNTK (aka Microsoft Cognitive Toolkit) job. Valid values are 'BrainScript'
      or 'Python'.
     :type language_type: str
-    :param config_file_path: Specifies the path of the config file. This
-     property can be specified only if the languageType is 'BrainScript'.
+    :param config_file_path: Config file path. Specifies the path of the
+     BrainScript config file. This property can be specified only if the
+     languageType is 'BrainScript'.
     :type config_file_path: str
-    :param python_script_file_path: The path and file name of the python
-     script to execute the job. This property can be specified only if the
-     languageType is 'Python'.
+    :param python_script_file_path: Python script file path. Python script to
+     execute. This property can be specified only if the languageType is
+     'Python'.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter. This
-     property can be specified only if the languageType is 'Python'.
+    :param python_interpreter_path: Python interpreter path. The path to the
+     Python interpreter. This property can be specified only if the
+     languageType is 'Python'.
     :type python_interpreter_path: str
-    :param command_line_args: Command line arguments that needs to be passed
-     to the python script or CNTK.exe.
+    :param command_line_args: Command line arguments. Command line arguments
+     that needs to be passed to the python script or cntk executable.
     :type command_line_args: str
-    :param process_count: Number of processes parameter that is passed to MPI
-     runtime. The default value for this property is equal to nodeCount
+    :param process_count: Process count. Number of processes to launch for the
+     job execution. The default value for this property is equal to nodeCount
      property
     :type process_count: int
     """

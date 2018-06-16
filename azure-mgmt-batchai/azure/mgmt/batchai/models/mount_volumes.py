@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class MountVolumes(Model):
     """Details of volumes to mount on the cluster.
 
-    :param azure_file_shares: Azure File Share setup configuration. References
-     to Azure File Shares that are to be mounted to the cluster nodes.
+    :param azure_file_shares: Azure File Shares. A collection of Azure File
+     Shares that are to be mounted to the cluster nodes.
     :type azure_file_shares:
      list[~azure.mgmt.batchai.models.AzureFileShareReference]
-    :param azure_blob_file_systems: Azure Blob FileSystem setup configuration.
-     References to Azure Blob FUSE that are to be mounted to the cluster nodes.
+    :param azure_blob_file_systems: Azure Blob file systems. A collection of
+     Azure Blob Containers that are to be mounted to the cluster nodes.
     :type azure_blob_file_systems:
      list[~azure.mgmt.batchai.models.AzureBlobFileSystemReference]
-    :param file_servers: References to a list of file servers that are mounted
-     to the cluster node.
+    :param file_servers: File Servers. A collection of Batch AI File Servers
+     that are to be mounted to the cluster nodes.
     :type file_servers: list[~azure.mgmt.batchai.models.FileServerReference]
-    :param unmanaged_file_systems: References to a list of file servers that
-     are mounted to the cluster node.
+    :param unmanaged_file_systems: Unmanaged file systems. A collection of
+     unmanaged file systems that are to be mounted to the cluster nodes.
     :type unmanaged_file_systems:
      list[~azure.mgmt.batchai.models.UnmanagedFileSystemReference]
     """

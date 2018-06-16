@@ -13,14 +13,17 @@ from msrest.serialization import Model
 
 
 class MountSettings(Model):
-    """Details of the File Server.
+    """File Server Mount Information.
 
-    :param mount_point: Path where the NFS is mounted on the Server.
+    :param mount_point: Mount Point. Path where the NFS is mounted on the File
+     Server.
     :type mount_point: str
-    :param file_server_public_ip: Public IP of the File Server VM.
+    :param file_server_public_ip: Public IP. Public IP address of the File
+     Server which can be used to SSH to the node from outside of the subnet.
     :type file_server_public_ip: str
-    :param file_server_internal_ip: Internal subnet IP which can be used to
-     access the file Server from within the subnet.
+    :param file_server_internal_ip: Internal IP. Internal IP address of the
+     File Server which can be used to access the File Server from within the
+     subnet.
     :type file_server_internal_ip: str
     """
 

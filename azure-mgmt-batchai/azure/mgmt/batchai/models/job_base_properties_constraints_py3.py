@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class JobBasePropertiesConstraints(Model):
     """Constraints associated with the Job.
 
-    :param max_wall_clock_time: Max time the job can run. Default Value = 1
-     week. Default value: "7.00:00:00" .
+    :param max_wall_clock_time: Max wall clock time. Max time the job can run.
+     Default value: 1 week. Default value: "7.00:00:00" .
     :type max_wall_clock_time: timedelta
     """
 

@@ -17,14 +17,15 @@ class PrivateRegistryCredentials(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param username: Required. User name to login.
+    :param username: Required. User name. User name to login to the
+     repository.
     :type username: str
-    :param password: Password to login. One of password or
-     passwordSecretReference must be specified.
+    :param password: Password. User password to login to the docker
+     repository. One of password or passwordSecretReference must be specified.
     :type password: str
-    :param password_secret_reference: Specifies the location of the password,
-     which is a Key Vault Secret. Users can store their secrets in Azure
-     KeyVault and pass it to the Batch AI Service to integrate with KeyVault.
+    :param password_secret_reference: Password secret reference. KeyVault
+     Secret storing the password. Users can store their secrets in Azure
+     KeyVault and pass it to the Batch AI service to integrate with KeyVault.
      One of password or passwordSecretReference must be specified.
     :type password_secret_reference:
      ~azure.mgmt.batchai.models.KeyVaultSecretReference

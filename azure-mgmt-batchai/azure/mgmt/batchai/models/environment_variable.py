@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class EnvironmentVariable(Model):
-    """A collection of environment variables to set.
+    """An environment variable definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
+    :param name: Required. Name. The name of the environment variable.
     :type name: str
-    :param value: Required. The value of the environment variable.
+    :param value: Required. Value. The value of the environment variable.
     :type value: str
     """
 

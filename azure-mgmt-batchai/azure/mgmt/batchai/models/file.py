@@ -18,18 +18,18 @@ class File(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of the file.
+    :ivar name: Name. Name of the file.
     :vartype name: str
-    :ivar file_type: Contains information about file type. Possible values
-     include: 'file', 'directory'
+    :ivar file_type: File type. Type of the file. Possible values are file and
+     directory. Possible values include: 'file', 'directory'
     :vartype file_type: str or ~azure.mgmt.batchai.models.FileType
-    :ivar download_url: Will contain an URL to download the corresponding
-     file. The downloadUrl is not returned for directories.
+    :ivar download_url: Download URL. URL to download the corresponding file.
+     The downloadUrl is not returned for directories.
     :vartype download_url: str
-    :ivar last_modified: The time at which the file was last modified. The
-     time at which the file was last modified.
+    :ivar last_modified: Last modified time. The time at which the file was
+     last modified.
     :vartype last_modified: datetime
-    :ivar content_length: The file size. The file size.
+    :ivar content_length: Content length. The file of the size.
     :vartype content_length: long
     """
 

@@ -167,7 +167,8 @@ class ClustersOperations(object):
          alphanumeric characters along with dash (-) and underscore (_). The
          name must be from 1 through 64 characters long.
         :type cluster_name: str
-        :param scale_settings: Desired scale for the cluster
+        :param scale_settings: Scale settings Desired scale settings for the
+         cluster. Batch AI service supports manual and auto scale clusters.
         :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
