@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class MountSettings(Model):
-    """File Server Mount Information.
+    """File Server mount Information.
 
-    :param mount_point: Mount Point. Path where the NFS is mounted on the File
-     Server.
+    :param mount_point: Mount Point. Path where the data disks are mounted on
+     the File Server.
     :type mount_point: str
     :param file_server_public_ip: Public IP. Public IP address of the File
      Server which can be used to SSH to the node from outside of the subnet.

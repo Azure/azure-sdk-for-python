@@ -17,11 +17,11 @@ class KeyVaultSecretReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_vault: Required. Key Vault resource ID. Fully qualified
-     resource ID for the Key Vault.
+    :param source_vault: Required. Key Vault resource identifier. Fully
+     qualified resource indentifier of the Key Vault.
     :type source_vault: ~azure.mgmt.batchai.models.ResourceId
-    :param secret_url: Required. Secret URL. The URL referencing a secret in a
-     Key Vault.
+    :param secret_url: Required. Secret URL. The URL referencing a secret in
+     the Key Vault.
     :type secret_url: str
     """
 

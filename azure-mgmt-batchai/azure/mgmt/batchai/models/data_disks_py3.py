@@ -20,7 +20,7 @@ class DataDisks(Model):
     :param disk_size_in_gb: Required. Disk size in GB. Disk size in GB for the
      blank data disks.
     :type disk_size_in_gb: int
-    :param caching_type: Caching Type. Caching Type for the disks. Available
+    :param caching_type: Caching type. Caching type for the disks. Available
      values are none (default), readonly, readwrite. Caching type can be set
      only for VM sizes supporting premium storage. Possible values include:
      'none', 'readonly', 'readwrite'. Default value: "none" .
