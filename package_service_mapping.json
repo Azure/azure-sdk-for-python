@@ -1,4 +1,11 @@
 {
+  "azure-applicationinsights": {
+		"service_name": "Application Insights",
+		"category ": "Client",
+    "namespaces": [
+      "azure.applicationinsights"
+    ]
+	},
   "azure-batch": {
     "category ": "Client",
     "namespaces": [
