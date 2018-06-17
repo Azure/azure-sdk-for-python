@@ -21,6 +21,10 @@ Wheels are provided for all major operating systems, so you can install directly
 
     $ pip install azure-eventhub
 
+Python 2.7 support
+++++++++++++++++++
+The uAMQP library currently only supports Python 3.4 and above. Python 2.7 support is planned for a future release.
+
 
 Examples
 +++++++++
