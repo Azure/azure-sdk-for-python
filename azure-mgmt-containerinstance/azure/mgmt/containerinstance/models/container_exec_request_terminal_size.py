@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class ContainerExecRequestTerminalSize(Model):
     """The size of the terminal.
 
-    :param row: The row size of the terminal
-    :type row: int
-    :param column: The column size of the terminal
-    :type column: int
+    :param rows: The row size of the terminal
+    :type rows: int
+    :param cols: The column size of the terminal
+    :type cols: int
     """
 
     _attribute_map = {
-        'row': {'key': 'row', 'type': 'int'},
-        'column': {'key': 'column', 'type': 'int'},
+        'rows': {'key': 'rows', 'type': 'int'},
+        'cols': {'key': 'cols', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(ContainerExecRequestTerminalSize, self).__init__(**kwargs)
-        self.row = kwargs.get('row', None)
-        self.column = kwargs.get('column', None)
+        self.rows = kwargs.get('rows', None)
+        self.cols = kwargs.get('cols', None)
