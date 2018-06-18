@@ -24,7 +24,7 @@ class Caffe2Settings(Model):
      Python interpreter.
     :type python_interpreter_path: str
     :param command_line_args: Command line arguments. Command line arguments
-     that needs to be passed to the python script.
+     that need to be passed to the python script.
     :type command_line_args: str
     """
 

@@ -27,7 +27,7 @@ class CaffeSettings(Model):
      pythonScriptFilePath is specified.
     :type python_interpreter_path: str
     :param command_line_args: Command line arguments. Command line arguments
-     that needs to be passed to the Caffe job.
+     that need to be passed to the Caffe job.
     :type command_line_args: str
     :param process_count: Process count. Number of processes to launch for the
      job execution. The default value for this property is equal to nodeCount

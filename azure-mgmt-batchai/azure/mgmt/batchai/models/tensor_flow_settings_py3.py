@@ -24,15 +24,15 @@ class TensorFlowSettings(Model):
      Python interpreter.
     :type python_interpreter_path: str
     :param master_command_line_args: Master command line arguments. Command
-     line arguments that needs to be passed to the python script for the master
+     line arguments that need to be passed to the python script for the master
      task.
     :type master_command_line_args: str
     :param worker_command_line_args: Worker command line arguments. Command
-     line arguments that needs to be passed to the python script for the worker
+     line arguments that need to be passed to the python script for the worker
      task. Optional for single process jobs.
     :type worker_command_line_args: str
     :param parameter_server_command_line_args: Parameter server command line
-     arguments. Command line arguments that needs to be passed to the python
+     arguments. Command line arguments that need to be passed to the python
      script for the parameter server. Optional for single process jobs.
     :type parameter_server_command_line_args: str
     :param worker_count: Worker count. The number of worker tasks. If
