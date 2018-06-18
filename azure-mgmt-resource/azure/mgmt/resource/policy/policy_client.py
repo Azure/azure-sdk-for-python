@@ -121,7 +121,7 @@ class PolicyClient(MultiApiClientMixin):
             from .v2018_03_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def policy_assignments(self):
         """Instance depends on the API version:
