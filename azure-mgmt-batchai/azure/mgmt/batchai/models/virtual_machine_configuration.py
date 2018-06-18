@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class VirtualMachineConfiguration(Model):
-    """Settings for OS image.
+    """VM configuration.
 
-    :param image_reference: Reference to OS image.
+    :param image_reference: Image reference. OS image reference for cluster
+     nodes.
     :type image_reference: ~azure.mgmt.batchai.models.ImageReference
     """
 

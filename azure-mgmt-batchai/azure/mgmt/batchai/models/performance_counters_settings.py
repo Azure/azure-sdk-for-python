@@ -17,10 +17,10 @@ class PerformanceCountersSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param app_insights_reference: Required. Specifies Azure Application
-     Insights information for performance counters reporting. If provided,
-     Batch AI will upload node performance counters to the corresponding Azure
-     Application Insights account.
+    :param app_insights_reference: Required. Azure Application Insights
+     reference. Azure Application Insights information for performance counters
+     reporting. If provided, Batch AI will upload node performance counters to
+     the corresponding Azure Application Insights account.
     :type app_insights_reference:
      ~azure.mgmt.batchai.models.AppInsightsReference
     """

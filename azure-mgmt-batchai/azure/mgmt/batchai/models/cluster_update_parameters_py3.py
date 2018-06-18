@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class ClusterUpdateParameters(Model):
-    """Parameters supplied to the Update operation.
+    """Cluster update parameters.
 
-    :param scale_settings: Desired scale for the cluster.
+    :param scale_settings: Scale settings. Desired scale settings for the
+     cluster. Batch AI service supports manual and auto scale clusters.
     :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
     """
 

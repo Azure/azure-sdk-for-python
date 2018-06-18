@@ -13,21 +13,21 @@ from msrest.serialization import Model
 
 
 class ImageReference(Model):
-    """The image reference.
+    """The OS image reference.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param publisher: Required. Publisher of the image.
+    :param publisher: Required. Publisher. Publisher of the image.
     :type publisher: str
-    :param offer: Required. Offer of the image.
+    :param offer: Required. Offer. Offer of the image.
     :type offer: str
-    :param sku: Required. SKU of the image.
+    :param sku: Required. SKU. SKU of the image.
     :type sku: str
-    :param version: Version of the image.
+    :param version: Version. Version of the image.
     :type version: str
-    :param virtual_machine_image_id: The ARM resource identifier of the
-     virtual machine image. Computes nodes of the cluster will be created using
-     this custom image. This is of the form
+    :param virtual_machine_image_id: Custom VM image resource ID. The ARM
+     resource identifier of the virtual machine image for the compute nodes.
+     This is of the form
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
      The virtual machine image must be in the same region and subscription as
      the cluster. For information about the firewall settings for the Batch

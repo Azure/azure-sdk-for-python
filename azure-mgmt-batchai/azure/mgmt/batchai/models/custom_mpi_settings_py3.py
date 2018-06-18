@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class CustomMpiSettings(Model):
-    """Specifies the settings for a custom MPI job.
+    """Custom MPI job settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. The program and program command line
-     parameters to be executed by mpi runtime.
+    :param command_line: Required. Command line. The command line to be
+     executed by mpi runtime on each compute node.
     :type command_line: str
-    :param process_count: Number of processes parameter that is passed to MPI
-     runtime. The default value for this property is equal to nodeCount
+    :param process_count: Process count. Number of processes to launch for the
+     job execution. The default value for this property is equal to nodeCount
      property
     :type process_count: int
     """

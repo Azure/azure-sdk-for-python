@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class CustomToolkitSettings(Model):
-    """Specifies the settings for a custom tool kit job.
+    """Custom tool kit job settings.
 
-    :param command_line: The command line to execute the custom toolkit Job.
+    :param command_line: Command line. The command line to execute on the
+     master node.
     :type command_line: str
     """
 

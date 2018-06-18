@@ -18,9 +18,11 @@ class ScaleSettings(Model):
     specified, the system automatically scales the cluster up and down (within
     the supplied limits) based on the pending jobs on the cluster.
 
-    :param manual: The scale for the cluster by manual settings.
+    :param manual: Manual scale settings. Manual scale settings for the
+     cluster.
     :type manual: ~azure.mgmt.batchai.models.ManualScaleSettings
-    :param auto_scale: The scale for the cluster by autoscale settings.
+    :param auto_scale: Auto-scale settings. Auto-scale settings for the
+     cluster.
     :type auto_scale: ~azure.mgmt.batchai.models.AutoScaleSettings
     """
 

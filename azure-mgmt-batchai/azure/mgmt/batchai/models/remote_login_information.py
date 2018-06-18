@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class RemoteLoginInformation(Model):
-    """Contains remote login details to SSH/RDP to a compute node in cluster.
+    """Login details to SSH to a compute node in cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar node_id: Id of the compute node
+    :ivar node_id: Node ID. ID of the compute node.
     :vartype node_id: str
-    :ivar ip_address: ip address
+    :ivar ip_address: IP address. Public IP address of the compute node.
     :vartype ip_address: str
-    :ivar port: port number.
+    :ivar port: Port. SSH port number of the node.
     :vartype port: float
     """
 

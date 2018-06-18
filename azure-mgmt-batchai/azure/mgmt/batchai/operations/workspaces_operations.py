@@ -257,9 +257,11 @@ class WorkspacesOperations(object):
          (-) and underscore (_). The name must be from 1 through 64 characters
          long.
         :type workspace_name: str
-        :param location: The region in which to create the Workspace.
+        :param location: Location. The region in which to create the
+         Workspace.
         :type location: str
-        :param tags: The user specified tags associated with the Workspace.
+        :param tags: Tags. The user specified tags associated with the
+         Workspace.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -314,7 +316,8 @@ class WorkspacesOperations(object):
          (-) and underscore (_). The name must be from 1 through 64 characters
          long.
         :type workspace_name: str
-        :param tags: The user specified tags associated with the Workspace.
+        :param tags: Tags. The user specified tags associated with the
+         Workspace.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

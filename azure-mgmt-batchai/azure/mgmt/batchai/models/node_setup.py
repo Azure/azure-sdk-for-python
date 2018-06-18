@@ -13,23 +13,21 @@ from msrest.serialization import Model
 
 
 class NodeSetup(Model):
-    """Use this to prepare the VM. NOTE: The volumes specified in mountVolumes are
-    mounted first and then the setupTask is run. Therefore the setup task can
-    use local mountPaths in its execution.
+    """Node setup settings.
 
-    :param setup_task: Specifies a setup task which can be used to customize
-     the compute nodes of the cluster. The NodeSetup task runs everytime a VM
-     is rebooted. For that reason the task code needs to be idempotent.
-     Generally it is used to either download static data that is required for
-     all jobs that run on the cluster VMs or to download/install software.
+    :param setup_task: Setup task. Setup task to run on cluster nodes when
+     nodes got created or rebooted. The setup task code needs to be idempotent.
+     Generally the setup task is used to download static data that is required
+     for all jobs that run on the cluster VMs and/or to download/install
+     software.
     :type setup_task: ~azure.mgmt.batchai.models.SetupTask
-    :param mount_volumes: Information on shared volumes to be used by jobs.
-     Specified mount volumes will be available to all jobs executing on the
-     cluster. The volumes will be mounted at location specified by
-     $AZ_BATCHAI_MOUNT_ROOT environment variable.
+    :param mount_volumes: Mount volumes. Mount volumes to be available to
+     setup task and all jobs executing on the cluster. The volumes will be
+     mounted at location specified by $AZ_BATCHAI_MOUNT_ROOT environment
+     variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
-    :param performance_counters_settings: Specifies settings for performance
-     counters collecting and uploading.
+    :param performance_counters_settings: Performance counters settings.
+     Settings for performance counters collecting and uploading.
     :type performance_counters_settings:
      ~azure.mgmt.batchai.models.PerformanceCountersSettings
     """

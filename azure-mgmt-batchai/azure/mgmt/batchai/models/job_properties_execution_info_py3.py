@@ -13,26 +13,25 @@ from msrest.serialization import Model
 
 
 class JobPropertiesExecutionInfo(Model):
-    """Contains information about the execution of a job in the Azure Batch
-    service.
+    """Information about the execution of a job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar start_time: The time at which the job started running. 'Running'
-     corresponds to the running state. If the job has been restarted or
-     retried, this is the most recent time at which the job started running.
+    :ivar start_time: Start time. The time at which the job started running.
+     'Running' corresponds to the running state. If the job has been restarted
+     or retried, this is the most recent time at which the job started running.
      This property is present only for job that are in the running or completed
      state.
     :vartype start_time: datetime
-    :ivar end_time: The time at which the job completed. This property is only
-     returned if the job is in completed state.
+    :ivar end_time: End time. The time at which the job completed. This
+     property is only returned if the job is in completed state.
     :vartype end_time: datetime
-    :ivar exit_code: The exit code of the job. This property is only returned
-     if the job is in completed state.
+    :ivar exit_code: Exit code. The exit code of the job. This property is
+     only returned if the job is in completed state.
     :vartype exit_code: int
-    :ivar errors: Contains details of various errors encountered by the
-     service during job execution.
+    :ivar errors: Errors. A collection of errors encountered by the service
+     during job execution.
     :vartype errors: list[~azure.mgmt.batchai.models.BatchAIError]
     """
 
