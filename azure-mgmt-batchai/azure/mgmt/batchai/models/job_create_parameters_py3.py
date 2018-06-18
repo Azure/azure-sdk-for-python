@@ -18,8 +18,8 @@ class JobCreateParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param scheduling_priority: Scheduling priority. Scheduling priority
-     associated with the job. Possible values include: 'low', 'normal', 'high'.
-     Default value: "normal" .
+     associated with the job. Possible values: low, normal, high. Possible
+     values include: 'low', 'normal', 'high'. Default value: "normal" .
     :type scheduling_priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Required. Cluster. Resource ID of the cluster on which
      this job will run.
