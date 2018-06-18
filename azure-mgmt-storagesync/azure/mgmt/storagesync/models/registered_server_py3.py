@@ -57,6 +57,10 @@ class RegisteredServer(Model):
     :type resource_location: str
     :param service_location: Service Location
     :type service_location: str
+    :param friendly_name: Friendly Name
+    :type friendly_name: str
+    :param management_endpoint_uri: Management Endpoint Uri
+    :type management_endpoint_uri: str
     """
 
     _validation = {
@@ -85,9 +89,11 @@ class RegisteredServer(Model):
         'discovery_endpoint_uri': {'key': 'properties.discoveryEndpointUri', 'type': 'str'},
         'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
         'service_location': {'key': 'properties.serviceLocation', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'management_endpoint_uri': {'key': 'properties.managementEndpointUri', 'type': 'str'},
     }
 
-    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, **kwargs) -> None:
+    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, **kwargs) -> None:
         super(RegisteredServer, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -108,3 +114,5 @@ class RegisteredServer(Model):
         self.discovery_endpoint_uri = discovery_endpoint_uri
         self.resource_location = resource_location
         self.service_location = service_location
+        self.friendly_name = friendly_name
+        self.management_endpoint_uri = management_endpoint_uri

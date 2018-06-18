@@ -42,7 +42,7 @@ class ServerEndpoint(Resource):
     :param last_operation_name: Resource Last Operation Name
     :type last_operation_name: str
     :param sync_status: Sync Health Status
-    :type sync_status: str
+    :type sync_status: object
     """
 
     _validation = {
@@ -64,7 +64,7 @@ class ServerEndpoint(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
-        'sync_status': {'key': 'properties.syncStatus', 'type': 'str'},
+        'sync_status': {'key': 'properties.syncStatus', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
