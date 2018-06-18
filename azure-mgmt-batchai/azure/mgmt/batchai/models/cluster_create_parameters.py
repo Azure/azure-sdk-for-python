@@ -36,9 +36,8 @@ class ClusterCreateParameters(Model):
      image.
     :type virtual_machine_configuration:
      ~azure.mgmt.batchai.models.VirtualMachineConfiguration
-    :param node_setup: Node setup. Setup (mount file systems, performance
-     counters settings and custom setup task) to be performed on each compute
-     node in the cluster.
+    :param node_setup: Node setup. Setup to be performed on each compute node
+     in the cluster.
     :type node_setup: ~azure.mgmt.batchai.models.NodeSetup
     :param user_account_settings: Required. User account settings. Settings
      for an administrator user account that will be created on each compute
