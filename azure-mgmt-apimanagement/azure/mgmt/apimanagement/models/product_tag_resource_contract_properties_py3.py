@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .product_entity_base_parameters import ProductEntityBaseParameters
+from .product_entity_base_parameters_py3 import ProductEntityBaseParameters
 
 
 class ProductTagResourceContractProperties(ProductEntityBaseParameters):
