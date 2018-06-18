@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ScheduleAssociationProperty(Model):
     """The schedule property associated with the entity.
 
-    :param name: Gets or sets the name of the schedule.
+    :param name: Gets or sets the name of the Schedule.
     :type name: str
     """
 

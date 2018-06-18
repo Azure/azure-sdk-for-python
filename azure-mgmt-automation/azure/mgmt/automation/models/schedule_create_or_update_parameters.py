@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ScheduleCreateOrUpdateParameters(Model):
     """The parameters supplied to the create or update schedule operation.
 
-    :param name: Gets or sets the name of the schedule.
+    :param name: Gets or sets the name of the Schedule.
     :type name: str
     :param description: Gets or sets the description of the schedule.
     :type description: str
