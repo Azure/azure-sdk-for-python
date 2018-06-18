@@ -89,6 +89,12 @@ class ApplicationGateway(Resource):
     :param enable_http2: Whether HTTP2 is enabled on the application gateway
      resource.
     :type enable_http2: bool
+    :param enable_fips: Whether FIPS is enabled on the application gateway
+     resource.
+    :type enable_fips: bool
+    :param autoscale_configuration: Autoscale Configuration.
+    :type autoscale_configuration:
+     ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayAutoscaleConfiguration
     :param resource_guid: Resource GUID property of the application gateway
      resource.
     :type resource_guid: str
@@ -98,6 +104,9 @@ class ApplicationGateway(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param zones: A list of availability zones denoting where the resource
+     needs to come from.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -129,12 +138,15 @@ class ApplicationGateway(Resource):
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
+        'enable_fips': {'key': 'properties.enableFIPS', 'type': 'bool'},
+        'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -153,6 +165,9 @@ class ApplicationGateway(Resource):
         self.redirect_configurations = redirect_configurations
         self.web_application_firewall_configuration = web_application_firewall_configuration
         self.enable_http2 = enable_http2
+        self.enable_fips = enable_fips
+        self.autoscale_configuration = autoscale_configuration
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
+        self.zones = zones

@@ -53,6 +53,8 @@ try:
     from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
+    from .application_gateway_autoscale_bounds_py3 import ApplicationGatewayAutoscaleBounds
+    from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway_py3 import ApplicationGateway
     from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group_py3 import ApplicationGatewayFirewallRuleGroup
@@ -248,6 +250,8 @@ except (SyntaxError, ImportError):
     from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
+    from .application_gateway_autoscale_bounds import ApplicationGatewayAutoscaleBounds
+    from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway import ApplicationGateway
     from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
@@ -558,6 +562,8 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
+    'ApplicationGatewayAutoscaleBounds',
+    'ApplicationGatewayAutoscaleConfiguration',
     'ApplicationGateway',
     'ApplicationGatewayFirewallRule',
     'ApplicationGatewayFirewallRuleGroup',
