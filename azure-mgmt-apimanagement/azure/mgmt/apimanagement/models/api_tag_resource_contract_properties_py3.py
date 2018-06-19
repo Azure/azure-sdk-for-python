@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .api_entity_base_contract import ApiEntityBaseContract
+from .api_entity_base_contract_py3 import ApiEntityBaseContract
 
 
 class ApiTagResourceContractProperties(ApiEntityBaseContract):
