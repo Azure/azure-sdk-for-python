@@ -14,8 +14,8 @@ class ApplicationInsightsQueryTest(AzureMgmtTestCase):
         # All queries should return at least a table.
         self.assertGreaterEqual(len(result.tables), 1)
 
-        # Request table schema has 4 columns.
-        self.assertEqual(len(result.tables[0].columns), 4)
+        # Request table schema has 37 columns.
+        self.assertEqual(len(result.tables[0].columns), 37)
 
         # The application should contain enough data to retrieve 10 rows, as asked
         self.assertEqual(len(result.tables[0].rows), 10)
