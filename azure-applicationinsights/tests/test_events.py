@@ -23,7 +23,7 @@ class ApplicationInsightsEventsTest(AzureMgmtTestCase):
         ]
         self.noneProps = ['interval', 'segments']
 
-    def est_events_get_by_type(self):
+    def test_events_get_by_type(self):
         eventType = 'requests'
         result = self.client.events.get_by_type(self.application, eventType)
         self.assertIsNotNone(result.value)
@@ -31,7 +31,7 @@ class ApplicationInsightsEventsTest(AzureMgmtTestCase):
         self.assertTrue(hasattr(result, 'value'))
         self.check_props(result)
         
-    def est_events_get(self):
+    def test_events_get(self):
         eventType = 'requests'
         eventId = '923e9660-7385-11e8-80fe-b756f505275f'
         result = self.client.events.get(self.application, eventType, eventId)
