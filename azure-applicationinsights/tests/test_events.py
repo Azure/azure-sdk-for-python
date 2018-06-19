@@ -1,4 +1,5 @@
 from azure.applicationinsights import ApplicationInsightsDataClient
+from azure.applicationinsights.models import MetricsPostBodySchema, MetricsPostBodySchemaParameters
 from devtools_testutils import AzureMgmtTestCase
 
 class ApplicationInsightsEventsTest(AzureMgmtTestCase):
@@ -42,7 +43,7 @@ class ApplicationInsightsEventsTest(AzureMgmtTestCase):
     def test_events_get_odata_metadata(self):
         result = self.client.events.get_odata_metadata(self.application)
         # WIP
-        print(result)
+        self.assertIsNotNone(result)
         
     def check_props(self, result):
         self.assertTrue(hasattr(result, 'value'))
