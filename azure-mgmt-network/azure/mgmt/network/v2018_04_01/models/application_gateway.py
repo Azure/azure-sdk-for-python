@@ -138,7 +138,7 @@ class ApplicationGateway(Resource):
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
-        'enable_fips': {'key': 'properties.enableFIPS', 'type': 'bool'},
+        'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},

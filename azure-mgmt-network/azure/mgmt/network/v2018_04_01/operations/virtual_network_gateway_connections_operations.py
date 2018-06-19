@@ -337,7 +337,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualNetworkGatewayConnectionListEntity', response)
+            deserialized = self._deserialize('VirtualNetworkGatewayConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -362,13 +362,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         VirtualNetworkGatewayConnectionListEntity or
-         ClientRawResponse<VirtualNetworkGatewayConnectionListEntity> if
-         raw==True
+         VirtualNetworkGatewayConnection or
+         ClientRawResponse<VirtualNetworkGatewayConnection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_04_01.models.VirtualNetworkGatewayConnectionListEntity]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_04_01.models.VirtualNetworkGatewayConnection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_04_01.models.VirtualNetworkGatewayConnectionListEntity]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_04_01.models.VirtualNetworkGatewayConnection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_tags_initial(
@@ -381,7 +380,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VirtualNetworkGatewayConnectionListEntity', response)
+            deserialized = self._deserialize('VirtualNetworkGatewayConnection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -400,8 +399,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
 
     def _set_shared_key_initial(
-            self, resource_group_name, virtual_network_gateway_connection_name, value, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ConnectionSharedKey(value=value)
+            self, resource_group_name, virtual_network_gateway_connection_name, value, id=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ConnectionSharedKey(id=id, value=value)
 
         # Construct URL
         url = self.set_shared_key.metadata['url']
@@ -453,7 +452,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         return deserialized
 
     def set_shared_key(
-            self, resource_group_name, virtual_network_gateway_connection_name, value, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, value, id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the
         virtual network gateway connection shared key for passed virtual
         network gateway connection in the specified resource group through
@@ -466,6 +465,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :type virtual_network_gateway_connection_name: str
         :param value: The virtual network connection shared key value.
         :type value: str
+        :param id: Resource ID.
+        :type id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -483,6 +484,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             value=value,
+            id=id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

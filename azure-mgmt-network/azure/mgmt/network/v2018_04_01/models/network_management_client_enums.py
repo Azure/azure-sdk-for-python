@@ -265,6 +265,7 @@ class ProbeProtocol(str, Enum):
 
     http = "Http"
     tcp = "Tcp"
+    https = "Https"
 
 
 class NetworkOperationStatus(str, Enum):
