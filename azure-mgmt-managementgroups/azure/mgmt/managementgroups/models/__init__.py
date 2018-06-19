@@ -24,6 +24,7 @@ try:
     from .operation_results_py3 import OperationResults
     from .entity_parent_group_info_py3 import EntityParentGroupInfo
     from .entity_info_py3 import EntityInfo
+    from .entity_list_result_py3 import EntityListResult
     from .entity_hierarchy_item_py3 import EntityHierarchyItem
     from .patch_management_group_request_py3 import PatchManagementGroupRequest
     from .create_parent_group_info_py3 import CreateParentGroupInfo
@@ -46,6 +47,7 @@ except (SyntaxError, ImportError):
     from .operation_results import OperationResults
     from .entity_parent_group_info import EntityParentGroupInfo
     from .entity_info import EntityInfo
+    from .entity_list_result import EntityListResult
     from .entity_hierarchy_item import EntityHierarchyItem
     from .patch_management_group_request import PatchManagementGroupRequest
     from .create_parent_group_info import CreateParentGroupInfo
@@ -55,7 +57,6 @@ except (SyntaxError, ImportError):
     from .check_name_availability_request import CheckNameAvailabilityRequest
 from .management_group_info_paged import ManagementGroupInfoPaged
 from .operation_paged import OperationPaged
-from .entity_info_paged import EntityInfoPaged
 from .management_groups_api_enums import (
     Reason,
     Status,
@@ -77,6 +78,7 @@ __all__ = [
     'OperationResults',
     'EntityParentGroupInfo',
     'EntityInfo',
+    'EntityListResult',
     'EntityHierarchyItem',
     'PatchManagementGroupRequest',
     'CreateParentGroupInfo',
@@ -86,7 +88,6 @@ __all__ = [
     'CheckNameAvailabilityRequest',
     'ManagementGroupInfoPaged',
     'OperationPaged',
-    'EntityInfoPaged',
     'Reason',
     'Status',
     'Type',
