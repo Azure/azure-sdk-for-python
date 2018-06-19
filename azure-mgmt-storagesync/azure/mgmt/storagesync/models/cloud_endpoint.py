@@ -44,6 +44,8 @@ class CloudEndpoint(Resource):
     :type provisioning_state: str
     :param last_workflow_id: CloudEndpoint lastWorkflowId
     :type last_workflow_id: str
+    :param last_operation_name: Resource Last Operation Name
+    :type last_operation_name: str
     """
 
     _validation = {
@@ -67,6 +69,7 @@ class CloudEndpoint(Resource):
         'backup_enabled': {'key': 'properties.backupEnabled', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
+        'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -81,3 +84,4 @@ class CloudEndpoint(Resource):
         self.backup_enabled = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)
+        self.last_operation_name = kwargs.get('last_operation_name', None)

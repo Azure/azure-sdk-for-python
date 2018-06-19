@@ -33,40 +33,16 @@ class ServerEndpoint(Resource):
     :type volume_free_space_percent: int
     :param friendly_name: Friendly Name
     :type friendly_name: str
-    :param last_sync_success: Last Sync Success
-    :type last_sync_success: datetime
-    :param sync_error_state: Sync Error State
-    :type sync_error_state: str
-    :param sync_error_state_timestamp: Sync Error State Timestamp
-    :type sync_error_state_timestamp: datetime
-    :param sync_error_direction: Sync Error Direction. Possible values
-     include: 'none', 'initialize', 'download', 'upload', 'recall'
-    :type sync_error_direction: str or ~azure.mgmt.storagesync.models.enum
-    :param item_upload_error_count: Item Upload Error Count.
-    :type item_upload_error_count: int
-    :param item_download_error_count: Item download error count.
-    :type item_download_error_count: int
-    :param sync_error_context: sync error context.
-    :type sync_error_context: str
-    :param current_progress_type: current progress type. Possible values
-     include: 'none', 'initialize', 'download', 'upload', 'recall'
-    :type current_progress_type: str or ~azure.mgmt.storagesync.models.enum
-    :param item_progress_count: Item Progress Count
-    :type item_progress_count: int
-    :param item_total_count: Item Total Count
-    :type item_total_count: int
-    :param byte_progress: Bytes in progress
-    :type byte_progress: int
-    :param total_progress: Total progress
-    :type total_progress: int
-    :param byte_total: Bytes total
-    :type byte_total: int
     :param server_resource_id: Server Resource Id.
     :type server_resource_id: str
     :param provisioning_state: ServerEndpoint Provisioning State
     :type provisioning_state: str
     :param last_workflow_id: ServerEndpoint lastWorkflowId
     :type last_workflow_id: str
+    :param last_operation_name: Resource Last Operation Name
+    :type last_operation_name: str
+    :param sync_status: Sync Health Status
+    :type sync_status: object
     """
 
     _validation = {
@@ -84,22 +60,11 @@ class ServerEndpoint(Resource):
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'last_sync_success': {'key': 'properties.lastSyncSuccess', 'type': 'iso-8601'},
-        'sync_error_state': {'key': 'properties.syncErrorState', 'type': 'str'},
-        'sync_error_state_timestamp': {'key': 'properties.syncErrorStateTimestamp', 'type': 'iso-8601'},
-        'sync_error_direction': {'key': 'properties.syncErrorDirection', 'type': 'str'},
-        'item_upload_error_count': {'key': 'properties.itemUploadErrorCount', 'type': 'int'},
-        'item_download_error_count': {'key': 'properties.itemDownloadErrorCount', 'type': 'int'},
-        'sync_error_context': {'key': 'properties.syncErrorContext', 'type': 'str'},
-        'current_progress_type': {'key': 'properties.currentProgressType', 'type': 'str'},
-        'item_progress_count': {'key': 'properties.itemProgressCount', 'type': 'int'},
-        'item_total_count': {'key': 'properties.itemTotalCount', 'type': 'int'},
-        'byte_progress': {'key': 'properties.byteProgress', 'type': 'int'},
-        'total_progress': {'key': 'properties.totalProgress', 'type': 'int'},
-        'byte_total': {'key': 'properties.byteTotal', 'type': 'int'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
+        'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
+        'sync_status': {'key': 'properties.syncStatus', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -108,19 +73,8 @@ class ServerEndpoint(Resource):
         self.cloud_tiering = kwargs.get('cloud_tiering', None)
         self.volume_free_space_percent = kwargs.get('volume_free_space_percent', None)
         self.friendly_name = kwargs.get('friendly_name', None)
-        self.last_sync_success = kwargs.get('last_sync_success', None)
-        self.sync_error_state = kwargs.get('sync_error_state', None)
-        self.sync_error_state_timestamp = kwargs.get('sync_error_state_timestamp', None)
-        self.sync_error_direction = kwargs.get('sync_error_direction', None)
-        self.item_upload_error_count = kwargs.get('item_upload_error_count', None)
-        self.item_download_error_count = kwargs.get('item_download_error_count', None)
-        self.sync_error_context = kwargs.get('sync_error_context', None)
-        self.current_progress_type = kwargs.get('current_progress_type', None)
-        self.item_progress_count = kwargs.get('item_progress_count', None)
-        self.item_total_count = kwargs.get('item_total_count', None)
-        self.byte_progress = kwargs.get('byte_progress', None)
-        self.total_progress = kwargs.get('total_progress', None)
-        self.byte_total = kwargs.get('byte_total', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)
+        self.last_operation_name = kwargs.get('last_operation_name', None)
+        self.sync_status = kwargs.get('sync_status', None)

@@ -49,6 +49,18 @@ class RegisteredServer(Model):
     :type storage_sync_service_uid: str
     :param last_workflow_id: Registered Server lastWorkflowId
     :type last_workflow_id: str
+    :param last_operation_name: Resource Last Operation Name
+    :type last_operation_name: str
+    :param discovery_endpoint_uri: Resource discoveryEndpointUri
+    :type discovery_endpoint_uri: str
+    :param resource_location: Resource Location
+    :type resource_location: str
+    :param service_location: Service Location
+    :type service_location: str
+    :param friendly_name: Friendly Name
+    :type friendly_name: str
+    :param management_endpoint_uri: Management Endpoint Uri
+    :type management_endpoint_uri: str
     """
 
     _validation = {
@@ -73,6 +85,12 @@ class RegisteredServer(Model):
         'server_id': {'key': 'properties.serverId', 'type': 'str'},
         'storage_sync_service_uid': {'key': 'properties.storageSyncServiceUid', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
+        'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
+        'discovery_endpoint_uri': {'key': 'properties.discoveryEndpointUri', 'type': 'str'},
+        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
+        'service_location': {'key': 'properties.serviceLocation', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'management_endpoint_uri': {'key': 'properties.managementEndpointUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -92,3 +110,9 @@ class RegisteredServer(Model):
         self.server_id = kwargs.get('server_id', None)
         self.storage_sync_service_uid = kwargs.get('storage_sync_service_uid', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)
+        self.last_operation_name = kwargs.get('last_operation_name', None)
+        self.discovery_endpoint_uri = kwargs.get('discovery_endpoint_uri', None)
+        self.resource_location = kwargs.get('resource_location', None)
+        self.service_location = kwargs.get('service_location', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.management_endpoint_uri = kwargs.get('management_endpoint_uri', None)

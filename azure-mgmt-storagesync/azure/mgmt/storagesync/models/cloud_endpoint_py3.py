@@ -44,6 +44,8 @@ class CloudEndpoint(Resource):
     :type provisioning_state: str
     :param last_workflow_id: CloudEndpoint lastWorkflowId
     :type last_workflow_id: str
+    :param last_operation_name: Resource Last Operation Name
+    :type last_operation_name: str
     """
 
     _validation = {
@@ -67,9 +69,10 @@ class CloudEndpoint(Resource):
         'backup_enabled': {'key': 'properties.backupEnabled', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
+        'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_key: str=None, storage_account: str=None, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_key: str=None, storage_account: str=None, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, **kwargs) -> None:
         super(CloudEndpoint, self).__init__(**kwargs)
         self.storage_account_key = storage_account_key
         self.storage_account = storage_account
@@ -81,3 +84,4 @@ class CloudEndpoint(Resource):
         self.backup_enabled = None
         self.provisioning_state = provisioning_state
         self.last_workflow_id = last_workflow_id
+        self.last_operation_name = last_operation_name

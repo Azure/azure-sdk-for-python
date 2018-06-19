@@ -19,3 +19,9 @@ class Reason(str, Enum):
     warned = "Warned"
     suspended = "Suspended"
     deleted = "Deleted"
+
+
+class NameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
