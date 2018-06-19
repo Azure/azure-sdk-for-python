@@ -39,18 +39,13 @@ class ManagementGroupsOperations(object):
         self.config = config
 
     def list(
-            self, cache_control="no-cache", skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """List management groups for the authenticated user.
+        .
 
         :param cache_control: Indicates that the request shouldn't utilize any
          caches.
         :type cache_control: str
-        :param skiptoken: Page continuation token is only used if a previous
-         operation returned a partial result. If a previous response contains a
-         nextLink element, the value of the nextLink element will include a
-         token parameter that specifies a starting point to use for subsequent
-         calls.
-        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -71,8 +66,8 @@ class ManagementGroupsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if self.config.skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
 
             else:
                 url = next_link
@@ -114,6 +109,7 @@ class ManagementGroupsOperations(object):
     def get(
             self, group_id, expand=None, recurse=None, filter=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Get the details of the management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -243,9 +239,11 @@ class ManagementGroupsOperations(object):
 
     def create_or_update(
             self, group_id, create_management_group_request, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a management group. If a management group is already
-        created and a subsequent create request is issued with different
-        properties, the management group properties will be updated.
+        """Create or update a management group.
+        If a management group is already created and a subsequent create
+        request is issued with different properties, the management group
+        properties will be updated.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -298,6 +296,7 @@ class ManagementGroupsOperations(object):
     def update(
             self, group_id, patch_group_request, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Update a management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -410,8 +409,9 @@ class ManagementGroupsOperations(object):
 
     def delete(
             self, group_id, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete management group. If a management group contains child
-        resources, the request will fail.
+        """Delete management group.
+        If a management group contains child resources, the request will fail.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str

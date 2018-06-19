@@ -19,7 +19,7 @@ class CheckNameAvailabilityRequest(Model):
     :type name: str
     :param type: fully qualified resource type which includes provider
      namespace. Possible values include:
-     '/providers/Microsoft.Management/managementGroups'
+     '/providers/Microsoft.Management/managementGroup'
     :type type: str or ~azure.mgmt.managementgroups.models.Type
     """
 
