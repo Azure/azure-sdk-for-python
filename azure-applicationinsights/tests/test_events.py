@@ -41,9 +41,11 @@ class ApplicationInsightsEventsTest(AzureMgmtTestCase):
         self.check_props(result)
 
     def test_events_get_odata_metadata(self):
-        result = self.client.events.get_odata_metadata(self.application)
+        result = self.client.events.get_odata_metadata(self.application, raw = True)
         # WIP
         self.assertIsNotNone(result)
+        self.assertEqual(result.response.status_code, 200)
+        self.assertIsNotNone(result.output)
         
     def check_props(self, result):
         self.assertTrue(hasattr(result, 'value'))

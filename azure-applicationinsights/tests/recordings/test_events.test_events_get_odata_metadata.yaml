@@ -230,13 +230,13 @@ interactions:
       connection: [keep-alive]
       content-length: ['19738']
       content-type: [application/xml; charset=utf-8]
-      date: ['Tue, 19 Jun 2018 17:16:26 GMT']
+      date: ['Tue, 19 Jun 2018 17:30:36 GMT']
       odata-version: [4.0;]
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      via: [1.1 draft-ai-green.516d2a0d-73df-11e8-9b60-70b3d5800006]
+      via: [1.1 draft-ai-green.d7e7eb79-73dc-11e8-9b60-70b3d5800006]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1
