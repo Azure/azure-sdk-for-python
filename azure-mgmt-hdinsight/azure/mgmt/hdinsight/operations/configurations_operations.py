@@ -67,7 +67,7 @@ class ConfigurationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'HttpConnectivitySettings')
+        body_content = self._serialize.body(parameters, '{str}')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -87,9 +87,8 @@ class ConfigurationsOperations(object):
             self, parameters, custom_headers=None, raw=False, **operation_config):
         """Configures the HTTP settings on the specified cluster.
 
-        :param parameters: The name of the resource group.
-        :type parameters:
-         ~azure.mgmt.hdinsight.models.HttpConnectivitySettings
+        :param parameters: The cluster configurations.
+        :type parameters: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

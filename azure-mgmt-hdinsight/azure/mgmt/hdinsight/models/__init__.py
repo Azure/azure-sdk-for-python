@@ -48,15 +48,9 @@ from .application_get_https_endpoint import ApplicationGetHttpsEndpoint
 from .application_get_endpoint import ApplicationGetEndpoint
 from .application_get_properties import ApplicationGetProperties
 from .application import Application
-from .version_spec import VersionSpec
-from .versions_capability import VersionsCapability
-from .regions_capability import RegionsCapability
-from .vm_sizes_capability import VmSizesCapability
-from .vm_size_compatibility_filter import VmSizeCompatibilityFilter
-from .regional_quota_capability import RegionalQuotaCapability
-from .quota_capability import QuotaCapability
-from .capabilities_result import CapabilitiesResult
-from .http_connectivity_settings import HttpConnectivitySettings
+from .localized_name import LocalizedName
+from .usage import Usage
+from .usages_result import UsagesResult
 from .extension import Extension
 from .cluster_monitoring_response import ClusterMonitoringResponse
 from .cluster_monitoring_request import ClusterMonitoringRequest
@@ -113,15 +107,9 @@ __all__ = [
     'ApplicationGetEndpoint',
     'ApplicationGetProperties',
     'Application',
-    'VersionSpec',
-    'VersionsCapability',
-    'RegionsCapability',
-    'VmSizesCapability',
-    'VmSizeCompatibilityFilter',
-    'RegionalQuotaCapability',
-    'QuotaCapability',
-    'CapabilitiesResult',
-    'HttpConnectivitySettings',
+    'LocalizedName',
+    'Usage',
+    'UsagesResult',
     'Extension',
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',

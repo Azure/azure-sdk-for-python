@@ -37,22 +37,22 @@ class LocationOperations(object):
 
         self.config = config
 
-    def get_capabilities(
+    def list_usages(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the capabilities for the specified location.
+        """Lists the usages for the specified location.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CapabilitiesResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hdinsight.models.CapabilitiesResult or
+        :return: UsagesResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.UsagesResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_capabilities.metadata['url']
+        url = self.list_usages.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("self.config.location", self.config.location, 'str')
@@ -85,11 +85,11 @@ class LocationOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CapabilitiesResult', response)
+            deserialized = self._deserialize('UsagesResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_capabilities.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/capabilities'}
+    list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/usages'}
