@@ -675,6 +675,19 @@ class NetworkManagementClient(MultiApiClientMixin):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def hub_virtual_network_connections(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2018_04_01.operations.HubVirtualNetworkConnectionsOperations>`
+        """
+        api_version = self._get_api_version('hub_virtual_network_connections')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import HubVirtualNetworkConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def inbound_nat_rules(self):
         """Instance depends on the API version:
 
@@ -1601,6 +1614,19 @@ class NetworkManagementClient(MultiApiClientMixin):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def virtual_hubs(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2018_04_01.operations.VirtualHubsOperations>`
+        """
+        api_version = self._get_api_version('virtual_hubs')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualHubsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def virtual_network_gateway_connections(self):
         """Instance depends on the API version:
 
@@ -1777,6 +1803,71 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_02_01.operations import VirtualNetworksOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import VirtualNetworksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def virtual_wa_ns(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VirtualWANsOperations<azure.mgmt.network.v2018_04_01.operations.VirtualWANsOperations>`
+        """
+        api_version = self._get_api_version('virtual_wa_ns')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VirtualWANsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def vpn_connections(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2018_04_01.operations.VpnConnectionsOperations>`
+        """
+        api_version = self._get_api_version('vpn_connections')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VpnConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def vpn_gateways(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2018_04_01.operations.VpnGatewaysOperations>`
+        """
+        api_version = self._get_api_version('vpn_gateways')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VpnGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def vpn_sites(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VpnSitesOperations<azure.mgmt.network.v2018_04_01.operations.VpnSitesOperations>`
+        """
+        api_version = self._get_api_version('vpn_sites')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VpnSitesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def vpn_sites_configuration(self):
+        """Instance depends on the API version:
+
+           * 2018-04-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2018_04_01.operations.VpnSitesConfigurationOperations>`
+        """
+        api_version = self._get_api_version('vpn_sites_configuration')
+        if api_version == '2018-04-01':
+            from .v2018_04_01.operations import VpnSitesConfigurationOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
