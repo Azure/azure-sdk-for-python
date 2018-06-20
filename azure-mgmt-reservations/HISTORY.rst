@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.2.1 (2018-06-14)
+++++++++++++++++++
+
+* Provide enum definitions when applicable
+
 0.2.0 (2018-06-12)
 ++++++++++++++++++
 
