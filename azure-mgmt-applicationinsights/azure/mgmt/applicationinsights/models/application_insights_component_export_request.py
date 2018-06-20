@@ -56,14 +56,14 @@ class ApplicationInsightsComponentExportRequest(Model):
         'destination_account_id': {'key': 'DestinationAccountId', 'type': 'str'},
     }
 
-    def __init__(self, record_types=None, destination_type=None, destination_address=None, is_enabled=None, notification_queue_enabled=None, notification_queue_uri=None, destination_storage_subscription_id=None, destination_storage_location_id=None, destination_account_id=None):
-        super(ApplicationInsightsComponentExportRequest, self).__init__()
-        self.record_types = record_types
-        self.destination_type = destination_type
-        self.destination_address = destination_address
-        self.is_enabled = is_enabled
-        self.notification_queue_enabled = notification_queue_enabled
-        self.notification_queue_uri = notification_queue_uri
-        self.destination_storage_subscription_id = destination_storage_subscription_id
-        self.destination_storage_location_id = destination_storage_location_id
-        self.destination_account_id = destination_account_id
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentExportRequest, self).__init__(**kwargs)
+        self.record_types = kwargs.get('record_types', None)
+        self.destination_type = kwargs.get('destination_type', None)
+        self.destination_address = kwargs.get('destination_address', None)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.notification_queue_enabled = kwargs.get('notification_queue_enabled', None)
+        self.notification_queue_uri = kwargs.get('notification_queue_uri', None)
+        self.destination_storage_subscription_id = kwargs.get('destination_storage_subscription_id', None)
+        self.destination_storage_location_id = kwargs.get('destination_storage_location_id', None)
+        self.destination_account_id = kwargs.get('destination_account_id', None)
