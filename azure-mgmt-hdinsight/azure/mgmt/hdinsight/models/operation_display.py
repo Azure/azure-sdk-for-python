@@ -18,7 +18,7 @@ class OperationDisplay(Model):
     :param provider: The service provider: Microsoft.HDInsight
     :type provider: str
     :param resource: The resource on which the operation is performed:
-     Cluster, Capabilities, etc.
+     Cluster, Applications, etc.
     :type resource: str
     :param operation: The operation type: read, write, delete, etc.
     :type operation: str
