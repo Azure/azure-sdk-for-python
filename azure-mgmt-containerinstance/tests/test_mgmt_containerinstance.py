@@ -30,6 +30,8 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         memory = 1
         restart_policy = 'OnFailure'
         livenessprob_period_seconds = 5
+        log_analytics_workspace_id = 'workspaceId'
+        log_analytics_workspace_key = 'workspaceKey'
 
         empty_volume = Volume(name='empty-volume', empty_dir={})
         volume_mount = VolumeMount(name='empty-volume', mount_path='/mnt/mydir')
@@ -49,7 +51,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
                         }
                     },
                     'volume_mounts': [volume_mount],
-                    'livenessProbe': {
+                    'liveness_probe': {
                         'exec': {
                             'command': [
                                 'cat'
@@ -61,6 +63,12 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
                 }],
                 'os_type': os_type,
                 'restart_policy': restart_policy,
+                'diagnostics': {
+                    'log_analytics': {
+                        'workspace_id': log_analytics_workspace_id,
+                        'workspace_key': log_analytics_workspace_key
+                    }
+                },
                 'volumes': [empty_volume],
             }
         )
@@ -70,6 +78,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         self.assertEqual(container_group.location, location)
         self.assertEqual(container_group.os_type, os_type)
         self.assertEqual(container_group.restart_policy, restart_policy)
+        self.assertEqual(container_group.diagnostics.log_analytics.workspace_id, log_analytics_workspace_id)
         self.assertEqual(container_group.containers[0].name, container_group_name)
         self.assertEqual(container_group.containers[0].image, image)
         self.assertEqual(container_group.containers[0].resources.requests.memory_in_gb, memory)
@@ -83,6 +92,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         self.assertEqual(container_group.location, location)
         self.assertEqual(container_group.os_type, os_type)
         self.assertEqual(container_group.restart_policy, restart_policy)
+        self.assertEqual(container_group.diagnostics.log_analytics.workspace_id, log_analytics_workspace_id)
         self.assertEqual(container_group.containers[0].name, container_group_name)
         self.assertEqual(container_group.containers[0].image, image)
         self.assertEqual(container_group.containers[0].resources.requests.memory_in_gb, memory)
@@ -96,6 +106,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         self.assertEqual(container_groups[0].location, location)
         self.assertEqual(container_groups[0].os_type, os_type)
         self.assertEqual(container_groups[0].restart_policy, restart_policy)
+        self.assertEqual(container_groups[0].diagnostics.log_analytics.workspace_id, log_analytics_workspace_id)
         self.assertEqual(container_groups[0].containers[0].name, container_group_name)
         self.assertEqual(container_groups[0].containers[0].image, image)
         self.assertEqual(container_groups[0].containers[0].resources.requests.memory_in_gb, memory)
