@@ -28,7 +28,7 @@ class KeyProperties(Model):
     :type reuse_key: bool
     :param curve: Elliptic curve name. For valid values, see
      JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
-     'SECP256K1'
+     'P-256K'
     :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
     """
 
