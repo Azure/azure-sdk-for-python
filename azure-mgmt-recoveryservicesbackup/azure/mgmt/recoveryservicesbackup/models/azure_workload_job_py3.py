@@ -38,6 +38,8 @@ class AzureWorkloadJob(Job):
     :type activity_id: str
     :param job_type: Required. Constant filled by server.
     :type job_type: str
+    :param workload_type: Workload type of the job
+    :type workload_type: str
     :param duration: Time elapsed during the execution of this job.
     :type duration: timedelta
     :param actions_info: Gets or sets the state/actions applicable on this job
@@ -65,14 +67,16 @@ class AzureWorkloadJob(Job):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'activity_id': {'key': 'activityId', 'type': 'str'},
         'job_type': {'key': 'jobType', 'type': 'str'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
         'duration': {'key': 'duration', 'type': 'duration'},
         'actions_info': {'key': 'actionsInfo', 'type': '[JobSupportedAction]'},
         'error_details': {'key': 'errorDetails', 'type': '[AzureWorkloadErrorInfo]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadJobExtendedInfo'},
     }
 
-    def __init__(self, *, entity_friendly_name: str=None, backup_management_type=None, operation: str=None, status: str=None, start_time=None, end_time=None, activity_id: str=None, duration=None, actions_info=None, error_details=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, entity_friendly_name: str=None, backup_management_type=None, operation: str=None, status: str=None, start_time=None, end_time=None, activity_id: str=None, workload_type: str=None, duration=None, actions_info=None, error_details=None, extended_info=None, **kwargs) -> None:
         super(AzureWorkloadJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
+        self.workload_type = workload_type
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details

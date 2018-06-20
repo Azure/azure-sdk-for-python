@@ -26,7 +26,7 @@ class GenericProtectedItem(ProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -41,6 +41,11 @@ class GenericProtectedItem(ProtectedItem):
     :type last_recovery_point: datetime
     :param backup_set_name: Name of the backup set the backup item belongs to
     :type backup_set_name: str
+    :param create_mode: Create mode to indicate recovery of existing soft
+     deleted data source or creation of new data source. Possible values
+     include: 'Invalid', 'Default', 'Recover'
+    :type create_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.CreateMode
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the container.
@@ -74,6 +79,7 @@ class GenericProtectedItem(ProtectedItem):
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
+        'create_mode': {'key': 'createMode', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
@@ -83,8 +89,8 @@ class GenericProtectedItem(ProtectedItem):
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
-        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
+        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, **kwargs)
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
