@@ -18,10 +18,12 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Gets or sets the sku name. Required for account creation;
-     optional for update. Note that in older versions, sku name was called
-     accountType. Possible values include: 'Standard_LRS', 'Standard_GRS',
-     'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Gets or sets the sku name. Required for account
+     creation; optional for update. Note that in older versions, sku name was
+     called accountType. Possible values include: 'Standard_LRS',
+     'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'
     :type name: str or ~azure.mgmt.storage.v2016_12_01.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Standard', 'Premium'
@@ -38,7 +40,7 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'SkuTier'},
     }
 
-    def __init__(self, name):
-        super(Sku, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None

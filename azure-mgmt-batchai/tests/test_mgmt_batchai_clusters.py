@@ -54,7 +54,7 @@ class ClusterTestCase(AzureMgmtTestCase):
         self.assertCanRunJobInContainer(resource_group, location, cluster.id)
 
         # Test cluster deletion
-        self.client.clusters.delete(resource_group.name, self.cluster_name).result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name).result()
         helpers.assert_existing_clusters_are(self, self.client, resource_group.name, [])
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
@@ -93,7 +93,7 @@ class ClusterTestCase(AzureMgmtTestCase):
                                           u'setup task has a secret\n')
         helpers.assert_file_in_file_share(self, storage_account.name, storage_account_key,
                                           setup_task_output_path, 'stderr-{0}.txt'.format(node_id), u'')
-        self.client.clusters.delete(resource_group.name, self.cluster_name).result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name).result()
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
     @StorageAccountPreparer(name_prefix='psdk', location=helpers.LOCATION, playback_fake_resource=helpers.FAKE_STORAGE)
@@ -115,7 +115,7 @@ class ClusterTestCase(AzureMgmtTestCase):
 
         # Verify that cluster able to run tasks after resizing.
         self.assertCanRunJobOnHost(resource_group, location, cluster.id)
-        self.client.clusters.delete(resource_group.name, self.cluster_name).result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name).result()
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
     @StorageAccountPreparer(name_prefix='psdk', location=helpers.LOCATION, playback_fake_resource=helpers.FAKE_STORAGE)
@@ -127,7 +127,7 @@ class ClusterTestCase(AzureMgmtTestCase):
             storage_account.name, storage_account_key)
 
         # Switch the cluster into auto-scale mode
-        self.client.clusters.update(resource_group.name, self.cluster_name,
+        self.client.clusters.update(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name,
                                     scale_settings=models.ScaleSettings(
                                         auto_scale=models.AutoScaleSettings(
                                             minimum_node_count=0,
@@ -140,7 +140,7 @@ class ClusterTestCase(AzureMgmtTestCase):
         self.assertEqual(
             helpers.wait_for_nodes(self.is_live, self.client, resource_group.name, self.cluster_name, 0,
                                    helpers.NODE_STARTUP_TIMEOUT_SEC), 0)
-        self.client.clusters.delete(resource_group.name, self.cluster_name).result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name).result()
 
     def assertCanRunJobInContainer(self, resource_group, location, cluster_id, timeout_sec=helpers.MINUTE):
         self.assertCanRunJob(resource_group, location, cluster_id, 'container_job',
@@ -151,7 +151,7 @@ class ClusterTestCase(AzureMgmtTestCase):
         self.assertCanRunJob(resource_group, location, cluster_id, 'host_job', None, timeout_sec)
 
     def assertCanRunJob(self, resource_group, location, cluster_id, job_name, container_settings, timeout_sec):
-        helpers.create_custom_job(self.client, resource_group.name, location, cluster_id, job_name, 1,
+        helpers.create_custom_job(self.client, resource_group.name, cluster_id, job_name, 1,
                                   'echo hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt', container=container_settings)
 
         # Verify if the job finishes reasonably fast.
@@ -167,8 +167,9 @@ class ClusterTestCase(AzureMgmtTestCase):
                                      {u'stdout.txt': u'hello\n', u'stderr.txt': ''})
 
     def assertCanResizeCluster(self, resource_group, target):
-        self.client.clusters.update(resource_group.name, self.cluster_name, scale_settings=models.ScaleSettings(
-            manual=models.ManualScaleSettings(target_node_count=target)))
+        self.client.clusters.update(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.cluster_name,
+                                    scale_settings=models.ScaleSettings(
+                                        manual=models.ManualScaleSettings(target_node_count=target)))
         self.assertEqual(
             helpers.wait_for_nodes(self.is_live, self.client, resource_group.name, self.cluster_name, target,
                                    helpers.NODE_STARTUP_TIMEOUT_SEC),

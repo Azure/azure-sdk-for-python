@@ -53,13 +53,13 @@ class StorageBlobDeletedEventData(Model):
         'storage_diagnostics': {'key': 'storageDiagnostics', 'type': 'object'},
     }
 
-    def __init__(self, api=None, client_request_id=None, request_id=None, content_type=None, blob_type=None, url=None, sequencer=None, storage_diagnostics=None):
-        super(StorageBlobDeletedEventData, self).__init__()
-        self.api = api
-        self.client_request_id = client_request_id
-        self.request_id = request_id
-        self.content_type = content_type
-        self.blob_type = blob_type
-        self.url = url
-        self.sequencer = sequencer
-        self.storage_diagnostics = storage_diagnostics
+    def __init__(self, **kwargs):
+        super(StorageBlobDeletedEventData, self).__init__(**kwargs)
+        self.api = kwargs.get('api', None)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.blob_type = kwargs.get('blob_type', None)
+        self.url = kwargs.get('url', None)
+        self.sequencer = kwargs.get('sequencer', None)
+        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)

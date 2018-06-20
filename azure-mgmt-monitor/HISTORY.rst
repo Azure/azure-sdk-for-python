@@ -3,6 +3,26 @@
 Release History
 ===============
 
+0.5.2 (2018-06-06)
+++++++++++++++++++
+
+**Features**
+
+- Model ActionGroupResource has a new parameter voice_receivers
+- Model ActionGroupResource has a new parameter azure_function_receivers
+- Model ActionGroupResource has a new parameter logic_app_receivers
+- Added operation group MetricAlertsOperations
+- Added operation group ScheduledQueryRulesOperations
+- Added operation group MetricAlertsStatusOperations
+
+0.5.1 (2018-04-16)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid models in Python 3
+- Compatibility of the sdist with wheel 0.31.0
+
 0.5.0 (2017-03-19)
 ++++++++++++++++++
 

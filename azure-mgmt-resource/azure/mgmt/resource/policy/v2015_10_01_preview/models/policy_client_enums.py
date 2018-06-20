@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class PolicyType(Enum):
+class PolicyType(str, Enum):
 
     not_specified = "NotSpecified"
     built_in = "BuiltIn"

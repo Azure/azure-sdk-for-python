@@ -27,7 +27,7 @@ class AliasType(Model):
         'paths': {'key': 'paths', 'type': '[AliasPathType]'},
     }
 
-    def __init__(self, name=None, paths=None):
-        super(AliasType, self).__init__()
-        self.name = name
-        self.paths = paths
+    def __init__(self, **kwargs):
+        super(AliasType, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.paths = kwargs.get('paths', None)

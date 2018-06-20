@@ -15,52 +15,55 @@ from msrest.serialization import Model
 class X12EnvelopeSettings(Model):
     """The X12 agreement envelope settings.
 
-    :param control_standards_id: The controls standards id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param control_standards_id: Required. The controls standards id.
     :type control_standards_id: int
-    :param use_control_standards_id_as_repetition_character: The value
-     indicating whether to use control standards id as repetition character.
+    :param use_control_standards_id_as_repetition_character: Required. The
+     value indicating whether to use control standards id as repetition
+     character.
     :type use_control_standards_id_as_repetition_character: bool
-    :param sender_application_id: The sender application id.
+    :param sender_application_id: Required. The sender application id.
     :type sender_application_id: str
-    :param receiver_application_id: The receiver application id.
+    :param receiver_application_id: Required. The receiver application id.
     :type receiver_application_id: str
-    :param control_version_number: The control version number.
+    :param control_version_number: Required. The control version number.
     :type control_version_number: str
-    :param interchange_control_number_lower_bound: The interchange  control
-     number lower bound.
+    :param interchange_control_number_lower_bound: Required. The interchange
+     control number lower bound.
     :type interchange_control_number_lower_bound: int
-    :param interchange_control_number_upper_bound: The interchange  control
-     number upper bound.
+    :param interchange_control_number_upper_bound: Required. The interchange
+     control number upper bound.
     :type interchange_control_number_upper_bound: int
-    :param rollover_interchange_control_number: The value indicating whether
-     to rollover interchange control number.
+    :param rollover_interchange_control_number: Required. The value indicating
+     whether to rollover interchange control number.
     :type rollover_interchange_control_number: bool
-    :param enable_default_group_headers: The value indicating whether to
-     enable default group headers.
+    :param enable_default_group_headers: Required. The value indicating
+     whether to enable default group headers.
     :type enable_default_group_headers: bool
     :param functional_group_id: The functional group id.
     :type functional_group_id: str
-    :param group_control_number_lower_bound: The group control number lower
-     bound.
+    :param group_control_number_lower_bound: Required. The group control
+     number lower bound.
     :type group_control_number_lower_bound: int
-    :param group_control_number_upper_bound: The group control number upper
-     bound.
+    :param group_control_number_upper_bound: Required. The group control
+     number upper bound.
     :type group_control_number_upper_bound: int
-    :param rollover_group_control_number: The value indicating whether to
-     rollover group control number.
+    :param rollover_group_control_number: Required. The value indicating
+     whether to rollover group control number.
     :type rollover_group_control_number: bool
-    :param group_header_agency_code: The group header agency code.
+    :param group_header_agency_code: Required. The group header agency code.
     :type group_header_agency_code: str
-    :param group_header_version: The group header version.
+    :param group_header_version: Required. The group header version.
     :type group_header_version: str
-    :param transaction_set_control_number_lower_bound: The transaction set
-     control number lower bound.
+    :param transaction_set_control_number_lower_bound: Required. The
+     transaction set control number lower bound.
     :type transaction_set_control_number_lower_bound: int
-    :param transaction_set_control_number_upper_bound: The transaction set
-     control number upper bound.
+    :param transaction_set_control_number_upper_bound: Required. The
+     transaction set control number upper bound.
     :type transaction_set_control_number_upper_bound: int
-    :param rollover_transaction_set_control_number: The value indicating
-     whether to rollover transaction set control number.
+    :param rollover_transaction_set_control_number: Required. The value
+     indicating whether to rollover transaction set control number.
     :type rollover_transaction_set_control_number: bool
     :param transaction_set_control_number_prefix: The transaction set control
      number prefix.
@@ -68,21 +71,22 @@ class X12EnvelopeSettings(Model):
     :param transaction_set_control_number_suffix: The transaction set control
      number suffix.
     :type transaction_set_control_number_suffix: str
-    :param overwrite_existing_transaction_set_control_number: The value
-     indicating whether to overwrite existing transaction set control number.
+    :param overwrite_existing_transaction_set_control_number: Required. The
+     value indicating whether to overwrite existing transaction set control
+     number.
     :type overwrite_existing_transaction_set_control_number: bool
-    :param group_header_date_format: The group header date format. Possible
-     values include: 'NotSpecified', 'CCYYMMDD', 'YYMMDD'
-    :type group_header_date_format: str or :class:`X12DateFormat
-     <azure.mgmt.logic.models.X12DateFormat>`
-    :param group_header_time_format: The group header time format. Possible
-     values include: 'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd', 'HHMMSSd'
-    :type group_header_time_format: str or :class:`X12TimeFormat
-     <azure.mgmt.logic.models.X12TimeFormat>`
-    :param usage_indicator: The usage indicator. Possible values include:
-     'NotSpecified', 'Test', 'Information', 'Production'
-    :type usage_indicator: str or :class:`UsageIndicator
-     <azure.mgmt.logic.models.UsageIndicator>`
+    :param group_header_date_format: Required. The group header date format.
+     Possible values include: 'NotSpecified', 'CCYYMMDD', 'YYMMDD'
+    :type group_header_date_format: str or
+     ~azure.mgmt.logic.models.X12DateFormat
+    :param group_header_time_format: Required. The group header time format.
+     Possible values include: 'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd',
+     'HHMMSSd'
+    :type group_header_time_format: str or
+     ~azure.mgmt.logic.models.X12TimeFormat
+    :param usage_indicator: Required. The usage indicator. Possible values
+     include: 'NotSpecified', 'Test', 'Information', 'Production'
+    :type usage_indicator: str or ~azure.mgmt.logic.models.UsageIndicator
     """
 
     _validation = {
@@ -136,28 +140,29 @@ class X12EnvelopeSettings(Model):
         'usage_indicator': {'key': 'usageIndicator', 'type': 'UsageIndicator'},
     }
 
-    def __init__(self, control_standards_id, use_control_standards_id_as_repetition_character, sender_application_id, receiver_application_id, control_version_number, interchange_control_number_lower_bound, interchange_control_number_upper_bound, rollover_interchange_control_number, enable_default_group_headers, group_control_number_lower_bound, group_control_number_upper_bound, rollover_group_control_number, group_header_agency_code, group_header_version, transaction_set_control_number_lower_bound, transaction_set_control_number_upper_bound, rollover_transaction_set_control_number, overwrite_existing_transaction_set_control_number, group_header_date_format, group_header_time_format, usage_indicator, functional_group_id=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None):
-        self.control_standards_id = control_standards_id
-        self.use_control_standards_id_as_repetition_character = use_control_standards_id_as_repetition_character
-        self.sender_application_id = sender_application_id
-        self.receiver_application_id = receiver_application_id
-        self.control_version_number = control_version_number
-        self.interchange_control_number_lower_bound = interchange_control_number_lower_bound
-        self.interchange_control_number_upper_bound = interchange_control_number_upper_bound
-        self.rollover_interchange_control_number = rollover_interchange_control_number
-        self.enable_default_group_headers = enable_default_group_headers
-        self.functional_group_id = functional_group_id
-        self.group_control_number_lower_bound = group_control_number_lower_bound
-        self.group_control_number_upper_bound = group_control_number_upper_bound
-        self.rollover_group_control_number = rollover_group_control_number
-        self.group_header_agency_code = group_header_agency_code
-        self.group_header_version = group_header_version
-        self.transaction_set_control_number_lower_bound = transaction_set_control_number_lower_bound
-        self.transaction_set_control_number_upper_bound = transaction_set_control_number_upper_bound
-        self.rollover_transaction_set_control_number = rollover_transaction_set_control_number
-        self.transaction_set_control_number_prefix = transaction_set_control_number_prefix
-        self.transaction_set_control_number_suffix = transaction_set_control_number_suffix
-        self.overwrite_existing_transaction_set_control_number = overwrite_existing_transaction_set_control_number
-        self.group_header_date_format = group_header_date_format
-        self.group_header_time_format = group_header_time_format
-        self.usage_indicator = usage_indicator
+    def __init__(self, **kwargs):
+        super(X12EnvelopeSettings, self).__init__(**kwargs)
+        self.control_standards_id = kwargs.get('control_standards_id', None)
+        self.use_control_standards_id_as_repetition_character = kwargs.get('use_control_standards_id_as_repetition_character', None)
+        self.sender_application_id = kwargs.get('sender_application_id', None)
+        self.receiver_application_id = kwargs.get('receiver_application_id', None)
+        self.control_version_number = kwargs.get('control_version_number', None)
+        self.interchange_control_number_lower_bound = kwargs.get('interchange_control_number_lower_bound', None)
+        self.interchange_control_number_upper_bound = kwargs.get('interchange_control_number_upper_bound', None)
+        self.rollover_interchange_control_number = kwargs.get('rollover_interchange_control_number', None)
+        self.enable_default_group_headers = kwargs.get('enable_default_group_headers', None)
+        self.functional_group_id = kwargs.get('functional_group_id', None)
+        self.group_control_number_lower_bound = kwargs.get('group_control_number_lower_bound', None)
+        self.group_control_number_upper_bound = kwargs.get('group_control_number_upper_bound', None)
+        self.rollover_group_control_number = kwargs.get('rollover_group_control_number', None)
+        self.group_header_agency_code = kwargs.get('group_header_agency_code', None)
+        self.group_header_version = kwargs.get('group_header_version', None)
+        self.transaction_set_control_number_lower_bound = kwargs.get('transaction_set_control_number_lower_bound', None)
+        self.transaction_set_control_number_upper_bound = kwargs.get('transaction_set_control_number_upper_bound', None)
+        self.rollover_transaction_set_control_number = kwargs.get('rollover_transaction_set_control_number', None)
+        self.transaction_set_control_number_prefix = kwargs.get('transaction_set_control_number_prefix', None)
+        self.transaction_set_control_number_suffix = kwargs.get('transaction_set_control_number_suffix', None)
+        self.overwrite_existing_transaction_set_control_number = kwargs.get('overwrite_existing_transaction_set_control_number', None)
+        self.group_header_date_format = kwargs.get('group_header_date_format', None)
+        self.group_header_time_format = kwargs.get('group_header_time_format', None)
+        self.usage_indicator = kwargs.get('usage_indicator', None)

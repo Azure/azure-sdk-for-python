@@ -21,7 +21,10 @@ class SetupTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. Command Line to start Setup process.
+    :param command_line: Required. Command line to be executed on each
+     cluster's node after it being allocated or rebooted. Command line to be
+     executed on each cluster's node after it being allocated or rebooted. The
+     command is executed in a bash subshell as a root.
     :type command_line: str
     :param environment_variables: Collection of environment variables to be
      set for setup task.
@@ -32,11 +35,6 @@ class SetupTask(Model):
      back.
     :type secrets:
      list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
-    :param run_elevated: Specifies whether to run the setup task under root
-     account. The default value is false. Note. Non-elevated tasks are run
-     under an account added into sudoer list and can perform sudo when
-     required. Default value: False .
-    :type run_elevated: bool
     :param std_out_err_path_prefix: Required. The prefix of a path where the
      Batch AI service will upload the stdout and stderr of the setup task.
     :type std_out_err_path_prefix: str
@@ -59,16 +57,14 @@ class SetupTask(Model):
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'environment_variables': {'key': 'environmentVariables', 'type': '[EnvironmentVariable]'},
         'secrets': {'key': 'secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
         'std_out_err_path_prefix': {'key': 'stdOutErrPathPrefix', 'type': 'str'},
         'std_out_err_path_suffix': {'key': 'stdOutErrPathSuffix', 'type': 'str'},
     }
 
-    def __init__(self, *, command_line: str, std_out_err_path_prefix: str, environment_variables=None, secrets=None, run_elevated: bool=False, **kwargs) -> None:
+    def __init__(self, *, command_line: str, std_out_err_path_prefix: str, environment_variables=None, secrets=None, **kwargs) -> None:
         super(SetupTask, self).__init__(**kwargs)
         self.command_line = command_line
         self.environment_variables = environment_variables
         self.secrets = secrets
-        self.run_elevated = run_elevated
         self.std_out_err_path_prefix = std_out_err_path_prefix
         self.std_out_err_path_suffix = None

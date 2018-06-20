@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.images_operations import ImagesOperations
@@ -42,7 +42,7 @@ class ImageSearchAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ImageSearchAPI(object):
+class ImageSearchAPI(SDKClient):
     """The Image Search API lets you send a search query to Bing and get back a list of relevant images. This section provides technical details about the query parameters and headers that you use to request images and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the Web for Images](https://docs.microsoft.com/azure/cognitive-services/bing-image-search/search-the-web).
 
     :ivar config: Configuration for client.
@@ -61,7 +61,7 @@ class ImageSearchAPI(object):
             self, credentials, base_url=None):
 
         self.config = ImageSearchAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ImageSearchAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

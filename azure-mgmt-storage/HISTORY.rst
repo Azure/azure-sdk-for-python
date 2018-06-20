@@ -3,12 +3,60 @@
 Release History
 ===============
 
-XXXXXXXXXXXX
-++++++++++++
+2.0.0rc3 (2018-05-30)
++++++++++++++++++++++
 
 **Features**
 
-- All clients now support Azure profiles.
+- Add preview version of management policy (API 2018-03-01-preview only). This is considered preview and breaking changes might happen
+  if you opt in for that Api Version.
+
+**Bugfixes**
+
+- Correct azure-common dependency
+
+2.0.0rc2 (2018-05-16)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix default "models" import to 2018-02-01
+
+2.0.0rc1 (2018-05-11)
++++++++++++++++++++++
+
+**Features**
+
+- Add blob containers operations, immutability policy
+- Add usage.list_by_location
+- Client now supports Azure profiles.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
 
 1.5.0 (2017-12-12)
 ++++++++++++++++++

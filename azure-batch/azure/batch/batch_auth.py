@@ -6,7 +6,6 @@
 #--------------------------------------------------------------------------
 
 import time
-import keyring
 import ast
 import base64
 import hmac

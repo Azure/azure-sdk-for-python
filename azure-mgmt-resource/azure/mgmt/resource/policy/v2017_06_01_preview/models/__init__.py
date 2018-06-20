@@ -9,12 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_sku import PolicySku
-from .policy_assignment import PolicyAssignment
-from .error_response import ErrorResponse, ErrorResponseException
-from .policy_definition_reference import PolicyDefinitionReference
-from .policy_set_definition import PolicySetDefinition
-from .policy_definition import PolicyDefinition
+try:
+    from .policy_sku_py3 import PolicySku
+    from .policy_assignment_py3 import PolicyAssignment
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .policy_definition_reference_py3 import PolicyDefinitionReference
+    from .policy_set_definition_py3 import PolicySetDefinition
+    from .policy_definition_py3 import PolicyDefinition
+except (SyntaxError, ImportError):
+    from .policy_sku import PolicySku
+    from .policy_assignment import PolicyAssignment
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .policy_definition_reference import PolicyDefinitionReference
+    from .policy_set_definition import PolicySetDefinition
+    from .policy_definition import PolicyDefinition
 from .policy_assignment_paged import PolicyAssignmentPaged
 from .policy_set_definition_paged import PolicySetDefinitionPaged
 from .policy_definition_paged import PolicyDefinitionPaged

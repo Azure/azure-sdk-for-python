@@ -26,8 +26,8 @@ class PromptFieldDescription(Model):
     :type prompt_field_type_is_list: bool
     :param prompt_field_type: Possible values include: 'String',
      'SecureString', 'Credential'
-    :type prompt_field_type: str or :class:`PromptFieldType
-     <azure.mgmt.servermanager.models.PromptFieldType>`
+    :type prompt_field_type: str or
+     ~azure.mgmt.servermanager.models.PromptFieldType
     """
 
     _attribute_map = {
@@ -38,9 +38,10 @@ class PromptFieldDescription(Model):
         'prompt_field_type': {'key': 'promptFieldType', 'type': 'PromptFieldType'},
     }
 
-    def __init__(self, name=None, label=None, help_message=None, prompt_field_type_is_list=None, prompt_field_type=None):
-        self.name = name
-        self.label = label
-        self.help_message = help_message
-        self.prompt_field_type_is_list = prompt_field_type_is_list
-        self.prompt_field_type = prompt_field_type
+    def __init__(self, **kwargs):
+        super(PromptFieldDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.label = kwargs.get('label', None)
+        self.help_message = kwargs.get('help_message', None)
+        self.prompt_field_type_is_list = kwargs.get('prompt_field_type_is_list', None)
+        self.prompt_field_type = kwargs.get('prompt_field_type', None)

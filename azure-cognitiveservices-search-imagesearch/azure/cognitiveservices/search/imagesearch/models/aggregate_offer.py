@@ -18,7 +18,9 @@ class AggregateOffer(Offer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -125,7 +127,7 @@ class AggregateOffer(Offer):
         'offers': {'key': 'offers', 'type': '[Offer]'},
     }
 
-    def __init__(self):
-        super(AggregateOffer, self).__init__()
+    def __init__(self, **kwargs):
+        super(AggregateOffer, self).__init__(**kwargs)
         self.offers = None
         self._type = 'AggregateOffer'

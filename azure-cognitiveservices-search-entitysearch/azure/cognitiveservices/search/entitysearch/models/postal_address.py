@@ -18,7 +18,9 @@ class PostalAddress(StructuredValue):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -127,8 +129,8 @@ class PostalAddress(StructuredValue):
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PostalAddress, self).__init__()
+    def __init__(self, **kwargs):
+        super(PostalAddress, self).__init__(**kwargs)
         self.street_address = None
         self.address_locality = None
         self.address_subregion = None

@@ -19,7 +19,9 @@ class PropertyValue(Model):
     sub-classes are: BinaryPropertyValue, Int64PropertyValue,
     DoublePropertyValue, StringPropertyValue, GuidPropertyValue
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -35,6 +37,6 @@ class PropertyValue(Model):
         'kind': {'Binary': 'BinaryPropertyValue', 'Int64': 'Int64PropertyValue', 'Double': 'DoublePropertyValue', 'String': 'StringPropertyValue', 'Guid': 'GuidPropertyValue'}
     }
 
-    def __init__(self):
-        super(PropertyValue, self).__init__()
+    def __init__(self, **kwargs):
+        super(PropertyValue, self).__init__(**kwargs)
         self.kind = None

@@ -18,7 +18,7 @@ class JobTestCase(AzureMgmtTestCase):
         self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
 
     def test_quota_and_usage(self):
-        usages = list(self.client.usage.list(helpers.LOCATION))
+        usages = list(self.client.usages.list(helpers.LOCATION))
         self.assertGreater(len(usages), 0)
         for u in usages:
             self.assertIsNotNone(u.name)

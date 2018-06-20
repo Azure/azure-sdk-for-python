@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class TrackedResource(ProxyResource):
@@ -48,6 +48,6 @@ class TrackedResource(ProxyResource):
     }
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(TrackedResource, self).__init__(, **kwargs)
+        super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags

@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class OperationInputs(Model):
     """Input values for operation results call.
 
-    :param name: The name of the Provisioning Service to check.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the Provisioning Service to check.
     :type name: str
     """
 
@@ -27,6 +29,6 @@ class OperationInputs(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        super(OperationInputs, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(OperationInputs, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

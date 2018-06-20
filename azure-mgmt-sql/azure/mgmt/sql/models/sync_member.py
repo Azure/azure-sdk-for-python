@@ -76,14 +76,14 @@ class SyncMember(ProxyResource):
         'sync_state': {'key': 'properties.syncState', 'type': 'str'},
     }
 
-    def __init__(self, database_type=None, sync_agent_id=None, sql_server_database_id=None, server_name=None, database_name=None, user_name=None, password=None, sync_direction=None):
-        super(SyncMember, self).__init__()
-        self.database_type = database_type
-        self.sync_agent_id = sync_agent_id
-        self.sql_server_database_id = sql_server_database_id
-        self.server_name = server_name
-        self.database_name = database_name
-        self.user_name = user_name
-        self.password = password
-        self.sync_direction = sync_direction
+    def __init__(self, **kwargs):
+        super(SyncMember, self).__init__(**kwargs)
+        self.database_type = kwargs.get('database_type', None)
+        self.sync_agent_id = kwargs.get('sync_agent_id', None)
+        self.sql_server_database_id = kwargs.get('sql_server_database_id', None)
+        self.server_name = kwargs.get('server_name', None)
+        self.database_name = kwargs.get('database_name', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.sync_direction = kwargs.get('sync_direction', None)
         self.sync_state = None

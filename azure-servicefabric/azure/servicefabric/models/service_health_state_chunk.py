@@ -16,7 +16,6 @@ class ServiceHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a service, which contains the service
     name, its aggregated health state and any partitions that respect the
     filters in the cluster health chunk query description.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
@@ -38,7 +37,7 @@ class ServiceHealthStateChunk(EntityHealthStateChunk):
         'partition_health_state_chunks': {'key': 'PartitionHealthStateChunks', 'type': 'PartitionHealthStateChunkList'},
     }
 
-    def __init__(self, health_state=None, service_name=None, partition_health_state_chunks=None):
-        super(ServiceHealthStateChunk, self).__init__(health_state=health_state)
-        self.service_name = service_name
-        self.partition_health_state_chunks = partition_health_state_chunks
+    def __init__(self, **kwargs):
+        super(ServiceHealthStateChunk, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.partition_health_state_chunks = kwargs.get('partition_health_state_chunks', None)

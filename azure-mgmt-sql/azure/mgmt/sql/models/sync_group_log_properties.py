@@ -51,8 +51,8 @@ class SyncGroupLogProperties(Model):
         'operation_status': {'key': 'operationStatus', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SyncGroupLogProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncGroupLogProperties, self).__init__(**kwargs)
         self.timestamp = None
         self.type = None
         self.source = None

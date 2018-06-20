@@ -36,7 +36,7 @@ class TenantIdDescription(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(TenantIdDescription, self).__init__()
+    def __init__(self, **kwargs):
+        super(TenantIdDescription, self).__init__(**kwargs)
         self.id = None
         self.tenant_id = None

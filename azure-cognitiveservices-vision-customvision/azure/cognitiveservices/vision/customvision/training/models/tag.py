@@ -34,10 +34,10 @@ class Tag(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'image_count': {'key': 'ImageCount', 'type': 'int'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'image_count': {'key': 'imageCount', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):

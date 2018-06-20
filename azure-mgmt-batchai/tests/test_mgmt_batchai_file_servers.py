@@ -59,7 +59,7 @@ class FileServerTestCase(AzureMgmtTestCase):
                                          _FILE_SERVER_CREATION_TIMEOUT_SEC))
 
         # Verify the remote login information and private ip are reported
-        server = self.client.file_servers.get(resource_group.name, self.file_server_name)  # type: models.FileServer
+        server = self.client.file_servers.get(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.file_server_name)
         self.assertRegexpMatches(server.mount_settings.file_server_public_ip, helpers.RE_ID_ADDRESS)
         self.assertRegexpMatches(server.mount_settings.file_server_internal_ip, helpers.RE_ID_ADDRESS)
 
@@ -72,14 +72,12 @@ class FileServerTestCase(AzureMgmtTestCase):
                                    helpers.NODE_STARTUP_TIMEOUT_SEC), 1)
 
         # Execute publishing tasks on the first cluster
-        job1 = helpers.create_custom_job(self.client, resource_group.name, location, cluster1.id,
-                                         'host_publisher', 1,
+        job1 = helpers.create_custom_job(self.client, resource_group.name, cluster1.id, 'host_publisher', 1,
                                          'echo hi from host > $AZ_BATCHAI_MOUNT_ROOT/nfs/host.txt')
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job1.name, helpers.MINUTE),
             models.ExecutionState.succeeded)
-        job2 = helpers.create_custom_job(self.client, resource_group.name, location, cluster1.id,
-                                         'container_publisher', 1,
+        job2 = helpers.create_custom_job(self.client, resource_group.name, cluster1.id, 'container_publisher', 1,
                                          'echo hi from container >> $AZ_BATCHAI_MOUNT_ROOT/nfs/container.txt',
                                          container=models.ContainerSettings(
                                              image_source_registry=models.ImageSourceRegistry(image="ubuntu")))
@@ -88,7 +86,7 @@ class FileServerTestCase(AzureMgmtTestCase):
             models.ExecutionState.succeeded)
 
         # Execute consumer task on the second cluster
-        job3 = helpers.create_custom_job(self.client, resource_group.name, location, cluster2.id, 'consumer', 1,
+        job3 = helpers.create_custom_job(self.client, resource_group.name, cluster2.id, 'consumer', 1,
                                          'cat $AZ_BATCHAI_MOUNT_ROOT/nfs/host.txt; '
                                          'cat $AZ_BATCHAI_MOUNT_ROOT/nfs/container.txt')
         self.assertEqual(
@@ -101,9 +99,9 @@ class FileServerTestCase(AzureMgmtTestCase):
                                      {u'stdout.txt': u'hi from host\nhi from container\n', u'stderr.txt': ''})
 
         # Delete clusters
-        self.client.clusters.delete(resource_group.name, 'cluster1').result()
-        self.client.clusters.delete(resource_group.name, 'cluster2').result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, 'cluster1').result()
+        self.client.clusters.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, 'cluster2').result()
 
         # Test deletion
-        self.client.file_servers.delete(resource_group.name, self.file_server_name).result()
+        self.client.file_servers.delete(resource_group.name, helpers.DEFAULT_WORKSPACE_NAME, self.file_server_name).result()
         helpers.assert_existing_file_servers_are(self, self.client, resource_group.name, [])

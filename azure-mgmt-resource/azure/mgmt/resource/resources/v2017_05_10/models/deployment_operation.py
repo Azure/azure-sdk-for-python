@@ -38,8 +38,8 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(DeploymentOperation, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeploymentOperation, self).__init__(**kwargs)
         self.id = None
         self.operation_id = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class FabricErrorError(Model):
     """Error object containing error code and error message.
 
-    :param code: Defines the fabric error codes that be returned as part of
-     the error object in response to Service Fabric API operations that are not
-     successful. Following are the error code values that can be returned for a
-     specific HTTP status code.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Defines the fabric error codes that be returned as
+     part of the error object in response to Service Fabric API operations that
+     are not successful. Following are the error code values that can be
+     returned for a specific HTTP status code.
      - Possible values of the error code for HTTP status code 400 (Bad Request)
      - "FABRIC_E_INVALID_PARTITION_KEY"
      - "FABRIC_E_IMAGEBUILDER_VALIDATION_ERROR"
@@ -34,6 +36,11 @@ class FabricErrorError(Model):
      - "FABRIC_E_SERVICE_AFFINITY_CHAIN_NOT_SUPPORTED"
      - "FABRIC_E_INVALID_ATOMIC_GROUP"
      - "FABRIC_E_VALUE_EMPTY"
+     - "FABRIC_E_BACKUP_IS_ENABLED"
+     - "FABRIC_E_RESTORE_SOURCE_TARGET_PARTITION_MISMATCH"
+     - "FABRIC_E_INVALID_FOR_STATELESS_SERVICES"
+     - "FABRIC_E_INVALID_SERVICE_SCALING_POLICY"
+     - "E_INVALIDARG"
      - Possible values of the error code for HTTP status code 404 (Not Found)
      - "FABRIC_E_NODE_NOT_FOUND"
      - "FABRIC_E_APPLICATION_TYPE_NOT_FOUND"
@@ -55,6 +62,9 @@ class FabricErrorError(Model):
      - "FABRIC_E_SERVICE_MANIFEST_NOT_FOUND"
      - "FABRIC_E_KEY_NOT_FOUND"
      - "FABRIC_E_HEALTH_ENTITY_NOT_FOUND"
+     - "FABRIC_E_BACKUP_NOT_ENABLED"
+     - "FABRIC_E_BACKUP_POLICY_NOT_EXISTING"
+     - "FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING"
      - Possible values of the error code for HTTP status code 409 (Conflict)
      - "FABRIC_E_APPLICATION_TYPE_ALREADY_EXISTS"
      - "FABRIC_E_APPLICATION_ALREADY_EXISTS"
@@ -77,12 +87,16 @@ class FabricErrorError(Model):
      - "FABRIC_E_SEQUENCE_NUMBER_CHECK_FAILED"
      - "FABRIC_E_NODE_HAS_NOT_STOPPED_YET"
      - "FABRIC_E_INSTANCE_ID_MISMATCH"
+     - "FABRIC_E_BACKUP_IN_PROGRESS"
+     - "FABRIC_E_RESTORE_IN_PROGRESS"
+     - "FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING"
      - Possible values of the error code for HTTP status code 413 (Request
      Entity Too Large)
      - "FABRIC_E_VALUE_TOO_LARGE"
      - Possible values of the error code for HTTP status code 500 (Internal
      Server Error)
      - "FABRIC_E_NODE_IS_UP"
+     - "E_FAIL"
      - Possible values of the error code for HTTP status code 503 (Service
      Unavailable)
      - "FABRIC_E_NO_WRITE_QUORUM"
@@ -96,8 +110,8 @@ class FabricErrorError(Model):
      Timeout)
      - "FABRIC_E_COMMUNICATION_ERROR"
      - "FABRIC_E_OPERATION_NOT_COMPLETE"
-     - "FABRIC_E_TIMEOUT"
-     . Possible values include: 'FABRIC_E_INVALID_PARTITION_KEY',
+     - "FABRIC_E_TIMEOUT". Possible values include:
+     'FABRIC_E_INVALID_PARTITION_KEY',
      'FABRIC_E_IMAGEBUILDER_VALIDATION_ERROR', 'FABRIC_E_INVALID_ADDRESS',
      'FABRIC_E_APPLICATION_NOT_UPGRADING',
      'FABRIC_E_APPLICATION_UPGRADE_VALIDATION_ERROR',
@@ -140,8 +154,16 @@ class FabricErrorError(Model):
      'FABRIC_E_NOT_PRIMARY', 'FABRIC_E_NOT_READY',
      'FABRIC_E_RECONFIGURATION_PENDING', 'FABRIC_E_SERVICE_OFFLINE', 'E_ABORT',
      'FABRIC_E_COMMUNICATION_ERROR', 'FABRIC_E_OPERATION_NOT_COMPLETE',
-     'FABRIC_E_TIMEOUT', 'FABRIC_E_NODE_IS_UP'
-    :type code: str or ~azure.servicefabric.models.enum
+     'FABRIC_E_TIMEOUT', 'FABRIC_E_NODE_IS_UP', 'E_FAIL',
+     'FABRIC_E_BACKUP_IS_ENABLED',
+     'FABRIC_E_RESTORE_SOURCE_TARGET_PARTITION_MISMATCH',
+     'FABRIC_E_INVALID_FOR_STATELESS_SERVICES', 'FABRIC_E_BACKUP_NOT_ENABLED',
+     'FABRIC_E_BACKUP_POLICY_NOT_EXISTING',
+     'FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING',
+     'FABRIC_E_BACKUP_IN_PROGRESS', 'FABRIC_E_RESTORE_IN_PROGRESS',
+     'FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING',
+     'FABRIC_E_INVALID_SERVICE_SCALING_POLICY', 'E_INVALIDARG'
+    :type code: str or ~azure.servicefabric.models.FabricErrorCodes
     :param message: Error message.
     :type message: str
     """
@@ -155,7 +177,7 @@ class FabricErrorError(Model):
         'message': {'key': 'Message', 'type': 'str'},
     }
 
-    def __init__(self, code, message=None):
-        super(FabricErrorError, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(FabricErrorError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

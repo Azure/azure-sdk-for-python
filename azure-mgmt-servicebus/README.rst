@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `Service Bus Management
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-servicebus.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/servicebus>`__
+on docs.microsoft.com.
 
 
 Provide Feedback

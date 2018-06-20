@@ -13,19 +13,21 @@ from msrest.serialization import Model
 
 
 class AS2AcknowledgementConnectionSettings(Model):
-    """The AS2 agreement acknowledegment connection settings.
+    """The AS2 agreement acknowledgement connection settings.
 
-    :param ignore_certificate_name_mismatch: The value indicating whether to
-     ignore mismatch in certificate name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param ignore_certificate_name_mismatch: Required. The value indicating
+     whether to ignore mismatch in certificate name.
     :type ignore_certificate_name_mismatch: bool
-    :param support_http_status_code_continue: The value indicating whether to
-     support HTTP status code 'CONTINUE'.
+    :param support_http_status_code_continue: Required. The value indicating
+     whether to support HTTP status code 'CONTINUE'.
     :type support_http_status_code_continue: bool
-    :param keep_http_connection_alive: The value indicating whether to keep
-     the connection alive.
+    :param keep_http_connection_alive: Required. The value indicating whether
+     to keep the connection alive.
     :type keep_http_connection_alive: bool
-    :param unfold_http_headers: The value indicating whether to unfold the
-     HTTP headers.
+    :param unfold_http_headers: Required. The value indicating whether to
+     unfold the HTTP headers.
     :type unfold_http_headers: bool
     """
 
@@ -43,8 +45,9 @@ class AS2AcknowledgementConnectionSettings(Model):
         'unfold_http_headers': {'key': 'unfoldHttpHeaders', 'type': 'bool'},
     }
 
-    def __init__(self, ignore_certificate_name_mismatch, support_http_status_code_continue, keep_http_connection_alive, unfold_http_headers):
-        self.ignore_certificate_name_mismatch = ignore_certificate_name_mismatch
-        self.support_http_status_code_continue = support_http_status_code_continue
-        self.keep_http_connection_alive = keep_http_connection_alive
-        self.unfold_http_headers = unfold_http_headers
+    def __init__(self, **kwargs):
+        super(AS2AcknowledgementConnectionSettings, self).__init__(**kwargs)
+        self.ignore_certificate_name_mismatch = kwargs.get('ignore_certificate_name_mismatch', None)
+        self.support_http_status_code_continue = kwargs.get('support_http_status_code_continue', None)
+        self.keep_http_connection_alive = kwargs.get('keep_http_connection_alive', None)
+        self.unfold_http_headers = kwargs.get('unfold_http_headers', None)

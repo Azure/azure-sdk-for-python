@@ -43,7 +43,9 @@ class JobOperations(object):
 
         Statistics are aggregated across all jobs that have ever existed in the
         account, from account creation to the last update time of the
-        statistics.
+        statistics. The statistics may not be immediately available. The Batch
+        service performs periodic roll-up of statistics. The typical delay is
+        about 30 minutes.
 
         :param job_get_all_lifetime_statistics_options: Additional parameters
          for the operation
@@ -797,8 +799,11 @@ class JobOperations(object):
 
         When a Terminate Job request is received, the Batch service sets the
         job to the terminating state. The Batch service then terminates any
-        active or running tasks associated with the job, and runs any required
-        Job Release tasks. The job then moves into the completed state.
+        running tasks associated with the job and runs any required job release
+        tasks. Then the job moves into the completed state. If there are any
+        tasks in the job in the active state, they will remain in the active
+        state. Once a job is terminated, new tasks cannot be added and any
+        remaining active tasks will not be scheduled.
 
         :param job_id: The ID of the job to terminate.
         :type job_id: str

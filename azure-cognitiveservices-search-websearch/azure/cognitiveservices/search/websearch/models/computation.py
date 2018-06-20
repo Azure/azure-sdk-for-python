@@ -18,7 +18,9 @@ class Computation(Answer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -27,11 +29,11 @@ class Computation(Answer):
     :ivar follow_up_queries:
     :vartype follow_up_queries:
      list[~azure.cognitiveservices.search.websearch.models.Query]
-    :param expression: The math or conversion expression. If the query
-     contains a request to convert units of measure (for example, meters to
-     feet), this field contains the from units and value contains the to units.
-     If the query contains a mathematical expression such as 2+2, this field
-     contains the expression and value contains the answer. Note that
+    :param expression: Required. The math or conversion expression. If the
+     query contains a request to convert units of measure (for example, meters
+     to feet), this field contains the from units and value contains the to
+     units. If the query contains a mathematical expression such as 2+2, this
+     field contains the expression and value contains the answer. Note that
      mathematical expressions may be normalized. For example, if the query was
      sqrt(4^2+8^2), the normalized expression may be sqrt((4^2)+(8^2)). If the
      user's query is a math question and the textDecorations query parameter is
@@ -39,7 +41,7 @@ class Computation(Answer):
      example, if the user's query is log(2), the normalized expression includes
      the subscript markers. For more information, see Hit Highlighting.
     :type expression: str
-    :param value: The expression's answer.
+    :param value: Required. The expression's answer.
     :type value: str
     """
 
@@ -61,8 +63,8 @@ class Computation(Answer):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, expression, value):
-        super(Computation, self).__init__()
-        self.expression = expression
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Computation, self).__init__(**kwargs)
+        self.expression = kwargs.get('expression', None)
+        self.value = kwargs.get('value', None)
         self._type = 'Computation'

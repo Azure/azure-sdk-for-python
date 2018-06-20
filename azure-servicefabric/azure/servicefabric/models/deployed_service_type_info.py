@@ -46,10 +46,10 @@ class DeployedServiceTypeInfo(Model):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, service_type_name=None, service_manifest_name=None, code_package_name=None, status=None, service_package_activation_id=None):
-        super(DeployedServiceTypeInfo, self).__init__()
-        self.service_type_name = service_type_name
-        self.service_manifest_name = service_manifest_name
-        self.code_package_name = code_package_name
-        self.status = status
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServiceTypeInfo, self).__init__(**kwargs)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.code_package_name = kwargs.get('code_package_name', None)
+        self.status = kwargs.get('status', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

@@ -19,21 +19,20 @@ class MonthlyRetentionSchedule(Model):
      monthly retention policy. Possible values include: 'Invalid', 'Daily',
      'Weekly'
     :type retention_schedule_format_type: str or
-     :class:`RetentionScheduleFormat
-     <azure.mgmt.recoveryservicesbackup.models.RetentionScheduleFormat>`
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionScheduleFormat
     :param retention_schedule_daily: Daily retention format for monthly
      retention policy.
-    :type retention_schedule_daily: :class:`DailyRetentionFormat
-     <azure.mgmt.recoveryservicesbackup.models.DailyRetentionFormat>`
+    :type retention_schedule_daily:
+     ~azure.mgmt.recoveryservicesbackup.models.DailyRetentionFormat
     :param retention_schedule_weekly: Weekly retention format for monthly
      retention policy.
-    :type retention_schedule_weekly: :class:`WeeklyRetentionFormat
-     <azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionFormat>`
+    :type retention_schedule_weekly:
+     ~azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionFormat
     :param retention_times: Retention times of retention policy.
-    :type retention_times: list of datetime
+    :type retention_times: list[datetime]
     :param retention_duration: Retention duration of retention Policy.
-    :type retention_duration: :class:`RetentionDuration
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDuration>`
+    :type retention_duration:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDuration
     """
 
     _attribute_map = {
@@ -44,9 +43,10 @@ class MonthlyRetentionSchedule(Model):
         'retention_duration': {'key': 'retentionDuration', 'type': 'RetentionDuration'},
     }
 
-    def __init__(self, retention_schedule_format_type=None, retention_schedule_daily=None, retention_schedule_weekly=None, retention_times=None, retention_duration=None):
-        self.retention_schedule_format_type = retention_schedule_format_type
-        self.retention_schedule_daily = retention_schedule_daily
-        self.retention_schedule_weekly = retention_schedule_weekly
-        self.retention_times = retention_times
-        self.retention_duration = retention_duration
+    def __init__(self, **kwargs):
+        super(MonthlyRetentionSchedule, self).__init__(**kwargs)
+        self.retention_schedule_format_type = kwargs.get('retention_schedule_format_type', None)
+        self.retention_schedule_daily = kwargs.get('retention_schedule_daily', None)
+        self.retention_schedule_weekly = kwargs.get('retention_schedule_weekly', None)
+        self.retention_times = kwargs.get('retention_times', None)
+        self.retention_duration = kwargs.get('retention_duration', None)

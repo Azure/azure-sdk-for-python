@@ -20,7 +20,9 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     sub-classes are: SecondaryActiveReplicatorStatus,
     SecondaryIdleReplicatorStatus
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param replication_queue_status: Details about the replication queue on
      the secondary replicator.
@@ -67,12 +69,12 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
         'kind': {'ActiveSecondary': 'SecondaryActiveReplicatorStatus', 'IdleSecondary': 'SecondaryIdleReplicatorStatus'}
     }
 
-    def __init__(self, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None):
-        super(SecondaryReplicatorStatus, self).__init__()
-        self.replication_queue_status = replication_queue_status
-        self.last_replication_operation_received_time_utc = last_replication_operation_received_time_utc
-        self.is_in_build = is_in_build
-        self.copy_queue_status = copy_queue_status
-        self.last_copy_operation_received_time_utc = last_copy_operation_received_time_utc
-        self.last_acknowledgement_sent_time_utc = last_acknowledgement_sent_time_utc
+    def __init__(self, **kwargs):
+        super(SecondaryReplicatorStatus, self).__init__(**kwargs)
+        self.replication_queue_status = kwargs.get('replication_queue_status', None)
+        self.last_replication_operation_received_time_utc = kwargs.get('last_replication_operation_received_time_utc', None)
+        self.is_in_build = kwargs.get('is_in_build', None)
+        self.copy_queue_status = kwargs.get('copy_queue_status', None)
+        self.last_copy_operation_received_time_utc = kwargs.get('last_copy_operation_received_time_utc', None)
+        self.last_acknowledgement_sent_time_utc = kwargs.get('last_acknowledgement_sent_time_utc', None)
         self.kind = 'SecondaryReplicatorStatus'

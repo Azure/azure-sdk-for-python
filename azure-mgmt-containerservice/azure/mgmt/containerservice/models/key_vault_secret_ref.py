@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class KeyVaultSecretRef(Model):
     """Reference to a secret stored in Azure Key Vault.
 
-    :param vault_id: Key vault identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :param vault_id: Required. Key vault identifier.
     :type vault_id: str
-    :param secret_name: The secret name.
+    :param secret_name: Required. The secret name.
     :type secret_name: str
     :param version: The secret version.
     :type version: str
@@ -34,8 +36,8 @@ class KeyVaultSecretRef(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, vault_id, secret_name, version=None):
-        super(KeyVaultSecretRef, self).__init__()
-        self.vault_id = vault_id
-        self.secret_name = secret_name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(KeyVaultSecretRef, self).__init__(**kwargs)
+        self.vault_id = kwargs.get('vault_id', None)
+        self.secret_name = kwargs.get('secret_name', None)
+        self.version = kwargs.get('version', None)

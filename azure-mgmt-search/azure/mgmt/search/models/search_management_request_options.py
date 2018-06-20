@@ -21,5 +21,10 @@ class SearchManagementRequestOptions(Model):
     :type client_request_id: str
     """
 
-    def __init__(self, client_request_id=None):
-        self.client_request_id = client_request_id
+    _attribute_map = {
+        'client_request_id': {'key': '', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SearchManagementRequestOptions, self).__init__(**kwargs)
+        self.client_request_id = kwargs.get('client_request_id', None)

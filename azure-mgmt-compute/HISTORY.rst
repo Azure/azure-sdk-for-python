@@ -3,13 +3,21 @@
 Release History
 ===============
 
-XXXXXXXXXXXX
-++++++++++++
+4.0.0rc2 (2018-04-17)
++++++++++++++++++++++
 
 **Features**
 
 - All clients now support Azure profiles.
+- Add update operation to VirtualMachineExtension operations (all ApiVersions)
+- Add get_extensions operation to VirtualMachine operations (all ApiVersions)
+- Support eviction policy for virtual machines inside a low priority scale set (2017-12-01)
+- Add get_os_upgrade_history to VMSS operations (2017-12-01)
 
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- Fix some invalid models in Python 3 (introduced in 4.0.0rc1)
 
 4.0.0rc1 (2018-03-21)
 +++++++++++++++++++++

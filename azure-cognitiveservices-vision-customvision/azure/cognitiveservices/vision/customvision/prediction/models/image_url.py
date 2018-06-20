@@ -20,7 +20,7 @@ class ImageUrl(Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'Url', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

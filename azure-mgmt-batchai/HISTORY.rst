@@ -3,6 +3,44 @@
 Release History
 ===============
 
+2.0.0 (2018-06-07)
+++++++++++++++++++
+
+**Breaking changes**
+
+This version uses 2018-05-01 BatchAI API specification which introduced the following braking changes:
+
+- Clusters, FileServers must be created under a workspace;
+- Jobs must be created under an experiment;
+- Clusters, FileServers and Jobs do not accept location during creation and belong to the same location as the parent
+  workspace;
+- Clusters, FileServers and Jobs do not support tags;
+- BatchAIManagementClient.usage renamed to BatchAIManagementClient.usages;
+- Job priority changed a type from int to an enum;
+- File.is_directory is replaced with File.file_type;
+- Job.priority and JobCreateParameters.priority is replaced with scheduling_priority;
+- Removed unsupported MountSettings.file_server_type attribute;
+- OutputDirectory.type unsupported attribute removed;
+- OutputDirectory.create_new attributes removed, BatchAI will always create output directories if they not exist;
+- SetupTask.run_elevated attribute removed, the setup task is always executed under root.
+
+**Features**
+
+- Added support to workspaces to group Clusters, FileServers and Experiments and remove limit on number of allocated
+  resources;
+- Added support for experiment to group jobs and remove limit on number of jobs;
+- Added support for configuring /dev/shm for jobs which use docker containers;
+- Added first class support for generic MPI jobs;
+- Added first class support for Horovod jobs.
+
+1.0.1 (2018-04-16)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid models in Python 3
+- Compatibility of the sdist with wheel 0.31.0
+
 1.0.0 (2018-03-19)
 ++++++++++++++++++
 

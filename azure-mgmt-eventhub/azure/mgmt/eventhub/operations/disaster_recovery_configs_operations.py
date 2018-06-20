@@ -21,7 +21,7 @@ class DisasterRecoveryConfigsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
 
@@ -61,7 +61,7 @@ class DisasterRecoveryConfigsOperations(object):
         parameters = models.CheckNameAvailabilityParameter(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/CheckNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -104,6 +104,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/CheckNameAvailability'}
 
     def list(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -129,7 +130,7 @@ class DisasterRecoveryConfigsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -174,6 +175,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs'}
 
     def create_or_update(
             self, resource_group_name, namespace_name, alias, partner_namespace=None, alternate_name=None, custom_headers=None, raw=False, **operation_config):
@@ -206,7 +208,7 @@ class DisasterRecoveryConfigsOperations(object):
         parameters = models.ArmDisasterRecovery(partner_namespace=partner_namespace, alternate_name=alternate_name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -250,6 +252,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}
 
     def delete(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
@@ -273,7 +276,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -306,6 +309,7 @@ class DisasterRecoveryConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}
 
     def get(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
@@ -331,7 +335,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -371,6 +375,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}
 
     def break_pairing(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
@@ -395,7 +400,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing'
+        url = self.break_pairing.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -428,6 +433,7 @@ class DisasterRecoveryConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    break_pairing.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing'}
 
     def fail_over(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
@@ -452,7 +458,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover'
+        url = self.fail_over.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -485,6 +491,7 @@ class DisasterRecoveryConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    fail_over.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover'}
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
@@ -512,7 +519,7 @@ class DisasterRecoveryConfigsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules'
+                url = self.list_authorization_rules.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -558,6 +565,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules'}
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -584,7 +592,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}'
+        url = self.get_authorization_rule.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -625,6 +633,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}'}
 
     def list_keys(
             self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -651,7 +660,7 @@ class DisasterRecoveryConfigsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}/listKeys'
+        url = self.list_keys.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -692,3 +701,4 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}/listKeys'}

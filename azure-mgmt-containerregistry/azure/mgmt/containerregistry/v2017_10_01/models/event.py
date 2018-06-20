@@ -33,7 +33,7 @@ class Event(EventInfo):
         'event_response_message': {'key': 'eventResponseMessage', 'type': 'EventResponseMessage'},
     }
 
-    def __init__(self, id=None, event_request_message=None, event_response_message=None):
-        super(Event, self).__init__(id=id)
-        self.event_request_message = event_request_message
-        self.event_response_message = event_response_message
+    def __init__(self, **kwargs):
+        super(Event, self).__init__(**kwargs)
+        self.event_request_message = kwargs.get('event_request_message', None)
+        self.event_response_message = kwargs.get('event_response_message', None)

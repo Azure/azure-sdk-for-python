@@ -15,10 +15,12 @@ from .chaos_event import ChaosEvent
 class ValidationFailedChaosEvent(ChaosEvent):
     """Chaos event corresponding to a failure during validation.
 
-    :param time_stamp_utc: The UTC timestamp when this Chaos event was
-     generated.
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param reason: Describes why the ValidationFailedChaosEvent was generated.
      This may happen because more than MaxPercentUnhealthyNodes are unhealthy
@@ -38,7 +40,7 @@ class ValidationFailedChaosEvent(ChaosEvent):
         'reason': {'key': 'Reason', 'type': 'str'},
     }
 
-    def __init__(self, time_stamp_utc, reason=None):
-        super(ValidationFailedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
-        self.reason = reason
+    def __init__(self, **kwargs):
+        super(ValidationFailedChaosEvent, self).__init__(**kwargs)
+        self.reason = kwargs.get('reason', None)
         self.kind = 'ValidationFailed'

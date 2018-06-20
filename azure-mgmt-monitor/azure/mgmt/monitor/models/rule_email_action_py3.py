@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .rule_action import RuleAction
+from .rule_action_py3 import RuleAction
 
 
 class RuleEmailAction(RuleAction):
@@ -40,7 +40,7 @@ class RuleEmailAction(RuleAction):
     }
 
     def __init__(self, *, send_to_service_owners: bool=None, custom_emails=None, **kwargs) -> None:
-        super(RuleEmailAction, self).__init__(, **kwargs)
+        super(RuleEmailAction, self).__init__(**kwargs)
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'

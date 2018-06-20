@@ -53,11 +53,11 @@ class Metric(Model):
         'metric_values': {'key': 'metricValues', 'type': '[MetricValue]'},
     }
 
-    def __init__(self, unit=None):
-        super(Metric, self).__init__()
+    def __init__(self, **kwargs):
+        super(Metric, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.time_grain = None
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.metric_values = None

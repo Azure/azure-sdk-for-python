@@ -28,7 +28,7 @@ class AadMetadataObject(Model):
         'metadata': {'key': 'metadata', 'type': 'AadMetadata'},
     }
 
-    def __init__(self, type=None, metadata=None):
-        super(AadMetadataObject, self).__init__()
-        self.type = type
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(AadMetadataObject, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.metadata = kwargs.get('metadata', None)

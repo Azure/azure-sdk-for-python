@@ -40,8 +40,8 @@ class SqlFilter(Model):
         'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
     }
 
-    def __init__(self, sql_expression=None, requires_preprocessing=True):
-        super(SqlFilter, self).__init__()
-        self.sql_expression = sql_expression
+    def __init__(self, **kwargs):
+        super(SqlFilter, self).__init__(**kwargs)
+        self.sql_expression = kwargs.get('sql_expression', None)
         self.compatibility_level = None
-        self.requires_preprocessing = requires_preprocessing
+        self.requires_preprocessing = kwargs.get('requires_preprocessing', True)
