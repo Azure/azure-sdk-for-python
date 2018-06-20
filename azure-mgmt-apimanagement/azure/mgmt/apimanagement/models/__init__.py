@@ -11,6 +11,7 @@
 
 try:
     from .error_field_contract_py3 import ErrorFieldContract
+    from .error_response_body_py3 import ErrorResponseBody
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .policy_contract_py3 import PolicyContract
     from .policy_collection_py3 import PolicyCollection
@@ -155,6 +156,7 @@ try:
     from .api_version_set_update_parameters_py3 import ApiVersionSetUpdateParameters
 except (SyntaxError, ImportError):
     from .error_field_contract import ErrorFieldContract
+    from .error_response_body import ErrorResponseBody
     from .error_response import ErrorResponse, ErrorResponseException
     from .policy_contract import PolicyContract
     from .policy_collection import PolicyCollection
@@ -364,6 +366,7 @@ from .api_management_client_enums import (
 
 __all__ = [
     'ErrorFieldContract',
+    'ErrorResponseBody',
     'ErrorResponse', 'ErrorResponseException',
     'PolicyContract',
     'PolicyCollection',

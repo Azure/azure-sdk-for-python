@@ -34,7 +34,7 @@ class OperationResultContract(Model):
     :param result_info: Optional result info.
     :type result_info: str
     :param error: Error Body Contract
-    :type error: ~azure.mgmt.apimanagement.models.ErrorResponse
+    :type error: ~azure.mgmt.apimanagement.models.ErrorResponseBody
     :ivar action_log: This property if only provided as part of the
      TenantConfiguration_Validate operation. It contains the log the entities
      which will be updated/created/deleted as part of the
@@ -53,7 +53,7 @@ class OperationResultContract(Model):
         'started': {'key': 'started', 'type': 'iso-8601'},
         'updated': {'key': 'updated', 'type': 'iso-8601'},
         'result_info': {'key': 'resultInfo', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
         'action_log': {'key': 'actionLog', 'type': '[OperationResultLogItemContract]'},
     }
 
