@@ -20,7 +20,7 @@ class KeyVerifyParameters(Model):
     :param algorithm: Required. The signing/verification algorithm. For more
      information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
      Possible values include: 'PS256', 'PS384', 'PS512', 'RS256', 'RS384',
-     'RS512', 'RSNULL', 'ES256', 'ES384', 'ES512', 'ECDSA256'
+     'RS512', 'RSNULL', 'ES256', 'ES384', 'ES512', 'ES256K'
     :type algorithm: str or
      ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
     :param digest: Required. The digest used for signing.
