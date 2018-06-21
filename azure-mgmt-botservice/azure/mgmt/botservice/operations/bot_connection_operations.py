@@ -93,7 +93,7 @@ class BotConnectionOperations(object):
             return client_raw_response
 
         return deserialized
-    list_service_providers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/BotServices/listServiceProviders'}
+    list_service_providers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/listAuthServiceProviders'}
 
     def list_with_secrets(
             self, resource_group_name, resource_name, connection_name, custom_headers=None, raw=False, **operation_config):

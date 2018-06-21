@@ -16,26 +16,18 @@ class ConnectionSettingParameter(Model):
     """Extra Parameter in a Connection Setting Properties to indicate service
     provider specific properties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar key: Key for the Connection Setting Parameter.
-    :vartype key: str
-    :ivar value: Value associated with the Connection Setting Parameter.
-    :vartype value: str
+    :param key: Key for the Connection Setting Parameter.
+    :type key: str
+    :param value: Value associated with the Connection Setting Parameter.
+    :type value: str
     """
-
-    _validation = {
-        'key': {'readonly': True},
-        'value': {'readonly': True},
-    }
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, key: str=None, value: str=None, **kwargs) -> None:
         super(ConnectionSettingParameter, self).__init__(**kwargs)
-        self.key = None
-        self.value = None
+        self.key = key
+        self.value = value
