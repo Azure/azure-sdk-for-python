@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -52,7 +52,7 @@ class KeyVaultManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class KeyVaultManagementClient(object):
+class KeyVaultManagementClient(SDKClient):
     """The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.
 
     :ivar config: Configuration for client.
@@ -77,10 +77,10 @@ class KeyVaultManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = KeyVaultManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(KeyVaultManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-02-14-preview'
+        self.api_version = '2018-02-14'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
