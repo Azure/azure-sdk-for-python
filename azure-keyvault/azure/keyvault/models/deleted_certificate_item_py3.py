@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .certificate_item import CertificateItem
+from .certificate_item_py3 import CertificateItem
 
 
 class DeletedCertificateItem(CertificateItem):

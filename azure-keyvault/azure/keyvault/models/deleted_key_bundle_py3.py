@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_bundle import KeyBundle
+from .key_bundle_py3 import KeyBundle
 
 
 class DeletedKeyBundle(KeyBundle):
