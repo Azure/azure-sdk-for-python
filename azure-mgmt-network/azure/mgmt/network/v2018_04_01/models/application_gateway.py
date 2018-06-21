@@ -89,6 +89,12 @@ class ApplicationGateway(Resource):
     :param enable_http2: Whether HTTP2 is enabled on the application gateway
      resource.
     :type enable_http2: bool
+    :param enable_fips: Whether FIPS is enabled on the application gateway
+     resource.
+    :type enable_fips: bool
+    :param autoscale_configuration: Autoscale Configuration.
+    :type autoscale_configuration:
+     ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayAutoscaleConfiguration
     :param resource_guid: Resource GUID property of the application gateway
      resource.
     :type resource_guid: str
@@ -98,6 +104,9 @@ class ApplicationGateway(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param zones: A list of availability zones denoting where the resource
+     needs to come from.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -129,9 +138,12 @@ class ApplicationGateway(Resource):
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
+        'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
+        'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -153,6 +165,9 @@ class ApplicationGateway(Resource):
         self.redirect_configurations = kwargs.get('redirect_configurations', None)
         self.web_application_firewall_configuration = kwargs.get('web_application_firewall_configuration', None)
         self.enable_http2 = kwargs.get('enable_http2', None)
+        self.enable_fips = kwargs.get('enable_fips', None)
+        self.autoscale_configuration = kwargs.get('autoscale_configuration', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)
+        self.zones = kwargs.get('zones', None)
