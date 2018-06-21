@@ -20,14 +20,20 @@ class Settings(Model):
     :type time_zone: str
     :param issqlcompression: SQL compression flag
     :type issqlcompression: bool
+    :param is_compression: Workload compression flag. This has been added so
+     that 'isSqlCompression'
+     will be deprecated once clients upgrade to consider this flag.
+    :type is_compression: bool
     """
 
     _attribute_map = {
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'issqlcompression': {'key': 'issqlcompression', 'type': 'bool'},
+        'is_compression': {'key': 'isCompression', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(Settings, self).__init__(**kwargs)
         self.time_zone = kwargs.get('time_zone', None)
         self.issqlcompression = kwargs.get('issqlcompression', None)
+        self.is_compression = kwargs.get('is_compression', None)

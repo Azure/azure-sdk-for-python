@@ -62,7 +62,7 @@ class IaasVMRestoreRequest(RestoreRequest):
      while restoring the VM. If this is false, VM will be restored to the same
      cloud service as it was at the time of backup.
     :type create_new_cloud_service: bool
-    :param original_storage_account_option: Original SA Option
+    :param original_storage_account_option: Original Storage Account Option
     :type original_storage_account_option: bool
     :param encryption_details: Details needed if the VM was encrypted at the
      time of backup.

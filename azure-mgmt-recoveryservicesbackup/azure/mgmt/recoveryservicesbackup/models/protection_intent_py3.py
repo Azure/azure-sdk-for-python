@@ -16,7 +16,8 @@ class ProtectionIntent(Model):
     """Base class for backup ProtectionIntent.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureResourceProtectionIntent
+    sub-classes are: AzureRecoveryServiceVaultProtectionIntent,
+    AzureResourceProtectionIntent
 
     All required parameters must be populated in order to send to Azure.
 
@@ -57,7 +58,7 @@ class ProtectionIntent(Model):
     }
 
     _subtype_map = {
-        'protection_intent_item_type': {'AzureResourceItem': 'AzureResourceProtectionIntent'}
+        'protection_intent_item_type': {'RecoveryServiceVaultItem': 'AzureRecoveryServiceVaultProtectionIntent', 'AzureResourceItem': 'AzureResourceProtectionIntent'}
     }
 
     def __init__(self, *, backup_management_type=None, source_resource_id: str=None, item_id: str=None, policy_id: str=None, protection_state=None, **kwargs) -> None:

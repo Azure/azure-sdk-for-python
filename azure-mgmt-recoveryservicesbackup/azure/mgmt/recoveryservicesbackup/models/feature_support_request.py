@@ -16,7 +16,8 @@ class FeatureSupportRequest(Model):
     """Base class for feature request.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVMResourceFeatureSupportRequest
+    sub-classes are: AzureBackupGoalFeatureSupportRequest,
+    AzureVMResourceFeatureSupportRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,7 +34,7 @@ class FeatureSupportRequest(Model):
     }
 
     _subtype_map = {
-        'feature_type': {'AzureVMResourceBackup': 'AzureVMResourceFeatureSupportRequest'}
+        'feature_type': {'AzureBackupGoals': 'AzureBackupGoalFeatureSupportRequest', 'AzureVMResourceBackup': 'AzureVMResourceFeatureSupportRequest'}
     }
 
     def __init__(self, **kwargs):

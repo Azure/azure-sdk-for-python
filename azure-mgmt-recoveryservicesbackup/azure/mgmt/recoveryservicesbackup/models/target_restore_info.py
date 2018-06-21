@@ -22,7 +22,8 @@ class TargetRestoreInfo(Model):
     :param container_id: Resource Id name of the container in which Target
      DataBase resides
     :type container_id: str
-    :param database_name: Database name SQL InstanceName/DataBaseName
+    :param database_name: Database name InstanceName/DataBaseName for SQL or
+     System/DbName for SAP Hana
     :type database_name: str
     """
 
