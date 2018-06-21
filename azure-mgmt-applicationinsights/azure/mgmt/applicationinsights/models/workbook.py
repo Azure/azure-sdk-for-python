@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .workbook_resource import WorkbookResource
 
 
-class Workbook(Resource):
+class Workbook(WorkbookResource):
     """An Application Insights workbook definition.
 
     Variables are only populated by the server, and will be ignored when
