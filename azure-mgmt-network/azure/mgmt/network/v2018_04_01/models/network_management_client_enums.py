@@ -589,3 +589,27 @@ class VirtualNetworkGatewayConnectionType(str, Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
+
+
+class VpnConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+
+class TunnelConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+
+class HubVirtualNetworkConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
