@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sas_definition_item import SasDefinitionItem
+from .sas_definition_item_py3 import SasDefinitionItem
 
 
 class DeletedSasDefinitionItem(SasDefinitionItem):
@@ -57,7 +57,7 @@ class DeletedSasDefinitionItem(SasDefinitionItem):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedSasDefinitionItem, self).__init__(, **kwargs)
+        super(DeletedSasDefinitionItem, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
