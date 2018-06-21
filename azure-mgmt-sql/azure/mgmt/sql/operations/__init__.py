@@ -32,6 +32,7 @@ from .transparent_data_encryptions_operations import TransparentDataEncryptionsO
 from .transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from .server_usages_operations import ServerUsagesOperations
 from .database_usages_operations import DatabaseUsagesOperations
+from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .encryption_protectors_operations import EncryptionProtectorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
@@ -43,10 +44,6 @@ from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
-from .extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
-from .server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
-from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
 from .job_agents_operations import JobAgentsOperations
@@ -63,7 +60,6 @@ from .backup_long_term_retention_policies_operations import BackupLongTermRetent
 from .managed_databases_operations import ManagedDatabasesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
-from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .restore_points_operations import RestorePointsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
@@ -98,6 +94,7 @@ __all__ = [
     'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
     'DatabaseUsagesOperations',
+    'DatabaseBlobAuditingPoliciesOperations',
     'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
@@ -109,10 +106,6 @@ __all__ = [
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
-    'ExtendedDatabaseBlobAuditingPoliciesOperations',
-    'ExtendedServerBlobAuditingPoliciesOperations',
-    'ServerBlobAuditingPoliciesOperations',
-    'DatabaseBlobAuditingPoliciesOperations',
     'DatabaseVulnerabilityAssessmentRuleBaselinesOperations',
     'DatabaseVulnerabilityAssessmentsOperations',
     'JobAgentsOperations',
@@ -129,7 +122,6 @@ __all__ = [
     'ManagedDatabasesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
-    'ServerSecurityAlertPoliciesOperations',
     'RestorePointsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
