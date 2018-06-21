@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_input import JobInput
+from .job_input_py3 import JobInput
 
 
 class JobInputs(JobInput):

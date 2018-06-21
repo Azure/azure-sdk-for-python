@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class StreamingLocator(ProxyResource):
@@ -49,7 +49,14 @@ class StreamingLocator(ProxyResource):
     :type default_content_key_policy_name: str
     :param content_keys: ContentKeys used by this Streaming Locator
     :type content_keys:
-     list[~azure.mgmt.media.models.StreamingLocatorUserDefinedContentKey]
+     list[~azure.mgmt.media.models.StreamingLocatorContentKey]
+    :param alternative_media_id: An Alternative Media Identifier associated
+     with the StreamingLocator.  This identifier can be used to distinguish
+     different StreamingLocators for the same Asset for authorization purposes
+     in the CustomLicenseAcquisitionUrlTemplate or the
+     CustomKeyAcquisitionUrlTemplate of the StreamingPolicy specified in the
+     StreamingPolicyName field.
+    :type alternative_media_id: str
     """
 
     _validation = {
@@ -72,10 +79,11 @@ class StreamingLocator(ProxyResource):
         'streaming_locator_id': {'key': 'properties.streamingLocatorId', 'type': 'str'},
         'streaming_policy_name': {'key': 'properties.streamingPolicyName', 'type': 'str'},
         'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
-        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorUserDefinedContentKey]'},
+        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorContentKey]'},
+        'alternative_media_id': {'key': 'properties.alternativeMediaId', 'type': 'str'},
     }
 
-    def __init__(self, *, asset_name: str, streaming_policy_name: str, start_time=None, end_time=None, streaming_locator_id: str=None, default_content_key_policy_name: str=None, content_keys=None, **kwargs) -> None:
+    def __init__(self, *, asset_name: str, streaming_policy_name: str, start_time=None, end_time=None, streaming_locator_id: str=None, default_content_key_policy_name: str=None, content_keys=None, alternative_media_id: str=None, **kwargs) -> None:
         super(StreamingLocator, self).__init__(**kwargs)
         self.asset_name = asset_name
         self.created = None
@@ -85,3 +93,4 @@ class StreamingLocator(ProxyResource):
         self.streaming_policy_name = streaming_policy_name
         self.default_content_key_policy_name = default_content_key_policy_name
         self.content_keys = content_keys
+        self.alternative_media_id = alternative_media_id
