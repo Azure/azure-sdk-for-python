@@ -361,7 +361,7 @@ class AlertRulesOperations(object):
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules'}
 
-    def list_by_susbscription(
+    def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
         """List the alert rules within a subscription.
 
@@ -379,7 +379,7 @@ class AlertRulesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_susbscription.metadata['url']
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -424,4 +424,4 @@ class AlertRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_susbscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/alertrules'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/alertrules'}
