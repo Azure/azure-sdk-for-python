@@ -21,7 +21,7 @@ class KeyOperationsParameters(Model):
      'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
     :type algorithm: str or
      ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
-    :param value: Required.
+    :param value: Required. an unpadded, url-encoded, base-64 string
     :type value: bytes
     """
 
