@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ContainerLogsOperations(object):
-    """ContainerLogsOperations operations.
+class ContainerOperations(object):
+    """ContainerOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-02-01-preview".
+    :ivar api_version: Client API version. Constant value: "2018-06-01".
     """
 
     models = models
@@ -33,11 +33,11 @@ class ContainerLogsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01-preview"
+        self.api_version = "2018-06-01"
 
         self.config = config
 
-    def list(
+    def list_logs(
             self, resource_group_name, container_group_name, container_name, tail=None, custom_headers=None, raw=False, **operation_config):
         """Get the logs for a specified container instance.
 
@@ -65,7 +65,7 @@ class ContainerLogsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list_logs.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -109,4 +109,83 @@ class ContainerLogsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/logs'}
+    list_logs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/logs'}
+
+    def execute_command(
+            self, resource_group_name, container_group_name, container_name, command=None, terminal_size=None, custom_headers=None, raw=False, **operation_config):
+        """Executes a command in a specific container instance.
+
+        Executes a command for a specific container instance in a specified
+        resource group and container group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param container_group_name: The name of the container group.
+        :type container_group_name: str
+        :param container_name: The name of the container instance.
+        :type container_name: str
+        :param command: The command to be executed.
+        :type command: str
+        :param terminal_size: The size of the terminal.
+        :type terminal_size:
+         ~azure.mgmt.containerinstance.models.ContainerExecRequestTerminalSize
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ContainerExecResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerExecResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        container_exec_request = models.ContainerExecRequest(command=command, terminal_size=terminal_size)
+
+        # Construct URL
+        url = self.execute_command.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(container_exec_request, 'ContainerExecRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerExecResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    execute_command.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/exec'}
