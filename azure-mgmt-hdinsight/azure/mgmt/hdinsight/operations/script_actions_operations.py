@@ -94,7 +94,7 @@ class ScriptActionsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions/{scriptName}'}
 
-    def list_persisted_scripts_by_cluster(
+    def list_by_cluster(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the persisted script actions for the specified cluster.
 
@@ -116,7 +116,7 @@ class ScriptActionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_persisted_scripts_by_cluster.metadata['url']
+                url = self.list_by_cluster.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -163,7 +163,7 @@ class ScriptActionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_persisted_scripts_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions'}
+    list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions'}
 
     def get_execution_detail(
             self, resource_group_name, cluster_name, script_execution_id, custom_headers=None, raw=False, **operation_config):
