@@ -15,7 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.clusters_operations import ClustersOperations
 from .operations.applications_operations import ApplicationsOperations
-from .operations.location_operations import LocationOperations
+from .operations.locations_operations import LocationsOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.extensions_operations import ExtensionsOperations
 from .operations.script_actions_operations import ScriptActionsOperations
@@ -68,8 +68,8 @@ class HDInsightManagementClient(object):
     :vartype clusters: azure.mgmt.hdinsight.operations.ClustersOperations
     :ivar applications: Applications operations
     :vartype applications: azure.mgmt.hdinsight.operations.ApplicationsOperations
-    :ivar location: Location operations
-    :vartype location: azure.mgmt.hdinsight.operations.LocationOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
     :ivar configurations: Configurations operations
     :vartype configurations: azure.mgmt.hdinsight.operations.ConfigurationsOperations
     :ivar extensions: Extensions operations
@@ -106,7 +106,7 @@ class HDInsightManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.location = LocationOperations(
+        self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

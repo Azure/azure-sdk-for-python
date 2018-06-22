@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class LocationOperations(object):
-    """LocationOperations operations.
+class LocationsOperations(object):
+    """LocationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

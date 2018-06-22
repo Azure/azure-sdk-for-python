@@ -11,7 +11,7 @@
 
 from .clusters_operations import ClustersOperations
 from .applications_operations import ApplicationsOperations
-from .location_operations import LocationOperations
+from .locations_operations import LocationsOperations
 from .configurations_operations import ConfigurationsOperations
 from .extensions_operations import ExtensionsOperations
 from .script_actions_operations import ScriptActionsOperations
@@ -21,7 +21,7 @@ from .operations import Operations
 __all__ = [
     'ClustersOperations',
     'ApplicationsOperations',
-    'LocationOperations',
+    'LocationsOperations',
     'ConfigurationsOperations',
     'ExtensionsOperations',
     'ScriptActionsOperations',
