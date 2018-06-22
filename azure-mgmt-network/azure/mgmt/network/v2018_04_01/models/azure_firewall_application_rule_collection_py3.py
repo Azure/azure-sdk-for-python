@@ -40,7 +40,7 @@ class AzureFirewallApplicationRuleCollection(SubResource):
     """
 
     _validation = {
-        'priority': {'maximum': 65000, 'minimum': 0},
+        'priority': {'maximum': 65000, 'minimum': 100},
         'etag': {'readonly': True},
     }
 

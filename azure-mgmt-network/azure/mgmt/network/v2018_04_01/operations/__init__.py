@@ -51,6 +51,13 @@ from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperation
 from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .local_network_gateways_operations import LocalNetworkGatewaysOperations
+from .virtual_wa_ns_operations import VirtualWANsOperations
+from .vpn_sites_operations import VpnSitesOperations
+from .vpn_sites_configuration_operations import VpnSitesConfigurationOperations
+from .virtual_hubs_operations import VirtualHubsOperations
+from .hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
+from .vpn_gateways_operations import VpnGatewaysOperations
+from .vpn_connections_operations import VpnConnectionsOperations
 
 __all__ = [
     'AzureFirewallsOperations',
@@ -95,4 +102,11 @@ __all__ = [
     'VirtualNetworkGatewaysOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
+    'VirtualWANsOperations',
+    'VpnSitesOperations',
+    'VpnSitesConfigurationOperations',
+    'VirtualHubsOperations',
+    'HubVirtualNetworkConnectionsOperations',
+    'VpnGatewaysOperations',
+    'VpnConnectionsOperations',
 ]

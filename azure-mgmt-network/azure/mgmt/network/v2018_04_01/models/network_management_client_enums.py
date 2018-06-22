@@ -121,12 +121,16 @@ class ApplicationGatewaySkuName(str, Enum):
     standard_large = "Standard_Large"
     waf_medium = "WAF_Medium"
     waf_large = "WAF_Large"
+    standard_v2 = "Standard_v2"
+    waf_v2 = "WAF_v2"
 
 
 class ApplicationGatewayTier(str, Enum):
 
     standard = "Standard"
     waf = "WAF"
+    standard_v2 = "Standard_v2"
+    waf_v2 = "WAF_v2"
 
 
 class ApplicationGatewaySslProtocol(str, Enum):
@@ -498,6 +502,7 @@ class VpnClientProtocol(str, Enum):
 
     ike_v2 = "IkeV2"
     sstp = "SSTP"
+    open_vpn = "OpenVPN"
 
 
 class IpsecEncryption(str, Enum):
@@ -604,3 +609,27 @@ class VirtualNetworkGatewayConnectionType(str, Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
+
+
+class VpnConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+
+class TunnelConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+
+class HubVirtualNetworkConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"

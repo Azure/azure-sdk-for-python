@@ -60,6 +60,13 @@ from .operations.virtual_network_peerings_operations import VirtualNetworkPeerin
 from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
+from .operations.virtual_wa_ns_operations import VirtualWANsOperations
+from .operations.vpn_sites_operations import VpnSitesOperations
+from .operations.vpn_sites_configuration_operations import VpnSitesConfigurationOperations
+from .operations.virtual_hubs_operations import VirtualHubsOperations
+from .operations.hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
+from .operations.vpn_gateways_operations import VpnGatewaysOperations
+from .operations.vpn_connections_operations import VpnConnectionsOperations
 from . import models
 
 
@@ -187,6 +194,20 @@ class NetworkManagementClient(SDKClient):
     :vartype virtual_network_gateway_connections: azure.mgmt.network.v2018_04_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
     :vartype local_network_gateways: azure.mgmt.network.v2018_04_01.operations.LocalNetworkGatewaysOperations
+    :ivar virtual_wa_ns: VirtualWANs operations
+    :vartype virtual_wa_ns: azure.mgmt.network.v2018_04_01.operations.VirtualWANsOperations
+    :ivar vpn_sites: VpnSites operations
+    :vartype vpn_sites: azure.mgmt.network.v2018_04_01.operations.VpnSitesOperations
+    :ivar vpn_sites_configuration: VpnSitesConfiguration operations
+    :vartype vpn_sites_configuration: azure.mgmt.network.v2018_04_01.operations.VpnSitesConfigurationOperations
+    :ivar virtual_hubs: VirtualHubs operations
+    :vartype virtual_hubs: azure.mgmt.network.v2018_04_01.operations.VirtualHubsOperations
+    :ivar hub_virtual_network_connections: HubVirtualNetworkConnections operations
+    :vartype hub_virtual_network_connections: azure.mgmt.network.v2018_04_01.operations.HubVirtualNetworkConnectionsOperations
+    :ivar vpn_gateways: VpnGateways operations
+    :vartype vpn_gateways: azure.mgmt.network.v2018_04_01.operations.VpnGatewaysOperations
+    :ivar vpn_connections: VpnConnections operations
+    :vartype vpn_connections: azure.mgmt.network.v2018_04_01.operations.VpnConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -291,6 +312,20 @@ class NetworkManagementClient(SDKClient):
         self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.local_network_gateways = LocalNetworkGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_wa_ns = VirtualWANsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vpn_sites = VpnSitesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vpn_sites_configuration = VpnSitesConfigurationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_hubs = VirtualHubsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.hub_virtual_network_connections = HubVirtualNetworkConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vpn_gateways = VpnGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vpn_connections = VpnConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(

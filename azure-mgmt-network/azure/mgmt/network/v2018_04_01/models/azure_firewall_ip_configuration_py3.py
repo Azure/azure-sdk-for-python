@@ -17,8 +17,8 @@ class AzureFirewallIPConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param private_ip_address: PrivateIPAddress of the network interface IP
-     Configuration. This field is populated in the output.
+    :param private_ip_address: The Firewall Internal Load Balancer IP to be
+     used as the next hop in User Defined Routes.
     :type private_ip_address: str
     :param subnet: Reference of the subnet resource. This resource must be
      named 'AzureFirewallSubnet'.

@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class ConnectionSharedKey(Model):
+class ConnectionSharedKey(SubResource):
     """Response for GetConnectionSharedKey API service call.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param id: Resource ID.
+    :type id: str
     :param value: Required. The virtual network connection shared key value.
     :type value: str
     """
@@ -26,6 +28,7 @@ class ConnectionSharedKey(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 

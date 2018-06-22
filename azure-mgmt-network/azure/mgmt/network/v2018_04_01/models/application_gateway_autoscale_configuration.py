@@ -9,29 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource_py3 import SubResource
+from msrest.serialization import Model
 
 
-class ConnectionSharedKey(SubResource):
-    """Response for GetConnectionSharedKey API service call.
+class ApplicationGatewayAutoscaleConfiguration(Model):
+    """Application Gateway autoscale configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Resource ID.
-    :type id: str
-    :param value: Required. The virtual network connection shared key value.
-    :type value: str
+    :param bounds: Required. Autoscale bounds
+    :type bounds:
+     ~azure.mgmt.network.v2018_04_01.models.ApplicationGatewayAutoscaleBounds
     """
 
     _validation = {
-        'value': {'required': True},
+        'bounds': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'bounds': {'key': 'bounds', 'type': 'ApplicationGatewayAutoscaleBounds'},
     }
 
-    def __init__(self, *, value: str, id: str=None, **kwargs) -> None:
-        super(ConnectionSharedKey, self).__init__(id=id, **kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayAutoscaleConfiguration, self).__init__(**kwargs)
+        self.bounds = kwargs.get('bounds', None)
