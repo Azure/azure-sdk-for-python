@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class UsagesResult(Model):
+class UsagesListResult(Model):
     """The response for the operation to get regional usages for a subscription.
 
     :param value: The list of usages.
@@ -24,5 +24,5 @@ class UsagesResult(Model):
     }
 
     def __init__(self, value=None):
-        super(UsagesResult, self).__init__()
+        super(UsagesListResult, self).__init__()
         self.value = value

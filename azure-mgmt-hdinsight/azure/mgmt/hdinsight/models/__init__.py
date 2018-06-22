@@ -46,11 +46,11 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .application_get_https_endpoint import ApplicationGetHttpsEndpoint
 from .application_get_endpoint import ApplicationGetEndpoint
-from .application_get_properties import ApplicationGetProperties
+from .application_properties import ApplicationProperties
 from .application import Application
 from .localized_name import LocalizedName
 from .usage import Usage
-from .usages_result import UsagesResult
+from .usages_list_result import UsagesListResult
 from .extension import Extension
 from .cluster_monitoring_response import ClusterMonitoringResponse
 from .cluster_monitoring_request import ClusterMonitoringRequest
@@ -105,11 +105,11 @@ __all__ = [
     'Operation',
     'ApplicationGetHttpsEndpoint',
     'ApplicationGetEndpoint',
-    'ApplicationGetProperties',
+    'ApplicationProperties',
     'Application',
     'LocalizedName',
     'Usage',
-    'UsagesResult',
+    'UsagesListResult',
     'Extension',
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',

@@ -23,7 +23,7 @@ class LocationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
+    :ivar api_version: The HDInsight client API Version. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -33,21 +33,23 @@ class LocationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-03-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
     def list_usages(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, location, custom_headers=None, raw=False, **operation_config):
         """Lists the usages for the specified location.
 
+        :param location: The location to get capabilities for.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: UsagesResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hdinsight.models.UsagesResult or
+        :return: UsagesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.UsagesListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -55,7 +57,7 @@ class LocationOperations(object):
         url = self.list_usages.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'location': self._serialize.url("self.config.location", self.config.location, 'str')
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,7 +87,7 @@ class LocationOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UsagesResult', response)
+            deserialized = self._deserialize('UsagesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

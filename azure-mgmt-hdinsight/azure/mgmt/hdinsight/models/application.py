@@ -29,7 +29,7 @@ class Application(ProxyResource):
     :param tags: The tags for the application.
     :type tags: dict[str, str]
     :param properties: The properties of the application.
-    :type properties: ~azure.mgmt.hdinsight.models.ApplicationGetProperties
+    :type properties: ~azure.mgmt.hdinsight.models.ApplicationProperties
     """
 
     _validation = {
@@ -44,7 +44,7 @@ class Application(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ApplicationGetProperties'},
+        'properties': {'key': 'properties', 'type': 'ApplicationProperties'},
     }
 
     def __init__(self, etag=None, tags=None, properties=None):
