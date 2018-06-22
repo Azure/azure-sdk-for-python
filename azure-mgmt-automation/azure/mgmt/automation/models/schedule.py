@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Schedule(Model):
+class Schedule(ProxyResource):
     """Definition of the schedule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets name of the schedule.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :param start_time: Gets or sets the start time of the schedule.
     :type start_time: datetime
@@ -87,9 +87,6 @@ class Schedule(Model):
 
     def __init__(self, start_time=None, expiry_time=None, expiry_time_offset_minutes=None, is_enabled=False, next_run=None, next_run_offset_minutes=None, interval=None, frequency=None, time_zone=None, advanced_schedule=None, creation_time=None, last_modified_time=None, description=None):
         super(Schedule, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.start_time = start_time
         self.start_time_offset_minutes = None
         self.expiry_time = expiry_time

@@ -47,6 +47,7 @@ from .node_reports_operations import NodeReportsOperations
 from .dsc_compilation_job_operations import DscCompilationJobOperations
 from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_node_configuration_operations import DscNodeConfigurationOperations
+from .watcher_operations import WatcherOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -87,4 +88,5 @@ __all__ = [
     'DscCompilationJobOperations',
     'DscCompilationJobStreamOperations',
     'DscNodeConfigurationOperations',
+    'WatcherOperations',
 ]

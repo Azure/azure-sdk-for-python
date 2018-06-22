@@ -12,62 +12,53 @@
 from enum import Enum
 
 
+class SkuNameEnum(Enum):
+
+    free = "Free"
+    basic = "Basic"
+
+
+class AutomationAccountState(Enum):
+
+    ok = "Ok"
+    unavailable = "Unavailable"
+    suspended = "Suspended"
+
+
 class AutomationKeyName(Enum):
 
-    primary = "primary"
-    secondary = "secondary"
+    primary = "Primary"
+    secondary = "Secondary"
 
 
 class AutomationKeyPermissions(Enum):
 
+    read = "Read"
     full = "Full"
 
 
-class JobProvisioningState(Enum):
+class ContentSourceType(Enum):
 
-    failed = "Failed"
+    embedded_content = "embeddedContent"
+    uri = "uri"
+
+
+class DscConfigurationProvisioningState(Enum):
+
     succeeded = "Succeeded"
-    suspended = "Suspended"
-    processing = "Processing"
 
 
-class JobStatus(Enum):
-
-    new = "New"
-    activating = "Activating"
-    running = "Running"
-    completed = "Completed"
-    failed = "Failed"
-    stopped = "Stopped"
-    blocked = "Blocked"
-    suspended = "Suspended"
-    disconnected = "Disconnected"
-    suspending = "Suspending"
-    stopping = "Stopping"
-    resuming = "Resuming"
-    removing = "Removing"
-
-
-class RunbookTypeEnum(Enum):
-
-    script = "Script"
-    graph = "Graph"
-    power_shell_workflow = "PowerShellWorkflow"
-    power_shell = "PowerShell"
-    graph_power_shell_workflow = "GraphPowerShellWorkflow"
-    graph_power_shell = "GraphPowerShell"
-
-
-class RunbookState(Enum):
+class DscConfigurationState(Enum):
 
     new = "New"
     edit = "Edit"
     published = "Published"
 
 
-class RunbookProvisioningState(Enum):
+class GroupTypeEnum(Enum):
 
-    succeeded = "Succeeded"
+    user = "User"
+    system = "System"
 
 
 class ModuleProvisioningState(Enum):
@@ -90,54 +81,6 @@ class ModuleProvisioningState(Enum):
     updating = "Updating"
 
 
-class ContentSourceType(Enum):
-
-    embedded_content = "embeddedContent"
-    uri = "uri"
-
-
-class DscConfigurationProvisioningState(Enum):
-
-    succeeded = "Succeeded"
-
-
-class DscConfigurationState(Enum):
-
-    new = "New"
-    edit = "Edit"
-    published = "Published"
-
-
-class SkuNameEnum(Enum):
-
-    free = "Free"
-    basic = "Basic"
-
-
-class AutomationAccountState(Enum):
-
-    ok = "Ok"
-    unavailable = "Unavailable"
-    suspended = "Suspended"
-
-
-class ScheduleDay(Enum):
-
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-    sunday = "Sunday"
-
-
-class AgentRegistrationKeyName(Enum):
-
-    primary = "primary"
-    secondary = "secondary"
-
-
 class JobStreamType(Enum):
 
     progress = "Progress"
@@ -147,6 +90,28 @@ class JobStreamType(Enum):
     debug = "Debug"
     verbose = "Verbose"
     any = "Any"
+
+
+class RunbookTypeEnum(Enum):
+
+    script = "Script"
+    graph = "Graph"
+    power_shell_workflow = "PowerShellWorkflow"
+    power_shell = "PowerShell"
+    graph_power_shell_workflow = "GraphPowerShellWorkflow"
+    graph_power_shell = "GraphPowerShell"
+
+
+class RunbookState(Enum):
+
+    new = "New"
+    edit = "Edit"
+    published = "Published"
+
+
+class RunbookProvisioningState(Enum):
+
+    succeeded = "Succeeded"
 
 
 class HttpStatusCode(Enum):
@@ -198,6 +163,17 @@ class HttpStatusCode(Enum):
     service_unavailable = "ServiceUnavailable"
     gateway_timeout = "GatewayTimeout"
     http_version_not_supported = "HttpVersionNotSupported"
+
+
+class ScheduleDay(Enum):
+
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+    sunday = "Sunday"
 
 
 class ScheduleFrequency(Enum):
@@ -260,3 +236,34 @@ class StreamType(Enum):
 
     error = "Error"
     output = "Output"
+
+
+class JobStatus(Enum):
+
+    new = "New"
+    activating = "Activating"
+    running = "Running"
+    completed = "Completed"
+    failed = "Failed"
+    stopped = "Stopped"
+    blocked = "Blocked"
+    suspended = "Suspended"
+    disconnected = "Disconnected"
+    suspending = "Suspending"
+    stopping = "Stopping"
+    resuming = "Resuming"
+    removing = "Removing"
+
+
+class JobProvisioningState(Enum):
+
+    failed = "Failed"
+    succeeded = "Succeeded"
+    suspended = "Suspended"
+    processing = "Processing"
+
+
+class AgentRegistrationKeyName(Enum):
+
+    primary = "primary"
+    secondary = "secondary"

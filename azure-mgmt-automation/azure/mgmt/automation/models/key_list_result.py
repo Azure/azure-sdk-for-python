@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class KeyPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Key <azure.mgmt.automation.models.Key>` object
+class KeyListResult(Model):
+    """KeyListResult.
+
+    :param keys: Lists the automation keys.
+    :type keys: list[~azure.mgmt.automation.models.Key]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Key]'}
+        'keys': {'key': 'keys', 'type': '[Key]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(KeyPaged, self).__init__(*args, **kwargs)
+    def __init__(self, keys=None):
+        super(KeyListResult, self).__init__()
+        self.keys = keys

@@ -27,7 +27,7 @@ class ActivityParameter(Model):
      parameter is dynamic.
     :type is_dynamic: bool
     :param position: Gets or sets the position of the activity parameter.
-    :type position: bool
+    :type position: long
     :param value_from_pipeline: Gets or sets a Boolean value that indicates
      true if the parameter can take values from the incoming pipeline objects.
      This setting is used if the cmdlet must access the complete input object.
@@ -53,7 +53,7 @@ class ActivityParameter(Model):
         'type': {'key': 'type', 'type': 'str'},
         'is_mandatory': {'key': 'isMandatory', 'type': 'bool'},
         'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
-        'position': {'key': 'position', 'type': 'bool'},
+        'position': {'key': 'position', 'type': 'long'},
         'value_from_pipeline': {'key': 'valueFromPipeline', 'type': 'bool'},
         'value_from_pipeline_by_property_name': {'key': 'valueFromPipelineByPropertyName', 'type': 'bool'},
         'value_from_remaining_arguments': {'key': 'valueFromRemainingArguments', 'type': 'bool'},

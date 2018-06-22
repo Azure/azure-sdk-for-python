@@ -42,7 +42,7 @@ class ConnectionOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param connection_name: The name of connection.
         :type connection_name: str
@@ -106,7 +106,7 @@ class ConnectionOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param connection_name: The name of connection.
         :type connection_name: str
@@ -170,7 +170,7 @@ class ConnectionOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param connection_name: The parameters supplied to the create or
          update connection operation.
@@ -245,7 +245,7 @@ class ConnectionOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param connection_name: The parameters supplied to the update a
          connection operation.
@@ -318,7 +318,7 @@ class ConnectionOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

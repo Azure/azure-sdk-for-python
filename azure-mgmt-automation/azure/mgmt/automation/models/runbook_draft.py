@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RunbookDraft(Model):
-    """Definition of the runbook type.
+    """RunbookDraft.
 
     :param in_edit: Gets or sets whether runbook is in edit mode.
     :type in_edit: bool

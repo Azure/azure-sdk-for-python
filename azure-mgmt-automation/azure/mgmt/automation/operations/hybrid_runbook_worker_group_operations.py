@@ -42,7 +42,7 @@ class HybridRunbookWorkerGroupOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: Automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param hybrid_runbook_worker_group_name: The hybrid runbook worker
          group name
@@ -99,7 +99,7 @@ class HybridRunbookWorkerGroupOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param hybrid_runbook_worker_group_name: The hybrid runbook worker
          group name
@@ -164,7 +164,7 @@ class HybridRunbookWorkerGroupOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param hybrid_runbook_worker_group_name: The hybrid runbook worker
          group name
@@ -238,7 +238,7 @@ class HybridRunbookWorkerGroupOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str

@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ScheduleUpdateParameters(Model):
     """The parameters supplied to the update schedule operation.
 
-    :param name: Gets or sets the name of the schedule.
+    :param name: Gets or sets the name of the Schedule.
     :type name: str
     :param description: Gets or sets the description of the schedule.
     :type description: str

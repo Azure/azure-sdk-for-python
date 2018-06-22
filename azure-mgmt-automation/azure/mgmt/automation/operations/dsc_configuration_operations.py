@@ -42,7 +42,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param configuration_name: The configuration name.
         :type configuration_name: str
@@ -98,7 +98,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param configuration_name: The configuration name.
         :type configuration_name: str
@@ -162,7 +162,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param configuration_name: The create or update parameters for
          configuration.
@@ -236,7 +236,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param configuration_name: The create or update parameters for
          configuration.
@@ -311,7 +311,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param configuration_name: The configuration name.
         :type configuration_name: str
@@ -374,7 +374,7 @@ class DscConfigurationOperations(object):
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str

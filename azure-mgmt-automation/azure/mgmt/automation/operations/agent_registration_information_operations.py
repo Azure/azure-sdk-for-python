@@ -98,17 +98,17 @@ class AgentRegistrationInformationOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/agentRegistrationInformation'}
 
     def regenerate_key(
-            self, resource_group_name, automation_account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, key_name, custom_headers=None, raw=False, **operation_config):
         """Regenerate a primary or secondary agent registration key.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param parameters: The name of the agent registration key to be
-         regenerated
-        :type parameters:
-         ~azure.mgmt.automation.models.AgentRegistrationRegenerateKeyParameter
+        :param key_name: Gets or sets the agent registration key name -
+         primary or secondary. Possible values include: 'primary', 'secondary'
+        :type key_name: str or
+         ~azure.mgmt.automation.models.AgentRegistrationKeyName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -120,6 +120,8 @@ class AgentRegistrationInformationOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        parameters = models.AgentRegistrationRegenerateKeyParameter(key_name=key_name)
+
         # Construct URL
         url = self.regenerate_key.metadata['url']
         path_format_arguments = {
