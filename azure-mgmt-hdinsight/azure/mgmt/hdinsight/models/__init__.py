@@ -42,8 +42,7 @@ from .operation_resource import OperationResource
 from .resource import Resource
 from .tracked_resource import TrackedResource
 from .proxy_resource import ProxyResource
-from .operation_display import OperationDisplay
-from .operation import Operation
+from .error_response import ErrorResponse, ErrorResponseException
 from .application_get_https_endpoint import ApplicationGetHttpsEndpoint
 from .application_get_endpoint import ApplicationGetEndpoint
 from .application_properties import ApplicationProperties
@@ -55,6 +54,8 @@ from .extension import Extension
 from .cluster_monitoring_response import ClusterMonitoringResponse
 from .cluster_monitoring_request import ClusterMonitoringRequest
 from .script_action_persisted_get_response_spec import ScriptActionPersistedGetResponseSpec
+from .operation_display import OperationDisplay
+from .operation import Operation
 from .cluster_paged import ClusterPaged
 from .application_paged import ApplicationPaged
 from .runtime_script_action_detail_paged import RuntimeScriptActionDetailPaged
@@ -101,8 +102,7 @@ __all__ = [
     'Resource',
     'TrackedResource',
     'ProxyResource',
-    'OperationDisplay',
-    'Operation',
+    'ErrorResponse', 'ErrorResponseException',
     'ApplicationGetHttpsEndpoint',
     'ApplicationGetEndpoint',
     'ApplicationProperties',
@@ -114,6 +114,8 @@ __all__ = [
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',
     'ScriptActionPersistedGetResponseSpec',
+    'OperationDisplay',
+    'Operation',
     'ClusterPaged',
     'ApplicationPaged',
     'RuntimeScriptActionDetailPaged',
