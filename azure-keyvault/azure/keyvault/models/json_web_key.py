@@ -17,8 +17,9 @@ class JsonWebKey(Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: JsonWebKey key type (kty). Possible values include: 'EC',
-     'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
+     Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
     :type kty: str or ~azure.keyvault.models.JsonWebKeyType
     :param key_ops:
     :type key_ops: list[str]
@@ -44,7 +45,7 @@ class JsonWebKey(Model):
     :type t: bytes
     :param crv: Elliptic curve name. For valid values, see
      JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
-     'SECP256K1'
+     'P-256K'
     :type crv: str or ~azure.keyvault.models.JsonWebKeyCurveName
     :param x: X component of an EC public key.
     :type x: bytes

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .secret_bundle import SecretBundle
+from .secret_bundle_py3 import SecretBundle
 
 
 class DeletedSecretBundle(SecretBundle):

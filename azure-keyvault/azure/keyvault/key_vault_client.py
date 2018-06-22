@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -43,7 +43,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class KeyVaultClient(object):
+class KeyVaultClient(SDKClient):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar config: Configuration for client.
@@ -58,10 +58,10 @@ class KeyVaultClient(object):
             self, credentials):
 
         self.config = KeyVaultClientConfiguration(credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(KeyVaultClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '7.0-preview'
+        self.api_version = '7.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -85,7 +85,8 @@ class KeyVaultClient(object):
          JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
         :type kty: str or ~azure.keyvault.models.JsonWebKeyType
-        :param key_size: The key size in bytes. For example, 1024 or 2048.
+        :param key_size: The key size in bits. For example: 2048, 3072, or
+         4096 for RSA.
         :type key_size: int
         :param key_ops:
         :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
@@ -96,7 +97,7 @@ class KeyVaultClient(object):
         :type tags: dict[str, str]
         :param curve: Elliptic curve name. For valid values, see
          JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
-         'P-521', 'SECP256K1'
+         'P-521', 'P-256K'
         :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -966,7 +967,7 @@ class KeyVaultClient(object):
          more information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
          'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
-         'ES384', 'ES512', 'ECDSA256'
+         'ES384', 'ES512', 'ES256K'
         :type algorithm: str or
          ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param value:
@@ -1053,7 +1054,7 @@ class KeyVaultClient(object):
          information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
          'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
-         'ES384', 'ES512', 'ECDSA256'
+         'ES384', 'ES512', 'ES256K'
         :type algorithm: str or
          ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param digest: The digest used for signing.
