@@ -29,7 +29,7 @@ class TextOperationResult(Model):
         'recognition_result': {'key': 'recognitionResult', 'type': 'RecognitionResult'},
     }
 
-    def __init__(self, status=None, recognition_result=None):
-        super(TextOperationResult, self).__init__()
-        self.status = status
-        self.recognition_result = recognition_result
+    def __init__(self, **kwargs):
+        super(TextOperationResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.recognition_result = kwargs.get('recognition_result', None)

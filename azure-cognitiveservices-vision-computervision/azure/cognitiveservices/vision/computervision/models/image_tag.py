@@ -19,14 +19,18 @@ class ImageTag(Model):
     :type name: str
     :param confidence: The level of confidence the service has in the caption
     :type confidence: float
+    :param hint: Optional categorization for the tag
+    :type hint: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'confidence': {'key': 'confidence', 'type': 'float'},
+        'hint': {'key': 'hint', 'type': 'str'},
     }
 
-    def __init__(self, name=None, confidence=None):
-        super(ImageTag, self).__init__()
-        self.name = name
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(ImageTag, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.confidence = kwargs.get('confidence', None)
+        self.hint = kwargs.get('hint', None)
