@@ -346,7 +346,7 @@ class VaultsOperations(object):
 
     def update_access_policy(
             self, resource_group_name, vault_name, operation_kind, properties, custom_headers=None, raw=False, **operation_config):
-        """Update access policies in a key vault in the specified subscription.
+        """Update access policies on a key vault in the specified subscription.
 
         :param resource_group_name: The name of the Resource Group to which
          the vault belongs.
