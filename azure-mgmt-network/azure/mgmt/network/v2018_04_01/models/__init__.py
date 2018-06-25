@@ -62,8 +62,6 @@ try:
     from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_bounds_py3 import ApplicationGatewayAutoscaleBounds
-    from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway_py3 import ApplicationGateway
     from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group_py3 import ApplicationGatewayFirewallRuleGroup
@@ -107,7 +105,7 @@ try:
     from .outbound_nat_rule_py3 import OutboundNatRule
     from .load_balancer_py3 import LoadBalancer
     from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error, ErrorException
+    from .error_py3 import Error
     from .azure_async_operation_result_py3 import AzureAsyncOperationResult
     from .effective_network_security_group_association_py3 import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule_py3 import EffectiveNetworkSecurityRule
@@ -214,16 +212,6 @@ try:
     from .virtual_network_connection_gateway_reference_py3 import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity_py3 import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters_py3 import VpnDeviceScriptParameters
-    from .virtual_wan_py3 import VirtualWAN
-    from .device_properties_py3 import DeviceProperties
-    from .vpn_site_py3 import VpnSite
-    from .get_vpn_sites_configuration_request_py3 import GetVpnSitesConfigurationRequest
-    from .hub_virtual_network_connection_py3 import HubVirtualNetworkConnection
-    from .virtual_hub_py3 import VirtualHub
-    from .vpn_connection_py3 import VpnConnection
-    from .policies_py3 import Policies
-    from .vpn_gateway_py3 import VpnGateway
-    from .vpn_site_id_py3 import VpnSiteId
 except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
@@ -277,8 +265,6 @@ except (SyntaxError, ImportError):
     from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_bounds import ApplicationGatewayAutoscaleBounds
-    from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway import ApplicationGateway
     from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
@@ -322,7 +308,7 @@ except (SyntaxError, ImportError):
     from .outbound_nat_rule import OutboundNatRule
     from .load_balancer import LoadBalancer
     from .error_details import ErrorDetails
-    from .error import Error, ErrorException
+    from .error import Error
     from .azure_async_operation_result import AzureAsyncOperationResult
     from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule import EffectiveNetworkSecurityRule
@@ -429,16 +415,6 @@ except (SyntaxError, ImportError):
     from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters import VpnDeviceScriptParameters
-    from .virtual_wan import VirtualWAN
-    from .device_properties import DeviceProperties
-    from .vpn_site import VpnSite
-    from .get_vpn_sites_configuration_request import GetVpnSitesConfigurationRequest
-    from .hub_virtual_network_connection import HubVirtualNetworkConnection
-    from .virtual_hub import VirtualHub
-    from .vpn_connection import VpnConnection
-    from .policies import Policies
-    from .vpn_gateway import VpnGateway
-    from .vpn_site_id import VpnSiteId
 from .azure_firewall_paged import AzureFirewallPaged
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
@@ -480,12 +456,6 @@ from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_list_entity_paged import VirtualNetworkGatewayConnectionListEntityPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
-from .virtual_wan_paged import VirtualWANPaged
-from .vpn_site_paged import VpnSitePaged
-from .virtual_hub_paged import VirtualHubPaged
-from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPaged
-from .vpn_gateway_paged import VpnGatewayPaged
-from .vpn_connection_paged import VpnConnectionPaged
 from .network_management_client_enums import (
     ProvisioningState,
     AzureFirewallRCActionType,
@@ -562,9 +532,6 @@ from .network_management_client_enums import (
     AuthenticationMethod,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
-    VpnConnectionStatus,
-    TunnelConnectionStatus,
-    HubVirtualNetworkConnectionStatus,
 )
 
 __all__ = [
@@ -620,8 +587,6 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
-    'ApplicationGatewayAutoscaleBounds',
-    'ApplicationGatewayAutoscaleConfiguration',
     'ApplicationGateway',
     'ApplicationGatewayFirewallRule',
     'ApplicationGatewayFirewallRuleGroup',
@@ -665,7 +630,7 @@ __all__ = [
     'OutboundNatRule',
     'LoadBalancer',
     'ErrorDetails',
-    'Error', 'ErrorException',
+    'Error',
     'AzureAsyncOperationResult',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
@@ -772,16 +737,6 @@ __all__ = [
     'VirtualNetworkConnectionGatewayReference',
     'VirtualNetworkGatewayConnectionListEntity',
     'VpnDeviceScriptParameters',
-    'VirtualWAN',
-    'DeviceProperties',
-    'VpnSite',
-    'GetVpnSitesConfigurationRequest',
-    'HubVirtualNetworkConnection',
-    'VirtualHub',
-    'VpnConnection',
-    'Policies',
-    'VpnGateway',
-    'VpnSiteId',
     'AzureFirewallPaged',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
@@ -823,12 +778,6 @@ __all__ = [
     'VirtualNetworkGatewayConnectionListEntityPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
-    'VirtualWANPaged',
-    'VpnSitePaged',
-    'VirtualHubPaged',
-    'HubVirtualNetworkConnectionPaged',
-    'VpnGatewayPaged',
-    'VpnConnectionPaged',
     'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
@@ -904,7 +853,4 @@ __all__ = [
     'AuthenticationMethod',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
-    'VpnConnectionStatus',
-    'TunnelConnectionStatus',
-    'HubVirtualNetworkConnectionStatus',
 ]

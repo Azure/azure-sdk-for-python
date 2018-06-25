@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource_py3 import SubResource
+from msrest.serialization import Model
 
 
-class ConnectionSharedKey(SubResource):
+class ConnectionSharedKey(Model):
     """Response for GetConnectionSharedKey API service call.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Resource ID.
-    :type id: str
     :param value: Required. The virtual network connection shared key value.
     :type value: str
     """
@@ -28,10 +26,9 @@ class ConnectionSharedKey(SubResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, value: str, id: str=None, **kwargs) -> None:
-        super(ConnectionSharedKey, self).__init__(id=id, **kwargs)
+    def __init__(self, *, value: str, **kwargs) -> None:
+        super(ConnectionSharedKey, self).__init__(**kwargs)
         self.value = value
