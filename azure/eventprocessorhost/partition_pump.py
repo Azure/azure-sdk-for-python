@@ -43,7 +43,7 @@ class PartitionPump():
         """
         Sets a new partition lease to be processed by the pump
         :param lease: The lease to set.
-        :type lease: ~azure.eventprocessorhost.Lease
+        :type lease: ~azure.eventprocessorhost.lease.Lease
         """
         if self.partition_context:
             self.partition_context.lease = new_lease

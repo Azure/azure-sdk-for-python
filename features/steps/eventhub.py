@@ -1,13 +1,55 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+import asyncio
+import uuid
+
 from behave import *
 
-@given('we have behave installed')
-def step_impl(context):
-    pass
+import test_utils
 
-@when('we implement a test')
+@given('the EventHub SDK is installed')
 def step_impl(context):
+    from azure import eventhub
+
+@given('an EventHub is created with credentials retrieved')
+def step_impl(context):
+    #from mgmt_settings_real import get_credentials, SUBSCRIPTION_ID
+    #rg, mgmt_client = test_utils.create_mgmt_client(get_credentials(), SUBSCRIPTION_ID)
+    context.eh_config = test_utils.get_eventhub_config()
+
+@given('an EventHub with {properties} is created with credentials retrieved')
+def step_impl(context, properties):
+    #from mgmt_settings_real import get_credentials, SUBSCRIPTION_ID
+    #rg, mgmt_client = test_utils.create_mgmt_client(get_credentials(), SUBSCRIPTION_ID)
+    context.eh_config = test_utils.get_eventhub_config()
+
+@when('I {clients} messages for {hours} hours')
+def step_impl(context, clients, hours):
     assert True is not False
 
-@then('behave will test it for us!')
+@when('I {clients} messages {destination} for {hours} hours')
+def step_impl(context, clients, destination, hours):
+    assert True is not False
+
+@then('I should receive no errors')
+def step_impl(context):
+    assert context.failed is False
+
+@then('I can shutdown the {clients} cleanly')
+def step_impl(context, clients):
+    assert context.failed is False
+
+@then('I should achieve throughput of greater than {total} messages')
+def step_impl(context, total):
+    assert context.failed is False
+
+@then('I should achieve throughput of greater than {total} messages from {source}')
+def step_impl(context, total, source):
+    assert context.failed is False
+
+@then('I remove the EventHub')
 def step_impl(context):
     assert context.failed is False

@@ -430,7 +430,7 @@ class Receiver:
         Callback to process a received message and wrap it in EventData.
         Will also call a user supplied callback.
         :param event: The received message.
-        :type event: ~uamqp.Message
+        :type event: ~uamqp.message.Message
         :returns: ~azure.eventhub.EventData.
         """
         event_data = EventData(message=event)

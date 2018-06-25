@@ -88,6 +88,7 @@ class PartitionContext:
         """
         Returns the parition context in the following format:
         "PartitionContext({EventHubPath}{ConsumerGroupName}{PartitionId}{SequenceNumber})"
+
         :returns: str
         """
         return "PartitionContext({}{}{}{})".format(self.eh_path,
@@ -97,9 +98,10 @@ class PartitionContext:
 
     async def persist_checkpoint_async(self, checkpoint):
         """
-        Persists the checkpoint
+        Persists the checkpoint.
+
         :param checkpoint: The checkpoint to persist.
-        :type checkpoint: ~azure.eventprocessorhost.Checkpoint
+        :type checkpoint: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
         _logger.debug("PartitionPumpCheckpointStart {} {} {} {}".format(
             self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number))

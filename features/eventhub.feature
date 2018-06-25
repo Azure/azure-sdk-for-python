@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 Feature: Exercising EventHub SDK
 
 #  Scenario: Just sends for 3 days, no receives. Focus on send failures only.
@@ -8,7 +13,8 @@ Feature: Exercising EventHub SDK
     And an EventHub is created with credentials retrieved
     When I send and receive messages for 72 hours
     Then I should receive no errors
-    And I can shutdown the sender and receiver cleanly.
+    And I can shutdown the sender and receiver cleanly
+    And I remove the EventHub
 
 #  Scenario: Sender stays idle for 45 minutes and sends some number of messages after each idle duration.
 
@@ -25,16 +31,18 @@ Feature: Exercising EventHub SDK
     When I send messages for 2 hours
     Then I should achieve throughput of greater than 3600000 messages
     And I should receive no errors
-    And I can shutdown the sender cleanly.
+    And I can shutdown the sender cleanly
+    And I remove the EventHub
 
   @long-running
   Scenario: Runs on a 100TU namespace and saturates ingress with partition senders for 3 days.
     Given the EventHub SDK is installed
     And an EventHub with 100TU is created with credentials retrieved
     When I send messages to partitions for 2 hours
-    Then I should achieve throughput of greater than 1800000 messages to each partition
+    Then I should achieve throughput of greater than 1800000 messages from each partition
     And I should receive no errors
-    And I can shutdown the sender cleanly.
+    And I can shutdown the sender cleanly
+    And I remove the EventHub
 
 #  Scenario: Sends and receives 1 byte size messages.
 
