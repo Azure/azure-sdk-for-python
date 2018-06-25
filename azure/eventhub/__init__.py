@@ -106,6 +106,7 @@ class EventHubClient(object):
     def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
         """
         Create an EventHubClient from a connection string.
+
         :param conn_str: The connection string.
         :type conn_str: str
         :param eventhub: The name of the EventHub, if the EntityName is
@@ -135,7 +136,7 @@ class EventHubClient(object):
         Format the properties with which to instantiate the connection.
         This acts like a user agent over HTTP.
 
-        :returns: dict
+        :rtype: dict
         """
         properties = {}
         properties["product"] = "eventhub.python"
@@ -146,7 +147,7 @@ class EventHubClient(object):
 
     def _create_connection(self):
         """
-        Create a new ~uamqp.Connection instance that will be shared between all
+        Create a new ~uamqp.connection.Connection instance that will be shared between all
         Sender/Receiver clients.
         """
         if not self.connection:
@@ -179,7 +180,7 @@ class EventHubClient(object):
         Run the EventHubClient in blocking mode.
         Opens the connection and starts running all Sender/Receiver clients.
 
-        :returns: ~azure.eventhub.EventHubClient
+        :rtype: ~azure.eventhub.EventHubClient
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection()
@@ -205,7 +206,8 @@ class EventHubClient(object):
          -'created_at'
          -'partition_count'
          -'partition_ids'
-        :returns: dict
+
+        :rtype: dict
         """
         self._create_connection()
         eh_name = self.address.path.lstrip('/')
@@ -237,6 +239,7 @@ class EventHubClient(object):
     def add_receiver(self, consumer_group, partition, offset=None, prefetch=300):
         """
         Add a receiver to the client for a particular consumer group and partition.
+
         :param consumer_group: The name of the consumer group.
         :type consumer_group: str
         :param partition: The ID of the partition.
@@ -245,7 +248,7 @@ class EventHubClient(object):
         :type offset: ~azure.eventhub.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :returns: ~azure.eventhub.Receiver
+        :rtype: ~azure.eventhub.Receiver
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -262,6 +265,7 @@ class EventHubClient(object):
         can connect to a partition at any given time - additional epoch receivers must have
         a higher epoch value or they will be rejected. If a 2nd epoch receiver has
         connected, the first will be closed.
+
         :param consumer_group: The name of the consumer group.
         :type consumer_group: str
         :param partition: The ID of the partition.
@@ -270,7 +274,7 @@ class EventHubClient(object):
         :type epoch: int
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :returns: ~azure.eventhub.Receiver
+        :rtype: ~azure.eventhub.Receiver
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -282,11 +286,12 @@ class EventHubClient(object):
         """
         Add a sender to the client to send ~azure.eventhub.EventData object
         to an EventHub.
+
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
-         round-robin
+         round-robin.
         :type parition: str
-        :returns: ~azure.eventhub.Sender
+        :rtype: ~azure.eventhub.Sender
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         handler = Sender(self, target, partition=partition)
@@ -303,6 +308,7 @@ class Sender:
     def __init__(self, client, target, partition=None):
         """
         Instantiate an EventHub event Sender client.
+
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.EventHubClient.
         :param target: The URI of the EventHub to send to.
@@ -323,11 +329,13 @@ class Sender:
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
+
         :param event_data: The event to be sent.
         :type event_data: ~azure.eventhub.EventData
         :raises: ~azure.eventhub.EventHubError if the message fails to
          send.
-        :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
+        :return: The outcome of the message send.
+        :rtype: ~uamqp.constants.MessageSendResult
         """
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
@@ -344,6 +352,7 @@ class Sender:
     def transfer(self, event_data, callback=None):
         """
         Transfers an event data and notifies the callback when the operation is done.
+
         :param event_data: The event to be sent.
         :type event_data: ~azure.eventhub.EventData
         :param callback: Callback to be run once the message has been send.
@@ -368,6 +377,7 @@ class Sender:
     def _on_outcome(self, outcome, condition):
         """
         Called when the outcome is received for a delivery.
+
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult
         """
@@ -389,10 +399,11 @@ class Receiver:
     def __init__(self, client, source, prefetch=300, epoch=None):
         """
         Instantiate a receiver.
+
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.EventHubClient
         :param source: The source EventHub from which to receive events.
-        :type source: ~uamqp.Source
+        :type source: ~uamqp.address.Source
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
@@ -418,7 +429,8 @@ class Receiver:
     def queue_size(self):
         """
         The current size of the unprocessed message queue.
-        :returns: int
+
+        :rtype: int
         """
         # pylint: disable=protected-access
         if self._handler._received_messages:
@@ -429,9 +441,10 @@ class Receiver:
         """
         Callback to process a received message and wrap it in EventData.
         Will also call a user supplied callback.
+
         :param event: The received message.
         :type event: ~uamqp.message.Message
-        :returns: ~azure.eventhub.EventData.
+        :rtype: ~azure.eventhub.EventData.
         """
         event_data = EventData(message=event)
         if self._callback:
@@ -442,6 +455,7 @@ class Receiver:
     def receive(self, max_batch_size=None, callback=None, timeout=None):
         """
         Receive events from the EventHub.
+
         :param max_batch_size: Receive a batch of events. Batch size will
          be up to the maximum specified, but will return as soon as service
          returns no new events. If combined with a timeout and no events are
@@ -452,7 +466,7 @@ class Receiver:
          be a function that accepts a single argument - the event data. This callback
          will be run before the message is returned in the result generator.
         :type callback: func[~azure.eventhub.EventData]
-        :returns: list[~azure.eventhub.EventData]
+        :rtype: list[~azure.eventhub.EventData]
         """
         try:
             timeout_ms = 1000 * timeout if timeout else 0
@@ -478,9 +492,10 @@ class Receiver:
     def selector(self, default):
         """
         Create a selector for the current offset if it is set.
+
         :param default: The fallback receive offset.
         :type default: ~azure.eventhub.Offset
-        :returns: ~azure.eventhub.Offset
+        :rtype: ~azure.eventhub.Offset
         """
         if self.offset is not None:
             return Offset(self.offset).selector()
@@ -490,7 +505,7 @@ class Receiver:
 class EventData(object):
     """
     The EventData class is a holder of event content.
-    Acts as a wrapper to an ~uamqp.Message object.
+    Acts as a wrapper to an ~uamqp.message.Message object.
     """
 
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
@@ -501,13 +516,14 @@ class EventData(object):
 
     def __init__(self, body=None, batch=None, message=None):
         """
-        Initialize EventData
+        Initialize EventData.
+
         :param body: The data to send in a single message.
         :type body: str, bytes or list
         :param batch: A data generator to send batched messages.
         :type batch: Generator
         :param message: The received message.
-        :type message: ~uamqp.Message
+        :type message: ~uamqp.message.Message
         """
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
@@ -536,7 +552,8 @@ class EventData(object):
     def sequence_number(self):
         """
         The sequence number of the event data object.
-        :returns: int
+
+        :rtype: int
         """
         return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
@@ -544,7 +561,8 @@ class EventData(object):
     def offset(self):
         """
         The offset of the event data object.
-        :returns: int
+
+        :rtype: int
         """
         try:
             return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
@@ -555,7 +573,8 @@ class EventData(object):
     def enqueued_time(self):
         """
         The enqueued timestamp of the event data object.
-        :returns: datetime.datetime
+
+        :rtype: datetime.datetime
         """
         timestamp = self._annotations.get(EventData.PROP_TIMESTAMP, None)
         if timestamp:
@@ -567,7 +586,8 @@ class EventData(object):
         """
         The device ID of the event data object. This is only used for
         IoT Hub implementations.
-        :returns: bytes
+
+        :rtype: bytes
         """
         return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
@@ -575,7 +595,8 @@ class EventData(object):
     def partition_key(self):
         """
         The partition key of the event data object.
-        :returns: bytes
+
+        :rtype: bytes
         """
         try:
             return self._annotations[self._partition_key]
@@ -586,6 +607,7 @@ class EventData(object):
     def partition_key(self, value):
         """
         Set the partition key of the event data object.
+
         :param value: The partition key to set.
         :type value: str or bytes
         """
@@ -599,7 +621,8 @@ class EventData(object):
     def properties(self):
         """
         Application defined properties on the message.
-        :returns: dict
+
+        :rtype: dict
         """
         return self._properties
 
@@ -607,6 +630,7 @@ class EventData(object):
     def properties(self, value):
         """
         Application defined properties on the message.
+
         :param value: The application properties for the EventData.
         :type value: dict
         """
@@ -618,7 +642,8 @@ class EventData(object):
     def body(self):
         """
         The body of the event data object.
-        :returns: bytes or generator[bytes]
+
+        :rtype: bytes or generator[bytes]
         """
         return self.message.get_data()
 
@@ -643,6 +668,7 @@ class Offset(object):
     def __init__(self, value, inclusive=False):
         """
         Initialize Offset.
+
         :param value: The offset value.
         :type value: ~datetime.datetime or int or str
         :param inclusive: Whether to include the supplied value as the start point.
@@ -654,7 +680,8 @@ class Offset(object):
     def selector(self):
         """
         Creates a selector expression of the offset.
-        :returns: bytes
+
+        :rtype: bytes
         """
         operator = ">=" if self.inclusive else ">"
         if isinstance(self.value, datetime.datetime):

@@ -12,6 +12,7 @@ import base64
 class EventHubConfig:
     """
     A container class for Event Hub properties.
+
     :param sb_name: The EventHub (ServiceBus) namespace.
     :type sb_name: str
     :param eh_name: The EventHub name.
@@ -43,6 +44,8 @@ class EventHubConfig:
         """
         Returns an auth token dictionary for making calls to eventhub
         REST API.
+
+        :rtype: str
         """
         return "amqps://{}:{}@{}.{}:5671/{}".format(
             urllib.parse.quote_plus(self.policy),
@@ -54,6 +57,8 @@ class EventHubConfig:
     def get_rest_token(self):
         """
         Returns an auth token for making calls to eventhub REST API.
+
+        :rtype: str
         """
         uri = urllib.parse.quote_plus(
             "https://{}.{}/{}".format(self.sb_name, self.namespace_suffix, self.eh_name))

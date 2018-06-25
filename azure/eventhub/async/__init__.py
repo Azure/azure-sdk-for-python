@@ -34,7 +34,7 @@ class EventHubClientAsync(EventHubClient):
 
     def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
         """
-        Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
+        Create an ~uamqp.async.authentication_async.SASTokenAuthAsync instance to authenticate
         the session.
 
         :param auth_uri: The URI to authenticate against.
@@ -48,7 +48,7 @@ class EventHubClientAsync(EventHubClient):
 
     def _create_connection_async(self):
         """
-        Create a new ~uamqp.ConnectionAsync instance that will be shared between all
+        Create a new ~uamqp.async.connection_async.ConnectionAsync instance that will be shared between all
         AsyncSender/AsyncReceiver clients.
         """
         if not self.connection:
@@ -81,7 +81,7 @@ class EventHubClientAsync(EventHubClient):
         Run the EventHubClient asynchronously.
         Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
 
-        :returns: ~azure.eventhub.EventHubClientAsync
+        :rtype: ~azure.eventhub.async.EventHubClientAsync
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection_async()
@@ -101,7 +101,8 @@ class EventHubClientAsync(EventHubClient):
     async def get_eventhub_info_async(self):
         """
         Get details on the specified EventHub async.
-        :returns: dict
+
+        :rtype: dict
         """
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
@@ -126,6 +127,7 @@ class EventHubClientAsync(EventHubClient):
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
+
         :param consumer_group: The name of the consumer group.
         :type consumer_group: str
         :param partition: The ID of the partition.
@@ -134,7 +136,7 @@ class EventHubClientAsync(EventHubClient):
         :type offset: ~azure.eventhub.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :returns: ~azure.eventhub.ReceiverAsync
+        :rtype: ~azure.eventhub.async.ReceiverAsync
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -151,6 +153,7 @@ class EventHubClientAsync(EventHubClient):
         can connect to a partition at any given time - additional epoch receivers must have
         a higher epoch value or they will be rejected. If a 2nd epoch receiver has
         connected, the first will be closed.
+
         :param consumer_group: The name of the consumer group.
         :type consumer_group: str
         :param partition: The ID of the partition.
@@ -159,7 +162,7 @@ class EventHubClientAsync(EventHubClient):
         :type epoch: int
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :returns: ~azure.eventhub.ReceiverAsync
+        :rtype: ~azure.eventhub.async.ReceiverAsync
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -171,11 +174,12 @@ class EventHubClientAsync(EventHubClient):
         """
         Add an async sender to the client to send ~azure.eventhub.EventData object
         to an EventHub.
+
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
-         round-robin
+         round-robin.
         :type partition: str
-        :returns: ~azure.eventhub.SenderAsync
+        :rtype: ~azure.eventhub.async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         handler = AsyncSender(self, target, partition=partition, loop=loop)
@@ -190,8 +194,9 @@ class AsyncSender(Sender):
     def __init__(self, client, target, partition=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an EventHub event SenderAsync client.
-        :param client: The parent EventHubClient.
-        :type client: ~azure.eventhub.EventHubClient.
+
+        :param client: The parent EventHubClientAsync.
+        :type client: ~azure.eventhub.async.EventHubClientAsync
         :param target: The URI of the EventHub to send to.
         :type target: str
         :param loop: An event loop.
@@ -213,6 +218,7 @@ class AsyncSender(Sender):
         """
         Sends an event data and asynchronously waits until
         acknowledgement is received or operation times out.
+
         :param event_data: The event to be sent.
         :type event_data: ~azure.eventhub.EventData
         :raises: ~azure.eventhub.EventHubError if the message fails to
@@ -237,10 +243,11 @@ class AsyncReceiver(Receiver):
     def __init__(self, client, source, prefetch=300, epoch=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an async receiver.
-        :param client: The parent EventHubClient.
-        :type client: ~azure.eventhub.EventHubClient
+
+        :param client: The parent EventHubClientAsync.
+        :type client: ~azure.eventhub.async.EventHubClientAsync
         :param source: The source EventHub from which to receive events.
-        :type source: ~uamqp.Source
+        :type source: ~uamqp.address.Source
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
@@ -268,6 +275,7 @@ class AsyncReceiver(Receiver):
     async def receive(self, max_batch_size=None, callback=None, timeout=None):
         """
         Receive events asynchronously from the EventHub.
+
         :param max_batch_size: Receive a batch of events. Batch size will
          be up to the maximum specified, but will return as soon as service
          returns no new events. If combined with a timeout and no events are
@@ -278,7 +286,7 @@ class AsyncReceiver(Receiver):
          be a function that accepts a single argument - the event data. This callback
          will be run before the message is returned in the result generator.
         :type callback: func[~azure.eventhub.EventData]
-        :returns: list[~azure.eventhub.EventData]
+        :rtype: list[~azure.eventhub.EventData]
         """
         try:
             self._callback = callback

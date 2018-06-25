@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class PartitionContext:
     """
-    Encapsulates information related to an Event Hubs partition used by AbstractEventProcessor
+    Encapsulates information related to an Event Hubs partition used by AbstractEventProcessor.
     """
 
     def __init__(self, host, partition_id, eh_path, consumer_group_name, pump_loop=None):
@@ -28,6 +28,7 @@ class PartitionContext:
     def set_offset_and_sequence_number(self, event_data):
         """
         Updates offset based on event.
+
         :param event_data: A received EventData with valid offset and sequenceNumber.
         :type event_data: ~azure.eventhub.EventData
         """
@@ -39,7 +40,8 @@ class PartitionContext:
     async def get_initial_offset_async(self): # throws InterruptedException, ExecutionException
         """
         Gets the initial offset for processing the partition.
-        :returns: str
+
+        :rtype: str
         """
         _logger.info("Calling user-provided initial offset provider {} {}".format(
             self.host.guid, self.partition_id))
@@ -60,7 +62,7 @@ class PartitionContext:
     async def checkpoint_async(self):
         """
         Generates a checkpoint for the partition using the curren offset and sequenceNumber for
-        and persists to the checkpoint manager
+        and persists to the checkpoint manager.
         """
         captured_checkpoint = Checkpoint(self.partition_id, self.offset, self.sequence_number)
         await self.persist_checkpoint_async(captured_checkpoint)
@@ -69,9 +71,10 @@ class PartitionContext:
         """
         Stores the offset and sequenceNumber from the provided received EventData instance,
         then writes those values to the checkpoint store via the checkpoint manager.
+
         :param event_data: A received EventData with valid offset and sequenceNumber.
         :type event_data: ~azure.eventhub.EventData
-        :raises: ValueError if suplied event_data is None
+        :raises: ValueError if suplied event_data is None.
         :raises: ValueError if the sequenceNumber is less than the last checkpointed value.
         """
         if not event_data:
@@ -89,7 +92,7 @@ class PartitionContext:
         Returns the parition context in the following format:
         "PartitionContext({EventHubPath}{ConsumerGroupName}{PartitionId}{SequenceNumber})"
 
-        :returns: str
+        :rtype: str
         """
         return "PartitionContext({}{}{}{})".format(self.eh_path,
                                                    self.consumer_group_name,

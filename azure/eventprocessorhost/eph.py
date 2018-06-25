@@ -11,25 +11,26 @@ from azure.eventprocessorhost.partition_manager import PartitionManager
 class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.
-    Takes in event hub a event processor class definition a eh_config object
-    As well as a storage manager and an optional event_processor params (ep_params)
+    Takes in an event hub, a event processor class definition, a config object,
+    as well as a storage manager and optional event processor params (ep_params).
     """
 
     def __init__(self, event_processor, eh_config, storage_manager, ep_params=None, eph_options=None, loop=None):
         """
         Initialize EventProcessorHost.
+
         :param event_processor: The event processing handler.
-        :type event_processor: ~azure.eventprocessorhost.AbstractEventProcessor
+        :type event_processor: ~azure.eventprocessorhost.abstract_event_processor.AbstractEventProcessor
         :param eh_config: The EPH connection configuration.
-        :type eh_config: ~azure.eventprocessorhost.EventHubConfig
+        :type eh_config: ~azure.eventprocessorhost.eh_config.EventHubConfig
         :param storage_manager: The Azure storage manager for persisting lease and
          checkpoint information.
-        :type storage_manager: ~azure.eventprocessorhost.AzureStorageCheckpointLeaseManager
+        :type storage_manager: ~azure.eventprocessorhost.azure_storage_checkpoint_manager.AzureStorageCheckpointLeaseManager
         :param ep_params: Optional arbitrary parameters to be passed into the event_processor
          on initialization.
         :type ep_params: list
         :param eph_options: EPH configuration options.
-        :type eph_options: ~azure.eventprocessorhost.EPHOptions
+        :type eph_options: ~azure.eventprocessorhost.eph.EPHOptions
         :param loop: An eventloop. If not provided the default asyncio event loop will be used.
         """
         self.event_processor = event_processor
@@ -46,7 +47,7 @@ class EventProcessorHost:
 
     async def open_async(self):
         """
-        Starts the host
+        Starts the host.
         """
         if not self.loop:
             self.loop = asyncio.get_event_loop()
@@ -54,14 +55,14 @@ class EventProcessorHost:
 
     async def close_async(self):
         """
-        Stops the host
+        Stops the host.
         """
         await self.partition_manager.stop_async()
 
 
 class EPHOptions:
     """
-    Class that contains default and overidable EPH option
+    Class that contains default and overidable EPH option.
     """
 
     def __init__(self):

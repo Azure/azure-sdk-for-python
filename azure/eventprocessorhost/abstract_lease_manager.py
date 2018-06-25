@@ -25,7 +25,9 @@ class AbstractLeaseManager(ABC):
     async def create_lease_store_if_not_exists_async(self):
         """
         Create the lease store if it does not exist, do nothing if it does exist.
-        :returns: `True` if the lease store already exists or was created successfully, `False` if not.
+
+        :return: `True` if the lease store already exists or was created successfully, `False` if not.
+        :rtype: bool
         """
         pass
 
@@ -33,7 +35,9 @@ class AbstractLeaseManager(ABC):
     async def delete_lease_store_async(self):
         """
         Not used by EventProcessorHost, but a convenient function to have for testing.
-        :returns: `True` if the lease store was deleted successfully, `False` if not.
+
+        :return: `True` if the lease store was deleted successfully, `False` if not.
+        :rtype: bool
         """
         pass
 
@@ -41,9 +45,11 @@ class AbstractLeaseManager(ABC):
         """
         Return the lease info for the specified partition.
         Can return null if no lease has been created in the store for the specified partition.
+
         :param partition_id: The ID of a given partition.
         :type parition_id: str
-        :returns: lease info for the partition, or `None`.
+        :return: Lease info for the partition, or `None`.
+        :rtype:
         """
         pass
 
@@ -52,7 +58,9 @@ class AbstractLeaseManager(ABC):
         """
         Return the lease info for all partitions.
         A typical implementation could just call get_lease_async() on all partitions.
-        :returns: list of lease info.
+
+        :return: A list of lease info.
+        :rtype:
         """
         pass
 
@@ -61,9 +69,10 @@ class AbstractLeaseManager(ABC):
         """
         Create in the store the lease info for the given partition, if it does not exist.
         Do nothing if it does exist in the store already.
+
         :param partition_id: The ID of a given partition.
         :type parition_id: str
-        :returns: The existing or newly-created lease info for the partition.
+        :return: The existing or newly-created lease info for the partition.
         """
         pass
 
@@ -72,8 +81,9 @@ class AbstractLeaseManager(ABC):
         """
         Delete the lease info for the given partition from the store.
         If there is no stored lease for the given partition, that is treated as success.
+
         :param lease: The lease to be deleted.
-        :type lease: ~azure.eventprocessorhost.Lease
+        :type lease: ~azure.eventprocessorhost.lease.Lease
         """
         pass
 
@@ -83,9 +93,11 @@ class AbstractLeaseManager(ABC):
         Acquire the lease on the desired partition for this EventProcessorHost.
         Note that it is legal to acquire a lease that is already owned by another host.
         Lease-stealing is how partitions are redistributed when additional hosts are started.
+
         :param lease: The lease to be acquired.
-        :type lease: ~azure.eventprocessorhost.Lease
-        :returns: `True` if the lease was acquired successfully, `False` if not.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
+        :return: `True` if the lease was acquired successfully, `False` if not.
+        :rtype: bool
         """
         pass
 
@@ -95,9 +107,11 @@ class AbstractLeaseManager(ABC):
         Renew a lease currently held by this host.
         If the lease has been stolen, or expired, or released, it is not possible to renew it.
         You will have to call get_lease_async() and then acquire_lease_async() again.
+
         :param lease: The lease to be renewed.
-        :type lease: ~azure.eventprocessorhost.Lease
-        :returns: `True` if the lease was renewed successfully, `False` if not.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
+        :return: `True` if the lease was renewed successfully, `False` if not.
+        :rtype: bool
         """
         pass
 
@@ -106,9 +120,11 @@ class AbstractLeaseManager(ABC):
         """
         Give up a lease currently held by this host. If the lease has been stolen, or expired,
         releasing it is unnecessary, and will fail if attempted.
+
         :param lease: The lease to be released.
-        :type lease: ~azure.eventprocessorhost.Lease
-        :returns: `True` if the lease was released successfully, `False` if not.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
+        :return: `True` if the lease was released successfully, `False` if not.
+        :rtype: bool
         """
         pass
 
@@ -119,9 +135,10 @@ class AbstractLeaseManager(ABC):
         hold a lease in order to update it. If the lease has been stolen, or expired, or released,
         it cannot be updated. Updating should renew the lease before performing the update to
         avoid lease expiration during the process.
+
         :param lease: The lease to be updated.
-        :type lease: ~azure.eventprocessorhost.Lease
-        :returns: `True` if the updated was performed successfully, `False` if not.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
+        :return: `True` if the updated was performed successfully, `False` if not.
+        :rtype: bool
         """
         pass
-   

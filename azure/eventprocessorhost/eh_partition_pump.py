@@ -15,7 +15,7 @@ _logger = logging.getLogger(__name__)
 
 class EventHubPartitionPump(PartitionPump):
     """
-    Pulls and messages from lease partition from eventhub and sends them to processor
+    Pulls and messages from lease partition from eventhub and sends them to processor.
     """
 
     def __init__(self, host, lease):
@@ -27,7 +27,7 @@ class EventHubPartitionPump(PartitionPump):
 
     async def on_open_async(self):
         """
-        Eventhub Override for on_open_async
+        Eventhub Override for on_open_async.
         """
         _opened_ok = False
         _retry_count = 0
@@ -61,7 +61,7 @@ class EventHubPartitionPump(PartitionPump):
     async def open_clients_async(self):
         """
         Responsible for establishing connection to event hub client
-        throws EventHubsException, IOException, InterruptedException, ExecutionException
+        throws EventHubsException, IOException, InterruptedException, ExecutionException.
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
@@ -78,7 +78,7 @@ class EventHubPartitionPump(PartitionPump):
 
     async def clean_up_clients_async(self):
         """
-        Resets the pump swallows all exceptions
+        Resets the pump swallows all exceptions.
         """
         if self.partition_receiver:
             if self.eh_client:
@@ -89,7 +89,8 @@ class EventHubPartitionPump(PartitionPump):
 
     async def on_closing_async(self, reason):
         """
-        Overides partition pump on cleasing
+        Overides partition pump on cleasing.
+
         :param reason: The reason for the shutdown.
         :type reason: str
         """
@@ -100,7 +101,7 @@ class EventHubPartitionPump(PartitionPump):
 
 class PartitionReceiver:
     """
-    Recieves events from a async until lease is lost
+    Recieves events asynchronously until lease is lost.
     """
 
     def __init__(self, eh_partition_pump):
@@ -110,7 +111,7 @@ class PartitionReceiver:
 
     async def run(self):
         """
-        Runs the async partion reciever event loop to retrive messages from the event queue
+        Runs the async partion reciever event loop to retrive messages from the event queue.
         """
         # Implement pull max batch from queue instead of one message at a time
         while self.eh_partition_pump.pump_status != "Errored" and not self.eh_partition_pump.is_closing():
@@ -135,10 +136,11 @@ class PartitionReceiver:
         """
         This method is called on the thread that the EH client uses to run the pump.
         There is one pump per EventHubClient. Since each PartitionPump creates a
-        new EventHubClient,using that thread to call OnEvents does no harm. Even if OnEvents
+        new EventHubClient, using that thread to call OnEvents does no harm. Even if OnEvents
         is slow, the pump will get control back each time OnEvents returns, and be able to receive
         a new batch of messages with which to make the next OnEvents call.The pump gains nothing
         by running faster than OnEvents.
+
         :param events: List of events to be processed.
         :type events: list of ~azure.eventhub.EventData
         """
@@ -147,7 +149,8 @@ class PartitionReceiver:
     async def process_error_async(self, error):
         """
         Handles processing errors this is never called since python recieve client doesn't
-        have error handling implemented (TBD add fault pump handling)
+        have error handling implemented (TBD add fault pump handling).
+
         :param error: An error the occurred.
         :type error: Exception
         """

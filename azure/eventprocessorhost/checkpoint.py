@@ -5,11 +5,12 @@
 
 class Checkpoint:
     """
-    Contains checkpoint metadata
+    Contains checkpoint metadata.
     """
 
     def __init__(self, partition_id, offset="-1", sequence_number="0"):
-        """Initialize Checkpoint
+        """Initialize Checkpoint.
+
         :param partition_id: The parition ID of the checkpoint.
         :type partition_id: str
         :param offset: The receive offset of the checkpoint.
@@ -24,8 +25,9 @@ class Checkpoint:
     def from_source(self, checkpoint):
         """
         Creates a new Checkpoint from an existing checkpoint.
+
         :param checkpoint: Existing checkpoint.
-        :type checkpoint: ~azure.eventprocessorhost.Checkpoint
+        :type checkpoint: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
         self.partition_id = checkpoint.partition_id
         self.offset = checkpoint.offset
