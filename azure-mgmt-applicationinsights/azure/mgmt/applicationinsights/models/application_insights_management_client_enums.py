@@ -30,8 +30,8 @@ class RequestSource(Enum):
 
 class PurgeState(Enum):
 
-    pending = "Pending"
-    completed = "Completed"
+    pending = "pending"
+    completed = "completed"
 
 
 class FavoriteType(Enum):

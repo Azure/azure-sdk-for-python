@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .workbook_resource import WorkbookResource
 
 
-class Workbook(Resource):
+class Workbook(WorkbookResource):
     """An Application Insights workbook definition.
 
     Variables are only populated by the server, and will be ignored when
@@ -68,7 +68,6 @@ class Workbook(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'workbook_name': {'required': True},
         'serialized_data': {'required': True},
         'workbook_id': {'required': True},
@@ -97,7 +96,7 @@ class Workbook(Resource):
         'source_resource_id': {'key': 'properties.sourceResourceId', 'type': 'str'},
     }
 
-    def __init__(self, location, workbook_name, serialized_data, workbook_id, category, user_id, tags=None, kind=None, version=None, shared_type_kind="shared", workbook_tags=None, source_resource_id=None):
+    def __init__(self, workbook_name, serialized_data, workbook_id, category, user_id, location=None, tags=None, kind=None, version=None, shared_type_kind="shared", workbook_tags=None, source_resource_id=None):
         super(Workbook, self).__init__(location=location, tags=tags)
         self.kind = kind
         self.workbook_name = workbook_name

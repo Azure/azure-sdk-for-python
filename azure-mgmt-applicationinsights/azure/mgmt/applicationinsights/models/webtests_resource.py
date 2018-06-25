@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class WebtestsResource(Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
@@ -46,7 +46,7 @@ class Resource(Model):
     }
 
     def __init__(self, location, tags=None):
-        super(Resource, self).__init__()
+        super(WebtestsResource, self).__init__()
         self.id = None
         self.name = None
         self.type = None
