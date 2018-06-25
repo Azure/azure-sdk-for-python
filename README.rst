@@ -17,7 +17,7 @@ This project provides a set of Python packages that make it easy to
 access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Batch, Monitor) components of
 `Microsoft Azure <https://azure.microsoft.com/>`_
 Complete feature list of this repo and where to find Python packages not in this repo can be found on our 
-`Azure SDK for Python features chapter on ReadTheDocs <http://azure-sdk-for-python.readthedocs.io/en/latest/index.html#features>`__.
+`Azure SDK for Python features chapter on ReadTheDocs <https://docs.microsoft.com/en-us/python/api/overview/azure/?view=azure-python>`__.
 
 The SDK supports Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 
