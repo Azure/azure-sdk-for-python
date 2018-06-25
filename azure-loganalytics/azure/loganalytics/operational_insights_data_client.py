@@ -43,7 +43,7 @@ class OperationalInsightsDataClientConfiguration(Configuration):
 
 
 class OperationalInsightsDataClient(SDKClient):
-    """Operational Insights Data Client
+    """Log Analytics Data Plane Client
 
     :ivar config: Configuration for client.
     :vartype config: OperationalInsightsDataClientConfiguration
