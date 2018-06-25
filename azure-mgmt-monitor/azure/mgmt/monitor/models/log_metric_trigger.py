@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class LogMetricTrigger(Model):
-    """LogMetricTrigger.
+    """A log metrics trigger descriptor.
 
     :param threshold_operator: Evaluation operation for Metric -'GreaterThan'
      or 'LessThan' or 'Equal'. Possible values include: 'GreaterThan',
      'LessThan', 'Equal'
     :type threshold_operator: str or
      ~azure.mgmt.monitor.models.ConditionalOperator
-    :param threshold:
+    :param threshold: The threshold of the metric trigger.
     :type threshold: float
     :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or
      'Total'. Possible values include: 'Consecutive', 'Total'
