@@ -41,7 +41,7 @@ async def pump(_pid, receiver, _args, _dl):
                 print("{}: No events received, queue size {}, delivered {}".format(
                     _pid,
                     receiver.queue_size,
-                    receiver.delivered))
+                    total))
             elif iteration >= 80:
                 iteration = 0
                 print("{}: total received {}, last sn={}, last offset={}".format(
