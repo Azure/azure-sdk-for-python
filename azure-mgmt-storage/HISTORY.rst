@@ -3,6 +3,18 @@
 Release History
 ===============
 
+2.0.0rc4 (2018-06-26)
++++++++++++++++++++++
+
+**Features (2018-02-01/2018-03-01-preview)**
+
+Support HDFS feature and web endpoint in Account properties
+
+- Model StorageAccountCreateParameters has a new parameter is_hns_enabled
+- Model Endpoints has a new parameter web
+- Model Endpoints has a new parameter dfs
+- Model StorageAccount has a new parameter is_hns_enabled
+
 2.0.0rc3 (2018-05-30)
 +++++++++++++++++++++
 
