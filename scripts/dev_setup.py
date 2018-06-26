@@ -57,6 +57,6 @@ pip_command('install -r azure-sdk-tools/packaging_requirements.txt')
 
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package
-pip_command('install --force-reinstall azure-nspkg==1.0.0')
 pip_command('install --force-reinstall azure-mgmt-nspkg==1.0.0')
+pip_command('install --force-reinstall azure-nspkg==1.0.0')
 print('Finished dev setup.')

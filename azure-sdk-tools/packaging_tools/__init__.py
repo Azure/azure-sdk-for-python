@@ -23,6 +23,8 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
     # Manage the nspkg
     package_name = result["package_name"]
     result["package_nspkg"] = package_name[:package_name.rindex('-')]+"-nspkg"
+    # ARM?
+    result['is_arm'] = result.pop("is_arm", True)
 
     # Return result
     return result

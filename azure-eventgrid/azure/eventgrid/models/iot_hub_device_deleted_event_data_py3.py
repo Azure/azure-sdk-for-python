@@ -18,7 +18,7 @@ class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
      alphanumeric characters plus the following special characters: - : . + % _
-     # * ? ! ( ) , = @ ; $ '.
+     &#35; * ? ! ( ) , = @ ; $ '.
     :type device_id: str
     :param hub_name: Name of the IoT Hub where the device was created or
      deleted.

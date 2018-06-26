@@ -22,7 +22,7 @@ class ProjectsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API. Constant value: "2018-03-31-preview".
+    :ivar api_version: Version of the API. Constant value: "2018-04-19".
     """
 
     models = models
@@ -32,11 +32,11 @@ class ProjectsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31-preview"
+        self.api_version = "2018-04-19"
 
         self.config = config
 
-    def list(
+    def list_by_resource_group(
             self, group_name, service_name, custom_headers=None, raw=False, **operation_config):
         """Get projects in a service.
 
@@ -63,7 +63,7 @@ class ProjectsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'groupName': self._serialize.url("group_name", group_name, 'str'),
@@ -108,7 +108,7 @@ class ProjectsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.DataMigration/services/{serviceName}/projects'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.DataMigration/services/{serviceName}/projects'}
 
     def create_or_update(
             self, parameters, group_name, service_name, project_name, custom_headers=None, raw=False, **operation_config):

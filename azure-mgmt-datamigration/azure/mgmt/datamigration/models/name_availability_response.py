@@ -15,17 +15,26 @@ from msrest.serialization import Model
 class NameAvailabilityResponse(Model):
     """Indicates whether a proposed resource name is available.
 
-    :param name_available: If true, the name is valid and available. If false,
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name_available: If true, the name is valid and available. If false,
      'reason' describes why not.
-    :type name_available: bool
-    :param reason: The reason why the name is not available, if nameAvailable
+    :vartype name_available: bool
+    :ivar reason: The reason why the name is not available, if nameAvailable
      is false. Possible values include: 'AlreadyExists', 'Invalid'
-    :type reason: str or
+    :vartype reason: str or
      ~azure.mgmt.datamigration.models.NameCheckFailureReason
-    :param message: The localized reason why the name is not available, if
+    :ivar message: The localized reason why the name is not available, if
      nameAvailable is false
-    :type message: str
+    :vartype message: str
     """
+
+    _validation = {
+        'name_available': {'readonly': True},
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
@@ -35,6 +44,6 @@ class NameAvailabilityResponse(Model):
 
     def __init__(self, **kwargs):
         super(NameAvailabilityResponse, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name_available = None
+        self.reason = None
+        self.message = None
