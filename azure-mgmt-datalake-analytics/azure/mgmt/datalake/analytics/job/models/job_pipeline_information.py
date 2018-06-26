@@ -19,40 +19,40 @@ class JobPipelineInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar pipeline_id: the job relationship pipeline identifier (a GUID).
+    :ivar pipeline_id: The job relationship pipeline identifier (a GUID).
     :vartype pipeline_id: str
-    :ivar pipeline_name: the friendly name of the job relationship pipeline,
+    :ivar pipeline_name: The friendly name of the job relationship pipeline,
      which does not need to be unique.
     :vartype pipeline_name: str
-    :ivar pipeline_uri: the pipeline uri, unique, links to the originating
+    :ivar pipeline_uri: The pipeline uri, unique, links to the originating
      service for this pipeline.
     :vartype pipeline_uri: str
-    :ivar num_jobs_failed: the number of jobs in this pipeline that have
+    :ivar num_jobs_failed: The number of jobs in this pipeline that have
      failed.
     :vartype num_jobs_failed: int
-    :ivar num_jobs_canceled: the number of jobs in this pipeline that have
+    :ivar num_jobs_canceled: The number of jobs in this pipeline that have
      been canceled.
     :vartype num_jobs_canceled: int
-    :ivar num_jobs_succeeded: the number of jobs in this pipeline that have
+    :ivar num_jobs_succeeded: The number of jobs in this pipeline that have
      succeeded.
     :vartype num_jobs_succeeded: int
-    :ivar au_hours_failed: the number of job execution hours that resulted in
+    :ivar au_hours_failed: The number of job execution hours that resulted in
      failed jobs.
     :vartype au_hours_failed: float
-    :ivar au_hours_canceled: the number of job execution hours that resulted
+    :ivar au_hours_canceled: The number of job execution hours that resulted
      in canceled jobs.
     :vartype au_hours_canceled: float
-    :ivar au_hours_succeeded: the number of job execution hours that resulted
+    :ivar au_hours_succeeded: The number of job execution hours that resulted
      in successful jobs.
     :vartype au_hours_succeeded: float
-    :ivar last_submit_time: the last time a job in this pipeline was
+    :ivar last_submit_time: The last time a job in this pipeline was
      submitted.
     :vartype last_submit_time: datetime
-    :ivar runs: the list of recurrence identifiers representing each run of
+    :ivar runs: The list of recurrence identifiers representing each run of
      this pipeline.
     :vartype runs:
      list[~azure.mgmt.datalake.analytics.job.models.JobPipelineRunInformation]
-    :ivar recurrences: the list of recurrence identifiers representing each
+    :ivar recurrences: The list of recurrence identifiers representing each
      run of this pipeline.
     :vartype recurrences: list[str]
     """
@@ -87,8 +87,8 @@ class JobPipelineInformation(Model):
         'recurrences': {'key': 'recurrences', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(JobPipelineInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobPipelineInformation, self).__init__(**kwargs)
         self.pipeline_id = None
         self.pipeline_name = None
         self.pipeline_uri = None

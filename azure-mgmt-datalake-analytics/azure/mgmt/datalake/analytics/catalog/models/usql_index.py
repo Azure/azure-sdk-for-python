@@ -54,15 +54,15 @@ class USqlIndex(Model):
         'is_unique': {'key': 'isUnique', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, index_keys=None, columns=None, distribution_info=None, partition_function=None, partition_key_list=None, stream_names=None, is_columnstore=None, index_id=None, is_unique=None):
-        super(USqlIndex, self).__init__()
-        self.name = name
-        self.index_keys = index_keys
-        self.columns = columns
-        self.distribution_info = distribution_info
-        self.partition_function = partition_function
-        self.partition_key_list = partition_key_list
-        self.stream_names = stream_names
-        self.is_columnstore = is_columnstore
-        self.index_id = index_id
-        self.is_unique = is_unique
+    def __init__(self, **kwargs):
+        super(USqlIndex, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.index_keys = kwargs.get('index_keys', None)
+        self.columns = kwargs.get('columns', None)
+        self.distribution_info = kwargs.get('distribution_info', None)
+        self.partition_function = kwargs.get('partition_function', None)
+        self.partition_key_list = kwargs.get('partition_key_list', None)
+        self.stream_names = kwargs.get('stream_names', None)
+        self.is_columnstore = kwargs.get('is_columnstore', None)
+        self.index_id = kwargs.get('index_id', None)
+        self.is_unique = kwargs.get('is_unique', None)
