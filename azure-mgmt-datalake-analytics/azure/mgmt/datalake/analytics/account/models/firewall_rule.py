@@ -48,7 +48,7 @@ class FirewallRule(SubResource):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(FirewallRule, self).__init__()
+    def __init__(self, **kwargs):
+        super(FirewallRule, self).__init__(**kwargs)
         self.start_ip_address = None
         self.end_ip_address = None

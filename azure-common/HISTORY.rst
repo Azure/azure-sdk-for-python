@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.12 (2018-05-29)
++++++++++++++++++++
+
+**Features**
+
+- Add Authorization profile definition
+
 1.1.11 (2018-05-08)
 +++++++++++++++++++
 

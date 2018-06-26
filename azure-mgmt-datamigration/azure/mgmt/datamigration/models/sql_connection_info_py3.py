@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .connection_info import ConnectionInfo
+from .connection_info_py3 import ConnectionInfo
 
 
 class SqlConnectionInfo(ConnectionInfo):

@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Data Migration
-<https://docs.microsoft.com/python/azure/>`__
+<https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 
 

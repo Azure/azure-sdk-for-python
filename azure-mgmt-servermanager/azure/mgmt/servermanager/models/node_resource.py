@@ -27,7 +27,7 @@ class NodeResource(Resource):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     :param gateway_id: ID of the gateway.
@@ -61,9 +61,9 @@ class NodeResource(Resource):
         'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
     }
 
-    def __init__(self, tags=None, etag=None, gateway_id=None, connection_name=None, created=None, updated=None):
-        super(NodeResource, self).__init__(tags=tags, etag=etag)
-        self.gateway_id = gateway_id
-        self.connection_name = connection_name
-        self.created = created
-        self.updated = updated
+    def __init__(self, **kwargs):
+        super(NodeResource, self).__init__(**kwargs)
+        self.gateway_id = kwargs.get('gateway_id', None)
+        self.connection_name = kwargs.get('connection_name', None)
+        self.created = kwargs.get('created', None)
+        self.updated = kwargs.get('updated', None)

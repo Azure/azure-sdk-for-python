@@ -38,10 +38,11 @@ class NodeParameters(Model):
         'password': {'key': 'properties.password', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, gateway_id=None, connection_name=None, user_name=None, password=None):
-        self.location = location
-        self.tags = tags
-        self.gateway_id = gateway_id
-        self.connection_name = connection_name
-        self.user_name = user_name
-        self.password = password
+    def __init__(self, **kwargs):
+        super(NodeParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.gateway_id = kwargs.get('gateway_id', None)
+        self.connection_name = kwargs.get('connection_name', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)

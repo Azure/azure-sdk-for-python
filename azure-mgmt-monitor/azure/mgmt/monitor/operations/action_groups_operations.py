@@ -22,7 +22,7 @@ class ActionGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-04-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ActionGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-01"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
@@ -427,7 +427,8 @@ class ActionGroupsOperations(object):
     def enable_receiver(
             self, resource_group_name, action_group_name, receiver_name, custom_headers=None, raw=False, **operation_config):
         """Enable a receiver in an action group. This changes the receiver's
-        status from Disabled to Enabled.
+        status from Disabled to Enabled. This operation is only supported for
+        Email or SMS receivers.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
