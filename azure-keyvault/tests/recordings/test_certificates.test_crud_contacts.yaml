@@ -7,17 +7,17 @@ interactions:
       Connection: [keep-alive]
       Content-Length: [0]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.27
-          msrest_azure/0.4.25 azure-keyvault/1.0.0b1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-keyvault/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0-preview
+    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Fri, 18 May 2018 20:26:45 GMT']
+      date: ['Fri, 22 Jun 2018 17:01:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -26,9 +26,9 @@ interactions:
           resource="https://vault.azure.net"']
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=167.220.0.114;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=167.220.0.182;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.848]
+      x-ms-keyvault-service-version: [1.0.0.849]
       x-powered-by: [ASP.NET]
     status: {code: 401, message: Unauthorized}
 - request:
@@ -41,11 +41,11 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['166']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.27
-          msrest_azure/0.4.25 azure-keyvault/1.0.0b1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-keyvault/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0-preview
+    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: '{"id":"https://vault11e00ecf.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -53,16 +53,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 18 May 2018 20:26:46 GMT']
+      date: ['Fri, 22 Jun 2018 17:01:24 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=167.220.0.114;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=167.220.0.182;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.848]
+      x-ms-keyvault-service-version: [1.0.0.849]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -72,11 +72,11 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.27
-          msrest_azure/0.4.25 azure-keyvault/1.0.0b1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-keyvault/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0-preview
+    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: '{"id":"https://vault11e00ecf.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -84,16 +84,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 18 May 2018 20:26:46 GMT']
+      date: ['Fri, 22 Jun 2018 17:01:24 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=167.220.0.114;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=167.220.0.182;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.848]
+      x-ms-keyvault-service-version: [1.0.0.849]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -104,11 +104,11 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.27
-          msrest_azure/0.4.25 azure-keyvault/1.0.0b1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-keyvault/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0-preview
+    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: '{"id":"https://vault11e00ecf.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -116,16 +116,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 18 May 2018 20:26:46 GMT']
+      date: ['Fri, 22 Jun 2018 17:01:24 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=167.220.0.114;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=167.220.0.182;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.848]
+      x-ms-keyvault-service-version: [1.0.0.849]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -135,27 +135,27 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.27
-          msrest_azure/0.4.25 azure-keyvault/1.0.0b1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-keyvault/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0-preview
+    uri: https://vault11e00ecf.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['68']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 18 May 2018 20:26:47 GMT']
+      date: ['Fri, 22 Jun 2018 17:01:25 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=167.220.0.114;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=167.220.0.182;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.848]
+      x-ms-keyvault-service-version: [1.0.0.849]
       x-powered-by: [ASP.NET]
     status: {code: 404, message: Not Found}
 version: 1

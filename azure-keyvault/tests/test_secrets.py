@@ -144,7 +144,6 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    @unittest.skipIf(True, 'routing issue for 7.0 preview')
     def test_backup_restore(self, vault, **kwargs):
         self.assertIsNotNone(vault)
         vault_uri = vault.properties.vault_uri

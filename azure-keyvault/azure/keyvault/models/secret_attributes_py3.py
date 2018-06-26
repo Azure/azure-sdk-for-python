@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .attributes import Attributes
+from .attributes_py3 import Attributes
 
 
 class SecretAttributes(Attributes):

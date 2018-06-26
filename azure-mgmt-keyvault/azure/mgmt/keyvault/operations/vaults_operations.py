@@ -42,7 +42,7 @@ class VaultsOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, vault_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -170,7 +170,7 @@ class VaultsOperations(object):
         """
         parameters = models.VaultPatchParameters(tags=tags, properties=properties)
 
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.update.metadata['url']
@@ -240,7 +240,7 @@ class VaultsOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.delete.metadata['url']
@@ -298,7 +298,7 @@ class VaultsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -372,7 +372,7 @@ class VaultsOperations(object):
         """
         parameters = models.VaultAccessPolicyParameters(properties=properties)
 
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.update_access_policy.metadata['url']
@@ -445,7 +445,7 @@ class VaultsOperations(object):
          ~azure.mgmt.keyvault.models.VaultPaged[~azure.mgmt.keyvault.models.Vault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -518,7 +518,7 @@ class VaultsOperations(object):
          ~azure.mgmt.keyvault.models.VaultPaged[~azure.mgmt.keyvault.models.Vault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -587,7 +587,7 @@ class VaultsOperations(object):
          ~azure.mgmt.keyvault.models.DeletedVaultPaged[~azure.mgmt.keyvault.models.DeletedVault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -658,7 +658,7 @@ class VaultsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.get_deleted.metadata['url']
@@ -707,7 +707,7 @@ class VaultsOperations(object):
 
     def _purge_deleted_initial(
             self, vault_name, location, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.purge_deleted.metadata['url']
@@ -878,7 +878,7 @@ class VaultsOperations(object):
         """
         vault_name = models.VaultCheckNameAvailabilityParameters(name=name)
 
-        api_version = "2018-02-14-preview"
+        api_version = "2018-02-14"
 
         # Construct URL
         url = self.check_name_availability.metadata['url']

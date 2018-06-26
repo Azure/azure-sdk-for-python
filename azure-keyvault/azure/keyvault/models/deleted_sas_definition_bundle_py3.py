@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sas_definition_bundle import SasDefinitionBundle
+from .sas_definition_bundle_py3 import SasDefinitionBundle
 
 
 class DeletedSasDefinitionBundle(SasDefinitionBundle):
@@ -73,7 +73,7 @@ class DeletedSasDefinitionBundle(SasDefinitionBundle):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedSasDefinitionBundle, self).__init__(, **kwargs)
+        super(DeletedSasDefinitionBundle, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None

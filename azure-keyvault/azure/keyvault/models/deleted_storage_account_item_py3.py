@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_account_item import StorageAccountItem
+from .storage_account_item_py3 import StorageAccountItem
 
 
 class DeletedStorageAccountItem(StorageAccountItem):
@@ -57,7 +57,7 @@ class DeletedStorageAccountItem(StorageAccountItem):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedStorageAccountItem, self).__init__(, **kwargs)
+        super(DeletedStorageAccountItem, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
