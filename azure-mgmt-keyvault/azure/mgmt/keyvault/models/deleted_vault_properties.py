@@ -27,7 +27,7 @@ class DeletedVaultProperties(Model):
     :ivar scheduled_purge_date: The scheduled purged date.
     :vartype scheduled_purge_date: datetime
     :ivar tags: Tags of the original vault.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -46,7 +46,8 @@ class DeletedVaultProperties(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(DeletedVaultProperties, self).__init__(**kwargs)
         self.vault_id = None
         self.location = None
         self.deletion_date = None

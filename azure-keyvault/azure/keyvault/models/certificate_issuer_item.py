@@ -26,6 +26,7 @@ class CertificateIssuerItem(Model):
         'provider': {'key': 'provider', 'type': 'str'},
     }
 
-    def __init__(self, id=None, provider=None):
-        self.id = id
-        self.provider = provider
+    def __init__(self, **kwargs):
+        super(CertificateIssuerItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.provider = kwargs.get('provider', None)

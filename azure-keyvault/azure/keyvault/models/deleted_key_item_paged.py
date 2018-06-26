@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DeletedKeyItemPaged(Paged):
     """
-    A paging container for iterating over a list of DeletedKeyItem object
+    A paging container for iterating over a list of :class:`DeletedKeyItem <azure.keyvault.models.DeletedKeyItem>` object
     """
 
     _attribute_map = {
