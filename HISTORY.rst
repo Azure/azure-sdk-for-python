@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.2.0rc1 (unreleased)
++++++++++++++++++++++
+
+- Updated uAMQP dependency to vRC2
+- Added support for constructing IoTHub connections.
+- Removed optional `callback` argument from `Receiver.receive` and `AsyncReceiver.receive`.
+  This removes the potential for messages to be processed via callback for not yet returned
+  in the batch.
+
+
 0.2.0b2 (2018-05-29)
 ++++++++++++++++++++
 

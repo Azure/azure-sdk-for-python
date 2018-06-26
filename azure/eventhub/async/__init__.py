@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
-import queue
 import asyncio
 import time
 import datetime
@@ -257,7 +256,6 @@ class AsyncReceiver(Receiver):
         """
         self.loop = loop or asyncio.get_event_loop()
         self.offset = None
-        self._callback = None
         self.prefetch = prefetch
         self.epoch = epoch
         properties = None
@@ -272,7 +270,7 @@ class AsyncReceiver(Receiver):
             timeout=self.timeout,
             loop=self.loop)
 
-    async def receive(self, max_batch_size=None, callback=None, timeout=None):
+    async def receive(self, max_batch_size=None, timeout=None):
         """
         Receive events asynchronously from the EventHub.
 
@@ -282,20 +280,19 @@ class AsyncReceiver(Receiver):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :param callback: A callback to be run for each received event. This must
-         be a function that accepts a single argument - the event data. This callback
-         will be run before the message is returned in the result generator.
-        :type callback: func[~azure.eventhub.EventData]
         :rtype: list[~azure.eventhub.EventData]
         """
         try:
-            self._callback = callback
             timeout_ms = 1000 * timeout if timeout else 0
-            batch = await self._handler.receive_message_batch_async(
+            message_batch = await self._handler.receive_message_batch_async(
                 max_batch_size=max_batch_size,
-                on_message_received=self.on_message,
                 timeout=timeout_ms)
-            return batch
+            data_batch = []
+            for message in message_batch:
+                event_data = EventData(message=event)
+                self.offset = event_data.offset
+                data_batch.append(event_data)
+            return data_batch
         except errors.AMQPConnectionError as e:
             message = "Failed to open receiver: {}".format(e)
             message += "\nPlease check that the partition key is valid "

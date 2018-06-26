@@ -11,11 +11,9 @@ import uuid
 import time
 import asyncio
 try:
-    from urllib import urlparse
-    from urllib import unquote_plus
+    from urllib import urlparse, unquote_plus, urlencode
 except ImportError:
-    from urllib.parse import unquote_plus
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, unquote_plus, urlencode
 
 import uamqp
 from uamqp import Connection
@@ -50,6 +48,29 @@ def _parse_conn_str(conn_str):
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
     return endpoint, shared_access_key_name, shared_access_key, entity_path
+
+
+def _generate_sas_token(uri, policy, key, expiry=None):
+    """Create a shared access signiture token as a string literal.
+    :returns: SAS token as string literal.
+    :rtype: str
+    """
+    from base64 import b64encode, b64decode
+    from hashlib import sha256
+    from hmac import HMAC
+    if not expiry:
+        expiry = time.time() + 3600  # Default to 1 hour.
+    encoded_uri = quote_plus(uri)
+    ttl = int(expiry)
+    sign_key = '%s\n%d' % (encoded_uri, ttl)
+    signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
+    result = {
+        'sr': uri,
+        'sig': signature,
+        'se': str(ttl)}
+    if policy:
+        result['skn'] = policy
+    return 'SharedAccessSignature ' + urlencode(result)
 
 
 def _build_uri(address, entity):
@@ -116,6 +137,14 @@ class EventHubClient(object):
         entity = eventhub or entity
         address = _build_uri(address, entity)
         return cls(address, username=policy, password=key, **kwargs)
+
+    @classmethod
+    def from_iothub_connection_string(cls, conn_str, **kwargs)
+        address, policy, key, _ = _parse_conn_str(conn_str)
+        hub_name = address.split('.')[0]
+        username = "{}@sas.root.{}".format(policy, hub_name)
+        password = _generate_sas_token(address, policy, key)
+        return cls(address, username=username, password=password, **kwargs)
 
     def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
         """
@@ -411,7 +440,6 @@ class Receiver:
         :type epoch: int
         """
         self.offset = None
-        self._callback = None
         self.prefetch = prefetch
         self.epoch = epoch
         properties = None
@@ -437,22 +465,7 @@ class Receiver:
             return self._handler._received_messages.qsize()
         return 0
 
-    def on_message(self, event):
-        """
-        Callback to process a received message and wrap it in EventData.
-        Will also call a user supplied callback.
-
-        :param event: The received message.
-        :type event: ~uamqp.message.Message
-        :rtype: ~azure.eventhub.EventData.
-        """
-        event_data = EventData(message=event)
-        if self._callback:
-            self._callback(event_data)
-        self.offset = event_data.offset
-        return event_data
-
-    def receive(self, max_batch_size=None, callback=None, timeout=None):
+    def receive(self, max_batch_size=None, timeout=None):
         """
         Receive events from the EventHub.
 
@@ -462,20 +475,19 @@ class Receiver:
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :param callback: A callback to be run for each received event. This must
-         be a function that accepts a single argument - the event data. This callback
-         will be run before the message is returned in the result generator.
-        :type callback: func[~azure.eventhub.EventData]
         :rtype: list[~azure.eventhub.EventData]
         """
         try:
             timeout_ms = 1000 * timeout if timeout else 0
-            self._callback = callback
-            batch = self._handler.receive_message_batch(
+            message_batch = self._handler.receive_message_batch(
                 max_batch_size=max_batch_size,
-                on_message_received=self.on_message,
                 timeout=timeout_ms)
-            return batch
+            data_batch = []
+            for message in message_batch:
+                event_data = EventData(message=event)
+                self.offset = event_data.offset
+                data_batch.append(event_data)
+            return data_batch
         except errors.AMQPConnectionError as e:
             message = "Failed to open receiver: {}".format(e)
             message += "\nPlease check that the partition key is valid "
