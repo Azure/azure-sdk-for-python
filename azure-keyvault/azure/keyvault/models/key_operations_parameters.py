@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class KeyOperationsParameters(Model):
     """The key operations parameters.
 
-    :param algorithm: algorithm identifier. Possible values include:
+    All required parameters must be populated in order to send to Azure.
+
+    :param algorithm: Required. algorithm identifier. Possible values include:
      'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-    :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-     <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
-    :param value:
+    :type algorithm: str or
+     ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
+    :param value: Required.
     :type value: bytes
     """
 
@@ -33,6 +35,7 @@ class KeyOperationsParameters(Model):
         'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, algorithm, value):
-        self.algorithm = algorithm
-        self.value = value
+    def __init__(self, **kwargs):
+        super(KeyOperationsParameters, self).__init__(**kwargs)
+        self.algorithm = kwargs.get('algorithm', None)
+        self.value = kwargs.get('value', None)
