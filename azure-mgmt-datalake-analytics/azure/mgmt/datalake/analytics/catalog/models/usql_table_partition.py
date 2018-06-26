@@ -48,12 +48,12 @@ class USqlTablePartition(CatalogItem):
         'create_date': {'key': 'createDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, parent_name=None, index_id=None, label=None, create_date=None):
-        super(USqlTablePartition, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.parent_name = parent_name
-        self.index_id = index_id
-        self.label = label
-        self.create_date = create_date
+    def __init__(self, **kwargs):
+        super(USqlTablePartition, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.name = kwargs.get('name', None)
+        self.parent_name = kwargs.get('parent_name', None)
+        self.index_id = kwargs.get('index_id', None)
+        self.label = kwargs.get('label', None)
+        self.create_date = kwargs.get('create_date', None)
