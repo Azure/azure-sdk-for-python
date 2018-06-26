@@ -6,7 +6,7 @@ Release History
 0.6.0 (2018-06-15)
 ++++++++++++++++++
 
-**Features* 
+**Features**
 
 - Catalog_ListTableFragments
 - Catalog_PreviewTable
