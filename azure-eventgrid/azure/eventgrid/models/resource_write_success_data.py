@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data import EventGridEventData
 
 
-class ResourceWriteSuccessData(Model):
+class ResourceWriteSuccessData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for a
     Microsoft.Resources.ResourceWriteSuccess event. This is raised when a
     resource create or update operation succeeds.

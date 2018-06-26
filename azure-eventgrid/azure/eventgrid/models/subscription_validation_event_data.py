@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data import EventGridEventData
 
 
-class SubscriptionValidationEventData(Model):
+class SubscriptionValidationEventData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for a
     Microsoft.EventGrid.SubscriptionValidationEvent.
 

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data import EventGridEventData
 
 
-class DeviceLifeCycleEventProperties(Model):
+class DeviceLifeCycleEventProperties(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for a device life cycle
     event (DeviceCreated, DeviceDeleted).
 

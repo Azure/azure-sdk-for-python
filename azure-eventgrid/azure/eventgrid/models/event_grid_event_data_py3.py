@@ -9,5 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0"
+from msrest.serialization import Model
 
+
+class EventGridEventData(Model):
+    """Base type for system event data published by Azure services to Event Grid.
+    """
+
+    _attribute_map = {
+    }
