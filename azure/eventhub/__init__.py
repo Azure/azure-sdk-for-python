@@ -139,7 +139,7 @@ class EventHubClient(object):
         return cls(address, username=policy, password=key, **kwargs)
 
     @classmethod
-    def from_iothub_connection_string(cls, conn_str, **kwargs)
+    def from_iothub_connection_string(cls, conn_str, **kwargs):
         address, policy, key, _ = _parse_conn_str(conn_str)
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
@@ -484,7 +484,7 @@ class Receiver:
                 timeout=timeout_ms)
             data_batch = []
             for message in message_batch:
-                event_data = EventData(message=event)
+                event_data = EventData(message=message)
                 self.offset = event_data.offset
                 data_batch.append(event_data)
             return data_batch
@@ -540,15 +540,12 @@ class EventData(object):
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._properties = {}
-        self._header = MessageHeader()
-        self._header.durable = True
         if batch:
             self.message = BatchMessage(data=batch, multi_messages=True)
         elif message:
             self.message = message
             self._annotations = message.annotations
             self._properties = message.application_properties
-            self._header = message.header
         else:
             if isinstance(body, list) and body:
                 self.message = Message(body[0])
@@ -625,8 +622,10 @@ class EventData(object):
         """
         annotations = dict(self._annotations)
         annotations[self._partition_key] = value
+        header = MessageHeader()
+        header.durable = True
         self.message.annotations = annotations
-        self.message.header = self._header
+        self.message.header = header
         self._annotations = annotations
 
     @property

@@ -289,7 +289,7 @@ class AsyncReceiver(Receiver):
                 timeout=timeout_ms)
             data_batch = []
             for message in message_batch:
-                event_data = EventData(message=event)
+                event_data = EventData(message=message)
                 self.offset = event_data.offset
                 data_batch.append(event_data)
             return data_batch
