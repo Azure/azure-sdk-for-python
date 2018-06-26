@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .certificate_bundle import CertificateBundle
+from .certificate_bundle_py3 import CertificateBundle
 
 
 class DeletedCertificateBundle(CertificateBundle):

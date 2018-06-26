@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .secret_item import SecretItem
+from .secret_item_py3 import SecretItem
 
 
 class DeletedSecretItem(SecretItem):
