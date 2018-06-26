@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data import EventGridEventData
 
 
-class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(Model):
+class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for a
     Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent event.
 

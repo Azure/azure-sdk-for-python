@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data_py3 import EventGridEventData
 
 
-class SubscriptionDeletedEventData(Model):
+class SubscriptionDeletedEventData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for a
     Microsoft.EventGrid.SubscriptionDeletedEvent.
 

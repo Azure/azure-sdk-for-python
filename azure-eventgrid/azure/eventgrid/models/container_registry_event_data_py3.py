@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data_py3 import EventGridEventData
 
 
-class ContainerRegistryEventData(Model):
+class ContainerRegistryEventData(EventGridEventData):
     """The content of the event request message.
 
     :param id: The event ID.

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data import EventGridEventData
 
 
-class StorageBlobDeletedEventData(Model):
+class StorageBlobDeletedEventData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for an
     Microsoft.Storage.BlobDeleted event.
 

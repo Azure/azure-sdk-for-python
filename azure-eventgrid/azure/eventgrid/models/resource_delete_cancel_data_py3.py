@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .event_grid_event_data_py3 import EventGridEventData
 
 
-class ResourceDeleteCancelData(Model):
+class ResourceDeleteCancelData(EventGridEventData):
     """Schema of the Data property of an EventGridEvent for an
     Microsoft.Resources.ResourceDeleteCancel event. This is raised when a
     resource delete operation is canceled.
