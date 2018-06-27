@@ -26,7 +26,7 @@ class ShortDescription(Model):
         'solution': {'key': 'solution', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, problem: str=None, solution: str=None, **kwargs) -> None:
         super(ShortDescription, self).__init__(**kwargs)
-        self.problem = kwargs.get('problem', None)
-        self.solution = kwargs.get('solution', None)
+        self.problem = problem
+        self.solution = solution

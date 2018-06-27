@@ -9,13 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .configurations_operations import ConfigurationsOperations
 from .recommendations_operations import RecommendationsOperations
 from .operations import Operations
 from .suppressions_operations import SuppressionsOperations
 
 __all__ = [
-    'ConfigurationsOperations',
     'RecommendationsOperations',
     'Operations',
     'SuppressionsOperations',
