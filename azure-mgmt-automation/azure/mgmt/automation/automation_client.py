@@ -37,6 +37,7 @@ from .operations.test_job_operations import TestJobOperations
 from .operations.schedule_operations import ScheduleOperations
 from .operations.variable_operations import VariableOperations
 from .operations.webhook_operations import WebhookOperations
+from .operations.watcher_operations import WatcherOperations
 from .operations.software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
 from .operations.software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
 from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
@@ -51,7 +52,7 @@ from .operations.node_reports_operations import NodeReportsOperations
 from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
 from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
-from .operations.watcher_operations import WatcherOperations
+from .operations.node_count_information_operations import NodeCountInformationOperations
 from . import models
 
 
@@ -67,16 +68,21 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param count_type1: The type of counts to retrieve. Possible values
+     include: 'status', 'nodeconfiguration'
+    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, count_type1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if count_type1 is None:
+            raise ValueError("Parameter 'count_type1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -87,6 +93,7 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.count_type1 = count_type1
 
 
 class AutomationClient(object):
@@ -143,6 +150,8 @@ class AutomationClient(object):
     :vartype variable: azure.mgmt.automation.operations.VariableOperations
     :ivar webhook: Webhook operations
     :vartype webhook: azure.mgmt.automation.operations.WebhookOperations
+    :ivar watcher: Watcher operations
+    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
     :ivar software_update_configurations: SoftwareUpdateConfigurations operations
     :vartype software_update_configurations: azure.mgmt.automation.operations.SoftwareUpdateConfigurationsOperations
     :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRuns operations
@@ -171,8 +180,8 @@ class AutomationClient(object):
     :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_node_configuration: DscNodeConfiguration operations
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
-    :ivar watcher: Watcher operations
-    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
+    :ivar node_count_information: NodeCountInformation operations
+    :vartype node_count_information: azure.mgmt.automation.operations.NodeCountInformationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -181,13 +190,16 @@ class AutomationClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param count_type1: The type of counts to retrieve. Possible values
+     include: 'status', 'nodeconfiguration'
+    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, count_type1, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, count_type1, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -242,6 +254,8 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.webhook = WebhookOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.watcher = WatcherOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
@@ -270,5 +284,5 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.watcher = WatcherOperations(
+        self.node_count_information = NodeCountInformationOperations(
             self._client, self.config, self._serialize, self._deserialize)

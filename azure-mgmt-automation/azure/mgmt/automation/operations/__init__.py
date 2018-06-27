@@ -33,6 +33,7 @@ from .test_job_operations import TestJobOperations
 from .schedule_operations import ScheduleOperations
 from .variable_operations import VariableOperations
 from .webhook_operations import WebhookOperations
+from .watcher_operations import WatcherOperations
 from .software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
 from .software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
 from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
@@ -47,7 +48,7 @@ from .node_reports_operations import NodeReportsOperations
 from .dsc_compilation_job_operations import DscCompilationJobOperations
 from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_node_configuration_operations import DscNodeConfigurationOperations
-from .watcher_operations import WatcherOperations
+from .node_count_information_operations import NodeCountInformationOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -74,6 +75,7 @@ __all__ = [
     'ScheduleOperations',
     'VariableOperations',
     'WebhookOperations',
+    'WatcherOperations',
     'SoftwareUpdateConfigurationsOperations',
     'SoftwareUpdateConfigurationRunsOperations',
     'SoftwareUpdateConfigurationMachineRunsOperations',
@@ -88,5 +90,5 @@ __all__ = [
     'DscCompilationJobOperations',
     'DscCompilationJobStreamOperations',
     'DscNodeConfigurationOperations',
-    'WatcherOperations',
+    'NodeCountInformationOperations',
 ]

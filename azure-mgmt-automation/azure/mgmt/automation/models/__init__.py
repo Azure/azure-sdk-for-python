@@ -86,6 +86,8 @@ from .variable_update_parameters import VariableUpdateParameters
 from .webhook import Webhook
 from .webhook_update_parameters import WebhookUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
+from .watcher import Watcher
+from .watcher_update_parameters import WatcherUpdateParameters
 from .windows_properties import WindowsProperties
 from .linux_properties import LinuxProperties
 from .update_configuration import UpdateConfiguration
@@ -127,8 +129,9 @@ from .dsc_compilation_job import DscCompilationJob
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
 from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
-from .watcher import Watcher
-from .watcher_update_parameters import WatcherUpdateParameters
+from .node_count_properties import NodeCountProperties
+from .node_count import NodeCount
+from .node_counts import NodeCounts
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -148,6 +151,7 @@ from .job_stream_paged import JobStreamPaged
 from .schedule_paged import SchedulePaged
 from .variable_paged import VariablePaged
 from .webhook_paged import WebhookPaged
+from .watcher_paged import WatcherPaged
 from .source_control_paged import SourceControlPaged
 from .source_control_sync_job_paged import SourceControlSyncJobPaged
 from .source_control_sync_job_stream_paged import SourceControlSyncJobStreamPaged
@@ -156,7 +160,6 @@ from .dsc_node_paged import DscNodePaged
 from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
-from .watcher_paged import WatcherPaged
 from .automation_client_enums import (
     SkuNameEnum,
     AutomationAccountState,
@@ -184,6 +187,7 @@ from .automation_client_enums import (
     JobStatus,
     JobProvisioningState,
     AgentRegistrationKeyName,
+    CountType,
 )
 
 __all__ = [
@@ -264,6 +268,8 @@ __all__ = [
     'Webhook',
     'WebhookUpdateParameters',
     'WebhookCreateOrUpdateParameters',
+    'Watcher',
+    'WatcherUpdateParameters',
     'WindowsProperties',
     'LinuxProperties',
     'UpdateConfiguration',
@@ -305,8 +311,9 @@ __all__ = [
     'DscCompilationJobCreateParameters',
     'DscNodeConfiguration',
     'DscNodeConfigurationCreateOrUpdateParameters',
-    'Watcher',
-    'WatcherUpdateParameters',
+    'NodeCountProperties',
+    'NodeCount',
+    'NodeCounts',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
@@ -326,6 +333,7 @@ __all__ = [
     'SchedulePaged',
     'VariablePaged',
     'WebhookPaged',
+    'WatcherPaged',
     'SourceControlPaged',
     'SourceControlSyncJobPaged',
     'SourceControlSyncJobStreamPaged',
@@ -334,7 +342,6 @@ __all__ = [
     'DscNodeReportPaged',
     'DscCompilationJobPaged',
     'DscNodeConfigurationPaged',
-    'WatcherPaged',
     'SkuNameEnum',
     'AutomationAccountState',
     'AutomationKeyName',
@@ -361,4 +368,5 @@ __all__ = [
     'JobStatus',
     'JobProvisioningState',
     'AgentRegistrationKeyName',
+    'CountType',
 ]
