@@ -37,7 +37,8 @@ class StorageAccountAttributes(Model):
         'updated': {'key': 'updated', 'type': 'unix-time'},
     }
 
-    def __init__(self, enabled=None):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(StorageAccountAttributes, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
         self.created = None
         self.updated = None

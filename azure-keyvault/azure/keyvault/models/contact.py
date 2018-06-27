@@ -29,7 +29,8 @@ class Contact(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, email_address=None, name=None, phone=None):
-        self.email_address = email_address
-        self.name = name
-        self.phone = phone
+    def __init__(self, **kwargs):
+        super(Contact, self).__init__(**kwargs)
+        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs.get('name', None)
+        self.phone = kwargs.get('phone', None)

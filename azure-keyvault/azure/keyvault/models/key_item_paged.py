@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class KeyItemPaged(Paged):
     """
-    A paging container for iterating over a list of KeyItem object
+    A paging container for iterating over a list of :class:`KeyItem <azure.keyvault.models.KeyItem>` object
     """
 
     _attribute_map = {

@@ -12,23 +12,32 @@
 from enum import Enum
 
 
-class JsonWebKeyType(Enum):
+class JsonWebKeyType(str, Enum):
 
     ec = "EC"
+    ec_hsm = "EC-HSM"
     rsa = "RSA"
     rsa_hsm = "RSA-HSM"
     oct = "oct"
 
 
-class DeletionRecoveryLevel(Enum):
+class JsonWebKeyCurveName(str, Enum):
 
-    purgeable = "Purgeable"
-    recoverable_purgeable = "Recoverable+Purgeable"
-    recoverable = "Recoverable"
-    recoverable_protected_subscription = "Recoverable+ProtectedSubscription"
+    p_256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+    p_384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    p_521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    secp256_k1 = "SECP256K1"  #: The SECG SECP256K1 elliptic curve.
 
 
-class KeyUsageType(Enum):
+class DeletionRecoveryLevel(str, Enum):
+
+    purgeable = "Purgeable"  #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and irreversible data loss.
+    recoverable_purgeable = "Recoverable+Purgeable"  #: Soft-delete is enabled for this vault; A priveleged user may trigger an immediate, irreversible deletion(purge) of a deleted entity.
+    recoverable = "Recoverable"  #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain in this state until recovered, or the end of the retention interval.
+    recoverable_protected_subscription = "Recoverable+ProtectedSubscription"  #: Soft-delete is enabled for this vault, and the subscription is protected against immediate deletion.
+
+
+class KeyUsageType(str, Enum):
 
     digital_signature = "digitalSignature"
     non_repudiation = "nonRepudiation"
@@ -41,13 +50,13 @@ class KeyUsageType(Enum):
     decipher_only = "decipherOnly"
 
 
-class ActionType(Enum):
+class ActionType(str, Enum):
 
     email_contacts = "EmailContacts"
     auto_renew = "AutoRenew"
 
 
-class JsonWebKeyOperation(Enum):
+class JsonWebKeyOperation(str, Enum):
 
     encrypt = "encrypt"
     decrypt = "decrypt"
@@ -57,14 +66,14 @@ class JsonWebKeyOperation(Enum):
     unwrap_key = "unwrapKey"
 
 
-class JsonWebKeyEncryptionAlgorithm(Enum):
+class JsonWebKeyEncryptionAlgorithm(str, Enum):
 
     rsa_oaep = "RSA-OAEP"
     rsa_oaep_256 = "RSA-OAEP-256"
     rsa1_5 = "RSA1_5"
 
 
-class JsonWebKeySignatureAlgorithm(Enum):
+class JsonWebKeySignatureAlgorithm(str, Enum):
 
     ps256 = "PS256"
     ps384 = "PS384"
@@ -73,3 +82,7 @@ class JsonWebKeySignatureAlgorithm(Enum):
     rs384 = "RS384"
     rs512 = "RS512"
     rsnull = "RSNULL"
+    es256 = "ES256"
+    es384 = "ES384"
+    es512 = "ES512"
+    ecdsa256 = "ECDSA256"
