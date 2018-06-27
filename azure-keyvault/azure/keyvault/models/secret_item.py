@@ -21,10 +21,9 @@ class SecretItem(Model):
     :param id: Secret identifier.
     :type id: str
     :param attributes: The secret management attributes.
-    :type attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type attributes: ~azure.keyvault.models.SecretAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param content_type: Type of the secret value such as a password.
     :type content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If
@@ -44,9 +43,10 @@ class SecretItem(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, content_type=None):
-        self.id = id
-        self.attributes = attributes
-        self.tags = tags
-        self.content_type = content_type
+    def __init__(self, **kwargs):
+        super(SecretItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
+        self.content_type = kwargs.get('content_type', None)
         self.managed = None

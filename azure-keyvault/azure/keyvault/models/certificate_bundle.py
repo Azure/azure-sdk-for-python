@@ -27,17 +27,15 @@ class CertificateBundle(Model):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: :class:`CertificatePolicy
-     <azure.keyvault.models.CertificatePolicy>`
+    :vartype policy: ~azure.keyvault.models.CertificatePolicy
     :param cer: CER contents of x509 certificate.
     :type cer: bytearray
     :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The certificate attributes.
-    :type attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -60,13 +58,14 @@ class CertificateBundle(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, cer=None, content_type=None, attributes=None, tags=None):
+    def __init__(self, **kwargs):
+        super(CertificateBundle, self).__init__(**kwargs)
         self.id = None
         self.kid = None
         self.sid = None
         self.x509_thumbprint = None
         self.policy = None
-        self.cer = cer
-        self.content_type = content_type
-        self.attributes = attributes
-        self.tags = tags
+        self.cer = kwargs.get('cer', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CertificateIssuerItemPaged(Paged):
     """
-    A paging container for iterating over a list of CertificateIssuerItem object
+    A paging container for iterating over a list of :class:`CertificateIssuerItem <azure.keyvault.models.CertificateIssuerItem>` object
     """
 
     _attribute_map = {

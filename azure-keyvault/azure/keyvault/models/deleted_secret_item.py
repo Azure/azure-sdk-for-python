@@ -21,10 +21,9 @@ class DeletedSecretItem(SecretItem):
     :param id: Secret identifier.
     :type id: str
     :param attributes: The secret management attributes.
-    :type attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type attributes: ~azure.keyvault.models.SecretAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param content_type: Type of the secret value such as a password.
     :type content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If
@@ -57,8 +56,8 @@ class DeletedSecretItem(SecretItem):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, content_type=None, recovery_id=None):
-        super(DeletedSecretItem, self).__init__(id=id, attributes=attributes, tags=tags, content_type=content_type)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedSecretItem, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

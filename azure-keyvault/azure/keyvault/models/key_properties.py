@@ -17,13 +17,19 @@ class KeyProperties(Model):
 
     :param exportable: Indicates if the private key can be exported.
     :type exportable: bool
-    :param key_type: The key type.
-    :type key_type: str
-    :param key_size: The key size in bytes. For example;  1024 or 2048.
+    :param key_type: The type of key pair to be used for the certificate.
+     Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :type key_type: str or ~azure.keyvault.models.JsonWebKeyType
+    :param key_size: The key size in bits. For example: 2048, 3072, or 4096
+     for RSA.
     :type key_size: int
     :param reuse_key: Indicates if the same key pair will be used on
      certificate renewal.
     :type reuse_key: bool
+    :param curve: Elliptic curve name. For valid values, see
+     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
+     'P-256K'
+    :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -31,10 +37,13 @@ class KeyProperties(Model):
         'key_type': {'key': 'kty', 'type': 'str'},
         'key_size': {'key': 'key_size', 'type': 'int'},
         'reuse_key': {'key': 'reuse_key', 'type': 'bool'},
+        'curve': {'key': 'crv', 'type': 'str'},
     }
 
-    def __init__(self, exportable=None, key_type=None, key_size=None, reuse_key=None):
-        self.exportable = exportable
-        self.key_type = key_type
-        self.key_size = key_size
-        self.reuse_key = reuse_key
+    def __init__(self, **kwargs):
+        super(KeyProperties, self).__init__(**kwargs)
+        self.exportable = kwargs.get('exportable', None)
+        self.key_type = kwargs.get('key_type', None)
+        self.key_size = kwargs.get('key_size', None)
+        self.reuse_key = kwargs.get('reuse_key', None)
+        self.curve = kwargs.get('curve', None)

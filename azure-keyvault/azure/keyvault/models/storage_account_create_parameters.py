@@ -15,21 +15,23 @@ from msrest.serialization import Model
 class StorageAccountCreateParameters(Model):
     """The storage account create parameters.
 
-    :param resource_id: Storage account resource id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. Storage account resource id.
     :type resource_id: str
-    :param active_key_name: Current active storage account key name.
+    :param active_key_name: Required. Current active storage account key name.
     :type active_key_name: str
-    :param auto_regenerate_key: whether keyvault should manage the storage
-     account for the user.
+    :param auto_regenerate_key: Required. whether keyvault should manage the
+     storage account for the user.
     :type auto_regenerate_key: bool
     :param regeneration_period: The key regeneration time duration specified
      in ISO-8601 format.
     :type regeneration_period: str
     :param storage_account_attributes: The attributes of the storage account.
-    :type storage_account_attributes: :class:`StorageAccountAttributes
-     <azure.keyvault.models.StorageAccountAttributes>`
+    :type storage_account_attributes:
+     ~azure.keyvault.models.StorageAccountAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -47,10 +49,11 @@ class StorageAccountCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, resource_id, active_key_name, auto_regenerate_key, regeneration_period=None, storage_account_attributes=None, tags=None):
-        self.resource_id = resource_id
-        self.active_key_name = active_key_name
-        self.auto_regenerate_key = auto_regenerate_key
-        self.regeneration_period = regeneration_period
-        self.storage_account_attributes = storage_account_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(StorageAccountCreateParameters, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.active_key_name = kwargs.get('active_key_name', None)
+        self.auto_regenerate_key = kwargs.get('auto_regenerate_key', None)
+        self.regeneration_period = kwargs.get('regeneration_period', None)
+        self.storage_account_attributes = kwargs.get('storage_account_attributes', None)
+        self.tags = kwargs.get('tags', None)

@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SecretRestoreParameters(Model):
     """The secret restore parameters.
 
-    :param secret_bundle_backup: The backup blob associated with a secret
-     bundle.
+    All required parameters must be populated in order to send to Azure.
+
+    :param secret_bundle_backup: Required. The backup blob associated with a
+     secret bundle.
     :type secret_bundle_backup: bytes
     """
 
@@ -28,5 +30,6 @@ class SecretRestoreParameters(Model):
         'secret_bundle_backup': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, secret_bundle_backup):
-        self.secret_bundle_backup = secret_bundle_backup
+    def __init__(self, **kwargs):
+        super(SecretRestoreParameters, self).__init__(**kwargs)
+        self.secret_bundle_backup = kwargs.get('secret_bundle_backup', None)
