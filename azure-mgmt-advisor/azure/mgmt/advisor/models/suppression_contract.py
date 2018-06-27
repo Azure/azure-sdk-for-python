@@ -25,6 +25,11 @@ class SuppressionContract(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param location: The location of the resource. This cannot be changed
+     after the resource is created.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict[str, str]
     :param suppression_id: The GUID of the suppression.
     :type suppression_id: str
     :param ttl: The duration for which the suppression is valid.
@@ -41,11 +46,13 @@ class SuppressionContract(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'suppression_id': {'key': 'properties.suppressionId', 'type': 'str'},
-        'ttl': {'key': 'properties.ttl', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'suppression_id': {'key': 'suppressionId', 'type': 'str'},
+        'ttl': {'key': 'ttl', 'type': 'str'},
     }
 
-    def __init__(self, suppression_id=None, ttl=None):
-        super(SuppressionContract, self).__init__()
-        self.suppression_id = suppression_id
-        self.ttl = ttl
+    def __init__(self, **kwargs):
+        super(SuppressionContract, self).__init__(**kwargs)
+        self.suppression_id = kwargs.get('suppression_id', None)
+        self.ttl = kwargs.get('ttl', None)

@@ -65,18 +65,18 @@ class ResourceRecommendationBase(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, name: str=None, category=None, impact=None, impacted_field: str=None, impacted_value: str=None, last_updated=None, metadata=None, recommendation_type_id: str=None, risk=None, short_description=None, suppression_ids=None, type: str=None, **kwargs) -> None:
         super(ResourceRecommendationBase, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.category = kwargs.get('category', None)
-        self.impact = kwargs.get('impact', None)
-        self.impacted_field = kwargs.get('impacted_field', None)
-        self.impacted_value = kwargs.get('impacted_value', None)
-        self.last_updated = kwargs.get('last_updated', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.recommendation_type_id = kwargs.get('recommendation_type_id', None)
-        self.risk = kwargs.get('risk', None)
-        self.short_description = kwargs.get('short_description', None)
-        self.suppression_ids = kwargs.get('suppression_ids', None)
-        self.type = kwargs.get('type', None)
+        self.id = id
+        self.name = name
+        self.category = category
+        self.impact = impact
+        self.impacted_field = impacted_field
+        self.impacted_value = impacted_value
+        self.last_updated = last_updated
+        self.metadata = metadata
+        self.recommendation_type_id = recommendation_type_id
+        self.risk = risk
+        self.short_description = short_description
+        self.suppression_ids = suppression_ids
+        self.type = type

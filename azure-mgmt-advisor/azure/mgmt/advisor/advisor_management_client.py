@@ -9,11 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.configurations_operations import ConfigurationsOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.operations import Operations
 from .operations.suppressions_operations import SuppressionsOperations
@@ -52,14 +51,12 @@ class AdvisorManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AdvisorManagementClient(object):
+class AdvisorManagementClient(SDKClient):
     """REST APIs for Azure Advisor
 
     :ivar config: Configuration for client.
     :vartype config: AdvisorManagementClientConfiguration
 
-    :ivar configurations: Configurations operations
-    :vartype configurations: azure.mgmt.advisor.operations.ConfigurationsOperations
     :ivar recommendations: Recommendations operations
     :vartype recommendations: azure.mgmt.advisor.operations.RecommendationsOperations
     :ivar operations: Operations operations
@@ -79,15 +76,13 @@ class AdvisorManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = AdvisorManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(AdvisorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-19'
+        self.api_version = '2018-01-02-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.configurations = ConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

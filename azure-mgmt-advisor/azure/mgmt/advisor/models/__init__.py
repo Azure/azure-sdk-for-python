@@ -9,19 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .config_data_properties import ConfigDataProperties
-from .config_data import ConfigData
-from .arm_error_response_body import ARMErrorResponseBody
-from .short_description import ShortDescription
-from .resource_recommendation_base import ResourceRecommendationBase
-from .resource import Resource
-from .operation_display_info import OperationDisplayInfo
-from .operation_entity import OperationEntity
-from .suppression_contract import SuppressionContract
-from .config_data_paged import ConfigDataPaged
+try:
+    from .short_description_py3 import ShortDescription
+    from .resource_recommendation_base_py3 import ResourceRecommendationBase
+    from .resource_py3 import Resource
+    from .operation_display_info_py3 import OperationDisplayInfo
+    from .operation_entity_py3 import OperationEntity
+    from .suppression_contract_py3 import SuppressionContract
+except (SyntaxError, ImportError):
+    from .short_description import ShortDescription
+    from .resource_recommendation_base import ResourceRecommendationBase
+    from .resource import Resource
+    from .operation_display_info import OperationDisplayInfo
+    from .operation_entity import OperationEntity
+    from .suppression_contract import SuppressionContract
 from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
 from .operation_entity_paged import OperationEntityPaged
-from .suppression_contract_paged import SuppressionContractPaged
 from .advisor_management_client_enums import (
     Category,
     Impact,
@@ -29,19 +32,14 @@ from .advisor_management_client_enums import (
 )
 
 __all__ = [
-    'ConfigDataProperties',
-    'ConfigData',
-    'ARMErrorResponseBody',
     'ShortDescription',
     'ResourceRecommendationBase',
     'Resource',
     'OperationDisplayInfo',
     'OperationEntity',
     'SuppressionContract',
-    'ConfigDataPaged',
     'ResourceRecommendationBasePaged',
     'OperationEntityPaged',
-    'SuppressionContractPaged',
     'Category',
     'Impact',
     'Risk',
