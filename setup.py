@@ -53,11 +53,11 @@ setup(
     ],
     extras_require={
         'ci_tools':[
-            "PyGithub>=1.40a3", # Can Merge PR after 1.36, "requests" after 1.40a1
+            "PyGithub>=1.40", # Can Merge PR after 1.36, "requests" and tests after 1.40
             "GitPython",
             "requests>=2.0"
         ]
-    },    
+    },
     package_dir={'': 'src'},
     install_requires=DEPENDENCIES,
 )

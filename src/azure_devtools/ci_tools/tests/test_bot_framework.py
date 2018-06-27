@@ -1,10 +1,10 @@
+import os.path
 from unittest import mock
 
 import pytest
+from github.tests import Framework
 
 from azure_devtools.ci_tools.bot_framework import BotHandler, order, build_from_issue_comment, build_from_issues
-
-from . import Framework
 
 class BotFrameworkTest(Framework.TestCase):
 
@@ -12,6 +12,7 @@ class BotFrameworkTest(Framework.TestCase):
         self.maxDiff = None # Big diff to come
         self.recordMode = False  # turn to True to record
         self.tokenAuthMode = True
+        self.replayDataFolder = os.path.join(os.path.dirname(__file__), "ReplayData")
         super(BotFrameworkTest, self).setUp()
 
     def test_webhook_data(self):
@@ -105,7 +106,7 @@ class BotFrameworkTest(Framework.TestCase):
         github_token = self.oauth_token
         repo = self.g.get_repo("lmazuel/TestingRepo")
         issue = repo.get_issue(17)
-        
+
         class BotCommand:
             @order
             def command1(self, issue, param1):
@@ -144,7 +145,7 @@ class BotFrameworkTest(Framework.TestCase):
         github_token = self.oauth_token
         repo = self.g.get_repo("lmazuel/TestingRepo")
         issue = repo.get_issue(18)
-        
+
         class BotCommand:
             @order
             def command1(self, issue, param1):

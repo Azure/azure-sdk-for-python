@@ -1,4 +1,4 @@
-import os
+import os.path
 from pathlib import Path
 from subprocess import CalledProcessError
 import tempfile
@@ -8,8 +8,7 @@ import pytest
 
 from git import Repo, GitCommandError
 from github import GithubException
-
-from . import Framework
+from github.tests import Framework
 
 from azure_devtools.ci_tools.github_tools import (
     exception_to_github,
@@ -32,6 +31,7 @@ class GithubTools(Framework.TestCase):
         self.maxDiff = None # Big diff to come
         self.recordMode = False  # turn to True to record
         self.tokenAuthMode = True
+        self.replayDataFolder = os.path.join(os.path.dirname(__file__), "ReplayData")
         super(GithubTools, self).setUp()
 
     @mock.patch('traceback.format_exc')
@@ -124,8 +124,8 @@ class GithubTools(Framework.TestCase):
         dashboard = DashboardCommentableObject(issue, header)
 
         with exception_to_github(dashboard, "Python bot") as error:
-            "Test".fakemethod(12)  # pylint: disable=no-member    
-        
+            "Test".fakemethod(12)  # pylint: disable=no-member
+
         after_size = len(list(issue.get_comments()))
         assert after_size == initial_size + 1
 
@@ -363,6 +363,6 @@ def test_github_link():
     assert link.path == "specification/billing/resource-manager/readme.md"
     assert str(link) == inputstr
     raw_link = link.as_raw_link()
-    assert isinstance(raw_link, GithubLink)    
+    assert isinstance(raw_link, GithubLink)
     # Raw link with token does not use token in URL, since it has to be provided as Authorization: token <token>
     assert str(raw_link) == "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/billing/resource-manager/readme.md"
