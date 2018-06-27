@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
 class Error(Model):
@@ -43,15 +42,3 @@ class Error(Model):
         self.target = kwargs.get('target', None)
         self.details = kwargs.get('details', None)
         self.inner_error = kwargs.get('inner_error', None)
-
-
-class ErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'Error'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)

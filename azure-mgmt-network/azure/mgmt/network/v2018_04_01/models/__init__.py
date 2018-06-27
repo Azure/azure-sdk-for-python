@@ -97,7 +97,7 @@ try:
     from .outbound_nat_rule_py3 import OutboundNatRule
     from .load_balancer_py3 import LoadBalancer
     from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error, ErrorException
+    from .error_py3 import Error
     from .azure_async_operation_result_py3 import AzureAsyncOperationResult
     from .effective_network_security_group_association_py3 import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule_py3 import EffectiveNetworkSecurityRule
@@ -202,16 +202,6 @@ try:
     from .virtual_network_connection_gateway_reference_py3 import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity_py3 import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters_py3 import VpnDeviceScriptParameters
-    from .virtual_wan_py3 import VirtualWAN
-    from .device_properties_py3 import DeviceProperties
-    from .vpn_site_py3 import VpnSite
-    from .get_vpn_sites_configuration_request_py3 import GetVpnSitesConfigurationRequest
-    from .hub_virtual_network_connection_py3 import HubVirtualNetworkConnection
-    from .virtual_hub_py3 import VirtualHub
-    from .vpn_connection_py3 import VpnConnection
-    from .policies_py3 import Policies
-    from .vpn_gateway_py3 import VpnGateway
-    from .vpn_site_id_py3 import VpnSiteId
 except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .backend_address_pool import BackendAddressPool
@@ -300,7 +290,7 @@ except (SyntaxError, ImportError):
     from .outbound_nat_rule import OutboundNatRule
     from .load_balancer import LoadBalancer
     from .error_details import ErrorDetails
-    from .error import Error, ErrorException
+    from .error import Error
     from .azure_async_operation_result import AzureAsyncOperationResult
     from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule import EffectiveNetworkSecurityRule
@@ -405,16 +395,6 @@ except (SyntaxError, ImportError):
     from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters import VpnDeviceScriptParameters
-    from .virtual_wan import VirtualWAN
-    from .device_properties import DeviceProperties
-    from .vpn_site import VpnSite
-    from .get_vpn_sites_configuration_request import GetVpnSitesConfigurationRequest
-    from .hub_virtual_network_connection import HubVirtualNetworkConnection
-    from .virtual_hub import VirtualHub
-    from .vpn_connection import VpnConnection
-    from .policies import Policies
-    from .vpn_gateway import VpnGateway
-    from .vpn_site_id import VpnSiteId
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
@@ -455,12 +435,6 @@ from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_list_entity_paged import VirtualNetworkGatewayConnectionListEntityPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
-from .virtual_wan_paged import VirtualWANPaged
-from .vpn_site_paged import VpnSitePaged
-from .virtual_hub_paged import VirtualHubPaged
-from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPaged
-from .vpn_gateway_paged import VpnGatewayPaged
-from .vpn_connection_paged import VpnConnectionPaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -534,9 +508,6 @@ from .network_management_client_enums import (
     AuthenticationMethod,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
-    VpnConnectionStatus,
-    TunnelConnectionStatus,
-    HubVirtualNetworkConnectionStatus,
 )
 
 __all__ = [
@@ -627,7 +598,7 @@ __all__ = [
     'OutboundNatRule',
     'LoadBalancer',
     'ErrorDetails',
-    'Error', 'ErrorException',
+    'Error',
     'AzureAsyncOperationResult',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
@@ -732,16 +703,6 @@ __all__ = [
     'VirtualNetworkConnectionGatewayReference',
     'VirtualNetworkGatewayConnectionListEntity',
     'VpnDeviceScriptParameters',
-    'VirtualWAN',
-    'DeviceProperties',
-    'VpnSite',
-    'GetVpnSitesConfigurationRequest',
-    'HubVirtualNetworkConnection',
-    'VirtualHub',
-    'VpnConnection',
-    'Policies',
-    'VpnGateway',
-    'VpnSiteId',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
@@ -782,12 +743,6 @@ __all__ = [
     'VirtualNetworkGatewayConnectionListEntityPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
-    'VirtualWANPaged',
-    'VpnSitePaged',
-    'VirtualHubPaged',
-    'HubVirtualNetworkConnectionPaged',
-    'VpnGatewayPaged',
-    'VpnConnectionPaged',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',
@@ -860,7 +815,4 @@ __all__ = [
     'AuthenticationMethod',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
-    'VpnConnectionStatus',
-    'TunnelConnectionStatus',
-    'HubVirtualNetworkConnectionStatus',
 ]
