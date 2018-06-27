@@ -18,7 +18,8 @@
 /azure-mgmt-eventgrid/ @kalyanaj
 /azure-mgmt-keyvault/ @schaabs
 /azure-mgmt-machinelearningcompute/ @shutchings
-/azure-mgmt-recoveryservicesbackup/ @dragonfly91
+/azure-mgmt-recoveryservices/ @DheerendraRathor
+/azure-mgmt-recoveryservicesbackup/ @DheerendraRathor
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
