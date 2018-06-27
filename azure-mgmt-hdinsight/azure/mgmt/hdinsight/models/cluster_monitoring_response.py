@@ -24,8 +24,8 @@ class ClusterMonitoringResponse(Model):
     """
 
     _attribute_map = {
-        'cluster_monitoring_enabled': {'key': 'ClusterMonitoringEnabled', 'type': 'bool'},
-        'workspace_id': {'key': 'WorkspaceId', 'type': 'str'},
+        'cluster_monitoring_enabled': {'key': 'clusterMonitoringEnabled', 'type': 'bool'},
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
     }
 
     def __init__(self, cluster_monitoring_enabled=None, workspace_id=None):

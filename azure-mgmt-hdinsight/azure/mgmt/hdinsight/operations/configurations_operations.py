@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
@@ -25,8 +24,7 @@ class ConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar configuration_name: The constant for configuration type of gateway. Constant value: "gateway".
-    :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
+    :ivar api_version: The HDInsight client API Version. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -36,21 +34,20 @@ class ConfigurationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.configuration_name = "gateway"
-        self.api_version = "2015-03-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
 
     def _update_http_settings_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'
+        url = self.update_http_settings.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("self.configuration_name", self.configuration_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,7 +66,7 @@ class ConfigurationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'HttpConnectivitySettings')
+        body_content = self._serialize.body(parameters, '{str}')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -77,25 +74,24 @@ class ConfigurationsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def update_http_settings(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Configures the HTTP settings on the specified cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
-        :param parameters: The name of the resource group.
-        :type parameters:
-         ~azure.mgmt.hdinsight.models.HttpConnectivitySettings
+        :param configuration_name: The name of the cluster configuration.
+        :type configuration_name: str
+        :param parameters: The cluster configurations.
+        :type parameters: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -103,11 +99,13 @@ class ConfigurationsOperations(object):
          ClientRawResponse if raw=true
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         raw_result = self._update_http_settings_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
+            configuration_name=configuration_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -133,9 +131,7 @@ class ConfigurationsOperations(object):
         def get_long_running_output(response):
 
             if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
@@ -147,6 +143,7 @@ class ConfigurationsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update_http_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}
 
     def get(
             self, resource_group_name, cluster_name, configuration_name, custom_headers=None, raw=False, **operation_config):
@@ -156,8 +153,7 @@ class ConfigurationsOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
-        :param configuration_name: The constant for configuration type of
-         gateway.
+        :param configuration_name: The name of the cluster configuration.
         :type configuration_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -166,15 +162,16 @@ class ConfigurationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: dict or ClientRawResponse if raw=true
         :rtype: dict[str, str] or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -197,9 +194,7 @@ class ConfigurationsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -211,3 +206,4 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}

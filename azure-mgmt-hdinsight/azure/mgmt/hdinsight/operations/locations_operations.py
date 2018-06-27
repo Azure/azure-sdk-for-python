@@ -11,19 +11,18 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class LocationOperations(object):
-    """LocationOperations operations.
+class LocationsOperations(object):
+    """LocationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
+    :ivar api_version: The HDInsight client API Version. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -33,13 +32,13 @@ class LocationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-03-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
-    def get_capabilities(
+    def list_usages(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets the capabilities for the specified location.
+        """Lists the usages for the specified location.
 
         :param location: The location to get capabilities for.
         :type location: str
@@ -48,16 +47,17 @@ class LocationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CapabilitiesResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hdinsight.models.CapabilitiesResult or
+        :return: UsagesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.UsagesListResult or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/capabilities'
+        url = self.list_usages.metadata['url']
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -80,17 +80,16 @@ class LocationOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CapabilitiesResult', response)
+            deserialized = self._deserialize('UsagesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/usages'}

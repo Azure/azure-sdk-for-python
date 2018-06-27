@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class ScriptActionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
+    :ivar api_version: The HDInsight client API Version. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -33,7 +32,7 @@ class ScriptActionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-03-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
@@ -54,15 +53,16 @@ class ScriptActionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions/{scriptName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'scriptName': self._serialize.url("script_name", script_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'scriptName': self._serialize.url("script_name", script_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,15 +85,14 @@ class ScriptActionsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions/{scriptName}'}
 
-    def list_persisted_scripts(
+    def list_by_cluster(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the persisted script actions for the specified cluster.
 
@@ -109,17 +108,18 @@ class ScriptActionsOperations(object):
         :return: An iterator like instance of RuntimeScriptActionDetail
         :rtype:
          ~azure.mgmt.hdinsight.models.RuntimeScriptActionDetailPaged[~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions'
+                url = self.list_by_cluster.metadata['url']
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -147,9 +147,7 @@ class ScriptActionsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -162,6 +160,7 @@ class ScriptActionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptActions'}
 
     def get_execution_detail(
             self, resource_group_name, cluster_name, script_execution_id, custom_headers=None, raw=False, **operation_config):
@@ -181,15 +180,16 @@ class ScriptActionsOperations(object):
         :return: RuntimeScriptActionDetail or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptExecutionHistory/{scriptExecutionId}'
+        url = self.get_execution_detail.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'scriptExecutionId': self._serialize.url("script_execution_id", script_execution_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'scriptExecutionId': self._serialize.url("script_execution_id", script_execution_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -212,9 +212,7 @@ class ScriptActionsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -226,3 +224,4 @@ class ScriptActionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_execution_detail.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/scriptExecutionHistory/{scriptExecutionId}'}

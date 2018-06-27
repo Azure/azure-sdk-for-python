@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class VersionsCapability(Model):
-    """The version capability.
+class UsagesListResult(Model):
+    """The response for the operation to get regional usages for a subscription.
 
-    :param available: The list of version capabilities.
-    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    :param value: The list of usages.
+    :type value: list[~azure.mgmt.hdinsight.models.Usage]
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[VersionSpec]'},
+        'value': {'key': 'value', 'type': '[Usage]'},
     }
 
-    def __init__(self, available=None):
-        super(VersionsCapability, self).__init__()
-        self.available = available
+    def __init__(self, value=None):
+        super(UsagesListResult, self).__init__()
+        self.value = value

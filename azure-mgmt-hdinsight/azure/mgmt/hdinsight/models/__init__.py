@@ -42,25 +42,20 @@ from .operation_resource import OperationResource
 from .resource import Resource
 from .tracked_resource import TrackedResource
 from .proxy_resource import ProxyResource
-from .operation_display import OperationDisplay
-from .operation import Operation
+from .error_response import ErrorResponse, ErrorResponseException
 from .application_get_https_endpoint import ApplicationGetHttpsEndpoint
 from .application_get_endpoint import ApplicationGetEndpoint
-from .application_get_properties import ApplicationGetProperties
+from .application_properties import ApplicationProperties
 from .application import Application
-from .version_spec import VersionSpec
-from .versions_capability import VersionsCapability
-from .regions_capability import RegionsCapability
-from .vm_sizes_capability import VmSizesCapability
-from .vm_size_compatibility_filter import VmSizeCompatibilityFilter
-from .regional_quota_capability import RegionalQuotaCapability
-from .quota_capability import QuotaCapability
-from .capabilities_result import CapabilitiesResult
-from .http_connectivity_settings import HttpConnectivitySettings
+from .localized_name import LocalizedName
+from .usage import Usage
+from .usages_list_result import UsagesListResult
 from .extension import Extension
 from .cluster_monitoring_response import ClusterMonitoringResponse
 from .cluster_monitoring_request import ClusterMonitoringRequest
 from .script_action_persisted_get_response_spec import ScriptActionPersistedGetResponseSpec
+from .operation_display import OperationDisplay
+from .operation import Operation
 from .cluster_paged import ClusterPaged
 from .application_paged import ApplicationPaged
 from .runtime_script_action_detail_paged import RuntimeScriptActionDetailPaged
@@ -107,25 +102,20 @@ __all__ = [
     'Resource',
     'TrackedResource',
     'ProxyResource',
-    'OperationDisplay',
-    'Operation',
+    'ErrorResponse', 'ErrorResponseException',
     'ApplicationGetHttpsEndpoint',
     'ApplicationGetEndpoint',
-    'ApplicationGetProperties',
+    'ApplicationProperties',
     'Application',
-    'VersionSpec',
-    'VersionsCapability',
-    'RegionsCapability',
-    'VmSizesCapability',
-    'VmSizeCompatibilityFilter',
-    'RegionalQuotaCapability',
-    'QuotaCapability',
-    'CapabilitiesResult',
-    'HttpConnectivitySettings',
+    'LocalizedName',
+    'Usage',
+    'UsagesListResult',
     'Extension',
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',
     'ScriptActionPersistedGetResponseSpec',
+    'OperationDisplay',
+    'Operation',
     'ClusterPaged',
     'ApplicationPaged',
     'RuntimeScriptActionDetailPaged',
