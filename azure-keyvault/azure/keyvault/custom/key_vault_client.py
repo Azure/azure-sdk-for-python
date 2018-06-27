@@ -12,7 +12,7 @@ from ..models import KeyVaultErrorException
 from msrest.authentication import BasicTokenAuthentication
 
 
-class CustomKeyVaultClient(KeyVaultClientBase):
+class KeyVaultClient(KeyVaultClientBase):
 
     def __init__(self, credentials):
         """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
@@ -32,7 +32,7 @@ class CustomKeyVaultClient(KeyVaultClientBase):
             # wrap the supplied credentials with a KeyVaultAuthentication instance. Use that for the credentials supplied to the base client
             credentials = KeyVaultAuthentication(credentials=credentials)
 
-        super(CustomKeyVaultClient, self).__init__(credentials)
+        super(KeyVaultClient, self).__init__(credentials)
 
     def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Base64 pending certificate signing request (PKCS-10).
