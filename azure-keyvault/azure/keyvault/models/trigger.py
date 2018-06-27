@@ -18,7 +18,10 @@ class Trigger(Model):
     :param lifetime_percentage: Percentage of lifetime at which to trigger.
      Value should be between 1 and 99.
     :type lifetime_percentage: int
-    :param days_before_expiry: Days before expiry.
+    :param days_before_expiry: Days before expiry to attempt renewal. Value
+     should be between 1 and validity_in_months multiplied by 27. If
+     validity_in_months is 36, then value should be between 1 and 972 (36 *
+     27).
     :type days_before_expiry: int
     """
 
@@ -31,6 +34,7 @@ class Trigger(Model):
         'days_before_expiry': {'key': 'days_before_expiry', 'type': 'int'},
     }
 
-    def __init__(self, lifetime_percentage=None, days_before_expiry=None):
-        self.lifetime_percentage = lifetime_percentage
-        self.days_before_expiry = days_before_expiry
+    def __init__(self, **kwargs):
+        super(Trigger, self).__init__(**kwargs)
+        self.lifetime_percentage = kwargs.get('lifetime_percentage', None)
+        self.days_before_expiry = kwargs.get('days_before_expiry', None)

@@ -34,8 +34,8 @@ class SecretAttributes(Attributes):
      the system can purge the secret, at the end of the retention interval.
      Possible values include: 'Purgeable', 'Recoverable+Purgeable',
      'Recoverable', 'Recoverable+ProtectedSubscription'
-    :vartype recovery_level: str or :class:`DeletionRecoveryLevel
-     <azure.keyvault.models.DeletionRecoveryLevel>`
+    :vartype recovery_level: str or
+     ~azure.keyvault.models.DeletionRecoveryLevel
     """
 
     _validation = {
@@ -53,6 +53,6 @@ class SecretAttributes(Attributes):
         'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None, not_before=None, expires=None):
-        super(SecretAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires)
+    def __init__(self, **kwargs):
+        super(SecretAttributes, self).__init__(**kwargs)
         self.recovery_level = None

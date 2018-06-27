@@ -22,10 +22,9 @@ class DeletedCertificateItem(CertificateItem):
     :param id: Certificate identifier.
     :type id: str
     :param attributes: The certificate management attributes.
-    :type attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param x509_thumbprint: Thumbprint of the certificate.
     :type x509_thumbprint: bytes
     :param recovery_id: The url of the recovery object, used to identify and
@@ -53,8 +52,8 @@ class DeletedCertificateItem(CertificateItem):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, x509_thumbprint=None, recovery_id=None):
-        super(DeletedCertificateItem, self).__init__(id=id, attributes=attributes, tags=tags, x509_thumbprint=x509_thumbprint)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedCertificateItem, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

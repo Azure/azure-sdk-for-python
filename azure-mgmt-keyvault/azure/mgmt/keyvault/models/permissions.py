@@ -16,17 +16,14 @@ class Permissions(Model):
     """Permissions the identity has for keys, secrets, certificates and storage.
 
     :param keys: Permissions to keys
-    :type keys: list of str or :class:`KeyPermissions
-     <azure.mgmt.keyvault.models.KeyPermissions>`
+    :type keys: list[str or ~azure.mgmt.keyvault.models.KeyPermissions]
     :param secrets: Permissions to secrets
-    :type secrets: list of str or :class:`SecretPermissions
-     <azure.mgmt.keyvault.models.SecretPermissions>`
+    :type secrets: list[str or ~azure.mgmt.keyvault.models.SecretPermissions]
     :param certificates: Permissions to certificates
-    :type certificates: list of str or :class:`CertificatePermissions
-     <azure.mgmt.keyvault.models.CertificatePermissions>`
+    :type certificates: list[str or
+     ~azure.mgmt.keyvault.models.CertificatePermissions]
     :param storage: Permissions to storage accounts
-    :type storage: list of str or :class:`StoragePermissions
-     <azure.mgmt.keyvault.models.StoragePermissions>`
+    :type storage: list[str or ~azure.mgmt.keyvault.models.StoragePermissions]
     """
 
     _attribute_map = {
@@ -36,8 +33,9 @@ class Permissions(Model):
         'storage': {'key': 'storage', 'type': '[str]'},
     }
 
-    def __init__(self, keys=None, secrets=None, certificates=None, storage=None):
-        self.keys = keys
-        self.secrets = secrets
-        self.certificates = certificates
-        self.storage = storage
+    def __init__(self, **kwargs):
+        super(Permissions, self).__init__(**kwargs)
+        self.keys = kwargs.get('keys', None)
+        self.secrets = kwargs.get('secrets', None)
+        self.certificates = kwargs.get('certificates', None)
+        self.storage = kwargs.get('storage', None)
