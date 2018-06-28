@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ComputeNodeUser(Model):
     """A user account for RDP or SSH access on a compute node.
 
-    :param name: The user name of the account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The user name of the account.
     :type name: str
     :param is_admin: Whether the account should be an administrator on the
      compute node. The default value is false.
@@ -51,10 +53,10 @@ class ComputeNodeUser(Model):
         'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
     }
 
-    def __init__(self, name, is_admin=None, expiry_time=None, password=None, ssh_public_key=None):
-        super(ComputeNodeUser, self).__init__()
-        self.name = name
-        self.is_admin = is_admin
-        self.expiry_time = expiry_time
-        self.password = password
-        self.ssh_public_key = ssh_public_key
+    def __init__(self, **kwargs):
+        super(ComputeNodeUser, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.is_admin = kwargs.get('is_admin', None)
+        self.expiry_time = kwargs.get('expiry_time', None)
+        self.password = kwargs.get('password', None)
+        self.ssh_public_key = kwargs.get('ssh_public_key', None)
