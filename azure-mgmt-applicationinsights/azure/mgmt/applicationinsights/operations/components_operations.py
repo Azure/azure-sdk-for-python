@@ -12,8 +12,6 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
 
@@ -439,9 +437,32 @@ class ComponentsOperations(object):
         return deserialized
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}'}
 
-
-    def _purge_initial(
+    def purge(
             self, resource_group_name, resource_name, table, filters, custom_headers=None, raw=False, **operation_config):
+        """Purges data in an Application Insights component by a set of
+        user-defined filters.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
+        :param table: Table from which to purge data.
+        :type table: str
+        :param filters: The set of columns and filters (queries) to run over
+         them to purge the resulting data.
+        :type filters:
+         list[~azure.mgmt.applicationinsights.models.ComponentPurgeBodyFilters]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ComponentPurgeResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.applicationinsights.models.ComponentPurgeResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         body = models.ComponentPurgeBody(table=table, filters=filters)
 
         # Construct URL
@@ -475,15 +496,13 @@ class ComponentsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ComponentPurgeStatusResponse', response)
         if response.status_code == 202:
             deserialized = self._deserialize('ComponentPurgeResponse', response)
 
@@ -492,77 +511,72 @@ class ComponentsOperations(object):
             return client_raw_response
 
         return deserialized
+    purge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/purge'}
 
-    def purge(
-            self, resource_group_name, resource_name, table, filters, custom_headers=None, raw=False, **operation_config):
-        """Purges data in an Application Insights component by a set of
-        user-defined filters.
+    def get_purge_status(
+            self, resource_group_name, resource_name, purge_id, custom_headers=None, raw=False, **operation_config):
+        """Get status for an ongoing purge operation.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param table: Table from which to purge data.
-        :type table: str
-        :param filters: The set of columns and filters (queries) to run over
-         them to purge the resulting data.
-        :type filters:
-         list[~azure.mgmt.applicationinsights.models.ComponentPurgeBodyFilters]
+        :param purge_id: In a purge status request, this is the Id of the
+         operation the status of which is returned.
+        :type purge_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns object or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ComponentPurgeStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.ComponentPurgeStatusResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._purge_initial(
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            table=table,
-            filters=filters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-        if raw:
-            return raw_result
+        # Construct URL
+        url = self.get_purge_status.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'purgeId': self._serialize.url("purge_id", purge_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
-            return raw_result.response
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        def get_long_running_status(status_link, headers=None):
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+        deserialized = None
 
-        def get_long_running_output(response):
+        if response.status_code == 200:
+            deserialized = self._deserialize('ComponentPurgeStatusResponse', response)
 
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-            deserialized = self._deserialize('object', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-    purge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/purge'}
+        return deserialized
+    get_purge_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/operations/{purgeId}'}

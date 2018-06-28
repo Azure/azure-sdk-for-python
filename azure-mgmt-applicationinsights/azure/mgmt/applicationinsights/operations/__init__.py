@@ -21,12 +21,10 @@ from .proactive_detection_configurations_operations import ProactiveDetectionCon
 from .components_operations import ComponentsOperations
 from .work_item_configurations_operations import WorkItemConfigurationsOperations
 from .favorites_operations import FavoritesOperations
-from .favorite_operations import FavoriteOperations
 from .web_test_locations_operations import WebTestLocationsOperations
 from .web_tests_operations import WebTestsOperations
-from .analytics_item_operations import AnalyticsItemOperations
+from .analytics_items_operations import AnalyticsItemsOperations
 from .workbooks_operations import WorkbooksOperations
-from .workbook_operations import WorkbookOperations
 
 __all__ = [
     'Operations',
@@ -41,10 +39,8 @@ __all__ = [
     'ComponentsOperations',
     'WorkItemConfigurationsOperations',
     'FavoritesOperations',
-    'FavoriteOperations',
     'WebTestLocationsOperations',
     'WebTestsOperations',
-    'AnalyticsItemOperations',
+    'AnalyticsItemsOperations',
     'WorkbooksOperations',
-    'WorkbookOperations',
 ]
