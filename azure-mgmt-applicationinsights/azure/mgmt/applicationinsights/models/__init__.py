@@ -52,8 +52,10 @@ from .link_properties import LinkProperties
 from .error_field_contract import ErrorFieldContract
 from .workbook_error import WorkbookError, WorkbookErrorException
 from .operation_paged import OperationPaged
+from .annotation_paged import AnnotationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
+from .work_item_configuration_paged import WorkItemConfigurationPaged
 from .application_insights_component_web_test_location_paged import ApplicationInsightsComponentWebTestLocationPaged
 from .web_test_paged import WebTestPaged
 from .workbook_paged import WorkbookPaged
@@ -117,8 +119,10 @@ __all__ = [
     'ErrorFieldContract',
     'WorkbookError', 'WorkbookErrorException',
     'OperationPaged',
+    'AnnotationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
+    'WorkItemConfigurationPaged',
     'ApplicationInsightsComponentWebTestLocationPaged',
     'WebTestPaged',
     'WorkbookPaged',
