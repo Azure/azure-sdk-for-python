@@ -24,6 +24,12 @@ class OperatingSystemStateTypes(str, Enum):
     specialized = "Specialized"
 
 
+class ScaleTier(str, Enum):
+
+    s30 = "S30"
+    s100 = "S100"
+
+
 class AggregatedReplicationState(str, Enum):
 
     unknown = "Unknown"
