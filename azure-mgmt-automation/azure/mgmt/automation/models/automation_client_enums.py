@@ -81,90 +81,6 @@ class ModuleProvisioningState(Enum):
     updating = "Updating"
 
 
-class JobStreamType(Enum):
-
-    progress = "Progress"
-    output = "Output"
-    warning = "Warning"
-    error = "Error"
-    debug = "Debug"
-    verbose = "Verbose"
-    any = "Any"
-
-
-class RunbookTypeEnum(Enum):
-
-    script = "Script"
-    graph = "Graph"
-    power_shell_workflow = "PowerShellWorkflow"
-    power_shell = "PowerShell"
-    graph_power_shell_workflow = "GraphPowerShellWorkflow"
-    graph_power_shell = "GraphPowerShell"
-
-
-class RunbookState(Enum):
-
-    new = "New"
-    edit = "Edit"
-    published = "Published"
-
-
-class RunbookProvisioningState(Enum):
-
-    succeeded = "Succeeded"
-
-
-class HttpStatusCode(Enum):
-
-    continue_enum = "Continue"
-    switching_protocols = "SwitchingProtocols"
-    ok = "OK"
-    created = "Created"
-    accepted = "Accepted"
-    non_authoritative_information = "NonAuthoritativeInformation"
-    no_content = "NoContent"
-    reset_content = "ResetContent"
-    partial_content = "PartialContent"
-    multiple_choices = "MultipleChoices"
-    ambiguous = "Ambiguous"
-    moved_permanently = "MovedPermanently"
-    moved = "Moved"
-    found = "Found"
-    redirect = "Redirect"
-    see_other = "SeeOther"
-    redirect_method = "RedirectMethod"
-    not_modified = "NotModified"
-    use_proxy = "UseProxy"
-    unused = "Unused"
-    temporary_redirect = "TemporaryRedirect"
-    redirect_keep_verb = "RedirectKeepVerb"
-    bad_request = "BadRequest"
-    unauthorized = "Unauthorized"
-    payment_required = "PaymentRequired"
-    forbidden = "Forbidden"
-    not_found = "NotFound"
-    method_not_allowed = "MethodNotAllowed"
-    not_acceptable = "NotAcceptable"
-    proxy_authentication_required = "ProxyAuthenticationRequired"
-    request_timeout = "RequestTimeout"
-    conflict = "Conflict"
-    gone = "Gone"
-    length_required = "LengthRequired"
-    precondition_failed = "PreconditionFailed"
-    request_entity_too_large = "RequestEntityTooLarge"
-    request_uri_too_long = "RequestUriTooLong"
-    unsupported_media_type = "UnsupportedMediaType"
-    requested_range_not_satisfiable = "RequestedRangeNotSatisfiable"
-    expectation_failed = "ExpectationFailed"
-    upgrade_required = "UpgradeRequired"
-    internal_server_error = "InternalServerError"
-    not_implemented = "NotImplemented"
-    bad_gateway = "BadGateway"
-    service_unavailable = "ServiceUnavailable"
-    gateway_timeout = "GatewayTimeout"
-    http_version_not_supported = "HttpVersionNotSupported"
-
-
 class ScheduleDay(Enum):
 
     monday = "Monday"
@@ -238,6 +154,17 @@ class StreamType(Enum):
     output = "Output"
 
 
+class JobStreamType(Enum):
+
+    progress = "Progress"
+    output = "Output"
+    warning = "Warning"
+    error = "Error"
+    debug = "Debug"
+    verbose = "Verbose"
+    any = "Any"
+
+
 class JobStatus(Enum):
 
     new = "New"
@@ -267,6 +194,79 @@ class AgentRegistrationKeyName(Enum):
 
     primary = "primary"
     secondary = "secondary"
+
+
+class RunbookTypeEnum(Enum):
+
+    script = "Script"
+    graph = "Graph"
+    power_shell_workflow = "PowerShellWorkflow"
+    power_shell = "PowerShell"
+    graph_power_shell_workflow = "GraphPowerShellWorkflow"
+    graph_power_shell = "GraphPowerShell"
+
+
+class RunbookState(Enum):
+
+    new = "New"
+    edit = "Edit"
+    published = "Published"
+
+
+class RunbookProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+
+
+class HttpStatusCode(Enum):
+
+    continue_enum = "Continue"
+    switching_protocols = "SwitchingProtocols"
+    ok = "OK"
+    created = "Created"
+    accepted = "Accepted"
+    non_authoritative_information = "NonAuthoritativeInformation"
+    no_content = "NoContent"
+    reset_content = "ResetContent"
+    partial_content = "PartialContent"
+    multiple_choices = "MultipleChoices"
+    ambiguous = "Ambiguous"
+    moved_permanently = "MovedPermanently"
+    moved = "Moved"
+    found = "Found"
+    redirect = "Redirect"
+    see_other = "SeeOther"
+    redirect_method = "RedirectMethod"
+    not_modified = "NotModified"
+    use_proxy = "UseProxy"
+    unused = "Unused"
+    temporary_redirect = "TemporaryRedirect"
+    redirect_keep_verb = "RedirectKeepVerb"
+    bad_request = "BadRequest"
+    unauthorized = "Unauthorized"
+    payment_required = "PaymentRequired"
+    forbidden = "Forbidden"
+    not_found = "NotFound"
+    method_not_allowed = "MethodNotAllowed"
+    not_acceptable = "NotAcceptable"
+    proxy_authentication_required = "ProxyAuthenticationRequired"
+    request_timeout = "RequestTimeout"
+    conflict = "Conflict"
+    gone = "Gone"
+    length_required = "LengthRequired"
+    precondition_failed = "PreconditionFailed"
+    request_entity_too_large = "RequestEntityTooLarge"
+    request_uri_too_long = "RequestUriTooLong"
+    unsupported_media_type = "UnsupportedMediaType"
+    requested_range_not_satisfiable = "RequestedRangeNotSatisfiable"
+    expectation_failed = "ExpectationFailed"
+    upgrade_required = "UpgradeRequired"
+    internal_server_error = "InternalServerError"
+    not_implemented = "NotImplemented"
+    bad_gateway = "BadGateway"
+    service_unavailable = "ServiceUnavailable"
+    gateway_timeout = "GatewayTimeout"
+    http_version_not_supported = "HttpVersionNotSupported"
 
 
 class CountType(Enum):
