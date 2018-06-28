@@ -11,6 +11,15 @@
 
 try:
     from .sub_resource_py3 import SubResource
+    from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
+    from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
+    from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
+    from .azure_firewall_application_rule_py3 import AzureFirewallApplicationRule
+    from .azure_firewall_application_rule_collection_py3 import AzureFirewallApplicationRuleCollection
+    from .azure_firewall_network_rule_py3 import AzureFirewallNetworkRule
+    from .azure_firewall_network_rule_collection_py3 import AzureFirewallNetworkRuleCollection
+    from .azure_firewall_py3 import AzureFirewall
+    from .resource_py3 import Resource
     from .backend_address_pool_py3 import BackendAddressPool
     from .inbound_nat_rule_py3 import InboundNatRule
     from .application_security_group_py3 import ApplicationSecurityGroup
@@ -62,7 +71,6 @@ try:
     from .application_gateway_available_waf_rule_sets_result_py3 import ApplicationGatewayAvailableWafRuleSetsResult
     from .application_gateway_available_ssl_options_py3 import ApplicationGatewayAvailableSslOptions
     from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
-    from .resource_py3 import Resource
     from .tags_object_py3 import TagsObject
     from .dns_name_availability_result_py3 import DnsNameAvailabilityResult
     from .ddos_protection_plan_py3 import DdosProtectionPlan
@@ -218,6 +226,15 @@ try:
     from .vpn_site_id_py3 import VpnSiteId
 except (SyntaxError, ImportError):
     from .sub_resource import SubResource
+    from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
+    from .azure_firewall_rc_action import AzureFirewallRCAction
+    from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
+    from .azure_firewall_application_rule import AzureFirewallApplicationRule
+    from .azure_firewall_application_rule_collection import AzureFirewallApplicationRuleCollection
+    from .azure_firewall_network_rule import AzureFirewallNetworkRule
+    from .azure_firewall_network_rule_collection import AzureFirewallNetworkRuleCollection
+    from .azure_firewall import AzureFirewall
+    from .resource import Resource
     from .backend_address_pool import BackendAddressPool
     from .inbound_nat_rule import InboundNatRule
     from .application_security_group import ApplicationSecurityGroup
@@ -269,7 +286,6 @@ except (SyntaxError, ImportError):
     from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
     from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
     from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
-    from .resource import Resource
     from .tags_object import TagsObject
     from .dns_name_availability_result import DnsNameAvailabilityResult
     from .ddos_protection_plan import DdosProtectionPlan
@@ -423,6 +439,7 @@ except (SyntaxError, ImportError):
     from .policies import Policies
     from .vpn_gateway import VpnGateway
     from .vpn_site_id import VpnSiteId
+from .azure_firewall_paged import AzureFirewallPaged
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
@@ -470,6 +487,10 @@ from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPag
 from .vpn_gateway_paged import VpnGatewayPaged
 from .vpn_connection_paged import VpnConnectionPaged
 from .network_management_client_enums import (
+    ProvisioningState,
+    AzureFirewallRCActionType,
+    AzureFirewallApplicationRuleProtocolType,
+    AzureFirewallNetworkRuleProtocol,
     TransportProtocol,
     IPAllocationMethod,
     IPVersion,
@@ -508,7 +529,6 @@ from .network_management_client_enums import (
     EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
     EffectiveRouteState,
-    ProvisioningState,
     AssociationType,
     Direction,
     IpFlowProtocol,
@@ -549,6 +569,15 @@ from .network_management_client_enums import (
 
 __all__ = [
     'SubResource',
+    'AzureFirewallIPConfiguration',
+    'AzureFirewallRCAction',
+    'AzureFirewallApplicationRuleProtocol',
+    'AzureFirewallApplicationRule',
+    'AzureFirewallApplicationRuleCollection',
+    'AzureFirewallNetworkRule',
+    'AzureFirewallNetworkRuleCollection',
+    'AzureFirewall',
+    'Resource',
     'BackendAddressPool',
     'InboundNatRule',
     'ApplicationSecurityGroup',
@@ -600,7 +629,6 @@ __all__ = [
     'ApplicationGatewayAvailableWafRuleSetsResult',
     'ApplicationGatewayAvailableSslOptions',
     'ApplicationGatewaySslPredefinedPolicy',
-    'Resource',
     'TagsObject',
     'DnsNameAvailabilityResult',
     'DdosProtectionPlan',
@@ -754,6 +782,7 @@ __all__ = [
     'Policies',
     'VpnGateway',
     'VpnSiteId',
+    'AzureFirewallPaged',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
@@ -800,6 +829,10 @@ __all__ = [
     'HubVirtualNetworkConnectionPaged',
     'VpnGatewayPaged',
     'VpnConnectionPaged',
+    'ProvisioningState',
+    'AzureFirewallRCActionType',
+    'AzureFirewallApplicationRuleProtocolType',
+    'AzureFirewallNetworkRuleProtocol',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',
@@ -838,7 +871,6 @@ __all__ = [
     'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',
     'EffectiveRouteState',
-    'ProvisioningState',
     'AssociationType',
     'Direction',
     'IpFlowProtocol',
