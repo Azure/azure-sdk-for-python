@@ -36,7 +36,6 @@ from .operations.transparent_data_encryptions_operations import TransparentDataE
 from .operations.transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from .operations.server_usages_operations import ServerUsagesOperations
 from .operations.database_usages_operations import DatabaseUsagesOperations
-from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .operations.database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .operations.encryption_protectors_operations import EncryptionProtectorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
@@ -48,6 +47,10 @@ from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
+from .operations.extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
+from .operations.extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
+from .operations.server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
+from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from .operations.database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .operations.database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
 from .operations.job_agents_operations import JobAgentsOperations
@@ -64,6 +67,7 @@ from .operations.backup_long_term_retention_policies_operations import BackupLon
 from .operations.managed_databases_operations import ManagedDatabasesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.restore_points_operations import RestorePointsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
@@ -161,8 +165,6 @@ class SqlManagementClient(SDKClient):
     :vartype server_usages: azure.mgmt.sql.operations.ServerUsagesOperations
     :ivar database_usages: DatabaseUsages operations
     :vartype database_usages: azure.mgmt.sql.operations.DatabaseUsagesOperations
-    :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
-    :vartype database_blob_auditing_policies: azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
     :ivar database_automatic_tuning: DatabaseAutomaticTuning operations
     :vartype database_automatic_tuning: azure.mgmt.sql.operations.DatabaseAutomaticTuningOperations
     :ivar encryption_protectors: EncryptionProtectors operations
@@ -185,6 +187,14 @@ class SqlManagementClient(SDKClient):
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
+    :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPolicies operations
+    :vartype extended_database_blob_auditing_policies: azure.mgmt.sql.operations.ExtendedDatabaseBlobAuditingPoliciesOperations
+    :ivar extended_server_blob_auditing_policies: ExtendedServerBlobAuditingPolicies operations
+    :vartype extended_server_blob_auditing_policies: azure.mgmt.sql.operations.ExtendedServerBlobAuditingPoliciesOperations
+    :ivar server_blob_auditing_policies: ServerBlobAuditingPolicies operations
+    :vartype server_blob_auditing_policies: azure.mgmt.sql.operations.ServerBlobAuditingPoliciesOperations
+    :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
+    :vartype database_blob_auditing_policies: azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
     :ivar database_vulnerability_assessment_rule_baselines: DatabaseVulnerabilityAssessmentRuleBaselines operations
     :vartype database_vulnerability_assessment_rule_baselines: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentRuleBaselinesOperations
     :ivar database_vulnerability_assessments: DatabaseVulnerabilityAssessments operations
@@ -217,6 +227,8 @@ class SqlManagementClient(SDKClient):
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar database_operations: DatabaseOperations operations
@@ -301,8 +313,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.database_usages = DatabaseUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.database_automatic_tuning = DatabaseAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.encryption_protectors = EncryptionProtectorsOperations(
@@ -324,6 +334,14 @@ class SqlManagementClient(SDKClient):
         self.subscription_usages = SubscriptionUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.extended_database_blob_auditing_policies = ExtendedDatabaseBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.extended_server_blob_auditing_policies = ExtendedServerBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_blob_auditing_policies = ServerBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_vulnerability_assessment_rule_baselines = DatabaseVulnerabilityAssessmentRuleBaselinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -356,6 +374,8 @@ class SqlManagementClient(SDKClient):
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
