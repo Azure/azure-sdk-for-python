@@ -12,6 +12,34 @@
 from enum import Enum
 
 
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class AzureFirewallRCActionType(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class AzureFirewallApplicationRuleProtocolType(str, Enum):
+
+    http = "Http"
+    https = "Https"
+
+
+class AzureFirewallNetworkRuleProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+    icmp = "ICMP"
+
+
 class TransportProtocol(str, Enum):
 
     udp = "Udp"
@@ -294,14 +322,6 @@ class EffectiveRouteState(str, Enum):
 
     active = "Active"
     invalid = "Invalid"
-
-
-class ProvisioningState(str, Enum):
-
-    succeeded = "Succeeded"
-    updating = "Updating"
-    deleting = "Deleting"
-    failed = "Failed"
 
 
 class AssociationType(str, Enum):

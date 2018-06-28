@@ -18,6 +18,7 @@ from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 import uuid
+from .operations.azure_firewalls_operations import AzureFirewallsOperations
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .operations.ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -109,6 +110,8 @@ class NetworkManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
 
+    :ivar azure_firewalls: AzureFirewalls operations
+    :vartype azure_firewalls: azure.mgmt.network.v2018_04_01.operations.AzureFirewallsOperations
     :ivar application_gateways: ApplicationGateways operations
     :vartype application_gateways: azure.mgmt.network.v2018_04_01.operations.ApplicationGatewaysOperations
     :ivar application_security_groups: ApplicationSecurityGroups operations
@@ -226,6 +229,8 @@ class NetworkManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.azure_firewalls = AzureFirewallsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.application_gateways = ApplicationGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application_security_groups = ApplicationSecurityGroupsOperations(
