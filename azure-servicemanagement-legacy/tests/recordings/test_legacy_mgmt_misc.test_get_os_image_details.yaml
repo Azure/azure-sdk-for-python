@@ -11,7 +11,7 @@ interactions:
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images
   response:
-    body: {string: !!python/unicode '<OSImage xmlns="http://schemas.microsoft.com/windowsazure"
+    body: {string: '<OSImage xmlns="http://schemas.microsoft.com/windowsazure"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Category>User</Category><Label>utosimgcd6e1329label</Label><Location>West
         US</Location><LogicalSizeInGB>4</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/python-azure-sdk-test.vhd</MediaLink><Name>utosimgcd6e1329</Name><OS>Linux</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
@@ -33,7 +33,7 @@ interactions:
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/aa6c239c88196bc79af0e30ca3ec19e2
   response:
-    body: {string: !!python/unicode '<Operation xmlns="http://schemas.microsoft.com/windowsazure"
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>aa6c239c-8819-6bc7-9af0-e30ca3ec19e2</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       cache-control: [no-cache]
@@ -54,7 +54,7 @@ interactions:
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimgcd6e1329
   response:
-    body: {string: !!python/unicode '<OSImage xmlns="http://schemas.microsoft.com/windowsazure"
+    body: {string: '<OSImage xmlns="http://schemas.microsoft.com/windowsazure"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Category>User</Category><Label>utosimgcd6e1329label</Label><Location>West
         US</Location><LogicalSizeInGB>4</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/python-azure-sdk-test.vhd</MediaLink><Name>utosimgcd6e1329</Name><OS>Linux</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
@@ -79,7 +79,7 @@ interactions:
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimgcd6e1329/replicate
   response:
-    body: {string: !!python/unicode '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">b4590d9e3ed742e4a1d46e5424aa335e__utosimgcd6e1329</string>'}
+    body: {string: '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">b4590d9e3ed742e4a1d46e5424aa335e__utosimgcd6e1329</string>'}
     headers:
       cache-control: [no-cache]
       content-length: ['131']
@@ -100,7 +100,7 @@ interactions:
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c0c5d518b4ad6b9e88a95f07a5a3b942
   response:
-    body: {string: !!python/unicode '<Operation xmlns="http://schemas.microsoft.com/windowsazure"
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c0c5d518-b4ad-6b9e-88a9-5f07a5a3b942</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       cache-control: [no-cache]
@@ -121,7 +121,7 @@ interactions:
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimgcd6e1329/details
   response:
-    body: {string: !!python/unicode '<OSImageDetails xmlns="http://schemas.microsoft.com/windowsazure"
+    body: {string: '<OSImageDetails xmlns="http://schemas.microsoft.com/windowsazure"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Category>User</Category><Label>utosimgcd6e1329label</Label><Location>West
         US</Location><LogicalSizeInGB>4</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/python-azure-sdk-test.vhd</MediaLink><Name>utosimgcd6e1329</Name><OS>Linux</OS><IsPremium>false</IsPremium><ReplicationProgress><ReplicationProgressElement><Location>West
         US</Location><Progress>0</Progress></ReplicationProgressElement><ReplicationProgressElement><Location>West
