@@ -6,7 +6,6 @@ azure-storage-common # azure-keyvault
 pytest-cov
 pytest>=3.5.1
 azure-devtools>=0.4.1
-PyYAML>=4.0  # https://github.com/kevin1024/vcrpy/issues/366
 vcrpy
 readme_renderer
 wheel
