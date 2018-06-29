@@ -62,7 +62,7 @@ class ArmDisasterRecovery(Resource):
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
         'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
-        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount ', 'type': 'long'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
