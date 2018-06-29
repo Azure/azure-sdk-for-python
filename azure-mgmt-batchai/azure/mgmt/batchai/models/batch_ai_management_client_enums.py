@@ -81,7 +81,7 @@ class ToolType(str, Enum):
     caffe2 = "caffe2"
     chainer = "chainer"
     horovod = "horovod"
-    mpi = "mpi"
+    custommpi = "custommpi"
     custom = "custom"
 
 

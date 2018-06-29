@@ -45,9 +45,9 @@ class Job(ProxyResource):
      on the VM.
     :type container_settings: ~azure.mgmt.batchai.models.ContainerSettings
     :param tool_type: The toolkit type of this job. Possible values are: cntk,
-     tensorflow, caffe, caffe2, chainer, pytorch, custom, mpi, horovod.
+     tensorflow, caffe, caffe2, chainer, pytorch, custom, custommpi, horovod.
      Possible values include: 'cntk', 'tensorflow', 'caffe', 'caffe2',
-     'chainer', 'horovod', 'mpi', 'custom'
+     'chainer', 'horovod', 'custommpi', 'custom'
     :type tool_type: str or ~azure.mgmt.batchai.models.ToolType
     :param cntk_settings: Specifies the settings for CNTK (aka Microsoft
      Cognitive Toolkit) job.
