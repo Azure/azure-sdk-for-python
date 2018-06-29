@@ -27,6 +27,7 @@ matrix:
     - os: osx
 #    - python: "pypy2.7-5.8.0"
     - python: "pypy3.5-5.8.0"
+    - python: "3.7"
     - python: "nightly"
   fast_finish: true
 # Perform the manual steps on osx to install python3 and activate venv
