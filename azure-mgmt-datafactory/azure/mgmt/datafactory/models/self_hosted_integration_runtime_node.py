@@ -116,9 +116,9 @@ class SelfHostedIntegrationRuntimeNode(Model):
         'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(SelfHostedIntegrationRuntimeNode, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(SelfHostedIntegrationRuntimeNode, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.node_name = None
         self.machine_name = None
         self.host_service_uri = None

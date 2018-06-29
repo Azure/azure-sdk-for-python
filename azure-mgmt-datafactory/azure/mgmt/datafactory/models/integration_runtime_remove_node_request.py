@@ -27,7 +27,7 @@ class IntegrationRuntimeRemoveNodeRequest(Model):
         'node_name': {'key': 'nodeName', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, node_name=None):
-        super(IntegrationRuntimeRemoveNodeRequest, self).__init__()
-        self.additional_properties = additional_properties
-        self.node_name = node_name
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeRemoveNodeRequest, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.node_name = kwargs.get('node_name', None)

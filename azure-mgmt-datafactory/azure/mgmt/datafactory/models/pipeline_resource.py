@@ -64,11 +64,11 @@ class PipelineResource(SubResource):
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
     }
 
-    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, concurrency=None, annotations=None):
-        super(PipelineResource, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
-        self.activities = activities
-        self.parameters = parameters
-        self.concurrency = concurrency
-        self.annotations = annotations
+    def __init__(self, **kwargs):
+        super(PipelineResource, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
+        self.activities = kwargs.get('activities', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.concurrency = kwargs.get('concurrency', None)
+        self.annotations = kwargs.get('annotations', None)

@@ -15,27 +15,29 @@ from .execution_activity import ExecutionActivity
 class WebActivity(ExecutionActivity):
     """Web activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param method: Rest API method for target endpoint. Possible values
-     include: 'GET', 'POST', 'PUT', 'DELETE'
+    :param method: Required. Rest API method for target endpoint. Possible
+     values include: 'GET', 'POST', 'PUT', 'DELETE'
     :type method: str or ~azure.mgmt.datafactory.models.WebActivityMethod
-    :param url: Web activity target endpoint and path. Type: string (or
-     Expression with resultType string).
+    :param url: Required. Web activity target endpoint and path. Type: string
+     (or Expression with resultType string).
     :type url: object
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
@@ -81,13 +83,13 @@ class WebActivity(ExecutionActivity):
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
     }
 
-    def __init__(self, name, method, url, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, headers=None, body=None, authentication=None, datasets=None, linked_services=None):
-        super(WebActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.method = method
-        self.url = url
-        self.headers = headers
-        self.body = body
-        self.authentication = authentication
-        self.datasets = datasets
-        self.linked_services = linked_services
+    def __init__(self, **kwargs):
+        super(WebActivity, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.url = kwargs.get('url', None)
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs.get('body', None)
+        self.authentication = kwargs.get('authentication', None)
+        self.datasets = kwargs.get('datasets', None)
+        self.linked_services = kwargs.get('linked_services', None)
         self.type = 'WebActivity'

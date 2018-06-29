@@ -46,10 +46,10 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
         'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, catalog_server_endpoint=None, catalog_admin_user_name=None, catalog_admin_password=None, catalog_pricing_tier=None):
-        super(IntegrationRuntimeSsisCatalogInfo, self).__init__()
-        self.additional_properties = additional_properties
-        self.catalog_server_endpoint = catalog_server_endpoint
-        self.catalog_admin_user_name = catalog_admin_user_name
-        self.catalog_admin_password = catalog_admin_password
-        self.catalog_pricing_tier = catalog_pricing_tier
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.catalog_server_endpoint = kwargs.get('catalog_server_endpoint', None)
+        self.catalog_admin_user_name = kwargs.get('catalog_admin_user_name', None)
+        self.catalog_admin_password = kwargs.get('catalog_admin_password', None)
+        self.catalog_pricing_tier = kwargs.get('catalog_pricing_tier', None)

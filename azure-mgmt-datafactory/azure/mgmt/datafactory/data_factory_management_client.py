@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -58,7 +58,7 @@ class DataFactoryManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DataFactoryManagementClient(object):
+class DataFactoryManagementClient(SDKClient):
     """The Azure Data Factory V2 management API provides a RESTful set of web services that interact with Azure Data Factory V2 services.
 
     :ivar config: Configuration for client.
@@ -97,7 +97,7 @@ class DataFactoryManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DataFactoryManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataFactoryManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-09-01-preview'
