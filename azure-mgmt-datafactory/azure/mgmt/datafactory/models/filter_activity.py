@@ -15,20 +15,22 @@ from .control_activity import ControlActivity
 class FilterActivity(ControlActivity):
     """Filter and return results from input array based on the conditions.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param items: Input array on which filter should be applied.
+    :param items: Required. Input array on which filter should be applied.
     :type items: ~azure.mgmt.datafactory.models.Expression
-    :param condition: Condition to be used for filtering the input.
+    :param condition: Required. Condition to be used for filtering the input.
     :type condition: ~azure.mgmt.datafactory.models.Expression
     """
 
@@ -49,8 +51,8 @@ class FilterActivity(ControlActivity):
         'condition': {'key': 'typeProperties.condition', 'type': 'Expression'},
     }
 
-    def __init__(self, name, items, condition, additional_properties=None, description=None, depends_on=None):
-        super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
-        self.items = items
-        self.condition = condition
+    def __init__(self, **kwargs):
+        super(FilterActivity, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)
+        self.condition = kwargs.get('condition', None)
         self.type = 'Filter'

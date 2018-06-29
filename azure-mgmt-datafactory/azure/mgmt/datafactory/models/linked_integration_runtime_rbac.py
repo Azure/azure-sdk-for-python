@@ -15,10 +15,12 @@ from .linked_integration_runtime_properties import LinkedIntegrationRuntimePrope
 class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
     """The base definition of a secret type.
 
-    :param authorization_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param resource_id: The resource ID of the integration runtime to be
-     shared.
+    :param resource_id: Required. The resource ID of the integration runtime
+     to be shared.
     :type resource_id: str
     """
 
@@ -32,7 +34,7 @@ class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, resource_id):
-        super(LinkedIntegrationRuntimeRbac, self).__init__()
-        self.resource_id = resource_id
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeRbac, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
         self.authorization_type = 'RBAC'

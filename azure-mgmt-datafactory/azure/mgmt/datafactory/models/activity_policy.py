@@ -45,10 +45,10 @@ class ActivityPolicy(Model):
         'secure_output': {'key': 'secureOutput', 'type': 'bool'},
     }
 
-    def __init__(self, additional_properties=None, timeout=None, retry=None, retry_interval_in_seconds=None, secure_output=None):
-        super(ActivityPolicy, self).__init__()
-        self.additional_properties = additional_properties
-        self.timeout = timeout
-        self.retry = retry
-        self.retry_interval_in_seconds = retry_interval_in_seconds
-        self.secure_output = secure_output
+    def __init__(self, **kwargs):
+        super(ActivityPolicy, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.retry = kwargs.get('retry', None)
+        self.retry_interval_in_seconds = kwargs.get('retry_interval_in_seconds', None)
+        self.secure_output = kwargs.get('secure_output', None)
