@@ -27,6 +27,8 @@ class ForEachActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param is_sequential: Should the loop be executed in sequence or in
@@ -54,6 +56,7 @@ class ForEachActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'is_sequential': {'key': 'typeProperties.isSequential', 'type': 'bool'},
         'batch_count': {'key': 'typeProperties.batchCount', 'type': 'int'},
@@ -61,8 +64,8 @@ class ForEachActivity(ControlActivity):
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, *, name: str, items, activities, additional_properties=None, description: str=None, depends_on=None, is_sequential: bool=None, batch_count: int=None, **kwargs) -> None:
-        super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, items, activities, additional_properties=None, description: str=None, depends_on=None, user_properties=None, is_sequential: bool=None, batch_count: int=None, **kwargs) -> None:
+        super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.is_sequential = is_sequential
         self.batch_count = batch_count
         self.items = items

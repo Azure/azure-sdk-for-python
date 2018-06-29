@@ -26,6 +26,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
@@ -53,6 +55,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -60,8 +63,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
     }
 
-    def __init__(self, *, name: str, stored_procedure_name, additional_properties=None, description: str=None, depends_on=None, linked_service_name=None, policy=None, stored_procedure_parameters=None, **kwargs) -> None:
-        super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, stored_procedure_name, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, stored_procedure_parameters=None, **kwargs) -> None:
+        super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.stored_procedure_name = stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
         self.type = 'SqlServerStoredProcedure'

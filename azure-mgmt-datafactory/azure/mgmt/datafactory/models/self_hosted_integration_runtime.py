@@ -24,9 +24,6 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     :type description: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :param linked_info:
-    :type linked_info:
-     ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeProperties
     """
 
     _validation = {
@@ -37,10 +34,8 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeProperties'},
     }
 
     def __init__(self, **kwargs):
         super(SelfHostedIntegrationRuntime, self).__init__(**kwargs)
-        self.linked_info = kwargs.get('linked_info', None)
         self.type = 'SelfHosted'

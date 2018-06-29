@@ -57,15 +57,21 @@ class TriggerRuntimeState(str, Enum):
     disabled = "Disabled"
 
 
-class PipelineRunQueryFilterOperand(str, Enum):
+class RunQueryFilterOperand(str, Enum):
 
     pipeline_name = "PipelineName"
     status = "Status"
     run_start = "RunStart"
     run_end = "RunEnd"
+    activity_name = "ActivityName"
+    activity_run_start = "ActivityRunStart"
+    activity_run_end = "ActivityRunEnd"
+    activity_type = "ActivityType"
+    trigger_name = "TriggerName"
+    trigger_run_timestamp = "TriggerRunTimestamp"
 
 
-class PipelineRunQueryFilterOperator(str, Enum):
+class RunQueryFilterOperator(str, Enum):
 
     equals = "Equals"
     not_equals = "NotEquals"
@@ -73,13 +79,20 @@ class PipelineRunQueryFilterOperator(str, Enum):
     not_in = "NotIn"
 
 
-class PipelineRunQueryOrderByField(str, Enum):
+class RunQueryOrderByField(str, Enum):
 
     run_start = "RunStart"
     run_end = "RunEnd"
+    pipeline_name = "PipelineName"
+    status = "Status"
+    activity_name = "ActivityName"
+    activity_run_start = "ActivityRunStart"
+    activity_run_end = "ActivityRunEnd"
+    trigger_name = "TriggerName"
+    trigger_run_timestamp = "TriggerRunTimestamp"
 
 
-class PipelineRunQueryOrder(str, Enum):
+class RunQueryOrder(str, Enum):
 
     asc = "ASC"
     desc = "DESC"

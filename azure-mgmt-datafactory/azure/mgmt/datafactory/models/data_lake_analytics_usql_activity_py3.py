@@ -26,6 +26,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
@@ -71,6 +73,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -83,8 +86,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         'compilation_mode': {'key': 'typeProperties.compilationMode', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, script_path, script_linked_service, additional_properties=None, description: str=None, depends_on=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None, **kwargs) -> None:
-        super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, script_path, script_linked_service, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None, **kwargs) -> None:
+        super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism

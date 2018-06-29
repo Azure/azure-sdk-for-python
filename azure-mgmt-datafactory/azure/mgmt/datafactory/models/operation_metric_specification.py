@@ -36,6 +36,9 @@ class OperationMetricSpecification(Model):
      available.
     :type availabilities:
      list[~azure.mgmt.datafactory.models.OperationMetricAvailability]
+    :param dimensions: Defines the metric dimension.
+    :type dimensions:
+     list[~azure.mgmt.datafactory.models.OperationMetricDimension]
     """
 
     _attribute_map = {
@@ -48,6 +51,7 @@ class OperationMetricSpecification(Model):
         'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
         'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
         'availabilities': {'key': 'availabilities', 'type': '[OperationMetricAvailability]'},
+        'dimensions': {'key': 'dimensions', 'type': '[OperationMetricDimension]'},
     }
 
     def __init__(self, **kwargs):
@@ -61,3 +65,4 @@ class OperationMetricSpecification(Model):
         self.source_mdm_account = kwargs.get('source_mdm_account', None)
         self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
         self.availabilities = kwargs.get('availabilities', None)
+        self.dimensions = kwargs.get('dimensions', None)

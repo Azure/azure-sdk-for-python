@@ -26,6 +26,8 @@ class HDInsightSparkActivity(ExecutionActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
@@ -71,6 +73,7 @@ class HDInsightSparkActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -84,8 +87,8 @@ class HDInsightSparkActivity(ExecutionActivity):
         'spark_config': {'key': 'typeProperties.sparkConfig', 'type': '{object}'},
     }
 
-    def __init__(self, *, name: str, root_path, entry_file_path, additional_properties=None, description: str=None, depends_on=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name: str=None, proxy_user=None, spark_config=None, **kwargs) -> None:
-        super(HDInsightSparkActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, root_path, entry_file_path, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name: str=None, proxy_user=None, spark_config=None, **kwargs) -> None:
+        super(HDInsightSparkActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.root_path = root_path
         self.entry_file_path = entry_file_path
         self.arguments = arguments

@@ -29,6 +29,8 @@ class Activity(Model):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -43,6 +45,7 @@ class Activity(Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -50,10 +53,11 @@ class Activity(Model):
         'type': {'Execution': 'ExecutionActivity', 'Container': 'ControlActivity'}
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, **kwargs) -> None:
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
         super(Activity, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = name
         self.description = description
         self.depends_on = depends_on
+        self.user_properties = user_properties
         self.type = None

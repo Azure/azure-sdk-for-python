@@ -29,6 +29,8 @@ class Activity(Model):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -43,6 +45,7 @@ class Activity(Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -56,4 +59,5 @@ class Activity(Model):
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.depends_on = kwargs.get('depends_on', None)
+        self.user_properties = kwargs.get('user_properties', None)
         self.type = None
