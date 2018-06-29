@@ -15,9 +15,11 @@ from .linked_integration_runtime_properties import LinkedIntegrationRuntimePrope
 class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
     """The base definition of a secret type.
 
-    :param authorization_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param key: Type of the secret.
+    :param key: Required. Type of the secret.
     :type key: ~azure.mgmt.datafactory.models.SecureString
     """
 
@@ -31,7 +33,7 @@ class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
         'key': {'key': 'key', 'type': 'SecureString'},
     }
 
-    def __init__(self, key):
-        super(LinkedIntegrationRuntimeKey, self).__init__()
-        self.key = key
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeKey, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
         self.authorization_type = 'Key'

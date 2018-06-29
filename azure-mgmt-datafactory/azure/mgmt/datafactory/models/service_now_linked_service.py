@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class ServiceNowLinkedService(LinkedService):
     """ServiceNow server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,13 +31,13 @@ class ServiceNowLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: The endpoint of the ServiceNow server. (i.e.
+    :param endpoint: Required. The endpoint of the ServiceNow server. (i.e.
      ServiceNowData.com)
     :type endpoint: object
-    :param authentication_type: The authentication type to use. Possible
-     values include: 'Basic', 'OAuth2'
+    :param authentication_type: Required. The authentication type to use.
+     Possible values include: 'Basic', 'OAuth2'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.ServiceNowAuthenticationType
     :param username: The user name used to connect to the ServiceNow server
@@ -89,16 +91,16 @@ class ServiceNowLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, endpoint, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, username=None, password=None, client_id=None, client_secret=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(ServiceNowLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.endpoint = endpoint
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(ServiceNowLinkedService, self).__init__(**kwargs)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'ServiceNow'

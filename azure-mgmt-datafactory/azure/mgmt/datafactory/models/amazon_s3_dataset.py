@@ -15,6 +15,8 @@ from .dataset import Dataset
 class AmazonS3Dataset(Dataset):
     """A single Amazon Simple Storage Service (S3) object or a set of S3 objects.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class AmazonS3Dataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,10 +34,10 @@ class AmazonS3Dataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param bucket_name: The name of the Amazon S3 bucket. Type: string (or
-     Expression with resultType string).
+    :param bucket_name: Required. The name of the Amazon S3 bucket. Type:
+     string (or Expression with resultType string).
     :type bucket_name: object
     :param key: The key of the Amazon S3 object. Type: string (or Expression
      with resultType string).
@@ -75,12 +77,12 @@ class AmazonS3Dataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, bucket_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, key=None, prefix=None, version=None, format=None, compression=None):
-        super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.bucket_name = bucket_name
-        self.key = key
-        self.prefix = prefix
-        self.version = version
-        self.format = format
-        self.compression = compression
+    def __init__(self, **kwargs):
+        super(AmazonS3Dataset, self).__init__(**kwargs)
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.key = kwargs.get('key', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.version = kwargs.get('version', None)
+        self.format = kwargs.get('format', None)
+        self.compression = kwargs.get('compression', None)
         self.type = 'AmazonS3Object'
