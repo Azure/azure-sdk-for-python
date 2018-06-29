@@ -54,7 +54,7 @@ class MigrationConfigProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount ', 'type': 'long'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
     }

@@ -59,7 +59,7 @@ class ArmDisasterRecovery(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateDR'},
-        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount ', 'type': 'long'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
         'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
