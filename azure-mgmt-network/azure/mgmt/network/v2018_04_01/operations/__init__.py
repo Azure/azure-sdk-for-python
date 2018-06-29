@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .azure_firewalls_operations import AzureFirewallsOperations
 from .application_gateways_operations import ApplicationGatewaysOperations
 from .application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -59,6 +60,7 @@ from .vpn_gateways_operations import VpnGatewaysOperations
 from .vpn_connections_operations import VpnConnectionsOperations
 
 __all__ = [
+    'AzureFirewallsOperations',
     'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
     'DdosProtectionPlansOperations',
