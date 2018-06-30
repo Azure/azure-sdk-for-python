@@ -50,7 +50,7 @@ class GalleryImage(Resource):
     :type os_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemStateTypes
     :param end_of_life_date: The end of life of this gallery image.
-    :type end_of_life_date: date
+    :type end_of_life_date: datetime
     :param identifier:
     :type identifier:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageIdentifier
@@ -90,7 +90,7 @@ class GalleryImage(Resource):
         'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'os_state': {'key': 'properties.osState', 'type': 'OperatingSystemStateTypes'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'date'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
         'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
         'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
         'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
