@@ -38,7 +38,7 @@ class IntegrationRuntimeComputeProperties(Model):
 
     _validation = {
         'number_of_nodes': {'minimum': 1},
-        'max_parallel_executions_per_node': {'maximum': 8, 'minimum': 1},
+        'max_parallel_executions_per_node': {'minimum': 1},
     }
 
     _attribute_map = {
