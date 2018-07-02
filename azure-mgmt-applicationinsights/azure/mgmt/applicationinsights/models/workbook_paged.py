@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class Workbooks(Model):
-    """Workbook list result.
-
-    :param value: An array of workbooks.
-    :type value: list[~azure.mgmt.applicationinsights.models.Workbook]
+class WorkbookPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workbook <azure.mgmt.applicationinsights.models.Workbook>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workbook]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workbook]'}
     }
 
-    def __init__(self, value=None):
-        super(Workbooks, self).__init__()
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(WorkbookPaged, self).__init__(*args, **kwargs)

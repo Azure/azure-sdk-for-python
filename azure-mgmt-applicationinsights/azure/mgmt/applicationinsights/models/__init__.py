@@ -28,7 +28,7 @@ from .application_insights_component_feature import ApplicationInsightsComponent
 from .application_insights_component_available_features import ApplicationInsightsComponentAvailableFeatures
 from .application_insights_component_proactive_detection_configuration_rule_definitions import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
 from .application_insights_component_proactive_detection_configuration import ApplicationInsightsComponentProactiveDetectionConfiguration
-from .resource import Resource
+from .components_resource import ComponentsResource
 from .tags_resource import TagsResource
 from .application_insights_component import ApplicationInsightsComponent
 from .component_purge_body_filters import ComponentPurgeBodyFilters
@@ -40,21 +40,25 @@ from .work_item_create_configuration import WorkItemCreateConfiguration
 from .work_item_configuration_error import WorkItemConfigurationError, WorkItemConfigurationErrorException
 from .application_insights_component_favorite import ApplicationInsightsComponentFavorite
 from .application_insights_component_web_test_location import ApplicationInsightsComponentWebTestLocation
+from .webtests_resource import WebtestsResource
 from .web_test_geolocation import WebTestGeolocation
 from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
 from .application_insights_component_analytics_item_properties import ApplicationInsightsComponentAnalyticsItemProperties
 from .application_insights_component_analytics_item import ApplicationInsightsComponentAnalyticsItem
+from .workbook_resource import WorkbookResource
 from .workbook import Workbook
-from .workbooks import Workbooks
 from .link_properties import LinkProperties
 from .error_field_contract import ErrorFieldContract
 from .workbook_error import WorkbookError, WorkbookErrorException
 from .operation_paged import OperationPaged
+from .annotation_paged import AnnotationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
+from .work_item_configuration_paged import WorkItemConfigurationPaged
 from .application_insights_component_web_test_location_paged import ApplicationInsightsComponentWebTestLocationPaged
 from .web_test_paged import WebTestPaged
+from .workbook_paged import WorkbookPaged
 from .application_insights_management_client_enums import (
     ApplicationType,
     FlowType,
@@ -91,7 +95,7 @@ __all__ = [
     'ApplicationInsightsComponentAvailableFeatures',
     'ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions',
     'ApplicationInsightsComponentProactiveDetectionConfiguration',
-    'Resource',
+    'ComponentsResource',
     'TagsResource',
     'ApplicationInsightsComponent',
     'ComponentPurgeBodyFilters',
@@ -103,21 +107,25 @@ __all__ = [
     'WorkItemConfigurationError', 'WorkItemConfigurationErrorException',
     'ApplicationInsightsComponentFavorite',
     'ApplicationInsightsComponentWebTestLocation',
+    'WebtestsResource',
     'WebTestGeolocation',
     'WebTestPropertiesConfiguration',
     'WebTest',
     'ApplicationInsightsComponentAnalyticsItemProperties',
     'ApplicationInsightsComponentAnalyticsItem',
+    'WorkbookResource',
     'Workbook',
-    'Workbooks',
     'LinkProperties',
     'ErrorFieldContract',
     'WorkbookError', 'WorkbookErrorException',
     'OperationPaged',
+    'AnnotationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
+    'WorkItemConfigurationPaged',
     'ApplicationInsightsComponentWebTestLocationPaged',
     'WebTestPaged',
+    'WorkbookPaged',
     'ApplicationType',
     'FlowType',
     'RequestSource',

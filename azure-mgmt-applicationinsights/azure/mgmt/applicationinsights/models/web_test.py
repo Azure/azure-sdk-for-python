@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .webtests_resource import WebtestsResource
 
 
-class WebTest(Resource):
+class WebTest(WebtestsResource):
     """An Application Insights web test definition.
 
     Variables are only populated by the server, and will be ignored when
