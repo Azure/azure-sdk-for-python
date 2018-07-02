@@ -74,7 +74,7 @@ class GalleryImagesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -84,8 +84,6 @@ class GalleryImagesOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('GalleryImage', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('GalleryImage', response)
-        if response.status_code == 202:
             deserialized = self._deserialize('GalleryImage', response)
 
         if raw:
@@ -250,9 +248,16 @@ class GalleryImagesOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
 
     def delete(
             self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, polling=True, **operation_config):
@@ -269,10 +274,12 @@ class GalleryImagesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -285,9 +292,13 @@ class GalleryImagesOperations(object):
         )
 
         def get_long_running_output(response):
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
@@ -298,7 +309,7 @@ class GalleryImagesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
 
-    def list_by_gallery(
+    def list_gallery_images_by_gallery(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
         """List gallery images under a gallery.
 
@@ -320,7 +331,7 @@ class GalleryImagesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_gallery.metadata['url']
+                url = self.list_gallery_images_by_gallery.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -367,4 +378,4 @@ class GalleryImagesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_gallery.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images'}
+    list_gallery_images_by_gallery.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images'}
