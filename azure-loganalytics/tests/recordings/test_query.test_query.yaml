@@ -1,72 +1,91 @@
 interactions:
 - request:
-    body: '{"query": "AzureActivity | take 10"}'
+    body: '{"query": "Heartbeat | take 10"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['36']
+      Content-Length: ['32']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
           azure-loganalytics/0.1.0]
       x-api-key: [DEMO_KEY]
     method: POST
     uri: https://api.loganalytics.io/v1/workspaces/DEMO_WORKSPACE/query
   response:
-    body: {string: '{"tables":[{"name":"PrimaryResult","columns":[{"name":"OperationName","type":"string"},{"name":"Level","type":"string"},{"name":"ActivityStatus","type":"string"},{"name":"ActivitySubstatus","type":"string"},{"name":"ResourceGroup","type":"string"},{"name":"SubscriptionId","type":"string"},{"name":"CorrelationId","type":"string"},{"name":"Caller","type":"string"},{"name":"CallerIpAddress","type":"string"},{"name":"Category","type":"string"},{"name":"HTTPRequest","type":"string"},{"name":"Properties","type":"string"},{"name":"EventSubmissionTimestamp","type":"datetime"},{"name":"Authorization","type":"string"},{"name":"ResourceId","type":"string"},{"name":"OperationId","type":"string"},{"name":"ResourceProvider","type":"string"},{"name":"Resource","type":"string"},{"name":"EventDataId","type":"string"},{"name":"TenantId","type":"string"},{"name":"TimeGenerated","type":"datetime"},{"name":"SourceSystem","type":"string"},{"name":"Type","type":"string"}],"rows":[["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Succeeded","OK
-        (HTTP Status Code: 200)","ContosoAzureHQ","e4272367-5645-4c4e-9c67-3b74b59a6982","0954e683-bea7-4a94-b3b7-17e57069f635","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","191.238.145.40","Administrative","{\r\n  \"clientRequestId\":
-        \"5965cc66-a3ba-442b-8c5a-05beee9fd018\",\r\n  \"clientIpAddress\": \"191.238.145.40\",\r\n  \"method\":
-        \"POST\"\r\n}","{\r\n  \"statusCode\": \"OK\",\r\n  \"serviceRequestId\":
-        \"514a2341-069c-45d4-b2e4-b1333b56ddb2\"\r\n}","2018-06-13T10:58:09.144Z","{\r\n  \"action\":
-        \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\": \"/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u\"\r\n}","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u","0954e683-bea7-4a94-b3b7-17e57069f635","Microsoft.Storage","chqdiagk7owxak6tjx7u","61e3255a-db71-40a6-86da-8a71626e323a","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:41.748Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Started","","ContosoAzureHQ","e4272367-5645-4c4e-9c67-3b74b59a6982","0954e683-bea7-4a94-b3b7-17e57069f635","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","191.238.145.40","Administrative","{\r\n  \"clientRequestId\":
-        \"5965cc66-a3ba-442b-8c5a-05beee9fd018\",\r\n  \"clientIpAddress\": \"191.238.145.40\",\r\n  \"method\":
-        \"POST\"\r\n}","","2018-06-13T10:58:09.144Z","{\r\n  \"action\": \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\":
-        \"/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u\"\r\n}","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u","0954e683-bea7-4a94-b3b7-17e57069f635","Microsoft.Storage","chqdiagk7owxak6tjx7u","b56371d0-8085-4491-9278-5e2802ac870a","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:41.701Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Succeeded","OK
-        (HTTP Status Code: 200)","ContosoAzureHQ","e4272367-5645-4c4e-9c67-3b74b59a6982","f973e2ce-4826-44fc-9362-4dd90d4b9b40","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","191.238.145.40","Administrative","{\r\n  \"clientRequestId\":
-        \"5965cc66-a3ba-442b-8c5a-05beee9fd015\",\r\n  \"clientIpAddress\": \"191.238.145.40\",\r\n  \"method\":
-        \"POST\"\r\n}","{\r\n  \"statusCode\": \"OK\",\r\n  \"serviceRequestId\":
-        \"e4fa642a-ffa4-4983-b111-6183f36ce104\"\r\n}","2018-06-13T10:57:50.166Z","{\r\n  \"action\":
-        \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\": \"/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u\"\r\n}","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u","f973e2ce-4826-44fc-9362-4dd90d4b9b40","Microsoft.Storage","chqdiagk7owxak6tjx7u","5d602af0-5551-486e-b975-e07c3b9ee022","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:30.155Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Started","","ContosoAzureHQ","e4272367-5645-4c4e-9c67-3b74b59a6982","f973e2ce-4826-44fc-9362-4dd90d4b9b40","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","191.238.145.40","Administrative","{\r\n  \"clientRequestId\":
-        \"5965cc66-a3ba-442b-8c5a-05beee9fd015\",\r\n  \"clientIpAddress\": \"191.238.145.40\",\r\n  \"method\":
-        \"POST\"\r\n}","","2018-06-13T10:57:50.165Z","{\r\n  \"action\": \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\":
-        \"/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u\"\r\n}","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/ContosoAzureHQ/providers/Microsoft.Storage/storageAccounts/chqdiagk7owxak6tjx7u","f973e2ce-4826-44fc-9362-4dd90d4b9b40","Microsoft.Storage","chqdiagk7owxak6tjx7u","13a77ff3-8a6b-4571-9987-37a15c5f0b21","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:30.092Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Succeeded","OK
-        (HTTP Status Code: 200)","BitnamiELK","85d819e7-0e0a-451d-91eb-82c7a0764cf9","f729df99-2d47-4070-aebb-76883158190e","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.96.114.155","Administrative","{\r\n  \"clientRequestId\":
-        \"a725acfd-4414-4c43-b26c-f2227bbe258d\",\r\n  \"clientIpAddress\": \"23.96.114.155\",\r\n  \"method\":
-        \"POST\"\r\n}","{\r\n  \"statusCode\": \"OK\",\r\n  \"serviceRequestId\":
-        \"1ee6e6bb-9b19-4b3d-9f94-600eb1167a2f\"\r\n}","2018-06-13T10:58:58.171Z","{\r\n  \"action\":
-        \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\": \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/BitnamiELK/providers/Microsoft.Storage/storageAccounts/bitnamielkdiag101\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/BitnamiELK/providers/Microsoft.Storage/storageAccounts/bitnamielkdiag101","f729df99-2d47-4070-aebb-76883158190e","Microsoft.Storage","bitnamielkdiag101","4c1c600d-7b5b-470d-a01a-a8f9b799448b","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:58:37.089Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Started","","BitnamiELK","85d819e7-0e0a-451d-91eb-82c7a0764cf9","f729df99-2d47-4070-aebb-76883158190e","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.96.114.155","Administrative","{\r\n  \"clientRequestId\":
-        \"a725acfd-4414-4c43-b26c-f2227bbe258d\",\r\n  \"clientIpAddress\": \"23.96.114.155\",\r\n  \"method\":
-        \"POST\"\r\n}","","2018-06-13T10:58:58.171Z","{\r\n  \"action\": \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\":
-        \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/BitnamiELK/providers/Microsoft.Storage/storageAccounts/bitnamielkdiag101\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/BitnamiELK/providers/Microsoft.Storage/storageAccounts/bitnamielkdiag101","f729df99-2d47-4070-aebb-76883158190e","Microsoft.Storage","bitnamielkdiag101","f5419f51-ff42-4f26-87b3-cef39db992b2","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:58:37.026Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Succeeded","OK
-        (HTTP Status Code: 200)","ContosoLoanApp1","85d819e7-0e0a-451d-91eb-82c7a0764cf9","36b4edc8-3f13-4c0b-8866-caf41d4e1bfa","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.102.233.53","Administrative","{\r\n  \"clientRequestId\":
-        \"6425da6d-eb94-4d1f-aed6-98e3a230d68d\",\r\n  \"clientIpAddress\": \"23.102.233.53\",\r\n  \"method\":
-        \"POST\"\r\n}","{\r\n  \"statusCode\": \"OK\",\r\n  \"serviceRequestId\":
-        \"ad192e48-6d03-4477-bef1-80a16c6c708a\"\r\n}","2018-06-13T10:58:08.117Z","{\r\n  \"action\":
-        \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\": \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/ContosoLoanApp1/providers/Microsoft.Storage/storageAccounts/contosoloanapp1diag605\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/ContosoLoanApp1/providers/Microsoft.Storage/storageAccounts/contosoloanapp1diag605","36b4edc8-3f13-4c0b-8866-caf41d4e1bfa","Microsoft.Storage","contosoloanapp1diag605","c082c55a-add9-4aa2-b2ac-70ce6770eab3","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:48.802Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Started","","ContosoLoanApp1","85d819e7-0e0a-451d-91eb-82c7a0764cf9","36b4edc8-3f13-4c0b-8866-caf41d4e1bfa","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.102.233.53","Administrative","{\r\n  \"clientRequestId\":
-        \"6425da6d-eb94-4d1f-aed6-98e3a230d68d\",\r\n  \"clientIpAddress\": \"23.102.233.53\",\r\n  \"method\":
-        \"POST\"\r\n}","","2018-06-13T10:58:08.117Z","{\r\n  \"action\": \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\":
-        \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/ContosoLoanApp1/providers/Microsoft.Storage/storageAccounts/contosoloanapp1diag605\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/ContosoLoanApp1/providers/Microsoft.Storage/storageAccounts/contosoloanapp1diag605","36b4edc8-3f13-4c0b-8866-caf41d4e1bfa","Microsoft.Storage","contosoloanapp1diag605","31297063-f44a-4b34-a88d-3148bb69627d","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:57:48.661Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Succeeded","OK
-        (HTTP Status Code: 200)","acsSwarmTestRG","85d819e7-0e0a-451d-91eb-82c7a0764cf9","cd1afd29-3094-46f2-85a4-ac5d05285337","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.96.114.155","Administrative","{\r\n  \"clientRequestId\":
-        \"76688e15-1b44-4171-8a0f-30dc5cb812c9\",\r\n  \"clientIpAddress\": \"23.96.114.155\",\r\n  \"method\":
-        \"POST\"\r\n}","{\r\n  \"statusCode\": \"OK\",\r\n  \"serviceRequestId\":
-        \"51f8bff5-a95e-47fc-950b-ecad3ec2ccad\"\r\n}","2018-06-13T10:57:05.239Z","{\r\n  \"action\":
-        \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\": \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/acsSwarmTestRG/providers/Microsoft.Storage/storageAccounts/briq4u4p5pcsaswarmdiag0\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/acsSwarmTestRG/providers/Microsoft.Storage/storageAccounts/briq4u4p5pcsaswarmdiag0","cd1afd29-3094-46f2-85a4-ac5d05285337","Microsoft.Storage","briq4u4p5pcsaswarmdiag0","8a8b1248-8c06-43fe-b8b3-7c6514f4e1ce","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:56:42.038Z","Azure","AzureActivity"],["Microsoft.Storage/storageAccounts/listKeys/action","Informational","Started","","acsSwarmTestRG","85d819e7-0e0a-451d-91eb-82c7a0764cf9","cd1afd29-3094-46f2-85a4-ac5d05285337","6cd43949-0f4d-45f1-81f0-9ada0a1fdbc8","23.96.114.155","Administrative","{\r\n  \"clientRequestId\":
-        \"76688e15-1b44-4171-8a0f-30dc5cb812c9\",\r\n  \"clientIpAddress\": \"23.96.114.155\",\r\n  \"method\":
-        \"POST\"\r\n}","","2018-06-13T10:57:05.239Z","{\r\n  \"action\": \"Microsoft.Storage/storageAccounts/listKeys/action\",\r\n  \"scope\":
-        \"/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/acsSwarmTestRG/providers/Microsoft.Storage/storageAccounts/briq4u4p5pcsaswarmdiag0\"\r\n}","/subscriptions/85d819e7-0e0a-451d-91eb-82c7a0764cf9/resourceGroups/acsSwarmTestRG/providers/Microsoft.Storage/storageAccounts/briq4u4p5pcsaswarmdiag0","cd1afd29-3094-46f2-85a4-ac5d05285337","Microsoft.Storage","briq4u4p5pcsaswarmdiag0","d50478e2-6f0b-4f61-adcb-e83044c0365f","b438b4f6-912a-46d5-9cb1-b44069212abc","2018-06-13T10:56:41.991Z","Azure","AzureActivity"]]}]}'}
+    body: {string: '{"tables":[{"name":"PrimaryResult","columns":[{"name":"TenantId","type":"string"},{"name":"SourceSystem","type":"string"},{"name":"TimeGenerated","type":"datetime"},{"name":"MG","type":"string"},{"name":"ManagementGroupName","type":"string"},{"name":"SourceComputerId","type":"string"},{"name":"ComputerIP","type":"string"},{"name":"Computer","type":"string"},{"name":"Category","type":"string"},{"name":"OSType","type":"string"},{"name":"OSName","type":"string"},{"name":"OSMajorVersion","type":"string"},{"name":"OSMinorVersion","type":"string"},{"name":"Version","type":"string"},{"name":"SCAgentChannel","type":"string"},{"name":"IsGatewayInstalled","type":"bool"},{"name":"RemoteIPLongitude","type":"real"},{"name":"RemoteIPLatitude","type":"real"},{"name":"RemoteIPCountry","type":"string"},{"name":"SubscriptionId","type":"string"},{"name":"ResourceGroup","type":"string"},{"name":"ResourceProvider","type":"string"},{"name":"Resource","type":"string"},{"name":"ResourceId","type":"string"},{"name":"ResourceType","type":"string"},{"name":"ComputerEnvironment","type":"string"},{"name":"Solutions","type":"string"},{"name":"VMUUID","type":"string"},{"name":"Type","type":"string"}],"rows":[["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:19:09.8Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","d19ee03d-94e7-4914-adc3-52384a301395","104.43.139.78","AZTest2","Direct
+        Agent","Windows","","10","0","8.0.11081.0","Direct",false,-93.62,41.59,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","aztest","microsoft.compute","aztest2","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/aztest/providers/microsoft.compute/virtualmachines/aztest2","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","a860c408-abf7-4a93-9942-fa7f59af805f","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:33.29Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","bcdf2849-b262-427f-a434-b0b01253ef90","52.161.152.66","ContosoWebVM2","Direct
+        Agent","Windows","","6","3","8.0.11081.0","Direct",false,-104.75,41.14,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoa2ademo2","microsoft.compute","contosowebvm2","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoa2ademo2/providers/microsoft.compute/virtualmachines/contosowebvm2","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","c2bf6b8e-5bb4-47ae-a7bf-04eae9808ecc","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:34.61Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","e7d0be0e-635c-42f8-8b1e-c954cbb3491d","104.215.85.192","ContosoSQLSrv1","Direct
+        Agent","Windows","","6","3","8.0.11081.0","Direct",false,-98.54,29.47,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoazurehq","microsoft.compute","restoreconstoso","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoazurehq/providers/microsoft.compute/virtualmachines/restoreconstoso","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","4c9bb3b2-f821-4412-b15c-c0200fabc7b6","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:23.357Z","00000000-0000-0000-0000-000000000002","","4eeb4b3e-dc5d-442a-9ede-391378986ae8","52.242.33.111","aks-nodepool1-85388480-1","Direct
+        Agent","Linux","Ubuntu","16","04","1.6.0-23","Direct",null,-71.21,46.81,"Canada","","","","","","","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","8bf9ffde-3213-1c4c-b925-b0711a97d162","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:34.12Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","62180e48-dcf8-4bcd-9ca4-02f1ec85a1ac","52.161.28.190","ContosoWebSrvr1","Direct
+        Agent","Windows","","6","2","8.0.11081.0","Direct",false,-104.75,41.14,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoautomation","microsoft.compute","contosowebsrvr1","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoautomation/providers/microsoft.compute/virtualmachines/contosowebsrvr1","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","cb4d29c3-2e93-4bfb-a186-603d26729310","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:35.18Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","087cbf04-c0e0-4002-97a7-5d72573478a2","13.74.159.39","asr01kn","Direct
+        Agent","Windows","","10","0","8.0.11081.0","Direct",false,-6.24,53.35,"Ireland","e4272367-5645-4c4e-9c67-3b74b59a6982","asrkn","microsoft.compute","asr01knwinsrv","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/asrkn/providers/microsoft.compute/virtualmachines/asr01knwinsrv","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","d9ee3998-ff9e-4f7c-8577-7cb5861744c9","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:37.947Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","102df91d-ae46-40ec-a30d-cd690b612b89","13.66.60.244","ContosoWeb1.ContosoRetail.com","Direct
+        Agent","Windows","","10","0","8.0.11081.0","Direct",false,-98.54,29.47,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoazurehq","microsoft.compute","contosoweb1","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoazurehq/providers/microsoft.compute/virtualmachines/contosoweb1","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","3a5d3ff3-efd6-475e-8d5f-71546935b565","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:41.163Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","34bf41fc-ed42-4d79-8b68-c1866af32125","40.124.12.81","ContosoMABSVM1.ContosoRetail.com","Direct
+        Agent","Windows","","10","0","8.0.11081.0","Direct",false,-98.54,29.47,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoonpremhq","microsoft.compute","contosomabsvm1","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoonpremhq/providers/microsoft.compute/virtualmachines/contosomabsvm1","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","ff1419a0-7284-44c0-80d9-160ff379d441","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:42.43Z","00000000-0000-0000-0000-000000000001","AOI-b438b4f6-912a-46d5-9cb1-b44069212abc","d60ef052-e184-4433-9afe-cfab55837dae","167.220.196.238","On-Premise-16S","Direct
+        Agent","Windows","","10","0","8.0.11072.0","Direct",false,-0.91,51.47,"United
+        Kingdom","","","","","","","Non-Azure","\"security\", \"updates\", \"antiMalware\",
+        \"changeTracking\", \"sqlAssessment\", \"adAssessment\", \"azureAutomation\",
+        \"networkMonitoring\", \"containers\", \"containerInsights\", \"serviceMap\",
+        \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\", \"wireData2\",
+        \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","34bd465a-bd7b-4112-a6d9-b99f81450f94","Heartbeat"],["b438b4f6-912a-46d5-9cb1-b44069212abc","OpsManager","2018-07-02T21:18:30.283Z","00000000-0000-0000-0000-000000000002","","d601fac0-8dba-4796-98e1-ac809f2136c0","52.183.208.73","ContosoAzLnx2","Direct
+        Agent","Linux","Ubuntu","16","04","1.6.0-42","Direct",null,-98.54,29.47,"United
+        States","e4272367-5645-4c4e-9c67-3b74b59a6982","contosoazurehq","microsoft.compute","contosoazlnx2","/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourcegroups/contosoazurehq/providers/microsoft.compute/virtualmachines/contosoazlnx2","virtualmachines","Azure","\"security\",
+        \"updates\", \"antiMalware\", \"changeTracking\", \"sqlAssessment\", \"adAssessment\",
+        \"azureAutomation\", \"networkMonitoring\", \"containers\", \"containerInsights\",
+        \"serviceMap\", \"adReplication\", \"compatibilityAssessment\", \"dnsAnalytics\",
+        \"wireData2\", \"waaSUpdateInsights\", \"securityCenterFree\", \"deviceHealthProd\"","12cb25e0-4e43-fe4b-8659-01c823765991","Heartbeat"]]}]}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location']
+      age: ['107']
       connection: [keep-alive]
-      content-length: ['11992']
+      content-length: ['10564']
       content-location: ['https://eastus.api.loganalytics.io/v1/workspaces/DEMO_WORKSPACE/query']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 13 Jun 2018 19:15:21 GMT']
+      date: ['Mon, 02 Jul 2018 21:48:43 GMT']
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      via: [1.1 draft-oms-blue.ac8ad2aa-6e9d-11e8-8023-70b3d5800002]
+      via: [1.1 draft-oms-blue.fbc79ec2-7e35-11e8-b421-70b3d5800006]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1
