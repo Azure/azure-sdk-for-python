@@ -88,7 +88,7 @@ class EventsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_type.metadata['url']
+        url = '/apps/{appId}/events/{eventType}'
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'eventType': self._serialize.url("event_type", event_type, 'str')
@@ -141,7 +141,6 @@ class EventsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_type.metadata = {'url': '/apps/{appId}/events/{eventType}'}
 
     def get(
             self, app_id, event_type, event_id, timespan=None, custom_headers=None, raw=False, **operation_config):
@@ -178,7 +177,7 @@ class EventsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = '/apps/{appId}/events/{eventType}/{eventId}'
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'eventType': self._serialize.url("event_type", event_type, 'str'),
@@ -214,7 +213,6 @@ class EventsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/apps/{appId}/events/{eventType}/{eventId}'}
 
     def get_odata_metadata(
             self, app_id, custom_headers=None, raw=False, **operation_config):
@@ -236,7 +234,7 @@ class EventsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_odata_metadata.metadata['url']
+        url = '/apps/{appId}/events/$metadata'
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
@@ -268,4 +266,3 @@ class EventsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_odata_metadata.metadata = {'url': '/apps/{appId}/events/$metadata'}

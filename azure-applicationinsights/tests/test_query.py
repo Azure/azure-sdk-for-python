@@ -19,3 +19,4 @@ class ApplicationInsightsQueryTest(AzureMgmtTestCase):
 
         # The application should contain enough data to retrieve 10 rows, as asked
         self.assertEqual(len(result.tables[0].rows), 10)
+        self.assertIs(type(result.tables[0].rows[0][7]), float)
