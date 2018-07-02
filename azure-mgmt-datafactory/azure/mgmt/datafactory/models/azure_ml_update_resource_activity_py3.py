@@ -26,6 +26,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
@@ -62,6 +64,7 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -70,8 +73,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         'trained_model_file_path': {'key': 'typeProperties.trainedModelFilePath', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, trained_model_name, trained_model_linked_service_name, trained_model_file_path, additional_properties=None, description: str=None, depends_on=None, linked_service_name=None, policy=None, **kwargs) -> None:
-        super(AzureMLUpdateResourceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, trained_model_name, trained_model_linked_service_name, trained_model_file_path, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, **kwargs) -> None:
+        super(AzureMLUpdateResourceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.trained_model_name = trained_model_name
         self.trained_model_linked_service_name = trained_model_linked_service_name
         self.trained_model_file_path = trained_model_file_path

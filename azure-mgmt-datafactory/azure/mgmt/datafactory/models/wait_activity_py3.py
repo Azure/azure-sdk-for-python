@@ -26,6 +26,8 @@ class WaitActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param wait_time_in_seconds: Required. Duration in seconds.
@@ -43,11 +45,12 @@ class WaitActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'wait_time_in_seconds': {'key': 'typeProperties.waitTimeInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str, wait_time_in_seconds: int, additional_properties=None, description: str=None, depends_on=None, **kwargs) -> None:
-        super(WaitActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, wait_time_in_seconds: int, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(WaitActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.wait_time_in_seconds = wait_time_in_seconds
         self.type = 'Wait'

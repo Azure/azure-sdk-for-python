@@ -27,7 +27,7 @@ class IntegrationRuntimeNodeMonitoringData(Model):
      runtime node.
     :vartype available_memory_in_mb: int
     :ivar cpu_utilization: CPU percentage on the integration runtime node.
-    :vartype cpu_utilization: float
+    :vartype cpu_utilization: int
     :ivar concurrent_jobs_limit: Maximum concurrent jobs on the integration
      runtime node.
     :vartype concurrent_jobs_limit: int
@@ -58,7 +58,7 @@ class IntegrationRuntimeNodeMonitoringData(Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'node_name': {'key': 'nodeName', 'type': 'str'},
         'available_memory_in_mb': {'key': 'availableMemoryInMB', 'type': 'int'},
-        'cpu_utilization': {'key': 'cpuUtilization', 'type': 'float'},
+        'cpu_utilization': {'key': 'cpuUtilization', 'type': 'int'},
         'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
         'concurrent_jobs_running': {'key': 'concurrentJobsRunning', 'type': 'int'},
         'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},

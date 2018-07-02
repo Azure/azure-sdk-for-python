@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .factory_repo_configuration import FactoryRepoConfiguration
+from msrest.serialization import Model
 
 
-class FactoryVSTSConfiguration(FactoryRepoConfiguration):
-    """Factory's VSTS repo information.
+class FactoryRepoConfiguration(Model):
+    """Factory's git repo information.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FactoryVSTSConfiguration, FactoryGitHubConfiguration
 
     All required parameters must be populated in order to send to Azure.
 
@@ -29,10 +32,6 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
     :type last_commit_id: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :param project_name: Required. VSTS project name.
-    :type project_name: str
-    :param tenant_id: VSTS tenant id.
-    :type tenant_id: str
     """
 
     _validation = {
@@ -41,7 +40,6 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         'collaboration_branch': {'required': True},
         'root_folder': {'required': True},
         'type': {'required': True},
-        'project_name': {'required': True},
     }
 
     _attribute_map = {
@@ -51,12 +49,17 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         'root_folder': {'key': 'rootFolder', 'type': 'str'},
         'last_commit_id': {'key': 'lastCommitId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(FactoryVSTSConfiguration, self).__init__(**kwargs)
-        self.project_name = kwargs.get('project_name', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.type = 'FactoryVSTSConfiguration'
+    _subtype_map = {
+        'type': {'FactoryVSTSConfiguration': 'FactoryVSTSConfiguration', 'FactoryGithubConfiguration': 'FactoryGitHubConfiguration'}
+    }
+
+    def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, last_commit_id: str=None, **kwargs) -> None:
+        super(FactoryRepoConfiguration, self).__init__(**kwargs)
+        self.account_name = account_name
+        self.repository_name = repository_name
+        self.collaboration_branch = collaboration_branch
+        self.root_folder = root_folder
+        self.last_commit_id = last_commit_id
+        self.type = None

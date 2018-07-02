@@ -9,44 +9,54 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .factory_repo_configuration_py3 import FactoryRepoConfiguration
 
 
-class FactoryVSTSConfiguration(Model):
+class FactoryVSTSConfiguration(FactoryRepoConfiguration):
     """Factory's VSTS repo information.
 
-    :param account_name: VSTS account name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. Account name.
     :type account_name: str
-    :param project_name: VSTS project name.
-    :type project_name: str
-    :param repository_name: VSTS repository name.
+    :param repository_name: Required. Rrepository name.
     :type repository_name: str
-    :param collaboration_branch: VSTS collaboration branch.
+    :param collaboration_branch: Required. Collaboration branch.
     :type collaboration_branch: str
-    :param root_folder: VSTS root folder.
+    :param root_folder: Required. Root folder.
     :type root_folder: str
-    :param last_commit_id: VSTS last commit id.
+    :param last_commit_id: Last commit id.
     :type last_commit_id: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param project_name: Required. VSTS project name.
+    :type project_name: str
     :param tenant_id: VSTS tenant id.
     :type tenant_id: str
     """
 
+    _validation = {
+        'account_name': {'required': True},
+        'repository_name': {'required': True},
+        'collaboration_branch': {'required': True},
+        'root_folder': {'required': True},
+        'type': {'required': True},
+        'project_name': {'required': True},
+    }
+
     _attribute_map = {
         'account_name': {'key': 'accountName', 'type': 'str'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
         'repository_name': {'key': 'repositoryName', 'type': 'str'},
         'collaboration_branch': {'key': 'collaborationBranch', 'type': 'str'},
         'root_folder': {'key': 'rootFolder', 'type': 'str'},
         'last_commit_id': {'key': 'lastCommitId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, account_name: str=None, project_name: str=None, repository_name: str=None, collaboration_branch: str=None, root_folder: str=None, last_commit_id: str=None, tenant_id: str=None, **kwargs) -> None:
-        super(FactoryVSTSConfiguration, self).__init__(**kwargs)
-        self.account_name = account_name
+    def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, project_name: str, last_commit_id: str=None, tenant_id: str=None, **kwargs) -> None:
+        super(FactoryVSTSConfiguration, self).__init__(account_name=account_name, repository_name=repository_name, collaboration_branch=collaboration_branch, root_folder=root_folder, last_commit_id=last_commit_id, **kwargs)
         self.project_name = project_name
-        self.repository_name = repository_name
-        self.collaboration_branch = collaboration_branch
-        self.root_folder = root_folder
-        self.last_commit_id = last_commit_id
         self.tenant_id = tenant_id
+        self.type = 'FactoryVSTSConfiguration'

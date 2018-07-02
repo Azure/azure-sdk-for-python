@@ -26,6 +26,8 @@ class ExecutePipelineActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipeline: Required. Pipeline reference.
@@ -48,14 +50,15 @@ class ExecutePipelineActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'pipeline': {'key': 'typeProperties.pipeline', 'type': 'PipelineReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
         'wait_on_completion': {'key': 'typeProperties.waitOnCompletion', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, pipeline, additional_properties=None, description: str=None, depends_on=None, parameters=None, wait_on_completion: bool=None, **kwargs) -> None:
-        super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, pipeline, additional_properties=None, description: str=None, depends_on=None, user_properties=None, parameters=None, wait_on_completion: bool=None, **kwargs) -> None:
+        super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.pipeline = pipeline
         self.parameters = parameters
         self.wait_on_completion = wait_on_completion

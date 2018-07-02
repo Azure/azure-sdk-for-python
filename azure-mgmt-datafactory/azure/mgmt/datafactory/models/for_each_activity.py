@@ -27,6 +27,8 @@ class ForEachActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param is_sequential: Should the loop be executed in sequence or in
@@ -54,6 +56,7 @@ class ForEachActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'is_sequential': {'key': 'typeProperties.isSequential', 'type': 'bool'},
         'batch_count': {'key': 'typeProperties.batchCount', 'type': 'int'},

@@ -18,7 +18,7 @@ try:
     from .azure_key_vault_secret_reference_py3 import AzureKeyVaultSecretReference
     from .secret_base_py3 import SecretBase
     from .factory_identity_py3 import FactoryIdentity
-    from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
+    from .factory_repo_configuration_py3 import FactoryRepoConfiguration
     from .factory_py3 import Factory
     from .integration_runtime_py3 import IntegrationRuntime
     from .integration_runtime_resource_py3 import IntegrationRuntimeResource
@@ -39,27 +39,30 @@ try:
     from .trigger_py3 import Trigger
     from .trigger_resource_py3 import TriggerResource
     from .create_run_response_py3 import CreateRunResponse
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
+    from .factory_git_hub_configuration_py3 import FactoryGitHubConfiguration
     from .factory_repo_update_py3 import FactoryRepoUpdate
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
     from .dataset_reference_py3 import DatasetReference
-    from .pipeline_run_query_filter_py3 import PipelineRunQueryFilter
-    from .pipeline_run_query_order_by_py3 import PipelineRunQueryOrderBy
-    from .pipeline_run_filter_parameters_py3 import PipelineRunFilterParameters
+    from .run_query_filter_py3 import RunQueryFilter
+    from .run_query_order_by_py3 import RunQueryOrderBy
+    from .run_filter_parameters_py3 import RunFilterParameters
     from .pipeline_run_invoked_by_py3 import PipelineRunInvokedBy
     from .pipeline_run_py3 import PipelineRun
-    from .pipeline_run_query_response_py3 import PipelineRunQueryResponse
+    from .pipeline_runs_query_response_py3 import PipelineRunsQueryResponse
     from .activity_run_py3 import ActivityRun
+    from .activity_runs_query_response_py3 import ActivityRunsQueryResponse
     from .trigger_run_py3 import TriggerRun
+    from .trigger_runs_query_response_py3 import TriggerRunsQueryResponse
     from .operation_display_py3 import OperationDisplay
     from .operation_log_specification_py3 import OperationLogSpecification
     from .operation_metric_availability_py3 import OperationMetricAvailability
+    from .operation_metric_dimension_py3 import OperationMetricDimension
     from .operation_metric_specification_py3 import OperationMetricSpecification
     from .operation_service_specification_py3 import OperationServiceSpecification
     from .operation_py3 import Operation
-    from .operation_list_response_py3 import OperationListResponse
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
@@ -312,16 +315,12 @@ try:
     from .if_condition_activity_py3 import IfConditionActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
-    from .linked_integration_runtime_py3 import LinkedIntegrationRuntime
     from .self_hosted_integration_runtime_node_py3 import SelfHostedIntegrationRuntimeNode
     from .self_hosted_integration_runtime_status_py3 import SelfHostedIntegrationRuntimeStatus
     from .managed_integration_runtime_operation_result_py3 import ManagedIntegrationRuntimeOperationResult
     from .managed_integration_runtime_error_py3 import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node_py3 import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status_py3 import ManagedIntegrationRuntimeStatus
-    from .linked_integration_runtime_rbac_py3 import LinkedIntegrationRuntimeRbac
-    from .linked_integration_runtime_key_py3 import LinkedIntegrationRuntimeKey
-    from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
     from .self_hosted_integration_runtime_py3 import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info_py3 import IntegrationRuntimeSsisCatalogInfo
@@ -332,7 +331,6 @@ try:
     from .integration_runtime_node_ip_address_py3 import IntegrationRuntimeNodeIpAddress
     from .integration_runtime_node_monitoring_data_py3 import IntegrationRuntimeNodeMonitoringData
     from .integration_runtime_monitoring_data_py3 import IntegrationRuntimeMonitoringData
-    from .integration_runtime_remove_node_request_py3 import IntegrationRuntimeRemoveNodeRequest
     from .integration_runtime_auth_keys_py3 import IntegrationRuntimeAuthKeys
     from .integration_runtime_regenerate_key_parameters_py3 import IntegrationRuntimeRegenerateKeyParameters
     from .integration_runtime_connection_info_py3 import IntegrationRuntimeConnectionInfo
@@ -345,7 +343,7 @@ except (SyntaxError, ImportError):
     from .azure_key_vault_secret_reference import AzureKeyVaultSecretReference
     from .secret_base import SecretBase
     from .factory_identity import FactoryIdentity
-    from .factory_vsts_configuration import FactoryVSTSConfiguration
+    from .factory_repo_configuration import FactoryRepoConfiguration
     from .factory import Factory
     from .integration_runtime import IntegrationRuntime
     from .integration_runtime_resource import IntegrationRuntimeResource
@@ -366,27 +364,30 @@ except (SyntaxError, ImportError):
     from .trigger import Trigger
     from .trigger_resource import TriggerResource
     from .create_run_response import CreateRunResponse
-    from .error_response import ErrorResponse, ErrorResponseException
+    from .factory_vsts_configuration import FactoryVSTSConfiguration
+    from .factory_git_hub_configuration import FactoryGitHubConfiguration
     from .factory_repo_update import FactoryRepoUpdate
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
     from .dataset_reference import DatasetReference
-    from .pipeline_run_query_filter import PipelineRunQueryFilter
-    from .pipeline_run_query_order_by import PipelineRunQueryOrderBy
-    from .pipeline_run_filter_parameters import PipelineRunFilterParameters
+    from .run_query_filter import RunQueryFilter
+    from .run_query_order_by import RunQueryOrderBy
+    from .run_filter_parameters import RunFilterParameters
     from .pipeline_run_invoked_by import PipelineRunInvokedBy
     from .pipeline_run import PipelineRun
-    from .pipeline_run_query_response import PipelineRunQueryResponse
+    from .pipeline_runs_query_response import PipelineRunsQueryResponse
     from .activity_run import ActivityRun
+    from .activity_runs_query_response import ActivityRunsQueryResponse
     from .trigger_run import TriggerRun
+    from .trigger_runs_query_response import TriggerRunsQueryResponse
     from .operation_display import OperationDisplay
     from .operation_log_specification import OperationLogSpecification
     from .operation_metric_availability import OperationMetricAvailability
+    from .operation_metric_dimension import OperationMetricDimension
     from .operation_metric_specification import OperationMetricSpecification
     from .operation_service_specification import OperationServiceSpecification
     from .operation import Operation
-    from .operation_list_response import OperationListResponse
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
@@ -639,16 +640,12 @@ except (SyntaxError, ImportError):
     from .if_condition_activity import IfConditionActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
-    from .linked_integration_runtime import LinkedIntegrationRuntime
     from .self_hosted_integration_runtime_node import SelfHostedIntegrationRuntimeNode
     from .self_hosted_integration_runtime_status import SelfHostedIntegrationRuntimeStatus
     from .managed_integration_runtime_operation_result import ManagedIntegrationRuntimeOperationResult
     from .managed_integration_runtime_error import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status import ManagedIntegrationRuntimeStatus
-    from .linked_integration_runtime_rbac import LinkedIntegrationRuntimeRbac
-    from .linked_integration_runtime_key import LinkedIntegrationRuntimeKey
-    from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
     from .self_hosted_integration_runtime import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
@@ -659,28 +656,26 @@ except (SyntaxError, ImportError):
     from .integration_runtime_node_ip_address import IntegrationRuntimeNodeIpAddress
     from .integration_runtime_node_monitoring_data import IntegrationRuntimeNodeMonitoringData
     from .integration_runtime_monitoring_data import IntegrationRuntimeMonitoringData
-    from .integration_runtime_remove_node_request import IntegrationRuntimeRemoveNodeRequest
     from .integration_runtime_auth_keys import IntegrationRuntimeAuthKeys
     from .integration_runtime_regenerate_key_parameters import IntegrationRuntimeRegenerateKeyParameters
     from .integration_runtime_connection_info import IntegrationRuntimeConnectionInfo
+from .operation_paged import OperationPaged
 from .factory_paged import FactoryPaged
 from .integration_runtime_resource_paged import IntegrationRuntimeResourcePaged
 from .linked_service_resource_paged import LinkedServiceResourcePaged
 from .dataset_resource_paged import DatasetResourcePaged
 from .pipeline_resource_paged import PipelineResourcePaged
-from .activity_run_paged import ActivityRunPaged
 from .trigger_resource_paged import TriggerResourcePaged
-from .trigger_run_paged import TriggerRunPaged
 from .data_factory_management_client_enums import (
     IntegrationRuntimeState,
     IntegrationRuntimeAutoUpdate,
     ParameterType,
     DependencyCondition,
     TriggerRuntimeState,
-    PipelineRunQueryFilterOperand,
-    PipelineRunQueryFilterOperator,
-    PipelineRunQueryOrderByField,
-    PipelineRunQueryOrder,
+    RunQueryFilterOperand,
+    RunQueryFilterOperator,
+    RunQueryOrderByField,
+    RunQueryOrder,
     TriggerRunStatus,
     SparkServerType,
     SparkThriftTransportProtocol,
@@ -741,7 +736,7 @@ __all__ = [
     'AzureKeyVaultSecretReference',
     'SecretBase',
     'FactoryIdentity',
-    'FactoryVSTSConfiguration',
+    'FactoryRepoConfiguration',
     'Factory',
     'IntegrationRuntime',
     'IntegrationRuntimeResource',
@@ -762,27 +757,30 @@ __all__ = [
     'Trigger',
     'TriggerResource',
     'CreateRunResponse',
-    'ErrorResponse', 'ErrorResponseException',
+    'FactoryVSTSConfiguration',
+    'FactoryGitHubConfiguration',
     'FactoryRepoUpdate',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',
     'DatasetReference',
-    'PipelineRunQueryFilter',
-    'PipelineRunQueryOrderBy',
-    'PipelineRunFilterParameters',
+    'RunQueryFilter',
+    'RunQueryOrderBy',
+    'RunFilterParameters',
     'PipelineRunInvokedBy',
     'PipelineRun',
-    'PipelineRunQueryResponse',
+    'PipelineRunsQueryResponse',
     'ActivityRun',
+    'ActivityRunsQueryResponse',
     'TriggerRun',
+    'TriggerRunsQueryResponse',
     'OperationDisplay',
     'OperationLogSpecification',
     'OperationMetricAvailability',
+    'OperationMetricDimension',
     'OperationMetricSpecification',
     'OperationServiceSpecification',
     'Operation',
-    'OperationListResponse',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
@@ -1035,16 +1033,12 @@ __all__ = [
     'IfConditionActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
-    'LinkedIntegrationRuntime',
     'SelfHostedIntegrationRuntimeNode',
     'SelfHostedIntegrationRuntimeStatus',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeError',
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeStatus',
-    'LinkedIntegrationRuntimeRbac',
-    'LinkedIntegrationRuntimeKey',
-    'LinkedIntegrationRuntimeProperties',
     'SelfHostedIntegrationRuntime',
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',
@@ -1055,27 +1049,25 @@ __all__ = [
     'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
     'IntegrationRuntimeMonitoringData',
-    'IntegrationRuntimeRemoveNodeRequest',
     'IntegrationRuntimeAuthKeys',
     'IntegrationRuntimeRegenerateKeyParameters',
     'IntegrationRuntimeConnectionInfo',
+    'OperationPaged',
     'FactoryPaged',
     'IntegrationRuntimeResourcePaged',
     'LinkedServiceResourcePaged',
     'DatasetResourcePaged',
     'PipelineResourcePaged',
-    'ActivityRunPaged',
     'TriggerResourcePaged',
-    'TriggerRunPaged',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
     'DependencyCondition',
     'TriggerRuntimeState',
-    'PipelineRunQueryFilterOperand',
-    'PipelineRunQueryFilterOperator',
-    'PipelineRunQueryOrderByField',
-    'PipelineRunQueryOrder',
+    'RunQueryFilterOperand',
+    'RunQueryFilterOperator',
+    'RunQueryOrderByField',
+    'RunQueryOrder',
     'TriggerRunStatus',
     'SparkServerType',
     'SparkThriftTransportProtocol',
