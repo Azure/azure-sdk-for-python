@@ -46,6 +46,13 @@ class ActivityParameter(Model):
      of an array. false if the cmdlet parameter does not accept all the
      remaining argument values.
     :type value_from_remaining_arguments: bool
+    :param description: Gets or sets the description of the activity
+     parameter.
+    :type description: str
+    :param validation_set: Gets or sets the validation set of activity
+     parameter.
+    :type validation_set:
+     list[~azure.mgmt.automation.models.ActivityParameterValidationSet]
     """
 
     _attribute_map = {
@@ -57,9 +64,11 @@ class ActivityParameter(Model):
         'value_from_pipeline': {'key': 'valueFromPipeline', 'type': 'bool'},
         'value_from_pipeline_by_property_name': {'key': 'valueFromPipelineByPropertyName', 'type': 'bool'},
         'value_from_remaining_arguments': {'key': 'valueFromRemainingArguments', 'type': 'bool'},
+        'description': {'key': 'description', 'type': 'str'},
+        'validation_set': {'key': 'validationSet', 'type': '[ActivityParameterValidationSet]'},
     }
 
-    def __init__(self, name=None, type=None, is_mandatory=None, is_dynamic=None, position=None, value_from_pipeline=None, value_from_pipeline_by_property_name=None, value_from_remaining_arguments=None):
+    def __init__(self, name=None, type=None, is_mandatory=None, is_dynamic=None, position=None, value_from_pipeline=None, value_from_pipeline_by_property_name=None, value_from_remaining_arguments=None, description=None, validation_set=None):
         super(ActivityParameter, self).__init__()
         self.name = name
         self.type = type
@@ -69,3 +78,5 @@ class ActivityParameter(Model):
         self.value_from_pipeline = value_from_pipeline
         self.value_from_pipeline_by_property_name = value_from_pipeline_by_property_name
         self.value_from_remaining_arguments = value_from_remaining_arguments
+        self.description = description
+        self.validation_set = validation_set

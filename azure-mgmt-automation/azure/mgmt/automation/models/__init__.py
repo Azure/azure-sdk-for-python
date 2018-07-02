@@ -52,6 +52,7 @@ from .runbook_association_property import RunbookAssociationProperty
 from .job_schedule import JobSchedule
 from .job_schedule_create_parameters import JobScheduleCreateParameters
 from .linked_workspace import LinkedWorkspace
+from .activity_parameter_validation_set import ActivityParameterValidationSet
 from .activity_parameter import ActivityParameter
 from .activity_parameter_set import ActivityParameterSet
 from .activity_output_type import ActivityOutputType
@@ -234,6 +235,7 @@ __all__ = [
     'JobSchedule',
     'JobScheduleCreateParameters',
     'LinkedWorkspace',
+    'ActivityParameterValidationSet',
     'ActivityParameter',
     'ActivityParameterSet',
     'ActivityOutputType',
