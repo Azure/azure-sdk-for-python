@@ -16,9 +16,8 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
     """Describes the parameters of a ScaleSet managed disk.
 
     :param storage_account_type: Specifies the storage account type for the
-     managed disk. Possible values are: Standard_LRS, Premium_LRS, and
-     StandardSSD_LRS. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'StandardSSD_LRS'
+     managed disk. Possible values are: Standard_LRS or Premium_LRS. Possible
+     values include: 'Standard_LRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2018_04_01.models.StorageAccountTypes
     """
