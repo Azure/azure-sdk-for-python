@@ -56,8 +56,9 @@ class AnnotationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of None
-        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation][None]
+        :return: An iterator like instance of Annotation
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.AnnotationPaged[~azure.mgmt.applicationinsights.models.Annotation]
         :raises:
          :class:`AnnotationErrorException<azure.mgmt.applicationinsights.models.AnnotationErrorException>`
         """
@@ -104,11 +105,11 @@ class AnnotationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.list(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AnnotationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.list(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AnnotationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
