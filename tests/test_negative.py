@@ -9,8 +9,12 @@ import asyncio
 import pytest
 
 from azure import eventhub
-from azure.eventhub import EventData, Offset, EventHubError, EventHubClient
-from azure.eventhub.async import EventHubClientAsync
+from azure.eventhub import (
+    EventHubClientAsync,
+    EventData,
+    Offset,
+    EventHubError,
+    EventHubClient)
 
 
 def test_send_partition_key_with_partition(connection_str):

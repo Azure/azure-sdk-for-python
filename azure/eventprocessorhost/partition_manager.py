@@ -8,7 +8,7 @@ import asyncio
 from queue import Queue
 from collections import Counter
 
-from azure.eventhub.async import EventHubClientAsync
+from azure.eventhub import EventHubClientAsync
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from azure.eventprocessorhost.cancellation_token import CancellationToken
 
