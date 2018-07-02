@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GalleryIdentifier(Model):
-    """Describes the gallery unique name.
+    """GalleryIdentifier.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -15,30 +15,22 @@ from msrest.serialization import Model
 class ReplicationStatus(Model):
     """This is the replication status of the gallery image version.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar aggregated_state: This is the aggregated replication status based on
-     the regional replication status. Possible values include: 'Unknown',
+    :param aggregated_state: This is the aggregated replication status based
+     on the regional replication status. Possible values include: 'Unknown',
      'InProgress', 'Completed', 'Failed'
-    :vartype aggregated_state: str or
+    :type aggregated_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.AggregatedReplicationState
-    :ivar summary: This is a summary of replication status for each region.
-    :vartype summary:
+    :param summary: This is a summary of replication status for each region.
+    :type summary:
      list[~azure.mgmt.compute.v2018_06_01.models.RegionalReplicationStatus]
     """
 
-    _validation = {
-        'aggregated_state': {'readonly': True},
-        'summary': {'readonly': True},
-    }
-
     _attribute_map = {
-        'aggregated_state': {'key': 'aggregatedState', 'type': 'str'},
+        'aggregated_state': {'key': 'aggregatedState', 'type': 'AggregatedReplicationState'},
         'summary': {'key': 'summary', 'type': '[RegionalReplicationStatus]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, aggregated_state=None, summary=None, **kwargs) -> None:
         super(ReplicationStatus, self).__init__(**kwargs)
-        self.aggregated_state = None
-        self.summary = None
+        self.aggregated_state = aggregated_state
+        self.summary = summary

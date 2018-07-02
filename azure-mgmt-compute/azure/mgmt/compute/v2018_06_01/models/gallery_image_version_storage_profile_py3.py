@@ -15,28 +15,20 @@ from msrest.serialization import Model
 class GalleryImageVersionStorageProfile(Model):
     """This is the storage profile of a gallery image version.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar os_disk_image:
-    :vartype os_disk_image:
+    :param os_disk_image:
+    :type os_disk_image:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryOSDiskImage
-    :ivar data_disk_images: A list of data disk images.
-    :vartype data_disk_images:
+    :param data_disk_images: A list of data disk images.
+    :type data_disk_images:
      list[~azure.mgmt.compute.v2018_06_01.models.GalleryDataDiskImage]
     """
-
-    _validation = {
-        'os_disk_image': {'readonly': True},
-        'data_disk_images': {'readonly': True},
-    }
 
     _attribute_map = {
         'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, os_disk_image=None, data_disk_images=None, **kwargs) -> None:
         super(GalleryImageVersionStorageProfile, self).__init__(**kwargs)
-        self.os_disk_image = None
-        self.data_disk_images = None
+        self.os_disk_image = os_disk_image
+        self.data_disk_images = data_disk_images

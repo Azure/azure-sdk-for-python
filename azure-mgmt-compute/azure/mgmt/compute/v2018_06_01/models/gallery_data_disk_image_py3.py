@@ -15,34 +15,25 @@ from .gallery_disk_image_py3 import GalleryDiskImage
 class GalleryDataDiskImage(GalleryDiskImage):
     """This is the data disk image.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar size_in_gb: It indicates the size of the VHD to create.
-    :vartype size_in_gb: int
-    :ivar host_caching: The host caching of the disk. Valid values are 'None',
-     'ReadOnly', and 'ReadWrite'. Possible values include: 'None', 'ReadOnly',
-     'ReadWrite'
-    :vartype host_caching: str or
+    :param sized_in_gb: It indicates the size of the VHD to create.
+    :type sized_in_gb: int
+    :param host_caching: The host caching of the disk. Valid values are
+     'None', 'ReadOnly', and 'ReadWrite'. Possible values include: 'None',
+     'ReadOnly', 'ReadWrite'
+    :type host_caching: str or
      ~azure.mgmt.compute.v2018_06_01.models.HostCaching
-    :ivar lun: Specifies the logical unit number of the data disk. This value
+    :param lun: Specifies the logical unit number of the data disk. This value
      is used to identify data disks within the VM and therefore must be unique
      for each data disk attached to a VM.
-    :vartype lun: int
+    :type lun: int
     """
 
-    _validation = {
-        'size_in_gb': {'readonly': True},
-        'host_caching': {'readonly': True},
-        'lun': {'readonly': True},
-    }
-
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
+        'sized_in_gb': {'key': 'sizedInGB', 'type': 'int'},
         'host_caching': {'key': 'hostCaching', 'type': 'HostCaching'},
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(GalleryDataDiskImage, self).__init__(**kwargs)
-        self.lun = None
+    def __init__(self, *, sized_in_gb: int=None, host_caching=None, lun: int=None, **kwargs) -> None:
+        super(GalleryDataDiskImage, self).__init__(sized_in_gb=sized_in_gb, host_caching=host_caching, **kwargs)
+        self.lun = lun
