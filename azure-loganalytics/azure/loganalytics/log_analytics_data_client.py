@@ -43,7 +43,7 @@ class LogAnalyticsDataClientConfiguration(Configuration):
 
 
 class LogAnalyticsDataClient(object):
-    """This API exposes Azure Log Analytics query capabilities
+    """Log Analytics Data Plane Client
 
     :ivar config: Configuration for client.
     :vartype config: LogAnalyticsDataClientConfiguration
@@ -93,7 +93,7 @@ class LogAnalyticsDataClient(object):
          :class:`ErrorResponseException<azure.loganalytics.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.query.metadata['url']
+        url = '/workspaces/{workspaceId}/query'
         path_format_arguments = {
             'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
         }
@@ -129,4 +129,3 @@ class LogAnalyticsDataClient(object):
             return client_raw_response
 
         return deserialized
-    query.metadata = {'url': '/workspaces/{workspaceId}/query'}
