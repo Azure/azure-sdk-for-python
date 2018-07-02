@@ -75,7 +75,7 @@ class GalleryImageVersionsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -85,6 +85,8 @@ class GalleryImageVersionsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('GalleryImageVersion', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('GalleryImageVersion', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('GalleryImageVersion', response)
 
         if raw:
@@ -104,7 +106,9 @@ class GalleryImageVersionsOperations(object):
         :param gallery_image_name: The name of the gallery image.
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery image
-         version.
+         version. Needs to follow semantic version name pattern: The allowed
+         characters are digit and period. Digits must be within the range of a
+         32-bit integer. Format: <MajorVersion>.<MinorVersion>.<Patch>
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or
          update gallery image version operation.
@@ -193,7 +197,7 @@ class GalleryImageVersionsOperations(object):
         # Construct parameters
         query_parameters = {}
         if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'ReplicationStatusTypes')
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -264,16 +268,9 @@ class GalleryImageVersionsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
 
     def delete(
             self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, polling=True, **operation_config):
@@ -293,12 +290,10 @@ class GalleryImageVersionsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns OperationStatusResponse
-         or ClientRawResponse<OperationStatusResponse> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_06_01.models.OperationStatusResponse]]
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -312,13 +307,9 @@ class GalleryImageVersionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('OperationStatusResponse', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
@@ -329,7 +320,7 @@ class GalleryImageVersionsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
-    def list_gallery_image_versions_by_gallery_image(
+    def list_by_gallery_image(
             self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
         """List gallery image versions under a gallery image.
 
@@ -353,7 +344,7 @@ class GalleryImageVersionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_gallery_image_versions_by_gallery_image.metadata['url']
+                url = self.list_by_gallery_image.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -401,4 +392,4 @@ class GalleryImageVersionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_gallery_image_versions_by_gallery_image.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions'}
+    list_by_gallery_image.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions'}
