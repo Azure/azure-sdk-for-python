@@ -40,11 +40,11 @@ class GalleryImageVersion(Resource):
      'Migrating'
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.enum
-    :param storage_profile:
-    :type storage_profile:
+    :ivar storage_profile:
+    :vartype storage_profile:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersionStorageProfile
-    :param replication_status:
-    :type replication_status:
+    :ivar replication_status:
+    :vartype replication_status:
      ~azure.mgmt.compute.v2018_06_01.models.ReplicationStatus
     """
 
@@ -54,6 +54,8 @@ class GalleryImageVersion(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'storage_profile': {'readonly': True},
+        'replication_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -72,5 +74,5 @@ class GalleryImageVersion(Resource):
         super(GalleryImageVersion, self).__init__(**kwargs)
         self.publishing_profile = kwargs.get('publishing_profile', None)
         self.provisioning_state = None
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.replication_status = kwargs.get('replication_status', None)
+        self.storage_profile = None
+        self.replication_status = None
