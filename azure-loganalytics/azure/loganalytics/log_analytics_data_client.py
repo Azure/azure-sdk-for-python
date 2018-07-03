@@ -93,7 +93,7 @@ class LogAnalyticsDataClient(object):
          :class:`ErrorResponseException<azure.loganalytics.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/workspaces/{workspaceId}/query'
+        url = self.query.metadata['url']
         path_format_arguments = {
             'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
         }
@@ -129,3 +129,4 @@ class LogAnalyticsDataClient(object):
             return client_raw_response
 
         return deserialized
+    query.metadata = {'url': '/workspaces/{workspaceId}/query'}
