@@ -46,15 +46,18 @@ from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
 from .application_insights_component_analytics_item_properties import ApplicationInsightsComponentAnalyticsItemProperties
 from .application_insights_component_analytics_item import ApplicationInsightsComponentAnalyticsItem
-from .workbook_resource import WorkbookResource
+from .resource import Resource
 from .workbook import Workbook
 from .workbooks import Workbooks
 from .link_properties import LinkProperties
+from .workbook_update_parameters import WorkbookUpdateParameters
 from .error_field_contract import ErrorFieldContract
 from .workbook_error import WorkbookError, WorkbookErrorException
 from .operation_paged import OperationPaged
+from .annotation_paged import AnnotationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
+from .work_item_configuration_paged import WorkItemConfigurationPaged
 from .application_insights_component_web_test_location_paged import ApplicationInsightsComponentWebTestLocationPaged
 from .web_test_paged import WebTestPaged
 from .application_insights_management_client_enums import (
@@ -111,15 +114,18 @@ __all__ = [
     'WebTest',
     'ApplicationInsightsComponentAnalyticsItemProperties',
     'ApplicationInsightsComponentAnalyticsItem',
-    'WorkbookResource',
+    'Resource',
     'Workbook',
     'Workbooks',
     'LinkProperties',
+    'WorkbookUpdateParameters',
     'ErrorFieldContract',
     'WorkbookError', 'WorkbookErrorException',
     'OperationPaged',
+    'AnnotationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
+    'WorkItemConfigurationPaged',
     'ApplicationInsightsComponentWebTestLocationPaged',
     'WebTestPaged',
     'ApplicationType',

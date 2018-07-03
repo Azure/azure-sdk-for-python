@@ -25,10 +25,9 @@ from .operations.proactive_detection_configurations_operations import ProactiveD
 from .operations.components_operations import ComponentsOperations
 from .operations.work_item_configurations_operations import WorkItemConfigurationsOperations
 from .operations.favorites_operations import FavoritesOperations
-from .operations.favorite_operations import FavoriteOperations
 from .operations.web_test_locations_operations import WebTestLocationsOperations
 from .operations.web_tests_operations import WebTestsOperations
-from .operations.analytics_item_operations import AnalyticsItemOperations
+from .operations.analytics_items_operations import AnalyticsItemsOperations
 from .operations.workbooks_operations import WorkbooksOperations
 from .operations.workbook_operations import WorkbookOperations
 from . import models
@@ -96,14 +95,12 @@ class ApplicationInsightsManagementClient(object):
     :vartype work_item_configurations: azure.mgmt.applicationinsights.operations.WorkItemConfigurationsOperations
     :ivar favorites: Favorites operations
     :vartype favorites: azure.mgmt.applicationinsights.operations.FavoritesOperations
-    :ivar favorite: Favorite operations
-    :vartype favorite: azure.mgmt.applicationinsights.operations.FavoriteOperations
     :ivar web_test_locations: WebTestLocations operations
     :vartype web_test_locations: azure.mgmt.applicationinsights.operations.WebTestLocationsOperations
     :ivar web_tests: WebTests operations
     :vartype web_tests: azure.mgmt.applicationinsights.operations.WebTestsOperations
-    :ivar analytics_item: AnalyticsItem operations
-    :vartype analytics_item: azure.mgmt.applicationinsights.operations.AnalyticsItemOperations
+    :ivar analytics_items: AnalyticsItems operations
+    :vartype analytics_items: azure.mgmt.applicationinsights.operations.AnalyticsItemsOperations
     :ivar workbooks: Workbooks operations
     :vartype workbooks: azure.mgmt.applicationinsights.operations.WorkbooksOperations
     :ivar workbook: Workbook operations
@@ -152,13 +149,11 @@ class ApplicationInsightsManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.favorites = FavoritesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.favorite = FavoriteOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.web_test_locations = WebTestLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_tests = WebTestsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.analytics_item = AnalyticsItemOperations(
+        self.analytics_items = AnalyticsItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workbooks = WorkbooksOperations(
             self._client, self.config, self._serialize, self._deserialize)

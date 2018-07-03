@@ -225,7 +225,7 @@ class WorkbookOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooks/{resourceName}'}
 
     def update(
-            self, resource_group_name, resource_name, workbook_properties, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, workbook_update_parameters, custom_headers=None, raw=False, **operation_config):
         """Updates a workbook that has already been added.
 
         :param resource_group_name: The name of the resource group.
@@ -233,10 +233,10 @@ class WorkbookOperations(object):
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param workbook_properties: Properties that need to be specified to
-         create a new workbook.
-        :type workbook_properties:
-         ~azure.mgmt.applicationinsights.models.Workbook
+        :param workbook_update_parameters: Properties that need to be
+         specified to create a new workbook.
+        :type workbook_update_parameters:
+         ~azure.mgmt.applicationinsights.models.WorkbookUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,7 +272,7 @@ class WorkbookOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(workbook_properties, 'Workbook')
+        body_content = self._serialize.body(workbook_update_parameters, 'WorkbookUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)

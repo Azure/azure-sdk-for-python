@@ -51,9 +51,9 @@ class WorkItemConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of None
+        :return: An iterator like instance of WorkItemConfiguration
         :rtype:
-         list[~azure.mgmt.applicationinsights.models.WorkItemConfiguration][None]
+         ~azure.mgmt.applicationinsights.models.WorkItemConfigurationPaged[~azure.mgmt.applicationinsights.models.WorkItemConfiguration]
         :raises:
          :class:`WorkItemConfigurationErrorException<azure.mgmt.applicationinsights.models.WorkItemConfigurationErrorException>`
         """
@@ -98,11 +98,11 @@ class WorkItemConfigurationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.list(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkItemConfigurationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.list(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkItemConfigurationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
