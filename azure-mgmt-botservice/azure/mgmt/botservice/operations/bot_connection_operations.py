@@ -37,12 +37,9 @@ class BotConnectionOperations(object):
         self.config = config
 
     def list_service_providers(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists the available Service Providers for creating Connection Settings.
 
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,7 +54,6 @@ class BotConnectionOperations(object):
         # Construct URL
         url = self.list_service_providers.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
