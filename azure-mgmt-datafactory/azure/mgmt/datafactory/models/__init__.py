@@ -28,6 +28,7 @@ try:
     from .integration_runtime_status_list_response_py3 import IntegrationRuntimeStatusListResponse
     from .update_integration_runtime_request_py3 import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request_py3 import UpdateIntegrationRuntimeNodeRequest
+    from .linked_integration_runtime_request_py3 import LinkedIntegrationRuntimeRequest
     from .parameter_specification_py3 import ParameterSpecification
     from .linked_service_py3 import LinkedService
     from .linked_service_resource_py3 import LinkedServiceResource
@@ -315,12 +316,16 @@ try:
     from .if_condition_activity_py3 import IfConditionActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
+    from .linked_integration_runtime_py3 import LinkedIntegrationRuntime
     from .self_hosted_integration_runtime_node_py3 import SelfHostedIntegrationRuntimeNode
     from .self_hosted_integration_runtime_status_py3 import SelfHostedIntegrationRuntimeStatus
     from .managed_integration_runtime_operation_result_py3 import ManagedIntegrationRuntimeOperationResult
     from .managed_integration_runtime_error_py3 import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node_py3 import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status_py3 import ManagedIntegrationRuntimeStatus
+    from .linked_integration_runtime_rbac_py3 import LinkedIntegrationRuntimeRbac
+    from .linked_integration_runtime_key_py3 import LinkedIntegrationRuntimeKey
+    from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
     from .self_hosted_integration_runtime_py3 import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info_py3 import IntegrationRuntimeSsisCatalogInfo
@@ -353,6 +358,7 @@ except (SyntaxError, ImportError):
     from .integration_runtime_status_list_response import IntegrationRuntimeStatusListResponse
     from .update_integration_runtime_request import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request import UpdateIntegrationRuntimeNodeRequest
+    from .linked_integration_runtime_request import LinkedIntegrationRuntimeRequest
     from .parameter_specification import ParameterSpecification
     from .linked_service import LinkedService
     from .linked_service_resource import LinkedServiceResource
@@ -640,12 +646,16 @@ except (SyntaxError, ImportError):
     from .if_condition_activity import IfConditionActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
+    from .linked_integration_runtime import LinkedIntegrationRuntime
     from .self_hosted_integration_runtime_node import SelfHostedIntegrationRuntimeNode
     from .self_hosted_integration_runtime_status import SelfHostedIntegrationRuntimeStatus
     from .managed_integration_runtime_operation_result import ManagedIntegrationRuntimeOperationResult
     from .managed_integration_runtime_error import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status import ManagedIntegrationRuntimeStatus
+    from .linked_integration_runtime_rbac import LinkedIntegrationRuntimeRbac
+    from .linked_integration_runtime_key import LinkedIntegrationRuntimeKey
+    from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
     from .self_hosted_integration_runtime import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
@@ -746,6 +756,7 @@ __all__ = [
     'IntegrationRuntimeStatusListResponse',
     'UpdateIntegrationRuntimeRequest',
     'UpdateIntegrationRuntimeNodeRequest',
+    'LinkedIntegrationRuntimeRequest',
     'ParameterSpecification',
     'LinkedService',
     'LinkedServiceResource',
@@ -1033,12 +1044,16 @@ __all__ = [
     'IfConditionActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
+    'LinkedIntegrationRuntime',
     'SelfHostedIntegrationRuntimeNode',
     'SelfHostedIntegrationRuntimeStatus',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeError',
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeStatus',
+    'LinkedIntegrationRuntimeRbac',
+    'LinkedIntegrationRuntimeKey',
+    'LinkedIntegrationRuntimeProperties',
     'SelfHostedIntegrationRuntime',
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',

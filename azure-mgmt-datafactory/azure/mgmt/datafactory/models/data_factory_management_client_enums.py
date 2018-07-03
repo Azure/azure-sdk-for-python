@@ -23,6 +23,7 @@ class IntegrationRuntimeState(str, Enum):
     online = "Online"
     limited = "Limited"
     offline = "Offline"
+    access_denied = "AccessDenied"
 
 
 class IntegrationRuntimeAutoUpdate(str, Enum):
