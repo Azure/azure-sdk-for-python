@@ -55,15 +55,18 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
-
+    cloud = get_cli_active_cloud()
     parameters = {}
     if 'credentials' not in kwargs or 'subscription_id' not in kwargs:
-        credentials, subscription_id = get_azure_cli_credentials()
+        if client_class.__name__ == 'GraphRbacManagementClient':
+            resource = cloud.endpoints.active_directory_graph_resource_id
+        else:
+            resource = None
+        credentials, subscription_id = get_azure_cli_credentials(resource=resource)
         parameters.update({
             'credentials': kwargs.get('credentials', credentials),
             'subscription_id': kwargs.get('subscription_id', subscription_id)
         })
-    cloud = get_cli_active_cloud()
     args = get_arg_spec(client_class.__init__).args
     if 'adla_job_dns_suffix' in args and 'adla_job_dns_suffix' not in kwargs:  # Datalake
         # Let it raise here with AttributeError at worst, this would mean this cloud does not define
@@ -122,12 +125,17 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     }
 
     if 'credentials' not in kwargs:
-        authority_url = (config_dict['activeDirectoryEndpointUrl'] + '/' + 
+        # Get the right resource for Credentials
+        if client_class.__name__ == 'GraphRbacManagementClient':
+            resource = config_dict['activeDirectoryGraphResourceId']
+        else:
+            resource = config_dict['resourceManagerEndpointUrl']
+        authority_url = (config_dict['activeDirectoryEndpointUrl'] + '/' +
                          config_dict['tenantId'])
         context = adal.AuthenticationContext(authority_url, api_version=None)
         parameters['credentials'] = AdalAuthentication(
             context.acquire_token_with_client_credentials,
-            config_dict['resourceManagerEndpointUrl'],
+            resource,
             config_dict['clientId'],
             config_dict['clientSecret']
         )
