@@ -30,10 +30,6 @@ from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
 from .operations.object_data_types_operations import ObjectDataTypesOperations
 from .operations.fields_operations import FieldsOperations
-from .operations.runbook_draft_operations import RunbookDraftOperations
-from .operations.runbook_operations import RunbookOperations
-from .operations.test_job_streams_operations import TestJobStreamsOperations
-from .operations.test_job_operations import TestJobOperations
 from .operations.schedule_operations import ScheduleOperations
 from .operations.variable_operations import VariableOperations
 from .operations.webhook_operations import WebhookOperations
@@ -53,6 +49,10 @@ from .operations.dsc_compilation_job_operations import DscCompilationJobOperatio
 from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .operations.node_count_information_operations import NodeCountInformationOperations
+from .operations.runbook_draft_operations import RunbookDraftOperations
+from .operations.runbook_operations import RunbookOperations
+from .operations.test_job_streams_operations import TestJobStreamsOperations
+from .operations.test_job_operations import TestJobOperations
 from . import models
 
 
@@ -68,21 +68,16 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param count_type1: The type of counts to retrieve. Possible values
-     include: 'status', 'nodeconfiguration'
-    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, count_type1, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if count_type1 is None:
-            raise ValueError("Parameter 'count_type1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -93,7 +88,6 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.count_type1 = count_type1
 
 
 class AutomationClient(object):
@@ -136,14 +130,6 @@ class AutomationClient(object):
     :vartype object_data_types: azure.mgmt.automation.operations.ObjectDataTypesOperations
     :ivar fields: Fields operations
     :vartype fields: azure.mgmt.automation.operations.FieldsOperations
-    :ivar runbook_draft: RunbookDraft operations
-    :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
-    :ivar runbook: Runbook operations
-    :vartype runbook: azure.mgmt.automation.operations.RunbookOperations
-    :ivar test_job_streams: TestJobStreams operations
-    :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
-    :ivar test_job: TestJob operations
-    :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
     :ivar schedule: Schedule operations
     :vartype schedule: azure.mgmt.automation.operations.ScheduleOperations
     :ivar variable: Variable operations
@@ -182,6 +168,14 @@ class AutomationClient(object):
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
     :ivar node_count_information: NodeCountInformation operations
     :vartype node_count_information: azure.mgmt.automation.operations.NodeCountInformationOperations
+    :ivar runbook_draft: RunbookDraft operations
+    :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
+    :ivar runbook: Runbook operations
+    :vartype runbook: azure.mgmt.automation.operations.RunbookOperations
+    :ivar test_job_streams: TestJobStreams operations
+    :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
+    :ivar test_job: TestJob operations
+    :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -190,16 +184,13 @@ class AutomationClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param count_type1: The type of counts to retrieve. Possible values
-     include: 'status', 'nodeconfiguration'
-    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, count_type1, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, count_type1, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -240,14 +231,6 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.fields = FieldsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.runbook_draft = RunbookDraftOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.runbook = RunbookOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.test_job_streams = TestJobStreamsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.test_job = TestJobOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.schedule = ScheduleOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.variable = VariableOperations(
@@ -285,4 +268,12 @@ class AutomationClient(object):
         self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.node_count_information = NodeCountInformationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.runbook_draft = RunbookDraftOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.runbook = RunbookOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.test_job_streams = TestJobStreamsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.test_job = TestJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
