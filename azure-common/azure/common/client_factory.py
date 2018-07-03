@@ -25,6 +25,8 @@ def _instantiate_client(client_class, **kwargs):
     """
     args = get_arg_spec(client_class.__init__).args
     for key in ['subscription_id', 'tenant_id']:
+        if key not in kwargs:
+            continue
         if key not in args:
             del kwargs[key]
         elif sys.version_info < (3, 0) and isinstance(kwargs[key], unicode):
@@ -56,25 +58,32 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
+    is_graphrbac = client_class.__name__ == 'GraphRbacManagementClient'
     cloud = get_cli_active_cloud()
     parameters = {}
     if 'credentials' not in kwargs or 'subscription_id' not in kwargs:
-        if client_class.__name__ == 'GraphRbacManagementClient':
+        if is_graphrbac:
             resource = cloud.endpoints.active_directory_graph_resource_id
         else:
             resource = None
-        credentials, subscription_id = get_azure_cli_credentials(resource=resource)
+        credentials, subscription_id, tenant_id = get_azure_cli_credentials(resource=resource, with_tenant=True)
         parameters.update({
             'credentials': kwargs.get('credentials', credentials),
             'subscription_id': kwargs.get('subscription_id', subscription_id)
         })
+
     args = get_arg_spec(client_class.__init__).args
     if 'adla_job_dns_suffix' in args and 'adla_job_dns_suffix' not in kwargs:  # Datalake
         # Let it raise here with AttributeError at worst, this would mean this cloud does not define
         # ADL endpoint and no manual suffix was given
         parameters['adla_job_dns_suffix'] = cloud.suffixes.azure_datalake_analytics_catalog_and_job_endpoint
     elif 'base_url' in args and 'base_url' not in kwargs:
-        parameters['base_url'] = cloud.endpoints.resource_manager
+        if is_graphrbac:
+            parameters['base_url'] = cloud.endpoints.active_directory_graph_resource_id
+        else:
+            parameters['base_url'] = cloud.endpoints.resource_manager
+    if 'tenant_id' in args and 'tenant_id' not in kwargs:
+        parameters['tenant_id'] = tenant_id
     parameters.update(kwargs)
     return _instantiate_client(client_class, **parameters)
 

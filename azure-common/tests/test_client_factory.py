@@ -10,11 +10,79 @@ import json
 import os
 import tempfile
 import unittest
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from io import open
+
+from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
 
 from azure.common.client_factory import *
 
 class TestCommon(unittest.TestCase):
+
+    @mock.patch('azure.common.client_factory.get_cli_active_cloud')
+    @mock.patch('azure.common.client_factory.get_azure_cli_credentials')
+    def test_get_client_from_cli_profile(self, get_azure_cli_credentials, get_cli_active_cloud):
+
+        class FakeClient(object):
+            def __init__(self, credentials, subscription_id, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if subscription_id is None:
+                    raise ValueError("Parameter 'subscription_id' must not be None.")
+                if not isinstance(subscription_id, str):
+                    raise TypeError("Parameter 'subscription_id' must be str.")
+                if not base_url:
+                    base_url = 'should not be used'
+
+                self.credentials = credentials
+                self.subscription_id = subscription_id
+                self.base_url = base_url
+
+        class FakeSubscriptionClient(object):
+            def __init__(self, credentials, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if not base_url:
+                    base_url = 'should not be used'
+
+                self.credentials = credentials
+                self.base_url = base_url
+
+        class GraphRbacManagementClient(object):
+            def __init__(self, credentials, tenant_id, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if tenant_id is None:
+                    raise ValueError("Parameter 'tenant_id' must not be None.")
+                if not base_url:
+                    base_url = 'should not be used'
+
+                self.credentials = credentials
+                self.tenant_id = tenant_id
+                self.base_url = base_url
+
+        get_cli_active_cloud.return_value = AZURE_PUBLIC_CLOUD
+        get_azure_cli_credentials.return_value = 'credentials', 'subscription_id', 'tenant_id'
+
+        client = get_client_from_cli_profile(FakeClient)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
+        assert client.credentials == 'credentials'
+        assert client.subscription_id == 'subscription_id'
+        assert client.base_url == "https://management.azure.com/"
+
+        client = get_client_from_cli_profile(FakeSubscriptionClient)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
+        assert client.credentials == 'credentials'
+        assert client.base_url == "https://management.azure.com/"
+
+        client = get_client_from_cli_profile(GraphRbacManagementClient)
+        get_azure_cli_credentials.assert_called_with(resource="https://graph.windows.net/", with_tenant=True)
+        assert client.credentials == 'credentials'
+        assert client.tenant_id == 'tenant_id'
+        assert client.base_url == "https://graph.windows.net/"
 
     def test_get_client_from_auth_file(self):
 
@@ -40,7 +108,7 @@ class TestCommon(unittest.TestCase):
                 if not isinstance(subscription_id, str):
                     raise TypeError("Parameter 'subscription_id' must be str.")
                 if not base_url:
-                    base_url = 'https://management.azure.com'
+                    base_url = 'should not be used'
 
                 self.credentials = credentials
                 self.subscription_id = subscription_id
@@ -51,7 +119,7 @@ class TestCommon(unittest.TestCase):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
                 if not base_url:
-                    base_url = 'https://management.azure.com'
+                    base_url = 'should not be used'
 
                 self.credentials = credentials
                 self.base_url = base_url
@@ -63,7 +131,7 @@ class TestCommon(unittest.TestCase):
                 if tenant_id is None:
                     raise ValueError("Parameter 'tenant_id' must not be None.")
                 if not base_url:
-                    base_url = 'https://graph.windows.net'
+                    base_url = 'should not be used'
 
                 self.credentials = credentials
                 self.tenant_id = tenant_id
