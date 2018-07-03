@@ -114,7 +114,7 @@ class MetricsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/apps/{appId}/metrics/{metricId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'metricId': self._serialize.url("metric_id", metric_id, 'str')
@@ -161,6 +161,7 @@ class MetricsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/apps/{appId}/metrics/{metricId}'}
 
     def get_multiple(
             self, app_id, body, custom_headers=None, raw=False, **operation_config):
@@ -186,7 +187,7 @@ class MetricsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/apps/{appId}/metrics'
+        url = self.get_multiple.metadata['url']
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
@@ -222,6 +223,7 @@ class MetricsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_multiple.metadata = {'url': '/apps/{appId}/metrics'}
 
     def get_metadata(
             self, app_id, custom_headers=None, raw=False, **operation_config):
@@ -243,7 +245,7 @@ class MetricsOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/apps/{appId}/metrics/metadata'
+        url = self.get_metadata.metadata['url']
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
@@ -275,3 +277,4 @@ class MetricsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_metadata.metadata = {'url': '/apps/{appId}/metrics/metadata'}

@@ -60,7 +60,7 @@ class QueryOperations(object):
          :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/apps/{appId}/query'
+        url = self.execute.metadata['url']
         path_format_arguments = {
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
@@ -96,3 +96,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
+    execute.metadata = {'url': '/apps/{appId}/query'}
