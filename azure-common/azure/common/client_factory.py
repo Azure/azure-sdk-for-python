@@ -21,13 +21,14 @@ from .cloud import get_cli_active_cloud
 
 
 def _instantiate_client(client_class, **kwargs):
-    """Instantiate a client from kwargs, removing the subscription_id argument if unsupported.
+    """Instantiate a client from kwargs, removing the subscription_id/tenant_id argument if unsupported.
     """
     args = get_arg_spec(client_class.__init__).args
-    if 'subscription_id' not in args:
-        del kwargs['subscription_id']
-    elif sys.version_info < (3, 0) and isinstance(kwargs['subscription_id'], unicode):
-        kwargs['subscription_id'] = kwargs['subscription_id'].encode('utf-8')
+    for key in ['subscription_id', 'tenant_id']:
+        if key not in args:
+            del kwargs[key]
+        elif sys.version_info < (3, 0) and isinstance(kwargs[key], unicode):
+            kwargs[key] = kwargs[key].encode('utf-8')
     return client_class(**kwargs)
 
 
@@ -90,6 +91,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     - credentials
     - subscription_id
     - base_url
+    - tenant_id
 
     Parameters provided in kwargs will override parameters and be passed directly to the client.
 
@@ -119,14 +121,18 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     :param dict config_dict: A config dict.
     :return: An instantiated client
     """
+    is_graphrbac = client_class.__name__ == 'GraphRbacManagementClient'
     parameters = {
         'subscription_id': config_dict.get('subscriptionId'),
         'base_url': config_dict.get('resourceManagerEndpointUrl'),
+        'tenant_id': config_dict.get('tenantId')  # GraphRbac
     }
+    if is_graphrbac:
+        parameters['base_url'] = config_dict['activeDirectoryGraphResourceId']
 
     if 'credentials' not in kwargs:
         # Get the right resource for Credentials
-        if client_class.__name__ == 'GraphRbacManagementClient':
+        if is_graphrbac:
             resource = config_dict['activeDirectoryGraphResourceId']
         else:
             resource = config_dict['resourceManagerEndpointUrl']

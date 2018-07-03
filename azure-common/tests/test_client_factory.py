@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 import json
+import os
 import tempfile
 import unittest
 from io import open
@@ -55,6 +56,19 @@ class TestCommon(unittest.TestCase):
                 self.credentials = credentials
                 self.base_url = base_url
 
+        class GraphRbacManagementClient(object):
+            def __init__(self, credentials, tenant_id, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if tenant_id is None:
+                    raise ValueError("Parameter 'tenant_id' must not be None.")
+                if not base_url:
+                    base_url = 'https://graph.windows.net'
+
+                self.credentials = credentials
+                self.tenant_id = tenant_id
+                self.base_url = base_url
+
         for encoding in ['utf-8', 'utf-8-sig', 'ascii']:
 
             temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
@@ -65,7 +79,7 @@ class TestCommon(unittest.TestCase):
             self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
             self.assertEqual('https://management.azure.com/', client.base_url)
             self.assertTupleEqual(client.credentials._args, (
-                'https://management.azure.com/', 
+                'https://management.azure.com/',
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             ))
@@ -93,8 +107,17 @@ class TestCommon(unittest.TestCase):
                 'password'
             ))
 
+            client = get_client_from_auth_file(GraphRbacManagementClient, temp_auth_file.name)
+            assert client.base_url == 'https://graph.windows.net/'
+            assert client.tenant_id == "c81da1d8-65ca-11e7-b1d1-ecb1d756380e"
+            assert client.credentials._args == (
+                "https://graph.windows.net/",
+                'a2ab11af-01aa-4759-8345-7803287dbd39',
+                'password'
+            )
+
             os.unlink(temp_auth_file.name)
-        
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
