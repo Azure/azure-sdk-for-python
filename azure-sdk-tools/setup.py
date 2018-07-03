@@ -21,7 +21,8 @@ DEPENDENCIES = [
     # Should not be here, but split per package once they have test dependencies
     'azure-storage-blob', # azure-servicemanagement-legacy azure-keyvault
     'azure-storage-file', # azure-mgmt-batchai
-    'azure-storage-common' # azure-keyvault
+    'azure-storage-common', # azure-keyvault
+    'pyopenssl' # azure-servicemanagement-legacy
 ]
 
 setup(
