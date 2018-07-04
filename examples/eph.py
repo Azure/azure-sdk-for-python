@@ -58,7 +58,7 @@ class EventProcessor(AbstractEventProcessor):
         :param context: Information about the partition
         :type context: ~azure.eventprocessorhost.PartitionContext
         :param messages: The events to be processed.
-        :type messages: list[~azure.eventhub.EventData]
+        :type messages: list[~azure.eventhub.common.EventData]
         """
         logger.info("Events processed {}".format(context.sequence_number))
         await context.checkpoint_async()

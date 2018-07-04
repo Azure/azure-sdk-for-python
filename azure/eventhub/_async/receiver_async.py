@@ -33,20 +33,64 @@ class AsyncReceiver(Receiver):
         :param loop: An event loop.
         """
         self.loop = loop or asyncio.get_event_loop()
+        self.redirected = None
+        self.error = None
+        self.debug = client.debug
         self.offset = None
         self.prefetch = prefetch
+        self.properties = None
         self.epoch = epoch
         properties = None
         if epoch:
-            properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
         self._handler = ReceiveClientAsync(
             source,
             auth=client.auth,
-            debug=client.debug,
+            debug=self.debug,
             prefetch=self.prefetch,
-            link_properties=properties,
+            link_properties=self.properties,
             timeout=self.timeout,
             loop=self.loop)
+
+    async def open_async(self, connection):
+        if self.redirected:
+            self._handler = ReceiveClientAsync(
+                self.redirected.address,
+                auth=None,
+                debug=self.debug,
+                prefetch=self.prefetch,
+                link_properties=self.properties,
+                timeout=self.timeout,
+                loop=self.loop)
+        await self._handler.open_async(connection=connection)
+
+    async def has_started(self):
+        # pylint: disable=protected-access
+        timeout = False
+        auth_in_progress = False
+        if self._handler._connection.cbs:
+            timeout, auth_in_progress = await self._handler._auth.handle_token_async()
+        if timeout:
+            raise EventHubError("Authorization timeout.")
+        elif auth_in_progress:
+            return False
+        elif not await self._handler._client_ready():
+            return False
+        else:
+            return True
+
+    async def close_async(self, exception=None):
+        if self.error:
+            return
+        elif isinstance(exception, errors.LinkRedirect):
+            self.redirected = exception
+        elif isinstance(exception, EventHubError):
+            self.error = exception
+        elif exception:
+            self.error = EventHubError(str(exception))
+        else:
+            self.error = EventHubError("This receive client is now closed.")
+        await self._handler.close_async()
 
     async def receive(self, max_batch_size=None, timeout=None):
         """
@@ -58,8 +102,10 @@ class AsyncReceiver(Receiver):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :rtype: list[~azure.eventhub.EventData]
+        :rtype: list[~azure.eventhub.common.EventData]
         """
+        if self.error:
+            raise self.error
         try:
             timeout_ms = 1000 * timeout if timeout else 0
             message_batch = await self._handler.receive_message_batch_async(
@@ -71,15 +117,11 @@ class AsyncReceiver(Receiver):
                 self.offset = event_data.offset
                 data_batch.append(event_data)
             return data_batch
-        except errors.AMQPConnectionError as e:
-            message = "Failed to open receiver: {}".format(e)
-            message += "\nPlease check that the partition key is valid "
-            if self.epoch:
-                message += "and that a higher epoch receiver is " \
-                           "not already running for this partition."
-            else:
-                message += "and whether an epoch receiver is " \
-                           "already running for this partition."
-            raise EventHubError(message)
+        except errors.LinkDetach as detach:
+            error = EventHubError(str(detach))
+            await self.close_async(exception=error)
+            raise error
         except Exception as e:
-            raise EventHubError("Receive failed: {}".format(e))
+            error = EventHubError("Receive failed: {}".format(e))
+            await self.close_async(exception=error)
+            raise error

@@ -141,7 +141,7 @@ class PartitionReceiver:
         by running faster than OnEvents.
 
         :param events: List of events to be processed.
-        :type events: list of ~azure.eventhub.EventData
+        :type events: list of ~azure.eventhub.common.EventData
         """
         await self.eh_partition_pump.process_events_async(events)
 

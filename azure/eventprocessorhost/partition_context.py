@@ -30,7 +30,7 @@ class PartitionContext:
         Updates offset based on event.
 
         :param event_data: A received EventData with valid offset and sequenceNumber.
-        :type event_data: ~azure.eventhub.EventData
+        :type event_data: ~azure.eventhub.common.EventData
         """
         if not event_data:
             raise Exception(event_data)
@@ -73,7 +73,7 @@ class PartitionContext:
         then writes those values to the checkpoint store via the checkpoint manager.
 
         :param event_data: A received EventData with valid offset and sequenceNumber.
-        :type event_data: ~azure.eventhub.EventData
+        :type event_data: ~azure.eventhub.common.EventData
         :raises: ValueError if suplied event_data is None.
         :raises: ValueError if the sequenceNumber is less than the last checkpointed value.
         """

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from uamqp import constants
+from uamqp import constants, errors
 from uamqp import SendClient
 
 from azure.eventhub.common import EventHubError
@@ -20,20 +20,64 @@ class Sender:
         Instantiate an EventHub event Sender client.
 
         :param client: The parent EventHubClient.
-        :type client: ~azure.eventhub.EventHubClient.
+        :type client: ~azure.eventhub.client.EventHubClient.
         :param target: The URI of the EventHub to send to.
         :type target: str
         """
+        self.redirected = None
+        self.error = None
+        self.debug = client.debug
         self.partition = partition
         if partition:
             target += "/Partitions/" + partition
         self._handler = SendClient(
             target,
             auth=client.auth,
-            debug=client.debug,
+            debug=self.debug,
             msg_timeout=Sender.TIMEOUT)
         self._outcome = None
         self._condition = None
+
+    def open(self, connection):
+        if self.redirected:
+            self._handler = SendClient(
+                self.redirected.address,
+                auth=None,
+                debug=self.debug,
+                msg_timeout=Sender.TIMEOUT)
+        self._handler.open(connection)
+
+    def get_handler_state(self):
+        # pylint: disable=protected-access
+        return self._handler._message_sender.get_state()
+
+    def has_started(self):
+        # pylint: disable=protected-access
+        timeout = False
+        auth_in_progress = False
+        if self._handler._connection.cbs:
+            timeout, auth_in_progress = self._handler._auth.handle_token()
+        if timeout:
+            raise EventHubError("Authorization timeout.")
+        elif auth_in_progress:
+            return False
+        elif not self._handler._client_ready():
+            return False
+        else:
+            return True
+
+    def close(self, exception=None):
+        if self.error:
+            return
+        elif isinstance(exception, errors.LinkRedirect):
+            self.redirected = exception
+        elif isinstance(exception, EventHubError):
+            self.error = exception
+        elif exception:
+            self.error = EventHubError(str(exception))
+        else:
+            self.error = EventHubError("This send client is now closed.")
+        self._handler.close()
 
     def send(self, event_data):
         """
@@ -41,12 +85,14 @@ class Sender:
         received or operation times out.
 
         :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.client.EventData
-        :raises: ~azure.eventhub.client.EventHubError if the message fails to
+        :type event_data: ~azure.eventhub.common.EventData
+        :raises: ~azure.eventhub.common.EventHubError if the message fails to
          send.
         :return: The outcome of the message send.
         :rtype: ~uamqp.constants.MessageSendResult
         """
+        if self.error:
+            raise self.error
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
@@ -54,8 +100,14 @@ class Sender:
             self._handler.send_message(event_data.message)
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
+        except errors.LinkDetach as detach:
+            error = EventHubError(str(detach))
+            self.close(exception=error)
+            raise error
         except Exception as e:
-            raise EventHubError("Send failed: {}".format(e))
+            error = EventHubError("Send failed: {}".format(e))
+            self.close(exception=error)
+            raise error
         else:
             return self._outcome
 
@@ -64,11 +116,13 @@ class Sender:
         Transfers an event data and notifies the callback when the operation is done.
 
         :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.client.EventData
+        :type event_data: ~azure.eventhub.common.EventData
         :param callback: Callback to be run once the message has been send.
          This must be a function that accepts two arguments.
-        :type callback: func[~uamqp.constants.MessageSendResult, ~azure.eventhub.client.EventHubError]
+        :type callback: func[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
         """
+        if self.error:
+            raise self.error
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         if callback:
@@ -79,6 +133,8 @@ class Sender:
         """
         Wait until all transferred events have been sent.
         """
+        if self.error:
+            raise self.error
         try:
             self._handler.wait()
         except Exception as e:

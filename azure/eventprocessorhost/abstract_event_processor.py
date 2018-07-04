@@ -43,7 +43,7 @@ class AbstractEventProcessor(ABC):
         :param context: Information about the partition
         :type context: ~azure.eventprocessorhost.partition_context.PartitionContext
         :param messages: The events to be processed.
-        :type messages: list[~azure.eventhub.EventData]
+        :type messages: list[~azure.eventhub.common.EventData]
         """
         pass
 

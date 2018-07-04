@@ -21,7 +21,7 @@ class Receiver:
         Instantiate a receiver.
 
         :param client: The parent EventHubClient.
-        :type client: ~azure.eventhub.EventHubClient
+        :type client: ~azure.eventhub.client.EventHubClient
         :param source: The source EventHub from which to receive events.
         :type source: ~uamqp.address.Source
         :param prefetch: The number of events to prefetch from the service
@@ -33,16 +33,62 @@ class Receiver:
         self.offset = None
         self.prefetch = prefetch
         self.epoch = epoch
-        properties = None
+        self.properties = None
+        self.redirected = None
+        self.debug = client.debug
+        self.error = None
         if epoch:
-            properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
         self._handler = ReceiveClient(
             source,
             auth=client.auth,
-            debug=client.debug,
+            debug=self.debug,
             prefetch=self.prefetch,
-            link_properties=properties,
+            link_properties=self.properties,
             timeout=self.timeout)
+
+    def open(self, connection):
+        if self.redirected:
+            self._handler = ReceiveClient(
+                self.redirected.address,
+                auth=None,
+                debug=self.debug,
+                prefetch=self.prefetch,
+                link_properties=self.properties,
+                timeout=self.timeout)
+        self._handler.open(connection)
+
+    def get_handler_state(self):
+        # pylint: disable=protected-access
+        return self._handler._message_receiver.get_state()
+
+    def has_started(self):
+        # pylint: disable=protected-access
+        timeout = False
+        auth_in_progress = False
+        if self._handler._connection.cbs:
+            timeout, auth_in_progress = self._handler._auth.handle_token()
+        if timeout:
+            raise EventHubError("Authorization timeout.")
+        elif auth_in_progress:
+            return False
+        elif not self._handler._client_ready():
+            return False
+        else:
+            return True
+
+    def close(self, exception=None):
+        if self.error:
+            return
+        elif isinstance(exception, errors.LinkRedirect):
+            self.redirected = exception
+        elif isinstance(exception, EventHubError):
+            self.error = exception
+        elif exception:
+            self.error = EventHubError(str(exception))
+        else:
+            self.error = EventHubError("This receive client is now closed.")
+        self._handler.close()
 
     @property
     def queue_size(self):
@@ -66,8 +112,10 @@ class Receiver:
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :rtype: list[~azure.eventhub.EventData]
+        :rtype: list[~azure.eventhub.common.EventData]
         """
+        if self.error:
+            raise self.error
         try:
             timeout_ms = 1000 * timeout if timeout else 0
             message_batch = self._handler.receive_message_batch(
@@ -79,26 +127,22 @@ class Receiver:
                 self.offset = event_data.offset
                 data_batch.append(event_data)
             return data_batch
-        except errors.AMQPConnectionError as e:
-            message = "Failed to open receiver: {}".format(e)
-            message += "\nPlease check that the partition key is valid "
-            if self.epoch:
-                message += ("and that a higher epoch receiver is not "
-                            "already running for this partition.")
-            else:
-                message += ("and whether an epoch receiver is "
-                            "already running for this partition.")
-            raise EventHubError(message)
+        except errors.LinkDetach as detach:
+            error = EventHubError(str(detach))
+            self.close(exception=error)
+            raise error
         except Exception as e:
-            raise EventHubError("Receive failed: {}".format(e))
+            error = EventHubError("Receive failed: {}".format(e))
+            self.close(exception=error)
+            raise error
 
     def selector(self, default):
         """
         Create a selector for the current offset if it is set.
 
         :param default: The fallback receive offset.
-        :type default: ~azure.eventhub.Offset
-        :rtype: ~azure.eventhub.Offset
+        :type default: ~azure.eventhub.common.Offset
+        :rtype: ~azure.eventhub.common.Offset
         """
         if self.offset is not None:
             return Offset(self.offset).selector()

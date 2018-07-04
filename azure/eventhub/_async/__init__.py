@@ -8,8 +8,7 @@ import asyncio
 import time
 import datetime
 
-from uamqp import constants, types, errors
-from uamqp.authentication import SASTokenAsync
+from uamqp import authentication, constants, types, errors
 from uamqp import (
     Message,
     Source,
@@ -50,7 +49,9 @@ class EventHubClientAsync(EventHubClient):
         :param password: The shared access key.
         :type password: str
         """
-        return SASTokenAsync.from_shared_access_key(auth_uri, username, password)
+        if "@sas.root" in username:
+            return authentication.SASLPlain(self.address.hostname, username, password)
+        return authentication.SASTokenAsync.from_shared_access_key(auth_uri, username, password)
 
     def _create_connection_async(self):
         """
@@ -79,21 +80,71 @@ class EventHubClientAsync(EventHubClient):
         """
         Close all open AsyncSender/AsyncReceiver clients.
         """
-        for client in self.clients:
-            await client.close_async()
+        await asyncio.gather(*[c.close_async() for c in self.clients])
+
+    async def _wait_for_client(self, client):
+        try:
+            while client.get_handler_state().value == 2:
+                await self.connection.work_async()
+        except Exception as exp:
+            await client.close_async(exception=exp)
+
+    async def _start_client_async(self, client):
+        try:
+            await client.open_async(self.connection)
+            started = await client.has_started()
+            while not started:
+                await self.connection.work_async()
+                started = await client.has_started()
+        except Exception as exp:
+            await client.close_async(exception=exp)
+
+    async def _handle_redirect(self, redirects):
+        if len(redirects) != len(self.clients):
+            not_redirected = [c for c in self.clients if not c.redirected]
+            done, timeout = await asyncio.wait([self._wait_for_client(c) for c in not_redirected], timeout=5)
+            if timeout:
+                raise EventHubError("Some clients are attempting to redirect the connection.")
+            redirects = [c.redirected for c in self.clients if c.redirected]
+        if not all(r.hostname == redirects[0].hostname for r in redirects):
+            raise EventHubError("Multiple clients attempting to redirect to different hosts.")
+        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
+        await self.connection.redirect_async(redirects[0], self.auth)
+        await asyncio.gather(*[c.open_async(self.connection) for c in self.clients])
 
     async def run_async(self):
         """
         Run the EventHubClient asynchronously.
         Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
+        Returns a list of the start up results. For a succcesful client start the
+        result will be `None`, otherwise the exception raise.
+        If all clients failed to start, the run will fail, shut down the connection
+        and raise an exception.
+        If at least one client starts up successfully the run command will succeed.
 
-        :rtype: ~azure.eventhub._async.EventHubClientAsync
+        :rtype: list[~azure.eventhub.common.EventHubError]
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection_async()
-        for client in self.clients:
-            await client.open_async(connection=self.connection)
-        return self
+        tasks = [self._start_client_async(c) for c in self.clients]
+        try:
+            await asyncio.gather(*tasks)
+            redirects = [c.redirected for c in self.clients if c.redirected]
+            failed = [c.error for c in self.clients if c.error]
+            if failed and len(failed) == len(self.clients):
+                log.warning("{}: All clients failed to start.".format(self.container_id, len(failed)))
+                raise failed[0]
+            elif failed:
+                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+            elif redirects:
+                await self._handle_redirect(redirects)
+        except EventHubError:
+            await self.stop_async()
+            raise
+        except Exception as exp:
+            await self.stop_async()
+            raise EventHubError(str(exp))
+        return failed
 
     async def stop_async(self):
         """
@@ -130,7 +181,7 @@ class EventHubClientAsync(EventHubClient):
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
 
-    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
+    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
 
@@ -144,16 +195,17 @@ class EventHubClientAsync(EventHubClient):
         :type prefetch: int
         :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
         """
+        path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, self.address.path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition)
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
         handler = AsyncReceiver(self, source, prefetch=prefetch, loop=loop)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler
 
-    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, loop=None):
+    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, operation=None, loop=None):
         """
         Add an async receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -170,13 +222,14 @@ class EventHubClientAsync(EventHubClient):
         :type prefetch: int
         :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
         """
+        path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, self.address.path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition)
         handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler
 
-    def add_async_sender(self, partition=None, loop=None):
+    def add_async_sender(self, partition=None, operation=None, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -188,6 +241,8 @@ class EventHubClientAsync(EventHubClient):
         :rtype: ~azure.eventhub._async.sender_async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
+        if operation:
+            target = target + operation
         handler = AsyncSender(self, target, partition=partition, loop=loop)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler

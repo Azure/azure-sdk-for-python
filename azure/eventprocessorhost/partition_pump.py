@@ -136,7 +136,7 @@ class PartitionPump():
         Process pump events.
 
         :param events: List of events to be processed.
-        :type events: list[~azure.eventhub.EventData]
+        :type events: list[~azure.eventhub.common.EventData]
         """
         if events:
             # Synchronize to serialize calls to the processor. The handler is not installed until

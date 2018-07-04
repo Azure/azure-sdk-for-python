@@ -8,7 +8,7 @@ import time
 
 from uamqp import Message, BatchMessage
 from uamqp import types
-from uamqp.message import MessageHeader
+from uamqp.message import MessageHeader, MessageProperties
 
 
 class EventData(object):
@@ -23,7 +23,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, batch=None, message=None):
+    def __init__(self, body=None, batch=None, to_device=None, message=None):
         """
         Initialize EventData.
 
@@ -37,21 +37,24 @@ class EventData(object):
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._properties = {}
+        self._msg_properties = MessageProperties()
+        if to_device:
+            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True)
+            self.message = BatchMessage(data=batch, multi_messages=True, properties=self._msg_properties)
         elif message:
             self.message = message
             self._annotations = message.annotations
             self._properties = message.application_properties
         else:
             if isinstance(body, list) and body:
-                self.message = Message(body[0])
+                self.message = Message(body[0], properties=self._msg_properties)
                 for more in body[1:]:
                     self.message._body.append(more)  # pylint: disable=protected-access
             elif body is None:
                 raise ValueError("EventData cannot be None.")
             else:
-                self.message = Message(body)
+                self.message = Message(body, properties=self._msg_properties)
 
 
     @property
