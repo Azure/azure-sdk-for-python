@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class WorkbookResource(Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
@@ -34,7 +34,6 @@ class Resource(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -45,8 +44,8 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
-        super(Resource, self).__init__()
+    def __init__(self, location=None, tags=None):
+        super(WorkbookResource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

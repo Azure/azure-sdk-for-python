@@ -25,7 +25,6 @@ from .web_test_locations_operations import WebTestLocationsOperations
 from .web_tests_operations import WebTestsOperations
 from .analytics_items_operations import AnalyticsItemsOperations
 from .workbooks_operations import WorkbooksOperations
-from .workbook_operations import WorkbookOperations
 
 __all__ = [
     'Operations',
@@ -44,5 +43,4 @@ __all__ = [
     'WebTestsOperations',
     'AnalyticsItemsOperations',
     'WorkbooksOperations',
-    'WorkbookOperations',
 ]

@@ -29,7 +29,6 @@ from .operations.web_test_locations_operations import WebTestLocationsOperations
 from .operations.web_tests_operations import WebTestsOperations
 from .operations.analytics_items_operations import AnalyticsItemsOperations
 from .operations.workbooks_operations import WorkbooksOperations
-from .operations.workbook_operations import WorkbookOperations
 from . import models
 
 
@@ -103,8 +102,6 @@ class ApplicationInsightsManagementClient(object):
     :vartype analytics_items: azure.mgmt.applicationinsights.operations.AnalyticsItemsOperations
     :ivar workbooks: Workbooks operations
     :vartype workbooks: azure.mgmt.applicationinsights.operations.WorkbooksOperations
-    :ivar workbook: Workbook operations
-    :vartype workbook: azure.mgmt.applicationinsights.operations.WorkbookOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -156,6 +153,4 @@ class ApplicationInsightsManagementClient(object):
         self.analytics_items = AnalyticsItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workbooks = WorkbooksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.workbook = WorkbookOperations(
             self._client, self.config, self._serialize, self._deserialize)
