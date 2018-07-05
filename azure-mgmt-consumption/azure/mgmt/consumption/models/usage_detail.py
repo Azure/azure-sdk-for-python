@@ -86,6 +86,8 @@ class UsageDetail(Resource):
     :vartype offer_id: str
     :ivar charges_billed_separately: Charges billed separately
     :vartype charges_billed_separately: bool
+    :ivar location: Resource Location
+    :vartype location: str
     :ivar additional_properties: Additional details of this usage item. By
      default this is not populated, unless it's specified in $expand.
     :vartype additional_properties: str
@@ -121,6 +123,7 @@ class UsageDetail(Resource):
         'resource_guid': {'readonly': True},
         'offer_id': {'readonly': True},
         'charges_billed_separately': {'readonly': True},
+        'location': {'readonly': True},
         'additional_properties': {'readonly': True},
     }
 
@@ -154,6 +157,7 @@ class UsageDetail(Resource):
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'offer_id': {'key': 'properties.offerId', 'type': 'str'},
         'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'bool'},
+        'location': {'key': 'properties.location', 'type': 'str'},
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
     }
 
@@ -184,4 +188,5 @@ class UsageDetail(Resource):
         self.resource_guid = None
         self.offer_id = None
         self.charges_billed_separately = None
+        self.location = None
         self.additional_properties = None
