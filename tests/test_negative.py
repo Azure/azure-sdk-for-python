@@ -273,8 +273,10 @@ async def test_send_null_body_async(connection_str):
 
 async def pump(receiver):
     messages = 0
+    count = 0
     batch = await receiver.receive(timeout=10)
-    while batch:
+    while batch and count <= 5:
+        count += 1
         messages += len(batch)
         batch = await receiver.receive(timeout=10)
     return messages
