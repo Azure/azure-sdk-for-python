@@ -86,7 +86,7 @@ class EventHubClientAsync(EventHubClient):
         try:
             while client.get_handler_state().value == 2:
                 await self.connection.work_async()
-        except Exception as exp:
+        except Exception as exp:  # pylint: disable=broad-except
             await client.close_async(exception=exp)
 
     async def _start_client_async(self, client):
@@ -96,13 +96,13 @@ class EventHubClientAsync(EventHubClient):
             while not started:
                 await self.connection.work_async()
                 started = await client.has_started()
-        except Exception as exp:
+        except Exception as exp:  # pylint: disable=broad-except
             await client.close_async(exception=exp)
 
     async def _handle_redirect(self, redirects):
         if len(redirects) != len(self.clients):
             not_redirected = [c for c in self.clients if not c.redirected]
-            done, timeout = await asyncio.wait([self._wait_for_client(c) for c in not_redirected], timeout=5)
+            _, timeout = await asyncio.wait([self._wait_for_client(c) for c in not_redirected], timeout=5)
             if timeout:
                 raise EventHubError("Some clients are attempting to redirect the connection.")
             redirects = [c.redirected for c in self.clients if c.redirected]
@@ -132,7 +132,7 @@ class EventHubClientAsync(EventHubClient):
             redirects = [c.redirected for c in self.clients if c.redirected]
             failed = [c.error for c in self.clients if c.error]
             if failed and len(failed) == len(self.clients):
-                log.warning("{}: All clients failed to start.".format(self.container_id, len(failed)))
+                log.warning("{}: All clients failed to start.".format(self.container_id))
                 raise failed[0]
             elif failed:
                 log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))

@@ -25,7 +25,8 @@ class EventProcessorHost:
         :type eh_config: ~azure.eventprocessorhost.eh_config.EventHubConfig
         :param storage_manager: The Azure storage manager for persisting lease and
          checkpoint information.
-        :type storage_manager: ~azure.eventprocessorhost.azure_storage_checkpoint_manager.AzureStorageCheckpointLeaseManager
+        :type storage_manager:
+         ~azure.eventprocessorhost.azure_storage_checkpoint_manager.AzureStorageCheckpointLeaseManager
         :param ep_params: Optional arbitrary parameters to be passed into the event_processor
          on initialization.
         :type ep_params: list

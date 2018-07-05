@@ -12,7 +12,7 @@ def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(level)
     uamqp_logger = logging.getLogger("uamqp")
-    uamqp_logger.setLevel(logging.DEBUG)
+    uamqp_logger.setLevel(logging.INFO)
 
     formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     console_handler = logging.StreamHandler(stream=sys.stdout)

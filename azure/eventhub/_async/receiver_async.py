@@ -40,7 +40,6 @@ class AsyncReceiver(Receiver):
         self.prefetch = prefetch
         self.properties = None
         self.epoch = epoch
-        properties = None
         if epoch:
             self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
         self._handler = ReceiveClientAsync(

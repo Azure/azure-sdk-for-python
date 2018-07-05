@@ -8,11 +8,11 @@ Release History
 
 - **Breaking change** Restructured library to support Python 3.7. Submodule `async` has been renamed and all classes from
   this module can now be imported from azure.eventhub directly.
-- Updated uAMQP dependency to vRC2
-- Added support for constructing IoTHub connections.
-- Removed optional `callback` argument from `Receiver.receive` and `AsyncReceiver.receive`.
+- **Breaking change** Removed optional `callback` argument from `Receiver.receive` and `AsyncReceiver.receive`.
   This removes the potential for messages to be processed via callback for not yet returned
   in the batch.
+- Updated uAMQP dependency to v0.1.0
+- Added support for constructing IoTHub connections.
 - Fixed memory leak in receive operations.
 - Dropped Python 2.7 wheel support.
 

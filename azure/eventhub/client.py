@@ -23,6 +23,7 @@ from uamqp import constants
 from azure.eventhub import __version__
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
+from azure.eventhub.common import EventHubError
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +36,8 @@ def _parse_conn_str(conn_str):
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
+            endpoint = value.rstrip('/')
+        elif key.lower() == 'hostname':
             endpoint = value.rstrip('/')
         elif key.lower() == 'sharedaccesskeyname':
             shared_access_key_name = value
@@ -113,6 +116,7 @@ class EventHubClient(object):
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.auth = self._create_auth(auth_uri, username, password)
+        self._auth_config = None
         self.connection = None
         self.debug = debug
 
@@ -141,7 +145,9 @@ class EventHubClient(object):
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
-        return cls(address, username=username, password=password, **kwargs)
+        client = cls("amqps://" + address, username=username, password=password, **kwargs)
+        client._auth_config = {'username': policy, 'password': key}  # pylint: disable=protected-access
+        return client
 
     def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
         """
@@ -155,6 +161,8 @@ class EventHubClient(object):
         :param password: The shared access key.
         :type password: str
         """
+        if "@sas.root" in username:
+            return authentication.SASLPlain(self.address.hostname, username, password)
         return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
 
     def _create_properties(self):  # pylint: disable=no-self-use
@@ -201,18 +209,52 @@ class EventHubClient(object):
         for client in self.clients:
             client.close()
 
+    def _start_clients(self):
+        for client in self.clients:
+            try:
+                client.open(self.connection)
+                while not client.has_started():
+                    self.connection.work()
+            except Exception as exp:  # pylint: disable=broad-except
+                client.close(exception=exp)
+
+    def _handle_redirect(self, redirects):
+        if len(redirects) != len(self.clients):
+            raise EventHubError("Some clients are attempting to redirect the connection.")
+        if not all(r.hostname == redirects[0].hostname for r in redirects):
+            raise EventHubError("Multiple clients attempting to redirect to different hosts.")
+        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
+        self.connection.redirect(redirects[0], self.auth)
+        for client in self.clients:
+            client.open(self.connection)
+
     def run(self):
         """
         Run the EventHubClient in blocking mode.
         Opens the connection and starts running all Sender/Receiver clients.
 
-        :rtype: ~azure.eventhub.EventHubClient
+        :rtype: ~azure.eventhub.client.EventHubClient
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection()
-        for client in self.clients:
-            client.open(connection=self.connection)
-        return self
+        try:
+            self._start_clients()
+            redirects = [c.redirected for c in self.clients if c.redirected]
+            failed = [c.error for c in self.clients if c.error]
+            if failed and len(failed) == len(self.clients):
+                log.warning("{}: All clients failed to start.".format(self.container_id))
+                raise failed[0]
+            elif failed:
+                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+            elif redirects:
+                self._handle_redirect(redirects)
+        except EventHubError:
+            self.stop()
+            raise
+        except Exception as e:
+            self.stop()
+            raise EventHubError(str(e))
+        return failed
 
     def stop(self):
         """
@@ -262,7 +304,7 @@ class EventHubClient(object):
         finally:
             mgmt_client.close()
 
-    def add_receiver(self, consumer_group, partition, offset=None, prefetch=300):
+    def add_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None):
         """
         Add a receiver to the client for a particular consumer group and partition.
 
@@ -271,21 +313,22 @@ class EventHubClient(object):
         :param partition: The ID of the partition.
         :type partition: str
         :param offset: The offset from which to start receiving.
-        :type offset: ~azure.eventhub.Offset
+        :type offset: ~azure.eventhub.common.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :rtype: ~azure.eventhub.Receiver
+        :rtype: ~azure.eventhub.receiver.Receiver
         """
+        path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, self.address.path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition)
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
         handler = Receiver(self, source, prefetch=prefetch)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler
 
-    def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300):
+    def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, operation=None):
         """
         Add a receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -300,26 +343,29 @@ class EventHubClient(object):
         :type epoch: int
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :rtype: ~azure.eventhub.Receiver
+        :rtype: ~azure.eventhub.receiver.Receiver
         """
+        path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, self.address.path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition)
         handler = Receiver(self, source_url, prefetch=prefetch, epoch=epoch)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler
 
-    def add_sender(self, partition=None):
+    def add_sender(self, partition=None, operation=None):
         """
-        Add a sender to the client to send ~azure.eventhub.EventData object
+        Add a sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
 
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type parition: str
-        :rtype: ~azure.eventhub.Sender
+        :rtype: ~azure.eventhub.sender.Sender
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
+        if operation:
+            target = target + operation
         handler = Sender(self, target, partition=partition)
-        self.clients.append(handler._handler)  # pylint: disable=protected-access
+        self.clients.append(handler)
         return handler
