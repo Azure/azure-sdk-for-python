@@ -36,6 +36,9 @@ class OperationMetricSpecification(Model):
      available.
     :type availabilities:
      list[~azure.mgmt.datafactory.models.OperationMetricAvailability]
+    :param dimensions: Defines the metric dimension.
+    :type dimensions:
+     list[~azure.mgmt.datafactory.models.OperationMetricDimension]
     """
 
     _attribute_map = {
@@ -48,9 +51,10 @@ class OperationMetricSpecification(Model):
         'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
         'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
         'availabilities': {'key': 'availabilities', 'type': '[OperationMetricAvailability]'},
+        'dimensions': {'key': 'dimensions', 'type': '[OperationMetricDimension]'},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, enable_regional_mdm_account: str=None, source_mdm_account: str=None, source_mdm_namespace: str=None, availabilities=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, enable_regional_mdm_account: str=None, source_mdm_account: str=None, source_mdm_namespace: str=None, availabilities=None, dimensions=None, **kwargs) -> None:
         super(OperationMetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -61,3 +65,4 @@ class OperationMetricSpecification(Model):
         self.source_mdm_account = source_mdm_account
         self.source_mdm_namespace = source_mdm_namespace
         self.availabilities = availabilities
+        self.dimensions = dimensions

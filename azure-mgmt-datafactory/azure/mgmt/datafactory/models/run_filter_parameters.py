@@ -12,25 +12,24 @@
 from msrest.serialization import Model
 
 
-class PipelineRunFilterParameters(Model):
-    """Query parameters for listing pipeline runs.
+class RunFilterParameters(Model):
+    """Query parameters for listing runs.
 
     All required parameters must be populated in order to send to Azure.
 
     :param continuation_token: The continuation token for getting the next
      page of results. Null for first page.
     :type continuation_token: str
-    :param last_updated_after: Required. The time at or after which the
-     pipeline run event was updated in 'ISO 8601' format.
+    :param last_updated_after: Required. The time at or after which the run
+     event was updated in 'ISO 8601' format.
     :type last_updated_after: datetime
-    :param last_updated_before: Required. The time at or before which the
-     pipeline run event was updated in 'ISO 8601' format.
+    :param last_updated_before: Required. The time at or before which the run
+     event was updated in 'ISO 8601' format.
     :type last_updated_before: datetime
     :param filters: List of filters.
-    :type filters: list[~azure.mgmt.datafactory.models.PipelineRunQueryFilter]
+    :type filters: list[~azure.mgmt.datafactory.models.RunQueryFilter]
     :param order_by: List of OrderBy option.
-    :type order_by:
-     list[~azure.mgmt.datafactory.models.PipelineRunQueryOrderBy]
+    :type order_by: list[~azure.mgmt.datafactory.models.RunQueryOrderBy]
     """
 
     _validation = {
@@ -42,12 +41,12 @@ class PipelineRunFilterParameters(Model):
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
         'last_updated_after': {'key': 'lastUpdatedAfter', 'type': 'iso-8601'},
         'last_updated_before': {'key': 'lastUpdatedBefore', 'type': 'iso-8601'},
-        'filters': {'key': 'filters', 'type': '[PipelineRunQueryFilter]'},
-        'order_by': {'key': 'orderBy', 'type': '[PipelineRunQueryOrderBy]'},
+        'filters': {'key': 'filters', 'type': '[RunQueryFilter]'},
+        'order_by': {'key': 'orderBy', 'type': '[RunQueryOrderBy]'},
     }
 
     def __init__(self, **kwargs):
-        super(PipelineRunFilterParameters, self).__init__(**kwargs)
+        super(RunFilterParameters, self).__init__(**kwargs)
         self.continuation_token = kwargs.get('continuation_token', None)
         self.last_updated_after = kwargs.get('last_updated_after', None)
         self.last_updated_before = kwargs.get('last_updated_before', None)

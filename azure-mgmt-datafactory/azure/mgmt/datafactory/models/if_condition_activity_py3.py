@@ -28,6 +28,8 @@ class IfConditionActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param expression: Required. An expression that would evaluate to Boolean.
@@ -55,14 +57,15 @@ class IfConditionActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'expression': {'key': 'typeProperties.expression', 'type': 'Expression'},
         'if_true_activities': {'key': 'typeProperties.ifTrueActivities', 'type': '[Activity]'},
         'if_false_activities': {'key': 'typeProperties.ifFalseActivities', 'type': '[Activity]'},
     }
 
-    def __init__(self, *, name: str, expression, additional_properties=None, description: str=None, depends_on=None, if_true_activities=None, if_false_activities=None, **kwargs) -> None:
-        super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, expression, additional_properties=None, description: str=None, depends_on=None, user_properties=None, if_true_activities=None, if_false_activities=None, **kwargs) -> None:
+        super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.expression = expression
         self.if_true_activities = if_true_activities
         self.if_false_activities = if_false_activities

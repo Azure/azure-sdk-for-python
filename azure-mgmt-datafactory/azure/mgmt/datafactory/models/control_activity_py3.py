@@ -30,6 +30,8 @@ class ControlActivity(Activity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -44,6 +46,7 @@ class ControlActivity(Activity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -51,6 +54,6 @@ class ControlActivity(Activity):
         'type': {'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, **kwargs) -> None:
-        super(ControlActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(ControlActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.type = 'Container'

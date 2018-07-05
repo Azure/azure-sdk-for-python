@@ -69,9 +69,11 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
     :ivar version_status: Status of the integration runtime version.
     :vartype version_status: str
-    :param links: The list of linked integration runtimes that are created to
-     share with this integration runtime.
-    :type links: list[~azure.mgmt.datafactory.models.LinkedIntegrationRuntime]
+    :ivar pushed_version: The version that the integration runtime is going to
+     update to.
+    :vartype pushed_version: str
+    :ivar latest_version: The latest version on download center.
+    :vartype latest_version: str
     """
 
     _validation = {
@@ -89,6 +91,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'service_urls': {'readonly': True},
         'auto_update': {'readonly': True},
         'version_status': {'readonly': True},
+        'pushed_version': {'readonly': True},
+        'latest_version': {'readonly': True},
     }
 
     _attribute_map = {
@@ -108,10 +112,11 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'service_urls': {'key': 'typeProperties.serviceUrls', 'type': '[str]'},
         'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
         'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
-        'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
+        'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
+        'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, nodes=None, links=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, nodes=None, **kwargs) -> None:
         super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
         self.create_time = None
         self.task_queue_id = None
@@ -125,5 +130,6 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.service_urls = None
         self.auto_update = None
         self.version_status = None
-        self.links = links
+        self.pushed_version = None
+        self.latest_version = None
         self.type = 'SelfHosted'

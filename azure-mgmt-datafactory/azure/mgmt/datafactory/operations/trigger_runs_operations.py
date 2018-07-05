@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ActivityRunsOperations(object):
-    """ActivityRunsOperations operations.
+class TriggerRunsOperations(object):
+    """TriggerRunsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,17 +37,15 @@ class ActivityRunsOperations(object):
 
         self.config = config
 
-    def query_by_pipeline_run(
-            self, resource_group_name, factory_name, run_id, filter_parameters, custom_headers=None, raw=False, **operation_config):
-        """Query activity runs based on input filter conditions.
+    def query_by_factory(
+            self, resource_group_name, factory_name, filter_parameters, custom_headers=None, raw=False, **operation_config):
+        """Query trigger runs.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param run_id: The pipeline run identifier.
-        :type run_id: str
-        :param filter_parameters: Parameters to filter the activity runs.
+        :param filter_parameters: Parameters to filter the pipeline run.
         :type filter_parameters:
          ~azure.mgmt.datafactory.models.RunFilterParameters
         :param dict custom_headers: headers that will be added to the request
@@ -55,18 +53,17 @@ class ActivityRunsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActivityRunsQueryResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse or
+        :return: TriggerRunsQueryResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.query_by_pipeline_run.metadata['url']
+        url = self.query_by_factory.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'runId': self._serialize.url("run_id", run_id, 'str')
+            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,11 +97,11 @@ class ActivityRunsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ActivityRunsQueryResponse', response)
+            deserialized = self._deserialize('TriggerRunsQueryResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    query_by_pipeline_run.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns'}
+    query_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns'}

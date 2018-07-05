@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class PipelineRunQueryResponse(Model):
-    """A list pipeline runs.
+class TriggerRunsQueryResponse(Model):
+    """A list of trigger runs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of pipeline runs.
-    :type value: list[~azure.mgmt.datafactory.models.PipelineRun]
+    :param value: Required. List of trigger runs.
+    :type value: list[~azure.mgmt.datafactory.models.TriggerRun]
     :param continuation_token: The continuation token for getting the next
      page of results, if any remaining results exist, null otherwise.
     :type continuation_token: str
@@ -29,11 +29,11 @@ class PipelineRunQueryResponse(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineRun]'},
+        'value': {'key': 'value', 'type': '[TriggerRun]'},
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
     }
 
     def __init__(self, *, value, continuation_token: str=None, **kwargs) -> None:
-        super(PipelineRunQueryResponse, self).__init__(**kwargs)
+        super(TriggerRunsQueryResponse, self).__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token

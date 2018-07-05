@@ -23,6 +23,7 @@ from .operations.pipelines_operations import PipelinesOperations
 from .operations.pipeline_runs_operations import PipelineRunsOperations
 from .operations.activity_runs_operations import ActivityRunsOperations
 from .operations.triggers_operations import TriggersOperations
+from .operations.trigger_runs_operations import TriggerRunsOperations
 from . import models
 
 
@@ -84,6 +85,8 @@ class DataFactoryManagementClient(SDKClient):
     :vartype activity_runs: azure.mgmt.datafactory.operations.ActivityRunsOperations
     :ivar triggers: Triggers operations
     :vartype triggers: azure.mgmt.datafactory.operations.TriggersOperations
+    :ivar trigger_runs: TriggerRuns operations
+    :vartype trigger_runs: azure.mgmt.datafactory.operations.TriggerRunsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -100,7 +103,7 @@ class DataFactoryManagementClient(SDKClient):
         super(DataFactoryManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-01-preview'
+        self.api_version = '2018-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -123,4 +126,6 @@ class DataFactoryManagementClient(SDKClient):
         self.activity_runs = ActivityRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.triggers = TriggersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.trigger_runs = TriggerRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)

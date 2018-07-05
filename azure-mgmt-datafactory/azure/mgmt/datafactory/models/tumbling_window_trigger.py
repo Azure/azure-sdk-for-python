@@ -63,9 +63,6 @@ class TumblingWindowTrigger(Trigger):
     :param retry_policy: Retry policy that will be applied for failed pipeline
      runs.
     :type retry_policy: ~azure.mgmt.datafactory.models.RetryPolicy
-    :param depends_on: Tumbling window triggers that this trigger depends on.
-     Only tumbling window triggers are supported.
-    :type depends_on: list[~azure.mgmt.datafactory.models.TriggerReference]
     """
 
     _validation = {
@@ -91,7 +88,6 @@ class TumblingWindowTrigger(Trigger):
         'delay': {'key': 'typeProperties.delay', 'type': 'object'},
         'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
         'retry_policy': {'key': 'typeProperties.retryPolicy', 'type': 'RetryPolicy'},
-        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[TriggerReference]'},
     }
 
     def __init__(self, **kwargs):
@@ -104,5 +100,4 @@ class TumblingWindowTrigger(Trigger):
         self.delay = kwargs.get('delay', None)
         self.max_concurrency = kwargs.get('max_concurrency', None)
         self.retry_policy = kwargs.get('retry_policy', None)
-        self.depends_on = kwargs.get('depends_on', None)
         self.type = 'TumblingWindowTrigger'

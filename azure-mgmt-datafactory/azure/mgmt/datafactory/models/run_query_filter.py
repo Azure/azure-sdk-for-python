@@ -12,19 +12,24 @@
 from msrest.serialization import Model
 
 
-class PipelineRunQueryFilter(Model):
-    """Query filter option for listing pipeline runs.
+class RunQueryFilter(Model):
+    """Query filter option for listing runs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param operand: Required. Parameter name to be used for filter. Possible
-     values include: 'PipelineName', 'Status', 'RunStart', 'RunEnd'
-    :type operand: str or
-     ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperand
+    :param operand: Required. Parameter name to be used for filter. The
+     allowed operands to query pipeline runs are PipelineName, RunStart, RunEnd
+     and Status; to query activity runs are ActivityName, ActivityRunStart,
+     ActivityRunEnd, ActivityType and Status, and to query trigger runs are
+     TriggerName, TriggerRunTimestamp and Status. Possible values include:
+     'PipelineName', 'Status', 'RunStart', 'RunEnd', 'ActivityName',
+     'ActivityRunStart', 'ActivityRunEnd', 'ActivityType', 'TriggerName',
+     'TriggerRunTimestamp'
+    :type operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
     :param operator: Required. Operator to be used for filter. Possible values
      include: 'Equals', 'NotEquals', 'In', 'NotIn'
     :type operator: str or
-     ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperator
+     ~azure.mgmt.datafactory.models.RunQueryFilterOperator
     :param values: Required. List of filter values.
     :type values: list[str]
     """
@@ -41,8 +46,8 @@ class PipelineRunQueryFilter(Model):
         'values': {'key': 'values', 'type': '[str]'},
     }
 
-    def __init__(self, *, operand, operator, values, **kwargs) -> None:
-        super(PipelineRunQueryFilter, self).__init__(**kwargs)
-        self.operand = operand
-        self.operator = operator
-        self.values = values
+    def __init__(self, **kwargs):
+        super(RunQueryFilter, self).__init__(**kwargs)
+        self.operand = kwargs.get('operand', None)
+        self.operator = kwargs.get('operator', None)
+        self.values = kwargs.get('values', None)

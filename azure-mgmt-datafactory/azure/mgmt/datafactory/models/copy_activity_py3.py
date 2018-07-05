@@ -26,6 +26,8 @@ class CopyActivity(ExecutionActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
@@ -51,10 +53,10 @@ class CopyActivity(ExecutionActivity):
      the source or sink to avoid overloading the data store. Type: integer (or
      Expression with resultType integer), minimum: 0.
     :type parallel_copies: object
-    :param cloud_data_movement_units: Maximum number of cloud data movement
-     units that can be used to perform this data movement. Type: integer (or
+    :param data_integration_units: Maximum number of data integration units
+     that can be used to perform this data movement. Type: integer (or
      Expression with resultType integer), minimum: 0.
-    :type cloud_data_movement_units: object
+    :type data_integration_units: object
     :param enable_skip_incompatible_row: Whether to skip incompatible row.
      Default value is false. Type: boolean (or Expression with resultType
      boolean).
@@ -81,6 +83,7 @@ class CopyActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -90,22 +93,22 @@ class CopyActivity(ExecutionActivity):
         'enable_staging': {'key': 'typeProperties.enableStaging', 'type': 'object'},
         'staging_settings': {'key': 'typeProperties.stagingSettings', 'type': 'StagingSettings'},
         'parallel_copies': {'key': 'typeProperties.parallelCopies', 'type': 'object'},
-        'cloud_data_movement_units': {'key': 'typeProperties.cloudDataMovementUnits', 'type': 'object'},
+        'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None, **kwargs) -> None:
-        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None, **kwargs) -> None:
+        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.source = source
         self.sink = sink
         self.translator = translator
         self.enable_staging = enable_staging
         self.staging_settings = staging_settings
         self.parallel_copies = parallel_copies
-        self.cloud_data_movement_units = cloud_data_movement_units
+        self.data_integration_units = data_integration_units
         self.enable_skip_incompatible_row = enable_skip_incompatible_row
         self.redirect_incompatible_row_settings = redirect_incompatible_row_settings
         self.inputs = inputs

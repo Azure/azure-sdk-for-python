@@ -26,6 +26,8 @@ class FilterActivity(ControlActivity):
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param items: Required. Input array on which filter should be applied.
@@ -46,13 +48,14 @@ class FilterActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'items': {'key': 'typeProperties.items', 'type': 'Expression'},
         'condition': {'key': 'typeProperties.condition', 'type': 'Expression'},
     }
 
-    def __init__(self, *, name: str, items, condition, additional_properties=None, description: str=None, depends_on=None, **kwargs) -> None:
-        super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, **kwargs)
+    def __init__(self, *, name: str, items, condition, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.items = items
         self.condition = condition
         self.type = 'Filter'
