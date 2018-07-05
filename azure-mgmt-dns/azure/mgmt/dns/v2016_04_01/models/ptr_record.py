@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0rc2"
+from msrest.serialization import Model
 
+
+class PtrRecord(Model):
+    """A PTR record.
+
+    :param ptrdname: The PTR target domain name for this PTR record.
+    :type ptrdname: str
+    """
+
+    _attribute_map = {
+        'ptrdname': {'key': 'ptrdname', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PtrRecord, self).__init__(**kwargs)
+        self.ptrdname = kwargs.get('ptrdname', None)

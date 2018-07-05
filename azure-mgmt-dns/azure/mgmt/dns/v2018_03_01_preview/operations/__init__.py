@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0rc2"
+from .record_sets_operations import RecordSetsOperations
+from .zones_operations import ZonesOperations
 
+__all__ = [
+    'RecordSetsOperations',
+    'ZonesOperations',
+]

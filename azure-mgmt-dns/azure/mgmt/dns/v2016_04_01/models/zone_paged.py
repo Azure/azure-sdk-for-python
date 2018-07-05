@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0rc2"
+from msrest.paging import Paged
 
+
+class ZonePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Zone <azure.mgmt.dns.v2016_04_01.models.Zone>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Zone]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ZonePaged, self).__init__(*args, **kwargs)
