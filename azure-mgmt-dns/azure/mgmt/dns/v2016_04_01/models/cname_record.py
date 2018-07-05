@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0rc2"
+from msrest.serialization import Model
 
+
+class CnameRecord(Model):
+    """A CNAME record.
+
+    :param cname: The canonical name for this CNAME record.
+    :type cname: str
+    """
+
+    _attribute_map = {
+        'cname': {'key': 'cname', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CnameRecord, self).__init__(**kwargs)
+        self.cname = kwargs.get('cname', None)

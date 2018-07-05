@@ -9,5 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0rc2"
+from enum import Enum
 
+
+class ZoneType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
+class RecordType(str, Enum):
+
+    a = "A"
+    aaaa = "AAAA"
+    caa = "CAA"
+    cname = "CNAME"
+    mx = "MX"
+    ns = "NS"
+    ptr = "PTR"
+    soa = "SOA"
+    srv = "SRV"
+    txt = "TXT"
