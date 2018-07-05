@@ -26,10 +26,12 @@ class Identity(Model):
      'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
      ~azure.mgmt.resource.resources.v2018_05_01.models.ResourceIdentityType
-    :param user_assigned_identities: The identities of the resource, should be
-     represented as an object where the property names are the resource id of
-     the identity and the value an empty JObject.
-    :type user_assigned_identities: object
+    :param user_assigned_identities: The list of user identities associated
+     with the resource. The user identity dictionary key references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.resource.resources.v2018_05_01.models.IdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -41,7 +43,7 @@ class Identity(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': 'object'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{IdentityUserAssignedIdentitiesValue}'},
     }
 
     def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
