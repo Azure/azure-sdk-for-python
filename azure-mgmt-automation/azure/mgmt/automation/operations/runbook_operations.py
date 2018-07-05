@@ -38,7 +38,7 @@ class RunbookOperations(object):
         self.config = config
 
     def get_content(
-            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, callback=None, **operation_config):
         """Retrieve the content of runbook identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -50,10 +50,15 @@ class RunbookOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -82,7 +87,7 @@ class RunbookOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -92,7 +97,7 @@ class RunbookOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -223,7 +228,7 @@ class RunbookOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 400]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
