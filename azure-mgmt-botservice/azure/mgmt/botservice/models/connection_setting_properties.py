@@ -15,8 +15,14 @@ from msrest.serialization import Model
 class ConnectionSettingProperties(Model):
     """Properties for a Connection Setting Item.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param client_id: Client Id associated with the Connection Setting.
     :type client_id: str
+    :ivar setting_id: Setting Id set by the service for the Connection
+     Setting.
+    :vartype setting_id: str
     :param client_secret: Client Secret associated with the Connection Setting
     :type client_secret: str
     :param scopes: Scopes associated with the Connection Setting
@@ -33,8 +39,13 @@ class ConnectionSettingProperties(Model):
      list[~azure.mgmt.botservice.models.ConnectionSettingParameter]
     """
 
+    _validation = {
+        'setting_id': {'readonly': True},
+    }
+
     _attribute_map = {
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'setting_id': {'key': 'settingId', 'type': 'str'},
         'client_secret': {'key': 'clientSecret', 'type': 'str'},
         'scopes': {'key': 'scopes', 'type': 'str'},
         'service_provider_id': {'key': 'serviceProviderId', 'type': 'str'},
@@ -45,6 +56,7 @@ class ConnectionSettingProperties(Model):
     def __init__(self, **kwargs):
         super(ConnectionSettingProperties, self).__init__(**kwargs)
         self.client_id = kwargs.get('client_id', None)
+        self.setting_id = None
         self.client_secret = kwargs.get('client_secret', None)
         self.scopes = kwargs.get('scopes', None)
         self.service_provider_id = kwargs.get('service_provider_id', None)
