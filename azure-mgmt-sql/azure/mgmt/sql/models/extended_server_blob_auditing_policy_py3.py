@@ -12,8 +12,8 @@
 from .proxy_resource_py3 import ProxyResource
 
 
-class DatabaseBlobAuditingPolicy(ProxyResource):
-    """A database blob auditing policy.
+class ExtendedServerBlobAuditingPolicy(ProxyResource):
+    """An extended server blob auditing policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,8 +26,9 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar kind: Resource kind.
-    :vartype kind: str
+    :param predicate_expression: Specifies condition of where clause when
+     creating an audit.
+    :type predicate_expression: str
     :param state: Required. Specifies the state of the policy. If state is
      Enabled, storageEndpoint and storageAccountAccessKey are required.
      Possible values include: 'Enabled', 'Disabled'
@@ -116,7 +117,6 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
         'state': {'required': True},
     }
 
@@ -124,7 +124,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        'predicate_expression': {'key': 'properties.predicateExpression', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -134,9 +134,9 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, **kwargs) -> None:
-        super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
-        self.kind = None
+    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, **kwargs) -> None:
+        super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
+        self.predicate_expression = predicate_expression
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
