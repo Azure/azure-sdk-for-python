@@ -23,6 +23,6 @@ class AaaaRecord(Model):
         'ipv6_address': {'key': 'ipv6Address', 'type': 'str'},
     }
 
-    def __init__(self, ipv6_address=None):
-        super(AaaaRecord, self).__init__()
-        self.ipv6_address = ipv6_address
+    def __init__(self, **kwargs):
+        super(AaaaRecord, self).__init__(**kwargs)
+        self.ipv6_address = kwargs.get('ipv6_address', None)

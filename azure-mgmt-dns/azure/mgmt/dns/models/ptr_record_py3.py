@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class PtrRecord(Model):
+    """A PTR record.
 
-    public = "Public"
-    private = "Private"
+    :param ptrdname: The PTR target domain name for this PTR record.
+    :type ptrdname: str
+    """
 
+    _attribute_map = {
+        'ptrdname': {'key': 'ptrdname', 'type': 'str'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, ptrdname: str=None, **kwargs) -> None:
+        super(PtrRecord, self).__init__(**kwargs)
+        self.ptrdname = ptrdname

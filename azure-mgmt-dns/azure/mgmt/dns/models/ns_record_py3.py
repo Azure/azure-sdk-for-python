@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class NsRecord(Model):
+    """An NS record.
 
-    public = "Public"
-    private = "Private"
+    :param nsdname: The name server name for this NS record.
+    :type nsdname: str
+    """
 
+    _attribute_map = {
+        'nsdname': {'key': 'nsdname', 'type': 'str'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, nsdname: str=None, **kwargs) -> None:
+        super(NsRecord, self).__init__(**kwargs)
+        self.nsdname = nsdname

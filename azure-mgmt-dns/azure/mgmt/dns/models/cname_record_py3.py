@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class CnameRecord(Model):
+    """A CNAME record.
 
-    public = "Public"
-    private = "Private"
+    :param cname: The canonical name for this CNAME record.
+    :type cname: str
+    """
 
+    _attribute_map = {
+        'cname': {'key': 'cname', 'type': 'str'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, cname: str=None, **kwargs) -> None:
+        super(CnameRecord, self).__init__(**kwargs)
+        self.cname = cname

@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class TxtRecord(Model):
+    """A TXT record.
 
-    public = "Public"
-    private = "Private"
+    :param value: The text value of this TXT record.
+    :type value: list[str]
+    """
 
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[str]'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(TxtRecord, self).__init__(**kwargs)
+        self.value = value
