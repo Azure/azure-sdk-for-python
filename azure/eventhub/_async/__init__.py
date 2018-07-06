@@ -117,8 +117,8 @@ class EventHubClientAsync(EventHubClient):
         Run the EventHubClient asynchronously.
         Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
         Returns a list of the start up results. For a succcesful client start the
-        result will be `None`, otherwise the exception raise.
-        If all clients failed to start, the run will fail, shut down the connection
+        result will be `None`, otherwise the exception raised.
+        If all clients failed to start, then run will fail, shut down the connection
         and raise an exception.
         If at least one client starts up successfully the run command will succeed.
 
@@ -193,6 +193,9 @@ class EventHubClientAsync(EventHubClient):
         :type offset: ~azure.eventhub.common.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :operation: An optional operation to be appended to the hostname in the source URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
@@ -220,6 +223,9 @@ class EventHubClientAsync(EventHubClient):
         :type epoch: int
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :operation: An optional operation to be appended to the hostname in the source URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
@@ -238,6 +244,9 @@ class EventHubClientAsync(EventHubClient):
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type partition: str
+        :operation: An optional operation to be appended to the hostname in the target URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub._async.sender_async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)

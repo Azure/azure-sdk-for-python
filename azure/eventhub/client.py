@@ -232,8 +232,13 @@ class EventHubClient(object):
         """
         Run the EventHubClient in blocking mode.
         Opens the connection and starts running all Sender/Receiver clients.
+        Returns a list of the start up results. For a succcesful client start the
+        result will be `None`, otherwise the exception raised.
+        If all clients failed to start, then run will fail, shut down the connection
+        and raise an exception.
+        If at least one client starts up successfully the run command will succeed.
 
-        :rtype: ~azure.eventhub.client.EventHubClient
+        :rtype: list[~azure.eventhub.common.EventHubError]
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection()
@@ -316,6 +321,9 @@ class EventHubClient(object):
         :type offset: ~azure.eventhub.common.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :operation: An optional operation to be appended to the hostname in the source URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub.receiver.Receiver
         """
         path = self.address.path + operation if operation else self.address.path
@@ -343,6 +351,9 @@ class EventHubClient(object):
         :type epoch: int
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :operation: An optional operation to be appended to the hostname in the source URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub.receiver.Receiver
         """
         path = self.address.path + operation if operation else self.address.path
@@ -361,6 +372,9 @@ class EventHubClient(object):
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type parition: str
+        :operation: An optional operation to be appended to the hostname in the target URL.
+         The value must start with `/` character.
+        :type operation: str
         :rtype: ~azure.eventhub.sender.Sender
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)

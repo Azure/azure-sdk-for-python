@@ -18,7 +18,7 @@ class AsyncSender(Sender):
 
     def __init__(self, client, target, partition=None, loop=None):  # pylint: disable=super-init-not-called
         """
-        Instantiate an EventHub event SenderAsync client.
+        Instantiate an EventHub event SenderAsync handler.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub._async.EventHubClientAsync
@@ -43,6 +43,14 @@ class AsyncSender(Sender):
         self._condition = None
 
     async def open_async(self, connection):
+        """
+        Open the Sender using the supplied conneciton.
+        If the handler has previously been redirected, the redirect
+        context will be used to create a new handler before opening it.
+
+        :param connection: The underlying client shared connection.
+        :type: connection:~uamqp._async.connection_async.ConnectionAsync
+        """
         if self.redirected:
             self._handler = SendClientAsync(
                 self.redirected.address,
@@ -52,6 +60,13 @@ class AsyncSender(Sender):
         await self._handler.open_async(connection=connection)
 
     async def has_started(self):
+        """
+        Whether the handler has completed all start up processes such as
+        establishing the connection, session, link and authentication, and
+        is not ready to process messages.
+
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         timeout = False
         auth_in_progress = False
@@ -67,6 +82,15 @@ class AsyncSender(Sender):
             return True
 
     async def close_async(self, exception=None):
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+        """
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):
@@ -76,7 +100,7 @@ class AsyncSender(Sender):
         elif exception:
             self.error = EventHubError(str(exception))
         else:
-            self.error = EventHubError("This send client is now closed.")
+            self.error = EventHubError("This send handler is now closed.")
         await self._handler.close_async()
 
     async def send(self, event_data):
@@ -108,3 +132,14 @@ class AsyncSender(Sender):
             raise error
         else:
             return self._outcome
+
+    async def wait_async(self):
+        """
+        Wait until all transferred events have been sent.
+        """
+        if self.error:
+            raise self.error
+        try:
+            await self._handler.wait_async()
+        except Exception as e:
+            raise EventHubError("Send failed: {}".format(e))

@@ -48,6 +48,14 @@ class Receiver:
             timeout=self.timeout)
 
     def open(self, connection):
+        """
+        Open the Receiver using the supplied conneciton.
+        If the handler has previously been redirected, the redirect
+        context will be used to create a new handler before opening it.
+
+        :param connection: The underlying client shared connection.
+        :type: connection: ~uamqp.connection.Connection
+        """
         if self.redirected:
             self._handler = ReceiveClient(
                 self.redirected.address,
@@ -59,10 +67,23 @@ class Receiver:
         self._handler.open(connection)
 
     def get_handler_state(self):
+        """
+        Get the state of the underlying handler with regards to start
+        up processes.
+
+        :rtype: ~uamqp.constants.MessageReceiverState
+        """
         # pylint: disable=protected-access
         return self._handler._message_receiver.get_state()
 
     def has_started(self):
+        """
+        Whether the handler has completed all start up processes such as
+        establishing the connection, session, link and authentication, and
+        is not ready to process messages.
+
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         timeout = False
         auth_in_progress = False
@@ -78,6 +99,15 @@ class Receiver:
             return True
 
     def close(self, exception=None):
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+        """
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):
@@ -87,13 +117,13 @@ class Receiver:
         elif exception:
             self.error = EventHubError(str(exception))
         else:
-            self.error = EventHubError("This receive client is now closed.")
+            self.error = EventHubError("This receive handler is now closed.")
         self._handler.close()
 
     @property
     def queue_size(self):
         """
-        The current size of the unprocessed message queue.
+        The current size of the unprocessed Event queue.
 
         :rtype: int
         """

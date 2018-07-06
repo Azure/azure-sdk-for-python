@@ -36,25 +36,26 @@ class EventData(object):
         """
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
-        self._properties = {}
-        self._msg_properties = MessageProperties()
+        self._app_properties = {}
+        self.msg_properties = MessageProperties()
         if to_device:
-            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
+            self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True, properties=self._msg_properties)
+            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties)
         elif message:
             self.message = message
+            self.msg_properties = message.properties
             self._annotations = message.annotations
-            self._properties = message.application_properties
+            self._app_properties = message.application_properties
         else:
             if isinstance(body, list) and body:
-                self.message = Message(body[0], properties=self._msg_properties)
+                self.message = Message(body[0], properties=self.msg_properties)
                 for more in body[1:]:
                     self.message._body.append(more)  # pylint: disable=protected-access
             elif body is None:
                 raise ValueError("EventData cannot be None.")
             else:
-                self.message = Message(body, properties=self._msg_properties)
+                self.message = Message(body, properties=self.msg_properties)
 
 
     @property
@@ -129,24 +130,24 @@ class EventData(object):
         self._annotations = annotations
 
     @property
-    def properties(self):
+    def application_properties(self):
         """
         Application defined properties on the message.
 
         :rtype: dict
         """
-        return self._properties
+        return self._app_properties
 
-    @properties.setter
-    def properties(self, value):
+    @application_properties.setter
+    def application_properties(self, value):
         """
         Application defined properties on the message.
 
         :param value: The application properties for the EventData.
         :type value: dict
         """
-        self._properties = value
-        properties = dict(self._properties)
+        self._app_properties = value
+        properties = dict(self._app_properties)
         self.message.application_properties = properties
 
     @property

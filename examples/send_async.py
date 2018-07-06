@@ -35,9 +35,10 @@ async def run(client):
 
 async def send(snd, count):
     for i in range(count):
-        data = EventData(str(i)
+        logger.info("Sending message: {}".format(i))
+        data = EventData(str(i))
         data.partition_key = b'SamplePartitionKey'
-        await snd.send(data))
+        await snd.send(data)
 
 try:
     if not ADDRESS:

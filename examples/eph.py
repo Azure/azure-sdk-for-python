@@ -79,7 +79,7 @@ async def wait_and_close(host):
     """
     Run EventProcessorHost for 2 minutes then shutdown.
     """
-    await asyncio.sleep(120)
+    await asyncio.sleep(60)
     await host.close_async()
 
 

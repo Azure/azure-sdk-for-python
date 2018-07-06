@@ -52,6 +52,14 @@ class AsyncReceiver(Receiver):
             loop=self.loop)
 
     async def open_async(self, connection):
+        """
+        Open the Receiver using the supplied conneciton.
+        If the handler has previously been redirected, the redirect
+        context will be used to create a new handler before opening it.
+
+        :param connection: The underlying client shared connection.
+        :type: connection: ~uamqp._async.connection_async.ConnectionAsync
+        """
         if self.redirected:
             self._handler = ReceiveClientAsync(
                 self.redirected.address,
@@ -64,6 +72,13 @@ class AsyncReceiver(Receiver):
         await self._handler.open_async(connection=connection)
 
     async def has_started(self):
+        """
+        Whether the handler has completed all start up processes such as
+        establishing the connection, session, link and authentication, and
+        is not ready to process messages.
+
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         timeout = False
         auth_in_progress = False
@@ -79,6 +94,15 @@ class AsyncReceiver(Receiver):
             return True
 
     async def close_async(self, exception=None):
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+        """
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):
@@ -88,7 +112,7 @@ class AsyncReceiver(Receiver):
         elif exception:
             self.error = EventHubError(str(exception))
         else:
-            self.error = EventHubError("This receive client is now closed.")
+            self.error = EventHubError("This receive handler is now closed.")
         await self._handler.close_async()
 
     async def receive(self, max_batch_size=None, timeout=None):
