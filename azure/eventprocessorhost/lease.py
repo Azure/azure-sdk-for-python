@@ -18,7 +18,8 @@ class Lease:
 
     def with_partition_id(self, partition_id):
         """
-        Init with partition Id
+        Init with partition Id.
+
         :param partition_id: ID of a given partition.
         :type partition_id: str
         """
@@ -30,8 +31,9 @@ class Lease:
     def with_source(self, lease):
         """
         Init with existing lease.
+
         :param lease: An existing Lease.
-        :type lease: ~azure.eventprocessorhost.Lease
+        :type lease: ~azure.eventprocessorhost.lease.Lease
         """
         self.partition_id = lease.partition_id
         self.epoch = lease.epoch
@@ -42,13 +44,14 @@ class Lease:
         """
         Determines whether the lease is expired. By default lease never expires.
         Deriving class implements the lease expiry logic.
-        :returns: bool
+
+        :rtype: bool
         """
         return False
 
     def increment_epoch(self):
         """
-        Increment lease epoch
+        Increment lease epoch.
         """
         self.epoch += 1
         return self.epoch

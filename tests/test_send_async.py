@@ -9,9 +9,7 @@ import asyncio
 import pytest
 import time
 
-from azure import eventhub
-from azure.eventhub import EventData
-from azure.eventhub.async import EventHubClientAsync
+from azure.eventhub import EventData, EventHubClientAsync
 
 
 @pytest.mark.asyncio

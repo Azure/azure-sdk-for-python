@@ -8,7 +8,7 @@ import asyncio
 from queue import Queue
 from collections import Counter
 
-from azure.eventhub.async import EventHubClientAsync
+from azure.eventhub import EventHubClientAsync
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from azure.eventprocessorhost.cancellation_token import CancellationToken
 
@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 
 class PartitionManager:
     """
-    Manages the partition event pump execution
+    Manages the partition event pump execution.
     """
 
     def __init__(self, host):
@@ -30,7 +30,9 @@ class PartitionManager:
 
     async def get_partition_ids_async(self):
         """
-        Returns a list of all the event hub partition ids
+        Returns a list of all the event hub partition IDs.
+
+        :rtype: list[str]
         """
         if not self.partition_ids:
             eh_client = EventHubClientAsync(
@@ -65,7 +67,7 @@ class PartitionManager:
 
     async def run_async(self):
         """
-        Starts the run loop and manages exceptions and cleanup
+        Starts the run loop and manages exceptions and cleanup.
         """
         try:
             await self.run_loop_async()
@@ -82,7 +84,10 @@ class PartitionManager:
         """
         Intializes the partition checkpoint and lease store ensures that a checkpoint
         exists for all partitions. Note in this case checkpoint and lease stores are
-        the same storage manager construct. Returns the number of partitions
+        the same storage manager construct.
+
+        :return: Returns the number of partitions.
+        :rtype: int
         """
         await self.host.storage_manager.create_checkpoint_store_if_not_exists_async()
         partition_ids = await self.get_partition_ids_async()
@@ -102,7 +107,7 @@ class PartitionManager:
 
     def retry(self, func, partition_id, retry_message, final_failure_message, max_retries, host_id):
         """
-        Make attempt_renew_lease async call sync
+        Make attempt_renew_lease async call sync.
         """
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.retry_async(func, partition_id, retry_message,
@@ -111,7 +116,7 @@ class PartitionManager:
     async def retry_async(self, func, partition_id, retry_message,
                           final_failure_message, max_retries, host_id):
         """
-        Throws if it runs out of retries. If it returns, action succeeded
+        Throws if it runs out of retries. If it returns, action succeeded.
         """
         created_okay = False
         retry_count = 0
@@ -127,7 +132,7 @@ class PartitionManager:
 
     async def run_loop_async(self):
         """
-        This is the main execution loop for allocating and manging pumps
+        This is the main execution loop for allocating and manging pumps.
         """
         while not self.cancellation_token.is_cancelled:
             lease_manager = self.host.storage_manager
@@ -189,7 +194,12 @@ class PartitionManager:
 
     async def check_and_add_pump_async(self, partition_id, lease):
         """
-        Updates the lease on an exisiting pump
+        Updates the lease on an exisiting pump.
+
+        :param partition_id: The partition ID.
+        :type partition_id: str
+        :param lease: The lease to be used.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
         """
         if partition_id in self.partition_pumps:
             # There already is a pump. Make sure the pump is working and replace the lease.
@@ -208,7 +218,12 @@ class PartitionManager:
 
     async def create_new_pump_async(self, partition_id, lease):
         """
-        Create a new pump thread with a given lease
+        Create a new pump thread with a given lease.
+
+        :param partition_id: The partition ID.
+        :type partition_id: str
+        :param lease: The lease to be used.
+        :type lease: ~azure.eventprocessorhost.lease.Lease
         """
         loop = asyncio.get_event_loop()
         partition_pump = EventHubPartitionPump(self.host, lease)
@@ -219,7 +234,12 @@ class PartitionManager:
 
     async def remove_pump_async(self, partition_id, reason):
         """
-        Stops a single partiton pump
+        Stops a single partiton pump.
+
+        :param partition_id: The partition ID.
+        :type partition_id: str
+        :param reason: A reason for closing.
+        :type reason: str
         """
         if partition_id in self.partition_pumps:
             captured_pump = self.partition_pumps[partition_id]
@@ -239,7 +259,11 @@ class PartitionManager:
     async def remove_all_pumps_async(self, reason):
         """
         Stops all partition pumps
-        (Note this might be wrong and need to await all tasks before returning done)
+        (Note this might be wrong and need to await all tasks before returning done).
+
+        :param reason: A reason for closing.
+        :type reason: str
+        :rtype: bool
         """
         pump_tasks = [self.remove_pump_async(p_id, reason) for p_id in self.partition_pumps]
         await asyncio.gather(*pump_tasks)
@@ -267,6 +291,12 @@ class PartitionManager:
         biggest and this host by two at a time. If the starting difference is two or greater,
         then the difference cannot end up below 0. This host may become tied for biggest, but it
         cannot become larger than the host that it is stealing from.
+
+        :param stealable_leases: List of leases to determine which can be stolen.
+        :type stealable_leases: list[~azure.eventprocessorhost.lease.Lease]
+        :param have_lease_count: Lease count.
+        :type have_lease_count: int
+        :rtype: ~azure.eventprocessorhost.lease.Lease
         """
         counts_by_owner = self.count_leases_by_owner(stealable_leases)
         biggest_owner = (sorted(counts_by_owner.items(), key=lambda kv: kv[1])).pop()
@@ -278,14 +308,14 @@ class PartitionManager:
 
     def count_leases_by_owner(self, leases):  # pylint: disable=no-self-use
         """
-        Returns a dictionary of leases by current owner
+        Returns a dictionary of leases by current owner.
         """
         owners = [l.owner for l in leases]
         return dict(Counter(owners))
 
     def attempt_renew_lease(self, lease_task, owned_by_others_q, lease_manager):
         """
-        Make attempt_renew_lease async call sync
+        Make attempt_renew_lease async call sync.
         """
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.attempt_renew_lease_async(lease_task, owned_by_others_q, lease_manager))
@@ -293,7 +323,7 @@ class PartitionManager:
     async def attempt_renew_lease_async(self, lease_task, owned_by_others_q, lease_manager):
         """
         Attempts to renew a potential lease if possible and
-        marks in the queue as none adds to adds to the queue
+        marks in the queue as none adds to adds to the queue.
         """
         try:
             possible_lease = await lease_task

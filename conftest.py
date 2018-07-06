@@ -23,7 +23,7 @@ from azure.eventprocessorhost.partition_manager import PartitionManager
 from azure.eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 
 
-log = get_logger(None, logging.INFO)
+log = get_logger(None, logging.DEBUG)
 
 @pytest.fixture()
 def live_eventhub_config():
@@ -47,6 +47,49 @@ def connection_str():
         return os.environ['EVENT_HUB_CONNECTION_STR']
     except KeyError:
         pytest.skip("No EventHub connection string found.")
+
+
+@pytest.fixture()
+def invalid_hostname():
+    try:
+        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
+        return conn_str.replace("Endpoint=sb://", "Endpoint=sb://invalid.")
+    except KeyError:
+        pytest.skip("No EventHub connection string found.")
+
+
+@pytest.fixture()
+def invalid_key():
+    try:
+        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
+        return conn_str.replace("SharedAccessKey=", "SharedAccessKey=invalid")
+    except KeyError:
+        pytest.skip("No EventHub connection string found.")
+
+
+@pytest.fixture()
+def invalid_policy():
+    try:
+        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
+        return conn_str.replace("SharedAccessKeyName=", "SharedAccessKeyName=invalid")
+    except KeyError:
+        pytest.skip("No EventHub connection string found.")
+
+
+@pytest.fixture()
+def iot_connection_str():
+    try:
+        return os.environ['IOT_HUB_CONNECTION_STR']
+    except KeyError:
+        pytest.skip("No IotHub connection string found.")
+
+
+@pytest.fixture()
+def device_id():
+    try:
+        return os.environ['IOTHUB_DEVICE']
+    except KeyError:
+        pytest.skip("No Iothub device ID found.")
 
 
 @pytest.fixture()

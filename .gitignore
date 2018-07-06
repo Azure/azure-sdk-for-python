@@ -105,3 +105,9 @@ ENV/
 .mypy_cache/
 .pytest_cache/v/cache/lastfailed
 .pytest_cache/v/cache/nodeids
+
+# EventHub
+azure/mgmt/
+azure/common/
+azure/profiles/
+features/steps/mgmt_settings_real.py

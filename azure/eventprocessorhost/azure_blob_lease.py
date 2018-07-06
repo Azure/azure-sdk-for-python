@@ -16,7 +16,7 @@ class AzureBlobLease(Lease):
 
     def __init__(self):
         """
-        Init Azure Blob Lease
+        Init Azure Blob Lease.
         """
         super()
         Lease.__init__(self)
@@ -25,7 +25,7 @@ class AzureBlobLease(Lease):
 
     def serializable(self):
         """
-        Returns Serialiazble instance of __dict__
+        Returns Serialiazble instance of `__dict__`.
         """
         serial = self.__dict__.copy()
         del serial['state']
@@ -33,13 +33,13 @@ class AzureBlobLease(Lease):
 
     def with_lease(self, lease):
         """
-        Init with exisiting lease
+        Init with exisiting lease.
         """
         super().with_source(lease)
 
     def with_blob(self, blob):
         """
-        Init Azure Blob Lease with existing blob
+        Init Azure Blob Lease with existing blob.
         """
         content = json.loads(blob.content)
         self.partition_id = content["partition_id"]
@@ -51,7 +51,7 @@ class AzureBlobLease(Lease):
 
     def with_source(self, lease):
         """
-        Init Azure Blob Lease from existing
+        Init Azure Blob Lease from existing.
         """
         super().with_source(lease)
         self.offset = lease.offset
@@ -59,7 +59,7 @@ class AzureBlobLease(Lease):
 
     async def is_expired(self):
         """
-        Check and return azure blob lease state using storage api
+        Check and return Azure Blob Lease state using Storage API.
         """
         if asyncio.iscoroutinefunction(self.state):
             current_state = await self.state()

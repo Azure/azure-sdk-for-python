@@ -58,7 +58,7 @@ class EventProcessor(AbstractEventProcessor):
         :param context: Information about the partition
         :type context: ~azure.eventprocessorhost.PartitionContext
         :param messages: The events to be processed.
-        :type messages: list[~azure.eventhub.EventData]
+        :type messages: list[~azure.eventhub.common.EventData]
         """
         logger.info("Events processed {}".format(context.sequence_number))
         await context.checkpoint_async()
@@ -79,7 +79,7 @@ async def wait_and_close(host):
     """
     Run EventProcessorHost for 2 minutes then shutdown.
     """
-    await asyncio.sleep(120)
+    await asyncio.sleep(60)
     await host.close_async()
 
 

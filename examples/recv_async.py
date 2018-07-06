@@ -14,8 +14,7 @@ import sys
 import time
 import logging
 import asyncio
-from azure.eventhub import Offset
-from azure.eventhub.async import EventHubClientAsync, AsyncReceiver
+from azure.eventhub import Offset, EventHubClientAsync, AsyncReceiver
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -30,17 +29,17 @@ USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 CONSUMER_GROUP = "$default"
 OFFSET = Offset("-1")
-PARTITION = "0"
 
 
-async def pump(client):
-    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, OFFSET, prefetch=5)
+async def pump(client, partition):
+    receiver = client.add_async_receiver(CONSUMER_GROUP, partition, OFFSET, prefetch=5)
     await client.run_async()
     total = 0
     start_time = time.time()
     for event_data in await receiver.receive(timeout=10):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
+        print("Received: {}, {}".format(last_offset, last_sn))
         total += 1
     end_time = time.time()
     run_time = end_time - start_time
@@ -53,8 +52,8 @@ try:
     loop = asyncio.get_event_loop()
     client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
     tasks = [
-        asyncio.ensure_future(pump(client)),
-        asyncio.ensure_future(pump(client))]
+        asyncio.ensure_future(pump(client, "0")),
+        asyncio.ensure_future(pump(client, "1"))]
     loop.run_until_complete(asyncio.wait(tasks))
     loop.run_until_complete(client.stop_async())
     loop.close()

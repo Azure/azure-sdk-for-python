@@ -28,7 +28,8 @@ KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
 def data_generator():
-    for i in range(15000):
+    for i in range(1500):
+        logger.info("Yielding message {}".format(i))
         yield b"Hello world"
 
 

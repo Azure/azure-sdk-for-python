@@ -17,7 +17,7 @@ import os
 from urllib.parse import quote_plus
 
 from azure.eventhub import Offset
-from azure.eventhub.async import EventHubClientAsync
+from azure.eventhub import EventHubClientAsync
 
 try:
     import tests
@@ -41,7 +41,7 @@ async def pump(_pid, receiver, _args, _dl):
                 print("{}: No events received, queue size {}, delivered {}".format(
                     _pid,
                     receiver.queue_size,
-                    receiver.delivered))
+                    total))
             elif iteration >= 80:
                 iteration = 0
                 print("{}: total received {}, last sn={}, last offset={}".format(
@@ -54,6 +54,7 @@ async def pump(_pid, receiver, _args, _dl):
             total))
     except Exception as e:
         print("Partition {} receiver failed: {}".format(_pid, e))
+        raise
 
 
 def test_long_running_receive():
@@ -73,7 +74,7 @@ def test_long_running_receive():
     if args.conn_str:
         client = EventHubClientAsync.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub)
+            eventhub=args.eventhub, debug=False)
     elif args.address:
         client = EventHubClientAsync(
             args.address,
@@ -97,8 +98,6 @@ def test_long_running_receive():
             pumps.append(pump(pid, receiver, args, args.duration))
         loop.run_until_complete(client.run_async())
         loop.run_until_complete(asyncio.gather(*pumps))
-    except:
-        raise
     finally:
         loop.run_until_complete(client.stop_async())
 

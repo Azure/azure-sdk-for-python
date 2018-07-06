@@ -27,18 +27,26 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
+
+def callback(outcome, condition):
+    logger.info("Message sent. Outcome: {}, Condition: {}".format(
+        outcome, condition))
+
+
 try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-    sender = client.add_sender()
+    sender = client.add_sender(partition="1")
     client.run()
     try:
         start_time = time.time()
-        for i in range(1000):
-            sender.transfer(EventData(str(i)))
+        for i in range(100):
+            sender.transfer(EventData(str(i)), callback=callback)
+        logger.info("Queued 100 messages.")
         sender.wait()
+        logger.info("Finished processing queue.")
     except:
         raise
     finally:
