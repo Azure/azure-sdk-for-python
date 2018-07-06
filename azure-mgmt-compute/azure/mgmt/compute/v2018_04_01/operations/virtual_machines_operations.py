@@ -1434,7 +1434,7 @@ class VirtualMachinesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[InstanceViewStatus]', response)
+            deserialized = self._deserialize('RunCommandResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1458,12 +1458,12 @@ class VirtualMachinesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns list or
-         ClientRawResponse<list> if raw==True
+        :return: An instance of LROPoller that returns RunCommandResult or
+         ClientRawResponse<RunCommandResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.compute.v2018_04_01.models.InstanceViewStatus]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_04_01.models.RunCommandResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.compute.v2018_04_01.models.InstanceViewStatus]]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_04_01.models.RunCommandResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._run_command_initial(
@@ -1476,7 +1476,7 @@ class VirtualMachinesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('[InstanceViewStatus]', response)
+            deserialized = self._deserialize('RunCommandResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
