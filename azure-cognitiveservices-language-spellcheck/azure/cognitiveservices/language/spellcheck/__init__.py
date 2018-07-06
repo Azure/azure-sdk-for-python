@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .spell_check_api import SpellCheckAPI
+from .spell_check_client import SpellCheckClient
 from .version import VERSION
 
-__all__ = ['SpellCheckAPI']
+__all__ = ['SpellCheckClient']
 
 __version__ = VERSION
 
