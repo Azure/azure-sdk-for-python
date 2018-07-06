@@ -11,6 +11,7 @@ import traceback
 from urllib.parse import urlsplit, urlunsplit
 
 from github import Github, GithubException
+from git import Repo
 
 from .git_tools import (
     clone_to_path as _git_clone_to_path,
@@ -166,10 +167,11 @@ def get_or_create_pull(github_repo, title, body, head, base, *, none_if_no_commi
 def clone_to_path(gh_token, folder, sdk_git_id, branch_or_commit=None, *, pr_number=None):
     """Clone the given repo_id to the folder.
 
-    If branch is specified, checkout this branch or commit.
-    If PR number is specified, don't checkout "branch", but instead the magic branches
+    If PR number is specified fetch the magic branches
     pull/<id>/head or pull/<id>/merge from Github. "merge" is tried first, and fallback to "head".
     Beware that pr_number implies detached head, and then no push is possible.
+
+    If branch is specified, checkout this branch or commit finally.
 
     :param str branch_or_commit: If specified, switch to this branch/commit.
     :param int pr_number: PR number.
@@ -194,17 +196,20 @@ def clone_to_path(gh_token, folder, sdk_git_id, branch_or_commit=None, *, pr_num
         credentials=credentials_part,
         sdk_git_id=sdk_git_id
     )
-    if not pr_number:
-        _git_clone_to_path(https_authenticated_url, folder, branch_or_commit)
-    else:
-        _git_clone_to_path(https_authenticated_url, folder)
+    # Clone the repo
+    _git_clone_to_path(https_authenticated_url, folder)
+    # If this is a PR, do some fetch to improve the number of SHA1 available
+    if pr_number:
         try:
             checkout_with_fetch(folder, "pull/{}/merge".format(pr_number))
             return
         except Exception:  # pylint: disable=broad-except
             pass  # Assume "merge" doesn't exist anymore, fetch "head"
         checkout_with_fetch(folder, "pull/{}/head".format(pr_number))
-
+    # If there is SHA1, checkout it. If PR number was given, SHA1 could be inside that PR.
+    if branch_or_commit:
+        repo = Repo(str(folder))
+        repo.git.checkout(branch_or_commit)
 
 def do_pr(gh_token, sdk_git_id, sdk_pr_target_repo_id, branch_name, base_branch, pr_body=""):  # pylint: disable=too-many-arguments
     "Do the PR"

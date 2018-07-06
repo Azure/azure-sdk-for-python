@@ -258,6 +258,20 @@ class GithubTools(Framework.TestCase):
                 raise
 
         finished = False # Authorize PermissionError on cleanup
+        # PR 2 must be opened, or the test means nothing
+        repo = self.g.get_repo("lmazuel/TestingRepo")
+        pr = repo.get_pull(2)
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", branch_or_commit=pr.merge_commit_sha, pr_number=2)
+                assert (Path(temp_dir) / Path("README.md")).stat().st_size >= 107 # File in the PR
+
+                finished = True
+        except (PermissionError, FileNotFoundError):
+            if not finished:
+                raise
+
+        finished = False # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 with pytest.raises(GitCommandError):
