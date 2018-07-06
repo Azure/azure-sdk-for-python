@@ -323,9 +323,9 @@ try:
     from .managed_integration_runtime_error_py3 import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node_py3 import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status_py3 import ManagedIntegrationRuntimeStatus
-    from .linked_integration_runtime_rbac_py3 import LinkedIntegrationRuntimeRbac
-    from .linked_integration_runtime_key_py3 import LinkedIntegrationRuntimeKey
-    from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
+    from .linked_integration_runtime_rbac_authorization_py3 import LinkedIntegrationRuntimeRbacAuthorization
+    from .linked_integration_runtime_key_authorization_py3 import LinkedIntegrationRuntimeKeyAuthorization
+    from .linked_integration_runtime_type_py3 import LinkedIntegrationRuntimeType
     from .self_hosted_integration_runtime_py3 import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info_py3 import IntegrationRuntimeSsisCatalogInfo
@@ -653,9 +653,9 @@ except (SyntaxError, ImportError):
     from .managed_integration_runtime_error import ManagedIntegrationRuntimeError
     from .managed_integration_runtime_node import ManagedIntegrationRuntimeNode
     from .managed_integration_runtime_status import ManagedIntegrationRuntimeStatus
-    from .linked_integration_runtime_rbac import LinkedIntegrationRuntimeRbac
-    from .linked_integration_runtime_key import LinkedIntegrationRuntimeKey
-    from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
+    from .linked_integration_runtime_rbac_authorization import LinkedIntegrationRuntimeRbacAuthorization
+    from .linked_integration_runtime_key_authorization import LinkedIntegrationRuntimeKeyAuthorization
+    from .linked_integration_runtime_type import LinkedIntegrationRuntimeType
     from .self_hosted_integration_runtime import SelfHostedIntegrationRuntime
     from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
@@ -1051,9 +1051,9 @@ __all__ = [
     'ManagedIntegrationRuntimeError',
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeStatus',
-    'LinkedIntegrationRuntimeRbac',
-    'LinkedIntegrationRuntimeKey',
-    'LinkedIntegrationRuntimeProperties',
+    'LinkedIntegrationRuntimeRbacAuthorization',
+    'LinkedIntegrationRuntimeKeyAuthorization',
+    'LinkedIntegrationRuntimeType',
     'SelfHostedIntegrationRuntime',
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',

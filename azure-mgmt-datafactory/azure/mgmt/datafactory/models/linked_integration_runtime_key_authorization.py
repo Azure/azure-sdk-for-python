@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
+from .linked_integration_runtime_type import LinkedIntegrationRuntimeType
 
 
-class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
-    """The key authorization type.
+class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
+    """The key authorization type integration runtime.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,7 +33,7 @@ class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
         'key': {'key': 'key', 'type': 'SecureString'},
     }
 
-    def __init__(self, *, key, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeKey, self).__init__(**kwargs)
-        self.key = key
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
         self.authorization_type = 'Key'

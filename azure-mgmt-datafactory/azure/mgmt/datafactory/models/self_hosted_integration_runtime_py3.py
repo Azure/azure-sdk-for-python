@@ -26,7 +26,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     :type type: str
     :param linked_info:
     :type linked_info:
-     ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeProperties
+     ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeType
     """
 
     _validation = {
@@ -37,7 +37,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeProperties'},
+        'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeType'},
     }
 
     def __init__(self, *, additional_properties=None, description: str=None, linked_info=None, **kwargs) -> None:

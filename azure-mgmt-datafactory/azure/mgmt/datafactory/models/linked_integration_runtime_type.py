@@ -12,11 +12,12 @@
 from msrest.serialization import Model
 
 
-class LinkedIntegrationRuntimeProperties(Model):
-    """The base definition of a linked integration runtime properties.
+class LinkedIntegrationRuntimeType(Model):
+    """The base definition of a linked integration runtime.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LinkedIntegrationRuntimeRbac, LinkedIntegrationRuntimeKey
+    sub-classes are: LinkedIntegrationRuntimeRbacAuthorization,
+    LinkedIntegrationRuntimeKeyAuthorization
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,9 +34,9 @@ class LinkedIntegrationRuntimeProperties(Model):
     }
 
     _subtype_map = {
-        'authorization_type': {'RBAC': 'LinkedIntegrationRuntimeRbac', 'Key': 'LinkedIntegrationRuntimeKey'}
+        'authorization_type': {'RBAC': 'LinkedIntegrationRuntimeRbacAuthorization', 'Key': 'LinkedIntegrationRuntimeKeyAuthorization'}
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeType, self).__init__(**kwargs)
         self.authorization_type = None

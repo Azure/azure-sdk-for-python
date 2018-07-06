@@ -9,31 +9,33 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
+from .linked_integration_runtime_type_py3 import LinkedIntegrationRuntimeType
 
 
-class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
-    """The key authorization type.
+class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
+    """The role based access control (RBAC) authorization type integration
+    runtime.
 
     All required parameters must be populated in order to send to Azure.
 
     :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param key: Required. The key used for authorization.
-    :type key: ~azure.mgmt.datafactory.models.SecureString
+    :param resource_id: Required. The resource identifier of the integration
+     runtime to be shared.
+    :type resource_id: str
     """
 
     _validation = {
         'authorization_type': {'required': True},
-        'key': {'required': True},
+        'resource_id': {'required': True},
     }
 
     _attribute_map = {
         'authorization_type': {'key': 'authorizationType', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'SecureString'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(LinkedIntegrationRuntimeKey, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
-        self.authorization_type = 'Key'
+    def __init__(self, *, resource_id: str, **kwargs) -> None:
+        super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.authorization_type = 'RBAC'

@@ -9,32 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_integration_runtime_properties_py3 import LinkedIntegrationRuntimeProperties
+from msrest.serialization import Model
 
 
-class LinkedIntegrationRuntimeRbac(LinkedIntegrationRuntimeProperties):
-    """The role based access control (RBAC) authorization type.
+class LinkedIntegrationRuntimeType(Model):
+    """The base definition of a linked integration runtime.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LinkedIntegrationRuntimeRbacAuthorization,
+    LinkedIntegrationRuntimeKeyAuthorization
 
     All required parameters must be populated in order to send to Azure.
 
     :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param resource_id: Required. The resource identifier of the integration
-     runtime to be shared.
-    :type resource_id: str
     """
 
     _validation = {
         'authorization_type': {'required': True},
-        'resource_id': {'required': True},
     }
 
     _attribute_map = {
         'authorization_type': {'key': 'authorizationType', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_id: str, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeRbac, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.authorization_type = 'RBAC'
+    _subtype_map = {
+        'authorization_type': {'RBAC': 'LinkedIntegrationRuntimeRbacAuthorization', 'Key': 'LinkedIntegrationRuntimeKeyAuthorization'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LinkedIntegrationRuntimeType, self).__init__(**kwargs)
+        self.authorization_type = None
