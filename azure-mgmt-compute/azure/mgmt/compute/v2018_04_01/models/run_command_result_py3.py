@@ -13,16 +13,17 @@ from msrest.serialization import Model
 
 
 class RunCommandResult(Model):
-    """Run command operation response.
+    """RunCommandResult.
 
-    :param output: Operation output data (raw JSON)
-    :type output: object
+    :param value: Run command operation response.
+    :type value:
+     list[~azure.mgmt.compute.v2018_04_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
-        'output': {'key': 'properties.output', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, *, output=None, **kwargs) -> None:
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(RunCommandResult, self).__init__(**kwargs)
-        self.output = output
+        self.value = value
