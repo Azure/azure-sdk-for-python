@@ -17,18 +17,19 @@ class LinkedIntegrationRuntimeRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param factory_name: Required. The data factory name.
-    :type factory_name: str
+    :param linked_factory_name: Required. The data factory name for linked
+     integration runtime.
+    :type linked_factory_name: str
     """
 
     _validation = {
-        'factory_name': {'required': True},
+        'linked_factory_name': {'required': True},
     }
 
     _attribute_map = {
-        'factory_name': {'key': 'factoryName', 'type': 'str'},
+        'linked_factory_name': {'key': 'factoryName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(LinkedIntegrationRuntimeRequest, self).__init__(**kwargs)
-        self.factory_name = kwargs.get('factory_name', None)
+        self.linked_factory_name = kwargs.get('linked_factory_name', None)
