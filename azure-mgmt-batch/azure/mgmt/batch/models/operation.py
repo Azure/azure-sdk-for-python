@@ -33,9 +33,9 @@ class Operation(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, properties=None):
-        super(Operation, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

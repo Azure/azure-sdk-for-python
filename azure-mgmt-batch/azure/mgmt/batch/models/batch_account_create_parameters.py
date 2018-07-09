@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class BatchAccountCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which to create the account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The region in which to create the account.
     :type location: str
     :param tags: The user-specified tags associated with the account.
     :type tags: dict[str, str]
@@ -47,10 +49,10 @@ class BatchAccountCreateParameters(Model):
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
     }
 
-    def __init__(self, location, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None):
-        super(BatchAccountCreateParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.auto_storage = auto_storage
-        self.pool_allocation_mode = pool_allocation_mode
-        self.key_vault_reference = key_vault_reference
+    def __init__(self, **kwargs):
+        super(BatchAccountCreateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.auto_storage = kwargs.get('auto_storage', None)
+        self.pool_allocation_mode = kwargs.get('pool_allocation_mode', None)
+        self.key_vault_reference = kwargs.get('key_vault_reference', None)

@@ -67,11 +67,11 @@ class StartTask(Model):
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line=None, resource_files=None, environment_settings=None, user_identity=None, max_task_retry_count=None, wait_for_success=None):
-        super(StartTask, self).__init__()
-        self.command_line = command_line
-        self.resource_files = resource_files
-        self.environment_settings = environment_settings
-        self.user_identity = user_identity
-        self.max_task_retry_count = max_task_retry_count
-        self.wait_for_success = wait_for_success
+    def __init__(self, **kwargs):
+        super(StartTask, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.max_task_retry_count = kwargs.get('max_task_retry_count', None)
+        self.wait_for_success = kwargs.get('wait_for_success', None)
