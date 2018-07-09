@@ -48,7 +48,6 @@ try:
     from .transparent_data_encryption_activity_py3 import TransparentDataEncryptionActivity
     from .server_usage_py3 import ServerUsage
     from .database_usage_py3 import DatabaseUsage
-    from .database_blob_auditing_policy_py3 import DatabaseBlobAuditingPolicy
     from .automatic_tuning_options_py3 import AutomaticTuningOptions
     from .database_automatic_tuning_py3 import DatabaseAutomaticTuning
     from .encryption_protector_py3 import EncryptionProtector
@@ -81,6 +80,10 @@ try:
     from .sync_member_py3 import SyncMember
     from .subscription_usage_py3 import SubscriptionUsage
     from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .extended_database_blob_auditing_policy_py3 import ExtendedDatabaseBlobAuditingPolicy
+    from .extended_server_blob_auditing_policy_py3 import ExtendedServerBlobAuditingPolicy
+    from .server_blob_auditing_policy_py3 import ServerBlobAuditingPolicy
+    from .database_blob_auditing_policy_py3 import DatabaseBlobAuditingPolicy
     from .database_vulnerability_assessment_rule_baseline_item_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
@@ -104,10 +107,12 @@ try:
     from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
     from .managed_database_py3 import ManagedDatabase
     from .managed_database_update_py3 import ManagedDatabaseUpdate
+    from .sensitivity_label_py3 import SensitivityLabel
     from .automatic_tuning_server_options_py3 import AutomaticTuningServerOptions
     from .server_automatic_tuning_py3 import ServerAutomaticTuning
     from .server_dns_alias_py3 import ServerDnsAlias
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
+    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .database_operation_py3 import DatabaseOperation
@@ -184,7 +189,6 @@ except (SyntaxError, ImportError):
     from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
     from .server_usage import ServerUsage
     from .database_usage import DatabaseUsage
-    from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
     from .automatic_tuning_options import AutomaticTuningOptions
     from .database_automatic_tuning import DatabaseAutomaticTuning
     from .encryption_protector import EncryptionProtector
@@ -217,6 +221,10 @@ except (SyntaxError, ImportError):
     from .sync_member import SyncMember
     from .subscription_usage import SubscriptionUsage
     from .virtual_network_rule import VirtualNetworkRule
+    from .extended_database_blob_auditing_policy import ExtendedDatabaseBlobAuditingPolicy
+    from .extended_server_blob_auditing_policy import ExtendedServerBlobAuditingPolicy
+    from .server_blob_auditing_policy import ServerBlobAuditingPolicy
+    from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
     from .database_vulnerability_assessment_rule_baseline_item import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
@@ -240,10 +248,12 @@ except (SyntaxError, ImportError):
     from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
     from .managed_database import ManagedDatabase
     from .managed_database_update import ManagedDatabaseUpdate
+    from .sensitivity_label import SensitivityLabel
     from .automatic_tuning_server_options import AutomaticTuningServerOptions
     from .server_automatic_tuning import ServerAutomaticTuning
     from .server_dns_alias import ServerDnsAlias
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+    from .server_security_alert_policy import ServerSecurityAlertPolicy
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .database_operation import DatabaseOperation
@@ -326,12 +336,14 @@ from .job_target_group_paged import JobTargetGroupPaged
 from .job_version_paged import JobVersionPaged
 from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_database_paged import ManagedDatabasePaged
+from .sensitivity_label_paged import SensitivityLabelPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
 from .instance_failover_group_paged import InstanceFailoverGroupPaged
+from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -357,7 +369,6 @@ from .sql_management_client_enums import (
     RecommendedIndexType,
     TransparentDataEncryptionStatus,
     TransparentDataEncryptionActivityStatus,
-    BlobAuditingPolicyState,
     AutomaticTuningMode,
     AutomaticTuningOptionModeDesired,
     AutomaticTuningOptionModeActual,
@@ -376,6 +387,7 @@ from .sql_management_client_enums import (
     SyncDirection,
     SyncMemberState,
     VirtualNetworkRuleState,
+    BlobAuditingPolicyState,
     JobAgentState,
     JobExecutionLifecycle,
     ProvisioningState,
@@ -407,6 +419,8 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
+    VulnerabilityAssessmentPolicyBaselineName,
+    SensitivityLabelSource,
     CapabilityGroup,
 )
 
@@ -449,7 +463,6 @@ __all__ = [
     'TransparentDataEncryptionActivity',
     'ServerUsage',
     'DatabaseUsage',
-    'DatabaseBlobAuditingPolicy',
     'AutomaticTuningOptions',
     'DatabaseAutomaticTuning',
     'EncryptionProtector',
@@ -482,6 +495,10 @@ __all__ = [
     'SyncMember',
     'SubscriptionUsage',
     'VirtualNetworkRule',
+    'ExtendedDatabaseBlobAuditingPolicy',
+    'ExtendedServerBlobAuditingPolicy',
+    'ServerBlobAuditingPolicy',
+    'DatabaseBlobAuditingPolicy',
     'DatabaseVulnerabilityAssessmentRuleBaselineItem',
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
@@ -505,10 +522,12 @@ __all__ = [
     'CompleteDatabaseRestoreDefinition',
     'ManagedDatabase',
     'ManagedDatabaseUpdate',
+    'SensitivityLabel',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'ServerSecurityAlertPolicy',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
     'DatabaseOperation',
@@ -591,12 +610,14 @@ __all__ = [
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedDatabasePaged',
+    'SensitivityLabelPaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
     'InstanceFailoverGroupPaged',
+    'BackupShortTermRetentionPolicyPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -621,7 +642,6 @@ __all__ = [
     'RecommendedIndexType',
     'TransparentDataEncryptionStatus',
     'TransparentDataEncryptionActivityStatus',
-    'BlobAuditingPolicyState',
     'AutomaticTuningMode',
     'AutomaticTuningOptionModeDesired',
     'AutomaticTuningOptionModeActual',
@@ -640,6 +660,7 @@ __all__ = [
     'SyncDirection',
     'SyncMemberState',
     'VirtualNetworkRuleState',
+    'BlobAuditingPolicyState',
     'JobAgentState',
     'JobExecutionLifecycle',
     'ProvisioningState',
@@ -671,5 +692,7 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
+    'VulnerabilityAssessmentPolicyBaselineName',
+    'SensitivityLabelSource',
     'CapabilityGroup',
 ]
