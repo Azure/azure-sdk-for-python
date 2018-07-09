@@ -16,12 +16,14 @@ class CloudServiceConfiguration(Model):
     """The configuration for nodes in a pool based on the Azure Cloud Services
     platform.
 
-    :param os_family: The Azure Guest OS family to be installed on the virtual
-     machines in the pool. Possible values are: 2 - OS Family 2, equivalent to
-     Windows Server 2008 R2 SP1. 3 - OS Family 3, equivalent to Windows Server
-     2012. 4 - OS Family 4, equivalent to Windows Server 2012 R2. 5 - OS Family
-     5, equivalent to Windows Server 2016. For more information, see Azure
-     Guest OS Releases
+    All required parameters must be populated in order to send to Azure.
+
+    :param os_family: Required. The Azure Guest OS family to be installed on
+     the virtual machines in the pool. Possible values are: 2 - OS Family 2,
+     equivalent to Windows Server 2008 R2 SP1. 3 - OS Family 3, equivalent to
+     Windows Server 2012. 4 - OS Family 4, equivalent to Windows Server 2012
+     R2. 5 - OS Family 5, equivalent to Windows Server 2016. For more
+     information, see Azure Guest OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
     :param target_os_version: The Azure Guest OS version to be installed on
@@ -47,8 +49,8 @@ class CloudServiceConfiguration(Model):
         'current_os_version': {'key': 'currentOSVersion', 'type': 'str'},
     }
 
-    def __init__(self, os_family, target_os_version=None, current_os_version=None):
-        super(CloudServiceConfiguration, self).__init__()
-        self.os_family = os_family
-        self.target_os_version = target_os_version
-        self.current_os_version = current_os_version
+    def __init__(self, **kwargs):
+        super(CloudServiceConfiguration, self).__init__(**kwargs)
+        self.os_family = kwargs.get('os_family', None)
+        self.target_os_version = kwargs.get('target_os_version', None)
+        self.current_os_version = kwargs.get('current_os_version', None)

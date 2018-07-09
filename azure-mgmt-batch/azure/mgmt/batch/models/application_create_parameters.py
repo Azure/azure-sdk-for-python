@@ -27,7 +27,7 @@ class ApplicationCreateParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, allow_updates=None, display_name=None):
-        super(ApplicationCreateParameters, self).__init__()
-        self.allow_updates = allow_updates
-        self.display_name = display_name
+    def __init__(self, **kwargs):
+        super(ApplicationCreateParameters, self).__init__(**kwargs)
+        self.allow_updates = kwargs.get('allow_updates', None)
+        self.display_name = kwargs.get('display_name', None)
