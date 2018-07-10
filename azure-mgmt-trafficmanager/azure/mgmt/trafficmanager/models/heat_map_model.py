@@ -15,14 +15,17 @@ from .proxy_resource import ProxyResource
 class HeatMapModel(ProxyResource):
     """Class representing a Traffic Manager HeatMap.
 
-    :param id: Fully qualified resource Id for the resource. Ex -
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :type id: str
-    :param name: The name of the resource
-    :type name: str
-    :param type: The type of the resource. Ex-
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :type type: str
+    :vartype type: str
     :param start_time: The beginning of the time window for this HeatMap,
      inclusive.
     :type start_time: datetime
@@ -35,6 +38,12 @@ class HeatMapModel(ProxyResource):
      calculation.
     :type traffic_flows: list[~azure.mgmt.trafficmanager.models.TrafficFlow]
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
