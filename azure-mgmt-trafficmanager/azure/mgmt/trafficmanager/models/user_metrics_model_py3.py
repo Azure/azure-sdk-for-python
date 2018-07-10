@@ -12,8 +12,8 @@
 from .proxy_resource_py3 import ProxyResource
 
 
-class HeatMapModel(ProxyResource):
-    """Class representing a Traffic Manager HeatMap.
+class UserMetricsModel(ProxyResource):
+    """Class representing Traffic Manager User Metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,17 +26,8 @@ class HeatMapModel(ProxyResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
-    :param start_time: The beginning of the time window for this HeatMap,
-     inclusive.
-    :type start_time: datetime
-    :param end_time: The ending of the time window for this HeatMap,
-     exclusive.
-    :type end_time: datetime
-    :param endpoints: The endpoints used in this HeatMap calculation.
-    :type endpoints: list[~azure.mgmt.trafficmanager.models.HeatMapEndpoint]
-    :param traffic_flows: The traffic flows produced in this HeatMap
-     calculation.
-    :type traffic_flows: list[~azure.mgmt.trafficmanager.models.TrafficFlow]
+    :param key: The key returned by the User Metrics operation.
+    :type key: str
     """
 
     _validation = {
@@ -49,15 +40,9 @@ class HeatMapModel(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[HeatMapEndpoint]'},
-        'traffic_flows': {'key': 'properties.trafficFlows', 'type': '[TrafficFlow]'},
+        'key': {'key': 'properties.key', 'type': 'str'},
     }
 
-    def __init__(self, *, start_time=None, end_time=None, endpoints=None, traffic_flows=None, **kwargs) -> None:
-        super(HeatMapModel, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.endpoints = endpoints
-        self.traffic_flows = traffic_flows
+    def __init__(self, *, key: str=None, **kwargs) -> None:
+        super(UserMetricsModel, self).__init__(**kwargs)
+        self.key = key

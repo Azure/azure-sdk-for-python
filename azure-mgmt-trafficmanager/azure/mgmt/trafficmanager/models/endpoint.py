@@ -15,14 +15,17 @@ from .proxy_resource import ProxyResource
 class Endpoint(ProxyResource):
     """Class representing a Traffic Manager endpoint.
 
-    :param id: Fully qualified resource Id for the resource. Ex -
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :type id: str
-    :param name: The name of the resource
-    :type name: str
-    :param type: The type of the resource. Ex-
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :type type: str
+    :vartype type: str
     :param target_resource_id: The Azure Resource URI of the of the endpoint.
      Not applicable to endpoints of type 'ExternalEndpoints'.
     :type target_resource_id: str
@@ -38,14 +41,14 @@ class Endpoint(ProxyResource):
     :param weight: The weight of this endpoint when using the 'Weighted'
      traffic routing method. Possible values are from 1 to 1000.
     :type weight: long
-    :param priority: The priority of this endpoint when using the ‘Priority’
+    :param priority: The priority of this endpoint when using the 'Priority'
      traffic routing method. Possible values are from 1 to 1000, lower values
      represent higher priority. This is an optional parameter.  If specified,
      it must be specified on all endpoints, and no two endpoints can share the
      same priority value.
     :type priority: long
     :param endpoint_location: Specifies the location of the external or nested
-     endpoints when using the ‘Performance’ traffic routing method.
+     endpoints when using the 'Performance' traffic routing method.
     :type endpoint_location: str
     :param endpoint_monitor_status: The monitoring status of the endpoint.
      Possible values include: 'CheckingEndpoint', 'Online', 'Degraded',
@@ -58,13 +61,24 @@ class Endpoint(ProxyResource):
      'NestedEndpoints'.
     :type min_child_endpoints: long
     :param geo_mapping: The list of countries/regions mapped to this endpoint
-     when using the ‘Geographic’ traffic routing method. Please consult Traffic
+     when using the 'Geographic' traffic routing method. Please consult Traffic
      Manager Geographic documentation for a full list of accepted values.
     :type geo_mapping: list[str]
+    :param subnets: The list of subnets, IP addresses, and/or address ranges
+     mapped to this endpoint when using the 'Subnet' traffic routing method. An
+     empty list will match all ranges not covered by other endpoints.
+    :type subnets:
+     list[~azure.mgmt.trafficmanager.models.EndpointPropertiesSubnetsItem]
     :param custom_headers: List of custom headers.
     :type custom_headers:
      list[~azure.mgmt.trafficmanager.models.EndpointPropertiesCustomHeadersItem]
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -79,6 +93,7 @@ class Endpoint(ProxyResource):
         'endpoint_monitor_status': {'key': 'properties.endpointMonitorStatus', 'type': 'str'},
         'min_child_endpoints': {'key': 'properties.minChildEndpoints', 'type': 'long'},
         'geo_mapping': {'key': 'properties.geoMapping', 'type': '[str]'},
+        'subnets': {'key': 'properties.subnets', 'type': '[EndpointPropertiesSubnetsItem]'},
         'custom_headers': {'key': 'properties.customHeaders', 'type': '[EndpointPropertiesCustomHeadersItem]'},
     }
 
@@ -93,4 +108,5 @@ class Endpoint(ProxyResource):
         self.endpoint_monitor_status = kwargs.get('endpoint_monitor_status', None)
         self.min_child_endpoints = kwargs.get('min_child_endpoints', None)
         self.geo_mapping = kwargs.get('geo_mapping', None)
+        self.subnets = kwargs.get('subnets', None)
         self.custom_headers = kwargs.get('custom_headers', None)
