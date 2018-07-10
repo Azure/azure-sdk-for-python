@@ -37,9 +37,9 @@ class MeterDetails(Model):
     :vartype total_included_quantity: decimal.Decimal
     :ivar pretax_standard_rate: The pretax listing price.
     :vartype pretax_standard_rate: decimal.Decimal
-    :ivar service_name: The Service Name.
+    :ivar service_name: The name of the service.
     :vartype service_name: str
-    :ivar service_tier: Service Tier.
+    :ivar service_tier: The service tier.
     :vartype service_tier: str
     """
 
