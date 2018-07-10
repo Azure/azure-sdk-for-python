@@ -81,17 +81,6 @@ class ModuleProvisioningState(Enum):
     updating = "Updating"
 
 
-class JobStreamType(Enum):
-
-    progress = "Progress"
-    output = "Output"
-    warning = "Warning"
-    error = "Error"
-    debug = "Debug"
-    verbose = "Verbose"
-    any = "Any"
-
-
 class RunbookTypeEnum(Enum):
 
     script = "Script"
@@ -163,6 +152,17 @@ class HttpStatusCode(Enum):
     service_unavailable = "ServiceUnavailable"
     gateway_timeout = "GatewayTimeout"
     http_version_not_supported = "HttpVersionNotSupported"
+
+
+class JobStreamType(Enum):
+
+    progress = "Progress"
+    output = "Output"
+    warning = "Warning"
+    error = "Error"
+    debug = "Debug"
+    verbose = "Verbose"
+    any = "Any"
 
 
 class ScheduleDay(Enum):
@@ -267,9 +267,3 @@ class AgentRegistrationKeyName(Enum):
 
     primary = "primary"
     secondary = "secondary"
-
-
-class CountType(Enum):
-
-    status = "status"
-    nodeconfiguration = "nodeconfiguration"
