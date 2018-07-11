@@ -43,6 +43,9 @@ class DatabricksNotebookActivity(ExecutionActivity):
      job.If the notebook takes a parameter that is not specified, the default
      value from the notebook will be used.
     :type base_parameters: dict[str, object]
+    :param libraries: A list of libraries to be installed on the cluster that
+     will execute the job.
+    :type libraries: list[dict[str, object]]
     """
 
     _validation = {
@@ -62,10 +65,12 @@ class DatabricksNotebookActivity(ExecutionActivity):
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'notebook_path': {'key': 'typeProperties.notebookPath', 'type': 'object'},
         'base_parameters': {'key': 'typeProperties.baseParameters', 'type': '{object}'},
+        'libraries': {'key': 'typeProperties.libraries', 'type': '[{object}]'},
     }
 
     def __init__(self, **kwargs):
         super(DatabricksNotebookActivity, self).__init__(**kwargs)
         self.notebook_path = kwargs.get('notebook_path', None)
         self.base_parameters = kwargs.get('base_parameters', None)
+        self.libraries = kwargs.get('libraries', None)
         self.type = 'DatabricksNotebook'
