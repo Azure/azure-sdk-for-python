@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DatabaseBlobAuditingPoliciesOperations(object):
-    """DatabaseBlobAuditingPoliciesOperations operations.
+class ExtendedDatabaseBlobAuditingPoliciesOperations(object):
+    """ExtendedDatabaseBlobAuditingPoliciesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -41,7 +41,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
 
     def get(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a database's blob auditing policy.
+        """Gets an extended database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -56,8 +56,9 @@ class DatabaseBlobAuditingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseBlobAuditingPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or
+        :return: ExtendedDatabaseBlobAuditingPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -98,18 +99,18 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedDatabaseBlobAuditingPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}'}
 
     def create_or_update(
             self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a database's blob auditing policy.
+        """Creates or updates an extended database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -119,15 +120,17 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         :type server_name: str
         :param database_name: The name of the database.
         :type database_name: str
-        :param parameters: The database blob auditing policy.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
+        :param parameters: The extended database blob auditing policy.
+        :type parameters:
+         ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseBlobAuditingPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or
+        :return: ExtendedDatabaseBlobAuditingPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -157,7 +160,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DatabaseBlobAuditingPolicy')
+        body_content = self._serialize.body(parameters, 'ExtendedDatabaseBlobAuditingPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -172,13 +175,13 @@ class DatabaseBlobAuditingPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedDatabaseBlobAuditingPolicy', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DatabaseBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedDatabaseBlobAuditingPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}'}
