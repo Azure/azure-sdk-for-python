@@ -1,15 +1,9 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Log Analytics Data Plane Client Library.
-
-Azure Resource Manager (ARM) is the next generation of management APIs that
-replace the old Azure Service Management (ASM).
+This is the Microsoft Azure Log Analytics Client Library.
 
 This package has been tested with Python 2.7, 3.4, 3.5 and 3.6.
-
-For the older Azure Service Management (ASM) libraries, see
-`azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
@@ -36,8 +30,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Log Analytics Data Plane
-<https://docs.microsoft.com/python/azure/>`__
+For code examples, see `Log Analytics
+<https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 
 

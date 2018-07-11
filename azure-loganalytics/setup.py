@@ -19,7 +19,7 @@ except ImportError:
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-loganalytics"
-PACKAGE_PPRINT_NAME = "Log Analytics Data Plane"
+PACKAGE_PPRINT_NAME = "Log Analytics"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -72,12 +72,13 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrest>=0.4.27,<2.0.0',
+        'msrest>=0.4.29,<2.0.0',
         'azure-common~=1.1',
     ],
     cmdclass=cmdclass
