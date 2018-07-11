@@ -214,12 +214,14 @@ class ConnectionTypeOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 409]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
+            deserialized = self._deserialize('ConnectionType', response)
+        if response.status_code == 409:
             deserialized = self._deserialize('ConnectionType', response)
 
         if raw:
