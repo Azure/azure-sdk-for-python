@@ -9,10 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error_response import ErrorResponse, ErrorResponseException
-from .resource import Resource
-from .tracked_resource import TrackedResource
-from .proxy_resource import ProxyResource
 from .sku import Sku
 from .automation_account import AutomationAccount
 from .automation_account_create_or_update_parameters import AutomationAccountCreateOrUpdateParameters
@@ -24,6 +20,10 @@ from .usage import Usage
 from .key import Key
 from .key_list_result import KeyListResult
 from .automation_account_update_parameters import AutomationAccountUpdateParameters
+from .proxy_resource import ProxyResource
+from .resource import Resource
+from .tracked_resource import TrackedResource
+from .error_response import ErrorResponse, ErrorResponseException
 from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
 from .certificate import Certificate
 from .certificate_update_parameters import CertificateUpdateParameters
@@ -63,8 +63,6 @@ from .module import Module
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
 from .type_field import TypeField
-from .job_stream import JobStream
-from .job_stream_list_result import JobStreamListResult
 from .runbook_parameter import RunbookParameter
 from .runbook_draft import RunbookDraft
 from .runbook import Runbook
@@ -75,6 +73,8 @@ from .test_job_create_parameters import TestJobCreateParameters
 from .test_job import TestJob
 from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
 from .runbook_create_or_update_draft_parameters import RunbookCreateOrUpdateDraftParameters
+from .job_stream import JobStream
+from .job_stream_list_result import JobStreamListResult
 from .advanced_schedule_monthly_occurrence import AdvancedScheduleMonthlyOccurrence
 from .advanced_schedule import AdvancedSchedule
 from .schedule_create_or_update_parameters import ScheduleCreateOrUpdateParameters
@@ -171,11 +171,11 @@ from .automation_client_enums import (
     DscConfigurationState,
     GroupTypeEnum,
     ModuleProvisioningState,
-    JobStreamType,
     RunbookTypeEnum,
     RunbookState,
     RunbookProvisioningState,
     HttpStatusCode,
+    JobStreamType,
     ScheduleDay,
     ScheduleFrequency,
     OperatingSystemType,
@@ -192,10 +192,6 @@ from .automation_client_enums import (
 )
 
 __all__ = [
-    'ErrorResponse', 'ErrorResponseException',
-    'Resource',
-    'TrackedResource',
-    'ProxyResource',
     'Sku',
     'AutomationAccount',
     'AutomationAccountCreateOrUpdateParameters',
@@ -207,6 +203,10 @@ __all__ = [
     'Key',
     'KeyListResult',
     'AutomationAccountUpdateParameters',
+    'ProxyResource',
+    'Resource',
+    'TrackedResource',
+    'ErrorResponse', 'ErrorResponseException',
     'CertificateCreateOrUpdateParameters',
     'Certificate',
     'CertificateUpdateParameters',
@@ -246,8 +246,6 @@ __all__ = [
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
     'TypeField',
-    'JobStream',
-    'JobStreamListResult',
     'RunbookParameter',
     'RunbookDraft',
     'Runbook',
@@ -258,6 +256,8 @@ __all__ = [
     'TestJob',
     'RunbookCreateOrUpdateDraftProperties',
     'RunbookCreateOrUpdateDraftParameters',
+    'JobStream',
+    'JobStreamListResult',
     'AdvancedScheduleMonthlyOccurrence',
     'AdvancedSchedule',
     'ScheduleCreateOrUpdateParameters',
@@ -353,11 +353,11 @@ __all__ = [
     'DscConfigurationState',
     'GroupTypeEnum',
     'ModuleProvisioningState',
-    'JobStreamType',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
     'HttpStatusCode',
+    'JobStreamType',
     'ScheduleDay',
     'ScheduleFrequency',
     'OperatingSystemType',

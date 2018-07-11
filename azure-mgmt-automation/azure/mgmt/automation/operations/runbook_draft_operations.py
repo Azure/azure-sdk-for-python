@@ -170,7 +170,7 @@ class RunbookDraftOperations(object):
         :type automation_account_name: str
         :param runbook_name: The runbook name.
         :type runbook_name: str
-        :param runbook_content: The runbook draft content.
+        :param runbook_content: The runbook draft content.
         :type runbook_content: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
