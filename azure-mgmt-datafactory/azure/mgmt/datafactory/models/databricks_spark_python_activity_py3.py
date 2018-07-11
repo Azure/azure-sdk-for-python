@@ -12,8 +12,8 @@
 from .execution_activity_py3 import ExecutionActivity
 
 
-class DatabricksNotebookActivity(ExecutionActivity):
-    """DatabricksNotebook activity.
+class DatabricksSparkPythonActivity(ExecutionActivity):
+    """DatabricksSparkPython activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,14 +35,13 @@ class DatabricksNotebookActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param notebook_path: Required. The absolute path of the notebook to be
-     run in the Databricks Workspace. This path must begin with a slash. Type:
-     string (or Expression with resultType string).
-    :type notebook_path: object
-    :param base_parameters: Base parameters to be used for each run of this
-     job.If the notebook takes a parameter that is not specified, the default
-     value from the notebook will be used.
-    :type base_parameters: dict[str, object]
+    :param python_file: Required. The URI of the Python file to be executed.
+     DBFS paths are supported. Type: string (or Expression with resultType
+     string).
+    :type python_file: object
+    :param parameters: Command line parameters that will be passed to the
+     Python file.
+    :type parameters: list[object]
     :param libraries: A list of libraries to be installed on the cluster that
      will execute the job.
     :type libraries: list[dict[str, object]]
@@ -51,7 +50,7 @@ class DatabricksNotebookActivity(ExecutionActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'notebook_path': {'required': True},
+        'python_file': {'required': True},
     }
 
     _attribute_map = {
@@ -63,14 +62,14 @@ class DatabricksNotebookActivity(ExecutionActivity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
-        'notebook_path': {'key': 'typeProperties.notebookPath', 'type': 'object'},
-        'base_parameters': {'key': 'typeProperties.baseParameters', 'type': '{object}'},
+        'python_file': {'key': 'typeProperties.pythonFile', 'type': 'object'},
+        'parameters': {'key': 'typeProperties.parameters', 'type': '[object]'},
         'libraries': {'key': 'typeProperties.libraries', 'type': '[{object}]'},
     }
 
-    def __init__(self, *, name: str, notebook_path, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, base_parameters=None, libraries=None, **kwargs) -> None:
-        super(DatabricksNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.notebook_path = notebook_path
-        self.base_parameters = base_parameters
+    def __init__(self, *, name: str, python_file, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, parameters=None, libraries=None, **kwargs) -> None:
+        super(DatabricksSparkPythonActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+        self.python_file = python_file
+        self.parameters = parameters
         self.libraries = libraries
-        self.type = 'DatabricksNotebook'
+        self.type = 'DatabricksSparkPython'

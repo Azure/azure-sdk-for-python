@@ -212,6 +212,8 @@ try:
     from .schedule_trigger_py3 import ScheduleTrigger
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .activity_policy_py3 import ActivityPolicy
+    from .databricks_spark_python_activity_py3 import DatabricksSparkPythonActivity
+    from .databricks_spark_jar_activity_py3 import DatabricksSparkJarActivity
     from .databricks_notebook_activity_py3 import DatabricksNotebookActivity
     from .data_lake_analytics_usql_activity_py3 import DataLakeAnalyticsUSQLActivity
     from .azure_ml_update_resource_activity_py3 import AzureMLUpdateResourceActivity
@@ -542,6 +544,8 @@ except (SyntaxError, ImportError):
     from .schedule_trigger import ScheduleTrigger
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .activity_policy import ActivityPolicy
+    from .databricks_spark_python_activity import DatabricksSparkPythonActivity
+    from .databricks_spark_jar_activity import DatabricksSparkJarActivity
     from .databricks_notebook_activity import DatabricksNotebookActivity
     from .data_lake_analytics_usql_activity import DataLakeAnalyticsUSQLActivity
     from .azure_ml_update_resource_activity import AzureMLUpdateResourceActivity
@@ -940,6 +944,8 @@ __all__ = [
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
     'ActivityPolicy',
+    'DatabricksSparkPythonActivity',
+    'DatabricksSparkJarActivity',
     'DatabricksNotebookActivity',
     'DataLakeAnalyticsUSQLActivity',
     'AzureMLUpdateResourceActivity',

@@ -59,6 +59,8 @@ class AzureDatabricksLinkedService(LinkedService):
     :param new_cluster_spark_conf: a set of optional, user-specified Spark
      configuration key-value pairs.
     :type new_cluster_spark_conf: dict[str, object]
+    :param new_cluster_custom_tags: Additional tags for cluster resources.
+    :type new_cluster_custom_tags: dict[str, object]
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -85,6 +87,7 @@ class AzureDatabricksLinkedService(LinkedService):
         'new_cluster_num_of_worker': {'key': 'typeProperties.newClusterNumOfWorker', 'type': 'object'},
         'new_cluster_node_type': {'key': 'typeProperties.newClusterNodeType', 'type': 'object'},
         'new_cluster_spark_conf': {'key': 'typeProperties.newClusterSparkConf', 'type': '{object}'},
+        'new_cluster_custom_tags': {'key': 'typeProperties.newClusterCustomTags', 'type': '{object}'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -97,5 +100,6 @@ class AzureDatabricksLinkedService(LinkedService):
         self.new_cluster_num_of_worker = kwargs.get('new_cluster_num_of_worker', None)
         self.new_cluster_node_type = kwargs.get('new_cluster_node_type', None)
         self.new_cluster_spark_conf = kwargs.get('new_cluster_spark_conf', None)
+        self.new_cluster_custom_tags = kwargs.get('new_cluster_custom_tags', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDatabricks'
