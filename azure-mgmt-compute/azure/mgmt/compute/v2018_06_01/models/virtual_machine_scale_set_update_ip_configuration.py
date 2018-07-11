@@ -37,6 +37,10 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
      backend address pools.
     :type application_gateway_backend_address_pools:
      list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
+    :param application_security_groups: Specifies an array of references to
+     application security group.
+    :type application_security_groups:
+     list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
     :param load_balancer_backend_address_pools: The load balancer backend
      address pools.
     :type load_balancer_backend_address_pools:
@@ -55,6 +59,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachineScaleSetUpdatePublicIPAddressConfiguration'},
         'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
+        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
@@ -67,5 +72,6 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
         self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
         self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
+        self.application_security_groups = kwargs.get('application_security_groups', None)
         self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
         self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)

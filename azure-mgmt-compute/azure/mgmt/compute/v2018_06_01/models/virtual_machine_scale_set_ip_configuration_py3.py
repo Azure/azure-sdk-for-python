@@ -41,6 +41,10 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
      Multiple scale sets cannot use the same application gateway.
     :type application_gateway_backend_address_pools:
      list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
+    :param application_security_groups: Specifies an array of references to
+     application security group.
+    :type application_security_groups:
+     list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
@@ -67,11 +71,12 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachineScaleSetPublicIPAddressConfiguration'},
         'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
+        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, *, name: str, id: str=None, subnet=None, primary: bool=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs) -> None:
+    def __init__(self, *, name: str, id: str=None, subnet=None, primary: bool=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, application_security_groups=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs) -> None:
         super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id, **kwargs)
         self.name = name
         self.subnet = subnet
@@ -79,5 +84,6 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         self.public_ip_address_configuration = public_ip_address_configuration
         self.private_ip_address_version = private_ip_address_version
         self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
+        self.application_security_groups = application_security_groups
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools

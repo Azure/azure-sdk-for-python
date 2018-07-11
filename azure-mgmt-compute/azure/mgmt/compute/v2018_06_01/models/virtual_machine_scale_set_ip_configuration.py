@@ -41,6 +41,10 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
      Multiple scale sets cannot use the same application gateway.
     :type application_gateway_backend_address_pools:
      list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
+    :param application_security_groups: Specifies an array of references to
+     application security group.
+    :type application_security_groups:
+     list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
@@ -67,6 +71,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachineScaleSetPublicIPAddressConfiguration'},
         'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
+        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
@@ -79,5 +84,6 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
         self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
         self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
+        self.application_security_groups = kwargs.get('application_security_groups', None)
         self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
         self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)
