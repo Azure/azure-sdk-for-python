@@ -2,7 +2,7 @@
 
 * @lmazuel
 
-/azure-applicationinsights @alexeldeib
+/azure-applicationinsights/ @alexeldeib
 /azure-batch/ @annatisch @matthchr
 /azure-keyvault/ @schaabs
 /azure-mgmt-batch/ @annatisch @matthchr

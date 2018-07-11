@@ -29,8 +29,8 @@ class EventsResults(Model):
         'value': {'key': 'value', 'type': '[EventsResultData]'},
     }
 
-    def __init__(self, odatacontext=None, aimessages=None, value=None):
-        super(EventsResults, self).__init__()
-        self.odatacontext = odatacontext
-        self.aimessages = aimessages
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EventsResults, self).__init__(**kwargs)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.aimessages = kwargs.get('aimessages', None)
+        self.value = kwargs.get('value', None)

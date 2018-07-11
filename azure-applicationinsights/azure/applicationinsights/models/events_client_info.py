@@ -44,13 +44,13 @@ class EventsClientInfo(Model):
         'country_or_region': {'key': 'countryOrRegion', 'type': 'str'},
     }
 
-    def __init__(self, model=None, os=None, type=None, browser=None, ip=None, city=None, state_or_province=None, country_or_region=None):
-        super(EventsClientInfo, self).__init__()
-        self.model = model
-        self.os = os
-        self.type = type
-        self.browser = browser
-        self.ip = ip
-        self.city = city
-        self.state_or_province = state_or_province
-        self.country_or_region = country_or_region
+    def __init__(self, **kwargs):
+        super(EventsClientInfo, self).__init__(**kwargs)
+        self.model = kwargs.get('model', None)
+        self.os = kwargs.get('os', None)
+        self.type = kwargs.get('type', None)
+        self.browser = kwargs.get('browser', None)
+        self.ip = kwargs.get('ip', None)
+        self.city = kwargs.get('city', None)
+        self.state_or_province = kwargs.get('state_or_province', None)
+        self.country_or_region = kwargs.get('country_or_region', None)

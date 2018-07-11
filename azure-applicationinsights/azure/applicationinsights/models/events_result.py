@@ -26,7 +26,7 @@ class EventsResult(Model):
         'value': {'key': 'value', 'type': 'EventsResultData'},
     }
 
-    def __init__(self, aimessages=None, value=None):
-        super(EventsResult, self).__init__()
-        self.aimessages = aimessages
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EventsResult, self).__init__(**kwargs)
+        self.aimessages = kwargs.get('aimessages', None)
+        self.value = kwargs.get('value', None)

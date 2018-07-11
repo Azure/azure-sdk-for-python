@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsDependencyResult(EventsResultData):
     """A dependency result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsDependencyResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param dependency:
     :type dependency: ~azure.applicationinsights.models.EventsDependencyInfo
@@ -68,7 +70,7 @@ class EventsDependencyResult(EventsResultData):
         'dependency': {'key': 'dependency', 'type': 'EventsDependencyInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, dependency=None):
-        super(EventsDependencyResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.dependency = dependency
+    def __init__(self, **kwargs):
+        super(EventsDependencyResult, self).__init__(**kwargs)
+        self.dependency = kwargs.get('dependency', None)
         self.type = 'dependency'

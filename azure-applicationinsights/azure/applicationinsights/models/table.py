@@ -17,11 +17,13 @@ class Table(Model):
 
     Contains the columns and rows for one table in a query response.
 
-    :param name: The name of the table.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the table.
     :type name: str
-    :param columns: The list of columns in this table.
+    :param columns: Required. The list of columns in this table.
     :type columns: list[~azure.applicationinsights.models.Column]
-    :param rows: The resulting rows from this query.
+    :param rows: Required. The resulting rows from this query.
     :type rows: list[list[object]]
     """
 
@@ -37,8 +39,8 @@ class Table(Model):
         'rows': {'key': 'rows', 'type': '[[object]]'},
     }
 
-    def __init__(self, name, columns, rows):
-        super(Table, self).__init__()
-        self.name = name
-        self.columns = columns
-        self.rows = rows
+    def __init__(self, **kwargs):
+        super(Table, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.columns = kwargs.get('columns', None)
+        self.rows = kwargs.get('rows', None)

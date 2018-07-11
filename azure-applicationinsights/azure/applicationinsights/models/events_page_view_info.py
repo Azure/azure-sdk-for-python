@@ -32,9 +32,9 @@ class EventsPageViewInfo(Model):
         'performance_bucket': {'key': 'performanceBucket', 'type': 'str'},
     }
 
-    def __init__(self, name=None, url=None, duration=None, performance_bucket=None):
-        super(EventsPageViewInfo, self).__init__()
-        self.name = name
-        self.url = url
-        self.duration = duration
-        self.performance_bucket = performance_bucket
+    def __init__(self, **kwargs):
+        super(EventsPageViewInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.duration = kwargs.get('duration', None)
+        self.performance_bucket = kwargs.get('performance_bucket', None)

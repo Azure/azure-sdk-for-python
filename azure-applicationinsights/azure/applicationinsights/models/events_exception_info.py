@@ -69,21 +69,21 @@ class EventsExceptionInfo(Model):
         'details': {'key': 'details', 'type': '[EventsExceptionDetail]'},
     }
 
-    def __init__(self, severity_level=None, problem_id=None, handled_at=None, assembly=None, method=None, message=None, type=None, outer_type=None, outer_method=None, outer_assembly=None, outer_message=None, innermost_type=None, innermost_message=None, innermost_method=None, innermost_assembly=None, details=None):
-        super(EventsExceptionInfo, self).__init__()
-        self.severity_level = severity_level
-        self.problem_id = problem_id
-        self.handled_at = handled_at
-        self.assembly = assembly
-        self.method = method
-        self.message = message
-        self.type = type
-        self.outer_type = outer_type
-        self.outer_method = outer_method
-        self.outer_assembly = outer_assembly
-        self.outer_message = outer_message
-        self.innermost_type = innermost_type
-        self.innermost_message = innermost_message
-        self.innermost_method = innermost_method
-        self.innermost_assembly = innermost_assembly
-        self.details = details
+    def __init__(self, **kwargs):
+        super(EventsExceptionInfo, self).__init__(**kwargs)
+        self.severity_level = kwargs.get('severity_level', None)
+        self.problem_id = kwargs.get('problem_id', None)
+        self.handled_at = kwargs.get('handled_at', None)
+        self.assembly = kwargs.get('assembly', None)
+        self.method = kwargs.get('method', None)
+        self.message = kwargs.get('message', None)
+        self.type = kwargs.get('type', None)
+        self.outer_type = kwargs.get('outer_type', None)
+        self.outer_method = kwargs.get('outer_method', None)
+        self.outer_assembly = kwargs.get('outer_assembly', None)
+        self.outer_message = kwargs.get('outer_message', None)
+        self.innermost_type = kwargs.get('innermost_type', None)
+        self.innermost_message = kwargs.get('innermost_message', None)
+        self.innermost_method = kwargs.get('innermost_method', None)
+        self.innermost_assembly = kwargs.get('innermost_assembly', None)
+        self.details = kwargs.get('details', None)

@@ -39,11 +39,11 @@ class EventsExceptionDetail(Model):
         'parsed_stack': {'key': 'parsedStack', 'type': '[EventsExceptionDetailsParsedStack]'},
     }
 
-    def __init__(self, severity_level=None, outer_id=None, message=None, type=None, id=None, parsed_stack=None):
-        super(EventsExceptionDetail, self).__init__()
-        self.severity_level = severity_level
-        self.outer_id = outer_id
-        self.message = message
-        self.type = type
-        self.id = id
-        self.parsed_stack = parsed_stack
+    def __init__(self, **kwargs):
+        super(EventsExceptionDetail, self).__init__(**kwargs)
+        self.severity_level = kwargs.get('severity_level', None)
+        self.outer_id = kwargs.get('outer_id', None)
+        self.message = kwargs.get('message', None)
+        self.type = kwargs.get('type', None)
+        self.id = kwargs.get('id', None)
+        self.parsed_stack = kwargs.get('parsed_stack', None)

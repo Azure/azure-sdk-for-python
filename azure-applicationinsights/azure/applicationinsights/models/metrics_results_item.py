@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class MetricsResultsItem(Model):
     """MetricsResultsItem.
 
-    :param id: The specified ID for this metric.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The specified ID for this metric.
     :type id: str
-    :param status: The HTTP status code of this metric query.
+    :param status: Required. The HTTP status code of this metric query.
     :type status: int
-    :param body: The results of this metric query.
+    :param body: Required. The results of this metric query.
     :type body: ~azure.applicationinsights.models.MetricsResult
     """
 
@@ -35,8 +37,8 @@ class MetricsResultsItem(Model):
         'body': {'key': 'body', 'type': 'MetricsResult'},
     }
 
-    def __init__(self, id, status, body):
-        super(MetricsResultsItem, self).__init__()
-        self.id = id
-        self.status = status
-        self.body = body
+    def __init__(self, **kwargs):
+        super(MetricsResultsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.status = kwargs.get('status', None)
+        self.body = kwargs.get('body', None)

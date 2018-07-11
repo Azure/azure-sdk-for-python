@@ -26,7 +26,7 @@ class EventsCloudInfo(Model):
         'role_instance': {'key': 'roleInstance', 'type': 'str'},
     }
 
-    def __init__(self, role_name=None, role_instance=None):
-        super(EventsCloudInfo, self).__init__()
-        self.role_name = role_name
-        self.role_instance = role_instance
+    def __init__(self, **kwargs):
+        super(EventsCloudInfo, self).__init__(**kwargs)
+        self.role_name = kwargs.get('role_name', None)
+        self.role_instance = kwargs.get('role_instance', None)

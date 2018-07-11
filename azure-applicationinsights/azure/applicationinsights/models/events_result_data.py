@@ -22,6 +22,8 @@ class EventsResultData(Model):
     EventsAvailabilityResultResult, EventsPerformanceCounterResult,
     EventsCustomMetricResult
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -48,7 +50,7 @@ class EventsResultData(Model):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -76,18 +78,18 @@ class EventsResultData(Model):
         'type': {'trace': 'EventsTraceResult', 'customEvent': 'EventsCustomEventResult', 'pageView': 'EventsPageViewResult', 'browserTiming': 'EventsBrowserTimingResult', 'request': 'EventsRequestResult', 'dependency': 'EventsDependencyResult', 'exception': 'EventsExceptionResult', 'availabilityResult': 'EventsAvailabilityResultResult', 'performanceCounter': 'EventsPerformanceCounterResult', 'customMetric': 'EventsCustomMetricResult'}
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None):
-        super(EventsResultData, self).__init__()
-        self.id = id
-        self.count = count
-        self.timestamp = timestamp
-        self.custom_dimensions = custom_dimensions
-        self.custom_measurements = custom_measurements
-        self.operation = operation
-        self.session = session
-        self.user = user
-        self.cloud = cloud
-        self.ai = ai
-        self.application = application
-        self.client = client
+    def __init__(self, **kwargs):
+        super(EventsResultData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.count = kwargs.get('count', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.custom_dimensions = kwargs.get('custom_dimensions', None)
+        self.custom_measurements = kwargs.get('custom_measurements', None)
+        self.operation = kwargs.get('operation', None)
+        self.session = kwargs.get('session', None)
+        self.user = kwargs.get('user', None)
+        self.cloud = kwargs.get('cloud', None)
+        self.ai = kwargs.get('ai', None)
+        self.application = kwargs.get('application', None)
+        self.client = kwargs.get('client', None)
         self.type = None

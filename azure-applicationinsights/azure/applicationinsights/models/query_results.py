@@ -17,7 +17,9 @@ class QueryResults(Model):
 
     Contains the tables, columns & rows resulting from a query.
 
-    :param tables: The list of tables, columns and rows.
+    All required parameters must be populated in order to send to Azure.
+
+    :param tables: Required. The list of tables, columns and rows.
     :type tables: list[~azure.applicationinsights.models.Table]
     """
 
@@ -29,6 +31,6 @@ class QueryResults(Model):
         'tables': {'key': 'tables', 'type': '[Table]'},
     }
 
-    def __init__(self, tables):
-        super(QueryResults, self).__init__()
-        self.tables = tables
+    def __init__(self, **kwargs):
+        super(QueryResults, self).__init__(**kwargs)
+        self.tables = kwargs.get('tables', None)

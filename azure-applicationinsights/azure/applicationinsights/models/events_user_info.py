@@ -29,8 +29,8 @@ class EventsUserInfo(Model):
         'authenticated_id': {'key': 'authenticatedId', 'type': 'str'},
     }
 
-    def __init__(self, id=None, account_id=None, authenticated_id=None):
-        super(EventsUserInfo, self).__init__()
-        self.id = id
-        self.account_id = account_id
-        self.authenticated_id = authenticated_id
+    def __init__(self, **kwargs):
+        super(EventsUserInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.account_id = kwargs.get('account_id', None)
+        self.authenticated_id = kwargs.get('authenticated_id', None)

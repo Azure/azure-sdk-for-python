@@ -32,9 +32,9 @@ class EventsExceptionDetailsParsedStack(Model):
         'line': {'key': 'line', 'type': 'long'},
     }
 
-    def __init__(self, assembly=None, method=None, level=None, line=None):
-        super(EventsExceptionDetailsParsedStack, self).__init__()
-        self.assembly = assembly
-        self.method = method
-        self.level = level
-        self.line = line
+    def __init__(self, **kwargs):
+        super(EventsExceptionDetailsParsedStack, self).__init__(**kwargs)
+        self.assembly = kwargs.get('assembly', None)
+        self.method = kwargs.get('method', None)
+        self.level = kwargs.get('level', None)
+        self.line = kwargs.get('line', None)

@@ -45,13 +45,13 @@ class EventsAvailabilityResultInfo(Model):
         'size': {'key': 'size', 'type': 'str'},
     }
 
-    def __init__(self, name=None, success=None, duration=None, performance_bucket=None, message=None, location=None, id=None, size=None):
-        super(EventsAvailabilityResultInfo, self).__init__()
-        self.name = name
-        self.success = success
-        self.duration = duration
-        self.performance_bucket = performance_bucket
-        self.message = message
-        self.location = location
-        self.id = id
-        self.size = size
+    def __init__(self, **kwargs):
+        super(EventsAvailabilityResultInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.success = kwargs.get('success', None)
+        self.duration = kwargs.get('duration', None)
+        self.performance_bucket = kwargs.get('performance_bucket', None)
+        self.message = kwargs.get('message', None)
+        self.location = kwargs.get('location', None)
+        self.id = kwargs.get('id', None)
+        self.size = kwargs.get('size', None)

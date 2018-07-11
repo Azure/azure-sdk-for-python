@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class MetricId(Enum):
+class MetricId(str, Enum):
 
     requestscount = "requests/count"
     requestsduration = "requests/duration"
@@ -48,7 +48,7 @@ class MetricId(Enum):
     custom_eventscount = "customEvents/count"
 
 
-class MetricsAggregation(Enum):
+class MetricsAggregation(str, Enum):
 
     min = "min"
     max = "max"
@@ -58,7 +58,7 @@ class MetricsAggregation(Enum):
     unique = "unique"
 
 
-class MetricsSegment(Enum):
+class MetricsSegment(str, Enum):
 
     application_build = "applicationBuild"
     application_version = "applicationVersion"
@@ -78,7 +78,7 @@ class MetricsSegment(Enum):
     instance_name = "instanceName"
 
 
-class EventType(Enum):
+class EventType(str, Enum):
 
     all = "$all"
     traces = "traces"

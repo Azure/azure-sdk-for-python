@@ -47,14 +47,14 @@ class EventsDependencyInfo(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, target=None, data=None, success=None, duration=None, performance_bucket=None, result_code=None, type=None, name=None, id=None):
-        super(EventsDependencyInfo, self).__init__()
-        self.target = target
-        self.data = data
-        self.success = success
-        self.duration = duration
-        self.performance_bucket = performance_bucket
-        self.result_code = result_code
-        self.type = type
-        self.name = name
-        self.id = id
+    def __init__(self, **kwargs):
+        super(EventsDependencyInfo, self).__init__(**kwargs)
+        self.target = kwargs.get('target', None)
+        self.data = kwargs.get('data', None)
+        self.success = kwargs.get('success', None)
+        self.duration = kwargs.get('duration', None)
+        self.performance_bucket = kwargs.get('performance_bucket', None)
+        self.result_code = kwargs.get('result_code', None)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)

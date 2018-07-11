@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsBrowserTimingResult(EventsResultData):
     """A browser timing result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsBrowserTimingResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param browser_timing:
     :type browser_timing:
@@ -73,8 +75,8 @@ class EventsBrowserTimingResult(EventsResultData):
         'client_performance': {'key': 'clientPerformance', 'type': 'EventsClientPerformanceInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, browser_timing=None, client_performance=None):
-        super(EventsBrowserTimingResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.browser_timing = browser_timing
-        self.client_performance = client_performance
+    def __init__(self, **kwargs):
+        super(EventsBrowserTimingResult, self).__init__(**kwargs)
+        self.browser_timing = kwargs.get('browser_timing', None)
+        self.client_performance = kwargs.get('client_performance', None)
         self.type = 'browserTiming'

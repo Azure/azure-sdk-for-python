@@ -44,13 +44,13 @@ class EventsRequestInfo(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, name=None, url=None, success=None, duration=None, performance_bucket=None, result_code=None, source=None, id=None):
-        super(EventsRequestInfo, self).__init__()
-        self.name = name
-        self.url = url
-        self.success = success
-        self.duration = duration
-        self.performance_bucket = performance_bucket
-        self.result_code = result_code
-        self.source = source
-        self.id = id
+    def __init__(self, **kwargs):
+        super(EventsRequestInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.success = kwargs.get('success', None)
+        self.duration = kwargs.get('duration', None)
+        self.performance_bucket = kwargs.get('performance_bucket', None)
+        self.result_code = kwargs.get('result_code', None)
+        self.source = kwargs.get('source', None)
+        self.id = kwargs.get('id', None)

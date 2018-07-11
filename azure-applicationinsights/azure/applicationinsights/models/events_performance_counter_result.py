@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsPerformanceCounterResult(EventsResultData):
     """A performance counter result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsPerformanceCounterResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param performance_counter:
     :type performance_counter:
@@ -69,7 +71,7 @@ class EventsPerformanceCounterResult(EventsResultData):
         'performance_counter': {'key': 'performanceCounter', 'type': 'EventsPerformanceCounterInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, performance_counter=None):
-        super(EventsPerformanceCounterResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.performance_counter = performance_counter
+    def __init__(self, **kwargs):
+        super(EventsPerformanceCounterResult, self).__init__(**kwargs)
+        self.performance_counter = kwargs.get('performance_counter', None)
         self.type = 'performanceCounter'

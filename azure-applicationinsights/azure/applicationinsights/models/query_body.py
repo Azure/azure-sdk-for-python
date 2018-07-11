@@ -16,7 +16,9 @@ class QueryBody(Model):
     """The Analytics query. Learn more about the [Analytics query
     syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/).
 
-    :param query: The query to execute.
+    All required parameters must be populated in order to send to Azure.
+
+    :param query: Required. The query to execute.
     :type query: str
     :param timespan: Optional. The timespan over which to query data. This is
      an ISO8601 time period value.  This timespan is applied in addition to any
@@ -37,8 +39,8 @@ class QueryBody(Model):
         'applications': {'key': 'applications', 'type': '[str]'},
     }
 
-    def __init__(self, query, timespan=None, applications=None):
-        super(QueryBody, self).__init__()
-        self.query = query
-        self.timespan = timespan
-        self.applications = applications
+    def __init__(self, **kwargs):
+        super(QueryBody, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.timespan = kwargs.get('timespan', None)
+        self.applications = kwargs.get('applications', None)

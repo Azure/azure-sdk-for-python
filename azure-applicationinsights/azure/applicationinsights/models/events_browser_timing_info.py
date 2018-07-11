@@ -50,15 +50,15 @@ class EventsBrowserTimingInfo(Model):
         'processing_duration': {'key': 'processingDuration', 'type': 'long'},
     }
 
-    def __init__(self, url_path=None, url_host=None, name=None, url=None, total_duration=None, performance_bucket=None, network_duration=None, send_duration=None, receive_duration=None, processing_duration=None):
-        super(EventsBrowserTimingInfo, self).__init__()
-        self.url_path = url_path
-        self.url_host = url_host
-        self.name = name
-        self.url = url
-        self.total_duration = total_duration
-        self.performance_bucket = performance_bucket
-        self.network_duration = network_duration
-        self.send_duration = send_duration
-        self.receive_duration = receive_duration
-        self.processing_duration = processing_duration
+    def __init__(self, **kwargs):
+        super(EventsBrowserTimingInfo, self).__init__(**kwargs)
+        self.url_path = kwargs.get('url_path', None)
+        self.url_host = kwargs.get('url_host', None)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.total_duration = kwargs.get('total_duration', None)
+        self.performance_bucket = kwargs.get('performance_bucket', None)
+        self.network_duration = kwargs.get('network_duration', None)
+        self.send_duration = kwargs.get('send_duration', None)
+        self.receive_duration = kwargs.get('receive_duration', None)
+        self.processing_duration = kwargs.get('processing_duration', None)

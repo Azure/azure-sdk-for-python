@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class MetricsPostBodySchema(Model):
     """A metric request.
 
-    :param id: An identifier for this query.  Must be unique within the post
-     body of the request.  This identifier will be the 'id' property of the
-     response object representing this query.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. An identifier for this query.  Must be unique within
+     the post body of the request.  This identifier will be the 'id' property
+     of the response object representing this query.
     :type id: str
-    :param parameters: The parameters for a single metrics query
+    :param parameters: Required. The parameters for a single metrics query
     :type parameters:
      ~azure.applicationinsights.models.MetricsPostBodySchemaParameters
     """
@@ -34,7 +36,7 @@ class MetricsPostBodySchema(Model):
         'parameters': {'key': 'parameters', 'type': 'MetricsPostBodySchemaParameters'},
     }
 
-    def __init__(self, id, parameters):
-        super(MetricsPostBodySchema, self).__init__()
-        self.id = id
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(MetricsPostBodySchema, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.parameters = kwargs.get('parameters', None)

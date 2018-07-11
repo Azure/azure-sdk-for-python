@@ -41,12 +41,12 @@ class EventsCustomMetricInfo(Model):
         'value_std_dev': {'key': 'valueStdDev', 'type': 'float'},
     }
 
-    def __init__(self, name=None, value=None, value_sum=None, value_count=None, value_min=None, value_max=None, value_std_dev=None):
-        super(EventsCustomMetricInfo, self).__init__()
-        self.name = name
-        self.value = value
-        self.value_sum = value_sum
-        self.value_count = value_count
-        self.value_min = value_min
-        self.value_max = value_max
-        self.value_std_dev = value_std_dev
+    def __init__(self, **kwargs):
+        super(EventsCustomMetricInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.value_sum = kwargs.get('value_sum', None)
+        self.value_count = kwargs.get('value_count', None)
+        self.value_min = kwargs.get('value_min', None)
+        self.value_max = kwargs.get('value_max', None)
+        self.value_std_dev = kwargs.get('value_std_dev', None)

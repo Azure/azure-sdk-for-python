@@ -32,9 +32,9 @@ class EventsAiInfo(Model):
         'sdk_version': {'key': 'sdkVersion', 'type': 'str'},
     }
 
-    def __init__(self, i_key=None, app_name=None, app_id=None, sdk_version=None):
-        super(EventsAiInfo, self).__init__()
-        self.i_key = i_key
-        self.app_name = app_name
-        self.app_id = app_id
-        self.sdk_version = sdk_version
+    def __init__(self, **kwargs):
+        super(EventsAiInfo, self).__init__(**kwargs)
+        self.i_key = kwargs.get('i_key', None)
+        self.app_name = kwargs.get('app_name', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.sdk_version = kwargs.get('sdk_version', None)

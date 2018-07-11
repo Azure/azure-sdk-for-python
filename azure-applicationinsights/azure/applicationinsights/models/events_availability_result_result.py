@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsAvailabilityResultResult(EventsResultData):
     """An availability result result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsAvailabilityResultResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param availability_result:
     :type availability_result:
@@ -69,7 +71,7 @@ class EventsAvailabilityResultResult(EventsResultData):
         'availability_result': {'key': 'availabilityResult', 'type': 'EventsAvailabilityResultInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, availability_result=None):
-        super(EventsAvailabilityResultResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.availability_result = availability_result
+    def __init__(self, **kwargs):
+        super(EventsAvailabilityResultResult, self).__init__(**kwargs)
+        self.availability_result = kwargs.get('availability_result', None)
         self.type = 'availabilityResult'

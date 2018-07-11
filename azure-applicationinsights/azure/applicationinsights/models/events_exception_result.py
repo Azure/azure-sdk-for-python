@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsExceptionResult(EventsResultData):
     """An exception result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsExceptionResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param exception:
     :type exception: ~azure.applicationinsights.models.EventsExceptionInfo
@@ -68,7 +70,7 @@ class EventsExceptionResult(EventsResultData):
         'exception': {'key': 'exception', 'type': 'EventsExceptionInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, exception=None):
-        super(EventsExceptionResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.exception = exception
+    def __init__(self, **kwargs):
+        super(EventsExceptionResult, self).__init__(**kwargs)
+        self.exception = kwargs.get('exception', None)
         self.type = 'exception'

@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsPageViewResult(EventsResultData):
     """A page view result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsPageViewResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param page_view:
     :type page_view: ~azure.applicationinsights.models.EventsPageViewInfo
@@ -68,7 +70,7 @@ class EventsPageViewResult(EventsResultData):
         'page_view': {'key': 'pageView', 'type': 'EventsPageViewInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, page_view=None):
-        super(EventsPageViewResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.page_view = page_view
+    def __init__(self, **kwargs):
+        super(EventsPageViewResult, self).__init__(**kwargs)
+        self.page_view = kwargs.get('page_view', None)
         self.type = 'pageView'

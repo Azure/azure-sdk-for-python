@@ -15,6 +15,8 @@ from .events_result_data import EventsResultData
 class EventsCustomMetricResult(EventsResultData):
     """A custom metric result.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The unique ID for this event.
     :type id: str
     :param count: Count of the event
@@ -41,7 +43,7 @@ class EventsCustomMetricResult(EventsResultData):
     :type application: ~azure.applicationinsights.models.EventsApplicationInfo
     :param client: Client info of the event
     :type client: ~azure.applicationinsights.models.EventsClientInfo
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param custom_metric:
     :type custom_metric:
@@ -69,7 +71,7 @@ class EventsCustomMetricResult(EventsResultData):
         'custom_metric': {'key': 'customMetric', 'type': 'EventsCustomMetricInfo'},
     }
 
-    def __init__(self, id=None, count=None, timestamp=None, custom_dimensions=None, custom_measurements=None, operation=None, session=None, user=None, cloud=None, ai=None, application=None, client=None, custom_metric=None):
-        super(EventsCustomMetricResult, self).__init__(id=id, count=count, timestamp=timestamp, custom_dimensions=custom_dimensions, custom_measurements=custom_measurements, operation=operation, session=session, user=user, cloud=cloud, ai=ai, application=application, client=client)
-        self.custom_metric = custom_metric
+    def __init__(self, **kwargs):
+        super(EventsCustomMetricResult, self).__init__(**kwargs)
+        self.custom_metric = kwargs.get('custom_metric', None)
         self.type = 'customMetric'

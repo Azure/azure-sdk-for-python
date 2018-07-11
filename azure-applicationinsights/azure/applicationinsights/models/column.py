@@ -28,7 +28,7 @@ class Column(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
-        super(Column, self).__init__()
-        self.name = name
-        self.type = type
+    def __init__(self, **kwargs):
+        super(Column, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)

@@ -23,6 +23,6 @@ class EventsResultDataCustomDimensions(Model):
         'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(EventsResultDataCustomDimensions, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(EventsResultDataCustomDimensions, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)

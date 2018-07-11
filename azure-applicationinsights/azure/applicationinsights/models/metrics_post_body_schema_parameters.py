@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class MetricsPostBodySchemaParameters(Model):
     """The parameters for a single metrics query.
 
-    :param metric_id: Possible values include: 'requests/count',
+    All required parameters must be populated in order to send to Azure.
+
+    :param metric_id: Required. Possible values include: 'requests/count',
      'requests/duration', 'requests/failed', 'users/count',
      'users/authenticated', 'pageViews/count', 'pageViews/duration',
      'client/processingDuration', 'client/receiveDuration',
@@ -68,13 +70,13 @@ class MetricsPostBodySchemaParameters(Model):
         'filter': {'key': 'filter', 'type': 'str'},
     }
 
-    def __init__(self, metric_id, timespan=None, aggregation=None, interval=None, segment=None, top=None, orderby=None, filter=None):
-        super(MetricsPostBodySchemaParameters, self).__init__()
-        self.metric_id = metric_id
-        self.timespan = timespan
-        self.aggregation = aggregation
-        self.interval = interval
-        self.segment = segment
-        self.top = top
-        self.orderby = orderby
-        self.filter = filter
+    def __init__(self, **kwargs):
+        super(MetricsPostBodySchemaParameters, self).__init__(**kwargs)
+        self.metric_id = kwargs.get('metric_id', None)
+        self.timespan = kwargs.get('timespan', None)
+        self.aggregation = kwargs.get('aggregation', None)
+        self.interval = kwargs.get('interval', None)
+        self.segment = kwargs.get('segment', None)
+        self.top = kwargs.get('top', None)
+        self.orderby = kwargs.get('orderby', None)
+        self.filter = kwargs.get('filter', None)

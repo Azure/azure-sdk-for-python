@@ -32,9 +32,9 @@ class EventsOperationInfo(Model):
         'synthetic_source': {'key': 'syntheticSource', 'type': 'str'},
     }
 
-    def __init__(self, name=None, id=None, parent_id=None, synthetic_source=None):
-        super(EventsOperationInfo, self).__init__()
-        self.name = name
-        self.id = id
-        self.parent_id = parent_id
-        self.synthetic_source = synthetic_source
+    def __init__(self, **kwargs):
+        super(EventsOperationInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.parent_id = kwargs.get('parent_id', None)
+        self.synthetic_source = kwargs.get('synthetic_source', None)

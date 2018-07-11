@@ -38,11 +38,11 @@ class EventsPerformanceCounterInfo(Model):
         'instance': {'key': 'instance', 'type': 'str'},
     }
 
-    def __init__(self, value=None, name=None, category=None, counter=None, instance_name=None, instance=None):
-        super(EventsPerformanceCounterInfo, self).__init__()
-        self.value = value
-        self.name = name
-        self.category = category
-        self.counter = counter
-        self.instance_name = instance_name
-        self.instance = instance
+    def __init__(self, **kwargs):
+        super(EventsPerformanceCounterInfo, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.name = kwargs.get('name', None)
+        self.category = kwargs.get('category', None)
+        self.counter = kwargs.get('counter', None)
+        self.instance_name = kwargs.get('instance_name', None)
+        self.instance = kwargs.get('instance', None)

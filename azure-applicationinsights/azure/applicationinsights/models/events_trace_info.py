@@ -26,7 +26,7 @@ class EventsTraceInfo(Model):
         'severity_level': {'key': 'severityLevel', 'type': 'int'},
     }
 
-    def __init__(self, message=None, severity_level=None):
-        super(EventsTraceInfo, self).__init__()
-        self.message = message
-        self.severity_level = severity_level
+    def __init__(self, **kwargs):
+        super(EventsTraceInfo, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.severity_level = kwargs.get('severity_level', None)

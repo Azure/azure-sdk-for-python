@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.metrics_operations import MetricsOperations
@@ -44,7 +44,7 @@ class ApplicationInsightsDataClientConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ApplicationInsightsDataClient(object):
+class ApplicationInsightsDataClient(SDKClient):
     """Composite Swagger for Application Insights Data Client
 
     :ivar config: Configuration for client.
@@ -67,7 +67,7 @@ class ApplicationInsightsDataClient(object):
             self, credentials, base_url=None):
 
         self.config = ApplicationInsightsDataClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ApplicationInsightsDataClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = 'v1'

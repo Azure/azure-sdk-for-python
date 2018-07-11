@@ -35,9 +35,9 @@ class MetricsSegmentInfo(Model):
         'segments': {'key': 'segments', 'type': '[MetricsSegmentInfo]'},
     }
 
-    def __init__(self, additional_properties=None, start=None, end=None, segments=None):
-        super(MetricsSegmentInfo, self).__init__()
-        self.additional_properties = additional_properties
-        self.start = start
-        self.end = end
-        self.segments = segments
+    def __init__(self, **kwargs):
+        super(MetricsSegmentInfo, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)
+        self.segments = kwargs.get('segments', None)

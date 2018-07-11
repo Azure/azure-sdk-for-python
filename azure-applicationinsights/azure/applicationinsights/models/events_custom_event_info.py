@@ -23,6 +23,6 @@ class EventsCustomEventInfo(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(EventsCustomEventInfo, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(EventsCustomEventInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
