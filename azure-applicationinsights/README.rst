@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Application Insights Data Plane Client Library.
+This is the Microsoft Azure Application Insights Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -36,8 +36,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Application Insights Data Plane
-<https://docs.microsoft.com/python/azure/>`__
+For code examples, see `Application Insights
+<https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 
 
