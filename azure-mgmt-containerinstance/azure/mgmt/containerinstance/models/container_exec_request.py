@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ContainerExecRequest(Model):
-    """The start container exec request.
+    """The container exec request.
 
     :param command: The command to be executed.
     :type command: str
@@ -27,7 +27,7 @@ class ContainerExecRequest(Model):
         'terminal_size': {'key': 'terminalSize', 'type': 'ContainerExecRequestTerminalSize'},
     }
 
-    def __init__(self, command=None, terminal_size=None):
-        super(ContainerExecRequest, self).__init__()
-        self.command = command
-        self.terminal_size = terminal_size
+    def __init__(self, **kwargs):
+        super(ContainerExecRequest, self).__init__(**kwargs)
+        self.command = kwargs.get('command', None)
+        self.terminal_size = kwargs.get('terminal_size', None)

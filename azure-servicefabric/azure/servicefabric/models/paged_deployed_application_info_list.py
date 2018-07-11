@@ -18,7 +18,6 @@ class PagedDeployedApplicationInfoList(Model):
     The list is paged when all of the results cannot fit in a single message.
     The next set of results can be obtained by executing the same query with
     the continuation token provided in this list.
-    .
 
     :param continuation_token: The continuation token parameter is used to
      obtain next set of results. The continuation token is included in the
@@ -36,7 +35,7 @@ class PagedDeployedApplicationInfoList(Model):
         'items': {'key': 'Items', 'type': '[DeployedApplicationInfo]'},
     }
 
-    def __init__(self, continuation_token=None, items=None):
-        super(PagedDeployedApplicationInfoList, self).__init__()
-        self.continuation_token = continuation_token
-        self.items = items
+    def __init__(self, **kwargs):
+        super(PagedDeployedApplicationInfoList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.items = kwargs.get('items', None)

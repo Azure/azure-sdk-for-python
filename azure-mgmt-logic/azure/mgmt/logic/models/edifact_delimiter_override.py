@@ -15,29 +15,31 @@ from msrest.serialization import Model
 class EdifactDelimiterOverride(Model):
     """The Edifact delimiter override settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param message_id: The message id.
     :type message_id: str
     :param message_version: The message version.
     :type message_version: str
-    :param message_release: The message releaseversion.
+    :param message_release: The message release.
     :type message_release: str
-    :param data_element_separator: The data element separator.
+    :param data_element_separator: Required. The data element separator.
     :type data_element_separator: int
-    :param component_separator: The component separator.
+    :param component_separator: Required. The component separator.
     :type component_separator: int
-    :param segment_terminator: The segment terminator.
+    :param segment_terminator: Required. The segment terminator.
     :type segment_terminator: int
-    :param repetition_separator: The repetition separator.
+    :param repetition_separator: Required. The repetition separator.
     :type repetition_separator: int
-    :param segment_terminator_suffix: The segment terminator suffix. Possible
-     values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
-    :param decimal_point_indicator: The decimal point indicator. Possible
-     values include: 'NotSpecified', 'Comma', 'Decimal'
-    :type decimal_point_indicator: str or :class:`EdifactDecimalIndicator
-     <azure.mgmt.logic.models.EdifactDecimalIndicator>`
-    :param release_indicator: The release indicator.
+    :param segment_terminator_suffix: Required. The segment terminator suffix.
+     Possible values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+    :param decimal_point_indicator: Required. The decimal point indicator.
+     Possible values include: 'NotSpecified', 'Comma', 'Decimal'
+    :type decimal_point_indicator: str or
+     ~azure.mgmt.logic.models.EdifactDecimalIndicator
+    :param release_indicator: Required. The release indicator.
     :type release_indicator: int
     :param message_association_assigned_code: The message association assigned
      code.
@@ -72,16 +74,17 @@ class EdifactDelimiterOverride(Model):
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
     }
 
-    def __init__(self, data_element_separator, component_separator, segment_terminator, repetition_separator, segment_terminator_suffix, decimal_point_indicator, release_indicator, message_id=None, message_version=None, message_release=None, message_association_assigned_code=None, target_namespace=None):
-        self.message_id = message_id
-        self.message_version = message_version
-        self.message_release = message_release
-        self.data_element_separator = data_element_separator
-        self.component_separator = component_separator
-        self.segment_terminator = segment_terminator
-        self.repetition_separator = repetition_separator
-        self.segment_terminator_suffix = segment_terminator_suffix
-        self.decimal_point_indicator = decimal_point_indicator
-        self.release_indicator = release_indicator
-        self.message_association_assigned_code = message_association_assigned_code
-        self.target_namespace = target_namespace
+    def __init__(self, **kwargs):
+        super(EdifactDelimiterOverride, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.message_version = kwargs.get('message_version', None)
+        self.message_release = kwargs.get('message_release', None)
+        self.data_element_separator = kwargs.get('data_element_separator', None)
+        self.component_separator = kwargs.get('component_separator', None)
+        self.segment_terminator = kwargs.get('segment_terminator', None)
+        self.repetition_separator = kwargs.get('repetition_separator', None)
+        self.segment_terminator_suffix = kwargs.get('segment_terminator_suffix', None)
+        self.decimal_point_indicator = kwargs.get('decimal_point_indicator', None)
+        self.release_indicator = kwargs.get('release_indicator', None)
+        self.message_association_assigned_code = kwargs.get('message_association_assigned_code', None)
+        self.target_namespace = kwargs.get('target_namespace', None)

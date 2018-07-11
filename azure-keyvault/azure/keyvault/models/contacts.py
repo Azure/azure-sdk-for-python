@@ -21,8 +21,7 @@ class Contacts(Model):
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
     :param contact_list: The contact list for the vault certificates.
-    :type contact_list: list of :class:`Contact
-     <azure.keyvault.models.Contact>`
+    :type contact_list: list[~azure.keyvault.models.Contact]
     """
 
     _validation = {
@@ -34,6 +33,7 @@ class Contacts(Model):
         'contact_list': {'key': 'contacts', 'type': '[Contact]'},
     }
 
-    def __init__(self, contact_list=None):
+    def __init__(self, **kwargs):
+        super(Contacts, self).__init__(**kwargs)
         self.id = None
-        self.contact_list = contact_list
+        self.contact_list = kwargs.get('contact_list', None)

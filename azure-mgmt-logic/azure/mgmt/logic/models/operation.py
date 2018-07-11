@@ -18,8 +18,7 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that represents the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.logic.models.OperationDisplay>`
+    :type display: ~azure.mgmt.logic.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -27,6 +26,7 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, name=None, display=None):
-        self.name = name
-        self.display = display
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)

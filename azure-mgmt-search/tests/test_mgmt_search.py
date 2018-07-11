@@ -38,7 +38,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
                     'name': 'free'
                 }
             }
-        )
+        ).result()
 
         availability = self.client.services.check_name_availability(account_name)
         self.assertFalse(availability.is_name_available)

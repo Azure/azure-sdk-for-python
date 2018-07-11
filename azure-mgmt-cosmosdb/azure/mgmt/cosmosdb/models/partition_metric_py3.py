@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .metric import Metric
+from .metric_py3 import Metric
 
 
 class PartitionMetric(Metric):

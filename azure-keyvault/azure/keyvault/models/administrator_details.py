@@ -32,8 +32,9 @@ class AdministratorDetails(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, first_name=None, last_name=None, email_address=None, phone=None):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email_address = email_address
-        self.phone = phone
+    def __init__(self, **kwargs):
+        super(AdministratorDetails, self).__init__(**kwargs)
+        self.first_name = kwargs.get('first_name', None)
+        self.last_name = kwargs.get('last_name', None)
+        self.email_address = kwargs.get('email_address', None)
+        self.phone = kwargs.get('phone', None)

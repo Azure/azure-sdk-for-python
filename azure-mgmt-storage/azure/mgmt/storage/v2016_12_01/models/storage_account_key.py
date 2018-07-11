@@ -40,8 +40,8 @@ class StorageAccountKey(Model):
         'permissions': {'key': 'permissions', 'type': 'KeyPermission'},
     }
 
-    def __init__(self):
-        super(StorageAccountKey, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageAccountKey, self).__init__(**kwargs)
         self.key_name = None
         self.value = None
         self.permissions = None

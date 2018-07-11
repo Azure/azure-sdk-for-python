@@ -39,7 +39,7 @@ with open('HISTORY.rst', encoding='utf-8') as f:
 
 setup(
     name='azure-common',
-    version='1.1.11',
+    version='1.1.13',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=readme + '\n\n' + history,
     license='MIT License',
@@ -55,6 +55,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,

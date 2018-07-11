@@ -15,6 +15,8 @@ from .resource_certificate_details import ResourceCertificateDetails
 class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
     """Certificate details representing the Vault credentials for ACS.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param certificate: The base64 encoded certificate raw data string.
     :type certificate: bytearray
     :param friendly_name: Certificate friendlyname.
@@ -31,13 +33,14 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Required. Constant filled by server.
     :type auth_type: str
-    :param global_acs_namespace: ACS namespace name - tenant for our service.
+    :param global_acs_namespace: Required. ACS namespace name - tenant for our
+     service.
     :type global_acs_namespace: str
-    :param global_acs_host_name: Acs mgmt host name to connect to.
+    :param global_acs_host_name: Required. Acs mgmt host name to connect to.
     :type global_acs_host_name: str
-    :param global_acs_rp_realm: Global ACS namespace RP realm.
+    :param global_acs_rp_realm: Required. Global ACS namespace RP realm.
     :type global_acs_rp_realm: str
     """
 
@@ -63,9 +66,9 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
         'global_acs_rp_realm': {'key': 'globalAcsRPRealm', 'type': 'str'},
     }
 
-    def __init__(self, global_acs_namespace, global_acs_host_name, global_acs_rp_realm, certificate=None, friendly_name=None, issuer=None, resource_id=None, subject=None, thumbprint=None, valid_from=None, valid_to=None):
-        super(ResourceCertificateAndAcsDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to)
-        self.global_acs_namespace = global_acs_namespace
-        self.global_acs_host_name = global_acs_host_name
-        self.global_acs_rp_realm = global_acs_rp_realm
+    def __init__(self, **kwargs):
+        super(ResourceCertificateAndAcsDetails, self).__init__(**kwargs)
+        self.global_acs_namespace = kwargs.get('global_acs_namespace', None)
+        self.global_acs_host_name = kwargs.get('global_acs_host_name', None)
+        self.global_acs_rp_realm = kwargs.get('global_acs_rp_realm', None)
         self.auth_type = 'AccessControlService'

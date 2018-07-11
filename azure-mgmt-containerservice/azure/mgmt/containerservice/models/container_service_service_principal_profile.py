@@ -17,7 +17,9 @@ class ContainerServiceServicePrincipalProfile(Model):
     manipulating Azure APIs. Either secret or keyVaultSecretRef must be
     specified.
 
-    :param client_id: The ID for the service principal.
+    All required parameters must be populated in order to send to Azure.
+
+    :param client_id: Required. The ID for the service principal.
     :type client_id: str
     :param secret: The secret password associated with the service principal
      in plain text.
@@ -38,8 +40,8 @@ class ContainerServiceServicePrincipalProfile(Model):
         'key_vault_secret_ref': {'key': 'keyVaultSecretRef', 'type': 'KeyVaultSecretRef'},
     }
 
-    def __init__(self, client_id, secret=None, key_vault_secret_ref=None):
-        super(ContainerServiceServicePrincipalProfile, self).__init__()
-        self.client_id = client_id
-        self.secret = secret
-        self.key_vault_secret_ref = key_vault_secret_ref
+    def __init__(self, **kwargs):
+        super(ContainerServiceServicePrincipalProfile, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.secret = kwargs.get('secret', None)
+        self.key_vault_secret_ref = kwargs.get('key_vault_secret_ref', None)

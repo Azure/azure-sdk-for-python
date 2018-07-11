@@ -21,13 +21,11 @@ class SearchResultsResponse(Model):
     :ivar id: The id of the search, which includes the full url.
     :vartype id: str
     :param metadata: The metadata from search results.
-    :type metadata: :class:`SearchMetadata
-     <azure.mgmt.loganalytics.models.SearchMetadata>`
+    :type metadata: ~azure.mgmt.loganalytics.models.SearchMetadata
     :param value: The array of result values.
-    :type value: list of object
+    :type value: list[object]
     :param error: The error.
-    :type error: :class:`SearchError
-     <azure.mgmt.loganalytics.models.SearchError>`
+    :type error: ~azure.mgmt.loganalytics.models.SearchError
     """
 
     _validation = {
@@ -36,13 +34,14 @@ class SearchResultsResponse(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'metadata': {'key': '__metadata', 'type': 'SearchMetadata'},
+        'metadata': {'key': 'metaData', 'type': 'SearchMetadata'},
         'value': {'key': 'value', 'type': '[object]'},
         'error': {'key': 'error', 'type': 'SearchError'},
     }
 
-    def __init__(self, metadata=None, value=None, error=None):
+    def __init__(self, **kwargs):
+        super(SearchResultsResponse, self).__init__(**kwargs)
         self.id = None
-        self.metadata = metadata
-        self.value = value
-        self.error = error
+        self.metadata = kwargs.get('metadata', None)
+        self.value = kwargs.get('value', None)
+        self.error = kwargs.get('error', None)

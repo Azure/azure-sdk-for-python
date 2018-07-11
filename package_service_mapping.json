@@ -320,6 +320,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-mgmt-loganalytics": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.loganalytics"
+    ],
+    "service_name": "Log Analytics"
+  },
   "azure-mgmt-logic": {
     "category ": "Management",
     "namespaces": [
@@ -333,6 +340,13 @@
       "azure.mgmt.machinelearningcompute"
     ],
     "service_name": "Machine Learning Compute"
+  },
+  "azure-mgmt-managementgroups": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.managementgroups"
+    ],
+    "service_name": "Management Groups"
   },
   "azure-mgmt-media": {
     "category ": "Management",
@@ -446,6 +460,7 @@
       "azure.mgmt.resource.resources.v2016_02_01",
       "azure.mgmt.resource.resources.v2016_09_01",
       "azure.mgmt.resource.resources.v2017_05_10",
+      "azure.mgmt.resource.resources.v2018_02_01",
       "azure.mgmt.resource.policy.v2015_10_01_preview",
       "azure.mgmt.resource.policy.v2016_04_01",
       "azure.mgmt.resource.policy.v2016_12_01",
@@ -502,7 +517,8 @@
       "azure.mgmt.storage.v2016_01_01",
       "azure.mgmt.storage.v2016_12_01",
       "azure.mgmt.storage.v2017_06_01",
-      "azure.mgmt.storage.v2017_10_01"
+      "azure.mgmt.storage.v2017_10_01",
+      "azure.mgmt.storage.v2018_02_01"
     ],
     "service_name": "Storage"
   },

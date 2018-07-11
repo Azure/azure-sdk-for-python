@@ -23,7 +23,7 @@ class ManagementLocksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-01-01".
+    :ivar api_version: The API version to use for the operation. Constant value: "2015-01-01".
     """
 
     models = models

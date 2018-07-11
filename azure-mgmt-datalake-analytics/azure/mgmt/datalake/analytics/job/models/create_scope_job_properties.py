@@ -13,20 +13,23 @@ from .create_job_properties import CreateJobProperties
 
 
 class CreateScopeJobProperties(CreateJobProperties):
-    """Scope job properties used when submitting Scope jobs.
+    """Scope job properties used when submitting Scope jobs. (Only for use
+    internally with Scope job type.).
 
-    :param runtime_version: the runtime version of the Data Lake Analytics
+    All required parameters must be populated in order to send to Azure.
+
+    :param runtime_version: The runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
-     is 3 MB.
+    :param script: Required. The script to run. Please note that the maximum
+     script size is 3 MB.
     :type script: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param resources: the list of resources that are required by the job.
+    :param resources: The list of resources that are required by the job.
     :type resources:
      list[~azure.mgmt.datalake.analytics.job.models.ScopeJobResource]
-    :param notifier: the list of email addresses, separated by semi-colons, to
+    :param notifier: The list of email addresses, separated by semi-colons, to
      notify when the job reaches a terminal state.
     :type notifier: str
     """
@@ -44,8 +47,8 @@ class CreateScopeJobProperties(CreateJobProperties):
         'notifier': {'key': 'notifier', 'type': 'str'},
     }
 
-    def __init__(self, script, runtime_version=None, resources=None, notifier=None):
-        super(CreateScopeJobProperties, self).__init__(runtime_version=runtime_version, script=script)
-        self.resources = resources
-        self.notifier = notifier
+    def __init__(self, **kwargs):
+        super(CreateScopeJobProperties, self).__init__(**kwargs)
+        self.resources = kwargs.get('resources', None)
+        self.notifier = kwargs.get('notifier', None)
         self.type = 'Scope'

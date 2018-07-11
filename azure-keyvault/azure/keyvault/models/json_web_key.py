@@ -17,18 +17,17 @@ class JsonWebKey(Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: Supported JsonWebKey key types (kty) for Elliptic Curve, RSA,
-     HSM, Octet. Kty is usually set to RSA. Possible values include: 'EC',
-     'RSA', 'RSA-HSM', 'oct'
-    :type kty: str or :class:`JsonWebKeyType
-     <azure.keyvault.models.JsonWebKeyType>`
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
+     Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :type kty: str or ~azure.keyvault.models.JsonWebKeyType
     :param key_ops:
-    :type key_ops: list of str
+    :type key_ops: list[str]
     :param n: RSA modulus.
     :type n: bytes
     :param e: RSA public exponent.
     :type e: bytes
-    :param d: RSA private exponent.
+    :param d: RSA private exponent, or the D component of an EC private key.
     :type d: bytes
     :param dp: RSA private key parameter.
     :type dp: bytes
@@ -44,6 +43,14 @@ class JsonWebKey(Model):
     :type k: bytes
     :param t: HSM Token, used with 'Bring Your Own Key'.
     :type t: bytes
+    :param crv: Elliptic curve name. For valid values, see
+     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
+     'P-256K'
+    :type crv: str or ~azure.keyvault.models.JsonWebKeyCurveName
+    :param x: X component of an EC public key.
+    :type x: bytes
+    :param y: Y component of an EC public key.
+    :type y: bytes
     """
 
     _attribute_map = {
@@ -60,19 +67,26 @@ class JsonWebKey(Model):
         'q': {'key': 'q', 'type': 'base64'},
         'k': {'key': 'k', 'type': 'base64'},
         't': {'key': 'key_hsm', 'type': 'base64'},
+        'crv': {'key': 'crv', 'type': 'str'},
+        'x': {'key': 'x', 'type': 'base64'},
+        'y': {'key': 'y', 'type': 'base64'},
     }
 
-    def __init__(self, kid=None, kty=None, key_ops=None, n=None, e=None, d=None, dp=None, dq=None, qi=None, p=None, q=None, k=None, t=None):
-        self.kid = kid
-        self.kty = kty
-        self.key_ops = key_ops
-        self.n = n
-        self.e = e
-        self.d = d
-        self.dp = dp
-        self.dq = dq
-        self.qi = qi
-        self.p = p
-        self.q = q
-        self.k = k
-        self.t = t
+    def __init__(self, **kwargs):
+        super(JsonWebKey, self).__init__(**kwargs)
+        self.kid = kwargs.get('kid', None)
+        self.kty = kwargs.get('kty', None)
+        self.key_ops = kwargs.get('key_ops', None)
+        self.n = kwargs.get('n', None)
+        self.e = kwargs.get('e', None)
+        self.d = kwargs.get('d', None)
+        self.dp = kwargs.get('dp', None)
+        self.dq = kwargs.get('dq', None)
+        self.qi = kwargs.get('qi', None)
+        self.p = kwargs.get('p', None)
+        self.q = kwargs.get('q', None)
+        self.k = kwargs.get('k', None)
+        self.t = kwargs.get('t', None)
+        self.crv = kwargs.get('crv', None)
+        self.x = kwargs.get('x', None)
+        self.y = kwargs.get('y', None)

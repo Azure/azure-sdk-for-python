@@ -36,7 +36,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Azure Data Lake Analytics Management
+For code examples, see `Data Lake Analytics Management
 <https://docs.microsoft.com/python/api/overview/azure/data-lake-analytics>`__
 on docs.microsoft.com.
 

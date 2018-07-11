@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-rdbms"
+package_pprint_name = "RDBMS Management"
+package_doc_id = ""
+is_stable = false

@@ -3,6 +3,25 @@
 Release History
 ===============
 
+1.1.13 (2018-07-03)
++++++++++++++++++++
+
+**Features**
+
+- get_azure_cli_credentials has a new parameter "with_tenant" to get default CLI tenant ID
+
+**Bugfixes**
+
+- get_client_from_cli_profile now supports the "azure-graphrbac" package #2867
+- get_client_from_auth_file now supports the "azure-graphrbac" package #2867
+
+1.1.12 (2018-05-29)
++++++++++++++++++++
+
+**Features**
+
+- Add Authorization profile definition
+
 1.1.11 (2018-05-08)
 +++++++++++++++++++
 

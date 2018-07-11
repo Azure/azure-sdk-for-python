@@ -15,7 +15,9 @@ from .ilr_request import ILRRequest
 class IaasVMILRRegistrationRequest(ILRRequest):
     """Restore files/folders from a backup copy of IaaS VM.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_point_id: ID of the IaaS VM backup copy from where the
      files/folders have to be restored.
@@ -42,10 +44,10 @@ class IaasVMILRRegistrationRequest(ILRRequest):
         'renew_existing_registration': {'key': 'renewExistingRegistration', 'type': 'bool'},
     }
 
-    def __init__(self, recovery_point_id=None, virtual_machine_id=None, initiator_name=None, renew_existing_registration=None):
-        super(IaasVMILRRegistrationRequest, self).__init__()
-        self.recovery_point_id = recovery_point_id
-        self.virtual_machine_id = virtual_machine_id
-        self.initiator_name = initiator_name
-        self.renew_existing_registration = renew_existing_registration
+    def __init__(self, **kwargs):
+        super(IaasVMILRRegistrationRequest, self).__init__(**kwargs)
+        self.recovery_point_id = kwargs.get('recovery_point_id', None)
+        self.virtual_machine_id = kwargs.get('virtual_machine_id', None)
+        self.initiator_name = kwargs.get('initiator_name', None)
+        self.renew_existing_registration = kwargs.get('renew_existing_registration', None)
         self.object_type = 'IaasVMILRRegistrationRequest'

@@ -15,19 +15,29 @@ from msrest.serialization import Model
 class QueryAnalysisValidationResult(Model):
     """Results for query analysis comparison between the source and target.
 
-    :param query_results: List of queries executed and it's execution results
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar query_results: List of queries executed and it's execution results
      in source and target
-    :type query_results: ~azure.mgmt.datamigration.models.QueryExecutionResult
-    :param validation_errors: Errors that are part of the execution
-    :type validation_errors: ~azure.mgmt.datamigration.models.ValidationError
+    :vartype query_results:
+     ~azure.mgmt.datamigration.models.QueryExecutionResult
+    :ivar validation_errors: Errors that are part of the execution
+    :vartype validation_errors:
+     ~azure.mgmt.datamigration.models.ValidationError
     """
+
+    _validation = {
+        'query_results': {'readonly': True},
+        'validation_errors': {'readonly': True},
+    }
 
     _attribute_map = {
         'query_results': {'key': 'queryResults', 'type': 'QueryExecutionResult'},
         'validation_errors': {'key': 'validationErrors', 'type': 'ValidationError'},
     }
 
-    def __init__(self, *, query_results=None, validation_errors=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(QueryAnalysisValidationResult, self).__init__(**kwargs)
-        self.query_results = query_results
-        self.validation_errors = validation_errors
+        self.query_results = None
+        self.validation_errors = None

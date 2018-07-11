@@ -18,20 +18,22 @@ class ContainerService(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
-    :param orchestrator_profile: Profile for the container service
+    :param orchestrator_profile: Required. Profile for the container service
      orchestrator.
     :type orchestrator_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceOrchestratorProfile
@@ -44,7 +46,7 @@ class ContainerService(Resource):
      secret or keyVaultSecretRef need to be specified.
     :type service_principal_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile
-    :param master_profile: Profile for the container service master.
+    :param master_profile: Required. Profile for the container service master.
     :type master_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceMasterProfile
     :param agent_pool_profiles: Properties of the agent pool.
@@ -54,8 +56,8 @@ class ContainerService(Resource):
      cluster.
     :type windows_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceWindowsProfile
-    :param linux_profile: Profile for Linux VMs in the container service
-     cluster.
+    :param linux_profile: Required. Profile for Linux VMs in the container
+     service cluster.
     :type linux_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceLinuxProfile
     :param diagnostics_profile: Profile for diagnostics in the container
@@ -92,14 +94,14 @@ class ContainerService(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'ContainerServiceDiagnosticsProfile'},
     }
 
-    def __init__(self, location, orchestrator_profile, master_profile, linux_profile, tags=None, custom_profile=None, service_principal_profile=None, agent_pool_profiles=None, windows_profile=None, diagnostics_profile=None):
-        super(ContainerService, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ContainerService, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.orchestrator_profile = orchestrator_profile
-        self.custom_profile = custom_profile
-        self.service_principal_profile = service_principal_profile
-        self.master_profile = master_profile
-        self.agent_pool_profiles = agent_pool_profiles
-        self.windows_profile = windows_profile
-        self.linux_profile = linux_profile
-        self.diagnostics_profile = diagnostics_profile
+        self.orchestrator_profile = kwargs.get('orchestrator_profile', None)
+        self.custom_profile = kwargs.get('custom_profile', None)
+        self.service_principal_profile = kwargs.get('service_principal_profile', None)
+        self.master_profile = kwargs.get('master_profile', None)
+        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
+        self.windows_profile = kwargs.get('windows_profile', None)
+        self.linux_profile = kwargs.get('linux_profile', None)
+        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)

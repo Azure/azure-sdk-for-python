@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-keyvault"
+package_pprint_name = "Key Vault"
+package_doc_id = "key-vault"
+is_stable = false
