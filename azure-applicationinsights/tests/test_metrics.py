@@ -20,8 +20,8 @@ class ApplicationInsightsMetricsTest(AzureMgmtTestCase):
     
     def test_metrics_get_multiple(self):
         metrics = [
-            MetricsPostBodySchema('1', MetricsPostBodySchemaParameters('availabilityResults/count', 'P2DT12H')),
-            MetricsPostBodySchema('two', MetricsPostBodySchemaParameters('availabilityResults/duration'))
+            MetricsPostBodySchema(**{'id': '1', 'parameters': MetricsPostBodySchemaParameters(**{'metric_id': 'availabilityResults/count', 'timespan': 'P2DT12H'})}),
+            MetricsPostBodySchema(**{'id': 'two', 'parameters': MetricsPostBodySchemaParameters(**{'metric_id': 'availabilityResults/duration'})})
         ]
         result = self.client.metrics.get_multiple(self.application, metrics)
         self.assertEqual(len(result), 2)
