@@ -10,7 +10,7 @@ class LogAnalyticsQueryTest(AzureMgmtTestCase):
     def test_query(self):
         query = 'Heartbeat | take 10'
         workspace = 'DEMO_WORKSPACE'
-        result = self.client.query(workspace, QueryBody(query))
+        result = self.client.query(workspace, QueryBody(**{'query': query}))
         print(result.tables[0].columns)
         print(result.tables[0].rows[0])
         # All queries should return at least a table.
