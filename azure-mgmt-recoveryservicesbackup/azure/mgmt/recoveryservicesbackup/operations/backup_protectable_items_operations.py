@@ -40,8 +40,8 @@ class BackupProtectableItemsOperations(object):
     def list(
             self, vault_name, resource_group_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
         """Provides a pageable list of protectable objects within your
-        subscription according to the query filter and the pagination
-        parameters.
+        subscription according to the query filter and the
+        pagination parameters.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

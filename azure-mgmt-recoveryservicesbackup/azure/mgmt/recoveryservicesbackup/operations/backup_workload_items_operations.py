@@ -40,7 +40,8 @@ class BackupWorkloadItemsOperations(object):
     def list(
             self, vault_name, resource_group_name, fabric_name, container_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
         """Provides a pageable list of workload item of a specific container
-        according to the query filter and the pagination parameters.
+        according to the query filter and the pagination
+        parameters.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

@@ -40,8 +40,8 @@ class BackupsOperations(object):
     def trigger(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Triggers backup for specified backed up item. This is an asynchronous
-        operation. To know the status of the operation, call
-        GetProtectedItemOperationResult API.
+        operation. To know the status of the
+        operation, call GetProtectedItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

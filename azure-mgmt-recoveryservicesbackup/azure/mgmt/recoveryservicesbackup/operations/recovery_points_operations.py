@@ -127,8 +127,9 @@ class RecoveryPointsOperations(object):
     def get(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, custom_headers=None, raw=False, **operation_config):
         """Provides the information of the backed up data identified using
-        RecoveryPointID. This is an asynchronous operation. To know the status
-        of the operation, call the GetProtectedItemOperationResult API.
+        RecoveryPointID. This is an asynchronous operation.
+        To know the status of the operation, call the
+        GetProtectedItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

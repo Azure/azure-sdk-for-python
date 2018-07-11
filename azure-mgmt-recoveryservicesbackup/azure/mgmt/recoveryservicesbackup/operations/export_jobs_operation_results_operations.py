@@ -40,9 +40,9 @@ class ExportJobsOperationResultsOperations(object):
     def get(
             self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets the operation result of operation triggered by Export Jobs API. If
-        the operation is successful, then it also contains URL of a Blob and a
-        SAS key to access the same. The blob contains exported jobs in JSON
-        serialized format.
+        the operation is successful, then it also
+        contains URL of a Blob and a SAS key to access the same. The blob
+        contains exported jobs in JSON serialized format.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

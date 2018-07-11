@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class AzureWorkloadContainerExtendedInfo(Model):
     """Extended information of the container.
 
-    :param host_server_name: Host Os Name in case of Stand Alone and
-     Cluster Name in case of distributed container.
+    :param host_server_name: Host Os Name in case of Stand Alone and Cluster
+     Name in case of distributed container.
     :type host_server_name: str
     :param inquiry_info: Inquiry Status for the container.
     :type inquiry_info: ~azure.mgmt.recoveryservicesbackup.models.InquiryInfo

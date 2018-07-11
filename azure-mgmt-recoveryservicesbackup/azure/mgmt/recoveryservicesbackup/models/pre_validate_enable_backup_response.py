@@ -26,7 +26,8 @@ class PreValidateEnableBackupResponse(Model):
     :param recommendation: Recommended action for user
     :type recommendation: str
     :param container_name: Specifies the product specific container name. E.g.
-     iaasvmcontainer;iaasvmcontainer;rgname;vmname. This is required for portal
+     iaasvmcontainer;iaasvmcontainer;rgname;vmname. This is required
+     for portal
     :type container_name: str
     :param protected_item_name: Specifies the product specific ds name. E.g.
      vm;iaasvmcontainer;rgname;vmname. This is required for portal
