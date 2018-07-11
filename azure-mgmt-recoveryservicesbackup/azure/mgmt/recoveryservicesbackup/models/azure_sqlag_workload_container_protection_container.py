@@ -40,6 +40,12 @@ class AzureSQLAGWorkloadContainerProtectionContainer(AzureWorkloadContainer):
     :param extended_info: Additional details of a workload container.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureWorkloadContainerExtendedInfo
+    :param workload_type: Workload type for which registration was sent.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """
 
     _validation = {
@@ -55,6 +61,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(AzureWorkloadContainer):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadContainerExtendedInfo'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

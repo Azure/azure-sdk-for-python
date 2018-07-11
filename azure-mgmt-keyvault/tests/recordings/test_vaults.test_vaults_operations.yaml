@@ -1,0 +1,207 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {"tenantId": "6819f86e-5d41-47b0-9297-334f33d7922d",
+      "sku": {"family": "A", "name": "standard"}, "accessPolicies": []}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['156']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e?api-version=2018-02-14
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e","name":"pykvf9870e4e","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykvf9870e4e.vault.azure.net","provisioningState":"RegisteringDns"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['494']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:09 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e?api-version=2018-02-14
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e","name":"pykvf9870e4e","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykvf9870e4e.vault.azure.net/","provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['490']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e?api-version=2018-02-14
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e","name":"pykvf9870e4e","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykvf9870e4e.vault.azure.net/","provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['490']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e","name":"pykvf9870e4e","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykvf9870e4e.vault.azure.net/","provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14&$skiptoken=cHlrdmY5ODcwZTRl"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['740']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14&$skiptoken=cHlrdmY5ODcwZTRl
+  response:
+    body: {string: '{"value":[]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['12']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:42 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=resourceType%20eq%20%27Microsoft.KeyVault%2Fvaults%27&api-version=2015-11-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault","name":"pytest-shared-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-acid-vast-94093","name":"vault-acid-vast-94093","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-adept-pride-03524","name":"vault-adept-pride-03524","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-bossy-writer-9481","name":"vault-bossy-writer-9481","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-brisk-list-27612","name":"vault-brisk-list-27612","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-brown-bread-05808","name":"vault-brown-bread-05808","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-bulky-annual-3028","name":"vault-bulky-annual-3028","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-fake-camera-84783","name":"vault-fake-camera-84783","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-fast-lake-37755","name":"vault-fast-lake-37755","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-fuzzy-way-23287","name":"vault-fuzzy-way-23287","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-half-abuse-13582","name":"vault-half-abuse-13582","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-hard-work-80758","name":"vault-hard-work-80758","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-jaded-click-73028","name":"vault-jaded-click-73028","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-jumpy-dust-87413","name":"vault-jumpy-dust-87413","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-lean-age-17469","name":"vault-lean-age-17469","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-light-lake-97896","name":"vault-light-lake-97896","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-light-weird-41174","name":"vault-light-weird-41174","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-limp-pass-38109","name":"vault-limp-pass-38109","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-lined-garage-5369","name":"vault-lined-garage-5369","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-many-delay-70830","name":"vault-many-delay-70830","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-mean-bonus-38832","name":"vault-mean-bonus-38832","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-misty-collar-5670","name":"vault-misty-collar-5670","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-murky-oven-83115","name":"vault-murky-oven-83115","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-nice-look-26852","name":"vault-nice-look-26852","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-noted-path-89261","name":"vault-noted-path-89261","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-null-dress-24660","name":"vault-null-dress-24660","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-oval-movie-64641","name":"vault-oval-movie-64641","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-prime-keep-55098","name":"vault-prime-keep-55098","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-prize-task-86706","name":"vault-prize-task-86706","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-prize-turn-19498","name":"vault-prize-turn-19498","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-pure-being-01994","name":"vault-pure-being-01994","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-pushy-scale-38929","name":"vault-pushy-scale-38929","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-rash-track-08650","name":"vault-rash-track-08650","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-rude-switch-00591","name":"vault-rude-switch-00591","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-sane-cookie-46182","name":"vault-sane-cookie-46182","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-shaky-female-9107","name":"vault-shaky-female-9107","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-small-animal-7300","name":"vault-small-animal-7300","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-sore-annual-81635","name":"vault-sore-annual-81635","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-spiky-tour-49299","name":"vault-spiky-tour-49299","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-tan-shift-22269","name":"vault-tan-shift-22269","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-tepid-drive-74040","name":"vault-tepid-drive-74040","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-twin-bowl-86148","name":"vault-twin-bowl-86148","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-vexed-star-79606","name":"vault-vexed-star-79606","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-vivid-rope-77951","name":"vault-vivid-rope-77951","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-wee-bone-62301","name":"vault-wee-bone-62301","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-wild-mind-94920","name":"vault-wild-mind-94920","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-wiry-claim-68282","name":"vault-wiry-claim-68282","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-witty-radio-66980","name":"vault-witty-radio-66980","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-yummy-cause-53172","name":"vault-yummy-cause-53172","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-zany-north-40726","name":"vault-zany-north-40726","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-key-vault-samples/providers/Microsoft.KeyVault/vaults/vault-zesty-case-78403","name":"vault-zesty-case-78403","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-aware-act-57426","name":"vault-aware-act-57426","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-bare-skirt-64797","name":"vault-bare-skirt-64797","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-evil-animal-60765","name":"vault-evil-animal-60765","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-full-look-51145","name":"vault-full-look-51145","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-half-year-33229","name":"vault-half-year-33229","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-ill-yellow-55346","name":"vault-ill-yellow-55346","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-limp-door-07476","name":"vault-limp-door-07476","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-mixed-river-36609","name":"vault-mixed-river-36609","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-old-duty-60336","name":"vault-old-duty-60336","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-pesky-friend-3178","name":"vault-pesky-friend-3178","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-shut-author-28426","name":"vault-shut-author-28426","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-stark-risk-65533","name":"vault-stark-risk-65533","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group/providers/Microsoft.KeyVault/vaults/vault-testy-blow-85659","name":"vault-testy-blow-85659","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-dirty-hide-23171","name":"vault-dirty-hide-23171","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-flat-match-25435","name":"vault-flat-match-25435","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-lewd-work-07809","name":"vault-lewd-work-07809","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-near-invite-34338","name":"vault-near-invite-34338","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-one-cousin-48966","name":"vault-one-cousin-48966","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-rapid-lay-63059","name":"vault-rapid-lay-63059","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-rowdy-demand-2249","name":"vault-rowdy-demand-2249","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-short-letter-0050","name":"vault-short-letter-0050","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-sweet-one-75007","name":"vault-sweet-one-75007","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-tame-abroad-86697","name":"vault-tame-abroad-86697","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-thick-salad-01675","name":"vault-thick-salad-01675","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sandbox-group/providers/Microsoft.KeyVault/vaults/vault-worn-dream-81687","name":"vault-worn-dream-81687","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_keyvault_keydbr4zt2a4nj4sr3tpdhpui5kyjz5dvlqzsiveqsedx5zyg4jasmnrg/providers/Microsoft.KeyVault/vaults/cli-test-keyvault-eqj7sm","name":"cli-test-keyvault-eqj7sm","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/nodeTestGroup1167/providers/Microsoft.KeyVault/vaults/testacc3584","name":"testacc3584","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/cli-2vault","name":"cli-2vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/cli-auth-repro-vault","name":"cli-auth-repro-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/cli-contact-test","name":"cli-contact-test","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/cli-vault","name":"cli-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/froyo","name":"froyo","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/jim-test-vault","name":"jim-test-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/jim-test-vault2","name":"jim-test-vault2","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/long-running-test","name":"long-running-test","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/proxy-vault","name":"proxy-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/softserve","name":"softserve","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/some-new-vault","name":"some-new-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/ss-devault","name":"ss-devault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/ss-msak-vault","name":"ss-msak-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/ss-premiumvault","name":"ss-premiumvault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/sssp-vault","name":"sssp-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/test-rcapiver-vault","name":"test-rcapiver-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/vault-bent-kind-88801","name":"vault-bent-kind-88801","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/vault-wary-blue-28204","name":"vault-wary-blue-28204","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/wonky-cli-vault","name":"wonky-cli-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/wonky-hsm-vault","name":"wonky-hsm-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/wonky-sp-vault","name":"wonky-sp-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e","name":"pykvf9870e4e","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['24780']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 26 Jun 2018 00:52:43 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.1
+          msrest_azure/0.4.33 azure-mgmt-keyvault/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_vaults_test_vaults_operationsf9870e4e/providers/Microsoft.KeyVault/vaults/pykvf9870e4e?api-version=2018-02-14
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 26 Jun 2018 00:52:45 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-service-version: [1.0.0.220]
+      x-ms-ratelimit-remaining-subscription-deletes: ['14999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

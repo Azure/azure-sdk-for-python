@@ -25,8 +25,7 @@ class DeletedVault(Model):
     :ivar type: The resource type of the key vault.
     :vartype type: str
     :param properties: Properties of the vault
-    :type properties: :class:`DeletedVaultProperties
-     <azure.mgmt.keyvault.models.DeletedVaultProperties>`
+    :type properties: ~azure.mgmt.keyvault.models.DeletedVaultProperties
     """
 
     _validation = {
@@ -42,8 +41,9 @@ class DeletedVault(Model):
         'properties': {'key': 'properties', 'type': 'DeletedVaultProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, **kwargs):
+        super(DeletedVault, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

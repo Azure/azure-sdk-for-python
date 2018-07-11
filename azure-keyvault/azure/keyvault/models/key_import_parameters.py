@@ -15,15 +15,16 @@ from msrest.serialization import Model
 class KeyImportParameters(Model):
     """The key import parameters.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param hsm: Whether to import as a hardware key (HSM) or software key.
     :type hsm: bool
-    :param key: The Json web key
-    :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+    :param key: Required. The Json web key
+    :type key: ~azure.keyvault.models.JsonWebKey
     :param key_attributes: The key management attributes.
-    :type key_attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type key_attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -37,8 +38,9 @@ class KeyImportParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, key, hsm=None, key_attributes=None, tags=None):
-        self.hsm = hsm
-        self.key = key
-        self.key_attributes = key_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyImportParameters, self).__init__(**kwargs)
+        self.hsm = kwargs.get('hsm', None)
+        self.key = kwargs.get('key', None)
+        self.key_attributes = kwargs.get('key_attributes', None)
+        self.tags = kwargs.get('tags', None)

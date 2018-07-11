@@ -73,6 +73,15 @@ class ProtectedItemHealthStatus(str, Enum):
     ir_pending = "IRPending"
 
 
+class WorkloadItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_data_base = "SQLDataBase"
+    sap_hana_system = "SAPHanaSystem"
+    sap_hana_database = "SAPHanaDatabase"
+
+
 class UsagesUnit(str, Enum):
 
     count = "Count"
@@ -98,6 +107,7 @@ class DataSourceType(str, Enum):
     generic_data_source = "GenericDataSource"
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
 
 
 class ProtectionStatus(str, Enum):
@@ -192,6 +202,7 @@ class WeekOfMonth(str, Enum):
     third = "Third"
     fourth = "Fourth"
     last = "Last"
+    invalid = "Invalid"
 
 
 class MonthOfYear(str, Enum):
@@ -228,6 +239,11 @@ class MabServerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
+    sql_cluster = "SqlCluster"
+    exchange_dag = "ExchangeDAG"
+    sharepoint_farm = "SharepointFarm"
+    hyper_vcluster = "HyperVCluster"
+    windows_client = "WindowsClient"
 
 
 class WorkloadType(str, Enum):
@@ -245,6 +261,7 @@ class WorkloadType(str, Enum):
     generic_data_source = "GenericDataSource"
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
 
 
 class HttpStatusCode(str, Enum):
@@ -303,6 +320,13 @@ class ValidationStatus(str, Enum):
     invalid = "Invalid"
     succeeded = "Succeeded"
     failed = "Failed"
+
+
+class CreateMode(str, Enum):
+
+    invalid = "Invalid"
+    default = "Default"
+    recover = "Recover"
 
 
 class HealthState(str, Enum):
@@ -427,6 +451,11 @@ class ContainerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
+    sql_cluster = "SqlCluster"
+    exchange_dag = "ExchangeDAG"
+    sharepoint_farm = "SharepointFarm"
+    hyper_vcluster = "HyperVCluster"
+    windows_client = "WindowsClient"
 
 
 class RestorePointQueryType(str, Enum):
@@ -437,13 +466,6 @@ class RestorePointQueryType(str, Enum):
     differential = "Differential"
     full_and_differential = "FullAndDifferential"
     all = "All"
-
-
-class WorkloadItemType(str, Enum):
-
-    invalid = "Invalid"
-    sql_instance = "SQLInstance"
-    sql_data_base = "SQLDataBase"
 
 
 class RecoveryPointTierType(str, Enum):
@@ -476,6 +498,7 @@ class BackupItemType(str, Enum):
     generic_data_source = "GenericDataSource"
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
 
 
 class OperationStatusValues(str, Enum):

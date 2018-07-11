@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VaultPaged(Paged):
     """
-    A paging container for iterating over a list of Vault object
+    A paging container for iterating over a list of :class:`Vault <azure.mgmt.keyvault.models.Vault>` object
     """
 
     _attribute_map = {

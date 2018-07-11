@@ -9,7 +9,7 @@
 /azure-mgmt-batchai/ @AlexanderYukhanov
 /azure-mgmt-cdn/ @tjprescott
 /azure-mgmt-consumption/ @sandeepnl
-/azure-mgmt-containerinstance/ @yolo3301 @xizhamsft
+/azure-mgmt-containerinstance/ @samkreter @xizhamsft
 /azure-mgmt-containerregistry/ @djyou 
 /azure-mgmt-cosmosdb/ @dmakwana
 /azure-mgmt-datafactory/ @hvermis
@@ -19,7 +19,8 @@
 /azure-mgmt-eventgrid/ @kalyanaj
 /azure-mgmt-keyvault/ @schaabs
 /azure-mgmt-machinelearningcompute/ @shutchings
-/azure-mgmt-recoveryservicesbackup/ @dragonfly91
+/azure-mgmt-recoveryservices/ @DheerendraRathor
+/azure-mgmt-recoveryservicesbackup/ @DheerendraRathor
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft

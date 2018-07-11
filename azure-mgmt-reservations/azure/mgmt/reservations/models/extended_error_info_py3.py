@@ -41,7 +41,7 @@ class ExtendedErrorInfo(Model):
      'BillingError', 'FulfillmentConfigurationError',
      'FulfillmentOutOfStockError', 'FulfillmentTransientError',
      'FulfillmentError', 'CalculatePriceFailed'
-    :type code: str or ~azure.mgmt.reservations.models.enum
+    :type code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
     :param message:
     :type message: str
     """
