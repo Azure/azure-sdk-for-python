@@ -4,6 +4,7 @@
 
 /azure-batch/ @annatisch @matthchr
 /azure-keyvault/ @schaabs
+/azure-loganalytics/ @alexeldeib
 /azure-mgmt-batch/ @annatisch @matthchr
 /azure-mgmt-batchai/ @AlexanderYukhanov
 /azure-mgmt-cdn/ @tjprescott
