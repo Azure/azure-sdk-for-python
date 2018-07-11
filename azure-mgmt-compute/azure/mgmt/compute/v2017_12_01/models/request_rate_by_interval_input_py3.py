@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .log_analytics_input_base import LogAnalyticsInputBase
+from .log_analytics_input_base_py3 import LogAnalyticsInputBase
 
 
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
