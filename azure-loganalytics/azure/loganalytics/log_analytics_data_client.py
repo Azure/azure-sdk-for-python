@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -42,7 +42,7 @@ class LogAnalyticsDataClientConfiguration(Configuration):
         self.credentials = credentials
 
 
-class LogAnalyticsDataClient(object):
+class LogAnalyticsDataClient(SDKClient):
     """Log Analytics Data Plane Client
 
     :ivar config: Configuration for client.
@@ -58,7 +58,7 @@ class LogAnalyticsDataClient(object):
             self, credentials, base_url=None):
 
         self.config = LogAnalyticsDataClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(LogAnalyticsDataClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = 'v1'

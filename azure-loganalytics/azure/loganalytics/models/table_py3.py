@@ -39,8 +39,8 @@ class Table(Model):
         'rows': {'key': 'rows', 'type': '[[object]]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, columns, rows, **kwargs) -> None:
         super(Table, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.columns = kwargs.get('columns', None)
-        self.rows = kwargs.get('rows', None)
+        self.name = name
+        self.columns = columns
+        self.rows = rows

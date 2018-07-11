@@ -9,13 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .query_body import QueryBody
-from .column import Column
-from .table import Table
-from .query_results import QueryResults
-from .error_detail import ErrorDetail
-from .error_info import ErrorInfo
-from .error_response import ErrorResponse, ErrorResponseException
+try:
+    from .query_body_py3 import QueryBody
+    from .column_py3 import Column
+    from .table_py3 import Table
+    from .query_results_py3 import QueryResults
+    from .error_detail_py3 import ErrorDetail
+    from .error_info_py3 import ErrorInfo
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+except (SyntaxError, ImportError):
+    from .query_body import QueryBody
+    from .column import Column
+    from .table import Table
+    from .query_results import QueryResults
+    from .error_detail import ErrorDetail
+    from .error_info import ErrorInfo
+    from .error_response import ErrorResponse, ErrorResponseException
 
 __all__ = [
     'QueryBody',

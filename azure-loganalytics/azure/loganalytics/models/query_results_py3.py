@@ -31,6 +31,6 @@ class QueryResults(Model):
         'tables': {'key': 'tables', 'type': '[Table]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tables, **kwargs) -> None:
         super(QueryResults, self).__init__(**kwargs)
-        self.tables = kwargs.get('tables', None)
+        self.tables = tables

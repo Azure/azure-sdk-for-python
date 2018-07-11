@@ -48,11 +48,11 @@ class ErrorDetail(Model):
         'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str, message: str, target: str=None, value: str=None, resources=None, additional_properties=None, **kwargs) -> None:
         super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.value = kwargs.get('value', None)
-        self.resources = kwargs.get('resources', None)
-        self.additional_properties = kwargs.get('additional_properties', None)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.value = value
+        self.resources = resources
+        self.additional_properties = additional_properties

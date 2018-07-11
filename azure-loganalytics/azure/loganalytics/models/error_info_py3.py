@@ -12,24 +12,19 @@
 from msrest.serialization import Model
 
 
-class ErrorDetail(Model):
-    """Error details.
+class ErrorInfo(Model):
+    """The code and message for an error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error's code.
+    :param code: Required. A machine readable error code.
     :type code: str
     :param message: Required. A human readable error message.
     :type message: str
-    :param target: Indicates which property in the request is responsible for
-     the error.
-    :type target: str
-    :param value: Indicates which value in 'target' is responsible for the
-     error.
-    :type value: str
-    :param resources: Indicates resources which were responsible for the
-     error.
-    :type resources: list[str]
+    :param details: error details.
+    :type details: list[~azure.loganalytics.models.ErrorDetail]
+    :param innererror: Inner error details if they exist.
+    :type innererror: ~azure.loganalytics.models.ErrorInfo
     :param additional_properties:
     :type additional_properties: object
     """
@@ -42,17 +37,15 @@ class ErrorDetail(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': '[str]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'innererror': {'key': 'innererror', 'type': 'ErrorInfo'},
         'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.value = kwargs.get('value', None)
-        self.resources = kwargs.get('resources', None)
-        self.additional_properties = kwargs.get('additional_properties', None)
+    def __init__(self, *, code: str, message: str, details=None, innererror=None, additional_properties=None, **kwargs) -> None:
+        super(ErrorInfo, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.details = details
+        self.innererror = innererror
+        self.additional_properties = additional_properties

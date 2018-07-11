@@ -38,8 +38,8 @@ class QueryBody(Model):
         'workspaces': {'key': 'workspaces', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, query: str, timespan: str=None, workspaces=None, **kwargs) -> None:
         super(QueryBody, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-        self.timespan = kwargs.get('timespan', None)
-        self.workspaces = kwargs.get('workspaces', None)
+        self.query = query
+        self.timespan = timespan
+        self.workspaces = workspaces
