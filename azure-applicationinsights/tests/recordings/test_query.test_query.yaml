@@ -7,63 +7,64 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['31']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.3
           azure-applicationinsights/0.1.0]
       x-api-key: [DEMO_KEY]
     method: POST
     uri: https://api.applicationinsights.io/v1/apps/DEMO_APP/query
   response:
-    body: {string: '{"tables":[{"name":"PrimaryResult","columns":[{"name":"timestamp","type":"datetime"},{"name":"id","type":"string"},{"name":"source","type":"string"},{"name":"name","type":"string"},{"name":"url","type":"string"},{"name":"success","type":"string"},{"name":"resultCode","type":"string"},{"name":"duration","type":"real"},{"name":"performanceBucket","type":"string"},{"name":"itemType","type":"string"},{"name":"customDimensions","type":"dynamic"},{"name":"customMeasurements","type":"dynamic"},{"name":"operation_Name","type":"string"},{"name":"operation_Id","type":"string"},{"name":"operation_ParentId","type":"string"},{"name":"operation_SyntheticSource","type":"string"},{"name":"session_Id","type":"string"},{"name":"user_Id","type":"string"},{"name":"user_AuthenticatedId","type":"string"},{"name":"user_AccountId","type":"string"},{"name":"application_Version","type":"string"},{"name":"client_Type","type":"string"},{"name":"client_Model","type":"string"},{"name":"client_OS","type":"string"},{"name":"client_IP","type":"string"},{"name":"client_City","type":"string"},{"name":"client_StateOrProvince","type":"string"},{"name":"client_CountryOrRegion","type":"string"},{"name":"client_Browser","type":"string"},{"name":"cloud_RoleName","type":"string"},{"name":"cloud_RoleInstance","type":"string"},{"name":"appId","type":"string"},{"name":"appName","type":"string"},{"name":"iKey","type":"string"},{"name":"sdkVersion","type":"string"},{"name":"itemId","type":"string"},{"name":"itemCount","type":"int"}],"rows":[["2018-06-16T11:18:54.163Z","|a460950b1b054f0c8164cc2093002a90.2.e7fb1735_","","GET
-        Home/Index","http://aiconnect2.cloudapp.net/FabrikamProd","True","200",160.4444,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET Home/Index","a460950b1b054f0c8164cc2093002a90","|a460950b1b054f0c8164cc2093002a90.2","Application
-        Insights Availability Monitoring","a460950b1b054f0c8164cc2093002a90","us-va-ash-azr_a460950b1b054f0c8164cc2093002a90","","","","PC","","","0.0.0.0","Boydton","Virginia","United
-        States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","0e294800-7157-11e8-8f4f-450e05e5ac2a",1],["2018-06-16T11:18:56.445Z","|480a02bfc62141fcafc7abd43c706817.0.82406a3c_","","GET
-        Home/Index","http://fabrikamfiberapp.azurewebsites.net/","True","200",635.0073,"500ms-1sec","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET Home/Index","480a02bfc62141fcafc7abd43c706817","|480a02bfc62141fcafc7abd43c706817.0","Application
-        Insights Availability Monitoring","480a02bfc62141fcafc7abd43c706817","us-va-ash-azr_480a02bfc62141fcafc7abd43c706817","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Washington","Virginia","United
-        States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","1068b0b8-7157-11e8-a187-8b1a8e15f607",1],["2018-06-16T11:18:59.396Z","|442f0f2a2f3d432a8c5dda1f1f883bea.5.e7fb1772_","","GET
-        /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","http://aiconnect2.cloudapp.net/FabrikamProd/Content/fonts/segoewp-light-webfont.eot","True","200",0.6056,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","442f0f2a2f3d432a8c5dda1f1f883bea","|442f0f2a2f3d432a8c5dda1f1f883bea.5","Application
-        Insights Availability Monitoring","442f0f2a2f3d432a8c5dda1f1f883bea","us-tx-sn1-azr_442f0f2a2f3d432a8c5dda1f1f883bea","","","","PC","","","0.0.0.0","San
-        Antonio","Texas","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","12fd3e40-7157-11e8-931a-d59ed8e186cf",2],["2018-06-16T11:20:24.826Z","|3fPA5v6THfs=.82406a42_","","GET
-        Home/Index","http://fabrikamfiberapp.azurewebsites.net/","True","200",633.4816,"500ms-1sec","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET Home/Index","3fPA5v6THfs=","3fPA5v6THfs=","Bot","","","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","","","","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","55c509b8-7157-11e8-9498-056276764899",1],["2018-06-16T11:21:11.946Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.0.82406a44_","","GET
-        Home/Index","http://fabrikamfiberapp.azurewebsites.net/","True","200",672.7884,"500ms-1sec","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET Home/Index","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc.0","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","605c8658-7157-11e8-9498-056276764899",1],["2018-06-16T11:21:12.665Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.82406a45_","","GET
-        /Content/style.css","http://fabrikamfiberapp.azurewebsites.net/Content/style.css","True","200",3.1551,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /Content/style.css","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","60a4b2e0-7157-11e8-b350-d74b4ee9eed5",1],["2018-06-16T11:21:12.712Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.82406a46_","","GET
-        /Scripts/jQuery.tmpl.min.js","http://fabrikamfiberapp.azurewebsites.net/Scripts/jQuery.tmpl.min.js","True","200",9.3944,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /Scripts/jQuery.tmpl.min.js","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","609103d1-7157-11e8-b5fa-2b1a93684918",1],["2018-06-16T11:21:12.727Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.82406a47_","","GET
-        /Scripts/jquery-ui-1.8.11.js","http://fabrikamfiberapp.azurewebsites.net/Scripts/jquery-ui-1.8.11.js","True","200",7.7356,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /Scripts/jquery-ui-1.8.11.js","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","609103d0-7157-11e8-b5fa-2b1a93684918",1],["2018-06-16T11:21:12.727Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.82406a48_","","GET
-        /Content/themes/base/jquery.ui.all.css","http://fabrikamfiberapp.azurewebsites.net/Content/themes/base/jquery.ui.all.css","True","200",7.9641,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /Content/themes/base/jquery.ui.all.css","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","60d3b220-7157-11e8-b5fa-2b1a93684918",1],["2018-06-16T11:21:12.745Z","|b84bf4ed9f8a4aefbc5562be98d8e7bc.82406a49_","","GET
-        /Scripts/knockout-1.2.0.js","http://fabrikamfiberapp.azurewebsites.net/Scripts/knockout-1.2.0.js","True","200",2.4131,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
-        Ver:''1.0'')\"}",null,"GET /Scripts/knockout-1.2.0.js","b84bf4ed9f8a4aefbc5562be98d8e7bc","|b84bf4ed9f8a4aefbc5562be98d8e7bc","Application
-        Insights Availability Monitoring","b84bf4ed9f8a4aefbc5562be98d8e7bc","us-fl-mia-edge_b84bf4ed9f8a4aefbc5562be98d8e7bc","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
-        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D506F00","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.6.0-18330","60d3b221-7157-11e8-b5fa-2b1a93684918",1]]}]}'}
+    body: {string: '{"tables":[{"name":"PrimaryResult","columns":[{"name":"timestamp","type":"datetime"},{"name":"id","type":"string"},{"name":"source","type":"string"},{"name":"name","type":"string"},{"name":"url","type":"string"},{"name":"success","type":"string"},{"name":"resultCode","type":"string"},{"name":"duration","type":"real"},{"name":"performanceBucket","type":"string"},{"name":"itemType","type":"string"},{"name":"customDimensions","type":"dynamic"},{"name":"customMeasurements","type":"dynamic"},{"name":"operation_Name","type":"string"},{"name":"operation_Id","type":"string"},{"name":"operation_ParentId","type":"string"},{"name":"operation_SyntheticSource","type":"string"},{"name":"session_Id","type":"string"},{"name":"user_Id","type":"string"},{"name":"user_AuthenticatedId","type":"string"},{"name":"user_AccountId","type":"string"},{"name":"application_Version","type":"string"},{"name":"client_Type","type":"string"},{"name":"client_Model","type":"string"},{"name":"client_OS","type":"string"},{"name":"client_IP","type":"string"},{"name":"client_City","type":"string"},{"name":"client_StateOrProvince","type":"string"},{"name":"client_CountryOrRegion","type":"string"},{"name":"client_Browser","type":"string"},{"name":"cloud_RoleName","type":"string"},{"name":"cloud_RoleInstance","type":"string"},{"name":"appId","type":"string"},{"name":"appName","type":"string"},{"name":"iKey","type":"string"},{"name":"sdkVersion","type":"string"},{"name":"itemId","type":"string"},{"name":"itemCount","type":"int"}],"rows":[["2018-07-11T11:21:04.097Z","|116e494634b64ff3ac53d9579fe16544.0.42a166b8_","","GET
+        Customers/Details","http://fabrikamfiberapp.azurewebsites.net/Customers/Details/8469","False","500",1718.2053,"1sec-3sec","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET Customers/Details","116e494634b64ff3ac53d9579fe16544","|116e494634b64ff3ac53d9579fe16544.0","Application
+        Insights Availability Monitoring","116e494634b64ff3ac53d9579fe16544","emea-au-syd-edge_116e494634b64ff3ac53d9579fe16544","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Sydney","New
+        South Wales","Australia","","fabrikamfiberapp","RD00155D469012","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","90b6e35b-84fc-11e8-87f9-553b5fa99291",1],["2018-07-11T11:21:04.128Z","|2cb05cba7bd4475fa8749b9152b983f9.0.42a166b9_","","GET
+        Customers/Details","http://fabrikamfiberapp.azurewebsites.net/Customers/Details/8469","False","500",1074.8092,"1sec-3sec","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET Customers/Details","2cb05cba7bd4475fa8749b9152b983f9","|2cb05cba7bd4475fa8749b9152b983f9.0","Application
+        Insights Availability Monitoring","2cb05cba7bd4475fa8749b9152b983f9","us-fl-mia-edge_2cb05cba7bd4475fa8749b9152b983f9","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Des
+        Moines","Iowa","United States","","fabrikamfiberapp","RD00155D469012","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","90b6e35a-84fc-11e8-87f9-553b5fa99291",1],["2018-07-11T11:21:28.452Z","|0b50d49e32b34a1788d6195d4fb79a14.2.c160da64_","","GET
+        /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","http://aiconnect2.cloudapp.net/FabrikamProd/Content/fonts/segoewp-light-webfont.eot","True","200",0.7897,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","0b50d49e32b34a1788d6195d4fb79a14","|0b50d49e32b34a1788d6195d4fb79a14.2","Application
+        Insights Availability Monitoring","0b50d49e32b34a1788d6195d4fb79a14","us-tx-sn1-azr_0b50d49e32b34a1788d6195d4fb79a14","","","","PC","","","0.0.0.0","San
+        Antonio","Texas","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","8e29f6e0-84fc-11e8-abf1-b7806bdec243",2],["2018-07-11T11:21:28.677Z","|0b50d49e32b34a1788d6195d4fb79a14.c160da66_","","GET
+        /FabrikamProd/Content/jquery.cleditor.css","http://aiconnect2.cloudapp.net/FabrikamProd/Content/jquery.cleditor.css","True","200",1.1321,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/jquery.cleditor.css","0b50d49e32b34a1788d6195d4fb79a14","|0b50d49e32b34a1788d6195d4fb79a14","Application
+        Insights Availability Monitoring","0b50d49e32b34a1788d6195d4fb79a14","us-tx-sn1-azr_0b50d49e32b34a1788d6195d4fb79a14","","","","PC","","","0.0.0.0","San
+        Antonio","Texas","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","8e6d6880-84fc-11e8-b54d-552c061aaa5d",2],["2018-07-11T11:21:28.726Z","|0b50d49e32b34a1788d6195d4fb79a14.4.c160da69_","","GET
+        /FabrikamProd/Content/fonts/segoewp-webfont.eot","http://aiconnect2.cloudapp.net/FabrikamProd/Content/fonts/segoewp-webfont.eot","True","200",0.6976,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/fonts/segoewp-webfont.eot","0b50d49e32b34a1788d6195d4fb79a14","|0b50d49e32b34a1788d6195d4fb79a14.4","Application
+        Insights Availability Monitoring","0b50d49e32b34a1788d6195d4fb79a14","us-tx-sn1-azr_0b50d49e32b34a1788d6195d4fb79a14","","","","PC","","","0.0.0.0","San
+        Antonio","Texas","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","8ead0990-84fc-11e8-8468-797ea911a79a",2],["2018-07-11T11:21:28.826Z","|0b50d49e32b34a1788d6195d4fb79a14.6.c160da6b_","","POST
+        ServiceTickets/Create","http://aiconnect2.cloudapp.net/FabrikamProd/ServiceTickets/Create","False","500",103.4477,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"POST ServiceTickets/Create","0b50d49e32b34a1788d6195d4fb79a14","|0b50d49e32b34a1788d6195d4fb79a14.6","Application
+        Insights Availability Monitoring","0b50d49e32b34a1788d6195d4fb79a14","us-tx-sn1-azr_0b50d49e32b34a1788d6195d4fb79a14","","","","PC","","","0.0.0.0","San
+        Antonio","Texas","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","8f607b14-84fc-11e8-91c3-39a59f9d0e98",2],["2018-07-11T11:21:41.477Z","|2c37dd7ed0764d68bc6fcae4a686f5fe.0.42a166bc_","","GET
+        Customers/Details","http://fabrikamfiberapp.azurewebsites.net/Customers/Details/8469","False","500",400.4823,"250ms-500ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET Customers/Details","2c37dd7ed0764d68bc6fcae4a686f5fe","|2c37dd7ed0764d68bc6fcae4a686f5fe.0","Application
+        Insights Availability Monitoring","2c37dd7ed0764d68bc6fcae4a686f5fe","emea-fr-pra-edge_2c37dd7ed0764d68bc6fcae4a686f5fe","","","AutoGen_49c3aea0-4641-4675-93b5-55f7a62d22d3","PC","","","0.0.0.0","Paris","Paris","France","","fabrikamfiberapp","RD00155D469012","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","989a1565-84fc-11e8-aad2-ab071122083e",1],["2018-07-11T11:21:50.871Z","|98710e3f2f524e598aab05e1457720f8.2.c160daa7_","","GET
+        Home/Index","http://aiconnect2.cloudapp.net/FabrikamProd","True","200",169.7712,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET Home/Index","98710e3f2f524e598aab05e1457720f8","|98710e3f2f524e598aab05e1457720f8.2","Application
+        Insights Availability Monitoring","98710e3f2f524e598aab05e1457720f8","us-fl-mia-edge_98710e3f2f524e598aab05e1457720f8","","","","PC","","","0.0.0.0","Des
+        Moines","Iowa","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","9bb4e9f8-84fc-11e8-a6d0-4fb15fec16c1",2],["2018-07-11T11:21:51.08Z","|98710e3f2f524e598aab05e1457720f8.3.c160daa8_","","GET
+        /FabrikamProd/Content/fonts/segoewp-webfont.eot","http://aiconnect2.cloudapp.net/FabrikamProd/Content/fonts/segoewp-webfont.eot","True","200",1.6614,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/fonts/segoewp-webfont.eot","98710e3f2f524e598aab05e1457720f8","|98710e3f2f524e598aab05e1457720f8.3","Application
+        Insights Availability Monitoring","98710e3f2f524e598aab05e1457720f8","us-fl-mia-edge_98710e3f2f524e598aab05e1457720f8","","","","PC","","","0.0.0.0","Des
+        Moines","Iowa","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","9b937f40-84fc-11e8-81ff-3d6e73e57a05",2],["2018-07-11T11:21:51.087Z","|98710e3f2f524e598aab05e1457720f8.4.c160daa9_","","GET
+        /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","http://aiconnect2.cloudapp.net/FabrikamProd/Content/fonts/segoewp-light-webfont.eot","True","200",0.7602,"<250ms","request","{\"_MS.ProcessedByMetricExtractors\":\"(Name:''Requests'',
+        Ver:''1.0'')\"}",null,"GET /FabrikamProd/Content/fonts/segoewp-light-webfont.eot","98710e3f2f524e598aab05e1457720f8","|98710e3f2f524e598aab05e1457720f8.4","Application
+        Insights Availability Monitoring","98710e3f2f524e598aab05e1457720f8","us-fl-mia-edge_98710e3f2f524e598aab05e1457720f8","","","","PC","","","0.0.0.0","Des
+        Moines","Iowa","United States","","","AIConnect2","cf58dcfd-0683-487c-bc84-048789bca8e5","fabrikamprod","5a2e4e0c-e136-4a15-9824-90ba859b0a89","web:2.7.0-454","9bccb7b0-84fc-11e8-81ff-3d6e73e57a05",2]]}]}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location']
       connection: [keep-alive]
-      content-length: ['9441']
+      content-length: ['9616']
       content-type: [application/json; charset=utf-8]
-      date: ['Sun, 17 Jun 2018 21:59:40 GMT']
+      date: ['Thu, 12 Jul 2018 21:38:21 GMT']
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      via: [1.1 draft-ai-blue.bfefd2d1-71d8-11e8-9814-70b3d5800001]
+      via: [1.1 draft-ai-blue.be2886b0-8568-11e8-a775-70b3d5800012]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1

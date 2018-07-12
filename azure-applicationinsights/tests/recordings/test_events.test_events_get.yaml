@@ -5,8 +5,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.3
           azure-applicationinsights/0.1.0]
       x-api-key: [DEMO_KEY]
     method: GET
@@ -24,13 +23,13 @@ interactions:
       content-length: ['1415']
       content-type: [application/json; charset=utf-8; ieee754compatible=false; odata.metadata=none;
           odata.streaming=false]
-      date: ['Tue, 19 Jun 2018 06:02:56 GMT']
+      date: ['Thu, 12 Jul 2018 21:38:13 GMT']
       odata-version: [4.0;]
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: ['Accept, Accept-Encoding']
-      via: [1.1 draft-ai-green.cebc8522-7371-11e8-8874-70b3d5800002]
+      via: [1.1 draft-ai-blue.75ba2774-8597-11e8-a775-70b3d5800012]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1

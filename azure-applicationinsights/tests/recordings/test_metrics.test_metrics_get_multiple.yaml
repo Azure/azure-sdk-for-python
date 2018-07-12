@@ -8,24 +8,24 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['168']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.3
           azure-applicationinsights/0.1.0]
       x-api-key: [DEMO_KEY]
     method: POST
     uri: https://api.applicationinsights.io/v1/apps/DEMO_APP/metrics
   response:
-    body: {string: '[{"id":"1","status":200,"body":{"value":{"start":"2018-06-16T17:39:11.216Z","end":"2018-06-19T05:39:11.216Z","availabilityResults/count":{"sum":28053}}}},{"id":"two","status":200,"body":{"value":{"start":"2018-06-18T17:39:11.230Z","end":"2018-06-19T05:39:11.230Z","availabilityResults/duration":{"avg":1120.81}}}}]'}
+    body: {string: '[{"id":"1","status":200,"body":{"value":{"start":"2018-07-10T09:38:20.190Z","end":"2018-07-12T21:38:20.190Z","availabilityResults/count":{"sum":29689}}}},{"id":"two","status":200,"body":{"value":{"start":"2018-07-12T09:38:20.210Z","end":"2018-07-12T21:38:20.210Z","availabilityResults/duration":{"avg":1041}}}}]'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location']
       connection: [keep-alive]
-      content-length: ['314']
+      content-length: ['311']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 19 Jun 2018 05:39:11 GMT']
+      date: ['Thu, 12 Jul 2018 21:38:20 GMT']
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       vary: ['Accept, Accept-Encoding']
-      via: [1.1 draft-ai-green.8ec43b22-7376-11e8-9b60-70b3d5800006]
+      via: [1.1 draft-ai-blue.d6bf7929-855f-11e8-a775-70b3d5800012]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1

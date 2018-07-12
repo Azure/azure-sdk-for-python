@@ -5,25 +5,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.3
           azure-applicationinsights/0.1.0]
       x-api-key: [DEMO_KEY]
     method: GET
     uri: https://api.applicationinsights.io/v1/apps/DEMO_APP/metrics/availabilityResults%2Fcount
   response:
-    body: {string: '{"value":{"start":"2018-06-18T17:39:09.873Z","end":"2018-06-19T05:39:09.873Z","availabilityResults/count":{"sum":5602}}}'}
+    body: {string: '{"value":{"start":"2018-07-12T09:38:18.749Z","end":"2018-07-12T21:38:18.749Z","availabilityResults/count":{"sum":6305}}}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location']
       connection: [keep-alive]
       content-length: ['120']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 19 Jun 2018 05:39:10 GMT']
+      date: ['Thu, 12 Jul 2018 21:38:19 GMT']
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       vary: ['Accept, Accept-Encoding']
-      via: [1.1 draft-ai-green.4ea30cd7-7326-11e8-9b60-70b3d5800006]
+      via: [1.1 draft-ai-blue.2f939e36-8602-11e8-a775-70b3d5800012]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1

@@ -2,11 +2,10 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/json]
+      Accept: [application/xml;charset=utf-8]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.0 msrest/0.5.0
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.3
           azure-applicationinsights/0.1.0]
       x-api-key: [DEMO_KEY]
     method: GET
@@ -18,76 +17,71 @@ interactions:
         Name="TraceCustomDimensionsType" OpenType="True"><Property Name="AgentSession"
         Type="Edm.String"/><Property Name="AgentVersion" Type="Edm.String"/><Property
         Name="MachineName" Type="Edm.String"/><Property Name="Source" Type="Edm.String"/><Property
-        Name="RunningMode" Type="Edm.String"/><Property Name="DeveloperMode" Type="Edm.String"/></ComplexType><ComplexType
-        Name="TraceCustomMeasurementsType" OpenType="True"><Property Name="AgentSession"
-        Type="Edm.String"/><Property Name="AgentVersion" Type="Edm.String"/><Property
-        Name="MachineName" Type="Edm.String"/><Property Name="Source" Type="Edm.String"/><Property
-        Name="RunningMode" Type="Edm.String"/><Property Name="DeveloperMode" Type="Edm.String"/></ComplexType><ComplexType
+        Name="RunningMode" Type="Edm.String"/></ComplexType><ComplexType Name="TraceCustomMeasurementsType"
+        OpenType="True"><Property Name="AgentSession" Type="Edm.String"/><Property
+        Name="AgentVersion" Type="Edm.String"/><Property Name="MachineName" Type="Edm.String"/><Property
+        Name="Source" Type="Edm.String"/><Property Name="RunningMode" Type="Edm.String"/></ComplexType><ComplexType
         Name="RequestCustomDimensionsType" OpenType="True"><Property Name="_MS.ProcessedByMetricExtractors"
-        Type="Edm.String"/></ComplexType><ComplexType Name="RequestCustomMeasurementsType"
-        OpenType="True"><Property Name="_MS.ProcessedByMetricExtractors" Type="Edm.String"/></ComplexType><ComplexType
+        Type="Edm.String"/><Property Name="AI internal" Type="Edm.String"/></ComplexType><ComplexType
+        Name="RequestCustomMeasurementsType" OpenType="True"><Property Name="_MS.ProcessedByMetricExtractors"
+        Type="Edm.String"/><Property Name="AI internal" Type="Edm.String"/></ComplexType><ComplexType
         Name="PageViewCustomDimensionsType" OpenType="True"/><ComplexType Name="PageViewCustomMeasurementsType"
         OpenType="True"/><ComplexType Name="DependencyCustomDimensionsType" OpenType="True"><Property
-        Name="ErrorMessage" Type="Edm.String"/><Property Name="Container" Type="Edm.String"/><Property
-        Name="_MS.ProcessedByMetricExtractors" Type="Edm.String"/><Property Name="Blob"
-        Type="Edm.String"/></ComplexType><ComplexType Name="DependencyCustomMeasurementsType"
-        OpenType="True"><Property Name="ErrorMessage" Type="Edm.String"/><Property
         Name="Container" Type="Edm.String"/><Property Name="_MS.ProcessedByMetricExtractors"
-        Type="Edm.String"/><Property Name="Blob" Type="Edm.String"/></ComplexType><ComplexType
-        Name="CustomEventCustomDimensionsType" OpenType="True"><Property Name="SnapshotCollectorConfiguration"
-        Type="Edm.String"/><Property Name="HeartbeatInterval" Type="Edm.String"/><Property
-        Name="ProcessId" Type="Edm.String"/><Property Name="EventName" Type="Edm.String"/><Property
-        Name="ServiceProfilerContent" Type="Edm.String"/><Property Name="ServiceProfilerVersion"
-        Type="Edm.String"/><Property Name="DeveloperMode" Type="Edm.String"/><Property
-        Name="RequestId" Type="Edm.String"/><Property Name="SnapshotContext" Type="Edm.String"/><Property
-        Name="Page Title" Type="Edm.String"/><Property Name="SnapshotVersion" Type="Edm.String"/><Property
-        Name="ProblemId" Type="Edm.String"/><Property Name="StampId" Type="Edm.String"/><Property
-        Name="SnapshotId" Type="Edm.String"/><Property Name="Duration" Type="Edm.String"/><Property
+        Type="Edm.String"/><Property Name="Blob" Type="Edm.String"/><Property Name="ErrorMessage"
+        Type="Edm.String"/></ComplexType><ComplexType Name="DependencyCustomMeasurementsType"
+        OpenType="True"><Property Name="Container" Type="Edm.String"/><Property Name="_MS.ProcessedByMetricExtractors"
+        Type="Edm.String"/><Property Name="Blob" Type="Edm.String"/><Property Name="ErrorMessage"
+        Type="Edm.String"/></ComplexType><ComplexType Name="CustomEventCustomDimensionsType"
+        OpenType="True"><Property Name="ProcessId" Type="Edm.String"/><Property Name="EventName"
+        Type="Edm.String"/><Property Name="ProblemId" Type="Edm.String"/><Property
         Name="DeOptimizationId" Type="Edm.String"/><Property Name="TotalSeconds" Type="Edm.String"/><Property
-        Name="Method" Type="Edm.String"/><Property Name="Section" Type="Edm.String"/><Property
-        Name="Exception" Type="Edm.String"/><Property Name="Arguments" Type="Edm.String"/><Property
-        Name="Path" Type="Edm.String"/><Property Name="parentProcessId" Type="Edm.String"/><Property
-        Name="dumpFolder" Type="Edm.String"/><Property Name="symbolFolders" Type="Edm.String"/><Property
-        Name="Configuration" Type="Edm.String"/><Property Name="Retries" Type="Edm.String"/></ComplexType><ComplexType
-        Name="CustomEventCustomMeasurementsType" OpenType="True"><Property Name="SnapshotCollectorConfiguration"
+        Name="Method" Type="Edm.String"/><Property Name="SnapshotCollectorConfiguration"
         Type="Edm.String"/><Property Name="HeartbeatInterval" Type="Edm.String"/><Property
-        Name="ProcessId" Type="Edm.String"/><Property Name="EventName" Type="Edm.String"/><Property
+        Name="RequestId" Type="Edm.String"/><Property Name="DeveloperMode" Type="Edm.String"/><Property
         Name="ServiceProfilerContent" Type="Edm.String"/><Property Name="ServiceProfilerVersion"
-        Type="Edm.String"/><Property Name="DeveloperMode" Type="Edm.String"/><Property
-        Name="RequestId" Type="Edm.String"/><Property Name="SnapshotContext" Type="Edm.String"/><Property
-        Name="Page Title" Type="Edm.String"/><Property Name="SnapshotVersion" Type="Edm.String"/><Property
-        Name="ProblemId" Type="Edm.String"/><Property Name="StampId" Type="Edm.String"/><Property
-        Name="SnapshotId" Type="Edm.String"/><Property Name="Duration" Type="Edm.String"/><Property
-        Name="DeOptimizationId" Type="Edm.String"/><Property Name="TotalSeconds" Type="Edm.String"/><Property
-        Name="Method" Type="Edm.String"/><Property Name="Section" Type="Edm.String"/><Property
-        Name="Exception" Type="Edm.String"/><Property Name="Arguments" Type="Edm.String"/><Property
-        Name="Path" Type="Edm.String"/><Property Name="parentProcessId" Type="Edm.String"/><Property
-        Name="dumpFolder" Type="Edm.String"/><Property Name="symbolFolders" Type="Edm.String"/><Property
-        Name="Configuration" Type="Edm.String"/><Property Name="Retries" Type="Edm.String"/></ComplexType><ComplexType
-        Name="AvailabilityResultCustomDimensionsType" OpenType="True"><Property Name="FullTestResultAvailable"
-        Type="Edm.String"/><Property Name="WebtestArmResourceName" Type="Edm.String"/><Property
-        Name="SyntheticMonitorId" Type="Edm.String"/><Property Name="WebtestLocationId"
-        Type="Edm.String"/></ComplexType><ComplexType Name="AvailabilityResultCustomMeasurementsType"
+        Type="Edm.String"/><Property Name="SnapshotVersion" Type="Edm.String"/><Property
+        Name="SnapshotId" Type="Edm.String"/><Property Name="StampId" Type="Edm.String"/><Property
+        Name="SnapshotContext" Type="Edm.String"/><Property Name="Duration" Type="Edm.String"/><Property
+        Name="Page Title" Type="Edm.String"/><Property Name="Section" Type="Edm.String"/><Property
+        Name="Arguments" Type="Edm.String"/><Property Name="parentProcessId" Type="Edm.String"/><Property
+        Name="symbolFolders" Type="Edm.String"/><Property Name="Path" Type="Edm.String"/><Property
+        Name="Configuration" Type="Edm.String"/><Property Name="dumpFolder" Type="Edm.String"/><Property
+        Name="ExitCode" Type="Edm.String"/><Property Name="Reason" Type="Edm.String"/><Property
+        Name="Retries" Type="Edm.String"/><Property Name="Exception" Type="Edm.String"/></ComplexType><ComplexType
+        Name="CustomEventCustomMeasurementsType" OpenType="True"><Property Name="ProcessId"
+        Type="Edm.String"/><Property Name="EventName" Type="Edm.String"/><Property
+        Name="ProblemId" Type="Edm.String"/><Property Name="DeOptimizationId" Type="Edm.String"/><Property
+        Name="TotalSeconds" Type="Edm.String"/><Property Name="Method" Type="Edm.String"/><Property
+        Name="SnapshotCollectorConfiguration" Type="Edm.String"/><Property Name="HeartbeatInterval"
+        Type="Edm.String"/><Property Name="RequestId" Type="Edm.String"/><Property
+        Name="DeveloperMode" Type="Edm.String"/><Property Name="ServiceProfilerContent"
+        Type="Edm.String"/><Property Name="ServiceProfilerVersion" Type="Edm.String"/><Property
+        Name="SnapshotVersion" Type="Edm.String"/><Property Name="SnapshotId" Type="Edm.String"/><Property
+        Name="StampId" Type="Edm.String"/><Property Name="SnapshotContext" Type="Edm.String"/><Property
+        Name="Duration" Type="Edm.String"/><Property Name="Page Title" Type="Edm.String"/><Property
+        Name="Section" Type="Edm.String"/><Property Name="Arguments" Type="Edm.String"/><Property
+        Name="parentProcessId" Type="Edm.String"/><Property Name="symbolFolders" Type="Edm.String"/><Property
+        Name="Path" Type="Edm.String"/><Property Name="Configuration" Type="Edm.String"/><Property
+        Name="dumpFolder" Type="Edm.String"/><Property Name="ExitCode" Type="Edm.String"/><Property
+        Name="Reason" Type="Edm.String"/><Property Name="Retries" Type="Edm.String"/><Property
+        Name="Exception" Type="Edm.String"/></ComplexType><ComplexType Name="AvailabilityResultCustomDimensionsType"
         OpenType="True"><Property Name="FullTestResultAvailable" Type="Edm.String"/><Property
         Name="WebtestArmResourceName" Type="Edm.String"/><Property Name="SyntheticMonitorId"
         Type="Edm.String"/><Property Name="WebtestLocationId" Type="Edm.String"/></ComplexType><ComplexType
-        Name="ExceptionCustomDimensionsType" OpenType="True"><Property Name="ai.snapshot.version"
-        Type="Edm.String"/><Property Name="ai.snapshot.id" Type="Edm.String"/><Property
-        Name="ai.snapshot.stampid" Type="Edm.String"/><Property Name="url" Type="Edm.String"/><Property
-        Name="AgentSession" Type="Edm.String"/><Property Name="AgentVersion" Type="Edm.String"/><Property
-        Name="MachineName" Type="Edm.String"/><Property Name="Description" Type="Edm.String"/><Property
-        Name="RunningMode" Type="Edm.String"/><Property Name="Source" Type="Edm.String"/><Property
-        Name="DeveloperMode" Type="Edm.String"/></ComplexType><ComplexType Name="ExceptionCustomMeasurementsType"
+        Name="AvailabilityResultCustomMeasurementsType" OpenType="True"><Property
+        Name="FullTestResultAvailable" Type="Edm.String"/><Property Name="WebtestArmResourceName"
+        Type="Edm.String"/><Property Name="SyntheticMonitorId" Type="Edm.String"/><Property
+        Name="WebtestLocationId" Type="Edm.String"/></ComplexType><ComplexType Name="ExceptionCustomDimensionsType"
         OpenType="True"><Property Name="ai.snapshot.version" Type="Edm.String"/><Property
         Name="ai.snapshot.id" Type="Edm.String"/><Property Name="ai.snapshot.stampid"
-        Type="Edm.String"/><Property Name="url" Type="Edm.String"/><Property Name="AgentSession"
-        Type="Edm.String"/><Property Name="AgentVersion" Type="Edm.String"/><Property
-        Name="MachineName" Type="Edm.String"/><Property Name="Description" Type="Edm.String"/><Property
-        Name="RunningMode" Type="Edm.String"/><Property Name="Source" Type="Edm.String"/><Property
-        Name="DeveloperMode" Type="Edm.String"/></ComplexType><ComplexType Name="BrowserTimingCustomDimensionsType"
-        OpenType="True"/><ComplexType Name="BrowserTimingCustomMeasurementsType" OpenType="True"/><ComplexType
-        Name="TraceType"><Property Name="message" Type="Edm.String"/><Property Name="severityLevel"
-        Type="Edm.Double"/></ComplexType><ComplexType Name="OperationType"><Property
+        Type="Edm.String"/><Property Name="url" Type="Edm.String"/></ComplexType><ComplexType
+        Name="ExceptionCustomMeasurementsType" OpenType="True"><Property Name="ai.snapshot.version"
+        Type="Edm.String"/><Property Name="ai.snapshot.id" Type="Edm.String"/><Property
+        Name="ai.snapshot.stampid" Type="Edm.String"/><Property Name="url" Type="Edm.String"/></ComplexType><ComplexType
+        Name="BrowserTimingCustomDimensionsType" OpenType="True"/><ComplexType Name="BrowserTimingCustomMeasurementsType"
+        OpenType="True"/><ComplexType Name="TraceType"><Property Name="message" Type="Edm.String"/><Property
+        Name="severityLevel" Type="Edm.Double"/></ComplexType><ComplexType Name="OperationType"><Property
         Name="name" Type="Edm.String"/><Property Name="id" Type="Edm.String"/><Property
         Name="parentId" Type="Edm.String"/><Property Name="syntheticSource" Type="Edm.String"/></ComplexType><ComplexType
         Name="SessionType"><Property Name="id" Type="Edm.String"/></ComplexType><ComplexType
@@ -228,15 +222,15 @@ interactions:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location']
       connection: [keep-alive]
-      content-length: ['19738']
+      content-length: ['19240']
       content-type: [application/xml; charset=utf-8]
-      date: ['Tue, 19 Jun 2018 17:30:36 GMT']
+      date: ['Thu, 12 Jul 2018 21:38:18 GMT']
       odata-version: [4.0;]
       server: [nginx]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      via: [1.1 draft-ai-green.d7e7eb79-73dc-11e8-9b60-70b3d5800006]
+      via: [1.1 draft-ai-blue.07e4c8d5-85bc-11e8-a775-70b3d5800012]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1
