@@ -10,7 +10,7 @@ class ApplicationInsightsQueryTest(AzureMgmtTestCase):
     def test_query(self):
         query = 'requests | take 10'
         application = 'DEMO_APP'
-        result = self.client.query.execute(application, QueryBody(**{'query': query}))
+        result = self.client.query.execute(application, QueryBody(query = query))
         # All queries should return at least a table.
         self.assertGreaterEqual(len(result.tables), 1)
 
