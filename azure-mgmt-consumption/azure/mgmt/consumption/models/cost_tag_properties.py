@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class CostTag(Model):
-    """The cost tag.
+class CostTagProperties(Model):
+    """The properties of the cost tag.
 
     :param key: Cost tag key.
     :type key: str
@@ -24,5 +24,5 @@ class CostTag(Model):
     }
 
     def __init__(self, key=None):
-        super(CostTag, self).__init__()
+        super(CostTagProperties, self).__init__()
         self.key = key

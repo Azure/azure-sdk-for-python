@@ -47,8 +47,8 @@ class CostTagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostTags or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostTags or
+        :return: CostTagsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTagsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -84,7 +84,7 @@ class CostTagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostTags', response)
+            deserialized = self._deserialize('CostTagsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -107,19 +107,20 @@ class CostTagsOperations(object):
          updating the latest version or not.
         :type e_tag: str
         :param cost_tags: Cost tags.
-        :type cost_tags: list[~azure.mgmt.consumption.models.CostTag]
+        :type cost_tags:
+         list[~azure.mgmt.consumption.models.CostTagProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostTags or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostTags or
+        :return: CostTagsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTagsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        parameters = models.CostTags(e_tag=e_tag, cost_tags=cost_tags)
+        parameters = models.CostTagsResult(e_tag=e_tag, cost_tags=cost_tags)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -143,7 +144,7 @@ class CostTagsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CostTags')
+        body_content = self._serialize.body(parameters, 'CostTagsResult')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -156,9 +157,9 @@ class CostTagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostTags', response)
+            deserialized = self._deserialize('CostTagsResult', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('CostTags', response)
+            deserialized = self._deserialize('CostTagsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

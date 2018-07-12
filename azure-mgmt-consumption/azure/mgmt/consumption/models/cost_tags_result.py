@@ -12,7 +12,7 @@
 from .proxy_resource import ProxyResource
 
 
-class CostTags(ProxyResource):
+class CostTagsResult(ProxyResource):
     """A cost tag resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -29,7 +29,7 @@ class CostTags(ProxyResource):
      latest version or not.
     :type e_tag: str
     :param cost_tags: Cost tags.
-    :type cost_tags: list[~azure.mgmt.consumption.models.CostTag]
+    :type cost_tags: list[~azure.mgmt.consumption.models.CostTagProperties]
     """
 
     _validation = {
@@ -43,9 +43,9 @@ class CostTags(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'cost_tags': {'key': 'properties.costTags', 'type': '[CostTag]'},
+        'cost_tags': {'key': 'properties.costTags', 'type': '[CostTagProperties]'},
     }
 
     def __init__(self, e_tag=None, cost_tags=None):
-        super(CostTags, self).__init__(e_tag=e_tag)
+        super(CostTagsResult, self).__init__(e_tag=e_tag)
         self.cost_tags = cost_tags
