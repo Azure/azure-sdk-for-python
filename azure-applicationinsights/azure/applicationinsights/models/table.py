@@ -24,7 +24,7 @@ class Table(Model):
     :param columns: Required. The list of columns in this table.
     :type columns: list[~azure.applicationinsights.models.Column]
     :param rows: Required. The resulting rows from this query.
-    :type rows: list[list[str]]
+    :type rows: list[list[object]]
     """
 
     _validation = {
@@ -36,7 +36,7 @@ class Table(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'columns': {'key': 'columns', 'type': '[Column]'},
-        'rows': {'key': 'rows', 'type': '[[str]]'},
+        'rows': {'key': 'rows', 'type': '[[object]]'},
     }
 
     def __init__(self, **kwargs):
