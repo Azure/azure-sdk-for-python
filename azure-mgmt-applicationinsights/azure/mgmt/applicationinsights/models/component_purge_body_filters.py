@@ -33,8 +33,8 @@ class ComponentPurgeBodyFilters(Model):
         'value': {'key': 'value', 'type': 'object'},
     }
 
-    def __init__(self, column=None, operator=None, value=None):
-        super(ComponentPurgeBodyFilters, self).__init__()
-        self.column = column
-        self.operator = operator
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
+        self.column = kwargs.get('column', None)
+        self.operator = kwargs.get('operator', None)
+        self.value = kwargs.get('value', None)

@@ -50,8 +50,8 @@ class ApplicationInsightsComponentFeatureCapability(Model):
         'meter_rate_frequency': {'key': 'MeterRateFrequency', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentFeatureCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentFeatureCapability, self).__init__(**kwargs)
         self.name = None
         self.description = None
         self.value = None

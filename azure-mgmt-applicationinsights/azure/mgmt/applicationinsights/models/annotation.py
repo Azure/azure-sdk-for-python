@@ -39,11 +39,11 @@ class Annotation(Model):
         'related_annotation': {'key': 'RelatedAnnotation', 'type': 'str'},
     }
 
-    def __init__(self, annotation_name=None, category=None, event_time=None, id=None, properties=None, related_annotation="null"):
-        super(Annotation, self).__init__()
-        self.annotation_name = annotation_name
-        self.category = category
-        self.event_time = event_time
-        self.id = id
-        self.properties = properties
-        self.related_annotation = related_annotation
+    def __init__(self, **kwargs):
+        super(Annotation, self).__init__(**kwargs)
+        self.annotation_name = kwargs.get('annotation_name', None)
+        self.category = kwargs.get('category', None)
+        self.event_time = kwargs.get('event_time', None)
+        self.id = kwargs.get('id', None)
+        self.properties = kwargs.get('properties', None)
+        self.related_annotation = kwargs.get('related_annotation', "null")

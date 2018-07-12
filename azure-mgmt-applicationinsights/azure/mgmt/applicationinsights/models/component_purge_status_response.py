@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ComponentPurgeStatusResponse(Model):
     """Response containing status for a specific purge operation.
 
-    :param status: Status of the operation represented by the requested Id.
-     Possible values include: 'pending', 'completed'
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Status of the operation represented by the
+     requested Id. Possible values include: 'pending', 'completed'
     :type status: str or ~azure.mgmt.applicationinsights.models.PurgeState
     """
 
@@ -28,6 +30,6 @@ class ComponentPurgeStatusResponse(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, status):
-        super(ComponentPurgeStatusResponse, self).__init__()
-        self.status = status
+    def __init__(self, **kwargs):
+        super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)

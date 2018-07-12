@@ -31,11 +31,11 @@ class WorkItemConfigurationError(Model):
         'innererror': {'key': 'innererror', 'type': 'InnerError'},
     }
 
-    def __init__(self, code=None, message=None, innererror=None):
-        super(WorkItemConfigurationError, self).__init__()
-        self.code = code
-        self.message = message
-        self.innererror = innererror
+    def __init__(self, **kwargs):
+        super(WorkItemConfigurationError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.innererror = kwargs.get('innererror', None)
 
 
 class WorkItemConfigurationErrorException(HttpOperationError):

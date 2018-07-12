@@ -44,10 +44,10 @@ class WorkbookResource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(WorkbookResource, self).__init__()
+    def __init__(self, **kwargs):
+        super(WorkbookResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

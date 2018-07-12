@@ -93,8 +93,8 @@ class ApplicationInsightsComponentFeatureCapabilities(Model):
         'throttle_rate': {'key': 'ThrottleRate', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentFeatureCapabilities, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentFeatureCapabilities, self).__init__(**kwargs)
         self.support_export_data = None
         self.burst_throttle_policy = None
         self.metadata_class = None

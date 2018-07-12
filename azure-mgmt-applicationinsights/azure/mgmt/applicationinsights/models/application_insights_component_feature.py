@@ -64,8 +64,8 @@ class ApplicationInsightsComponentFeature(Model):
         'supported_addon_features': {'key': 'SupportedAddonFeatures', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentFeature, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentFeature, self).__init__(**kwargs)
         self.feature_name = None
         self.meter_id = None
         self.meter_rate_frequency = None

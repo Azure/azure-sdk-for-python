@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ComponentPurgeResponse(Model):
     """Response containing operationId for a specific purge action.
 
-    :param operation_id: Id to use when querying for status for a particular
-     purge operation.
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation_id: Required. Id to use when querying for status for a
+     particular purge operation.
     :type operation_id: str
     """
 
@@ -28,6 +30,6 @@ class ComponentPurgeResponse(Model):
         'operation_id': {'key': 'operationId', 'type': 'str'},
     }
 
-    def __init__(self, operation_id):
-        super(ComponentPurgeResponse, self).__init__()
-        self.operation_id = operation_id
+    def __init__(self, **kwargs):
+        super(ComponentPurgeResponse, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)

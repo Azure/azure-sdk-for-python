@@ -36,10 +36,10 @@ class WorkItemConfiguration(Model):
         'config_properties': {'key': 'ConfigProperties', 'type': 'str'},
     }
 
-    def __init__(self, connector_id=None, config_display_name=None, is_default=None, id=None, config_properties=None):
-        super(WorkItemConfiguration, self).__init__()
-        self.connector_id = connector_id
-        self.config_display_name = config_display_name
-        self.is_default = is_default
-        self.id = id
-        self.config_properties = config_properties
+    def __init__(self, **kwargs):
+        super(WorkItemConfiguration, self).__init__(**kwargs)
+        self.connector_id = kwargs.get('connector_id', None)
+        self.config_display_name = kwargs.get('config_display_name', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.id = kwargs.get('id', None)
+        self.config_properties = kwargs.get('config_properties', None)

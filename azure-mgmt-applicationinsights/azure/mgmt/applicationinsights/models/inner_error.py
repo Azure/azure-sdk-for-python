@@ -26,7 +26,7 @@ class InnerError(Model):
         'time': {'key': 'time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, diagnosticcontext=None, time=None):
-        super(InnerError, self).__init__()
-        self.diagnosticcontext = diagnosticcontext
-        self.time = time
+    def __init__(self, **kwargs):
+        super(InnerError, self).__init__(**kwargs)
+        self.diagnosticcontext = kwargs.get('diagnosticcontext', None)
+        self.time = kwargs.get('time', None)

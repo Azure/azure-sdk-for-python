@@ -31,6 +31,6 @@ class ApplicationInsightsComponentAvailableFeatures(Model):
         'result': {'key': 'Result', 'type': '[ApplicationInsightsComponentFeature]'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentAvailableFeatures, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentAvailableFeatures, self).__init__(**kwargs)
         self.result = None

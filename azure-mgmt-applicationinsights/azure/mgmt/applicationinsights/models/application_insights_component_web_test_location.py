@@ -35,7 +35,7 @@ class ApplicationInsightsComponentWebTestLocation(Model):
         'tag': {'key': 'Tag', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentWebTestLocation, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentWebTestLocation, self).__init__(**kwargs)
         self.display_name = None
         self.tag = None

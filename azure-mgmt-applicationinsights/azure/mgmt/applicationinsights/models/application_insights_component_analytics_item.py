@@ -63,14 +63,14 @@ class ApplicationInsightsComponentAnalyticsItem(Model):
         'properties': {'key': 'Properties', 'type': 'ApplicationInsightsComponentAnalyticsItemProperties'},
     }
 
-    def __init__(self, id=None, name=None, content=None, scope=None, type=None, properties=None):
-        super(ApplicationInsightsComponentAnalyticsItem, self).__init__()
-        self.id = id
-        self.name = name
-        self.content = content
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentAnalyticsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.content = kwargs.get('content', None)
         self.version = None
-        self.scope = scope
-        self.type = type
+        self.scope = kwargs.get('scope', None)
+        self.type = kwargs.get('type', None)
         self.time_created = None
         self.time_modified = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

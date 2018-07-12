@@ -29,8 +29,8 @@ class LinkProperties(Model):
         'category': {'key': 'category', 'type': 'str'},
     }
 
-    def __init__(self, source_id=None, target_id=None, category=None):
-        super(LinkProperties, self).__init__()
-        self.source_id = source_id
-        self.target_id = target_id
-        self.category = category
+    def __init__(self, **kwargs):
+        super(LinkProperties, self).__init__(**kwargs)
+        self.source_id = kwargs.get('source_id', None)
+        self.target_id = kwargs.get('target_id', None)
+        self.category = kwargs.get('category', None)

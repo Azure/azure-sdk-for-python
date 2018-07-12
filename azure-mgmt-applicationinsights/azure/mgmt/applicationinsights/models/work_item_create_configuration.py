@@ -33,9 +33,9 @@ class WorkItemCreateConfiguration(Model):
         'work_item_properties': {'key': 'WorkItemProperties', 'type': 'str'},
     }
 
-    def __init__(self, connector_id=None, connector_data_configuration=None, validate_only=None, work_item_properties=None):
-        super(WorkItemCreateConfiguration, self).__init__()
-        self.connector_id = connector_id
-        self.connector_data_configuration = connector_data_configuration
-        self.validate_only = validate_only
-        self.work_item_properties = work_item_properties
+    def __init__(self, **kwargs):
+        super(WorkItemCreateConfiguration, self).__init__(**kwargs)
+        self.connector_id = kwargs.get('connector_id', None)
+        self.connector_data_configuration = kwargs.get('connector_data_configuration', None)
+        self.validate_only = kwargs.get('validate_only', None)
+        self.work_item_properties = kwargs.get('work_item_properties', None)

@@ -25,6 +25,6 @@ class ApplicationInsightsComponentAnalyticsItemProperties(Model):
         'function_alias': {'key': 'functionAlias', 'type': 'str'},
     }
 
-    def __init__(self, function_alias=None):
-        super(ApplicationInsightsComponentAnalyticsItemProperties, self).__init__()
-        self.function_alias = function_alias
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentAnalyticsItemProperties, self).__init__(**kwargs)
+        self.function_alias = kwargs.get('function_alias', None)

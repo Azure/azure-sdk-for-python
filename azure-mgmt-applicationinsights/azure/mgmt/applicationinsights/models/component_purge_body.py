@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class ComponentPurgeBody(Model):
     """Describes the body of a purge request for an App Insights component.
 
-    :param table: Table from which to purge data.
+    All required parameters must be populated in order to send to Azure.
+
+    :param table: Required. Table from which to purge data.
     :type table: str
-    :param filters: The set of columns and filters (queries) to run over them
-     to purge the resulting data.
+    :param filters: Required. The set of columns and filters (queries) to run
+     over them to purge the resulting data.
     :type filters:
      list[~azure.mgmt.applicationinsights.models.ComponentPurgeBodyFilters]
     """
@@ -33,7 +35,7 @@ class ComponentPurgeBody(Model):
         'filters': {'key': 'filters', 'type': '[ComponentPurgeBodyFilters]'},
     }
 
-    def __init__(self, table, filters):
-        super(ComponentPurgeBody, self).__init__()
-        self.table = table
-        self.filters = filters
+    def __init__(self, **kwargs):
+        super(ComponentPurgeBody, self).__init__(**kwargs)
+        self.table = kwargs.get('table', None)
+        self.filters = kwargs.get('filters', None)

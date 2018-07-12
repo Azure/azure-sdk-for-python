@@ -12,47 +12,47 @@
 from enum import Enum
 
 
-class ApplicationType(Enum):
+class ApplicationType(str, Enum):
 
     web = "web"
     other = "other"
 
 
-class FlowType(Enum):
+class FlowType(str, Enum):
 
     bluefield = "Bluefield"
 
 
-class RequestSource(Enum):
+class RequestSource(str, Enum):
 
     rest = "rest"
 
 
-class PurgeState(Enum):
+class PurgeState(str, Enum):
 
     pending = "pending"
     completed = "completed"
 
 
-class FavoriteType(Enum):
+class FavoriteType(str, Enum):
 
     shared = "shared"
     user = "user"
 
 
-class WebTestKind(Enum):
+class WebTestKind(str, Enum):
 
     ping = "ping"
     multistep = "multistep"
 
 
-class ItemScope(Enum):
+class ItemScope(str, Enum):
 
     shared = "shared"
     user = "user"
 
 
-class ItemType(Enum):
+class ItemType(str, Enum):
 
     query = "query"
     function = "function"
@@ -60,13 +60,13 @@ class ItemType(Enum):
     recent = "recent"
 
 
-class SharedTypeKind(Enum):
+class SharedTypeKind(str, Enum):
 
     user = "user"
     shared = "shared"
 
 
-class FavoriteSourceType(Enum):
+class FavoriteSourceType(str, Enum):
 
     retention = "retention"
     notebook = "notebook"
@@ -78,13 +78,13 @@ class FavoriteSourceType(Enum):
     segmentation = "segmentation"
 
 
-class ItemScopePath(Enum):
+class ItemScopePath(str, Enum):
 
     analytics_items = "analyticsItems"
     myanalytics_items = "myanalyticsItems"
 
 
-class ItemTypeParameter(Enum):
+class ItemTypeParameter(str, Enum):
 
     none = "none"
     query = "query"
@@ -93,7 +93,7 @@ class ItemTypeParameter(Enum):
     recent = "recent"
 
 
-class CategoryType(Enum):
+class CategoryType(str, Enum):
 
     workbook = "workbook"
     tsg = "TSG"

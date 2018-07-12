@@ -18,6 +18,8 @@ class Workbook(WorkbookResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
@@ -31,34 +33,34 @@ class Workbook(WorkbookResource):
     :param kind: The kind of workbook. Choices are user and shared. Possible
      values include: 'user', 'shared'
     :type kind: str or ~azure.mgmt.applicationinsights.models.SharedTypeKind
-    :param workbook_name: The user-defined name of the workbook.
+    :param workbook_name: Required. The user-defined name of the workbook.
     :type workbook_name: str
-    :param serialized_data: Configuration of this particular workbook.
-     Configuration data is a string containing valid JSON
+    :param serialized_data: Required. Configuration of this particular
+     workbook. Configuration data is a string containing valid JSON
     :type serialized_data: str
     :param version: This instance's version of the data model. This can change
      as new features are added that can be marked workbook.
     :type version: str
-    :param workbook_id: Internally assigned unique id of the workbook
-     definition.
+    :param workbook_id: Required. Internally assigned unique id of the
+     workbook definition.
     :type workbook_id: str
-    :param shared_type_kind: Enum indicating if this workbook definition is
-     owned by a specific user or is shared between all users with access to the
-     Application Insights component. Possible values include: 'user', 'shared'.
-     Default value: "shared" .
+    :param shared_type_kind: Required. Enum indicating if this workbook
+     definition is owned by a specific user or is shared between all users with
+     access to the Application Insights component. Possible values include:
+     'user', 'shared'. Default value: "shared" .
     :type shared_type_kind: str or
      ~azure.mgmt.applicationinsights.models.SharedTypeKind
     :ivar time_modified: Date and time in UTC of the last modification that
      was made to this workbook definition.
     :vartype time_modified: str
-    :param category: Workbook category, as defined by the user at creation
-     time.
+    :param category: Required. Workbook category, as defined by the user at
+     creation time.
     :type category: str
     :param workbook_tags: A list of 0 or more tags that are associated with
      this workbook definition
     :type workbook_tags: list[str]
-    :param user_id: Unique user id of the specific user that owns this
-     workbook.
+    :param user_id: Required. Unique user id of the specific user that owns
+     this workbook.
     :type user_id: str
     :param source_resource_id: Optional resourceId for a source resource.
     :type source_resource_id: str
@@ -96,16 +98,16 @@ class Workbook(WorkbookResource):
         'source_resource_id': {'key': 'properties.sourceResourceId', 'type': 'str'},
     }
 
-    def __init__(self, workbook_name, serialized_data, workbook_id, category, user_id, location=None, tags=None, kind=None, version=None, shared_type_kind="shared", workbook_tags=None, source_resource_id=None):
-        super(Workbook, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.workbook_name = workbook_name
-        self.serialized_data = serialized_data
-        self.version = version
-        self.workbook_id = workbook_id
-        self.shared_type_kind = shared_type_kind
+    def __init__(self, **kwargs):
+        super(Workbook, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.workbook_name = kwargs.get('workbook_name', None)
+        self.serialized_data = kwargs.get('serialized_data', None)
+        self.version = kwargs.get('version', None)
+        self.workbook_id = kwargs.get('workbook_id', None)
+        self.shared_type_kind = kwargs.get('shared_type_kind', "shared")
         self.time_modified = None
-        self.category = category
-        self.workbook_tags = workbook_tags
-        self.user_id = user_id
-        self.source_resource_id = source_resource_id
+        self.category = kwargs.get('category', None)
+        self.workbook_tags = kwargs.get('workbook_tags', None)
+        self.user_id = kwargs.get('user_id', None)
+        self.source_resource_id = kwargs.get('source_resource_id', None)

@@ -76,16 +76,16 @@ class ApplicationInsightsComponentFavorite(Model):
         'user_id': {'key': 'UserId', 'type': 'str'},
     }
 
-    def __init__(self, name=None, config=None, version=None, favorite_type=None, source_type=None, tags=None, category=None, is_generated_from_template=None):
-        super(ApplicationInsightsComponentFavorite, self).__init__()
-        self.name = name
-        self.config = config
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentFavorite, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.config = kwargs.get('config', None)
+        self.version = kwargs.get('version', None)
         self.favorite_id = None
-        self.favorite_type = favorite_type
-        self.source_type = source_type
+        self.favorite_type = kwargs.get('favorite_type', None)
+        self.source_type = kwargs.get('source_type', None)
         self.time_modified = None
-        self.tags = tags
-        self.category = category
-        self.is_generated_from_template = is_generated_from_template
+        self.tags = kwargs.get('tags', None)
+        self.category = kwargs.get('category', None)
+        self.is_generated_from_template = kwargs.get('is_generated_from_template', None)
         self.user_id = None
