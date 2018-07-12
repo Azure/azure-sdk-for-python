@@ -13,14 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-import uuid
 from .operations.usage_details_operations import UsageDetailsOperations
 from .operations.marketplaces_operations import MarketplacesOperations
-from .operations.marketplaces_by_billing_account_operations import MarketplacesByBillingAccountOperations
-from .operations.marketplaces_by_department_operations import MarketplacesByDepartmentOperations
-from .operations.marketplaces_by_enrollment_accounts_operations import MarketplacesByEnrollmentAccountsOperations
-from .operations.get_balances_by_billing_account_operations import GetBalancesByBillingAccountOperations
+from .operations.balances_operations import BalancesOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
@@ -75,14 +70,8 @@ class ConsumptionManagementClient(object):
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
     :ivar marketplaces: Marketplaces operations
     :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
-    :ivar marketplaces_by_billing_account: MarketplacesByBillingAccount operations
-    :vartype marketplaces_by_billing_account: azure.mgmt.consumption.operations.MarketplacesByBillingAccountOperations
-    :ivar marketplaces_by_department: MarketplacesByDepartment operations
-    :vartype marketplaces_by_department: azure.mgmt.consumption.operations.MarketplacesByDepartmentOperations
-    :ivar marketplaces_by_enrollment_accounts: MarketplacesByEnrollmentAccounts operations
-    :vartype marketplaces_by_enrollment_accounts: azure.mgmt.consumption.operations.MarketplacesByEnrollmentAccountsOperations
-    :ivar get_balances_by_billing_account: GetBalancesByBillingAccount operations
-    :vartype get_balances_by_billing_account: azure.mgmt.consumption.operations.GetBalancesByBillingAccountOperations
+    :ivar balances: Balances operations
+    :vartype balances: azure.mgmt.consumption.operations.BalancesOperations
     :ivar reservations_summaries: ReservationsSummaries operations
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
@@ -125,13 +114,7 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.marketplaces = MarketplacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.marketplaces_by_billing_account = MarketplacesByBillingAccountOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.marketplaces_by_department = MarketplacesByDepartmentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.marketplaces_by_enrollment_accounts = MarketplacesByEnrollmentAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.get_balances_by_billing_account = GetBalancesByBillingAccountOperations(
+        self.balances = BalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -151,61 +134,3 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def get_balances_by_billing_account(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the balances for a scope by billingAccountId. Balances are
-        available via this API only for May 1, 2014 or later.
-
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Balance or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.Balance or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_balances_by_billing_account.metadata['url']
-        path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Balance', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_balances_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}

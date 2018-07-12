@@ -11,10 +11,7 @@
 
 from .usage_details_operations import UsageDetailsOperations
 from .marketplaces_operations import MarketplacesOperations
-from .marketplaces_by_billing_account_operations import MarketplacesByBillingAccountOperations
-from .marketplaces_by_department_operations import MarketplacesByDepartmentOperations
-from .marketplaces_by_enrollment_accounts_operations import MarketplacesByEnrollmentAccountsOperations
-from .get_balances_by_billing_account_operations import GetBalancesByBillingAccountOperations
+from .balances_operations import BalancesOperations
 from .reservations_summaries_operations import ReservationsSummariesOperations
 from .reservations_details_operations import ReservationsDetailsOperations
 from .reservation_recommendations_operations import ReservationRecommendationsOperations
@@ -28,10 +25,7 @@ from .operations import Operations
 __all__ = [
     'UsageDetailsOperations',
     'MarketplacesOperations',
-    'MarketplacesByBillingAccountOperations',
-    'MarketplacesByDepartmentOperations',
-    'MarketplacesByEnrollmentAccountsOperations',
-    'GetBalancesByBillingAccountOperations',
+    'BalancesOperations',
     'ReservationsSummariesOperations',
     'ReservationsDetailsOperations',
     'ReservationRecommendationsOperations',
