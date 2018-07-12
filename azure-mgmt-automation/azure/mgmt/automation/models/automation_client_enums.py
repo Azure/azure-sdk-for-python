@@ -267,9 +267,3 @@ class AgentRegistrationKeyName(Enum):
 
     primary = "primary"
     secondary = "secondary"
-
-
-class CountType(Enum):
-
-    status = "status"
-    nodeconfiguration = "nodeconfiguration"

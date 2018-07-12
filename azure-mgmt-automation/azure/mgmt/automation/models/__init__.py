@@ -188,7 +188,6 @@ from .automation_client_enums import (
     JobStatus,
     JobProvisioningState,
     AgentRegistrationKeyName,
-    CountType,
 )
 
 __all__ = [
@@ -370,5 +369,4 @@ __all__ = [
     'JobStatus',
     'JobProvisioningState',
     'AgentRegistrationKeyName',
-    'CountType',
 ]
