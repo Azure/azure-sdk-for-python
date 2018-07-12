@@ -19,7 +19,7 @@ from .reservation_summary import ReservationSummary
 from .reservation_detail import ReservationDetail
 from .reservation_recommendation import ReservationRecommendation
 from .tag import Tag
-from .tags import Tags
+from .tags_result import TagsResult
 from .budget_time_period import BudgetTimePeriod
 from .filters import Filters
 from .current_spend import CurrentSpend
@@ -69,7 +69,7 @@ __all__ = [
     'ReservationDetail',
     'ReservationRecommendation',
     'Tag',
-    'Tags',
+    'TagsResult',
     'BudgetTimePeriod',
     'Filters',
     'CurrentSpend',

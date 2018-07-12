@@ -47,8 +47,8 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Tags or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.Tags or
+        :return: TagsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.TagsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -84,7 +84,7 @@ class TagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Tags', response)
+            deserialized = self._deserialize('TagsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -12,7 +12,7 @@
 from .proxy_resource import ProxyResource
 
 
-class Tags(ProxyResource):
+class TagsResult(ProxyResource):
     """A resource listing all tags.
 
     Variables are only populated by the server, and will be ignored when
@@ -47,5 +47,5 @@ class Tags(ProxyResource):
     }
 
     def __init__(self, e_tag=None, tags=None):
-        super(Tags, self).__init__(e_tag=e_tag)
+        super(TagsResult, self).__init__(e_tag=e_tag)
         self.tags = tags
