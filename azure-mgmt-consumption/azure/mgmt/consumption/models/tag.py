@@ -12,19 +12,17 @@
 from msrest.serialization import Model
 
 
-class ReportConfigDatasetConfiguration(Model):
-    """The configuration of dataset in the report.
+class Tag(Model):
+    """The tag resource.
 
-    :param columns: Array of column names to be included in the report. Any
-     valid report column name is allowed. If not provided, then report includes
-     all columns.
-    :type columns: list[str]
+    :param key: Tag key.
+    :type key: str
     """
 
     _attribute_map = {
-        'columns': {'key': 'columns', 'type': '[str]'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, columns=None):
-        super(ReportConfigDatasetConfiguration, self).__init__()
-        self.columns = columns
+    def __init__(self, key=None):
+        super(Tag, self).__init__()
+        self.key = key

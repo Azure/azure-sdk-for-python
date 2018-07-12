@@ -9,22 +9,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .price_sheet_operations import PriceSheetOperations
 from .usage_details_operations import UsageDetailsOperations
+from .marketplaces_operations import MarketplacesOperations
+from .balances_operations import BalancesOperations
+from .reservations_summaries_operations import ReservationsSummariesOperations
+from .reservations_details_operations import ReservationsDetailsOperations
+from .reservation_recommendations_operations import ReservationRecommendationsOperations
+from .budgets_operations import BudgetsOperations
+from .price_sheet_operations import PriceSheetOperations
+from .cost_tags_operations import CostTagsOperations
+from .tags_operations import TagsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
-from .report_config_operations import ReportConfigOperations
-from .billing_account_dimensions_operations import BillingAccountDimensionsOperations
-from .subscription_dimensions_operations import SubscriptionDimensionsOperations
-from .resource_group_dimensions_operations import ResourceGroupDimensionsOperations
 
 __all__ = [
-    'PriceSheetOperations',
     'UsageDetailsOperations',
+    'MarketplacesOperations',
+    'BalancesOperations',
+    'ReservationsSummariesOperations',
+    'ReservationsDetailsOperations',
+    'ReservationRecommendationsOperations',
+    'BudgetsOperations',
+    'PriceSheetOperations',
+    'CostTagsOperations',
+    'TagsOperations',
     'ForecastsOperations',
     'Operations',
-    'ReportConfigOperations',
-    'BillingAccountDimensionsOperations',
-    'SubscriptionDimensionsOperations',
-    'ResourceGroupDimensionsOperations',
 ]

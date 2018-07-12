@@ -13,16 +13,18 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-import uuid
-from .operations.price_sheet_operations import PriceSheetOperations
 from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.marketplaces_operations import MarketplacesOperations
+from .operations.balances_operations import BalancesOperations
+from .operations.reservations_summaries_operations import ReservationsSummariesOperations
+from .operations.reservations_details_operations import ReservationsDetailsOperations
+from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
+from .operations.budgets_operations import BudgetsOperations
+from .operations.price_sheet_operations import PriceSheetOperations
+from .operations.cost_tags_operations import CostTagsOperations
+from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
-from .operations.report_config_operations import ReportConfigOperations
-from .operations.billing_account_dimensions_operations import BillingAccountDimensionsOperations
-from .operations.subscription_dimensions_operations import SubscriptionDimensionsOperations
-from .operations.resource_group_dimensions_operations import ResourceGroupDimensionsOperations
 from . import models
 
 
@@ -64,22 +66,30 @@ class ConsumptionManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ConsumptionManagementClientConfiguration
 
-    :ivar price_sheet: PriceSheet operations
-    :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar marketplaces: Marketplaces operations
+    :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
+    :ivar balances: Balances operations
+    :vartype balances: azure.mgmt.consumption.operations.BalancesOperations
+    :ivar reservations_summaries: ReservationsSummaries operations
+    :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
+    :ivar reservations_details: ReservationsDetails operations
+    :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
+    :ivar reservation_recommendations: ReservationRecommendations operations
+    :vartype reservation_recommendations: azure.mgmt.consumption.operations.ReservationRecommendationsOperations
+    :ivar budgets: Budgets operations
+    :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
+    :ivar price_sheet: PriceSheet operations
+    :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
+    :ivar cost_tags: CostTags operations
+    :vartype cost_tags: azure.mgmt.consumption.operations.CostTagsOperations
+    :ivar tags: Tags operations
+    :vartype tags: azure.mgmt.consumption.operations.TagsOperations
     :ivar forecasts: Forecasts operations
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
-    :ivar report_config: ReportConfig operations
-    :vartype report_config: azure.mgmt.consumption.operations.ReportConfigOperations
-    :ivar billing_account_dimensions: BillingAccountDimensions operations
-    :vartype billing_account_dimensions: azure.mgmt.consumption.operations.BillingAccountDimensionsOperations
-    :ivar subscription_dimensions: SubscriptionDimensions operations
-    :vartype subscription_dimensions: azure.mgmt.consumption.operations.SubscriptionDimensionsOperations
-    :ivar resource_group_dimensions: ResourceGroupDimensions operations
-    :vartype resource_group_dimensions: azure.mgmt.consumption.operations.ResourceGroupDimensionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -96,241 +106,31 @@ class ConsumptionManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-05-31'
+        self.api_version = '2018-06-30'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.usage_details = UsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces = MarketplacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.balances = BalancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_summaries = ReservationsSummariesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_details = ReservationsDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_recommendations = ReservationRecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.budgets = BudgetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.usage_details = UsageDetailsOperations(
+        self.cost_tags = CostTagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.report_config = ReportConfigOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.billing_account_dimensions = BillingAccountDimensionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.subscription_dimensions = SubscriptionDimensionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.resource_group_dimensions = ResourceGroupDimensionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-
-    def analyze_subscription_usage(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage data for subscriptionId.
-
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.consumption.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of UsageAnalysis
-        :rtype:
-         ~azure.mgmt.consumption.models.UsageAnalysisPaged[~azure.mgmt.consumption.models.UsageAnalysis]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.analyze_subscription_usage.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    analyze_subscription_usage.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/AnalyzeUsage'}
-
-    def analyze_resource_group_usage(
-            self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage data for subscriptionId and resource group.
-
-        :param resource_group_name: Azure Resource Group Name.
-        :type resource_group_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.consumption.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of UsageAnalysis
-        :rtype:
-         ~azure.mgmt.consumption.models.UsageAnalysisPaged[~azure.mgmt.consumption.models.UsageAnalysis]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.analyze_resource_group_usage.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    analyze_resource_group_usage.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Consumption/AnalyzeUsage'}
-
-    def analyze_billing_account_usage(
-            self, billing_account_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage data for billing account.
-
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.consumption.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of UsageAnalysis
-        :rtype:
-         ~azure.mgmt.consumption.models.UsageAnalysisPaged[~azure.mgmt.consumption.models.UsageAnalysis]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.analyze_billing_account_usage.metadata['url']
-                path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.UsageAnalysisPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    analyze_billing_account_usage.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/AnalyzeUsage'}

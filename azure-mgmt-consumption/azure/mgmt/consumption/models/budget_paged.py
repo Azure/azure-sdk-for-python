@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class UsageAnalysisPaged(Paged):
+class BudgetPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`UsageAnalysis <azure.mgmt.consumption.models.UsageAnalysis>` object
+    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[UsageAnalysis]'}
+        'current_page': {'key': 'value', 'type': '[Budget]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(UsageAnalysisPaged, self).__init__(*args, **kwargs)
+        super(BudgetPaged, self).__init__(*args, **kwargs)

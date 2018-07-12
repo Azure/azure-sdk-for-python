@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class UsageAnalysis(Resource):
-    """UsageAnalysis.
+class CostTag(ProxyResource):
+    """A cost tag resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,35 +24,28 @@ class UsageAnalysis(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :param next_link:
-    :type next_link: str
-    :param columns: Array of columns
-    :type columns: list[~azure.mgmt.consumption.models.UsageAnalysisColumn]
-    :param rows:
-    :type rows: list[list[object]]
+    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
+     this field will be used to determine whether the user is updating the
+     latest version or not.
+    :type e_tag: str
+    :param cost_tags: Cost tags.
+    :type cost_tags: list[~azure.mgmt.consumption.models.CostTagProperties]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'tags': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
-        'columns': {'key': 'properties.columns', 'type': '[UsageAnalysisColumn]'},
-        'rows': {'key': 'properties.rows', 'type': '[[object]]'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'cost_tags': {'key': 'properties.costTags', 'type': '[CostTagProperties]'},
     }
 
-    def __init__(self, next_link=None, columns=None, rows=None):
-        super(UsageAnalysis, self).__init__()
-        self.next_link = next_link
-        self.columns = columns
-        self.rows = rows
+    def __init__(self, e_tag=None, cost_tags=None):
+        super(CostTag, self).__init__(e_tag=e_tag)
+        self.cost_tags = cost_tags

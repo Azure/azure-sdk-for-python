@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SubscriptionDimensionsOperations(object):
-    """SubscriptionDimensionsOperations operations.
+class ReservationRecommendationsOperations(object):
+    """ReservationRecommendationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2018-05-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-06-30. Constant value: "2018-06-30".
     """
 
     models = models
@@ -32,38 +32,25 @@ class SubscriptionDimensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-05-31"
+        self.api_version = "2018-06-30"
 
         self.config = config
 
     def list(
-            self, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the dimensions by subscription Id.
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List of recomendations for purchasing reserved instances.
 
-        :param filter: May be used to filter dimensions by
-         properties/category, properties/usageStart, properties/usageEnd.
-         Supported operators are 'eq','lt', 'gt', 'le', 'ge'.
+        :param filter: May be used to filter reservationRecommendations by
+         properties/scope and properties/lookBackPeriod.
         :type filter: str
-        :param expand: May be used to expand the properties/data within a
-         dimension dategory. By default, data is not included when listing
-         dimensions.
-        :type expand: str
-        :param skiptoken: Skiptoken is only used if a previous operation
-         returned a partial result. If a previous response contains a nextLink
-         element, the value of the nextLink element will include a skiptoken
-         parameter that specifies a starting point to use for subsequent calls.
-        :type skiptoken: str
-        :param top: May be used to limit the number of results to the most
-         recent N dimension data.
-        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Dimension
+        :return: An iterator like instance of ReservationRecommendation
         :rtype:
-         ~azure.mgmt.consumption.models.DimensionPaged[~azure.mgmt.consumption.models.Dimension]
+         ~azure.mgmt.consumption.models.ReservationRecommendationPaged[~azure.mgmt.consumption.models.ReservationRecommendation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -79,15 +66,9 @@ class SubscriptionDimensionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -114,12 +95,12 @@ class SubscriptionDimensionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationRecommendationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationRecommendationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/dimensions'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/reservationRecommendations'}

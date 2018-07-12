@@ -12,31 +12,30 @@
 from msrest.serialization import Model
 
 
-class ReportConfigAggregation(Model):
-    """The aggregation expression to be used in the report.
+class CurrentSpend(Model):
+    """The current amount of cost which is being tracked for a budget.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the column to aggregate.
-    :type name: str
-    :ivar function: The name of the aggregation function to use. Default
-     value: "Sum" .
-    :vartype function: str
+    :ivar amount: The total amount of cost which is being tracked by the
+     budget.
+    :vartype amount: decimal.Decimal
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'function': {'required': True, 'constant': True},
+        'amount': {'readonly': True},
+        'unit': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'function': {'key': 'function', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'decimal'},
+        'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    function = "Sum"
-
-    def __init__(self, name):
-        super(ReportConfigAggregation, self).__init__()
-        self.name = name
+    def __init__(self):
+        super(CurrentSpend, self).__init__()
+        self.amount = None
+        self.unit = None

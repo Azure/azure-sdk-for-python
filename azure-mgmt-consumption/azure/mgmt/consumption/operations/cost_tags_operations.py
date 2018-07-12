@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PriceSheetOperations(object):
-    """PriceSheetOperations operations.
+class CostTagsOperations(object):
+    """CostTagsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,29 +37,18 @@ class PriceSheetOperations(object):
         self.config = config
 
     def get(
-            self, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the price sheet for a scope by subscriptionId. Price sheet is
-        available via this API only for May 1, 2014 or later.
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
+        """Get cost tags for a billing account.
 
-        :param expand: May be used to expand the properties/meterDetails
-         within a price sheet. By default, these fields are not included when
-         returning price sheet.
-        :type expand: str
-        :param skiptoken: Skiptoken is only used if a previous operation
-         returned a partial result. If a previous response contains a nextLink
-         element, the value of the nextLink element will include a skiptoken
-         parameter that specifies a starting point to use for subsequent calls.
-        :type skiptoken: str
-        :param top: May be used to limit the number of results to the top N
-         results.
-        :type top: int
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PriceSheetResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.PriceSheetResult or
+        :return: CostTag or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -67,18 +56,12 @@ class PriceSheetOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        if skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -101,61 +84,53 @@ class PriceSheetOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PriceSheetResult', response)
+            deserialized = self._deserialize('CostTag', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
 
-    def get_by_billing_period(
-            self, billing_period_name, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get the price sheet for a scope by subscriptionId and billing period.
-        Price sheet is available via this API only for May 1, 2014 or later.
+    def create_or_update(
+            self, billing_account_id, e_tag=None, cost_tags=None, custom_headers=None, raw=False, **operation_config):
+        """The operation to create or update cost tags assiciated with a billing
+        account. Update operation requires latest eTag to be set in the request
+        mandatorily. You may obtain the latest eTag by performing a get
+        operation. Create operation does not require eTag.
 
-        :param billing_period_name: Billing Period Name.
-        :type billing_period_name: str
-        :param expand: May be used to expand the properties/meterDetails
-         within a price sheet. By default, these fields are not included when
-         returning price sheet.
-        :type expand: str
-        :param skiptoken: Skiptoken is only used if a previous operation
-         returned a partial result. If a previous response contains a nextLink
-         element, the value of the nextLink element will include a skiptoken
-         parameter that specifies a starting point to use for subsequent calls.
-        :type skiptoken: str
-        :param top: May be used to limit the number of results to the top N
-         results.
-        :type top: int
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
+        :param e_tag: eTag of the resource. To handle concurrent update
+         scenarion, this field will be used to determine whether the user is
+         updating the latest version or not.
+        :type e_tag: str
+        :param cost_tags: Cost tags.
+        :type cost_tags:
+         list[~azure.mgmt.consumption.models.CostTagProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PriceSheetResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.PriceSheetResult or
+        :return: CostTag or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
+        parameters = models.CostTag(e_tag=e_tag, cost_tags=cost_tags)
+
         # Construct URL
-        url = self.get_by_billing_period.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        if skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -168,21 +143,27 @@ class PriceSheetOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CostTag')
 
-        if response.status_code not in [200]:
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PriceSheetResult', response)
+            deserialized = self._deserialize('CostTag', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('CostTag', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_by_billing_period.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'}
+    create_or_update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}

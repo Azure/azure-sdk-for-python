@@ -12,25 +12,29 @@
 from msrest.serialization import Model
 
 
-class ReportConfigListResult(Model):
-    """Result of listing report configs. It contains a list of available report
-    configurations in the scope provided.
+class BalancePropertiesNewPurchasesDetailsItem(Model):
+    """BalancePropertiesNewPurchasesDetailsItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of report configs.
-    :vartype value: list[~azure.mgmt.consumption.models.ReportConfig]
+    :ivar name: the name of new purchase.
+    :vartype name: str
+    :ivar value: the value of new purchase.
+    :vartype value: decimal.Decimal
     """
 
     _validation = {
+        'name': {'readonly': True},
         'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReportConfig]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'decimal'},
     }
 
     def __init__(self):
-        super(ReportConfigListResult, self).__init__()
+        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__()
+        self.name = None
         self.value = None

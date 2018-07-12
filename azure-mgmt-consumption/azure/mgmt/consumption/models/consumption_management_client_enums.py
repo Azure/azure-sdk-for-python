@@ -12,6 +12,33 @@
 from enum import Enum
 
 
+class BillingFrequency(Enum):
+
+    month = "Month"
+    quarter = "Quarter"
+    year = "Year"
+
+
+class CategoryType(Enum):
+
+    cost = "Cost"
+    usage = "Usage"
+
+
+class TimeGrainType(Enum):
+
+    monthly = "Monthly"
+    quarterly = "Quarterly"
+    annually = "Annually"
+
+
+class OperatorType(Enum):
+
+    equal_to = "EqualTo"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+
+
 class Grain(Enum):
 
     daily = "Daily"
@@ -31,39 +58,7 @@ class Bound(Enum):
     lower = "Lower"
 
 
-class StatusType(Enum):
+class Datagrain(Enum):
 
-    active = "Active"
-    inactive = "Inactive"
-
-
-class RecurrenceType(Enum):
-
-    daily = "Daily"
-    weekly = "Weekly"
-    monthly = "Monthly"
-    annually = "Annually"
-
-
-class FormatType(Enum):
-
-    csv = "Csv"
-
-
-class TimeframeType(Enum):
-
-    week_to_date = "WeekToDate"
-    month_to_date = "MonthToDate"
-    year_to_date = "YearToDate"
-    custom = "Custom"
-
-
-class GranularityType(Enum):
-
-    daily = "Daily"
-
-
-class ReportConfigColumnType(Enum):
-
-    tag = "Tag"
-    dimension = "Dimension"
+    daily_grain = "daily"
+    monthly_grain = "monthly"
