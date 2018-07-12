@@ -53,9 +53,9 @@ class ReservationsSummariesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationSummaries
+        :return: An iterator like instance of ReservationSummary
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationSummariesPaged[~azure.mgmt.consumption.models.ReservationSummaries]
+         ~azure.mgmt.consumption.models.ReservationSummaryPaged[~azure.mgmt.consumption.models.ReservationSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -101,11 +101,11 @@ class ReservationsSummariesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -130,9 +130,9 @@ class ReservationsSummariesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationSummaries
+        :return: An iterator like instance of ReservationSummary
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationSummariesPaged[~azure.mgmt.consumption.models.ReservationSummaries]
+         ~azure.mgmt.consumption.models.ReservationSummaryPaged[~azure.mgmt.consumption.models.ReservationSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -179,11 +179,11 @@ class ReservationsSummariesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

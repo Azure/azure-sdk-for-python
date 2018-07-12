@@ -48,9 +48,9 @@ class ReservationRecommendationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationRecommendations
+        :return: An iterator like instance of ReservationRecommendation
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationRecommendationsPaged[~azure.mgmt.consumption.models.ReservationRecommendations]
+         ~azure.mgmt.consumption.models.ReservationRecommendationPaged[~azure.mgmt.consumption.models.ReservationRecommendation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -95,11 +95,11 @@ class ReservationRecommendationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationRecommendationsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationRecommendationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationRecommendationsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationRecommendationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

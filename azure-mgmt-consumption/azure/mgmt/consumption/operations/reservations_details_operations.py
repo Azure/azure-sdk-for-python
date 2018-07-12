@@ -51,9 +51,9 @@ class ReservationsDetailsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationDetails
+        :return: An iterator like instance of ReservationDetail
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationDetailsPaged[~azure.mgmt.consumption.models.ReservationDetails]
+         ~azure.mgmt.consumption.models.ReservationDetailPaged[~azure.mgmt.consumption.models.ReservationDetail]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -97,11 +97,11 @@ class ReservationsDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationDetailPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -124,9 +124,9 @@ class ReservationsDetailsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationDetails
+        :return: An iterator like instance of ReservationDetail
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationDetailsPaged[~azure.mgmt.consumption.models.ReservationDetails]
+         ~azure.mgmt.consumption.models.ReservationDetailPaged[~azure.mgmt.consumption.models.ReservationDetail]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -171,11 +171,11 @@ class ReservationsDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ReservationDetailPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ReservationDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

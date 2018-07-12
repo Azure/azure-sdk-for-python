@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class ReservationSummaries(Resource):
-    """reservation summaries resource.
+class ReservationSummary(Resource):
+    """reservation summary resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -96,7 +96,7 @@ class ReservationSummaries(Resource):
     }
 
     def __init__(self):
-        super(ReservationSummaries, self).__init__()
+        super(ReservationSummary, self).__init__()
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None

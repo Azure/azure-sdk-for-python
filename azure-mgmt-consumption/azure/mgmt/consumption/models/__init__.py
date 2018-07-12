@@ -15,9 +15,9 @@ from .marketplace import Marketplace
 from .balance_properties_new_purchases_details_item import BalancePropertiesNewPurchasesDetailsItem
 from .balance_properties_adjustment_details_item import BalancePropertiesAdjustmentDetailsItem
 from .balance import Balance
-from .reservation_summaries import ReservationSummaries
-from .reservation_details import ReservationDetails
-from .reservation_recommendations import ReservationRecommendations
+from .reservation_summary import ReservationSummary
+from .reservation_detail import ReservationDetail
+from .reservation_recommendation import ReservationRecommendation
 from .tag import Tag
 from .tags import Tags
 from .budget_time_period import BudgetTimePeriod
@@ -41,9 +41,9 @@ from .proxy_resource import ProxyResource
 from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
-from .reservation_summaries_paged import ReservationSummariesPaged
-from .reservation_details_paged import ReservationDetailsPaged
-from .reservation_recommendations_paged import ReservationRecommendationsPaged
+from .reservation_summary_paged import ReservationSummaryPaged
+from .reservation_detail_paged import ReservationDetailPaged
+from .reservation_recommendation_paged import ReservationRecommendationPaged
 from .budget_paged import BudgetPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
@@ -65,9 +65,9 @@ __all__ = [
     'BalancePropertiesNewPurchasesDetailsItem',
     'BalancePropertiesAdjustmentDetailsItem',
     'Balance',
-    'ReservationSummaries',
-    'ReservationDetails',
-    'ReservationRecommendations',
+    'ReservationSummary',
+    'ReservationDetail',
+    'ReservationRecommendation',
     'Tag',
     'Tags',
     'BudgetTimePeriod',
@@ -91,9 +91,9 @@ __all__ = [
     'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
-    'ReservationSummariesPaged',
-    'ReservationDetailsPaged',
-    'ReservationRecommendationsPaged',
+    'ReservationSummaryPaged',
+    'ReservationDetailPaged',
+    'ReservationRecommendationPaged',
     'BudgetPaged',
     'ForecastPaged',
     'OperationPaged',

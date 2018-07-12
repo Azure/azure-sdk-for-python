@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ReservationRecommendations(Model):
-    """Reservation recommendations resource.
+class ReservationRecommendation(Model):
+    """Reservation recommendation resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,7 +31,7 @@ class ReservationRecommendations(Model):
     :ivar sku: Resource sku
     :vartype sku: str
     :ivar look_back_period: The number of days of usage to look back for
-     recommendations.
+     recommendation.
     :vartype look_back_period: str
     :ivar meter_id: The meter id (GUID)
     :vartype meter_id: str
@@ -90,7 +90,7 @@ class ReservationRecommendations(Model):
     }
 
     def __init__(self):
-        super(ReservationRecommendations, self).__init__()
+        super(ReservationRecommendation, self).__init__()
         self.id = None
         self.name = None
         self.type = None
