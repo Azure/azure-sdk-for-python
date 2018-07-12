@@ -39,6 +39,12 @@ class OrderBy(str, Enum):
     suggested = "Suggested"
 
 
+class Classifier(str, Enum):
+
+    multiclass = "Multiclass"
+    multilabel = "Multilabel"
+
+
 class ExportPlatform(str, Enum):
 
     core_ml = "CoreML"
