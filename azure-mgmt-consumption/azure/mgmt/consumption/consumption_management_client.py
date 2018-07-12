@@ -9,17 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.usage_details_operations import UsageDetailsOperations
-from .operations.marketplaces_operations import MarketplacesOperations
-from .operations.reservations_summaries_operations import ReservationsSummariesOperations
-from .operations.reservations_details_operations import ReservationsDetailsOperations
-from .operations.budgets_operations import BudgetsOperations
-from .operations.operations import Operations
 from .operations.price_sheet_operations import PriceSheetOperations
+from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.forecasts_operations import ForecastsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -55,26 +52,20 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ConsumptionManagementClient(object):
+class ConsumptionManagementClient(SDKClient):
     """Consumption management client provides access to consumption resources for Azure Enterprise Subscriptions.
 
     :ivar config: Configuration for client.
     :vartype config: ConsumptionManagementClientConfiguration
 
-    :ivar usage_details: UsageDetails operations
-    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
-    :ivar marketplaces: Marketplaces operations
-    :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
-    :ivar reservations_summaries: ReservationsSummaries operations
-    :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
-    :ivar reservations_details: ReservationsDetails operations
-    :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
-    :ivar budgets: Budgets operations
-    :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
+    :ivar usage_details: UsageDetails operations
+    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar forecasts: Forecasts operations
+    :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.consumption.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,24 +79,18 @@ class ConsumptionManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-01-31'
+        self.api_version = '2018-05-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.price_sheet = PriceSheetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.usage_details = UsageDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.marketplaces = MarketplacesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.reservations_summaries = ReservationsSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.reservations_details = ReservationsDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.budgets = BudgetsOperations(
+        self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)

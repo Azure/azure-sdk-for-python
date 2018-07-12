@@ -9,64 +9,58 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .meter_details import MeterDetails
-from .usage_detail import UsageDetail
-from .marketplace import Marketplace
-from .reservation_summaries import ReservationSummaries
-from .reservation_details import ReservationDetails
-from .budget_time_period import BudgetTimePeriod
-from .filters import Filters
-from .current_spend import CurrentSpend
-from .notification import Notification
-from .budget import Budget
-from .error_details import ErrorDetails
-from .error_response import ErrorResponse, ErrorResponseException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .resource import Resource
-from .proxy_resource import ProxyResource
-from .price_sheet_properties import PriceSheetProperties
-from .price_sheet_result import PriceSheetResult
+try:
+    from .error_details_py3 import ErrorDetails
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .resource_py3 import Resource
+    from .meter_details_py3 import MeterDetails
+    from .price_sheet_properties_py3 import PriceSheetProperties
+    from .price_sheet_result_py3 import PriceSheetResult
+    from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
+    from .forecast_py3 import Forecast
+    from .usage_detail_py3 import UsageDetail
+    from .query_options_py3 import QueryOptions
+except (SyntaxError, ImportError):
+    from .error_details import ErrorDetails
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .resource import Resource
+    from .meter_details import MeterDetails
+    from .price_sheet_properties import PriceSheetProperties
+    from .price_sheet_result import PriceSheetResult
+    from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
+    from .forecast import Forecast
+    from .usage_detail import UsageDetail
+    from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
-from .marketplace_paged import MarketplacePaged
-from .reservation_summaries_paged import ReservationSummariesPaged
-from .reservation_details_paged import ReservationDetailsPaged
-from .budget_paged import BudgetPaged
+from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
-    CategoryType,
-    TimeGrainType,
-    OperatorType,
-    Datagrain,
+    Grain,
+    ChargeType,
+    Bound,
 )
 
 __all__ = [
-    'MeterDetails',
-    'UsageDetail',
-    'Marketplace',
-    'ReservationSummaries',
-    'ReservationDetails',
-    'BudgetTimePeriod',
-    'Filters',
-    'CurrentSpend',
-    'Notification',
-    'Budget',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',
     'Operation',
     'Resource',
-    'ProxyResource',
+    'MeterDetails',
     'PriceSheetProperties',
     'PriceSheetResult',
+    'ForecastPropertiesConfidenceLevelsItem',
+    'Forecast',
+    'UsageDetail',
+    'QueryOptions',
     'UsageDetailPaged',
-    'MarketplacePaged',
-    'ReservationSummariesPaged',
-    'ReservationDetailsPaged',
-    'BudgetPaged',
+    'ForecastPaged',
     'OperationPaged',
-    'CategoryType',
-    'TimeGrainType',
-    'OperatorType',
-    'Datagrain',
+    'Grain',
+    'ChargeType',
+    'Bound',
 ]

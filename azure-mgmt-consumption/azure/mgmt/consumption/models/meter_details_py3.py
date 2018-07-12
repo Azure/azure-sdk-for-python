@@ -59,7 +59,7 @@ class MeterDetails(Model):
         'pretax_standard_rate': {'key': 'pretaxStandardRate', 'type': 'decimal'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(MeterDetails, self).__init__(**kwargs)
         self.meter_name = None
         self.meter_category = None

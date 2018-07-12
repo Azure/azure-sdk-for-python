@@ -12,30 +12,28 @@
 from msrest.serialization import Model
 
 
-class CurrentSpend(Model):
-    """The current amount of cost which is being tracked for a budget.
+class Operation(Model):
+    """A Consumption REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar amount: The total amount of cost which is being tracked by the
-     budget.
-    :vartype amount: decimal.Decimal
-    :ivar unit: The unit of measure for the budget amount.
-    :vartype unit: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.consumption.models.OperationDisplay
     """
 
     _validation = {
-        'amount': {'readonly': True},
-        'unit': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
-        'amount': {'key': 'amount', 'type': 'decimal'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self):
-        super(CurrentSpend, self).__init__()
-        self.amount = None
-        self.unit = None
+    def __init__(self, *, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = display

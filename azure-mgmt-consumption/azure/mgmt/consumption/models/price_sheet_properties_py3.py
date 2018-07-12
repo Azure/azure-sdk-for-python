@@ -64,7 +64,7 @@ class PriceSheetProperties(Model):
         'offer_id': {'key': 'offerId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(PriceSheetProperties, self).__init__(**kwargs)
         self.billing_period_id = None
         self.meter_id = None
