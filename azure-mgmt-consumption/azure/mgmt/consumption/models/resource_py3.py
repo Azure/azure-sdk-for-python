@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ProxyResource(Model):
+class Resource(Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,28 +24,27 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
-     this field will be used to determine whether the user is updating the
-     latest version or not.
-    :type e_tag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'tags': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.tags = None

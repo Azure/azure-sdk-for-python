@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class Forecast(Resource):
@@ -69,11 +69,11 @@ class Forecast(Resource):
         'confidence_levels': {'key': 'properties.confidenceLevels', 'type': '[ForecastPropertiesConfidenceLevelsItem]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, grain=None, charge_type=None, **kwargs) -> None:
         super(Forecast, self).__init__(**kwargs)
         self.usage_date = None
-        self.grain = kwargs.get('grain', None)
+        self.grain = grain
         self.charge = None
         self.currency = None
-        self.charge_type = kwargs.get('charge_type', None)
+        self.charge_type = charge_type
         self.confidence_levels = None

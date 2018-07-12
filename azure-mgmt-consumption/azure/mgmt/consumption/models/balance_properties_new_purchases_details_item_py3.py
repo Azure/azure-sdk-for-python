@@ -12,40 +12,29 @@
 from msrest.serialization import Model
 
 
-class ProxyResource(Model):
-    """The Resource model definition.
+class BalancePropertiesNewPurchasesDetailsItem(Model):
+    """BalancePropertiesNewPurchasesDetailsItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: the name of new purchase.
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
-     this field will be used to determine whether the user is updating the
-     latest version or not.
-    :type e_tag: str
+    :ivar value: the value of new purchase.
+    :vartype value: decimal.Decimal
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'decimal'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, **kwargs) -> None:
+        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__(**kwargs)
         self.name = None
-        self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.value = None

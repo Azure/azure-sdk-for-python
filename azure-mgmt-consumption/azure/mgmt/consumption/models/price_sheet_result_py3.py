@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class ProxyResource(Model):
-    """The Resource model definition.
+class PriceSheetResult(Resource):
+    """An pricesheet resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,28 +24,34 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
-     this field will be used to determine whether the user is updating the
-     latest version or not.
-    :type e_tag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar pricesheets: Price sheet
+    :vartype pricesheets:
+     list[~azure.mgmt.consumption.models.PriceSheetProperties]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'pricesheets': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'pricesheets': {'key': 'properties.pricesheets', 'type': '[PriceSheetProperties]'},
+        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+    def __init__(self, **kwargs) -> None:
+        super(PriceSheetResult, self).__init__(**kwargs)
+        self.pricesheets = None
+        self.next_link = None

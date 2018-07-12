@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class ReservationSummary(Resource):
@@ -95,7 +95,7 @@ class ReservationSummary(Resource):
         'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'decimal'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ReservationSummary, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None

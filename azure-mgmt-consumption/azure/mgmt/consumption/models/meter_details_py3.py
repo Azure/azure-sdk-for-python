@@ -67,7 +67,7 @@ class MeterDetails(Model):
         'service_tier': {'key': 'serviceTier', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(MeterDetails, self).__init__(**kwargs)
         self.meter_name = None
         self.meter_category = None

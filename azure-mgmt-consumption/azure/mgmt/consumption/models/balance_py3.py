@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class Balance(Resource):
@@ -109,7 +109,7 @@ class Balance(Resource):
         'adjustment_details': {'key': 'properties.adjustmentDetails', 'type': '[BalancePropertiesAdjustmentDetailsItem]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, billing_frequency=None, **kwargs) -> None:
         super(Balance, self).__init__(**kwargs)
         self.currency = None
         self.beginning_balance = None
@@ -122,7 +122,7 @@ class Balance(Resource):
         self.total_overage = None
         self.total_usage = None
         self.azure_marketplace_service_charges = None
-        self.billing_frequency = kwargs.get('billing_frequency', None)
+        self.billing_frequency = billing_frequency
         self.price_hidden = None
         self.new_purchases_details = None
         self.adjustment_details = None

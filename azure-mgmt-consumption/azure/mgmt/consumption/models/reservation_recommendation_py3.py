@@ -89,7 +89,7 @@ class ReservationRecommendation(Model):
         'scope': {'key': 'properties.scope', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ReservationRecommendation, self).__init__(**kwargs)
         self.id = None
         self.name = None

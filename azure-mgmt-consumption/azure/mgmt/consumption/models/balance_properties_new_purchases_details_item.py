@@ -34,7 +34,7 @@ class BalancePropertiesNewPurchasesDetailsItem(Model):
         'value': {'key': 'value', 'type': 'decimal'},
     }
 
-    def __init__(self):
-        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__(**kwargs)
         self.name = None
         self.value = None

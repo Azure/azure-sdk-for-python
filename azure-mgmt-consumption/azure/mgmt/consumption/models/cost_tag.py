@@ -46,6 +46,6 @@ class CostTag(ProxyResource):
         'cost_tags': {'key': 'properties.costTags', 'type': '[CostTagProperties]'},
     }
 
-    def __init__(self, e_tag=None, cost_tags=None):
-        super(CostTag, self).__init__(e_tag=e_tag)
-        self.cost_tags = cost_tags
+    def __init__(self, **kwargs):
+        super(CostTag, self).__init__(**kwargs)
+        self.cost_tags = kwargs.get('cost_tags', None)

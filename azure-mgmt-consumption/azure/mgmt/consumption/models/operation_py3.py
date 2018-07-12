@@ -12,40 +12,28 @@
 from msrest.serialization import Model
 
 
-class ProxyResource(Model):
-    """The Resource model definition.
+class Operation(Model):
+    """A Consumption REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
-     this field will be used to determine whether the user is updating the
-     latest version or not.
-    :type e_tag: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.consumption.models.OperationDisplay
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, *, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.display = display

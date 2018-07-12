@@ -46,6 +46,6 @@ class TagsResult(ProxyResource):
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, e_tag=None, tags=None):
-        super(TagsResult, self).__init__(e_tag=e_tag)
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(TagsResult, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

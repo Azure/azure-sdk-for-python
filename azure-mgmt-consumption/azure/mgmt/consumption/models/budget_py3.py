@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class Budget(ProxyResource):
@@ -83,12 +83,12 @@ class Budget(ProxyResource):
         'notifications': {'key': 'properties.notifications', 'type': '{Notification}'},
     }
 
-    def __init__(self, **kwargs):
-        super(Budget, self).__init__(**kwargs)
-        self.category = kwargs.get('category', None)
-        self.amount = kwargs.get('amount', None)
-        self.time_grain = kwargs.get('time_grain', None)
-        self.time_period = kwargs.get('time_period', None)
-        self.filters = kwargs.get('filters', None)
+    def __init__(self, *, category, amount, time_grain, time_period, e_tag: str=None, filters=None, notifications=None, **kwargs) -> None:
+        super(Budget, self).__init__(e_tag=e_tag, **kwargs)
+        self.category = category
+        self.amount = amount
+        self.time_grain = time_grain
+        self.time_period = time_period
+        self.filters = filters
         self.current_spend = None
-        self.notifications = kwargs.get('notifications', None)
+        self.notifications = notifications

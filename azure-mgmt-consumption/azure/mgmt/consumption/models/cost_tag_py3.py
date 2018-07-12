@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource_py3 import ProxyResource
 
 
-class ProxyResource(Model):
-    """The Resource model definition.
+class CostTag(ProxyResource):
+    """A cost tag resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,8 @@ class ProxyResource(Model):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
+    :param cost_tags: Cost tags.
+    :type cost_tags: list[~azure.mgmt.consumption.models.CostTagProperties]
     """
 
     _validation = {
@@ -41,11 +43,9 @@ class ProxyResource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
+        'cost_tags': {'key': 'properties.costTags', 'type': '[CostTagProperties]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+    def __init__(self, *, e_tag: str=None, cost_tags=None, **kwargs) -> None:
+        super(CostTag, self).__init__(e_tag=e_tag, **kwargs)
+        self.cost_tags = cost_tags

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class UsageDetail(Resource):
@@ -161,7 +161,7 @@ class UsageDetail(Resource):
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UsageDetail, self).__init__(**kwargs)
         self.billing_period_id = None
         self.invoice_id = None

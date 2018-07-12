@@ -23,6 +23,6 @@ class Tag(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, key=None):
-        super(Tag, self).__init__()
-        self.key = key
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)

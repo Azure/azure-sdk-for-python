@@ -33,7 +33,7 @@ class BudgetTimePeriod(Model):
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, start_date, end_date=None, **kwargs) -> None:
         super(BudgetTimePeriod, self).__init__(**kwargs)
-        self.start_date = kwargs.get('start_date', None)
-        self.end_date = kwargs.get('end_date', None)
+        self.start_date = start_date
+        self.end_date = end_date

@@ -23,6 +23,6 @@ class CostTagProperties(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, key=None):
-        super(CostTagProperties, self).__init__()
-        self.key = key
+    def __init__(self, **kwargs):
+        super(CostTagProperties, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)

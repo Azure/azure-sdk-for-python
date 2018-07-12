@@ -43,9 +43,9 @@ class ProxyResource(Model):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, e_tag: str=None, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.e_tag = e_tag

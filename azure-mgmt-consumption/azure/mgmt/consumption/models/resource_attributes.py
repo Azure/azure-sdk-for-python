@@ -34,7 +34,7 @@ class ResourceAttributes(Model):
         'sku': {'key': 'sku', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceAttributes, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceAttributes, self).__init__(**kwargs)
         self.location = None
         self.sku = None

@@ -38,8 +38,8 @@ class ForecastPropertiesConfidenceLevelsItem(Model):
         'value': {'key': 'value', 'type': 'decimal'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, bound=None, **kwargs) -> None:
         super(ForecastPropertiesConfidenceLevelsItem, self).__init__(**kwargs)
         self.percentage = None
-        self.bound = kwargs.get('bound', None)
+        self.bound = bound
         self.value = None

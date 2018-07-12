@@ -34,7 +34,7 @@ class BalancePropertiesAdjustmentDetailsItem(Model):
         'value': {'key': 'value', 'type': 'decimal'},
     }
 
-    def __init__(self):
-        super(BalancePropertiesAdjustmentDetailsItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(BalancePropertiesAdjustmentDetailsItem, self).__init__(**kwargs)
         self.name = None
         self.value = None

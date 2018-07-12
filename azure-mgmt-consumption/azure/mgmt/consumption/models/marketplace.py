@@ -146,8 +146,8 @@ class Marketplace(Resource):
         'plan_name': {'key': 'properties.planName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Marketplace, self).__init__()
+    def __init__(self, **kwargs):
+        super(Marketplace, self).__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None

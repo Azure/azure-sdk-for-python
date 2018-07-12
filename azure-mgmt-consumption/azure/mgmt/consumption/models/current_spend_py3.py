@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class CurrentSpend(Model):
+    """The current amount of cost which is being tracked for a budget.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :ivar amount: The total amount of cost which is being tracked by the
+     budget.
+    :vartype amount: decimal.Decimal
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'amount': {'readonly': True},
+        'unit': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'decimal'},
+        'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+    def __init__(self, **kwargs) -> None:
+        super(CurrentSpend, self).__init__(**kwargs)
+        self.amount = None
+        self.unit = None

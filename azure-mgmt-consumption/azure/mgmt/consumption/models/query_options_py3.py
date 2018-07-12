@@ -24,6 +24,6 @@ class QueryOptions(Model):
         'apply': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, apply: str=None, **kwargs) -> None:
         super(QueryOptions, self).__init__(**kwargs)
-        self.apply = kwargs.get('apply', None)
+        self.apply = apply

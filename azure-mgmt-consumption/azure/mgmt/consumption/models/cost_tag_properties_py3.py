@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class QueryOptions(Model):
-    """Additional parameters for a set of operations.
+class CostTagProperties(Model):
+    """The properties of the cost tag.
 
-    :param apply: OData apply expression to aggregate usageDetails by tags or
-     (tags and properties/usageStart)
-    :type apply: str
+    :param key: Cost tag key.
+    :type key: str
     """
 
     _attribute_map = {
-        'apply': {'key': '', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(QueryOptions, self).__init__(**kwargs)
-        self.apply = kwargs.get('apply', None)
+    def __init__(self, *, key: str=None, **kwargs) -> None:
+        super(CostTagProperties, self).__init__(**kwargs)
+        self.key = key

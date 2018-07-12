@@ -54,11 +54,11 @@ class Notification(Model):
         'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enabled: bool, operator, threshold, contact_emails, contact_roles=None, contact_groups=None, **kwargs) -> None:
         super(Notification, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.operator = kwargs.get('operator', None)
-        self.threshold = kwargs.get('threshold', None)
-        self.contact_emails = kwargs.get('contact_emails', None)
-        self.contact_roles = kwargs.get('contact_roles', None)
-        self.contact_groups = kwargs.get('contact_groups', None)
+        self.enabled = enabled
+        self.operator = operator
+        self.threshold = threshold
+        self.contact_emails = contact_emails
+        self.contact_roles = contact_roles
+        self.contact_groups = contact_groups

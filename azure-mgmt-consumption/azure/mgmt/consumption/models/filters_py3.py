@@ -40,9 +40,9 @@ class Filters(Model):
         'tags': {'key': 'tags', 'type': '{[str]}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resource_groups=None, resources=None, meters=None, tags=None, **kwargs) -> None:
         super(Filters, self).__init__(**kwargs)
-        self.resource_groups = kwargs.get('resource_groups', None)
-        self.resources = kwargs.get('resources', None)
-        self.meters = kwargs.get('meters', None)
-        self.tags = kwargs.get('tags', None)
+        self.resource_groups = resource_groups
+        self.resources = resources
+        self.meters = meters
+        self.tags = tags
