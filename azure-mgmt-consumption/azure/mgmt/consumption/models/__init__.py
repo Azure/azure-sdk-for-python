@@ -26,7 +26,7 @@ from .current_spend import CurrentSpend
 from .notification import Notification
 from .budget import Budget
 from .cost_tag_properties import CostTagProperties
-from .cost_tags_result import CostTagsResult
+from .cost_tag import CostTag
 from .price_sheet_properties import PriceSheetProperties
 from .price_sheet_result import PriceSheetResult
 from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
@@ -76,7 +76,7 @@ __all__ = [
     'Notification',
     'Budget',
     'CostTagProperties',
-    'CostTagsResult',
+    'CostTag',
     'PriceSheetProperties',
     'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',

@@ -568,7 +568,7 @@ class MarketplacesOperations(object):
         return deserialized
     list_for_billing_period_by_department.metadata = {'url': '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}
 
-    def list_by_enrollment_accounts(
+    def list_by_enrollment_account(
             self, enrollment_account_id, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by enrollmentAccountId and current
         billing period. Marketplaces are available via this API only for May 1,
@@ -605,7 +605,7 @@ class MarketplacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_enrollment_accounts.metadata['url']
+                url = self.list_by_enrollment_account.metadata['url']
                 path_format_arguments = {
                     'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str')
                 }
@@ -654,9 +654,9 @@ class MarketplacesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_enrollment_accounts.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
+    list_by_enrollment_account.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
 
-    def list_for_billing_period_by_enrollment_accounts(
+    def list_for_billing_period_by_enrollment_account(
             self, enrollment_account_id, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billing period and
         enrollmentAccountId. Marketplaces are available via this API only for
@@ -695,7 +695,7 @@ class MarketplacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_for_billing_period_by_enrollment_accounts.metadata['url']
+                url = self.list_for_billing_period_by_enrollment_account.metadata['url']
                 path_format_arguments = {
                     'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
@@ -745,4 +745,4 @@ class MarketplacesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_for_billing_period_by_enrollment_accounts.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}
+    list_for_billing_period_by_enrollment_account.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}

@@ -12,7 +12,7 @@
 from .proxy_resource import ProxyResource
 
 
-class CostTagsResult(ProxyResource):
+class CostTag(ProxyResource):
     """A cost tag resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -47,5 +47,5 @@ class CostTagsResult(ProxyResource):
     }
 
     def __init__(self, e_tag=None, cost_tags=None):
-        super(CostTagsResult, self).__init__(e_tag=e_tag)
+        super(CostTag, self).__init__(e_tag=e_tag)
         self.cost_tags = cost_tags
