@@ -36,6 +36,8 @@ class PriceSheetProperties(Model):
     :vartype unit_price: decimal.Decimal
     :ivar currency_code: Currency Code
     :vartype currency_code: str
+    :ivar offer_id: Offer Id
+    :vartype offer_id: str
     """
 
     _validation = {
@@ -47,6 +49,7 @@ class PriceSheetProperties(Model):
         'part_number': {'readonly': True},
         'unit_price': {'readonly': True},
         'currency_code': {'readonly': True},
+        'offer_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,6 +61,7 @@ class PriceSheetProperties(Model):
         'part_number': {'key': 'partNumber', 'type': 'str'},
         'unit_price': {'key': 'unitPrice', 'type': 'decimal'},
         'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'offer_id': {'key': 'offerId', 'type': 'str'},
     }
 
     def __init__(self):
@@ -70,3 +74,4 @@ class PriceSheetProperties(Model):
         self.part_number = None
         self.unit_price = None
         self.currency_code = None
+        self.offer_id = None
