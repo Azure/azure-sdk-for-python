@@ -97,6 +97,8 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
      list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtension]
+    :ivar zones: The virtual machine zones.
+    :vartype zones: list[str]
     """
 
     _validation = {
@@ -111,6 +113,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_view': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resources': {'readonly': True},
+        'zones': {'readonly': True},
     }
 
     _attribute_map = {
@@ -134,6 +137,7 @@ class VirtualMachineScaleSetVM(Resource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(self, *, location: str, tags=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, plan=None, **kwargs) -> None:
@@ -153,3 +157,4 @@ class VirtualMachineScaleSetVM(Resource):
         self.license_type = license_type
         self.plan = plan
         self.resources = None
+        self.zones = None
