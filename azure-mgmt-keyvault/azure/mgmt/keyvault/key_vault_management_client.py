@@ -82,16 +82,13 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = KeyVaultManagementClientConfiguration(credentials, subscription_id, base_url)
         super(KeyVaultManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = KeyVaultManagementClient(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -113,7 +110,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_02_14 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def operations(self):
         """Instance depends on the API version:
