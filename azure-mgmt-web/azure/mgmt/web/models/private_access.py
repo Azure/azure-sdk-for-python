@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class ResourceHealthMetadata(ProxyOnlyResource):
-    """Used for getting ResourceHealthCheck settings.
+class PrivateAccess(ProxyOnlyResource):
+    """Description of the parameters of Private Access for a Web Site.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,11 +26,12 @@ class ResourceHealthMetadata(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param category: The category that the resource matches in the RHC Policy
-     File
-    :type category: str
-    :param signal_availability: Is there a health signal for the resource
-    :type signal_availability: bool
+    :param enabled: Whether private access is enabled or not.
+    :type enabled: bool
+    :param virtual_networks: The Virtual Networks (and subnets) allowed to
+     access the site privately.
+    :type virtual_networks:
+     list[~azure.mgmt.web.models.PrivateAccessVirtualNetwork]
     """
 
     _validation = {
@@ -44,11 +45,11 @@ class ResourceHealthMetadata(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'signal_availability': {'key': 'properties.signalAvailability', 'type': 'bool'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'virtual_networks': {'key': 'properties.virtualNetworks', 'type': '[PrivateAccessVirtualNetwork]'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceHealthMetadata, self).__init__(**kwargs)
-        self.category = kwargs.get('category', None)
-        self.signal_availability = kwargs.get('signal_availability', None)
+        super(PrivateAccess, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.virtual_networks = kwargs.get('virtual_networks', None)

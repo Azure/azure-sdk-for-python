@@ -26,8 +26,6 @@ class SourceControl(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param source_control_name: Name or source control type.
-    :type source_control_name: str
     :param token: OAuth access token.
     :type token: str
     :param token_secret: OAuth access token secret.
@@ -49,7 +47,6 @@ class SourceControl(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'source_control_name': {'key': 'properties.name', 'type': 'str'},
         'token': {'key': 'properties.token', 'type': 'str'},
         'token_secret': {'key': 'properties.tokenSecret', 'type': 'str'},
         'refresh_token': {'key': 'properties.refreshToken', 'type': 'str'},
@@ -58,7 +55,6 @@ class SourceControl(ProxyOnlyResource):
 
     def __init__(self, **kwargs):
         super(SourceControl, self).__init__(**kwargs)
-        self.source_control_name = kwargs.get('source_control_name', None)
         self.token = kwargs.get('token', None)
         self.token_secret = kwargs.get('token_secret', None)
         self.refresh_token = kwargs.get('refresh_token', None)

@@ -28,8 +28,6 @@ class User(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param user_name: Username
-    :type user_name: str
     :param publishing_user_name: Required. Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
@@ -39,6 +37,8 @@ class User(ProxyOnlyResource):
     :param publishing_password_hash_salt: Password hash salt used for
      publishing.
     :type publishing_password_hash_salt: str
+    :param scm_uri: Url of SCM site.
+    :type scm_uri: str
     """
 
     _validation = {
@@ -53,17 +53,17 @@ class User(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
+        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        self.user_name = kwargs.get('user_name', None)
         self.publishing_user_name = kwargs.get('publishing_user_name', None)
         self.publishing_password = kwargs.get('publishing_password', None)
         self.publishing_password_hash = kwargs.get('publishing_password_hash', None)
         self.publishing_password_hash_salt = kwargs.get('publishing_password_hash_salt', None)
+        self.scm_uri = kwargs.get('scm_uri', None)

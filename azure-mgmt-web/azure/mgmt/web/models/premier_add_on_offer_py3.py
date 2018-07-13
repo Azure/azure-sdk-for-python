@@ -32,8 +32,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
     :type product: str
     :param vendor: Premier add on offer Vendor.
     :type vendor: str
-    :param premier_add_on_offer_name: Premier add on offer Name.
-    :type premier_add_on_offer_name: str
     :param promo_code_required: <code>true</code> if promotion code is
      required; otherwise, <code>false</code>.
     :type promo_code_required: bool
@@ -68,7 +66,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_offer_name': {'key': 'properties.name', 'type': 'str'},
         'promo_code_required': {'key': 'properties.promoCodeRequired', 'type': 'bool'},
         'quota': {'key': 'properties.quota', 'type': 'int'},
         'web_hosting_plan_restrictions': {'key': 'properties.webHostingPlanRestrictions', 'type': 'AppServicePlanRestrictions'},
@@ -78,12 +75,11 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, sku: str=None, product: str=None, vendor: str=None, premier_add_on_offer_name: str=None, promo_code_required: bool=None, quota: int=None, web_hosting_plan_restrictions=None, privacy_policy_url: str=None, legal_terms_url: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, sku: str=None, product: str=None, vendor: str=None, promo_code_required: bool=None, quota: int=None, web_hosting_plan_restrictions=None, privacy_policy_url: str=None, legal_terms_url: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
         super(PremierAddOnOffer, self).__init__(kind=kind, **kwargs)
         self.sku = sku
         self.product = product
         self.vendor = vendor
-        self.premier_add_on_offer_name = premier_add_on_offer_name
         self.promo_code_required = promo_code_required
         self.quota = quota
         self.web_hosting_plan_restrictions = web_hosting_plan_restrictions

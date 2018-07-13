@@ -51,11 +51,17 @@ class Recommendation(ProxyOnlyResource):
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
     :type channels: str or ~azure.mgmt.web.models.Channels
-    :param tags: The list of category tags that this recommendation belongs
-     to.
-    :type tags: list[str]
+    :ivar category_tags: The list of category tags that this recommendation
+     belongs to.
+    :vartype category_tags: list[str]
     :param action_name: Name of action recommended by this object.
     :type action_name: str
+    :param enabled: True if this recommendation is still valid (i.e.
+     "actionable"). False if it is invalid.
+    :type enabled: int
+    :param states: The list of states of this recommendation. If it's null
+     then it shoud be considered "Active".
+    :type states: list[str]
     :param start_time: The beginning time in UTC of a range that the
      recommendation refers to.
     :type start_time: datetime
@@ -89,6 +95,7 @@ class Recommendation(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'category_tags': {'readonly': True},
     }
 
     _attribute_map = {
@@ -105,8 +112,10 @@ class Recommendation(ProxyOnlyResource):
         'message': {'key': 'properties.message', 'type': 'str'},
         'level': {'key': 'properties.level', 'type': 'NotificationLevel'},
         'channels': {'key': 'properties.channels', 'type': 'Channels'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'category_tags': {'key': 'properties.categoryTags', 'type': '[str]'},
         'action_name': {'key': 'properties.actionName', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'int'},
+        'states': {'key': 'properties.states', 'type': '[str]'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'next_notification_time': {'key': 'properties.nextNotificationTime', 'type': 'iso-8601'},
@@ -130,8 +139,10 @@ class Recommendation(ProxyOnlyResource):
         self.message = kwargs.get('message', None)
         self.level = kwargs.get('level', None)
         self.channels = kwargs.get('channels', None)
-        self.tags = kwargs.get('tags', None)
+        self.category_tags = None
         self.action_name = kwargs.get('action_name', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.states = kwargs.get('states', None)
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
         self.next_notification_time = kwargs.get('next_notification_time', None)

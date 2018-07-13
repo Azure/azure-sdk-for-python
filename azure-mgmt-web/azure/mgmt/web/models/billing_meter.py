@@ -35,8 +35,10 @@ class BillingMeter(ProxyOnlyResource):
     :type short_name: str
     :param friendly_name: Friendly name of the meter
     :type friendly_name: str
-    :param resource_type: App Service resource type meter used for
+    :param resource_type: App Service ResourceType meter used for
     :type resource_type: str
+    :param os_type: App Service OS type meter used for
+    :type os_type: str
     """
 
     _validation = {
@@ -55,6 +57,7 @@ class BillingMeter(ProxyOnlyResource):
         'short_name': {'key': 'properties.shortName', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
+        'os_type': {'key': 'properties.osType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -64,3 +67,4 @@ class BillingMeter(ProxyOnlyResource):
         self.short_name = kwargs.get('short_name', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.resource_type = kwargs.get('resource_type', None)
+        self.os_type = kwargs.get('os_type', None)

@@ -135,6 +135,15 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
+    :param has_linux_workers: Flag that displays whether an ASE has linux
+     workers or not
+    :type has_linux_workers: bool
+    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
+     default SSL certificate
+    :type ssl_cert_key_vault_id: str
+    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
+     Service Environment default SSL certificate
+    :type ssl_cert_key_vault_secret_name: str
     """
 
     _validation = {
@@ -205,9 +214,12 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
+        'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
+        'ssl_cert_key_vault_id': {'key': 'properties.sslCertKeyVaultId', 'type': 'str'},
+        'ssl_cert_key_vault_secret_name': {'key': 'properties.sslCertKeyVaultSecretName', 'type': 'str'},
     }
 
-    def __init__(self, *, app_service_environment_patch_resource_name: str, location: str, virtual_network, worker_pools, kind: str=None, vnet_name: str=None, vnet_resource_group_name: str=None, vnet_subnet_name: str=None, internal_load_balancing_mode=None, multi_size: str=None, multi_role_count: int=None, ipssl_address_count: int=None, dns_suffix: str=None, network_access_control_list=None, front_end_scale_factor: int=None, api_management_account_id: str=None, suspended: bool=None, dynamic_cache_enabled: bool=None, cluster_settings=None, user_whitelisted_ip_ranges=None, **kwargs) -> None:
+    def __init__(self, *, app_service_environment_patch_resource_name: str, location: str, virtual_network, worker_pools, kind: str=None, vnet_name: str=None, vnet_resource_group_name: str=None, vnet_subnet_name: str=None, internal_load_balancing_mode=None, multi_size: str=None, multi_role_count: int=None, ipssl_address_count: int=None, dns_suffix: str=None, network_access_control_list=None, front_end_scale_factor: int=None, api_management_account_id: str=None, suspended: bool=None, dynamic_cache_enabled: bool=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers: bool=None, ssl_cert_key_vault_id: str=None, ssl_cert_key_vault_secret_name: str=None, **kwargs) -> None:
         super(AppServiceEnvironmentPatchResource, self).__init__(kind=kind, **kwargs)
         self.app_service_environment_patch_resource_name = app_service_environment_patch_resource_name
         self.location = location
@@ -245,3 +257,6 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         self.dynamic_cache_enabled = dynamic_cache_enabled
         self.cluster_settings = cluster_settings
         self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
+        self.has_linux_workers = has_linux_workers
+        self.ssl_cert_key_vault_id = ssl_cert_key_vault_id
+        self.ssl_cert_key_vault_secret_name = ssl_cert_key_vault_secret_name

@@ -54,7 +54,7 @@ class RestoreRequest(ProxyOnlyResource):
      site.
     :type app_service_plan: str
     :param operation_type: Operation type. Possible values include: 'Default',
-     'Clone', 'Relocation', 'Snapshot'. Default value: "Default" .
+     'Clone', 'Relocation', 'Snapshot', 'CloudFS'. Default value: "Default" .
     :type operation_type: str or
      ~azure.mgmt.web.models.BackupRestoreOperationType
     :param adjust_connection_strings: <code>true</code> if

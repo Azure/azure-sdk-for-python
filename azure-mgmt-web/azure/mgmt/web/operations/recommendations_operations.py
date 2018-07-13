@@ -23,7 +23,7 @@ class RecommendationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2016-03-01".
+    :ivar api_version: API Version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class RecommendationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2018-02-01"
 
         self.config = config
 
@@ -60,7 +60,8 @@ class RecommendationsOperations(object):
         :return: An iterator like instance of Recommendation
         :rtype:
          ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -100,9 +101,7 @@ class RecommendationsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -223,7 +222,7 @@ class RecommendationsOperations(object):
     disable_recommendation_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations/{name}/disable'}
 
     def list_history_for_web_app(
-            self, resource_group_name, site_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, expired_only=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get past recommendations for an app, optionally specified by the time
         range.
 
@@ -235,6 +234,10 @@ class RecommendationsOperations(object):
         :type resource_group_name: str
         :param site_name: Name of the app.
         :type site_name: str
+        :param expired_only: Specify <code>false</code> to return all
+         recommendations. The default is <code>true</code>, which returns only
+         expired recommendations.
+        :type expired_only: bool
         :param filter: Filter is specified by using OData syntax. Example:
          $filter=channels eq 'Api' or channel eq 'Notification' and startTime
          eq '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
@@ -248,7 +251,8 @@ class RecommendationsOperations(object):
         :return: An iterator like instance of Recommendation
         :rtype:
          ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -264,6 +268,8 @@ class RecommendationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expired_only is not None:
+                    query_parameters['expiredOnly'] = self._serialize.query("expired_only", expired_only, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -288,9 +294,7 @@ class RecommendationsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -332,7 +336,8 @@ class RecommendationsOperations(object):
         :return: An iterator like instance of Recommendation
         :rtype:
          ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -374,9 +379,7 @@ class RecommendationsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -533,7 +536,8 @@ class RecommendationsOperations(object):
         :return: RecommendationRule or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.RecommendationRule or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_rule_details_by_web_app.metadata['url']
@@ -568,9 +572,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

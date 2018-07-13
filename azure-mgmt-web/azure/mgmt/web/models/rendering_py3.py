@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class Rendering(Model):
     """Instructions for rendering the data.
 
-    :param rendering_type: Rendering Type. Possible values include: 'NoGraph',
-     'Table', 'TimeSeries', 'TimeSeriesPerInstance'
-    :type rendering_type: str or ~azure.mgmt.web.models.RenderingType
+    :param type: Rendering Type. Possible values include: 'NoGraph', 'Table',
+     'TimeSeries', 'TimeSeriesPerInstance'
+    :type type: str or ~azure.mgmt.web.models.RenderingType
     :param title: Title of data
     :type title: str
     :param description: Description of the data that will help it be
@@ -26,13 +26,13 @@ class Rendering(Model):
     """
 
     _attribute_map = {
-        'rendering_type': {'key': 'renderingType', 'type': 'RenderingType'},
+        'type': {'key': 'type', 'type': 'RenderingType'},
         'title': {'key': 'title', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, rendering_type=None, title: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, type=None, title: str=None, description: str=None, **kwargs) -> None:
         super(Rendering, self).__init__(**kwargs)
-        self.rendering_type = rendering_type
+        self.type = type
         self.title = title
         self.description = description

@@ -42,7 +42,7 @@ class SiteInstance(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'site_instance_name': {'key': 'properties.name', 'type': 'str'},
+        'site_instance_name': {'key': 'properties.siteInstanceName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

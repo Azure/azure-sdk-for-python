@@ -26,10 +26,8 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar function_envelope_name: Function name.
-    :vartype function_envelope_name: str
-    :ivar function_app_id: Function App ID.
-    :vartype function_app_id: str
+    :param function_app_id: Function App ID.
+    :type function_app_id: str
     :param script_root_path_href: Script root path URI.
     :type script_root_path_href: str
     :param script_href: Script URI.
@@ -52,8 +50,6 @@ class FunctionEnvelope(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'function_envelope_name': {'readonly': True},
-        'function_app_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -61,22 +57,20 @@ class FunctionEnvelope(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'function_envelope_name': {'key': 'properties.name', 'type': 'str'},
-        'function_app_id': {'key': 'properties.functionAppId', 'type': 'str'},
-        'script_root_path_href': {'key': 'properties.scriptRootPathHref', 'type': 'str'},
-        'script_href': {'key': 'properties.scriptHref', 'type': 'str'},
-        'config_href': {'key': 'properties.configHref', 'type': 'str'},
-        'secrets_file_href': {'key': 'properties.secretsFileHref', 'type': 'str'},
+        'function_app_id': {'key': 'properties.function_app_id', 'type': 'str'},
+        'script_root_path_href': {'key': 'properties.script_root_path_href', 'type': 'str'},
+        'script_href': {'key': 'properties.script_href', 'type': 'str'},
+        'config_href': {'key': 'properties.config_href', 'type': 'str'},
+        'secrets_file_href': {'key': 'properties.secrets_file_href', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'config': {'key': 'properties.config', 'type': 'object'},
         'files': {'key': 'properties.files', 'type': '{str}'},
-        'test_data': {'key': 'properties.testData', 'type': 'str'},
+        'test_data': {'key': 'properties.test_data', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, script_root_path_href: str=None, script_href: str=None, config_href: str=None, secrets_file_href: str=None, href: str=None, config=None, files=None, test_data: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, function_app_id: str=None, script_root_path_href: str=None, script_href: str=None, config_href: str=None, secrets_file_href: str=None, href: str=None, config=None, files=None, test_data: str=None, **kwargs) -> None:
         super(FunctionEnvelope, self).__init__(kind=kind, **kwargs)
-        self.function_envelope_name = None
-        self.function_app_id = None
+        self.function_app_id = function_app_id
         self.script_root_path_href = script_root_path_href
         self.script_href = script_href
         self.config_href = config_href

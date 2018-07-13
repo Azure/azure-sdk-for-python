@@ -135,6 +135,15 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
+    :param has_linux_workers: Flag that displays whether an ASE has linux
+     workers or not
+    :type has_linux_workers: bool
+    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
+     default SSL certificate
+    :type ssl_cert_key_vault_id: str
+    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
+     Service Environment default SSL certificate
+    :type ssl_cert_key_vault_secret_name: str
     """
 
     _validation = {
@@ -205,6 +214,9 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
+        'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
+        'ssl_cert_key_vault_id': {'key': 'properties.sslCertKeyVaultId', 'type': 'str'},
+        'ssl_cert_key_vault_secret_name': {'key': 'properties.sslCertKeyVaultSecretName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -245,3 +257,6 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         self.dynamic_cache_enabled = kwargs.get('dynamic_cache_enabled', None)
         self.cluster_settings = kwargs.get('cluster_settings', None)
         self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)
+        self.has_linux_workers = kwargs.get('has_linux_workers', None)
+        self.ssl_cert_key_vault_id = kwargs.get('ssl_cert_key_vault_id', None)
+        self.ssl_cert_key_vault_secret_name = kwargs.get('ssl_cert_key_vault_secret_name', None)

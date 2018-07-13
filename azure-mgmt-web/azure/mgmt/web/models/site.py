@@ -64,6 +64,8 @@ class Site(Resource):
     :param reserved: <code>true</code> if reserved; otherwise,
      <code>false</code>. Default value: False .
     :type reserved: bool
+    :param is_xenon: Hyper-V sandbox. Default value: False .
+    :type is_xenon: bool
     :ivar last_modified_time_utc: Last time the app was modified, in UTC.
      Read-only.
     :vartype last_modified_time_utc: datetime
@@ -119,9 +121,6 @@ class Site(Resource):
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
     :type cloning_info: ~azure.mgmt.web.models.CloningInfo
-    :param snapshot_info: If specified during app creation, the app is created
-     from a previous snapshot.
-    :type snapshot_info: ~azure.mgmt.web.models.SnapshotRecoveryRequest
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -181,6 +180,7 @@ class Site(Resource):
         'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -197,7 +197,6 @@ class Site(Resource):
         'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
         'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
-        'snapshot_info': {'key': 'properties.snapshotInfo', 'type': 'SnapshotRecoveryRequest'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
@@ -218,6 +217,7 @@ class Site(Resource):
         self.host_name_ssl_states = kwargs.get('host_name_ssl_states', None)
         self.server_farm_id = kwargs.get('server_farm_id', None)
         self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
         self.last_modified_time_utc = None
         self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
@@ -234,7 +234,6 @@ class Site(Resource):
         self.suspended_till = None
         self.max_number_of_workers = None
         self.cloning_info = kwargs.get('cloning_info', None)
-        self.snapshot_info = kwargs.get('snapshot_info', None)
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None

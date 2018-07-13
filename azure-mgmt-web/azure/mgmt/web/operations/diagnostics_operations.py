@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class DiagnosticsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2016-03-01".
+    :ivar api_version: API Version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class DiagnosticsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2018-02-01"
 
         self.config = config
 
@@ -56,7 +55,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorResponse
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -94,9 +94,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -138,7 +136,8 @@ class DiagnosticsOperations(object):
         :return: DetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hosting_environment_detector_response.metadata['url']
@@ -175,9 +174,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -210,7 +207,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorResponse
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -248,9 +246,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -292,7 +288,8 @@ class DiagnosticsOperations(object):
         :return: DetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response.metadata['url']
@@ -329,9 +326,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -364,7 +359,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -402,9 +398,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -440,7 +434,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticCategory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category.metadata['url']
@@ -471,9 +466,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -508,7 +501,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -547,9 +541,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -587,7 +579,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis.metadata['url']
@@ -619,9 +612,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -664,7 +655,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis.metadata['url']
@@ -702,9 +694,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -739,7 +729,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -778,9 +769,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -818,7 +807,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -858,9 +848,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -904,7 +892,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector.metadata['url']
@@ -942,9 +931,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -979,7 +966,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorResponse
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1018,9 +1006,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1064,7 +1050,8 @@ class DiagnosticsOperations(object):
         :return: DetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response_slot.metadata['url']
@@ -1102,9 +1089,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1139,7 +1124,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1178,9 +1164,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1218,7 +1202,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticCategory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category_slot.metadata['url']
@@ -1250,9 +1235,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1289,7 +1272,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1329,9 +1313,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1371,7 +1353,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis_slot.metadata['url']
@@ -1404,9 +1387,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1451,7 +1432,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis_slot.metadata['url']
@@ -1490,9 +1472,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1529,7 +1509,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1569,9 +1550,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1611,7 +1590,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1652,9 +1632,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1700,7 +1678,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector_slot.metadata['url']
@@ -1739,9 +1718,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

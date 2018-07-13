@@ -18,8 +18,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -28,9 +26,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param app_service_plan_patch_resource_name: Required. Name for the App
-     Service plan.
-    :type app_service_plan_patch_resource_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -63,11 +58,17 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :param spot_expiration_time: The time when the server farm expires. Valid
      only if it is a spot server farm.
     :type spot_expiration_time: datetime
+    :param free_offer_expiration_time: The time when the server farm free
+     offer expires.
+    :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
     :param reserved: If Linux app service plan <code>true</code>,
      <code>false</code> otherwise. Default value: False .
     :type reserved: bool
+    :param is_xenon: If Hyper-V container app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
+    :type is_xenon: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -83,7 +84,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'app_service_plan_patch_resource_name': {'required': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
         'maximum_number_of_workers': {'readonly': True},
@@ -98,7 +98,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'app_service_plan_patch_resource_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -110,16 +109,17 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'spot_expiration_time': {'key': 'properties.spotExpirationTime', 'type': 'iso-8601'},
+        'free_offer_expiration_time': {'key': 'properties.freeOfferExpirationTime', 'type': 'iso-8601'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, *, app_service_plan_patch_resource_name: str, kind: str=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, is_spot: bool=None, spot_expiration_time=None, reserved: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, **kwargs) -> None:
         super(AppServicePlanPatchResource, self).__init__(kind=kind, **kwargs)
-        self.app_service_plan_patch_resource_name = app_service_plan_patch_resource_name
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None
@@ -131,8 +131,10 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self.number_of_sites = None
         self.is_spot = is_spot
         self.spot_expiration_time = spot_expiration_time
+        self.free_offer_expiration_time = free_offer_expiration_time
         self.resource_group = None
         self.reserved = reserved
+        self.is_xenon = is_xenon
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None

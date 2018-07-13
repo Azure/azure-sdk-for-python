@@ -29,7 +29,7 @@ class StampCapacity(Model):
      'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
-     'Default', 'Small', 'Medium', 'Large', 'D1', 'D2', 'D3'
+     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'Default'
     :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
@@ -45,6 +45,8 @@ class StampCapacity(Model):
     :type is_applicable_for_all_compute_modes: bool
     :param site_mode: Shared or Dedicated.
     :type site_mode: str
+    :param is_linux: Is this a linux stamp capacity
+    :type is_linux: bool
     """
 
     _attribute_map = {
@@ -58,9 +60,10 @@ class StampCapacity(Model):
         'exclude_from_capacity_allocation': {'key': 'excludeFromCapacityAllocation', 'type': 'bool'},
         'is_applicable_for_all_compute_modes': {'key': 'isApplicableForAllComputeModes', 'type': 'bool'},
         'site_mode': {'key': 'siteMode', 'type': 'str'},
+        'is_linux': {'key': 'isLinux', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, available_capacity: int=None, total_capacity: int=None, unit: str=None, compute_mode=None, worker_size=None, worker_size_id: int=None, exclude_from_capacity_allocation: bool=None, is_applicable_for_all_compute_modes: bool=None, site_mode: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, available_capacity: int=None, total_capacity: int=None, unit: str=None, compute_mode=None, worker_size=None, worker_size_id: int=None, exclude_from_capacity_allocation: bool=None, is_applicable_for_all_compute_modes: bool=None, site_mode: str=None, is_linux: bool=None, **kwargs) -> None:
         super(StampCapacity, self).__init__(**kwargs)
         self.name = name
         self.available_capacity = available_capacity
@@ -72,3 +75,4 @@ class StampCapacity(Model):
         self.exclude_from_capacity_allocation = exclude_from_capacity_allocation
         self.is_applicable_for_all_compute_modes = is_applicable_for_all_compute_modes
         self.site_mode = site_mode
+        self.is_linux = is_linux

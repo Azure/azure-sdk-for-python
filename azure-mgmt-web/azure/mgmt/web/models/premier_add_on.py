@@ -38,12 +38,6 @@ class PremierAddOn(Resource):
     :type product: str
     :param vendor: Premier add on Vendor.
     :type vendor: str
-    :param premier_add_on_name: Premier add on Name.
-    :type premier_add_on_name: str
-    :param premier_add_on_location: Premier add on Location.
-    :type premier_add_on_location: str
-    :param premier_add_on_tags: Premier add on Tags.
-    :type premier_add_on_tags: dict[str, str]
     :param marketplace_publisher: Premier add on Marketplace publisher.
     :type marketplace_publisher: str
     :param marketplace_offer: Premier add on Marketplace offer.
@@ -67,9 +61,6 @@ class PremierAddOn(Resource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_name': {'key': 'properties.name', 'type': 'str'},
-        'premier_add_on_location': {'key': 'properties.location', 'type': 'str'},
-        'premier_add_on_tags': {'key': 'properties.tags', 'type': '{str}'},
         'marketplace_publisher': {'key': 'properties.marketplacePublisher', 'type': 'str'},
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
@@ -79,8 +70,5 @@ class PremierAddOn(Resource):
         self.sku = kwargs.get('sku', None)
         self.product = kwargs.get('product', None)
         self.vendor = kwargs.get('vendor', None)
-        self.premier_add_on_name = kwargs.get('premier_add_on_name', None)
-        self.premier_add_on_location = kwargs.get('premier_add_on_location', None)
-        self.premier_add_on_tags = kwargs.get('premier_add_on_tags', None)
         self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
         self.marketplace_offer = kwargs.get('marketplace_offer', None)

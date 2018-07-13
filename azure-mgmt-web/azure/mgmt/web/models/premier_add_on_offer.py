@@ -32,8 +32,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
     :type product: str
     :param vendor: Premier add on offer Vendor.
     :type vendor: str
-    :param premier_add_on_offer_name: Premier add on offer Name.
-    :type premier_add_on_offer_name: str
     :param promo_code_required: <code>true</code> if promotion code is
      required; otherwise, <code>false</code>.
     :type promo_code_required: bool
@@ -68,7 +66,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_offer_name': {'key': 'properties.name', 'type': 'str'},
         'promo_code_required': {'key': 'properties.promoCodeRequired', 'type': 'bool'},
         'quota': {'key': 'properties.quota', 'type': 'int'},
         'web_hosting_plan_restrictions': {'key': 'properties.webHostingPlanRestrictions', 'type': 'AppServicePlanRestrictions'},
@@ -83,7 +80,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
         self.sku = kwargs.get('sku', None)
         self.product = kwargs.get('product', None)
         self.vendor = kwargs.get('vendor', None)
-        self.premier_add_on_offer_name = kwargs.get('premier_add_on_offer_name', None)
         self.promo_code_required = kwargs.get('promo_code_required', None)
         self.quota = kwargs.get('quota', None)
         self.web_hosting_plan_restrictions = kwargs.get('web_hosting_plan_restrictions', None)

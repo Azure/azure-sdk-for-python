@@ -26,10 +26,8 @@ try:
     from .vnet_info_py3 import VnetInfo
     from .vnet_gateway_py3 import VnetGateway
     from .user_py3 import User
-    from .snapshot_recovery_target_py3 import SnapshotRecoveryTarget
-    from .snapshot_recovery_request_py3 import SnapshotRecoveryRequest
+    from .snapshot_py3 import Snapshot
     from .resource_metric_availability_py3 import ResourceMetricAvailability
-    from .resource_metric_name_py3 import ResourceMetricName
     from .resource_metric_definition_py3 import ResourceMetricDefinition
     from .push_settings_py3 import PushSettings
     from .identifier_py3 import Identifier
@@ -67,7 +65,11 @@ try:
     from .sku_description_py3 import SkuDescription
     from .app_service_plan_py3 import AppServicePlan
     from .resource_py3 import Resource
+    from .default_error_response_error_details_item_py3 import DefaultErrorResponseErrorDetailsItem
+    from .default_error_response_error_py3 import DefaultErrorResponseError
+    from .default_error_response_py3 import DefaultErrorResponse, DefaultErrorResponseException
     from .name_identifier_py3 import NameIdentifier
+    from .log_specification_py3 import LogSpecification
     from .metric_availability_py3 import MetricAvailability
     from .dimension_py3 import Dimension
     from .metric_specification_py3 import MetricSpecification
@@ -85,7 +87,6 @@ try:
     from .domain_ownership_identifier_py3 import DomainOwnershipIdentifier
     from .domain_patch_resource_py3 import DomainPatchResource
     from .domain_recommendation_search_parameters_py3 import DomainRecommendationSearchParameters
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .tld_legal_agreement_py3 import TldLegalAgreement
     from .top_level_domain_py3 import TopLevelDomain
     from .top_level_domain_agreement_option_py3 import TopLevelDomainAgreementOption
@@ -99,16 +100,14 @@ try:
     from .app_service_environment_py3 import AppServiceEnvironment
     from .localizable_string_py3 import LocalizableString
     from .csm_usage_quota_py3 import CsmUsageQuota
+    from .deleted_site_py3 import DeletedSite
     from .error_entity_py3 import ErrorEntity
-    from .default_error_response_error_details_item_py3 import DefaultErrorResponseErrorDetailsItem
-    from .default_error_response_error_py3 import DefaultErrorResponseError
-    from .default_error_response_py3 import DefaultErrorResponse, DefaultErrorResponseException
     from .operation_py3 import Operation
+    from .resource_metric_name_py3 import ResourceMetricName
     from .resource_metric_property_py3 import ResourceMetricProperty
     from .resource_metric_value_py3 import ResourceMetricValue
     from .resource_metric_py3 import ResourceMetric
     from .web_app_collection_py3 import WebAppCollection
-    from .deleted_site_py3 import DeletedSite
     from .solution_py3 import Solution
     from .detector_abnormal_time_period_py3 import DetectorAbnormalTimePeriod
     from .abnormal_time_period_py3 import AbnormalTimePeriod
@@ -133,7 +132,6 @@ try:
     from .application_stack_py3 import ApplicationStack
     from .recommendation_py3 import Recommendation
     from .recommendation_rule_py3 import RecommendationRule
-    from .resource_health_metadata_py3 import ResourceHealthMetadata
     from .billing_meter_py3 import BillingMeter
     from .csm_move_resource_envelope_py3 import CsmMoveResourceEnvelope
     from .geo_region_py3 import GeoRegion
@@ -166,6 +164,7 @@ try:
     from .csm_publishing_profile_options_py3 import CsmPublishingProfileOptions
     from .csm_slot_entity_py3 import CsmSlotEntity
     from .custom_hostname_analysis_result_py3 import CustomHostnameAnalysisResult
+    from .deleted_app_restore_request_py3 import DeletedAppRestoreRequest
     from .deployment_py3 import Deployment
     from .enabled_config_py3 import EnabledConfig
     from .file_system_http_logs_config_py3 import FileSystemHttpLogsConfig
@@ -185,12 +184,15 @@ try:
     from .perf_mon_set_py3 import PerfMonSet
     from .perf_mon_response_py3 import PerfMonResponse
     from .premier_add_on_py3 import PremierAddOn
+    from .premier_add_on_patch_resource_py3 import PremierAddOnPatchResource
+    from .private_access_subnet_py3 import PrivateAccessSubnet
+    from .private_access_virtual_network_py3 import PrivateAccessVirtualNetwork
+    from .private_access_py3 import PrivateAccess
     from .process_thread_info_py3 import ProcessThreadInfo
     from .process_module_info_py3 import ProcessModuleInfo
     from .process_info_py3 import ProcessInfo
     from .public_certificate_py3 import PublicCertificate
     from .restore_request_py3 import RestoreRequest
-    from .restore_response_py3 import RestoreResponse
     from .site_auth_settings_py3 import SiteAuthSettings
     from .site_cloneability_criterion_py3 import SiteCloneabilityCriterion
     from .site_cloneability_py3 import SiteCloneability
@@ -204,10 +206,12 @@ try:
     from .site_source_control_py3 import SiteSourceControl
     from .slot_config_names_resource_py3 import SlotConfigNamesResource
     from .slot_difference_py3 import SlotDifference
-    from .snapshot_py3 import Snapshot
+    from .snapshot_recovery_source_py3 import SnapshotRecoverySource
+    from .snapshot_restore_request_py3 import SnapshotRestoreRequest
     from .storage_migration_options_py3 import StorageMigrationOptions
     from .storage_migration_response_py3 import StorageMigrationResponse
     from .string_dictionary_py3 import StringDictionary
+    from .swift_virtual_network_py3 import SwiftVirtualNetwork
     from .triggered_job_run_py3 import TriggeredJobRun
     from .triggered_job_history_py3 import TriggeredJobHistory
     from .triggered_web_job_py3 import TriggeredWebJob
@@ -240,10 +244,8 @@ except (SyntaxError, ImportError):
     from .vnet_info import VnetInfo
     from .vnet_gateway import VnetGateway
     from .user import User
-    from .snapshot_recovery_target import SnapshotRecoveryTarget
-    from .snapshot_recovery_request import SnapshotRecoveryRequest
+    from .snapshot import Snapshot
     from .resource_metric_availability import ResourceMetricAvailability
-    from .resource_metric_name import ResourceMetricName
     from .resource_metric_definition import ResourceMetricDefinition
     from .push_settings import PushSettings
     from .identifier import Identifier
@@ -281,7 +283,11 @@ except (SyntaxError, ImportError):
     from .sku_description import SkuDescription
     from .app_service_plan import AppServicePlan
     from .resource import Resource
+    from .default_error_response_error_details_item import DefaultErrorResponseErrorDetailsItem
+    from .default_error_response_error import DefaultErrorResponseError
+    from .default_error_response import DefaultErrorResponse, DefaultErrorResponseException
     from .name_identifier import NameIdentifier
+    from .log_specification import LogSpecification
     from .metric_availability import MetricAvailability
     from .dimension import Dimension
     from .metric_specification import MetricSpecification
@@ -299,7 +305,6 @@ except (SyntaxError, ImportError):
     from .domain_ownership_identifier import DomainOwnershipIdentifier
     from .domain_patch_resource import DomainPatchResource
     from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-    from .error_response import ErrorResponse, ErrorResponseException
     from .tld_legal_agreement import TldLegalAgreement
     from .top_level_domain import TopLevelDomain
     from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
@@ -313,16 +318,14 @@ except (SyntaxError, ImportError):
     from .app_service_environment import AppServiceEnvironment
     from .localizable_string import LocalizableString
     from .csm_usage_quota import CsmUsageQuota
+    from .deleted_site import DeletedSite
     from .error_entity import ErrorEntity
-    from .default_error_response_error_details_item import DefaultErrorResponseErrorDetailsItem
-    from .default_error_response_error import DefaultErrorResponseError
-    from .default_error_response import DefaultErrorResponse, DefaultErrorResponseException
     from .operation import Operation
+    from .resource_metric_name import ResourceMetricName
     from .resource_metric_property import ResourceMetricProperty
     from .resource_metric_value import ResourceMetricValue
     from .resource_metric import ResourceMetric
     from .web_app_collection import WebAppCollection
-    from .deleted_site import DeletedSite
     from .solution import Solution
     from .detector_abnormal_time_period import DetectorAbnormalTimePeriod
     from .abnormal_time_period import AbnormalTimePeriod
@@ -347,7 +350,6 @@ except (SyntaxError, ImportError):
     from .application_stack import ApplicationStack
     from .recommendation import Recommendation
     from .recommendation_rule import RecommendationRule
-    from .resource_health_metadata import ResourceHealthMetadata
     from .billing_meter import BillingMeter
     from .csm_move_resource_envelope import CsmMoveResourceEnvelope
     from .geo_region import GeoRegion
@@ -380,6 +382,7 @@ except (SyntaxError, ImportError):
     from .csm_publishing_profile_options import CsmPublishingProfileOptions
     from .csm_slot_entity import CsmSlotEntity
     from .custom_hostname_analysis_result import CustomHostnameAnalysisResult
+    from .deleted_app_restore_request import DeletedAppRestoreRequest
     from .deployment import Deployment
     from .enabled_config import EnabledConfig
     from .file_system_http_logs_config import FileSystemHttpLogsConfig
@@ -399,12 +402,15 @@ except (SyntaxError, ImportError):
     from .perf_mon_set import PerfMonSet
     from .perf_mon_response import PerfMonResponse
     from .premier_add_on import PremierAddOn
+    from .premier_add_on_patch_resource import PremierAddOnPatchResource
+    from .private_access_subnet import PrivateAccessSubnet
+    from .private_access_virtual_network import PrivateAccessVirtualNetwork
+    from .private_access import PrivateAccess
     from .process_thread_info import ProcessThreadInfo
     from .process_module_info import ProcessModuleInfo
     from .process_info import ProcessInfo
     from .public_certificate import PublicCertificate
     from .restore_request import RestoreRequest
-    from .restore_response import RestoreResponse
     from .site_auth_settings import SiteAuthSettings
     from .site_cloneability_criterion import SiteCloneabilityCriterion
     from .site_cloneability import SiteCloneability
@@ -418,10 +424,12 @@ except (SyntaxError, ImportError):
     from .site_source_control import SiteSourceControl
     from .slot_config_names_resource import SlotConfigNamesResource
     from .slot_difference import SlotDifference
-    from .snapshot import Snapshot
+    from .snapshot_recovery_source import SnapshotRecoverySource
+    from .snapshot_restore_request import SnapshotRestoreRequest
     from .storage_migration_options import StorageMigrationOptions
     from .storage_migration_response import StorageMigrationResponse
     from .string_dictionary import StringDictionary
+    from .swift_virtual_network import SwiftVirtualNetwork
     from .triggered_job_run import TriggeredJobRun
     from .triggered_job_history import TriggeredJobHistory
     from .triggered_web_job import TriggeredWebJob
@@ -453,12 +461,11 @@ from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
 from .recommendation_paged import RecommendationPaged
-from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .source_control_paged import SourceControlPaged
+from .billing_meter_paged import BillingMeterPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
 from .premier_add_on_offer_paged import PremierAddOnOfferPaged
-from .billing_meter_paged import BillingMeterPaged
 from .site_paged import SitePaged
 from .backup_item_paged import BackupItemPaged
 from .site_config_resource_paged import SiteConfigResourcePaged
@@ -498,12 +505,14 @@ from .web_site_management_client_enums import (
     CertificateOrderActionType,
     RouteType,
     ManagedServiceIdentityType,
+    IpFilterTag,
     AutoHealActionType,
     ConnectionStringType,
     ScmType,
     ManagedPipelineMode,
     SiteLoadBalancing,
     SupportedTlsVersions,
+    FtpsState,
     SslState,
     HostType,
     UsageState,
@@ -535,7 +544,6 @@ from .web_site_management_client_enums import (
     BackupItemStatus,
     DatabaseType,
     FrequencyUnit,
-    BackupRestoreOperationType,
     ContinuousWebJobStatus,
     WebJobType,
     PublishingProfileFormat,
@@ -544,6 +552,7 @@ from .web_site_management_client_enums import (
     MSDeployProvisioningState,
     MySqlMigrationType,
     PublicCertificateLocation,
+    BackupRestoreOperationType,
     UnauthenticatedClientAction,
     BuiltInAuthenticationProvider,
     CloneAbilityResult,
@@ -569,10 +578,8 @@ __all__ = [
     'VnetInfo',
     'VnetGateway',
     'User',
-    'SnapshotRecoveryTarget',
-    'SnapshotRecoveryRequest',
+    'Snapshot',
     'ResourceMetricAvailability',
-    'ResourceMetricName',
     'ResourceMetricDefinition',
     'PushSettings',
     'Identifier',
@@ -610,7 +617,11 @@ __all__ = [
     'SkuDescription',
     'AppServicePlan',
     'Resource',
+    'DefaultErrorResponseErrorDetailsItem',
+    'DefaultErrorResponseError',
+    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'NameIdentifier',
+    'LogSpecification',
     'MetricAvailability',
     'Dimension',
     'MetricSpecification',
@@ -628,7 +639,6 @@ __all__ = [
     'DomainOwnershipIdentifier',
     'DomainPatchResource',
     'DomainRecommendationSearchParameters',
-    'ErrorResponse', 'ErrorResponseException',
     'TldLegalAgreement',
     'TopLevelDomain',
     'TopLevelDomainAgreementOption',
@@ -642,16 +652,14 @@ __all__ = [
     'AppServiceEnvironment',
     'LocalizableString',
     'CsmUsageQuota',
+    'DeletedSite',
     'ErrorEntity',
-    'DefaultErrorResponseErrorDetailsItem',
-    'DefaultErrorResponseError',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'Operation',
+    'ResourceMetricName',
     'ResourceMetricProperty',
     'ResourceMetricValue',
     'ResourceMetric',
     'WebAppCollection',
-    'DeletedSite',
     'Solution',
     'DetectorAbnormalTimePeriod',
     'AbnormalTimePeriod',
@@ -676,7 +684,6 @@ __all__ = [
     'ApplicationStack',
     'Recommendation',
     'RecommendationRule',
-    'ResourceHealthMetadata',
     'BillingMeter',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
@@ -709,6 +716,7 @@ __all__ = [
     'CsmPublishingProfileOptions',
     'CsmSlotEntity',
     'CustomHostnameAnalysisResult',
+    'DeletedAppRestoreRequest',
     'Deployment',
     'EnabledConfig',
     'FileSystemHttpLogsConfig',
@@ -728,12 +736,15 @@ __all__ = [
     'PerfMonSet',
     'PerfMonResponse',
     'PremierAddOn',
+    'PremierAddOnPatchResource',
+    'PrivateAccessSubnet',
+    'PrivateAccessVirtualNetwork',
+    'PrivateAccess',
     'ProcessThreadInfo',
     'ProcessModuleInfo',
     'ProcessInfo',
     'PublicCertificate',
     'RestoreRequest',
-    'RestoreResponse',
     'SiteAuthSettings',
     'SiteCloneabilityCriterion',
     'SiteCloneability',
@@ -747,10 +758,12 @@ __all__ = [
     'SiteSourceControl',
     'SlotConfigNamesResource',
     'SlotDifference',
-    'Snapshot',
+    'SnapshotRecoverySource',
+    'SnapshotRestoreRequest',
     'StorageMigrationOptions',
     'StorageMigrationResponse',
     'StringDictionary',
+    'SwiftVirtualNetwork',
     'TriggeredJobRun',
     'TriggeredJobHistory',
     'TriggeredWebJob',
@@ -782,12 +795,11 @@ __all__ = [
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
     'RecommendationPaged',
-    'ResourceHealthMetadataPaged',
     'SourceControlPaged',
+    'BillingMeterPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
     'PremierAddOnOfferPaged',
-    'BillingMeterPaged',
     'SitePaged',
     'BackupItemPaged',
     'SiteConfigResourcePaged',
@@ -826,12 +838,14 @@ __all__ = [
     'CertificateOrderActionType',
     'RouteType',
     'ManagedServiceIdentityType',
+    'IpFilterTag',
     'AutoHealActionType',
     'ConnectionStringType',
     'ScmType',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
     'SupportedTlsVersions',
+    'FtpsState',
     'SslState',
     'HostType',
     'UsageState',
@@ -863,7 +877,6 @@ __all__ = [
     'BackupItemStatus',
     'DatabaseType',
     'FrequencyUnit',
-    'BackupRestoreOperationType',
     'ContinuousWebJobStatus',
     'WebJobType',
     'PublishingProfileFormat',
@@ -872,6 +885,7 @@ __all__ = [
     'MSDeployProvisioningState',
     'MySqlMigrationType',
     'PublicCertificateLocation',
+    'BackupRestoreOperationType',
     'UnauthenticatedClientAction',
     'BuiltInAuthenticationProvider',
     'CloneAbilityResult',

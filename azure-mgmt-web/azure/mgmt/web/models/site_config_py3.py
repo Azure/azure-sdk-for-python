@@ -33,6 +33,8 @@ class SiteConfig(Model):
     :type node_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
+    :param windows_fx_version: Xenon App Framework and version
+    :type windows_fx_version: str
     :param request_tracing_enabled: <code>true</code> if request tracing is
      enabled; otherwise, <code>false</code>.
     :type request_tracing_enabled: bool
@@ -120,6 +122,10 @@ class SiteConfig(Model):
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
      otherwise, <code>false</code>. Default value: False .
     :type local_my_sql_enabled: bool
+    :param managed_service_identity_id: Managed Service Identity Id
+    :type managed_service_identity_id: int
+    :param x_managed_service_identity_id: Explicit Managed Service Identity Id
+    :type x_managed_service_identity_id: int
     :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions:
      list[~azure.mgmt.web.models.IpSecurityRestriction]
@@ -130,10 +136,17 @@ class SiteConfig(Model):
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
     :type min_tls_version: str or ~azure.mgmt.web.models.SupportedTlsVersions
+    :param ftps_state: State of FTP / FTPS service. Possible values include:
+     'AllAllowed', 'FtpsOnly', 'Disabled'
+    :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
+    :param reserved_instance_count: Number of reserved instances.
+     This setting only applies to the Consumption Plan
+    :type reserved_instance_count: int
     """
 
     _validation = {
         'machine_key': {'readonly': True},
+        'reserved_instance_count': {'maximum': 10, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -144,6 +157,7 @@ class SiteConfig(Model):
         'python_version': {'key': 'pythonVersion', 'type': 'str'},
         'node_version': {'key': 'nodeVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
+        'windows_fx_version': {'key': 'windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
         'request_tracing_expiration_time': {'key': 'requestTracingExpirationTime', 'type': 'iso-8601'},
         'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
@@ -179,12 +193,16 @@ class SiteConfig(Model):
         'api_definition': {'key': 'apiDefinition', 'type': 'ApiDefinitionInfo'},
         'auto_swap_slot_name': {'key': 'autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
+        'managed_service_identity_id': {'key': 'managedServiceIdentityId', 'type': 'int'},
+        'x_managed_service_identity_id': {'key': 'xManagedServiceIdentityId', 'type': 'int'},
         'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'http20_enabled': {'key': 'http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
+        'ftps_state': {'key': 'ftpsState', 'type': 'str'},
+        'reserved_instance_count': {'key': 'reservedInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, ip_security_restrictions=None, http20_enabled: bool=True, min_tls_version=None, **kwargs) -> None:
+    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, reserved_instance_count: int=None, **kwargs) -> None:
         super(SiteConfig, self).__init__(**kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -193,6 +211,7 @@ class SiteConfig(Model):
         self.python_version = python_version
         self.node_version = node_version
         self.linux_fx_version = linux_fx_version
+        self.windows_fx_version = windows_fx_version
         self.request_tracing_enabled = request_tracing_enabled
         self.request_tracing_expiration_time = request_tracing_expiration_time
         self.remote_debugging_enabled = remote_debugging_enabled
@@ -228,6 +247,10 @@ class SiteConfig(Model):
         self.api_definition = api_definition
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled
+        self.managed_service_identity_id = managed_service_identity_id
+        self.x_managed_service_identity_id = x_managed_service_identity_id
         self.ip_security_restrictions = ip_security_restrictions
         self.http20_enabled = http20_enabled
         self.min_tls_version = min_tls_version
+        self.ftps_state = ftps_state
+        self.reserved_instance_count = reserved_instance_count

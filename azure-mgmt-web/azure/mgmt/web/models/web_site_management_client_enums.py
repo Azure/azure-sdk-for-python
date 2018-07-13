@@ -84,6 +84,13 @@ class RouteType(str, Enum):
 class ManagedServiceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+
+
+class IpFilterTag(str, Enum):
+
+    default = "Default"
+    xff_proxy = "XffProxy"
 
 
 class AutoHealActionType(str, Enum):
@@ -145,6 +152,13 @@ class SupportedTlsVersions(str, Enum):
     one_full_stop_zero = "1.0"
     one_full_stop_one = "1.1"
     one_full_stop_two = "1.2"
+
+
+class FtpsState(str, Enum):
+
+    all_allowed = "AllAllowed"
+    ftps_only = "FtpsOnly"
+    disabled = "Disabled"
 
 
 class SslState(str, Enum):
@@ -259,13 +273,13 @@ class ComputeModeOptions(str, Enum):
 
 class WorkerSizeOptions(str, Enum):
 
-    default = "Default"
     small = "Small"
     medium = "Medium"
     large = "Large"
     d1 = "D1"
     d2 = "D2"
     d3 = "D3"
+    default = "Default"
 
 
 class AccessControlEntryAction(str, Enum):
@@ -405,14 +419,6 @@ class FrequencyUnit(str, Enum):
     hour = "Hour"
 
 
-class BackupRestoreOperationType(str, Enum):
-
-    default = "Default"
-    clone = "Clone"
-    relocation = "Relocation"
-    snapshot = "Snapshot"
-
-
 class ContinuousWebJobStatus(str, Enum):
 
     initializing = "Initializing"
@@ -471,6 +477,15 @@ class PublicCertificateLocation(str, Enum):
     unknown = "Unknown"
 
 
+class BackupRestoreOperationType(str, Enum):
+
+    default = "Default"
+    clone = "Clone"
+    relocation = "Relocation"
+    snapshot = "Snapshot"
+    cloud_fs = "CloudFS"
+
+
 class UnauthenticatedClientAction(str, Enum):
 
     redirect_to_login_page = "RedirectToLoginPage"
@@ -513,6 +528,6 @@ class SkuName(str, Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
-    premium_v2 = "PremiumV2"
     dynamic = "Dynamic"
     isolated = "Isolated"
+    premium_v2 = "PremiumV2"
