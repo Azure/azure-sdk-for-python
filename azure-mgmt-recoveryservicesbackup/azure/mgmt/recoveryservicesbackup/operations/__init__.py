@@ -19,7 +19,7 @@ from .jobs_operations import JobsOperations
 from .backup_policies_operations import BackupPoliciesOperations
 from .backup_protected_items_operations import BackupProtectedItemsOperations
 from .backup_usage_summaries_operations import BackupUsageSummariesOperations
-from .validate_operations import ValidateOperations
+from .operation_operations import OperationOperations
 from .backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from .backup_engines_operations import BackupEnginesOperations
 from .protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
@@ -58,7 +58,7 @@ __all__ = [
     'BackupPoliciesOperations',
     'BackupProtectedItemsOperations',
     'BackupUsageSummariesOperations',
-    'ValidateOperations',
+    'OperationOperations',
     'BackupResourceVaultConfigsOperations',
     'BackupEnginesOperations',
     'ProtectionContainerRefreshOperationResultsOperations',

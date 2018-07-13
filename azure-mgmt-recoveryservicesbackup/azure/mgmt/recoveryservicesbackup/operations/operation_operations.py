@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ValidateOperations(object):
-    """ValidateOperations operations.
+class OperationOperations(object):
+    """OperationOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,7 +37,7 @@ class ValidateOperations(object):
 
         self.config = config
 
-    def operation(
+    def validate(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Validate operation for specified backed up item. This is a synchronous
         operation.
@@ -62,7 +62,7 @@ class ValidateOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.operation.metadata['url']
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -107,4 +107,4 @@ class ValidateOperations(object):
             return client_raw_response
 
         return deserialized
-    operation.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupValidateOperation'}
+    validate.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupValidateOperation'}

@@ -23,7 +23,7 @@ from .operations.jobs_operations import JobsOperations
 from .operations.backup_policies_operations import BackupPoliciesOperations
 from .operations.backup_protected_items_operations import BackupProtectedItemsOperations
 from .operations.backup_usage_summaries_operations import BackupUsageSummariesOperations
-from .operations.validate_operations import ValidateOperations
+from .operations.operation_operations import OperationOperations
 from .operations.backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from .operations.backup_engines_operations import BackupEnginesOperations
 from .operations.protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
@@ -111,8 +111,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
     :ivar backup_usage_summaries: BackupUsageSummaries operations
     :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
-    :ivar validate: Validate operations
-    :vartype validate: azure.mgmt.recoveryservicesbackup.operations.ValidateOperations
+    :ivar operation: Operation operations
+    :vartype operation: azure.mgmt.recoveryservicesbackup.operations.OperationOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar backup_engines: BackupEngines operations
@@ -204,7 +204,7 @@ class RecoveryServicesBackupClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_usage_summaries = BackupUsageSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.validate = ValidateOperations(
+        self.operation = OperationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
