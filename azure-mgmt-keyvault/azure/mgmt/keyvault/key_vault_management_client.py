@@ -12,10 +12,10 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
-from .operations.vaults_operations import VaultsOperations
-from .operations.operations import Operations
-from . import models
 
 
 class KeyVaultManagementClientConfiguration(AzureConfiguration):
@@ -52,16 +52,11 @@ class KeyVaultManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class KeyVaultManagementClient(SDKClient):
+class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
     """The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.
 
     :ivar config: Configuration for client.
     :vartype config: KeyVaultManagementClientConfiguration
-
-    :ivar vaults: Vaults operations
-    :vartype vaults: azure.mgmt.keyvault.operations.VaultsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.keyvault.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -70,21 +65,32 @@ class KeyVaultManagementClient(SDKClient):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    DEFAULT_API_VERSION = '2018-02-14'
+    _PROFILE_TAG = "azure.mgmt.keyvault.KeyVaultManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-        self.config = KeyVaultManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(KeyVaultManagementClient, self).__init__(self.config.credentials, self.config)
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(KeyVaultManagementClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-02-14'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self.config = KeyVaultManagementClient(credentials, subscription_id, base_url)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
-        self.vaults = VaultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
+############ Generated from here ############
