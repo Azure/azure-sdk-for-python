@@ -120,7 +120,6 @@ try:
     from .simple_schedule_policy_py3 import SimpleSchedulePolicy
     from .validate_iaas_vm_restore_operation_request_py3 import ValidateIaasVMRestoreOperationRequest
     from .validate_operation_request_py3 import ValidateOperationRequest
-    from .validate_operation_request_resource_py3 import ValidateOperationRequestResource
     from .validate_operation_response_py3 import ValidateOperationResponse
     from .validate_operations_response_py3 import ValidateOperationsResponse
     from .validate_restore_operation_request_py3 import ValidateRestoreOperationRequest
@@ -341,7 +340,6 @@ except (SyntaxError, ImportError):
     from .simple_schedule_policy import SimpleSchedulePolicy
     from .validate_iaas_vm_restore_operation_request import ValidateIaasVMRestoreOperationRequest
     from .validate_operation_request import ValidateOperationRequest
-    from .validate_operation_request_resource import ValidateOperationRequestResource
     from .validate_operation_response import ValidateOperationResponse
     from .validate_operations_response import ValidateOperationsResponse
     from .validate_restore_operation_request import ValidateRestoreOperationRequest
@@ -622,7 +620,6 @@ __all__ = [
     'SimpleSchedulePolicy',
     'ValidateIaasVMRestoreOperationRequest',
     'ValidateOperationRequest',
-    'ValidateOperationRequestResource',
     'ValidateOperationResponse',
     'ValidateOperationsResponse',
     'ValidateRestoreOperationRequest',
