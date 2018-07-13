@@ -3,6 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import time
+
+import uamqp
 from uamqp import constants, errors
 from uamqp import SendClient
 
@@ -28,13 +31,15 @@ class Sender:
         self.error = None
         self.debug = client.debug
         self.partition = partition
+        self.retry_policy = uamqp.sender.RetryPolicy(max_retries=3, on_error=self._error_handler)
         if partition:
             target += "/Partitions/" + partition
         self._handler = SendClient(
             target,
             auth=client.auth,
             debug=self.debug,
-            msg_timeout=Sender.TIMEOUT)
+            msg_timeout=Sender.TIMEOUT,
+            retry_policy=self.retry_policy)
         self._outcome = None
         self._condition = None
 
@@ -52,7 +57,8 @@ class Sender:
                 self.redirected.address,
                 auth=None,
                 debug=self.debug,
-                msg_timeout=Sender.TIMEOUT)
+                msg_timeout=Sender.TIMEOUT,
+                retry_policy=self.retry_policy)
         self._handler.open(connection)
 
     def get_handler_state(self):
@@ -179,6 +185,23 @@ class Sender:
         """
         self._outcome = outcome
         self._condition = condition
+
+    def _error_handler(self, error):
+        """
+        Called internally when an event has failed to send so we
+        can parse the error to determine whether we should attempt
+        to retry sending the event again.
+        Returns the action to take according to error type.
+
+        :param error: The error received in the send attempt.
+        :type error: list[list[bytes]]
+        :rtype: ~uamqp.sender.SendFailedAction
+        """
+        if isinstance(error, list) and isinstance(error[0], list):
+            error_type = error[0][0].decode('UTF-8')
+            if error_type == 'com.microsoft:server-busy':
+                return uamqp.sender.SendFailedAction(retry=True, backoff=4)
+        return uamqp.sender.SendFailedAction(retry=True, backoff=4)
 
     @staticmethod
     def _error(outcome, condition):

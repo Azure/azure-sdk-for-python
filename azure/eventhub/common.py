@@ -7,7 +7,7 @@ import datetime
 import time
 
 from uamqp import Message, BatchMessage
-from uamqp import types
+from uamqp import types, constants
 from uamqp.message import MessageHeader, MessageProperties
 
 
@@ -208,4 +208,40 @@ class EventHubError(Exception):
     """
     Represents an error happened in the client.
     """
-    pass
+
+    def __init__(self, message, details=None):
+        self.error = None
+        self.message = message
+        self.details = []
+        if isinstance(message, constants.MessageSendResult):
+            self.message = "Message send failed with result: {}".format(message)
+        if details and isinstance(details, list) and isinstance(details[0], list):
+            self.details = details[0]
+            self.error = details[0][0]
+            try:
+                self._parse_error(details[0])
+            except:
+                raise
+        if self.error:
+            self.message += "\nError: {}".format(self.error)
+        for detail in self.details:
+            self.message += "\n{}".format(detail)
+        super(EventHubError, self).__init__(self.message)
+
+    def _parse_error(self, error_list):
+        details = []
+        _, _, self.error = error_list[0].decode('UTF-8').partition(':')
+        self.message = error_list[1].decode('UTF-8')
+        details_index = self.message.find(" Reference:")
+        if details_index >= 0:
+            details_msg = self.message[details_index + 1:]
+            self.message = self.message[0:details_index]
+            
+            tracking_index = details_msg.index(", TrackingId:")
+            system_index = details_msg.index(", SystemTracker:")
+            timestamp_index = details_msg.index(", Timestamp:")
+            details.append(details_msg[:tracking_index])
+            details.append(details_msg[tracking_index + 2: system_index])
+            details.append(details_msg[system_index + 2: timestamp_index])
+            details.append(details_msg[timestamp_index + 2:])
+            self.details = details

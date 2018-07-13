@@ -5,15 +5,14 @@
 
 Feature: Exercising EventHub SDK
 
-#  Scenario: Just sends for 3 days, no receives. Focus on send failures only.
-
   @long-running
-  Scenario: Generic send and receive on client for 3 days.
-    Given the EventHub SDK is installed
-    And an EventHub is created with credentials retrieved
-    When I send and receive messages for 72 hours
+  Scenario: Just sends for 3 days, no receives. Focus on send failures only.
+    Given The EventHub SDK is installed
+    And An EventHub is created with credentials retrieved
+    When I start a message sender
+    And I send messages for 72 hours
     Then I should receive no errors
-    And I can shutdown the sender and receiver cleanly
+    And I can shutdown sender
     And I remove the EventHub
 
 #  Scenario: Sender stays idle for 45 minutes and sends some number of messages after each idle duration.
