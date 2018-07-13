@@ -43,7 +43,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class KeyVaultClient(MultiApiClientMixin):
+class KeyVaultClient(MultiApiClientMixin, SDKClient):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar config: Configuration for client.
@@ -68,16 +68,13 @@ class KeyVaultClient(MultiApiClientMixin):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(
-            self, credentials, api_version=None, profile=KnownProfiles.default):
+    def __init__(self, credentials, api_version=None, profile=KnownProfiles.default):
+        self.config = KeyVaultClientConfiguration(credentials)
         super(ComputeManagementClient, self).__init__(
-            credentials=credentials,
+            credentials,
             api_version=api_version,
             profile=profile
         )
-
-        self.config = KeyVaultClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
