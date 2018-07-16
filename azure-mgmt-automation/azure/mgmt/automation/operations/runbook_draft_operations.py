@@ -136,7 +136,7 @@ class RunbookDraftOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(runbook_content, 'str')
+        body_content = upload_gen(runbook_content)
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -176,7 +176,7 @@ class RunbookDraftOperations(object):
         :param runbook_name: The runbook name.
         :type runbook_name: str
         :param runbook_content: The runbook draft content.
-        :type runbook_content: str
+        :type runbook_content: Generator
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
