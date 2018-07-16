@@ -16,18 +16,27 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
     """Class representing the Geographic hierarchy used with the Geographic
     traffic routing method.
 
-    :param id: Fully qualified resource Id for the resource. Ex -
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :type id: str
-    :param name: The name of the resource
-    :type name: str
-    :param type: The type of the resource. Ex-
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :type type: str
+    :vartype type: str
     :param geographic_hierarchy: The region at the root of the hierarchy from
      all the regions in the hierarchy can be retrieved.
     :type geographic_hierarchy: ~azure.mgmt.trafficmanager.models.Region
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

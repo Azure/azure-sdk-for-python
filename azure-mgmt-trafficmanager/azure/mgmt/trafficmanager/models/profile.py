@@ -15,14 +15,17 @@ from .tracked_resource import TrackedResource
 class Profile(TrackedResource):
     """Class representing a Traffic Manager profile.
 
-    :param id: Fully qualified resource Id for the resource. Ex -
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :type id: str
-    :param name: The name of the resource
-    :type name: str
-    :param type: The type of the resource. Ex-
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :type type: str
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
@@ -33,7 +36,7 @@ class Profile(TrackedResource):
      ~azure.mgmt.trafficmanager.models.ProfileStatus
     :param traffic_routing_method: The traffic routing method of the Traffic
      Manager profile. Possible values include: 'Performance', 'Priority',
-     'Weighted', 'Geographic'
+     'Weighted', 'Geographic', 'MultiValue', 'Subnet'
     :type traffic_routing_method: str or
      ~azure.mgmt.trafficmanager.models.TrafficRoutingMethod
     :param dns_config: The DNS settings of the Traffic Manager profile.
@@ -49,7 +52,16 @@ class Profile(TrackedResource):
      Manage profile. Possible values include: 'Enabled', 'Disabled'
     :type traffic_view_enrollment_status: str or
      ~azure.mgmt.trafficmanager.models.TrafficViewEnrollmentStatus
+    :param max_return: Maximum number of endpoints to be returned for
+     MultiValue routing type.
+    :type max_return: long
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -63,6 +75,7 @@ class Profile(TrackedResource):
         'monitor_config': {'key': 'properties.monitorConfig', 'type': 'MonitorConfig'},
         'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
         'traffic_view_enrollment_status': {'key': 'properties.trafficViewEnrollmentStatus', 'type': 'str'},
+        'max_return': {'key': 'properties.maxReturn', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -73,3 +86,4 @@ class Profile(TrackedResource):
         self.monitor_config = kwargs.get('monitor_config', None)
         self.endpoints = kwargs.get('endpoints', None)
         self.traffic_view_enrollment_status = kwargs.get('traffic_view_enrollment_status', None)
+        self.max_return = kwargs.get('max_return', None)
