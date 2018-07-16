@@ -23,6 +23,7 @@ from .virtual_machine_scale_set_extensions_operations import VirtualMachineScale
 from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .log_analytics_operations import LogAnalyticsOperations
+from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from .galleries_operations import GalleriesOperations
 from .gallery_images_operations import GalleryImagesOperations
 from .gallery_image_versions_operations import GalleryImageVersionsOperations
@@ -42,6 +43,7 @@ __all__ = [
     'VirtualMachineScaleSetRollingUpgradesOperations',
     'VirtualMachineScaleSetVMsOperations',
     'LogAnalyticsOperations',
+    'VirtualMachineRunCommandsOperations',
     'GalleriesOperations',
     'GalleryImagesOperations',
     'GalleryImageVersionsOperations',
