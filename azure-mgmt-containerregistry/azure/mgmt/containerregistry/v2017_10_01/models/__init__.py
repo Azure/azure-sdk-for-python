@@ -15,6 +15,8 @@ try:
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
     from .registry_name_status_py3 import RegistryNameStatus
     from .operation_display_definition_py3 import OperationDisplayDefinition
+    from .operation_metric_specification_definition_py3 import OperationMetricSpecificationDefinition
+    from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
     from .operation_definition_py3 import OperationDefinition
     from .sku_py3 import Sku
     from .status_py3 import Status
@@ -26,6 +28,9 @@ try:
     from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
     from .registry_usage_py3 import RegistryUsage
     from .registry_usage_list_result_py3 import RegistryUsageListResult
+    from .quarantine_policy_py3 import QuarantinePolicy
+    from .trust_policy_py3 import TrustPolicy
+    from .registry_policies_py3 import RegistryPolicies
     from .replication_py3 import Replication
     from .replication_update_parameters_py3 import ReplicationUpdateParameters
     from .webhook_py3 import Webhook
@@ -48,6 +53,8 @@ except (SyntaxError, ImportError):
     from .registry_name_check_request import RegistryNameCheckRequest
     from .registry_name_status import RegistryNameStatus
     from .operation_display_definition import OperationDisplayDefinition
+    from .operation_metric_specification_definition import OperationMetricSpecificationDefinition
+    from .operation_service_specification_definition import OperationServiceSpecificationDefinition
     from .operation_definition import OperationDefinition
     from .sku import Sku
     from .status import Status
@@ -59,6 +66,9 @@ except (SyntaxError, ImportError):
     from .regenerate_credential_parameters import RegenerateCredentialParameters
     from .registry_usage import RegistryUsage
     from .registry_usage_list_result import RegistryUsageListResult
+    from .quarantine_policy import QuarantinePolicy
+    from .trust_policy import TrustPolicy
+    from .registry_policies import RegistryPolicies
     from .replication import Replication
     from .replication_update_parameters import ReplicationUpdateParameters
     from .webhook import Webhook
@@ -87,6 +97,8 @@ from .container_registry_management_client_enums import (
     ProvisioningState,
     PasswordName,
     RegistryUsageUnit,
+    PolicyStatus,
+    TrustPolicyType,
     WebhookStatus,
     WebhookAction,
 )
@@ -97,6 +109,8 @@ __all__ = [
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
     'OperationDisplayDefinition',
+    'OperationMetricSpecificationDefinition',
+    'OperationServiceSpecificationDefinition',
     'OperationDefinition',
     'Sku',
     'Status',
@@ -108,6 +122,9 @@ __all__ = [
     'RegenerateCredentialParameters',
     'RegistryUsage',
     'RegistryUsageListResult',
+    'QuarantinePolicy',
+    'TrustPolicy',
+    'RegistryPolicies',
     'Replication',
     'ReplicationUpdateParameters',
     'Webhook',
@@ -135,6 +152,8 @@ __all__ = [
     'ProvisioningState',
     'PasswordName',
     'RegistryUsageUnit',
+    'PolicyStatus',
+    'TrustPolicyType',
     'WebhookStatus',
     'WebhookAction',
 ]
