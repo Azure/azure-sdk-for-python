@@ -39,10 +39,10 @@ class ConfigurationsOperations(object):
         self.config = config
 
 
-    def _update_http_settings_initial(
+    def _update_initial(
             self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.update_http_settings.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -80,9 +80,9 @@ class ConfigurationsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def update_http_settings(
+    def update(
             self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Configures the HTTP settings on the specified cluster.
+        """Configures the configuration on the specified cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -102,7 +102,7 @@ class ConfigurationsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
         """
-        raw_result = self._update_http_settings_initial(
+        raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             configuration_name=configuration_name,
@@ -143,7 +143,7 @@ class ConfigurationsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
-    update_http_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}
 
     def get(
             self, resource_group_name, cluster_name, configuration_name, custom_headers=None, raw=False, **operation_config):
