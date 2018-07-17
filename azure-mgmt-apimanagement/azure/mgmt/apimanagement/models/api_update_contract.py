@@ -41,6 +41,10 @@ class ApiUpdateContract(Model):
     :vartype is_current: bool
     :ivar is_online: Indicates if API revision is accessible via the gateway.
     :vartype is_online: bool
+    :param api_revision_description: Description of the Api Revision.
+    :type api_revision_description: str
+    :param api_version_description: Description of the Api Version.
+    :type api_version_description: str
     :param api_version_set_id: A resource identifier for the related
      ApiVersionSet.
     :type api_version_set_id: str
@@ -64,6 +68,8 @@ class ApiUpdateContract(Model):
         'api_version': {'max_length': 100},
         'is_current': {'readonly': True},
         'is_online': {'readonly': True},
+        'api_revision_description': {'max_length': 256},
+        'api_version_description': {'max_length': 256},
         'display_name': {'max_length': 300, 'min_length': 1},
         'service_url': {'max_length': 2000, 'min_length': 1},
         'path': {'max_length': 400, 'min_length': 0},
@@ -78,6 +84,8 @@ class ApiUpdateContract(Model):
         'api_version': {'key': 'properties.apiVersion', 'type': 'str'},
         'is_current': {'key': 'properties.isCurrent', 'type': 'bool'},
         'is_online': {'key': 'properties.isOnline', 'type': 'bool'},
+        'api_revision_description': {'key': 'properties.apiRevisionDescription', 'type': 'str'},
+        'api_version_description': {'key': 'properties.apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'properties.apiVersionSetId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'service_url': {'key': 'properties.serviceUrl', 'type': 'str'},
@@ -95,6 +103,8 @@ class ApiUpdateContract(Model):
         self.api_version = kwargs.get('api_version', None)
         self.is_current = None
         self.is_online = None
+        self.api_revision_description = kwargs.get('api_revision_description', None)
+        self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
         self.display_name = kwargs.get('display_name', None)
         self.service_url = kwargs.get('service_url', None)
