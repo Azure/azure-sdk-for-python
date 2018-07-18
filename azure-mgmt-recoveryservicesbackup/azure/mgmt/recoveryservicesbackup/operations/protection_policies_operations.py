@@ -40,8 +40,9 @@ class ProtectionPoliciesOperations(object):
     def get(
             self, vault_name, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
         """Provides the details of the backup policies associated to Recovery
-        Services Vault. This is an asynchronous operation. Status of the
-        operation can be fetched using GetPolicyOperationResult API.
+        Services Vault. This is an asynchronous
+        operation. Status of the operation can be fetched using
+        GetPolicyOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -109,8 +110,8 @@ class ProtectionPoliciesOperations(object):
     def create_or_update(
             self, vault_name, resource_group_name, policy_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or modifies a backup policy. This is an asynchronous operation.
-        Status of the operation can be fetched using GetPolicyOperationResult
-        API.
+        Status of the operation can be fetched
+        using GetPolicyOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -185,8 +186,8 @@ class ProtectionPoliciesOperations(object):
     def delete(
             self, vault_name, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
         """Deletes specified backup policy from your Recovery Services Vault. This
-        is an asynchronous operation. Status of the operation can be fetched
-        using GetPolicyOperationResult API.
+        is an asynchronous operation. Status of the
+        operation can be fetched using GetPolicyOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

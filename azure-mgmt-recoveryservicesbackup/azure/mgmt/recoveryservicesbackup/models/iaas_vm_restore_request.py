@@ -45,9 +45,10 @@ class IaasVMRestoreRequest(RestoreRequest):
      User will be validated for join action permissions in the linked access.
     :type virtual_network_id: str
     :param subnet_id: Subnet ID, is the subnet ID associated with the to be
-     restored VM. For Classic VMs it would be {VnetID}/Subnet/{SubnetName} and,
-     for the Azure Resource Manager VMs it would be ARM resource ID used to
-     represent the subnet.
+     restored VM. For Classic VMs it would be
+     {VnetID}/Subnet/{SubnetName} and, for the Azure Resource Manager VMs it
+     would be ARM resource ID used to represent
+     the subnet.
     :type subnet_id: str
     :param target_domain_name_id: Fully qualified ARM ID of the domain name to
      be associated to the VM being restored. This applies only to Classic

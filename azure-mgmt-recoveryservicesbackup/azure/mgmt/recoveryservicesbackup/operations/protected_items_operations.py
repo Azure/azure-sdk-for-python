@@ -40,8 +40,8 @@ class ProtectedItemsOperations(object):
     def get(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Provides the details of the backed up item. This is an asynchronous
-        operation. To know the status of the operation, call the
-        GetItemOperationResult API.
+        operation. To know the status of the operation,
+        call the GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -121,8 +121,9 @@ class ProtectedItemsOperations(object):
     def create_or_update(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Enables backup of an item or to modifies the backup policy information
-        of an already backed up item. This is an asynchronous operation. To
-        know the status of the operation, call the GetItemOperationResult API.
+        of an already backed up item. This is an
+        asynchronous operation. To know the status of the operation, call the
+        GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -194,8 +195,8 @@ class ProtectedItemsOperations(object):
     def delete(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, custom_headers=None, raw=False, **operation_config):
         """Used to disable backup of an item within a container. This is an
-        asynchronous operation. To know the status of the request, call the
-        GetItemOperationResult API.
+        asynchronous operation. To know the status of the
+        request, call the GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

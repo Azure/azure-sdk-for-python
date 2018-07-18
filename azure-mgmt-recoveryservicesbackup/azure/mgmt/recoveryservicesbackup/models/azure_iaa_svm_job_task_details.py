@@ -29,6 +29,9 @@ class AzureIaaSVMJobTaskDetails(Model):
     :type status: str
     :param progress_percentage: Progress of the task.
     :type progress_percentage: float
+    :param task_execution_details: Details about execution of the task.
+     eg: number of bytes transfered etc
+    :type task_execution_details: str
     """
 
     _attribute_map = {
@@ -39,6 +42,7 @@ class AzureIaaSVMJobTaskDetails(Model):
         'duration': {'key': 'duration', 'type': 'duration'},
         'status': {'key': 'status', 'type': 'str'},
         'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
+        'task_execution_details': {'key': 'taskExecutionDetails', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -50,3 +54,4 @@ class AzureIaaSVMJobTaskDetails(Model):
         self.duration = kwargs.get('duration', None)
         self.status = kwargs.get('status', None)
         self.progress_percentage = kwargs.get('progress_percentage', None)
+        self.task_execution_details = kwargs.get('task_execution_details', None)
