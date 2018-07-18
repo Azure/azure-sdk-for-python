@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ProtectionPolicyOperationStatusesOperations(object):
-    """ProtectionPolicyOperationStatusesOperations operations.
+class OperationOperations(object):
+    """OperationOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
 
     models = models
@@ -33,17 +33,13 @@ class ProtectionPolicyOperationStatusesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
-    def get(
-            self, vault_name, resource_group_name, policy_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Provides the status of the asynchronous operations like backup,
-        restore. The status can be in progress, completed
-        or failed. You can refer to the Operation Status enum for all the
-        possible states of an operation. Some operations
-        create jobs. This method returns the list of jobs associated with
+    def validate(
+            self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Validate operation for specified backed up item. This is a synchronous
         operation.
 
         :param vault_name: The name of the recovery services vault.
@@ -51,30 +47,26 @@ class ProtectionPolicyOperationStatusesOperations(object):
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param policy_name: Backup policy name whose operation's status needs
-         to be fetched.
-        :type policy_name: str
-        :param operation_id: Operation ID which represents an operation whose
-         status needs to be fetched.
-        :type operation_id: str
+        :param parameters: resource validate operation request
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.models.ValidateOperationRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.OperationStatus or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ValidateOperationsResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ValidateOperationsResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,9 +84,13 @@ class ProtectionPolicyOperationStatusesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ValidateOperationRequest')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -104,11 +100,11 @@ class ProtectionPolicyOperationStatusesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatus', response)
+            deserialized = self._deserialize('ValidateOperationsResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}/operations/{operationId}'}
+    validate.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupValidateOperation'}

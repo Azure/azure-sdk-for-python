@@ -40,10 +40,11 @@ class BackupOperationStatusesOperations(object):
     def get(
             self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Fetches the status of an operation such as triggering a backup,
-        restore. The status can be in progress, completed or failed. You can
-        refer to the OperationStatus enum for all the possible states of an
-        operation. Some operations create jobs. This method returns the list of
-        jobs when the operation is complete.
+        restore. The status can be in progress, completed
+        or failed. You can refer to the OperationStatus enum for all the
+        possible states of an operation. Some operations
+        create jobs. This method returns the list of jobs when the operation is
+        complete.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
