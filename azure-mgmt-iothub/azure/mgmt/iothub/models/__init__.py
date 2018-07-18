@@ -11,10 +11,10 @@
 
 try:
     from .certificate_verification_description_py3 import CertificateVerificationDescription
-    from .certificate_body_description_py3 import CertificateBodyDescription
     from .certificate_properties_py3 import CertificateProperties
     from .certificate_description_py3 import CertificateDescription
     from .certificate_list_description_py3 import CertificateListDescription
+    from .certificate_body_description_py3 import CertificateBodyDescription
     from .certificate_properties_with_nonce_py3 import CertificatePropertiesWithNonce
     from .certificate_with_nonce_description_py3 import CertificateWithNonceDescription
     from .shared_access_signature_authorization_rule_py3 import SharedAccessSignatureAuthorizationRule
@@ -41,6 +41,7 @@ try:
     from .operation_py3 import Operation
     from .error_details_py3 import ErrorDetails, ErrorDetailsException
     from .iot_hub_quota_metric_info_py3 import IotHubQuotaMetricInfo
+    from .endpoint_health_data_py3 import EndpointHealthData
     from .registry_statistics_py3 import RegistryStatistics
     from .job_response_py3 import JobResponse
     from .iot_hub_capacity_py3 import IotHubCapacity
@@ -49,14 +50,27 @@ try:
     from .event_hub_consumer_group_info_py3 import EventHubConsumerGroupInfo
     from .operation_inputs_py3 import OperationInputs
     from .iot_hub_name_availability_info_py3 import IotHubNameAvailabilityInfo
+    from .name_py3 import Name
+    from .user_subscription_quota_py3 import UserSubscriptionQuota
+    from .user_subscription_quota_list_result_py3 import UserSubscriptionQuotaListResult
+    from .routing_message_py3 import RoutingMessage
+    from .test_all_routes_input_py3 import TestAllRoutesInput
+    from .matched_route_py3 import MatchedRoute
+    from .test_all_routes_result_py3 import TestAllRoutesResult
+    from .test_route_input_py3 import TestRouteInput
+    from .route_error_position_py3 import RouteErrorPosition
+    from .route_error_range_py3 import RouteErrorRange
+    from .route_compilation_error_py3 import RouteCompilationError
+    from .test_route_result_details_py3 import TestRouteResultDetails
+    from .test_route_result_py3 import TestRouteResult
     from .export_devices_request_py3 import ExportDevicesRequest
     from .import_devices_request_py3 import ImportDevicesRequest
 except (SyntaxError, ImportError):
     from .certificate_verification_description import CertificateVerificationDescription
-    from .certificate_body_description import CertificateBodyDescription
     from .certificate_properties import CertificateProperties
     from .certificate_description import CertificateDescription
     from .certificate_list_description import CertificateListDescription
+    from .certificate_body_description import CertificateBodyDescription
     from .certificate_properties_with_nonce import CertificatePropertiesWithNonce
     from .certificate_with_nonce_description import CertificateWithNonceDescription
     from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
@@ -83,6 +97,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .error_details import ErrorDetails, ErrorDetailsException
     from .iot_hub_quota_metric_info import IotHubQuotaMetricInfo
+    from .endpoint_health_data import EndpointHealthData
     from .registry_statistics import RegistryStatistics
     from .job_response import JobResponse
     from .iot_hub_capacity import IotHubCapacity
@@ -91,6 +106,19 @@ except (SyntaxError, ImportError):
     from .event_hub_consumer_group_info import EventHubConsumerGroupInfo
     from .operation_inputs import OperationInputs
     from .iot_hub_name_availability_info import IotHubNameAvailabilityInfo
+    from .name import Name
+    from .user_subscription_quota import UserSubscriptionQuota
+    from .user_subscription_quota_list_result import UserSubscriptionQuotaListResult
+    from .routing_message import RoutingMessage
+    from .test_all_routes_input import TestAllRoutesInput
+    from .matched_route import MatchedRoute
+    from .test_all_routes_result import TestAllRoutesResult
+    from .test_route_input import TestRouteInput
+    from .route_error_position import RouteErrorPosition
+    from .route_error_range import RouteErrorRange
+    from .route_compilation_error import RouteCompilationError
+    from .test_route_result_details import TestRouteResultDetails
+    from .test_route_result import TestRouteResult
     from .export_devices_request import ExportDevicesRequest
     from .import_devices_request import ImportDevicesRequest
 from .operation_paged import OperationPaged
@@ -99,6 +127,7 @@ from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
 from .event_hub_consumer_group_info_paged import EventHubConsumerGroupInfoPaged
 from .job_response_paged import JobResponsePaged
 from .iot_hub_quota_metric_info_paged import IotHubQuotaMetricInfoPaged
+from .endpoint_health_data_paged import EndpointHealthDataPaged
 from .shared_access_signature_authorization_rule_paged import SharedAccessSignatureAuthorizationRulePaged
 from .iot_hub_client_enums import (
     AccessRights,
@@ -108,18 +137,21 @@ from .iot_hub_client_enums import (
     Capabilities,
     IotHubSku,
     IotHubSkuTier,
+    EndpointHealthStatus,
     JobType,
     JobStatus,
     IotHubScaleType,
     IotHubNameUnavailabilityReason,
+    TestResultStatus,
+    RouteErrorSeverity,
 )
 
 __all__ = [
     'CertificateVerificationDescription',
-    'CertificateBodyDescription',
     'CertificateProperties',
     'CertificateDescription',
     'CertificateListDescription',
+    'CertificateBodyDescription',
     'CertificatePropertiesWithNonce',
     'CertificateWithNonceDescription',
     'SharedAccessSignatureAuthorizationRule',
@@ -146,6 +178,7 @@ __all__ = [
     'Operation',
     'ErrorDetails', 'ErrorDetailsException',
     'IotHubQuotaMetricInfo',
+    'EndpointHealthData',
     'RegistryStatistics',
     'JobResponse',
     'IotHubCapacity',
@@ -154,6 +187,19 @@ __all__ = [
     'EventHubConsumerGroupInfo',
     'OperationInputs',
     'IotHubNameAvailabilityInfo',
+    'Name',
+    'UserSubscriptionQuota',
+    'UserSubscriptionQuotaListResult',
+    'RoutingMessage',
+    'TestAllRoutesInput',
+    'MatchedRoute',
+    'TestAllRoutesResult',
+    'TestRouteInput',
+    'RouteErrorPosition',
+    'RouteErrorRange',
+    'RouteCompilationError',
+    'TestRouteResultDetails',
+    'TestRouteResult',
     'ExportDevicesRequest',
     'ImportDevicesRequest',
     'OperationPaged',
@@ -162,6 +208,7 @@ __all__ = [
     'EventHubConsumerGroupInfoPaged',
     'JobResponsePaged',
     'IotHubQuotaMetricInfoPaged',
+    'EndpointHealthDataPaged',
     'SharedAccessSignatureAuthorizationRulePaged',
     'AccessRights',
     'IpFilterActionType',
@@ -170,8 +217,11 @@ __all__ = [
     'Capabilities',
     'IotHubSku',
     'IotHubSkuTier',
+    'EndpointHealthStatus',
     'JobType',
     'JobStatus',
     'IotHubScaleType',
     'IotHubNameUnavailabilityReason',
+    'TestResultStatus',
+    'RouteErrorSeverity',
 ]
