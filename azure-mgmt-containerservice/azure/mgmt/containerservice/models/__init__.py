@@ -25,6 +25,7 @@ try:
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .container_service_py3 import ContainerService
     from .operation_value_py3 import OperationValue
+    from .tags_object_py3 import TagsObject
     from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
     from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
@@ -52,6 +53,7 @@ except (SyntaxError, ImportError):
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .container_service import ContainerService
     from .operation_value import OperationValue
+    from .tags_object import TagsObject
     from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
     from .container_service_network_profile import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile import ManagedClusterAddonProfile
@@ -91,6 +93,7 @@ __all__ = [
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
     'OperationValue',
+    'TagsObject',
     'ManagedClusterAgentPoolProfile',
     'ContainerServiceNetworkProfile',
     'ManagedClusterAddonProfile',
