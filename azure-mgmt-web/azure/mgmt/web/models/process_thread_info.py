@@ -26,8 +26,8 @@ class ProcessThreadInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param process_thread_info_id: ARM Identifier for deployment.
-    :type process_thread_info_id: int
+    :ivar identifier: Site extension ID.
+    :vartype identifier: int
     :param href: HRef URI.
     :type href: str
     :param process: Process URI.
@@ -58,6 +58,7 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -65,24 +66,24 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'process_thread_info_id': {'key': 'properties.id', 'type': 'int'},
+        'identifier': {'key': 'properties.identifier', 'type': 'int'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'process': {'key': 'properties.process', 'type': 'str'},
-        'start_address': {'key': 'properties.startAddress', 'type': 'str'},
-        'current_priority': {'key': 'properties.currentPriority', 'type': 'int'},
-        'priority_level': {'key': 'properties.priorityLevel', 'type': 'str'},
-        'base_priority': {'key': 'properties.basePriority', 'type': 'int'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'total_processor_time': {'key': 'properties.totalProcessorTime', 'type': 'str'},
-        'user_processor_time': {'key': 'properties.userProcessorTime', 'type': 'str'},
-        'priviledged_processor_time': {'key': 'properties.priviledgedProcessorTime', 'type': 'str'},
+        'start_address': {'key': 'properties.start_address', 'type': 'str'},
+        'current_priority': {'key': 'properties.current_priority', 'type': 'int'},
+        'priority_level': {'key': 'properties.priority_level', 'type': 'str'},
+        'base_priority': {'key': 'properties.base_priority', 'type': 'int'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'total_processor_time': {'key': 'properties.total_processor_time', 'type': 'str'},
+        'user_processor_time': {'key': 'properties.user_processor_time', 'type': 'str'},
+        'priviledged_processor_time': {'key': 'properties.priviledged_processor_time', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
-        'wait_reason': {'key': 'properties.waitReason', 'type': 'str'},
+        'wait_reason': {'key': 'properties.wait_reason', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ProcessThreadInfo, self).__init__(**kwargs)
-        self.process_thread_info_id = kwargs.get('process_thread_info_id', None)
+        self.identifier = None
         self.href = kwargs.get('href', None)
         self.process = kwargs.get('process', None)
         self.start_address = kwargs.get('start_address', None)

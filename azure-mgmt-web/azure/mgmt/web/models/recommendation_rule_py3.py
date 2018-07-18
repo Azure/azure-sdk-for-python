@@ -27,8 +27,8 @@ class RecommendationRule(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param recommendation_rule_name: Unique name of the rule.
-    :type recommendation_rule_name: str
+    :param recommendation_name: Unique name of the rule.
+    :type recommendation_name: str
     :param display_name: UI friendly name of the rule.
     :type display_name: str
     :param message: Localized name of the rule (Good for UI).
@@ -49,8 +49,9 @@ class RecommendationRule(ProxyOnlyResource):
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
     :type channels: str or ~azure.mgmt.web.models.Channels
-    :param tags: An array of category tags that the rule contains.
-    :type tags: list[str]
+    :ivar category_tags: The list of category tags that this recommendation
+     rule belongs to.
+    :vartype category_tags: list[str]
     :param is_dynamic: True if this is associated with a dynamically added
      rule
     :type is_dynamic: bool
@@ -69,6 +70,7 @@ class RecommendationRule(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'category_tags': {'readonly': True},
     }
 
     _attribute_map = {
@@ -76,7 +78,7 @@ class RecommendationRule(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'recommendation_rule_name': {'key': 'properties.name', 'type': 'str'},
+        'recommendation_name': {'key': 'properties.recommendationName', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'recommendation_id': {'key': 'properties.recommendationId', 'type': 'str'},
@@ -84,16 +86,16 @@ class RecommendationRule(ProxyOnlyResource):
         'action_name': {'key': 'properties.actionName', 'type': 'str'},
         'level': {'key': 'properties.level', 'type': 'NotificationLevel'},
         'channels': {'key': 'properties.channels', 'type': 'Channels'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'category_tags': {'key': 'properties.categoryTags', 'type': '[str]'},
         'is_dynamic': {'key': 'properties.isDynamic', 'type': 'bool'},
         'extension_name': {'key': 'properties.extensionName', 'type': 'str'},
         'blade_name': {'key': 'properties.bladeName', 'type': 'str'},
         'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, recommendation_rule_name: str=None, display_name: str=None, message: str=None, recommendation_id: str=None, description: str=None, action_name: str=None, level=None, channels=None, tags=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, recommendation_name: str=None, display_name: str=None, message: str=None, recommendation_id: str=None, description: str=None, action_name: str=None, level=None, channels=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
         super(RecommendationRule, self).__init__(kind=kind, **kwargs)
-        self.recommendation_rule_name = recommendation_rule_name
+        self.recommendation_name = recommendation_name
         self.display_name = display_name
         self.message = message
         self.recommendation_id = recommendation_id
@@ -101,7 +103,7 @@ class RecommendationRule(ProxyOnlyResource):
         self.action_name = action_name
         self.level = level
         self.channels = channels
-        self.tags = tags
+        self.category_tags = None
         self.is_dynamic = is_dynamic
         self.extension_name = extension_name
         self.blade_name = blade_name

@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class RestoreResponse(ProxyOnlyResource):
-    """Response for an app restore request.
+class DeletedAppRestoreRequest(ProxyOnlyResource):
+    """Details about restoring a deleted app.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,16 +26,22 @@ class RestoreResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar operation_id: When server starts the restore process, it will return
-     an operation ID identifying that particular restore operation.
-    :vartype operation_id: str
+    :param deleted_site_id: ARM resource ID of the deleted app. Example:
+     /subscriptions/{subId}/providers/Microsoft.Web/deletedSites/{deletedSiteId}
+    :type deleted_site_id: str
+    :param recover_configuration: If true, deleted site configuration, in
+     addition to content, will be restored.
+    :type recover_configuration: bool
+    :param snapshot_time: Point in time to restore the deleted app from,
+     formatted as a DateTime string.
+     If unspecified, default value is the time that the app was deleted.
+    :type snapshot_time: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,9 +49,13 @@ class RestoreResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        'deleted_site_id': {'key': 'properties.deletedSiteId', 'type': 'str'},
+        'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
+        'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(RestoreResponse, self).__init__(**kwargs)
-        self.operation_id = None
+        super(DeletedAppRestoreRequest, self).__init__(**kwargs)
+        self.deleted_site_id = kwargs.get('deleted_site_id', None)
+        self.recover_configuration = kwargs.get('recover_configuration', None)
+        self.snapshot_time = kwargs.get('snapshot_time', None)

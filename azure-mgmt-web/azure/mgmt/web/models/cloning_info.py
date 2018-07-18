@@ -55,9 +55,6 @@ class CloningInfo(Model):
      create. This is only needed if Traffic Manager profile does not already
      exist.
     :type traffic_manager_profile_name: str
-    :param ignore_quotas: <code>true</code> if quotas should be ignored;
-     otherwise, <code>false</code>.
-    :type ignore_quotas: bool
     """
 
     _validation = {
@@ -75,7 +72,6 @@ class CloningInfo(Model):
         'configure_load_balancing': {'key': 'configureLoadBalancing', 'type': 'bool'},
         'traffic_manager_profile_id': {'key': 'trafficManagerProfileId', 'type': 'str'},
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
-        'ignore_quotas': {'key': 'ignoreQuotas', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -90,4 +86,3 @@ class CloningInfo(Model):
         self.configure_load_balancing = kwargs.get('configure_load_balancing', None)
         self.traffic_manager_profile_id = kwargs.get('traffic_manager_profile_id', None)
         self.traffic_manager_profile_name = kwargs.get('traffic_manager_profile_name', None)
-        self.ignore_quotas = kwargs.get('ignore_quotas', None)

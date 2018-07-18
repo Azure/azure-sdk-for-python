@@ -18,12 +18,16 @@ class ServiceSpecification(Model):
     :param metric_specifications:
     :type metric_specifications:
      list[~azure.mgmt.web.models.MetricSpecification]
+    :param log_specifications:
+    :type log_specifications: list[~azure.mgmt.web.models.LogSpecification]
     """
 
     _attribute_map = {
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
     }
 
-    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
+    def __init__(self, *, metric_specifications=None, log_specifications=None, **kwargs) -> None:
         super(ServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications

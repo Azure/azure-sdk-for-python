@@ -12,8 +12,9 @@
 from .proxy_only_resource_py3 import ProxyOnlyResource
 
 
-class RestoreResponse(ProxyOnlyResource):
-    """Response for an app restore request.
+class SwiftVirtualNetwork(ProxyOnlyResource):
+    """Swift Virtual Network Contract. This is used to enable the new Swift way of
+    doing virtual network integration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,16 +27,19 @@ class RestoreResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar operation_id: When server starts the restore process, it will return
-     an operation ID identifying that particular restore operation.
-    :vartype operation_id: str
+    :param subnet_resource_id: The Virtual Network subnet's resource ID. This
+     is the subnet that this Web App will join. This subnet must have a
+     delegation to Microsoft.Web/serverFarms defined first.
+    :type subnet_resource_id: str
+    :param swift_supported: A flag that specifies if the scale unit this Web
+     App is on supports Swift integration.
+    :type swift_supported: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,9 +47,11 @@ class RestoreResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        'subnet_resource_id': {'key': 'properties.subnetResourceId', 'type': 'str'},
+        'swift_supported': {'key': 'properties.swiftSupported', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, **kwargs) -> None:
-        super(RestoreResponse, self).__init__(kind=kind, **kwargs)
-        self.operation_id = None
+    def __init__(self, *, kind: str=None, subnet_resource_id: str=None, swift_supported: bool=None, **kwargs) -> None:
+        super(SwiftVirtualNetwork, self).__init__(kind=kind, **kwargs)
+        self.subnet_resource_id = subnet_resource_id
+        self.swift_supported = swift_supported

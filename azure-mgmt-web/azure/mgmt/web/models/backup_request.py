@@ -28,8 +28,6 @@ class BackupRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param backup_request_name: Required. Name of the backup.
-    :type backup_request_name: str
     :param enabled: True if the backup schedule is enabled (must be included
      in that case), false if the backup schedule should be disabled.
     :type enabled: bool
@@ -40,17 +38,12 @@ class BackupRequest(ProxyOnlyResource):
     :type backup_schedule: ~azure.mgmt.web.models.BackupSchedule
     :param databases: Databases included in the backup.
     :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
-    :param backup_request_type: Type of the backup. Possible values include:
-     'Default', 'Clone', 'Relocation', 'Snapshot'
-    :type backup_request_type: str or
-     ~azure.mgmt.web.models.BackupRestoreOperationType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'backup_request_name': {'required': True},
         'storage_account_url': {'required': True},
     }
 
@@ -59,19 +52,15 @@ class BackupRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'backup_request_name': {'key': 'properties.name', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'backup_schedule': {'key': 'properties.backupSchedule', 'type': 'BackupSchedule'},
         'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
-        'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
     def __init__(self, **kwargs):
         super(BackupRequest, self).__init__(**kwargs)
-        self.backup_request_name = kwargs.get('backup_request_name', None)
         self.enabled = kwargs.get('enabled', None)
         self.storage_account_url = kwargs.get('storage_account_url', None)
         self.backup_schedule = kwargs.get('backup_schedule', None)
         self.databases = kwargs.get('databases', None)
-        self.backup_request_type = kwargs.get('backup_request_type', None)

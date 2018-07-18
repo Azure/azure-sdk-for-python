@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_only_resource import ProxyOnlyResource
+from .proxy_only_resource_py3 import ProxyOnlyResource
 
 
-class SnapshotRecoveryRequest(ProxyOnlyResource):
+class SnapshotRestoreRequest(ProxyOnlyResource):
     """Details about app recovery operation.
 
     Variables are only populated by the server, and will be ignored when
@@ -28,14 +28,15 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param snapshot_time: Point in time in which the app recovery should be
-     attempted, formatted as a DateTime string.
+    :param snapshot_time: Point in time in which the app restore should be
+     done, formatted as a DateTime string.
     :type snapshot_time: str
-    :param recovery_target: Specifies the web app that snapshot contents will
-     be written to.
-    :type recovery_target: ~azure.mgmt.web.models.SnapshotRecoveryTarget
-    :param overwrite: Required. If <code>true</code> the recovery operation
-     can overwrite source app; otherwise, <code>false</code>.
+    :param recovery_source: Optional. Specifies the web app that snapshot
+     contents will be retrieved from.
+     If empty, the targeted web app will be used as the source.
+    :type recovery_source: ~azure.mgmt.web.models.SnapshotRecoverySource
+    :param overwrite: Required. If <code>true</code> the restore operation can
+     overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool
     :param recover_configuration: If true, site configuration, in addition to
      content, will be reverted.
@@ -59,16 +60,16 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
-        'recovery_target': {'key': 'properties.recoveryTarget', 'type': 'SnapshotRecoveryTarget'},
+        'recovery_source': {'key': 'properties.recoverySource', 'type': 'SnapshotRecoverySource'},
         'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
         'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
         'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(SnapshotRecoveryRequest, self).__init__(**kwargs)
-        self.snapshot_time = kwargs.get('snapshot_time', None)
-        self.recovery_target = kwargs.get('recovery_target', None)
-        self.overwrite = kwargs.get('overwrite', None)
-        self.recover_configuration = kwargs.get('recover_configuration', None)
-        self.ignore_conflicting_host_names = kwargs.get('ignore_conflicting_host_names', None)
+    def __init__(self, *, overwrite: bool, kind: str=None, snapshot_time: str=None, recovery_source=None, recover_configuration: bool=None, ignore_conflicting_host_names: bool=None, **kwargs) -> None:
+        super(SnapshotRestoreRequest, self).__init__(kind=kind, **kwargs)
+        self.snapshot_time = snapshot_time
+        self.recovery_source = recovery_source
+        self.overwrite = overwrite
+        self.recover_configuration = recover_configuration
+        self.ignore_conflicting_host_names = ignore_conflicting_host_names

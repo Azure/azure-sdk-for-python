@@ -38,12 +38,6 @@ class PremierAddOn(Resource):
     :type product: str
     :param vendor: Premier add on Vendor.
     :type vendor: str
-    :param premier_add_on_name: Premier add on Name.
-    :type premier_add_on_name: str
-    :param premier_add_on_location: Premier add on Location.
-    :type premier_add_on_location: str
-    :param premier_add_on_tags: Premier add on Tags.
-    :type premier_add_on_tags: dict[str, str]
     :param marketplace_publisher: Premier add on Marketplace publisher.
     :type marketplace_publisher: str
     :param marketplace_offer: Premier add on Marketplace offer.
@@ -67,20 +61,14 @@ class PremierAddOn(Resource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_name': {'key': 'properties.name', 'type': 'str'},
-        'premier_add_on_location': {'key': 'properties.location', 'type': 'str'},
-        'premier_add_on_tags': {'key': 'properties.tags', 'type': '{str}'},
         'marketplace_publisher': {'key': 'properties.marketplacePublisher', 'type': 'str'},
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, sku: str=None, product: str=None, vendor: str=None, premier_add_on_name: str=None, premier_add_on_location: str=None, premier_add_on_tags=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str=None, tags=None, sku: str=None, product: str=None, vendor: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
         super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.product = product
         self.vendor = vendor
-        self.premier_add_on_name = premier_add_on_name
-        self.premier_add_on_location = premier_add_on_location
-        self.premier_add_on_tags = premier_add_on_tags
         self.marketplace_publisher = marketplace_publisher
         self.marketplace_offer = marketplace_offer

@@ -41,6 +41,8 @@ class SiteConfigResource(ProxyOnlyResource):
     :type node_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
+    :param windows_fx_version: Xenon App Framework and version
+    :type windows_fx_version: str
     :param request_tracing_enabled: <code>true</code> if request tracing is
      enabled; otherwise, <code>false</code>.
     :type request_tracing_enabled: bool
@@ -128,6 +130,10 @@ class SiteConfigResource(ProxyOnlyResource):
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
      otherwise, <code>false</code>. Default value: False .
     :type local_my_sql_enabled: bool
+    :param managed_service_identity_id: Managed Service Identity Id
+    :type managed_service_identity_id: int
+    :param x_managed_service_identity_id: Explicit Managed Service Identity Id
+    :type x_managed_service_identity_id: int
     :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions:
      list[~azure.mgmt.web.models.IpSecurityRestriction]
@@ -138,6 +144,12 @@ class SiteConfigResource(ProxyOnlyResource):
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
     :type min_tls_version: str or ~azure.mgmt.web.models.SupportedTlsVersions
+    :param ftps_state: State of FTP / FTPS service. Possible values include:
+     'AllAllowed', 'FtpsOnly', 'Disabled'
+    :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
+    :param reserved_instance_count: Number of reserved instances.
+     This setting only applies to the Consumption Plan
+    :type reserved_instance_count: int
     """
 
     _validation = {
@@ -145,6 +157,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'machine_key': {'readonly': True},
+        'reserved_instance_count': {'maximum': 10, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -159,6 +172,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
+        'windows_fx_version': {'key': 'properties.windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
         'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
@@ -194,9 +208,13 @@ class SiteConfigResource(ProxyOnlyResource):
         'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
+        'managed_service_identity_id': {'key': 'properties.managedServiceIdentityId', 'type': 'int'},
+        'x_managed_service_identity_id': {'key': 'properties.xManagedServiceIdentityId', 'type': 'int'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'properties.minTlsVersion', 'type': 'str'},
+        'ftps_state': {'key': 'properties.ftpsState', 'type': 'str'},
+        'reserved_instance_count': {'key': 'properties.reservedInstanceCount', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -208,6 +226,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
+        self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
         self.request_tracing_expiration_time = kwargs.get('request_tracing_expiration_time', None)
         self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
@@ -243,6 +262,10 @@ class SiteConfigResource(ProxyOnlyResource):
         self.api_definition = kwargs.get('api_definition', None)
         self.auto_swap_slot_name = kwargs.get('auto_swap_slot_name', None)
         self.local_my_sql_enabled = kwargs.get('local_my_sql_enabled', False)
+        self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
+        self.x_managed_service_identity_id = kwargs.get('x_managed_service_identity_id', None)
         self.ip_security_restrictions = kwargs.get('ip_security_restrictions', None)
         self.http20_enabled = kwargs.get('http20_enabled', True)
         self.min_tls_version = kwargs.get('min_tls_version', None)
+        self.ftps_state = kwargs.get('ftps_state', None)
+        self.reserved_instance_count = kwargs.get('reserved_instance_count', None)

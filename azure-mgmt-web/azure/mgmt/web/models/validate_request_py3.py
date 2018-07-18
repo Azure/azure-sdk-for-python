@@ -40,6 +40,9 @@ class ValidateRequest(Model):
     :param hosting_environment: Name of App Service Environment where app or
      App Service plan should be created.
     :type hosting_environment: str
+    :param is_xenon: <code>true</code> if App Service plan is running as a
+     windows container
+    :type is_xenon: bool
     """
 
     _validation = {
@@ -59,9 +62,10 @@ class ValidateRequest(Model):
         'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'capacity': {'key': 'properties.capacity', 'type': 'int'},
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, type, location: str, server_farm_id: str=None, sku_name: str=None, need_linux_workers: bool=None, is_spot: bool=None, capacity: int=None, hosting_environment: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, type, location: str, server_farm_id: str=None, sku_name: str=None, need_linux_workers: bool=None, is_spot: bool=None, capacity: int=None, hosting_environment: str=None, is_xenon: bool=None, **kwargs) -> None:
         super(ValidateRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -72,3 +76,4 @@ class ValidateRequest(Model):
         self.is_spot = is_spot
         self.capacity = capacity
         self.hosting_environment = hosting_environment
+        self.is_xenon = is_xenon

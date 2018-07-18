@@ -32,8 +32,6 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param app_service_plan_name: Required. Name for the App Service plan.
-    :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -66,11 +64,17 @@ class AppServicePlan(Resource):
     :param spot_expiration_time: The time when the server farm expires. Valid
      only if it is a spot server farm.
     :type spot_expiration_time: datetime
+    :param free_offer_expiration_time: The time when the server farm free
+     offer expires.
+    :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
     :param reserved: If Linux app service plan <code>true</code>,
      <code>false</code> otherwise. Default value: False .
     :type reserved: bool
+    :param is_xenon: If Hyper-V container app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
+    :type is_xenon: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -89,7 +93,6 @@ class AppServicePlan(Resource):
         'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
-        'app_service_plan_name': {'required': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
         'maximum_number_of_workers': {'readonly': True},
@@ -106,7 +109,6 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -118,8 +120,10 @@ class AppServicePlan(Resource):
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'spot_expiration_time': {'key': 'properties.spotExpirationTime', 'type': 'iso-8601'},
+        'free_offer_expiration_time': {'key': 'properties.freeOfferExpirationTime', 'type': 'iso-8601'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
@@ -128,7 +132,6 @@ class AppServicePlan(Resource):
 
     def __init__(self, **kwargs):
         super(AppServicePlan, self).__init__(**kwargs)
-        self.app_service_plan_name = kwargs.get('app_service_plan_name', None)
         self.worker_tier_name = kwargs.get('worker_tier_name', None)
         self.status = None
         self.subscription = None
@@ -140,8 +143,10 @@ class AppServicePlan(Resource):
         self.number_of_sites = None
         self.is_spot = kwargs.get('is_spot', None)
         self.spot_expiration_time = kwargs.get('spot_expiration_time', None)
+        self.free_offer_expiration_time = kwargs.get('free_offer_expiration_time', None)
         self.resource_group = None
         self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
         self.target_worker_count = kwargs.get('target_worker_count', None)
         self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None

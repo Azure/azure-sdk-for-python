@@ -19,12 +19,14 @@ class ManagedServiceIdentity(Model):
     sending a request.
 
     :param type: Type of managed service identity. Possible values include:
-     'SystemAssigned'
+     'SystemAssigned', 'UserAssigned'
     :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
     :ivar principal_id: Principal Id of managed service identity.
     :vartype principal_id: str
+    :param identity_ids: Array of UserAssigned managed service identities.
+    :type identity_ids: list[str]
     """
 
     _validation = {
@@ -36,10 +38,12 @@ class ManagedServiceIdentity(Model):
         'type': {'key': 'type', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
+        'identity_ids': {'key': 'identityIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, type=None, **kwargs) -> None:
+    def __init__(self, *, type=None, identity_ids=None, **kwargs) -> None:
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = type
         self.tenant_id = None
         self.principal_id = None
+        self.identity_ids = identity_ids

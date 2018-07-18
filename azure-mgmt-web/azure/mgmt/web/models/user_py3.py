@@ -28,8 +28,6 @@ class User(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param user_name: Username
-    :type user_name: str
     :param publishing_user_name: Required. Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
@@ -39,6 +37,8 @@ class User(ProxyOnlyResource):
     :param publishing_password_hash_salt: Password hash salt used for
      publishing.
     :type publishing_password_hash_salt: str
+    :param scm_uri: Url of SCM site.
+    :type scm_uri: str
     """
 
     _validation = {
@@ -53,17 +53,17 @@ class User(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
+        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
-    def __init__(self, *, publishing_user_name: str, kind: str=None, user_name: str=None, publishing_password: str=None, publishing_password_hash: str=None, publishing_password_hash_salt: str=None, **kwargs) -> None:
+    def __init__(self, *, publishing_user_name: str, kind: str=None, publishing_password: str=None, publishing_password_hash: str=None, publishing_password_hash_salt: str=None, scm_uri: str=None, **kwargs) -> None:
         super(User, self).__init__(kind=kind, **kwargs)
-        self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
         self.publishing_password_hash = publishing_password_hash
         self.publishing_password_hash_salt = publishing_password_hash_salt
+        self.scm_uri = scm_uri

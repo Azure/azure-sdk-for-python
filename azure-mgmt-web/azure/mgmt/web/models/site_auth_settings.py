@@ -90,6 +90,9 @@ class SiteAuthSettings(ProxyOnlyResource):
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html
     :type issuer: str
+    :param validate_issuer: Gets a value indicating whether the issuer should
+     be a valid HTTPS url and be validated as such.
+    :type validate_issuer: bool
     :param allowed_audiences: Allowed audience values to consider when
      validating JWTs issued by
      Azure Active Directory. Note that the <code>ClientID</code> value is
@@ -188,6 +191,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'validate_issuer': {'key': 'properties.validateIssuer', 'type': 'bool'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
         'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
         'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
@@ -215,6 +219,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
         self.issuer = kwargs.get('issuer', None)
+        self.validate_issuer = kwargs.get('validate_issuer', None)
         self.allowed_audiences = kwargs.get('allowed_audiences', None)
         self.additional_login_params = kwargs.get('additional_login_params', None)
         self.google_client_id = kwargs.get('google_client_id', None)
