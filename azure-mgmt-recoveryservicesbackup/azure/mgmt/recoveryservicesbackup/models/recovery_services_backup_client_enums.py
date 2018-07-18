@@ -30,6 +30,30 @@ class HealthStatus(str, Enum):
     invalid = "Invalid"
 
 
+class RecoveryType(str, Enum):
+
+    invalid = "Invalid"
+    original_location = "OriginalLocation"
+    alternate_location = "AlternateLocation"
+    restore_disks = "RestoreDisks"
+
+
+class CopyOptions(str, Enum):
+
+    invalid = "Invalid"
+    create_copy = "CreateCopy"
+    skip = "Skip"
+    overwrite = "Overwrite"
+    fail_on_conflict = "FailOnConflict"
+
+
+class RestoreRequestType(str, Enum):
+
+    invalid = "Invalid"
+    full_share_restore = "FullShareRestore"
+    item_level_restore = "ItemLevelRestore"
+
+
 class JobSupportedAction(str, Enum):
 
     invalid = "Invalid"
@@ -73,6 +97,13 @@ class ProtectedItemHealthStatus(str, Enum):
     ir_pending = "IRPending"
 
 
+class OverwriteOptions(str, Enum):
+
+    invalid = "Invalid"
+    fail_on_conflict = "FailOnConflict"
+    overwrite = "Overwrite"
+
+
 class WorkloadItemType(str, Enum):
 
     invalid = "Invalid"
@@ -80,6 +111,13 @@ class WorkloadItemType(str, Enum):
     sql_data_base = "SQLDataBase"
     sap_hana_system = "SAPHanaSystem"
     sap_hana_database = "SAPHanaDatabase"
+
+
+class SQLDataDirectoryType(str, Enum):
+
+    invalid = "Invalid"
+    data = "Data"
+    log = "Log"
 
 
 class UsagesUnit(str, Enum):
@@ -239,11 +277,6 @@ class MabServerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
-    sql_cluster = "SqlCluster"
-    exchange_dag = "ExchangeDAG"
-    sharepoint_farm = "SharepointFarm"
-    hyper_vcluster = "HyperVCluster"
-    windows_client = "WindowsClient"
 
 
 class WorkloadType(str, Enum):
@@ -351,42 +384,11 @@ class AzureFileShareType(str, Enum):
     xsync = "XSync"
 
 
-class RecoveryType(str, Enum):
-
-    invalid = "Invalid"
-    original_location = "OriginalLocation"
-    alternate_location = "AlternateLocation"
-    restore_disks = "RestoreDisks"
-
-
-class CopyOptions(str, Enum):
-
-    invalid = "Invalid"
-    create_copy = "CreateCopy"
-    skip = "Skip"
-    overwrite = "Overwrite"
-    fail_on_conflict = "FailOnConflict"
-
-
-class RestoreRequestType(str, Enum):
-
-    invalid = "Invalid"
-    full_share_restore = "FullShareRestore"
-    item_level_restore = "ItemLevelRestore"
-
-
 class InquiryStatus(str, Enum):
 
     invalid = "Invalid"
     success = "Success"
     failed = "Failed"
-
-
-class SQLDataDirectoryType(str, Enum):
-
-    invalid = "Invalid"
-    data = "Data"
-    log = "Log"
 
 
 class BackupType(str, Enum):
@@ -404,13 +406,6 @@ class RestorePointType(str, Enum):
     full = "Full"
     log = "Log"
     differential = "Differential"
-
-
-class OverwriteOptions(str, Enum):
-
-    invalid = "Invalid"
-    fail_on_conflict = "FailOnConflict"
-    overwrite = "Overwrite"
 
 
 class StorageType(str, Enum):
@@ -451,11 +446,6 @@ class ContainerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
-    sql_cluster = "SqlCluster"
-    exchange_dag = "ExchangeDAG"
-    sharepoint_farm = "SharepointFarm"
-    hyper_vcluster = "HyperVCluster"
-    windows_client = "WindowsClient"
 
 
 class RestorePointQueryType(str, Enum):

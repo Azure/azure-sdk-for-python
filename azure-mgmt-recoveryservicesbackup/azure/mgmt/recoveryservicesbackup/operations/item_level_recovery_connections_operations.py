@@ -40,10 +40,10 @@ class ItemLevelRecoveryConnectionsOperations(object):
     def provision(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Provisions a script which invokes an iSCSI connection to the backup
-        data. Executing this script opens a file explorer displaying all the
-        recoverable files and folders. This is an asynchronous operation. To
-        know the status of provisioning, call GetProtectedItemOperationResult
-        API.
+        data. Executing this script opens a file
+        explorer displaying all the recoverable files and folders. This is an
+        asynchronous operation. To know the status of
+        provisioning, call GetProtectedItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -59,7 +59,8 @@ class ItemLevelRecoveryConnectionsOperations(object):
          are to be restored.
         :type protected_item_name: str
         :param recovery_point_id: Recovery point ID which represents backed up
-         data. iSCSI connection will be provisioned for this backed up data.
+         data. iSCSI connection will be provisioned
+         for this backed up data.
         :type recovery_point_id: str
         :param parameters: resource ILR request
         :type parameters:
@@ -121,8 +122,9 @@ class ItemLevelRecoveryConnectionsOperations(object):
     def revoke(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, custom_headers=None, raw=False, **operation_config):
         """Revokes an iSCSI connection which can be used to download a script.
-        Executing this script opens a file explorer displaying all recoverable
-        files and folders. This is an asynchronous operation.
+        Executing this script opens a file explorer
+        displaying all recoverable files and folders. This is an asynchronous
+        operation.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -138,7 +140,8 @@ class ItemLevelRecoveryConnectionsOperations(object):
          are to be restored.
         :type protected_item_name: str
         :param recovery_point_id: Recovery point ID which represents backed up
-         data. iSCSI connection will be revoked for this backed up data.
+         data. iSCSI connection will be revoked for
+         this backed up data.
         :type recovery_point_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

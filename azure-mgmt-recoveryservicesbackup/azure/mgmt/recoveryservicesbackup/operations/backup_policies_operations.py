@@ -40,7 +40,8 @@ class BackupPoliciesOperations(object):
     def list(
             self, vault_name, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists of backup policies associated with Recovery Services Vault. API
-        provides pagination parameters to fetch scoped results.
+        provides pagination parameters to fetch
+        scoped results.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

@@ -40,7 +40,8 @@ class JobCancellationsOperations(object):
     def trigger(
             self, vault_name, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Cancels a job. This is an asynchronous operation. To know the status of
-        the cancellation, call GetCancelOperationResult API.
+        the cancellation, call
+        GetCancelOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

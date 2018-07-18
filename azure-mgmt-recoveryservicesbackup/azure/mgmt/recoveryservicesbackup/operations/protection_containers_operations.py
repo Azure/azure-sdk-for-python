@@ -113,7 +113,8 @@ class ProtectionContainersOperations(object):
             self, vault_name, resource_group_name, fabric_name, container_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Registers the container with Recovery Services vault.
         This is an asynchronous operation. To track the operation status, use
-        location header to call get latest status of the operation.
+        location header to call get latest status of
+        the operation.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -190,10 +191,10 @@ class ProtectionContainersOperations(object):
 
     def unregister(
             self, vault_name, resource_group_name, fabric_name, container_name, custom_headers=None, raw=False, **operation_config):
-        """Unregisters the given container from your Recovery Services Vault.
-        This is an asynchronous operation. To determine whether the backend
-        service has finished processing the request, call Get Container
-        Operation Result API.
+        """Unregisters the given container from your Recovery Services Vault. This
+        is an asynchronous operation. To determine
+        whether the backend service has finished processing the request, call
+        Get Container Operation Result API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -326,8 +327,9 @@ class ProtectionContainersOperations(object):
     def refresh(
             self, vault_name, resource_group_name, fabric_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Discovers all the containers in the subscription that can be backed up
-        to Recovery Services Vault. This is an asynchronous operation. To know
-        the status of the operation, call GetRefreshOperationResult API.
+        to Recovery Services Vault. This is an
+        asynchronous operation. To know the status of the operation, call
+        GetRefreshOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
