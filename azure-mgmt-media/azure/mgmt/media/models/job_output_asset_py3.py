@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_output import JobOutput
+from .job_output_py3 import JobOutput
 
 
 class JobOutputAsset(JobOutput):
