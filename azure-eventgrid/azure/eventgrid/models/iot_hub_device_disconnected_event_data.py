@@ -9,30 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+from .device_connection_state_event_properties import DeviceConnectionStateEventProperties
 
 
-class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
-    """Event data for Microsoft.Devices.DeviceDeleted event.
+class IotHubDeviceDisconnectedEventData(DeviceConnectionStateEventProperties):
+    """Event data for Microsoft.Devices.DeviceDisconnected event.
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
      alphanumeric characters plus the following special characters: - : . + % _
      &#35; * ? ! ( ) , = @ ; $ '.
     :type device_id: str
+    :param module_id: The unique identifier of the module. This case-sensitive
+     string can be up to 128 characters long, and supports ASCII 7-bit
+     alphanumeric characters plus the following special characters: - : . + % _
+     &#35; * ? ! ( ) , = @ ; $ '.
+    :type module_id: str
     :param hub_name: Name of the IoT Hub where the device was created or
      deleted.
     :type hub_name: str
-    :param twin: Information about the device twin, which is the cloud
-     representation of application device metadata.
-    :type twin: ~azure.eventgrid.models.DeviceTwinInfo
+    :param device_connection_state_event_info: Information about the device
+     connection state event.
+    :type device_connection_state_event_info:
+     ~azure.eventgrid.models.DeviceConnectionStateEventInfo
     """
 
     _attribute_map = {
         'device_id': {'key': 'deviceId', 'type': 'str'},
+        'module_id': {'key': 'moduleId', 'type': 'str'},
         'hub_name': {'key': 'hubName', 'type': 'str'},
-        'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
+        'device_connection_state_event_info': {'key': 'deviceConnectionStateEventInfo', 'type': 'DeviceConnectionStateEventInfo'},
     }
 
     def __init__(self, **kwargs):
-        super(IotHubDeviceDeletedEventData, self).__init__(**kwargs)
+        super(IotHubDeviceDisconnectedEventData, self).__init__(**kwargs)
