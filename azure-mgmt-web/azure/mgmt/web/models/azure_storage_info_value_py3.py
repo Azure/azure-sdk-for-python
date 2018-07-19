@@ -16,6 +16,9 @@ class AzureStorageInfoValue(Model):
     """Azure Files or Blob Storage access information value for dictionary
     storage.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param type: Type of storage. Possible values include: 'AzureFiles',
      'AzureBlob'
     :type type: str or ~azure.mgmt.web.models.AzureStorageType
@@ -29,10 +32,14 @@ class AzureStorageInfoValue(Model):
     :param mount_path: Path to mount the storage within the site's runtime
      environment.
     :type mount_path: str
-    :param state: State of the storage account. Possible values include: 'Ok',
+    :ivar state: State of the storage account. Possible values include: 'Ok',
      'InvalidCredentials', 'InvalidShare'
-    :type state: str or ~azure.mgmt.web.models.AzureStorageState
+    :vartype state: str or ~azure.mgmt.web.models.AzureStorageState
     """
+
+    _validation = {
+        'state': {'readonly': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'AzureStorageType'},
@@ -43,11 +50,11 @@ class AzureStorageInfoValue(Model):
         'state': {'key': 'state', 'type': 'AzureStorageState'},
     }
 
-    def __init__(self, *, type=None, account_name: str=None, share_name: str=None, access_key: str=None, mount_path: str=None, state=None, **kwargs) -> None:
+    def __init__(self, *, type=None, account_name: str=None, share_name: str=None, access_key: str=None, mount_path: str=None, **kwargs) -> None:
         super(AzureStorageInfoValue, self).__init__(**kwargs)
         self.type = type
         self.account_name = account_name
         self.share_name = share_name
         self.access_key = access_key
         self.mount_path = mount_path
-        self.state = state
+        self.state = None
