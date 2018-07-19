@@ -16,6 +16,9 @@ class AzureStorageInfoValue(Model):
     """Azure Files or Blob Storage access information value for dictionary
     storage.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param type: Type of storage. Possible values include: 'AzureFiles',
      'AzureBlob'
     :type type: str or ~azure.mgmt.web.models.AzureStorageType
@@ -29,10 +32,14 @@ class AzureStorageInfoValue(Model):
     :param mount_path: Path to mount the storage within the site's runtime
      environment.
     :type mount_path: str
-    :param state: State of the storage account. Possible values include: 'Ok',
+    :ivar state: State of the storage account. Possible values include: 'Ok',
      'InvalidCredentials', 'InvalidShare'
-    :type state: str or ~azure.mgmt.web.models.AzureStorageState
+    :vartype state: str or ~azure.mgmt.web.models.AzureStorageState
     """
+
+    _validation = {
+        'state': {'readonly': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'AzureStorageType'},
@@ -50,4 +57,4 @@ class AzureStorageInfoValue(Model):
         self.share_name = kwargs.get('share_name', None)
         self.access_key = kwargs.get('access_key', None)
         self.mount_path = kwargs.get('mount_path', None)
-        self.state = kwargs.get('state', None)
+        self.state = None
