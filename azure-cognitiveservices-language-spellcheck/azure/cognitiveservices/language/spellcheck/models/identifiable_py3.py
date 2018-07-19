@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response_base import ResponseBase
+from .response_base_py3 import ResponseBase
 
 
 class Identifiable(ResponseBase):
