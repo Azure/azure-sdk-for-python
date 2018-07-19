@@ -108,6 +108,7 @@ class EventHubClient(object):
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
+        self.mgmt_node = b"$management"
         url_username = unquote_plus(self.address.username) if self.address.username else None
         username = username or url_username
         url_password = unquote_plus(self.address.password) if self.address.password else None
@@ -147,6 +148,7 @@ class EventHubClient(object):
         password = _generate_sas_token(address, policy, key)
         client = cls("amqps://" + address, username=username, password=password, **kwargs)
         client._auth_config = {'username': policy, 'password': key}  # pylint: disable=protected-access
+        client.mgmt_node = ("amqps://" + address + ":5671/pyot/$management").encode('UTF-8')
         return client
 
     def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
@@ -163,7 +165,7 @@ class EventHubClient(object):
         """
         if "@sas.root" in username:
             return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
+        return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password, timeout=60)
 
     def _create_properties(self):  # pylint: disable=no-self-use
         """

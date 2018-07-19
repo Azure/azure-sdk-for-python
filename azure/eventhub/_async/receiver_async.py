@@ -88,7 +88,7 @@ class AsyncReceiver(Receiver):
             raise EventHubError("Authorization timeout.")
         elif auth_in_progress:
             return False
-        elif not await self._handler._client_ready():
+        elif not await self._handler._client_ready_async():
             return False
         else:
             return True
@@ -109,6 +109,8 @@ class AsyncReceiver(Receiver):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
+        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+            self.error = EventHubError(str(exception), exception)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
@@ -141,7 +143,11 @@ class AsyncReceiver(Receiver):
                 data_batch.append(event_data)
             return data_batch
         except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
+            error = EventHubError(str(detach), detach)
+            await self.close_async(exception=error)
+            raise error
+        except errors.ConnectionClose as close:
+            error = EventHubError(str(close), close)
             await self.close_async(exception=error)
             raise error
         except Exception as e:

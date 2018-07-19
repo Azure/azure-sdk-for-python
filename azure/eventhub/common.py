@@ -7,8 +7,28 @@ import datetime
 import time
 
 from uamqp import Message, BatchMessage
-from uamqp import types, constants
+from uamqp import types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
+
+
+def _error_handler(error):
+    """
+    Called internally when an event has failed to send so we
+    can parse the error to determine whether we should attempt
+    to retry sending the event again.
+    Returns the action to take according to error type.
+
+    :param error: The error received in the send attempt.
+    :type error: Exception
+    :rtype: ~uamqp.errors.ErrorAction
+    """
+    if error.condition == b'com.microsoft:server-busy':
+        return errors.ErrorAction(retry=True, backoff=4)
+    elif error.condition == b'com.microsoft:timeout':
+        return errors.ErrorAction(retry=True, backoff=2)
+    elif error.condition == b'com.microsoft:operation-cancelled':
+        return errors.ErrorAction(retry=True)
+    return errors.ErrorAction(retry=True)
 
 
 class EventData(object):
@@ -212,26 +232,27 @@ class EventHubError(Exception):
     def __init__(self, message, details=None):
         self.error = None
         self.message = message
-        self.details = []
+        self.details = details
         if isinstance(message, constants.MessageSendResult):
             self.message = "Message send failed with result: {}".format(message)
-        if details and isinstance(details, list) and isinstance(details[0], list):
-            self.details = details[0]
-            self.error = details[0][0]
+        if details and isinstance(details, Exception):
             try:
-                self._parse_error(details[0])
-            except:
-                raise
-        if self.error:
+                condition = details.condition.value.decode('UTF-8')
+            except AttributeError:
+                condition = details.condition.decode('UTF-8')
+            _, _, self.error = condition.partition(':')
             self.message += "\nError: {}".format(self.error)
-        for detail in self.details:
-            self.message += "\n{}".format(detail)
+            try:
+                self._parse_error(details.description)
+                for detail in self.details:
+                    self.message += "\n{}".format(detail)
+            except:
+                self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
     def _parse_error(self, error_list):
         details = []
-        _, _, self.error = error_list[0].decode('UTF-8').partition(':')
-        self.message = error_list[1].decode('UTF-8')
+        self.message = error_list if isinstance(error_list, str) else error_list.decode('UTF-8')
         details_index = self.message.find(" Reference:")
         if details_index >= 0:
             details_msg = self.message[details_index + 1:]

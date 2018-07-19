@@ -51,7 +51,7 @@ class EventHubClientAsync(EventHubClient):
         """
         if "@sas.root" in username:
             return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAsync.from_shared_access_key(auth_uri, username, password)
+        return authentication.SASTokenAsync.from_shared_access_key(auth_uri, username, password, timeout=60)
 
     def _create_connection_async(self):
         """
@@ -109,6 +109,10 @@ class EventHubClientAsync(EventHubClient):
         if not all(r.hostname == redirects[0].hostname for r in redirects):
             raise EventHubError("Multiple clients attempting to redirect to different hosts.")
         self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
+        #port = str(redirects[0].port).encode('UTF-8')
+        #path = self.address.path.encode('UTF-8')
+        #self.mgmt_node = b"pyot/$management" #+ redirects[0].hostname  b"amqps://pyot.azure-devices.net"  + b":" + port + 
+        #print("setting mgmt node", self.mgmt_node)
         await self.connection.redirect_async(redirects[0], self.auth)
         await asyncio.gather(*[c.open_async(self.connection) for c in self.clients])
 
@@ -161,14 +165,18 @@ class EventHubClientAsync(EventHubClient):
 
         :rtype: dict
         """
+        self._create_connection_async()
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        async with AMQPClientAsync(target, auth=self.auth, debug=self.debug) as mgmt_client:
+        try:
+            mgmt_client = AMQPClientAsync(target, auth=self.auth, debug=self.debug)
+            await mgmt_client.open_async(connection=self.connection)
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = await mgmt_client.mgmt_request_async(
                 mgmt_msg,
                 constants.READ_OPERATION,
                 op_type=b'com.microsoft:eventhub',
+                node=self.mgmt_node,
                 status_code_field=b'status-code',
                 description_fields=b'status-description')
             eh_info = response.get_data()
@@ -180,6 +188,8 @@ class EventHubClientAsync(EventHubClient):
                 output['partition_count'] = eh_info[b'partition_count']
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
+        finally:
+            await mgmt_client.close_async()
 
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None, loop=None):
         """

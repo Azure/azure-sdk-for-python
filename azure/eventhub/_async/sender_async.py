@@ -76,7 +76,7 @@ class AsyncSender(Sender):
             raise EventHubError("Authorization timeout.")
         elif auth_in_progress:
             return False
-        elif not await self._handler._client_ready():
+        elif not await self._handler._client_ready_async():
             return False
         else:
             return True
@@ -97,6 +97,8 @@ class AsyncSender(Sender):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
+        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+            self.error = EventHubError(str(error), error)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
@@ -123,7 +125,11 @@ class AsyncSender(Sender):
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
         except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
+            error = EventHubError(str(detach), detach)
+            await self.close_async(exception=error)
+            raise error
+        except errors.ConnectionClose as close:
+            error = EventHubError(str(close), close)
             await self.close_async(exception=error)
             raise error
         except Exception as e:
@@ -141,5 +147,13 @@ class AsyncSender(Sender):
             raise self.error
         try:
             await self._handler.wait_async()
+        except errors.LinkDetach as detach:
+            error = EventHubError(str(detach), detach)
+            await self.close_async(exception=error)
+            raise error
+        except errors.ConnectionClose as close:
+            error = EventHubError(str(close), close)
+            await self.close_async(exception=error)
+            raise error
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))

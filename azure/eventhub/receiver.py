@@ -158,7 +158,7 @@ class Receiver:
                 data_batch.append(event_data)
             return data_batch
         except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
+            error = EventHubError(str(detach), detach)
             self.close(exception=error)
             raise error
         except Exception as e:
