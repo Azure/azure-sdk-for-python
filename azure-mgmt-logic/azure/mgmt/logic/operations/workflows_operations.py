@@ -43,7 +43,8 @@ class WorkflowsOperations(object):
 
         :param top: The number of items to be included in the result.
         :type top: int
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Options for
+         filters include: State, Trigger, and ReferencedResourceId.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -118,7 +119,8 @@ class WorkflowsOperations(object):
         :type resource_group_name: str
         :param top: The number of items to be included in the result.
         :type top: int
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Options for
+         filters include: State, Trigger, and ReferencedResourceId.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
