@@ -115,7 +115,6 @@ try:
     from .common_encryption_cenc_py3 import CommonEncryptionCenc
     from .common_encryption_cbcs_py3 import CommonEncryptionCbcs
     from .streaming_policy_py3 import StreamingPolicy
-    from .streaming_locator_user_defined_content_key_py3 import StreamingLocatorUserDefinedContentKey
     from .streaming_locator_content_key_py3 import StreamingLocatorContentKey
     from .streaming_path_py3 import StreamingPath
     from .list_content_keys_response_py3 import ListContentKeysResponse
@@ -244,7 +243,6 @@ except (SyntaxError, ImportError):
     from .common_encryption_cenc import CommonEncryptionCenc
     from .common_encryption_cbcs import CommonEncryptionCbcs
     from .streaming_policy import StreamingPolicy
-    from .streaming_locator_user_defined_content_key import StreamingLocatorUserDefinedContentKey
     from .streaming_locator_content_key import StreamingLocatorContentKey
     from .streaming_path import StreamingPath
     from .list_content_keys_response import ListContentKeysResponse
@@ -422,7 +420,6 @@ __all__ = [
     'CommonEncryptionCenc',
     'CommonEncryptionCbcs',
     'StreamingPolicy',
-    'StreamingLocatorUserDefinedContentKey',
     'StreamingLocatorContentKey',
     'StreamingPath',
     'ListContentKeysResponse',
