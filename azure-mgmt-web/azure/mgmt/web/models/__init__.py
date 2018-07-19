@@ -56,6 +56,7 @@ try:
     from .handler_mapping_py3 import HandlerMapping
     from .site_machine_key_py3 import SiteMachineKey
     from .conn_string_info_py3 import ConnStringInfo
+    from .azure_storage_info_value_py3 import AzureStorageInfoValue
     from .name_value_pair_py3 import NameValuePair
     from .site_config_py3 import SiteConfig
     from .host_name_ssl_state_py3 import HostNameSslState
@@ -154,6 +155,7 @@ try:
     from .azure_blob_storage_application_logs_config_py3 import AzureBlobStorageApplicationLogsConfig
     from .application_logs_config_py3 import ApplicationLogsConfig
     from .azure_blob_storage_http_logs_config_py3 import AzureBlobStorageHttpLogsConfig
+    from .azure_storage_property_dictionary_resource_py3 import AzureStoragePropertyDictionaryResource
     from .database_backup_setting_py3 import DatabaseBackupSetting
     from .backup_item_py3 import BackupItem
     from .backup_schedule_py3 import BackupSchedule
@@ -274,6 +276,7 @@ except (SyntaxError, ImportError):
     from .handler_mapping import HandlerMapping
     from .site_machine_key import SiteMachineKey
     from .conn_string_info import ConnStringInfo
+    from .azure_storage_info_value import AzureStorageInfoValue
     from .name_value_pair import NameValuePair
     from .site_config import SiteConfig
     from .host_name_ssl_state import HostNameSslState
@@ -372,6 +375,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_storage_application_logs_config import AzureBlobStorageApplicationLogsConfig
     from .application_logs_config import ApplicationLogsConfig
     from .azure_blob_storage_http_logs_config import AzureBlobStorageHttpLogsConfig
+    from .azure_storage_property_dictionary_resource import AzureStoragePropertyDictionaryResource
     from .database_backup_setting import DatabaseBackupSetting
     from .backup_item import BackupItem
     from .backup_schedule import BackupSchedule
@@ -508,6 +512,8 @@ from .web_site_management_client_enums import (
     IpFilterTag,
     AutoHealActionType,
     ConnectionStringType,
+    AzureStorageType,
+    AzureStorageState,
     ScmType,
     ManagedPipelineMode,
     SiteLoadBalancing,
@@ -608,6 +614,7 @@ __all__ = [
     'HandlerMapping',
     'SiteMachineKey',
     'ConnStringInfo',
+    'AzureStorageInfoValue',
     'NameValuePair',
     'SiteConfig',
     'HostNameSslState',
@@ -706,6 +713,7 @@ __all__ = [
     'AzureBlobStorageApplicationLogsConfig',
     'ApplicationLogsConfig',
     'AzureBlobStorageHttpLogsConfig',
+    'AzureStoragePropertyDictionaryResource',
     'DatabaseBackupSetting',
     'BackupItem',
     'BackupSchedule',
@@ -841,6 +849,8 @@ __all__ = [
     'IpFilterTag',
     'AutoHealActionType',
     'ConnectionStringType',
+    'AzureStorageType',
+    'AzureStorageState',
     'ScmType',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
