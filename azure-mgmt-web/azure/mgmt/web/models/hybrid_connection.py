@@ -69,13 +69,13 @@ class HybridConnection(ProxyOnlyResource):
         'service_bus_suffix': {'key': 'properties.serviceBusSuffix', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, service_bus_namespace=None, relay_name=None, relay_arm_uri=None, hostname=None, port=None, send_key_name=None, send_key_value=None, service_bus_suffix=None):
-        super(HybridConnection, self).__init__(kind=kind)
-        self.service_bus_namespace = service_bus_namespace
-        self.relay_name = relay_name
-        self.relay_arm_uri = relay_arm_uri
-        self.hostname = hostname
-        self.port = port
-        self.send_key_name = send_key_name
-        self.send_key_value = send_key_value
-        self.service_bus_suffix = service_bus_suffix
+    def __init__(self, **kwargs):
+        super(HybridConnection, self).__init__(**kwargs)
+        self.service_bus_namespace = kwargs.get('service_bus_namespace', None)
+        self.relay_name = kwargs.get('relay_name', None)
+        self.relay_arm_uri = kwargs.get('relay_arm_uri', None)
+        self.hostname = kwargs.get('hostname', None)
+        self.port = kwargs.get('port', None)
+        self.send_key_name = kwargs.get('send_key_name', None)
+        self.send_key_value = kwargs.get('send_key_value', None)
+        self.service_bus_suffix = kwargs.get('service_bus_suffix', None)

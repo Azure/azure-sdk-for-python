@@ -60,8 +60,8 @@ class NetworkFeatures(ProxyOnlyResource):
         'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
     }
 
-    def __init__(self, kind=None):
-        super(NetworkFeatures, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(NetworkFeatures, self).__init__(**kwargs)
         self.virtual_network_name = None
         self.virtual_network_connection = None
         self.hybrid_connections = None

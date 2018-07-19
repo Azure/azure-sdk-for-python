@@ -35,10 +35,10 @@ class AnalysisData(Model):
         'detector_meta_data': {'key': 'detectorMetaData', 'type': 'ResponseMetaData'},
     }
 
-    def __init__(self, source=None, detector_definition=None, metrics=None, data=None, detector_meta_data=None):
-        super(AnalysisData, self).__init__()
-        self.source = source
-        self.detector_definition = detector_definition
-        self.metrics = metrics
-        self.data = data
-        self.detector_meta_data = detector_meta_data
+    def __init__(self, **kwargs):
+        super(AnalysisData, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.detector_definition = kwargs.get('detector_definition', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.data = kwargs.get('data', None)
+        self.detector_meta_data = kwargs.get('detector_meta_data', None)

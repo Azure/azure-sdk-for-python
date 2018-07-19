@@ -26,7 +26,7 @@ class RequestsBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, count=None, time_interval=None):
-        super(RequestsBasedTrigger, self).__init__()
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, **kwargs):
+        super(RequestsBasedTrigger, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)

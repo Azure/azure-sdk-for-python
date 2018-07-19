@@ -60,10 +60,10 @@ class SiteSourceControl(ProxyOnlyResource):
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
-        super(SiteSourceControl, self).__init__(kind=kind)
-        self.repo_url = repo_url
-        self.branch = branch
-        self.is_manual_integration = is_manual_integration
-        self.deployment_rollback_enabled = deployment_rollback_enabled
-        self.is_mercurial = is_mercurial
+    def __init__(self, **kwargs):
+        super(SiteSourceControl, self).__init__(**kwargs)
+        self.repo_url = kwargs.get('repo_url', None)
+        self.branch = kwargs.get('branch', None)
+        self.is_manual_integration = kwargs.get('is_manual_integration', None)
+        self.deployment_rollback_enabled = kwargs.get('deployment_rollback_enabled', None)
+        self.is_mercurial = kwargs.get('is_mercurial', None)
