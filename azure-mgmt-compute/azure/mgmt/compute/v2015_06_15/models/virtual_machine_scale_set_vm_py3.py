@@ -39,7 +39,7 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype latest_model_applied: bool
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineInstanceView
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetVMInstanceView
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
     :type hardware_profile:
@@ -118,7 +118,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_id': {'key': 'instanceId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},

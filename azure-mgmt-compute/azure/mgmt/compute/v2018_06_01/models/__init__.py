@@ -118,9 +118,9 @@ try:
     from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
     from .upgrade_operation_historical_status_info_properties_py3 import UpgradeOperationHistoricalStatusInfoProperties
     from .upgrade_operation_historical_status_info_py3 import UpgradeOperationHistoricalStatusInfo
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .virtual_machine_health_status_py3 import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status_py3 import RollingUpgradeRunningStatus
     from .rolling_upgrade_status_info_py3 import RollingUpgradeStatusInfo
     from .resource_py3 import Resource
@@ -266,9 +266,9 @@ except (SyntaxError, ImportError):
     from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
     from .upgrade_operation_historical_status_info_properties import UpgradeOperationHistoricalStatusInfoProperties
     from .upgrade_operation_historical_status_info import UpgradeOperationHistoricalStatusInfo
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .virtual_machine_health_status import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
     from .rolling_upgrade_status_info import RollingUpgradeStatusInfo
     from .resource import Resource
@@ -461,9 +461,9 @@ __all__ = [
     'RollingUpgradeProgressInfo',
     'UpgradeOperationHistoricalStatusInfoProperties',
     'UpgradeOperationHistoricalStatusInfo',
-    'VirtualMachineScaleSetVM',
     'VirtualMachineHealthStatus',
     'VirtualMachineScaleSetVMInstanceView',
+    'VirtualMachineScaleSetVM',
     'RollingUpgradeRunningStatus',
     'RollingUpgradeStatusInfo',
     'Resource',
