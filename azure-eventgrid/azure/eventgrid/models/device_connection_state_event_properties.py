@@ -12,31 +12,39 @@
 from msrest.serialization import Model
 
 
-class DeviceLifeCycleEventProperties(Model):
-    """Schema of the Data property of an EventGridEvent for a device life cycle
-    event (DeviceCreated, DeviceDeleted).
+class DeviceConnectionStateEventProperties(Model):
+    """Schema of the Data property of an EventGridEvent for a device connection
+    state event (DeviceConnected, DeviceDisconnected).
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
      alphanumeric characters plus the following special characters: - : . + % _
      &#35; * ? ! ( ) , = @ ; $ '.
     :type device_id: str
+    :param module_id: The unique identifier of the module. This case-sensitive
+     string can be up to 128 characters long, and supports ASCII 7-bit
+     alphanumeric characters plus the following special characters: - : . + % _
+     &#35; * ? ! ( ) , = @ ; $ '.
+    :type module_id: str
     :param hub_name: Name of the IoT Hub where the device was created or
      deleted.
     :type hub_name: str
-    :param twin: Information about the device twin, which is the cloud
-     representation of application device metadata.
-    :type twin: ~azure.eventgrid.models.DeviceTwinInfo
+    :param device_connection_state_event_info: Information about the device
+     connection state event.
+    :type device_connection_state_event_info:
+     ~azure.eventgrid.models.DeviceConnectionStateEventInfo
     """
 
     _attribute_map = {
         'device_id': {'key': 'deviceId', 'type': 'str'},
+        'module_id': {'key': 'moduleId', 'type': 'str'},
         'hub_name': {'key': 'hubName', 'type': 'str'},
-        'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
+        'device_connection_state_event_info': {'key': 'deviceConnectionStateEventInfo', 'type': 'DeviceConnectionStateEventInfo'},
     }
 
     def __init__(self, **kwargs):
-        super(DeviceLifeCycleEventProperties, self).__init__(**kwargs)
+        super(DeviceConnectionStateEventProperties, self).__init__(**kwargs)
         self.device_id = kwargs.get('device_id', None)
+        self.module_id = kwargs.get('module_id', None)
         self.hub_name = kwargs.get('hub_name', None)
-        self.twin = kwargs.get('twin', None)
+        self.device_connection_state_event_info = kwargs.get('device_connection_state_event_info', None)
