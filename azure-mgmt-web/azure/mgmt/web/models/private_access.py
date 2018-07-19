@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class RestoreResponse(ProxyOnlyResource):
-    """Response for an app restore request.
+class PrivateAccess(ProxyOnlyResource):
+    """Description of the parameters of Private Access for a Web Site.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,16 +26,18 @@ class RestoreResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar operation_id: When server starts the restore process, it will return
-     an operation ID identifying that particular restore operation.
-    :vartype operation_id: str
+    :param enabled: Whether private access is enabled or not.
+    :type enabled: bool
+    :param virtual_networks: The Virtual Networks (and subnets) allowed to
+     access the site privately.
+    :type virtual_networks:
+     list[~azure.mgmt.web.models.PrivateAccessVirtualNetwork]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,9 +45,11 @@ class RestoreResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'virtual_networks': {'key': 'properties.virtualNetworks', 'type': '[PrivateAccessVirtualNetwork]'},
     }
 
-    def __init__(self, kind=None):
-        super(RestoreResponse, self).__init__(kind=kind)
-        self.operation_id = None
+    def __init__(self, **kwargs):
+        super(PrivateAccess, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.virtual_networks = kwargs.get('virtual_networks', None)

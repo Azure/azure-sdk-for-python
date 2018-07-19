@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
 from .operations.certificate_registration_provider_operations import CertificateRegistrationProviderOperations
@@ -66,7 +67,7 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class WebSiteManagementClient(object):
+class WebSiteManagementClient(SDKClient):
     """WebSite Management Client
 
     :ivar config: Configuration for client.
@@ -112,9 +113,10 @@ class WebSiteManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = WebSiteManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(WebSiteManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-02-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -159,16 +161,15 @@ class WebSiteManagementClient(object):
         :return: User or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.User or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -185,9 +186,7 @@ class WebSiteManagementClient(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -217,16 +216,15 @@ class WebSiteManagementClient(object):
         :return: User or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.User or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -247,9 +245,7 @@ class WebSiteManagementClient(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -277,10 +273,9 @@ class WebSiteManagementClient(object):
         :return: An iterator like instance of SourceControl
         :rtype:
          ~azure.mgmt.web.models.SourceControlPaged[~azure.mgmt.web.models.SourceControl]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -289,7 +284,7 @@ class WebSiteManagementClient(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -311,9 +306,7 @@ class WebSiteManagementClient(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -344,10 +337,9 @@ class WebSiteManagementClient(object):
         :return: SourceControl or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.SourceControl or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.get_source_control.metadata['url']
         path_format_arguments = {
@@ -357,7 +349,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -374,9 +366,7 @@ class WebSiteManagementClient(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -408,10 +398,9 @@ class WebSiteManagementClient(object):
         :return: SourceControl or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.SourceControl or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.update_source_control.metadata['url']
         path_format_arguments = {
@@ -421,7 +410,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -442,9 +431,7 @@ class WebSiteManagementClient(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -457,6 +444,80 @@ class WebSiteManagementClient(object):
 
         return deserialized
     update_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
+
+    def list_billing_meters(
+            self, billing_location=None, os_type=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of meters for a given location.
+
+        Gets a list of meters for a given location.
+
+        :param billing_location: Azure Location of billable resource
+        :type billing_location: str
+        :param os_type: App Service OS type meters used for
+        :type os_type: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of BillingMeter
+        :rtype:
+         ~azure.mgmt.web.models.BillingMeterPaged[~azure.mgmt.web.models.BillingMeter]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_billing_meters.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if billing_location is not None:
+                    query_parameters['billingLocation'] = self._serialize.query("billing_location", billing_location, 'str')
+                if os_type is not None:
+                    query_parameters['osType'] = self._serialize.query("os_type", os_type, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.BillingMeterPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.BillingMeterPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_billing_meters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/billingMeters'}
 
     def check_name_availability(
             self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
@@ -481,11 +542,10 @@ class WebSiteManagementClient(object):
         :return: ResourceNameAvailability or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.ResourceNameAvailability or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
-
-        api_version = "2016-03-01"
 
         # Construct URL
         url = self.check_name_availability.metadata['url']
@@ -496,7 +556,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -517,9 +577,7 @@ class WebSiteManagementClient(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -547,10 +605,9 @@ class WebSiteManagementClient(object):
         :return: DeploymentLocations or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DeploymentLocations or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.get_subscription_deployment_locations.metadata['url']
         path_format_arguments = {
@@ -560,7 +617,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -577,9 +634,7 @@ class WebSiteManagementClient(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -594,18 +649,21 @@ class WebSiteManagementClient(object):
     get_subscription_deployment_locations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'}
 
     def list_geo_regions(
-            self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
 
         :param sku: Name of SKU used to filter the regions. Possible values
-         include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium',
-         'PremiumV2', 'Dynamic', 'Isolated'
+         include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
+         'Isolated', 'PremiumV2'
         :type sku: str or ~azure.mgmt.web.models.SkuName
         :param linux_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Linux workers.
         :type linux_workers_enabled: bool
+        :param xenon_workers_enabled: Specify <code>true</code> if you want to
+         filter to only regions that support Xenon workers.
+        :type xenon_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -614,10 +672,9 @@ class WebSiteManagementClient(object):
         :return: An iterator like instance of GeoRegion
         :rtype:
          ~azure.mgmt.web.models.GeoRegionPaged[~azure.mgmt.web.models.GeoRegion]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -634,7 +691,9 @@ class WebSiteManagementClient(object):
                     query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
                 if linux_workers_enabled is not None:
                     query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if xenon_workers_enabled is not None:
+                    query_parameters['xenonWorkersEnabled'] = self._serialize.query("xenon_workers_enabled", xenon_workers_enabled, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -656,9 +715,7 @@ class WebSiteManagementClient(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -689,11 +746,10 @@ class WebSiteManagementClient(object):
         :return: An iterator like instance of Identifier
         :rtype:
          ~azure.mgmt.web.models.IdentifierPaged[~azure.mgmt.web.models.Identifier]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         name_identifier = models.NameIdentifier(name=name)
-
-        api_version = "2016-03-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -707,7 +763,7 @@ class WebSiteManagementClient(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -732,9 +788,7 @@ class WebSiteManagementClient(object):
                 request, header_parameters, body_content, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -763,10 +817,9 @@ class WebSiteManagementClient(object):
         :return: An iterator like instance of PremierAddOnOffer
         :rtype:
          ~azure.mgmt.web.models.PremierAddOnOfferPaged[~azure.mgmt.web.models.PremierAddOnOffer]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -779,7 +832,7 @@ class WebSiteManagementClient(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -801,9 +854,7 @@ class WebSiteManagementClient(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -832,10 +883,9 @@ class WebSiteManagementClient(object):
         :return: SkuInfos or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.SkuInfos or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.list_skus.metadata['url']
         path_format_arguments = {
@@ -845,7 +895,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -862,9 +912,7 @@ class WebSiteManagementClient(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -896,10 +944,9 @@ class WebSiteManagementClient(object):
         :return: VnetValidationFailureDetails or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.VnetValidationFailureDetails or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.verify_hosting_environment_vnet.metadata['url']
         path_format_arguments = {
@@ -909,7 +956,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -930,9 +977,7 @@ class WebSiteManagementClient(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -970,8 +1015,6 @@ class WebSiteManagementClient(object):
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
 
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.move.metadata['url']
         path_format_arguments = {
@@ -982,7 +1025,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1031,10 +1074,9 @@ class WebSiteManagementClient(object):
         :return: ValidateResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.ValidateResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.validate.metadata['url']
         path_format_arguments = {
@@ -1045,7 +1087,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1066,9 +1108,7 @@ class WebSiteManagementClient(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1106,8 +1146,6 @@ class WebSiteManagementClient(object):
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
 
-        api_version = "2016-03-01"
-
         # Construct URL
         url = self.validate_move.metadata['url']
         path_format_arguments = {
@@ -1118,7 +1156,7 @@ class WebSiteManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
