@@ -467,6 +467,7 @@ class ComputeManagementClient(MultiApiClientMixin):
            * 2017-03-30: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations>`
            * 2017-12-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_12_01.operations.VirtualMachineRunCommandsOperations>`
            * 2018-04-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2018_04_01.operations.VirtualMachineRunCommandsOperations>`
+           * 2018-06-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2018_06_01.operations.VirtualMachineRunCommandsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_run_commands')
         if api_version == '2017-03-30':
@@ -475,6 +476,8 @@ class ComputeManagementClient(MultiApiClientMixin):
             from .v2017_12_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import VirtualMachineRunCommandsOperations as OperationClass
+        elif api_version == '2018-06-01':
+            from .v2018_06_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

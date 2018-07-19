@@ -132,6 +132,12 @@ try:
     from .log_analytics_input_base_py3 import LogAnalyticsInputBase
     from .log_analytics_output_py3 import LogAnalyticsOutput
     from .log_analytics_operation_result_py3 import LogAnalyticsOperationResult
+    from .run_command_input_parameter_py3 import RunCommandInputParameter
+    from .run_command_input_py3 import RunCommandInput
+    from .run_command_parameter_definition_py3 import RunCommandParameterDefinition
+    from .run_command_document_base_py3 import RunCommandDocumentBase
+    from .run_command_document_py3 import RunCommandDocument
+    from .run_command_result_py3 import RunCommandResult
     from .gallery_identifier_py3 import GalleryIdentifier
     from .gallery_py3 import Gallery
     from .gallery_image_identifier_py3 import GalleryImageIdentifier
@@ -274,6 +280,12 @@ except (SyntaxError, ImportError):
     from .log_analytics_input_base import LogAnalyticsInputBase
     from .log_analytics_output import LogAnalyticsOutput
     from .log_analytics_operation_result import LogAnalyticsOperationResult
+    from .run_command_input_parameter import RunCommandInputParameter
+    from .run_command_input import RunCommandInput
+    from .run_command_parameter_definition import RunCommandParameterDefinition
+    from .run_command_document_base import RunCommandDocumentBase
+    from .run_command_document import RunCommandDocument
+    from .run_command_result import RunCommandResult
     from .gallery_identifier import GalleryIdentifier
     from .gallery import Gallery
     from .gallery_image_identifier import GalleryImageIdentifier
@@ -304,6 +316,7 @@ from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .upgrade_operation_historical_status_info_paged import UpgradeOperationHistoricalStatusInfoPaged
 from .virtual_machine_scale_set_extension_paged import VirtualMachineScaleSetExtensionPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
+from .run_command_document_base_paged import RunCommandDocumentBasePaged
 from .gallery_paged import GalleryPaged
 from .gallery_image_paged import GalleryImagePaged
 from .gallery_image_version_paged import GalleryImageVersionPaged
@@ -462,6 +475,12 @@ __all__ = [
     'LogAnalyticsInputBase',
     'LogAnalyticsOutput',
     'LogAnalyticsOperationResult',
+    'RunCommandInputParameter',
+    'RunCommandInput',
+    'RunCommandParameterDefinition',
+    'RunCommandDocumentBase',
+    'RunCommandDocument',
+    'RunCommandResult',
     'GalleryIdentifier',
     'Gallery',
     'GalleryImageIdentifier',
@@ -492,6 +511,7 @@ __all__ = [
     'UpgradeOperationHistoricalStatusInfoPaged',
     'VirtualMachineScaleSetExtensionPaged',
     'VirtualMachineScaleSetVMPaged',
+    'RunCommandDocumentBasePaged',
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
