@@ -21,6 +21,7 @@ matrix:
 #      python: "pypy2.7-5.8.0"
     - os: linux
       python: "pypy3.5-5.8.0"
+      dist: trusty
     - os: osx
       osx_image: xcode7.3
       language: generic
