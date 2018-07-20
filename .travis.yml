@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 sudo: required
 cache: pip
 language: python
@@ -8,6 +8,7 @@ matrix:
       python: "2.7"
     - os: linux
       python: "3.4"
+      dist: trusty
     - os: linux
       python: "3.5"
     - os: linux
@@ -20,6 +21,7 @@ matrix:
 #      python: "pypy2.7-5.8.0"
     - os: linux
       python: "pypy3.5-5.8.0"
+      dist: trusty
     - os: osx
       osx_image: xcode7.3
       language: generic
@@ -27,7 +29,6 @@ matrix:
     - os: osx
 #    - python: "pypy2.7-5.8.0"
     - python: "pypy3.5-5.8.0"
-    - python: "3.7"
     - python: "nightly"
   fast_finish: true
 # Perform the manual steps on osx to install python3 and activate venv
