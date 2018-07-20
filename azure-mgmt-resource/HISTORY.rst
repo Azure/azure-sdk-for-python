@@ -9,6 +9,7 @@ Release History
 **Features**
 
 - Identity class has now a user_assigned_identities attribute
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
 
 2.0.0rc2 (2018-06-13)
 +++++++++++++++++++++
