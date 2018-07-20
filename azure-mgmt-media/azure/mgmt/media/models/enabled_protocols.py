@@ -19,9 +19,9 @@ class EnabledProtocols(Model):
 
     :param download: Required. Enable Download protocol or not
     :type download: bool
-    :param dash: Required. Enable Dash protocol or not
+    :param dash: Required. Enable DASH protocol or not
     :type dash: bool
-    :param hls: Required. Enable Hls protocol or not
+    :param hls: Required. Enable HLS protocol or not
     :type hls: bool
     :param smooth_streaming: Required. Enable SmoothStreaming protocol or not
     :type smooth_streaming: bool

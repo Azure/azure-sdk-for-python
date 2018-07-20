@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class MigrationConfigProperties(Resource):
@@ -28,6 +28,9 @@ class MigrationConfigProperties(Resource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of Migration Configuration
     :vartype provisioning_state: str
+    :ivar pending_replication_operations_count: Number of entities pending to
+     be replicated.
+    :vartype pending_replication_operations_count: long
     :param target_namespace: Required. Existing premium Namespace ARM Id name
      which has no entities, will be used for migration
     :type target_namespace: str
@@ -41,6 +44,7 @@ class MigrationConfigProperties(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
         'target_namespace': {'required': True},
         'post_migration_name': {'required': True},
     }
@@ -50,6 +54,7 @@ class MigrationConfigProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
     }
@@ -57,5 +62,6 @@ class MigrationConfigProperties(Resource):
     def __init__(self, *, target_namespace: str, post_migration_name: str, **kwargs) -> None:
         super(MigrationConfigProperties, self).__init__(**kwargs)
         self.provisioning_state = None
+        self.pending_replication_operations_count = None
         self.target_namespace = target_namespace
         self.post_migration_name = post_migration_name
