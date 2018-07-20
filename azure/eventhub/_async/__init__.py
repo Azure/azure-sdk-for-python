@@ -7,6 +7,10 @@ import logging
 import asyncio
 import time
 import datetime
+try:
+    from urllib import urlparse, unquote_plus, urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (
@@ -37,7 +41,7 @@ class EventHubClientAsync(EventHubClient):
     sending events to and receiving events from the Azure Event Hubs service.
     """
 
-    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
+    def _create_auth(self, username=None, password=None):  # pylint: disable=no-self-use
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
@@ -49,9 +53,11 @@ class EventHubClientAsync(EventHubClient):
         :param password: The shared access key.
         :type password: str
         """
+        username = username or self._auth_config['username']
+        password = password or self._auth_config['password']
         if "@sas.root" in username:
             return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAsync.from_shared_access_key(auth_uri, username, password, timeout=60)
+        return authentication.SASTokenAsync.from_shared_access_key(self.auth_uri, username, password, timeout=60)
 
     def _create_connection_async(self):
         """
@@ -108,11 +114,11 @@ class EventHubClientAsync(EventHubClient):
             redirects = [c.redirected for c in self.clients if c.redirected]
         if not all(r.hostname == redirects[0].hostname for r in redirects):
             raise EventHubError("Multiple clients attempting to redirect to different hosts.")
-        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
-        #port = str(redirects[0].port).encode('UTF-8')
-        #path = self.address.path.encode('UTF-8')
-        #self.mgmt_node = b"pyot/$management" #+ redirects[0].hostname  b"amqps://pyot.azure-devices.net"  + b":" + port + 
-        #print("setting mgmt node", self.mgmt_node)
+        self.auth_uri = redirects[0].address.decode('utf-8')
+        self.auth = self._create_auth()
+        new_target, _, _ = self.auth_uri.partition("/ConsumerGroups")
+        self.address = urlparse(new_target)
+        self.mgmt_node = new_target.encode('UTF-8') + b"/$management"
         await self.connection.redirect_async(redirects[0], self.auth)
         await asyncio.gather(*[c.open_async(self.connection) for c in self.clients])
 
@@ -165,12 +171,12 @@ class EventHubClientAsync(EventHubClient):
 
         :rtype: dict
         """
-        self._create_connection_async()
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
         try:
-            mgmt_client = AMQPClientAsync(target, auth=self.auth, debug=self.debug)
-            await mgmt_client.open_async(connection=self.connection)
+            mgmt_auth = self._create_auth()
+            mgmt_client = AMQPClientAsync(target, auth=mgmt_auth, debug=self.debug)
+            await mgmt_client.open_async()
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = await mgmt_client.mgmt_request_async(
                 mgmt_msg,

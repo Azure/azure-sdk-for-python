@@ -216,11 +216,13 @@ async def test_epoch_receiver_async(connection_str, senders):
 @pytest.mark.asyncio
 async def test_multiple_receiver_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
+    partitions = await client.get_eventhub_info_async()
     receivers = []
     for i in range(2):
         receivers.append(client.add_async_receiver("$default", "0", prefetch=10))
     try:
         await client.run_async()
+        more_partitions = await client.get_eventhub_info_async()
         outputs = await asyncio.gather(
             pump(receivers[0]),
             pump(receivers[1]),

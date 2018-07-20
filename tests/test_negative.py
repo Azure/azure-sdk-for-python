@@ -221,7 +221,7 @@ async def test_send_to_invalid_partitions_async(connection_str):
 
 
 def test_send_too_large_message(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, debug=True)
     sender = client.add_sender()
     try:
         client.run()
@@ -299,6 +299,8 @@ async def test_max_receivers_async(connection_str, senders):
             pump(receivers[5]),
             return_exceptions=True)
         print(outputs)
-        assert len([o for o in outputs if isinstance(o, EventHubError)]) == 1
+        failed = [o for o in outputs if isinstance(o, EventHubError)]
+        assert len(failed) == 1
+        print(failed[0].message)
     finally:
         await client.stop_async()

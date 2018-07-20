@@ -25,13 +25,14 @@ async def pump(receiver, sleep=None):
 
 
 @pytest.mark.asyncio
-async def test_iothub_receive_async(iot_connection_str):
+async def test_iothub_receive_multiple_async(iot_connection_str):
     client = EventHubClientAsync.from_iothub_connection_string(iot_connection_str, debug=True)
-    receivers = []
-    for i in range(2):
-        receivers.append(client.add_async_receiver("$default", "0", prefetch=1000, operation='/messages/events'))
-    await client.run_async()
     try:
+        receivers = []
+        for i in range(2):
+            receivers.append(client.add_async_receiver("$default", "0", prefetch=1000, operation='/messages/events'))
+        await client.run_async()
+        partitions = await client.get_eventhub_info_async()
         outputs = await asyncio.gather(
             pump(receivers[0]),
             pump(receivers[1]),
@@ -39,8 +40,6 @@ async def test_iothub_receive_async(iot_connection_str):
 
         assert isinstance(outputs[0], int) and outputs[0] == 0
         assert isinstance(outputs[1], int) and outputs[1] == 0
-    except:
-        raise
     finally:
         await client.stop_async()
 
@@ -60,7 +59,5 @@ async def test_iothub_receive_detach_async(iot_connection_str):
 
         assert isinstance(outputs[0], int) and outputs[0] == 0
         assert isinstance(outputs[1], EventHubError)
-    except:
-        raise
     finally:
         await client.stop_async()

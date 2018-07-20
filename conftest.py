@@ -79,7 +79,7 @@ def invalid_policy():
 @pytest.fixture()
 def iot_connection_str():
     try:
-        return os.environ['IOT_HUB_CONNECTION_STR']
+        return os.environ['IOTHUB_CONNECTION_STR']
     except KeyError:
         pytest.skip("No IotHub connection string found.")
 

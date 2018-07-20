@@ -115,9 +115,9 @@ class EventHubClient(object):
         password = password or url_password
         if not username or not password:
             raise ValueError("Missing username and/or password.")
-        auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.auth = self._create_auth(auth_uri, username, password)
-        self._auth_config = None
+        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+        self._auth_config = {'username': username, 'password': password}
+        self.auth = self._create_auth()
         self.connection = None
         self.debug = debug
 
@@ -147,11 +147,14 @@ class EventHubClient(object):
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
         client = cls("amqps://" + address, username=username, password=password, **kwargs)
-        client._auth_config = {'username': policy, 'password': key}  # pylint: disable=protected-access
-        client.mgmt_node = ("amqps://" + address + ":5671/pyot/$management").encode('UTF-8')
+        client._auth_config = {
+            'username': policy,
+            'password': key,
+            'iot_username': username,
+            'iot_password': password}  # pylint: disable=protected-access
         return client
 
-    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
+    def _create_auth(self, username=None, password=None):
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
@@ -163,9 +166,11 @@ class EventHubClient(object):
         :param password: The shared access key.
         :type password: str
         """
+        username = username or self._auth_config['username']
+        password = password or self._auth_config['password']
         if "@sas.root" in username:
             return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password, timeout=60)
+        return authentication.SASTokenAuth.from_shared_access_key(self.auth_uri, username, password, timeout=60)
 
     def _create_properties(self):  # pylint: disable=no-self-use
         """
@@ -225,7 +230,11 @@ class EventHubClient(object):
             raise EventHubError("Some clients are attempting to redirect the connection.")
         if not all(r.hostname == redirects[0].hostname for r in redirects):
             raise EventHubError("Multiple clients attempting to redirect to different hosts.")
-        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
+        self.auth_uri = redirects[0].address.decode('utf-8')
+        self.auth = self._create_auth()
+        new_target, _, _ = self.auth_uri.partition("/ConsumerGroups")
+        self.address = urlparse(new_target)
+        self.mgmt_node = new_target.encode('UTF-8') + b"/$management"
         self.connection.redirect(redirects[0], self.auth)
         for client in self.clients:
             client.open(self.connection)
@@ -284,12 +293,12 @@ class EventHubClient(object):
 
         :rtype: dict
         """
-        self._create_connection()
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        mgmt_client = uamqp.AMQPClient(target, auth=self.auth, debug=self.debug)
-        mgmt_client.open(self.connection)
+        mgmt_auth = self._create_auth()
+        mgmt_client = uamqp.AMQPClient(target, auth=mgmt_auth, debug=self.debug)
         try:
+            mgmt_client.open()
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = mgmt_client.mgmt_request(
                 mgmt_msg,

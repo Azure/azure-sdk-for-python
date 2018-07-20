@@ -19,6 +19,8 @@ def test_iothub_send_single_event(iot_connection_str, device_id):
     client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
     sender = client.add_sender(operation='/messages/devicebound')
     try:
+        with pytest.raises(NotImplementedError):
+            partitions = client.get_eventhub_info()
         client.run()
         outcome = sender.send(EventData(b"A single event", to_device=device_id))
         assert outcome.value == 0

@@ -28,6 +28,8 @@ def _error_handler(error):
         return errors.ErrorAction(retry=True, backoff=2)
     elif error.condition == b'com.microsoft:operation-cancelled':
         return errors.ErrorAction(retry=True)
+    elif error.condition == b"com.microsoft:container-close":
+        return errors.ErrorAction(retry=True)
     return errors.ErrorAction(retry=True)
 
 

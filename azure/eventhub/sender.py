@@ -27,6 +27,7 @@ class Sender:
         :param target: The URI of the EventHub to send to.
         :type target: str
         """
+        self.conneciton = None
         self.redirected = None
         self.error = None
         self.debug = client.debug
@@ -52,6 +53,7 @@ class Sender:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
+        self.connection = connection
         if self.redirected:
             self._handler = SendClient(
                 self.redirected.address,
@@ -60,6 +62,22 @@ class Sender:
                 msg_timeout=Sender.TIMEOUT,
                 retry_policy=self.retry_policy)
         self._handler.open(connection)
+
+    def reconnect(self):
+        """If the Sender was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
+        unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
+        self._handler.close()
+        self._handler = SendClient(
+            self.redirected.address,
+            auth=None,
+            debug=self.debug,
+            msg_timeout=Sender.TIMEOUT,
+            retry_policy=self.retry_policy)
+        self._handler.open(self.connection)
+        self._handler._pending_messages = unsent_events
+        self._handler.wait()
 
     def get_handler_state(self):
         """
@@ -141,9 +159,12 @@ class Sender:
             self.close(exception=error)
             raise error
         except errors.LinkDetach as detach:
-            error = EventHubError(str(detach), detach)
-            self.close(exception=error)
-            raise error
+            if detach.action.retry:
+                self.reconnect()
+            else:
+                error = EventHubError(str(detach), detach)
+                self.close(exception=error)
+                raise error
         except errors.ConnectionClose as close:
             error = EventHubError(str(close), close)
             self.close(exception=error)
@@ -182,9 +203,12 @@ class Sender:
         try:
             self._handler.wait()
         except errors.LinkDetach as detach:
-            error = EventHubError(str(detach), detach)
-            self.close(exception=error)
-            raise error
+            if detach.action.retry:
+                self.reconnect()
+            else:
+                error = EventHubError(str(detach), detach)
+                self.close(exception=error)
+                raise error
         except errors.ConnectionClose as close:
             error = EventHubError(str(close), close)
             self.close(exception=error)
