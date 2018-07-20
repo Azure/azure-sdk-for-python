@@ -73,14 +73,13 @@ except (SyntaxError, ImportError):
     from .tag_result import TagResult
     from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
     from .image_url import ImageUrl
-from .computer_vision_api_enums import (
+from .computer_vision_client_enums import (
     TextOperationStatusCodes,
     Gender,
     ComputerVisionErrorCodes,
     VisualFeatureTypes,
     OcrLanguages,
     TextRecognitionMode,
-    AzureRegions,
     Details,
 )
 
@@ -122,6 +121,5 @@ __all__ = [
     'VisualFeatureTypes',
     'OcrLanguages',
     'TextRecognitionMode',
-    'AzureRegions',
     'Details',
 ]

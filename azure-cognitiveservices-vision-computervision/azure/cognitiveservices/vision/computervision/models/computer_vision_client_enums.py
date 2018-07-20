@@ -91,22 +91,6 @@ class TextRecognitionMode(str, Enum):
     printed = "Printed"
 
 
-class AzureRegions(str, Enum):
-
-    westus = "westus"
-    westeurope = "westeurope"
-    southeastasia = "southeastasia"
-    eastus2 = "eastus2"
-    westcentralus = "westcentralus"
-    westus2 = "westus2"
-    eastus = "eastus"
-    southcentralus = "southcentralus"
-    northeurope = "northeurope"
-    eastasia = "eastasia"
-    australiaeast = "australiaeast"
-    brazilsouth = "brazilsouth"
-
-
 class Details(str, Enum):
 
     celebrities = "Celebrities"

@@ -17,63 +17,53 @@ from msrest.exceptions import HttpOperationError
 from . import models
 
 
-class ComputerVisionAPIConfiguration(Configuration):
-    """Configuration for ComputerVisionAPI
+class ComputerVisionClientConfiguration(Configuration):
+    """Configuration for ComputerVisionClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.computervision.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        if azure_region is None:
-            raise ValueError("Parameter 'azure_region' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v2.0'
+        base_url = '{Endpoint}/vision/v2.0'
 
-        super(ComputerVisionAPIConfiguration, self).__init__(base_url)
+        super(ComputerVisionClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-computervision/{}'.format(VERSION))
 
-        self.azure_region = azure_region
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class ComputerVisionAPI(SDKClient):
+class ComputerVisionClient(SDKClient):
     """The Computer Vision API provides state-of-the-art algorithms to process images and return information. For example, it can be used to determine if an image contains mature content, or it can be used to find all the faces in an image.  It also has other features like estimating dominant and accent colors, categorizing the content of images, and describing an image with complete English sentences.  Additionally, it can also intelligently generate images thumbnails for displaying large images effectively.
 
     :ivar config: Configuration for client.
-    :vartype config: ComputerVisionAPIConfiguration
+    :vartype config: ComputerVisionClientConfiguration
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.computervision.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        self.config = ComputerVisionAPIConfiguration(azure_region, credentials)
-        super(ComputerVisionAPI, self).__init__(self.config.credentials, self.config)
+        self.config = ComputerVisionClientConfiguration(endpoint, credentials)
+        super(ComputerVisionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2.0'
@@ -105,7 +95,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.list_models.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -190,7 +180,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -273,7 +263,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.generate_thumbnail.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -354,7 +344,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_printed_text.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -433,7 +423,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.describe_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -509,7 +499,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.tag_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -585,7 +575,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_by_domain.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -652,7 +642,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_text.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -709,7 +699,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.get_text_operation_result.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -794,7 +784,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -875,7 +865,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.generate_thumbnail_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -959,7 +949,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_printed_text_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1041,7 +1031,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.describe_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1120,7 +1110,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.tag_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1199,7 +1189,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_by_domain_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1269,7 +1259,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_text_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
