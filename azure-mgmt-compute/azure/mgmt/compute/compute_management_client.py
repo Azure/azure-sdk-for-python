@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -52,7 +52,7 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ComputeManagementClient(MultiApiClientMixin):
+class ComputeManagementClient(MultiApiClientMixin, SDKClient):
     """Compute Client.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -60,7 +60,7 @@ class ComputeManagementClient(MultiApiClientMixin):
     By default, uses latest API version available on public Azure.
     For production, you should stick a particular api-version and/or profile.
     The profile sets a mapping between the operation group and an API version.
-    The api-version parameter sets the default API version if the operation 
+    The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
     :ivar config: Configuration for client.
@@ -93,16 +93,13 @@ class ComputeManagementClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = ComputeManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ComputeManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = ComputeManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -148,7 +145,7 @@ class ComputeManagementClient(MultiApiClientMixin):
             from .v2018_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def availability_sets(self):
         """Instance depends on the API version:
