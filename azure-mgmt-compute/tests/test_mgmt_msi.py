@@ -115,25 +115,26 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
             )
 
         # Adds the MSI extension
-        ext_type_name = 'ManagedIdentityExtensionForLinux'
-        ext_name = vm_result.name + ext_type_name
-        params_create = virtual_machines_models.VirtualMachineExtension(
-            location=location,
-            publisher='Microsoft.ManagedIdentity',
-            virtual_machine_extension_type=ext_type_name,
-            type_handler_version='1.0',
-            auto_upgrade_minor_version=True,
-            settings={'port': 50342}, # Default port that should be used
-            protected_settings={},
-        )
-        result_create = self.compute_client.virtual_machine_extensions.create_or_update(
-            resource_group.name,
-            names.vm,
-            ext_name,
-            params_create,
-        )
-        result_create.wait()
-        
+        # This is deprecated, no extension needed anymore. Keep the code as extension example still.
+        # ext_type_name = 'ManagedIdentityExtensionForLinux'
+        # ext_name = vm_result.name + ext_type_name
+        # params_create = virtual_machines_models.VirtualMachineExtension(
+        #     location=location,
+        #     publisher='Microsoft.ManagedIdentity',
+        #     virtual_machine_extension_type=ext_type_name,
+        #     type_handler_version='1.0',
+        #     auto_upgrade_minor_version=True,
+        #     settings={'port': 50342}, # Default port that should be used
+        #     protected_settings={},
+        # )
+        # result_create = self.compute_client.virtual_machine_extensions.create_or_update(
+        #     resource_group.name,
+        #     names.vm,
+        #     ext_name,
+        #     params_create,
+        # )
+        # result_create.wait()
+
 
     ############# Should be generalized
 
@@ -215,4 +216,3 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
                 ),
             ],
         )
-    
