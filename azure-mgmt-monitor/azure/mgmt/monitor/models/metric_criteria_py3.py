@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MetricCriteria(Model):
-    """MetricCriteria.
+    """Criterion to filter metrics.
 
     All required parameters must be populated in order to send to Azure.
 
