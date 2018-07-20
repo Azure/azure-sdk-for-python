@@ -137,6 +137,9 @@ class AppServiceEnvironmentResource(Resource):
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
+    :param has_linux_workers: Flag that displays whether an ASE has linux
+     workers or not
+    :type has_linux_workers: bool
     """
 
     _validation = {
@@ -210,9 +213,10 @@ class AppServiceEnvironmentResource(Resource):
         'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
+        'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
+    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers=None):
         super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
         self.app_service_environment_resource_name = app_service_environment_resource_name
         self.app_service_environment_resource_location = app_service_environment_resource_location
@@ -250,3 +254,4 @@ class AppServiceEnvironmentResource(Resource):
         self.dynamic_cache_enabled = dynamic_cache_enabled
         self.cluster_settings = cluster_settings
         self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
+        self.has_linux_workers = has_linux_workers

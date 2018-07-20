@@ -27,9 +27,6 @@ class VnetRoute(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param vnet_route_name: The name of this route. This is only returned by
-     the server and does not need to be set by the client.
-    :type vnet_route_name: str
     :param start_address: The starting address for this route. This may also
      include a CIDR notation, in which case the end address must not be
      specified.
@@ -58,15 +55,13 @@ class VnetRoute(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'vnet_route_name': {'key': 'properties.name', 'type': 'str'},
         'start_address': {'key': 'properties.startAddress', 'type': 'str'},
         'end_address': {'key': 'properties.endAddress', 'type': 'str'},
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+    def __init__(self, kind=None, start_address=None, end_address=None, route_type=None):
         super(VnetRoute, self).__init__(kind=kind)
-        self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address
         self.route_type = route_type

@@ -123,6 +123,9 @@ class AppServiceEnvironment(Model):
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
+    :param has_linux_workers: Flag that displays whether an ASE has linux
+     workers or not
+    :type has_linux_workers: bool
     """
 
     _validation = {
@@ -186,9 +189,10 @@ class AppServiceEnvironment(Model):
         'dynamic_cache_enabled': {'key': 'dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'userWhitelistedIpRanges', 'type': '[str]'},
+        'has_linux_workers': {'key': 'hasLinuxWorkers', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
+    def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers=None):
         super(AppServiceEnvironment, self).__init__()
         self.name = name
         self.location = location
@@ -226,3 +230,4 @@ class AppServiceEnvironment(Model):
         self.dynamic_cache_enabled = dynamic_cache_enabled
         self.cluster_settings = cluster_settings
         self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
+        self.has_linux_workers = has_linux_workers

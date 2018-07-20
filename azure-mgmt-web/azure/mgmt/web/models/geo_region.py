@@ -26,8 +26,6 @@ class GeoRegion(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar geo_region_name: Region name.
-    :vartype geo_region_name: str
     :ivar description: Region description.
     :vartype description: str
     :ivar display_name: Display name for region.
@@ -38,7 +36,6 @@ class GeoRegion(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'geo_region_name': {'readonly': True},
         'description': {'readonly': True},
         'display_name': {'readonly': True},
     }
@@ -48,13 +45,11 @@ class GeoRegion(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'geo_region_name': {'key': 'properties.name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
     def __init__(self, kind=None):
         super(GeoRegion, self).__init__(kind=kind)
-        self.geo_region_name = None
         self.description = None
         self.display_name = None
