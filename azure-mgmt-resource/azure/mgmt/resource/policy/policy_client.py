@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class PolicyClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class PolicyClient(MultiApiClientMixin):
+class PolicyClient(MultiApiClientMixin, SDKClient):
     """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
     :ivar config: Configuration for client.
@@ -78,16 +78,13 @@ class PolicyClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         super(PolicyClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
