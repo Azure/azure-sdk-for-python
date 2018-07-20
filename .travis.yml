@@ -8,6 +8,7 @@ matrix:
       python: "2.7"
     - os: linux
       python: "3.4"
+      dist: trusty
     - os: linux
       python: "3.5"
     - os: linux
