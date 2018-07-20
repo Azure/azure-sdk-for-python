@@ -51,7 +51,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_storage_account(self, group_name, location, storage_name):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location
         )
@@ -199,7 +199,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         vm_result = result_create.result()
         self.assertEqual(vm_result.name, names.vm)
-    
+
         # Get by name
         result_get = self.compute_client.virtual_machines.get(
             resource_group.name,
@@ -298,7 +298,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             }
         )
         capture_result = async_capture.result()
-        self.assertTrue(hasattr(capture_result, 'output'))
+        assert capture_result.content_version == "1.0.0.0"
 
     @ResourceGroupPreparer()
     def test_vm_extensions(self, resource_group, location):
