@@ -3,6 +3,13 @@
 Release History
 ===============
 
+4.0.1 (2018-07-23)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix incorrect import from azure.mgmt.compute.models
+
 4.0.0 (2018-07-20)
 ++++++++++++++++++
 
