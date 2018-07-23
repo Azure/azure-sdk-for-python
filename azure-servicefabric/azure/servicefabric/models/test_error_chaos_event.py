@@ -18,6 +18,7 @@ class TestErrorChaosEvent(ChaosEvent):
     For example, due to the cluster snapshot being inconsistent, while faulting
     an entity, Chaos found that the entity was already faulted -- which would
     be an unexpected event.
+    .
 
     All required parameters must be populated in order to send to Azure.
 

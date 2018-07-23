@@ -21,6 +21,7 @@ class ReplicaHealthStateFilter(Model):
     chunk.
     One filter can match zero, one or multiple replicas, depending on its
     properties.
+    .
 
     :param replica_or_instance_id_filter: Id of the stateful service replica
      or stateless service instance that matches the filter. The filter is
@@ -42,7 +43,7 @@ class ReplicaHealthStateFilter(Model):
      If not specified, default value is None, unless the replica ID is
      specified. If the filter has default value and replica ID is specified,
      the matching replica is returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches replicas with
      HealthState value of OK (2) and Warning (4).
@@ -56,7 +57,8 @@ class ReplicaHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535. Default value: 0 .
+     65535.
+     . Default value: 0 .
     :type health_state_filter: int
     """
 

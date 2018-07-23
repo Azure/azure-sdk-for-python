@@ -15,6 +15,7 @@ from msrest.serialization import Model
 class RemoteReplicatorStatus(Model):
     """Represents the state of the secondary replicator from the primary
     replicator’s point of view.
+    .
 
     :param replica_id: Represents the replica ID of the remote secondary
      replicator.

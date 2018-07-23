@@ -16,6 +16,7 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a deployed service package, which
     contains the service manifest name and the service package aggregated
     health state.
+    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible

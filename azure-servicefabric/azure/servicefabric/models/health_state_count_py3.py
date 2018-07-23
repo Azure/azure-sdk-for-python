@@ -15,6 +15,7 @@ from msrest.serialization import Model
 class HealthStateCount(Model):
     """Represents information about how many health entities are in Ok, Warning
     and Error health state.
+    .
 
     :param ok_count: The number of health entities with aggregated health
      state Ok.
