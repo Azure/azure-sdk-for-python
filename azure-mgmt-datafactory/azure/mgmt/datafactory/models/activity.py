@@ -20,6 +20,9 @@ class Activity(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -38,6 +41,7 @@ class Activity(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -51,6 +55,7 @@ class Activity(Model):
 
     def __init__(self, **kwargs):
         super(Activity, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.depends_on = kwargs.get('depends_on', None)

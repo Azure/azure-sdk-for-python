@@ -17,6 +17,9 @@ class HDInsightSparkActivity(ExecutionActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -66,6 +69,7 @@ class HDInsightSparkActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -83,8 +87,8 @@ class HDInsightSparkActivity(ExecutionActivity):
         'spark_config': {'key': 'typeProperties.sparkConfig', 'type': '{object}'},
     }
 
-    def __init__(self, *, name: str, root_path, entry_file_path, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name: str=None, proxy_user=None, spark_config=None, **kwargs) -> None:
-        super(HDInsightSparkActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, root_path, entry_file_path, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name: str=None, proxy_user=None, spark_config=None, **kwargs) -> None:
+        super(HDInsightSparkActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.root_path = root_path
         self.entry_file_path = entry_file_path
         self.arguments = arguments

@@ -17,6 +17,9 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -66,6 +69,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -82,8 +86,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         'compilation_mode': {'key': 'typeProperties.compilationMode', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, script_path, script_linked_service, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None, **kwargs) -> None:
-        super(DataLakeAnalyticsUSQLActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, script_path, script_linked_service, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None, **kwargs) -> None:
+        super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism

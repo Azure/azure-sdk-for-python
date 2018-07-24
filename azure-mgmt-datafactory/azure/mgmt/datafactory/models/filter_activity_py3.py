@@ -17,6 +17,9 @@ class FilterActivity(ControlActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -41,6 +44,7 @@ class FilterActivity(ControlActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -50,8 +54,8 @@ class FilterActivity(ControlActivity):
         'condition': {'key': 'typeProperties.condition', 'type': 'Expression'},
     }
 
-    def __init__(self, *, name: str, items, condition, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
-        super(FilterActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+    def __init__(self, *, name: str, items, condition, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.items = items
         self.condition = condition
         self.type = 'Filter'
