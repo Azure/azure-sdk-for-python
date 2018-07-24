@@ -28,6 +28,6 @@ class UpdatePersonFaceRequest(Model):
         'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, user_data=None):
-        super(UpdatePersonFaceRequest, self).__init__()
-        self.user_data = user_data
+    def __init__(self, **kwargs):
+        super(UpdatePersonFaceRequest, self).__init__(**kwargs)
+        self.user_data = kwargs.get('user_data', None)

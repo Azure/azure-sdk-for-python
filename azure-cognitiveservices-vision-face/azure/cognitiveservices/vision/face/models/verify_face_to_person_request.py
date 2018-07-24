@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class VerifyFaceToPersonRequest(Model):
     """Request body for verify operation.
 
-    :param face_id: FaceId the face, comes from Face - Detect
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_id: Required. FaceId the face, comes from Face - Detect
     :type face_id: str
-    :param person_group_id: Using existing personGroupId and personId for fast
-     loading a specified person. personGroupId is created in Person
-     Groups.Create.
+    :param person_group_id: Required. Using existing personGroupId and
+     personId for fast loading a specified person. personGroupId is created in
+     Person Groups.Create.
     :type person_group_id: str
-    :param person_id: Specify a certain person in a person group. personId is
-     created in Persons.Create.
+    :param person_id: Required. Specify a certain person in a person group.
+     personId is created in Persons.Create.
     :type person_id: str
     """
 
@@ -38,8 +40,8 @@ class VerifyFaceToPersonRequest(Model):
         'person_id': {'key': 'personId', 'type': 'str'},
     }
 
-    def __init__(self, face_id, person_group_id, person_id):
-        super(VerifyFaceToPersonRequest, self).__init__()
-        self.face_id = face_id
-        self.person_group_id = person_group_id
-        self.person_id = person_id
+    def __init__(self, **kwargs):
+        super(VerifyFaceToPersonRequest, self).__init__(**kwargs)
+        self.face_id = kwargs.get('face_id', None)
+        self.person_group_id = kwargs.get('person_group_id', None)
+        self.person_id = kwargs.get('person_id', None)

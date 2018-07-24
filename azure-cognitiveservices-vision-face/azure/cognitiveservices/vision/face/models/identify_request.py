@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class IdentifyRequest(Model):
     """Request body for identify face operation.
 
-    :param person_group_id: PersonGroupId of the target person group, created
-     by PersonGroups.Create
+    All required parameters must be populated in order to send to Azure.
+
+    :param person_group_id: Required. PersonGroupId of the target person
+     group, created by PersonGroups.Create
     :type person_group_id: str
-    :param face_ids: Array of query faces faceIds, created by the Face -
-     Detect. Each of the faces are identified independently. The valid number
-     of faceIds is between [1, 10].
+    :param face_ids: Required. Array of query faces faceIds, created by the
+     Face - Detect. Each of the faces are identified independently. The valid
+     number of faceIds is between [1, 10].
     :type face_ids: list[str]
     :param max_num_of_candidates_returned: The range of
      maxNumOfCandidatesReturned is between 1 and 5 (default is 1). Default
@@ -45,9 +47,9 @@ class IdentifyRequest(Model):
         'confidence_threshold': {'key': 'confidenceThreshold', 'type': 'float'},
     }
 
-    def __init__(self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None):
-        super(IdentifyRequest, self).__init__()
-        self.person_group_id = person_group_id
-        self.face_ids = face_ids
-        self.max_num_of_candidates_returned = max_num_of_candidates_returned
-        self.confidence_threshold = confidence_threshold
+    def __init__(self, **kwargs):
+        super(IdentifyRequest, self).__init__(**kwargs)
+        self.person_group_id = kwargs.get('person_group_id', None)
+        self.face_ids = kwargs.get('face_ids', None)
+        self.max_num_of_candidates_returned = kwargs.get('max_num_of_candidates_returned', 1)
+        self.confidence_threshold = kwargs.get('confidence_threshold', None)

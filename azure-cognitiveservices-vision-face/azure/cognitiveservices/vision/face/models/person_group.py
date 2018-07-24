@@ -15,11 +15,14 @@ from .name_and_user_data_contract import NameAndUserDataContract
 class PersonGroup(NameAndUserDataContract):
     """Person group object.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param name: User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
-    :param person_group_id: PersonGroupId of the existing person groups.
+    :param person_group_id: Required. PersonGroupId of the existing person
+     groups.
     :type person_group_id: str
     """
 
@@ -35,6 +38,6 @@ class PersonGroup(NameAndUserDataContract):
         'person_group_id': {'key': 'personGroupId', 'type': 'str'},
     }
 
-    def __init__(self, person_group_id, name=None, user_data=None):
-        super(PersonGroup, self).__init__(name=name, user_data=user_data)
-        self.person_group_id = person_group_id
+    def __init__(self, **kwargs):
+        super(PersonGroup, self).__init__(**kwargs)
+        self.person_group_id = kwargs.get('person_group_id', None)
