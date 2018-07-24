@@ -6,7 +6,7 @@ This is the Microsoft Azure bundle.
 This package does not contain any code in itself. It installs a set
 of packages that provide Microsoft Azure functionality.
 
-All packages in this bundle have been tested with Python 2.7, 3.4, 3.5 and 3.6.
+All packages in this bundle have been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7
 
 This package uses PEP440 syntax, and thus requires pip >= 6.0 and/or setuptools >= 8.0
 to be installed.
@@ -23,10 +23,10 @@ Features
 
 This version of the Azure package bundle consists of the following
 packages. Follow the links for more information on each package.
-Note that versions are fixed at the minor version number level 
+Note that versions are fixed at the minor version number level
 (i.e. no breaking changes can be introduced, but features are allowed)
 
--  `azure-mgmt v2.x <https://pypi.python.org/pypi/azure-mgmt>`__
+-  `azure-mgmt v4.x <https://pypi.python.org/pypi/azure-mgmt>`__
 -  `azure-batch v4.x <https://pypi.python.org/pypi/azure-batch>`__
 -  `azure-cosmosb-table v1.x <https://pypi.python.org/pypi/azure-cosmosdb-table>`__
 -  `azure-datalake-store v0.0.x <https://pypi.python.org/pypi/azure-datalake-store>`__

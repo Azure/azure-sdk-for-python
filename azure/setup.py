@@ -11,7 +11,7 @@ from setuptools import setup
 
 setup(
     name='azure',
-    version='3.0.0',
+    version='4.0.0',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -27,11 +27,12 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     install_requires=[
-        'azure-mgmt~=2.0',
+        'azure-mgmt~=4.0',
         'azure-batch~=4.0',
         'azure-cosmosdb-table~=1.0',
         'azure-datalake-store~=0.0.18',
