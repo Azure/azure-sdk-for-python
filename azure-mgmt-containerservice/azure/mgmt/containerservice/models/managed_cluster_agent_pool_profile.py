@@ -89,9 +89,6 @@ class ManagedClusterAgentPoolProfile(Model):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the agent pool.
     :vartype fqdn: str
-    :param ports: Ports number array used to expose on this agent pool. The
-     default opened ports are different based on your choice of orchestrator.
-    :type ports: list[int]
     :param storage_profile: Storage profile specifies what kind of storage
      used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
      choose for you based on the orchestrator choice. Possible values include:
@@ -123,7 +120,6 @@ class ManagedClusterAgentPoolProfile(Model):
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
         'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
         'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ports': {'key': 'ports', 'type': '[int]'},
         'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
@@ -138,7 +134,6 @@ class ManagedClusterAgentPoolProfile(Model):
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
         self.dns_prefix = kwargs.get('dns_prefix', None)
         self.fqdn = None
-        self.ports = kwargs.get('ports', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
         self.max_pods = kwargs.get('max_pods', None)

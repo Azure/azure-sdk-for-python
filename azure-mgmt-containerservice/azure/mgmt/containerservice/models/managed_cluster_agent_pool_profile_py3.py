@@ -89,9 +89,6 @@ class ManagedClusterAgentPoolProfile(Model):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the agent pool.
     :vartype fqdn: str
-    :param ports: Ports number array used to expose on this agent pool. The
-     default opened ports are different based on your choice of orchestrator.
-    :type ports: list[int]
     :param storage_profile: Storage profile specifies what kind of storage
      used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
      choose for you based on the orchestrator choice. Possible values include:
@@ -123,14 +120,13 @@ class ManagedClusterAgentPoolProfile(Model):
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
         'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
         'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ports': {'key': 'ports', 'type': '[int]'},
         'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, ports=None, storage_profile=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, storage_profile=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -138,7 +134,6 @@ class ManagedClusterAgentPoolProfile(Model):
         self.os_disk_size_gb = os_disk_size_gb
         self.dns_prefix = dns_prefix
         self.fqdn = None
-        self.ports = ports
         self.storage_profile = storage_profile
         self.vnet_subnet_id = vnet_subnet_id
         self.max_pods = max_pods
