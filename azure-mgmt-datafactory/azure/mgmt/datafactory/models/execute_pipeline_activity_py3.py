@@ -17,9 +17,6 @@ class ExecutePipelineActivity(ControlActivity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -27,7 +24,7 @@ class ExecutePipelineActivity(ControlActivity):
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
-    :type user_properties: dict[str, str]
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipeline: Required. Pipeline reference.
@@ -46,19 +43,18 @@ class ExecutePipelineActivity(ControlActivity):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
-        'user_properties': {'key': 'userProperties', 'type': '{str}'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
         'pipeline': {'key': 'typeProperties.pipeline', 'type': 'PipelineReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
         'wait_on_completion': {'key': 'typeProperties.waitOnCompletion', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, pipeline, additional_properties=None, description: str=None, depends_on=None, user_properties=None, parameters=None, wait_on_completion: bool=None, **kwargs) -> None:
-        super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+    def __init__(self, *, name: str, pipeline, description: str=None, depends_on=None, user_properties=None, parameters=None, wait_on_completion: bool=None, **kwargs) -> None:
+        super(ExecutePipelineActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.pipeline = pipeline
         self.parameters = parameters
         self.wait_on_completion = wait_on_completion

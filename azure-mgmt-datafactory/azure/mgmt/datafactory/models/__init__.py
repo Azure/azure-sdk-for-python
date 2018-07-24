@@ -35,6 +35,7 @@ try:
     from .dataset_py3 import Dataset
     from .dataset_resource_py3 import DatasetResource
     from .activity_dependency_py3 import ActivityDependency
+    from .user_property_py3 import UserProperty
     from .activity_py3 import Activity
     from .pipeline_resource_py3 import PipelineResource
     from .trigger_py3 import Trigger
@@ -367,6 +368,7 @@ except (SyntaxError, ImportError):
     from .dataset import Dataset
     from .dataset_resource import DatasetResource
     from .activity_dependency import ActivityDependency
+    from .user_property import UserProperty
     from .activity import Activity
     from .pipeline_resource import PipelineResource
     from .trigger import Trigger
@@ -767,6 +769,7 @@ __all__ = [
     'Dataset',
     'DatasetResource',
     'ActivityDependency',
+    'UserProperty',
     'Activity',
     'PipelineResource',
     'Trigger',
