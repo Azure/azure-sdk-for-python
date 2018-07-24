@@ -20,9 +20,6 @@ class Activity(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -30,7 +27,7 @@ class Activity(Model):
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
-    :type user_properties: dict[str, str]
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -41,11 +38,10 @@ class Activity(Model):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
-        'user_properties': {'key': 'userProperties', 'type': '{str}'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -53,9 +49,8 @@ class Activity(Model):
         'type': {'Execution': 'ExecutionActivity', 'Container': 'ControlActivity'}
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
         super(Activity, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
         self.name = name
         self.description = description
         self.depends_on = depends_on

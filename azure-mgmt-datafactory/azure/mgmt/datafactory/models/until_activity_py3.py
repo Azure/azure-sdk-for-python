@@ -18,9 +18,6 @@ class UntilActivity(ControlActivity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -28,7 +25,7 @@ class UntilActivity(ControlActivity):
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
-    :type user_properties: dict[str, str]
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
     :param expression: Required. An expression that would evaluate to Boolean.
@@ -53,19 +50,18 @@ class UntilActivity(ControlActivity):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
-        'user_properties': {'key': 'userProperties', 'type': '{str}'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
         'expression': {'key': 'typeProperties.expression', 'type': 'Expression'},
         'timeout': {'key': 'typeProperties.timeout', 'type': 'object'},
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, *, name: str, expression, activities, additional_properties=None, description: str=None, depends_on=None, user_properties=None, timeout=None, **kwargs) -> None:
-        super(UntilActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+    def __init__(self, *, name: str, expression, activities, description: str=None, depends_on=None, user_properties=None, timeout=None, **kwargs) -> None:
+        super(UntilActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.expression = expression
         self.timeout = timeout
         self.activities = activities
