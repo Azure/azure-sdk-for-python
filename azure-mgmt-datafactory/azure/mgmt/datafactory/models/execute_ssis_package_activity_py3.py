@@ -17,6 +17,9 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -74,6 +77,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -93,8 +97,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
     }
 
-    def __init__(self, *, name: str, package_location, connect_via, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level: str=None, environment_path: str=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, **kwargs) -> None:
-        super(ExecuteSSISPackageActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, package_location, connect_via, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level: str=None, environment_path: str=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, **kwargs) -> None:
+        super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.package_location = package_location
         self.runtime = runtime
         self.logging_level = logging_level

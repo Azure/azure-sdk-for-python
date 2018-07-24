@@ -17,6 +17,9 @@ class DatabricksNotebookActivity(ExecutionActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -52,6 +55,7 @@ class DatabricksNotebookActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -64,8 +68,8 @@ class DatabricksNotebookActivity(ExecutionActivity):
         'libraries': {'key': 'typeProperties.libraries', 'type': '[{object}]'},
     }
 
-    def __init__(self, *, name: str, notebook_path, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, base_parameters=None, libraries=None, **kwargs) -> None:
-        super(DatabricksNotebookActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, notebook_path, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, base_parameters=None, libraries=None, **kwargs) -> None:
+        super(DatabricksNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.notebook_path = notebook_path
         self.base_parameters = base_parameters
         self.libraries = libraries

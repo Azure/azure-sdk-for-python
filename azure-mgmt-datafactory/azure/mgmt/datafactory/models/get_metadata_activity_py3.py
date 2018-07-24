@@ -17,6 +17,9 @@ class GetMetadataActivity(ExecutionActivity):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
@@ -45,6 +48,7 @@ class GetMetadataActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -56,8 +60,8 @@ class GetMetadataActivity(ExecutionActivity):
         'field_list': {'key': 'typeProperties.fieldList', 'type': '[object]'},
     }
 
-    def __init__(self, *, name: str, dataset, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, field_list=None, **kwargs) -> None:
-        super(GetMetadataActivity, self).__init__(name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, field_list=None, **kwargs) -> None:
+        super(GetMetadataActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.dataset = dataset
         self.field_list = field_list
         self.type = 'GetMetadata'
