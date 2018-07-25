@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0"
+from .vaults_operations import VaultsOperations
+from .operations import Operations
 
+__all__ = [
+    'VaultsOperations',
+    'Operations',
+]
