@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class Resource(Model):
-    """Resource.
+class AzureEntityResource(Resource):
+    """The resource model definition for a Azure Resource Manager resource with an
+    etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,22 +27,24 @@ class Resource(Model):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
