@@ -70,9 +70,6 @@ from .create_video_reviews_body_item import CreateVideoReviewsBodyItem
 from .video_frame_body_item_reviewer_result_tags_item import VideoFrameBodyItemReviewerResultTagsItem
 from .video_frame_body_item_metadata_item import VideoFrameBodyItemMetadataItem
 from .video_frame_body_item import VideoFrameBodyItem
-from .content_moderator_client_enums import (
-    AzureRegionBaseUrl,
-)
 
 __all__ = [
     'KeyValuePair',
@@ -136,5 +133,4 @@ __all__ = [
     'VideoFrameBodyItemReviewerResultTagsItem',
     'VideoFrameBodyItemMetadataItem',
     'VideoFrameBodyItem',
-    'AzureRegionBaseUrl',
 ]

@@ -57,7 +57,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.get_review.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -113,7 +113,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.get_job_details.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'JobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -197,7 +197,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.create_reviews.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -317,7 +317,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.create_job.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -406,7 +406,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.add_video_frame.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -487,7 +487,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.get_video_frames.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -548,7 +548,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.publish_video_review.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -605,7 +605,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.add_video_transcript_moderation_result.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -667,7 +667,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.add_video_transcript.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -749,7 +749,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.create_video_reviews.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -821,7 +821,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.add_video_frame_url.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -888,7 +888,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = self.add_video_frame_stream.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
