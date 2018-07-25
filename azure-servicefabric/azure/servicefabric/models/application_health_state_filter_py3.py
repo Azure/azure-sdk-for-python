@@ -17,6 +17,7 @@ class ApplicationHealthStateFilter(Model):
     included in the cluster health chunk.
     One filter can match zero, one or multiple applications, depending on its
     properties.
+    .
 
     :param application_name_filter: The name of the application that matches
      the filter, as a fabric uri. The filter is applied only to the specified
@@ -48,7 +49,7 @@ class ApplicationHealthStateFilter(Model):
      If not specified, default value is None, unless the application name or
      the application type name are specified. If the filter has default value
      and application name is specified, the matching application is returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches applications with
      HealthState value of OK (2) and Warning (4).
@@ -62,7 +63,8 @@ class ApplicationHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535. Default value: 0 .
+     65535.
+     . Default value: 0 .
     :type health_state_filter: int
     :param service_filters: Defines a list of filters that specify which
      services to be included in the returned cluster health chunk as children

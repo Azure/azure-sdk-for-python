@@ -20,6 +20,7 @@ class PartitionHealthStateFilter(Model):
     and application must be included in the cluster health chunk.
     One filter can match zero, one or multiple partitions, depending on its
     properties.
+    .
 
     :param partition_id_filter: ID of the partition that matches the filter.
      The filter is applied only to the specified partition, if it exists.
@@ -40,7 +41,7 @@ class PartitionHealthStateFilter(Model):
      If not specified, default value is None, unless the partition ID is
      specified. If the filter has default value and partition ID is specified,
      the matching partition is returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches partitions with
      HealthState value of OK (2) and Warning (4).
@@ -54,7 +55,8 @@ class PartitionHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535. Default value: 0 .
+     65535.
+     . Default value: 0 .
     :type health_state_filter: int
     :param replica_filters: Defines a list of filters that specify which
      replicas to be included in the returned cluster health chunk as children
