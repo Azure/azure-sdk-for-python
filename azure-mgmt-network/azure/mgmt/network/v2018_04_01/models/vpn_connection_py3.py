@@ -40,8 +40,8 @@ class VpnConnection(Resource):
     :vartype ingress_bytes_transferred: long
     :ivar egress_bytes_transferred: Egress bytes transferred.
     :vartype egress_bytes_transferred: long
-    :ivar connection_bandwidth_in_mbps: Expected bandwidth in MBPS.
-    :vartype connection_bandwidth_in_mbps: int
+    :ivar connection_bandwidth: Expected bandwidth in MBPS.
+    :vartype connection_bandwidth: int
     :param shared_key: SharedKey for the vpn connection.
     :type shared_key: str
     :param enable_bgp: EnableBgp flag
@@ -64,7 +64,7 @@ class VpnConnection(Resource):
         'type': {'readonly': True},
         'ingress_bytes_transferred': {'readonly': True},
         'egress_bytes_transferred': {'readonly': True},
-        'connection_bandwidth_in_mbps': {'readonly': True},
+        'connection_bandwidth': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -79,7 +79,7 @@ class VpnConnection(Resource):
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'connection_bandwidth_in_mbps': {'key': 'properties.connectionBandwidthInMbps', 'type': 'int'},
+        'connection_bandwidth': {'key': 'properties.connectionBandwidth', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
         'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
@@ -94,7 +94,7 @@ class VpnConnection(Resource):
         self.connection_status = connection_status
         self.ingress_bytes_transferred = None
         self.egress_bytes_transferred = None
-        self.connection_bandwidth_in_mbps = None
+        self.connection_bandwidth = None
         self.shared_key = shared_key
         self.enable_bgp = enable_bgp
         self.ipsec_policies = ipsec_policies
