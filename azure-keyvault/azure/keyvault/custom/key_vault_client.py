@@ -7,7 +7,7 @@ import uuid
 from msrest.pipeline import ClientRawResponse
 
 from .key_vault_authentication import KeyVaultAuthentication
-from ..key_vault_client import KeyVaultClient as KeyVaultClientBase
+from ..v7_0.key_vault_client import KeyVaultClient as KeyVaultClientBase
 from ..models import KeyVaultErrorException
 from msrest.authentication import BasicTokenAuthentication
 
@@ -23,7 +23,7 @@ class CustomKeyVaultClient(KeyVaultClientBase):
         :param credentials: Credentials needed for the client to connect to Azure.
         :type credentials: :mod:`A msrestazure Credentials
          object<msrestazure.azure_active_directory>` or :mod:`A KeyVaultAuthentication
-         object<key_vault_authentication>` 
+         object<key_vault_authentication>`
         """
 
         # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AAD credential type

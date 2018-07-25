@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0"
+from msrest.serialization import Model
 
+
+class SecretProperties(Model):
+    """Properties of the key backing a certificate.
+
+    :param content_type: The media type (MIME type).
+    :type content_type: str
+    """
+
+    _attribute_map = {
+        'content_type': {'key': 'contentType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecretProperties, self).__init__(**kwargs)
+        self.content_type = kwargs.get('content_type', None)
