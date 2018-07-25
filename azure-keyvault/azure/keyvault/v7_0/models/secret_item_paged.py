@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0"
+from msrest.paging import Paged
 
+
+class SecretItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecretItem <azure.keyvault.v7_0.models.SecretItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecretItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecretItemPaged, self).__init__(*args, **kwargs)
