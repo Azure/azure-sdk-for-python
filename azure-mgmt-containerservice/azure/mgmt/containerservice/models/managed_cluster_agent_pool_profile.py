@@ -84,16 +84,10 @@ class ManagedClusterAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
-     pool.
-    :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool.
-    :vartype fqdn: str
-    :param storage_profile: Storage profile specifies what kind of storage
-     used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
-     choose for you based on the orchestrator choice. Possible values include:
-     'StorageAccount', 'ManagedDisks'
-    :type storage_profile: str or
+    :ivar storage_profile: Storage profile specifies what kind of storage
+     used. Defaults to ManagedDisks. Possible values include: 'StorageAccount',
+     'ManagedDisks'
+    :vartype storage_profile: str or
      ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier.
@@ -110,7 +104,7 @@ class ManagedClusterAgentPoolProfile(Model):
         'name': {'required': True},
         'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
-        'fqdn': {'readonly': True},
+        'storage_profile': {'readonly': True},
     }
 
     _attribute_map = {
@@ -118,8 +112,6 @@ class ManagedClusterAgentPoolProfile(Model):
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
@@ -132,9 +124,7 @@ class ManagedClusterAgentPoolProfile(Model):
         self.count = kwargs.get('count', 1)
         self.vm_size = kwargs.get('vm_size', None)
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
-        self.dns_prefix = kwargs.get('dns_prefix', None)
-        self.fqdn = None
-        self.storage_profile = kwargs.get('storage_profile', None)
+        self.storage_profile = None
         self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
         self.max_pods = kwargs.get('max_pods', None)
         self.os_type = kwargs.get('os_type', "Linux")
