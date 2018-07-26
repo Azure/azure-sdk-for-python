@@ -68,7 +68,7 @@ setup(
         'azure-mgmt-network~=1.7',
         'azure-mgmt-notificationhubs~=1.0',
         'azure-mgmt-powerbiembedded~=1.0',
-        'azure-mgmt-rdbms~=0.1.0',
+        'azure-mgmt-rdbms~=1.2',
         'azure-mgmt-recoveryservices~=0.2.0',
         'azure-mgmt-recoveryservicesbackup~=0.1.1',
         'azure-mgmt-redis~=5.0',

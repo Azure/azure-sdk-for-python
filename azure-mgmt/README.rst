@@ -68,7 +68,7 @@ Note that versions are fixed at the minor version number level
 -  `azure-mgmt-network v1.x <https://pypi.python.org/pypi/azure-mgmt-network>`__
 -  `azure-mgmt-notificationhubs v1.x <https://pypi.python.org/pypi/azure-mgmt-notificationhubs>`__
 -  `azure-mgmt-powerbiembedded v1.x <https://pypi.python.org/pypi/azure-mgmt-powerbiembedded>`__
--  `azure-mgmt-rdbms v0.1.x <https://pypi.python.org/pypi/azure-mgmt-rdbms>`__
+-  `azure-mgmt-rdbms v1.2.x <https://pypi.python.org/pypi/azure-mgmt-rdbms>`__
 -  `azure-mgmt-recoveryservices v0.2.x <https://pypi.python.org/pypi/azure-mgmt-recoveryservices>`__
 -  `azure-mgmt-recoveryservicesbackup v0.1.x <https://pypi.python.org/pypi/azure-mgmt-recoveryservicesbackup>`__
 -  `azure-mgmt-redis v5.x <https://pypi.python.org/pypi/azure-mgmt-redis>`__
