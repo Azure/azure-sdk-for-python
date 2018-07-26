@@ -27,24 +27,26 @@ class Sender:
         :param target: The URI of the EventHub to send to.
         :type target: str
         """
-        self.conneciton = None
+        self.client = client
+        self.target = target
+        self.partition = partition
         self.redirected = None
         self.error = None
-        self.debug = client.debug
-        self.partition = partition
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         if partition:
-            target += "/Partitions/" + partition
+            self.target += "/Partitions/" + partition
         self._handler = SendClient(
-            target,
-            auth=client.auth,
-            debug=self.debug,
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
-            error_policy=self.retry_policy)
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
         self._outcome = None
         self._condition = None
 
-    def open(self, connection):
+    def open(self): #, connection):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -53,29 +55,41 @@ class Sender:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
-        self.connection = connection
         if self.redirected:
+            self.target = self.redirected.address
+            alt_creds = {
+                "username": self.client._auth_config.get("iot_username"),
+                "password":self.client._auth_config.get("iot_password")}
             self._handler = SendClient(
-                self.redirected.address,
-                auth=None,
-                debug=self.debug,
+                self.target,
+                auth=self.client.get_auth(**alt_creds),
+                debug=self.client.debug,
                 msg_timeout=Sender.TIMEOUT,
-                retry_policy=self.retry_policy)
-        self._handler.open(connection)
+                error_policy=self.retry_policy,
+                keep_alive_interval=30,
+                properties=self.client.create_properties())
+        self._handler.open() #connection)
+        while not self.has_started():
+            self._handler._connection.work()
 
     def reconnect(self):
         """If the Sender was disconnected from the service with
         a retryable error - attempt to reconnect."""
         pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
         unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
+        alt_creds = {
+            "username": self.client._auth_config.get("iot_username"),
+            "password":self.client._auth_config.get("iot_password")}
         self._handler.close()
         self._handler = SendClient(
-            self.redirected.address,
-            auth=None,
-            debug=self.debug,
+            self.target,
+            auth=self.client.get_auth(**alt_creds),
+            debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
-            retry_policy=self.retry_policy)
-        self._handler.open(self.connection)
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
+        self._handler.open()
         self._handler._pending_messages = unsent_events
         self._handler.wait()
 
@@ -158,17 +172,15 @@ class Sender:
             error = EventHubError(str(failed), failed)
             self.close(exception=error)
             raise error
-        except errors.LinkDetach as detach:
-            if detach.action.retry:
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
                 self.reconnect()
             else:
-                error = EventHubError(str(detach), detach)
+                error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except errors.ConnectionClose as close:
-            error = EventHubError(str(close), close)
-            self.close(exception=error)
-            raise error
+        except (errors.MessageHandlerError):
+            self.reconnect()
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
             self.close(exception=error)
@@ -202,17 +214,15 @@ class Sender:
             raise self.error
         try:
             self._handler.wait()
-        except errors.LinkDetach as detach:
-            if detach.action.retry:
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
                 self.reconnect()
             else:
-                error = EventHubError(str(detach), detach)
+                error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except errors.ConnectionClose as close:
-            error = EventHubError(str(close), close)
-            self.close(exception=error)
-            raise error
+        except (errors.MessageHandlerError):
+            self.reconnect()
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))
 

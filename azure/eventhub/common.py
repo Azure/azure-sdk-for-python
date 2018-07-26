@@ -10,6 +10,13 @@ from uamqp import Message, BatchMessage
 from uamqp import types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
 
+_NO_RETRY_ERRORS = (
+    b"com.microsoft:argument-out-of-range",
+    b"com.microsoft:entity-disabled",
+    b"com.microsoft:auth-failed",
+    b"com.microsoft:precondition-failed",
+    b"com.microsoft:argument-error"
+)
 
 def _error_handler(error):
     """
@@ -29,7 +36,9 @@ def _error_handler(error):
     elif error.condition == b'com.microsoft:operation-cancelled':
         return errors.ErrorAction(retry=True)
     elif error.condition == b"com.microsoft:container-close":
-        return errors.ErrorAction(retry=True)
+        return errors.ErrorAction(retry=True, backoff=4)
+    elif error.condition in _NO_RETRY_ERRORS:
+        return errors.ErrorAction(retry=False)
     return errors.ErrorAction(retry=True)
 
 
@@ -97,7 +106,7 @@ class EventData(object):
         :rtype: int
         """
         try:
-            return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
+            return Offset(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
         except (KeyError, AttributeError):
             return None
 
