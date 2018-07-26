@@ -77,7 +77,6 @@ Note that versions are fixed at the minor version number level
 -  `azure-mgmt-resource v1.x <https://pypi.python.org/pypi/azure-mgmt-resource>`__
 -  `azure-mgmt-scheduler v1.x <https://pypi.python.org/pypi/azure-mgmt-scheduler>`__
 -  `azure-mgmt-search v1.x <https://pypi.python.org/pypi/azure-mgmt-search>`__
--  `azure-mgmt-servermanager v1.x <https://pypi.python.org/pypi/azure-mgmt-servermanager>`__
 -  `azure-mgmt-servicebus v0.4.x <https://pypi.python.org/pypi/azure-mgmt-servicebus>`__
 -  `azure-mgmt-servicefabric v0.1.x <https://pypi.python.org/pypi/azure-mgmt-servicefabric>`__
 -  `azure-mgmt-sql v0.8.x <https://pypi.python.org/pypi/azure-mgmt-sql>`__

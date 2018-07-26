@@ -77,7 +77,6 @@ setup(
         'azure-mgmt-resource~=1.2',
         'azure-mgmt-scheduler~=1.1',
         'azure-mgmt-search~=1.0',
-        'azure-mgmt-servermanager~=1.2',
         'azure-mgmt-servicebus~=0.4.0',
         'azure-mgmt-servicefabric~=0.1.0',
         'azure-mgmt-sql~=0.8.5',
