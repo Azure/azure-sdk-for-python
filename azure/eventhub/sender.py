@@ -43,7 +43,7 @@ class Sender:
         self._outcome = None
         self._condition = None
 
-    def open(self): #, connection):
+    def open(self):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
