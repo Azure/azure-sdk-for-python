@@ -70,11 +70,12 @@ class AsyncSender(Sender):
                 loop=self.loop)
         await self._handler.open_async()
         while not await self.has_started():
-            await self._handler._connection.work_async()
+            await self._handler._connection.work_async()  # pylint: disable=protected-access
 
     async def reconnect_async(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
         pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
         unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
         await self._handler.close_async()
@@ -130,7 +131,7 @@ class AsyncSender(Sender):
         elif isinstance(exception, EventHubError):
             self.error = exception
         elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = EventHubError(str(error), error)
+            self.error = EventHubError(str(exception), exception)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
@@ -163,7 +164,7 @@ class AsyncSender(Sender):
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
-        except (errors.MessageHandlerError):
+        except errors.MessageHandlerError:
             await self.reconnect_async()
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
@@ -187,7 +188,7 @@ class AsyncSender(Sender):
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
-        except (errors.MessageHandlerError):
+        except errors.MessageHandlerError:
             await self.reconnect_async()
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))

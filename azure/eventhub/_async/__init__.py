@@ -69,7 +69,7 @@ class EventHubClientAsync(EventHubClient):
     async def _wait_for_client(self, client):
         try:
             while client.get_handler_state().value == 2:
-                await client._handler._connection.work_async()
+                await client._handler._connection.work_async()  # pylint: disable=protected-access
         except Exception as exp:  # pylint: disable=broad-except
             await client.close_async(exception=exp)
 
@@ -182,10 +182,8 @@ class EventHubClientAsync(EventHubClient):
         :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
-        
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        print("RECEIVER_PATH", source_url)
         handler = AsyncReceiver(self, source_url, offset=offset, prefetch=prefetch, loop=loop)
         self.clients.append(handler)
         return handler

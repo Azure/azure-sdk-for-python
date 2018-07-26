@@ -257,7 +257,7 @@ class EventHubError(Exception):
                 self._parse_error(details.description)
                 for detail in self.details:
                     self.message += "\n{}".format(detail)
-            except:
+            except:  # pylint: disable=bare-except
                 self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
@@ -268,7 +268,7 @@ class EventHubError(Exception):
         if details_index >= 0:
             details_msg = self.message[details_index + 1:]
             self.message = self.message[0:details_index]
-            
+
             tracking_index = details_msg.index(", TrackingId:")
             system_index = details_msg.index(", SystemTracker:")
             timestamp_index = details_msg.index(", Timestamp:")

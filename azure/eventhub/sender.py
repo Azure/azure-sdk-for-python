@@ -3,9 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import time
-
-import uamqp
 from uamqp import constants, errors
 from uamqp import SendClient
 
@@ -65,13 +62,14 @@ class Sender:
                 error_policy=self.retry_policy,
                 keep_alive_interval=30,
                 properties=self.client.create_properties())
-        self._handler.open() #connection)
+        self._handler.open()
         while not self.has_started():
-            self._handler._connection.work()
+            self._handler._connection.work()  # pylint: disable=protected-access
 
     def reconnect(self):
         """If the Sender was disconnected from the service with
         a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
         pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
         unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
         self._handler.close()
@@ -173,7 +171,7 @@ class Sender:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except (errors.MessageHandlerError):
+        except errors.MessageHandlerError:
             self.reconnect()
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
@@ -215,7 +213,7 @@ class Sender:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except (errors.MessageHandlerError):
+        except errors.MessageHandlerError:
             self.reconnect()
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))

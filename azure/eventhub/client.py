@@ -15,7 +15,6 @@ except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 import uamqp
-from uamqp import Connection
 from uamqp import Message
 from uamqp import authentication
 from uamqp import constants
@@ -152,11 +151,11 @@ class EventHubClient(object):
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
         client = cls("amqps://" + address, username=username, password=password, **kwargs)
-        client._auth_config = {
+        client._auth_config = {  # pylint: disable=protected-access
             'iot_username': policy,
             'iot_password': key,
             'username': username,
-            'password': password}  # pylint: disable=protected-access
+            'password': password}
         return client
 
     def _create_auth(self, username=None, password=None):

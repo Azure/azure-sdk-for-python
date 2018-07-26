@@ -6,7 +6,7 @@
 from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
-from azure.eventhub.common import EventHubError, EventData, Offset, _error_handler
+from azure.eventhub.common import EventHubError, EventData, _error_handler
 
 
 class Receiver:
@@ -64,6 +64,7 @@ class Receiver:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
+        # pylint: disable=protected-access
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -89,6 +90,7 @@ class Receiver:
     def reconnect(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
         alt_creds = {
             "username": self.client._auth_config.get("iot_username"),
             "password":self.client._auth_config.get("iot_password")}
@@ -209,7 +211,7 @@ class Receiver:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except (errors.MessageHandlerError):
+        except errors.MessageHandlerError:
             self.reconnect()
             return data_batch
         except Exception as e:
