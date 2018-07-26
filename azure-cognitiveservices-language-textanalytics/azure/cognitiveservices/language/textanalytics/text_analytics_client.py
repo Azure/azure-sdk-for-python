@@ -16,63 +16,55 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class TextAnalyticsAPIConfiguration(Configuration):
-    """Configuration for TextAnalyticsAPI
+class TextAnalyticsClientConfiguration(Configuration):
+    """Configuration for TextAnalyticsClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.language.textanalytics.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        if azure_region is None:
-            raise ValueError("Parameter 'azure_region' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/text/analytics'
+        base_url = '{Endpoint}/text/analytics/v2.0'
 
-        super(TextAnalyticsAPIConfiguration, self).__init__(base_url)
+        super(TextAnalyticsClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-language-textanalytics/{}'.format(VERSION))
 
-        self.azure_region = azure_region
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class TextAnalyticsAPI(SDKClient):
+class TextAnalyticsClient(SDKClient):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
 
     :ivar config: Configuration for client.
-    :vartype config: TextAnalyticsAPIConfiguration
+    :vartype config: TextAnalyticsClientConfiguration
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.language.textanalytics.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        self.config = TextAnalyticsAPIConfiguration(azure_region, credentials)
-        super(TextAnalyticsAPI, self).__init__(self.config.credentials, self.config)
+        self.config = TextAnalyticsClientConfiguration(endpoint, credentials)
+        super(TextAnalyticsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = 'v2.0'
@@ -110,7 +102,7 @@ class TextAnalyticsAPI(SDKClient):
         # Construct URL
         url = self.key_phrases.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -144,7 +136,7 @@ class TextAnalyticsAPI(SDKClient):
             return client_raw_response
 
         return deserialized
-    key_phrases.metadata = {'url': '/v2.0/keyPhrases'}
+    key_phrases.metadata = {'url': '/keyPhrases'}
 
     def detect_language(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -174,7 +166,7 @@ class TextAnalyticsAPI(SDKClient):
         # Construct URL
         url = self.detect_language.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,7 +200,7 @@ class TextAnalyticsAPI(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_language.metadata = {'url': '/v2.0/languages'}
+    detect_language.metadata = {'url': '/languages'}
 
     def sentiment(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -241,7 +233,7 @@ class TextAnalyticsAPI(SDKClient):
         # Construct URL
         url = self.sentiment.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -275,7 +267,7 @@ class TextAnalyticsAPI(SDKClient):
             return client_raw_response
 
         return deserialized
-    sentiment.metadata = {'url': '/v2.0/sentiment'}
+    sentiment.metadata = {'url': '/sentiment'}
 
     def entities(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -307,7 +299,7 @@ class TextAnalyticsAPI(SDKClient):
         # Construct URL
         url = self.entities.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -341,4 +333,4 @@ class TextAnalyticsAPI(SDKClient):
             return client_raw_response
 
         return deserialized
-    entities.metadata = {'url': '/v2.0/entities'}
+    entities.metadata = {'url': '/entities'}

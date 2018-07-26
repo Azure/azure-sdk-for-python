@@ -47,9 +47,6 @@ except (SyntaxError, ImportError):
     from .entity_record import EntityRecord
     from .entities_batch_result_item import EntitiesBatchResultItem
     from .entities_batch_result import EntitiesBatchResult
-from .text_analytics_api_enums import (
-    AzureRegions,
-)
 
 __all__ = [
     'MultiLanguageInput',
@@ -70,5 +67,4 @@ __all__ = [
     'EntityRecord',
     'EntitiesBatchResultItem',
     'EntitiesBatchResult',
-    'AzureRegions',
 ]
