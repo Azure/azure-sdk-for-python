@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0"
+from msrest.paging import Paged
 
+
+class ResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Resource <azure.mgmt.keyvault.v2018_02_14.models.Resource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Resource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourcePaged, self).__init__(*args, **kwargs)
