@@ -73,3 +73,4 @@ class EPHOptions:
         self.release_pump_on_timeout = False
         self.initial_offset_provider = "-1"
         self.debug_trace = False
+        self.http_proxy = None

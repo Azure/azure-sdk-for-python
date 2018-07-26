@@ -38,7 +38,8 @@ class PartitionManager:
             try:
                 eh_client = EventHubClientAsync(
                     self.host.eh_config.client_address,
-                    debug=self.host.eph_options.debug_trace)
+                    debug=self.host.eph_options.debug_trace,
+                    http_proxy=self.host.eph_options.http_proxy)
                 try:
                     eh_info = await eh_client.get_eventhub_info_async()
                     self.partition_ids = eh_info['partition_ids']

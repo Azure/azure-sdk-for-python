@@ -89,7 +89,7 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
     """
 
-    def __init__(self, address, username=None, password=None, debug=False):
+    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -105,10 +105,15 @@ class EventHubClient(object):
         :param debug: Whether to output network trace logs to the logger. Default
          is `False`.
         :type debug: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
         self.eh_name = self.address.path.lstrip('/')
+        self.http_proxy = http_proxy
         self.mgmt_target = "amqps://{}/{}".format(self.address.hostname, self.eh_name)
         url_username = unquote_plus(self.address.username) if self.address.username else None
         username = username or url_username
@@ -169,8 +174,10 @@ class EventHubClient(object):
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:
-            return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAuth.from_shared_access_key(self.auth_uri, username, password, timeout=60)
+            return authentication.SASLPlain(
+                self.address.hostname, username, password, http_proxy=self.http_proxy)
+        return authentication.SASTokenAuth.from_shared_access_key(
+            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
 
     def create_properties(self):  # pylint: disable=no-self-use
         """

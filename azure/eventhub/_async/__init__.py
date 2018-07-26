@@ -55,8 +55,10 @@ class EventHubClientAsync(EventHubClient):
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:
-            return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAsync.from_shared_access_key(self.auth_uri, username, password, timeout=60)
+            return authentication.SASLPlain(
+                self.address.hostname, username, password, http_proxy=self.http_proxy)
+        return authentication.SASTokenAsync.from_shared_access_key(
+            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
 
     async def _close_clients_async(self):
         """

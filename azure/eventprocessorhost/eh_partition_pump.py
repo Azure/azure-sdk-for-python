@@ -66,7 +66,8 @@ class EventHubPartitionPump(PartitionPump):
         # Create event hub client and receive handler and set options
         self.eh_client = EventHubClientAsync(
             self.host.eh_config.client_address,
-            debug=self.host.eph_options.debug_trace)
+            debug=self.host.eph_options.debug_trace,
+            http_proxy=self.host.eph_options.http_proxy)
         self.partition_receive_handler = self.eh_client.add_async_receiver(
             self.partition_context.consumer_group_name,
             self.partition_context.partition_id,
