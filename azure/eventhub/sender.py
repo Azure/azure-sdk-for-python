@@ -57,12 +57,9 @@ class Sender:
         """
         if self.redirected:
             self.target = self.redirected.address
-            alt_creds = {
-                "username": self.client._auth_config.get("iot_username"),
-                "password":self.client._auth_config.get("iot_password")}
             self._handler = SendClient(
                 self.target,
-                auth=self.client.get_auth(**alt_creds),
+                auth=self.client.get_auth(),
                 debug=self.client.debug,
                 msg_timeout=Sender.TIMEOUT,
                 error_policy=self.retry_policy,
@@ -77,13 +74,10 @@ class Sender:
         a retryable error - attempt to reconnect."""
         pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
         unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
-        alt_creds = {
-            "username": self.client._auth_config.get("iot_username"),
-            "password":self.client._auth_config.get("iot_password")}
         self._handler.close()
         self._handler = SendClient(
             self.target,
-            auth=self.client.get_auth(**alt_creds),
+            auth=self.client.get_auth(),
             debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,

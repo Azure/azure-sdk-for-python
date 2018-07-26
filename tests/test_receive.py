@@ -33,9 +33,13 @@ def test_receive_end_of_stream(connection_str, senders):
 
 def test_receive_with_offset_sync(connection_str, senders):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
+    partitions = client.get_eventhub_info()
+    assert partitions["partition_ids"] == ["0", "1"]
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:
         client.run()
+        more_partitions = client.get_eventhub_info()
+        assert more_partitions["partition_ids"] == ["0", "1"]
 
         received = receiver.receive(timeout=5)
         assert len(received) == 0

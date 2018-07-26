@@ -40,7 +40,7 @@ try:
     client.run()
     batched_events = receiver.receive(max_batch_size=10)
     for event_data in batched_events:
-        last_offset = event_data.offset
+        last_offset = event_data.offset.value
         last_sn = event_data.sequence_number
         total += 1
         print("Partition {}, Received {}, sn={} offset={}".format(

@@ -20,7 +20,6 @@ def test_iothub_send_single_event(iot_connection_str, device_id):
     sender = client.add_sender(operation='/messages/devicebound')
     try:
         client.run()
-        partitions = client.get_eventhub_info()
         outcome = sender.send(EventData(b"A single event", to_device=device_id))
         assert outcome.value == 0
     except:
