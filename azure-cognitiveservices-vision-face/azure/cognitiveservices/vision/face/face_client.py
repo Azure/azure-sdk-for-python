@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.face_operations import FaceOperations
@@ -19,45 +19,41 @@ from .operations.face_list_operations import FaceListOperations
 from . import models
 
 
-class FaceAPIConfiguration(Configuration):
-    """Configuration for FaceAPI
+class FaceClientConfiguration(Configuration):
+    """Configuration for FaceClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.face.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        if azure_region is None:
-            raise ValueError("Parameter 'azure_region' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/face/v1.0'
+        base_url = '{Endpoint}/face/v1.0'
 
-        super(FaceAPIConfiguration, self).__init__(base_url)
+        super(FaceClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-face/{}'.format(VERSION))
 
-        self.azure_region = azure_region
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class FaceAPI(object):
+class FaceClient(SDKClient):
     """An API for face detection, verification, and identification.
 
     :ivar config: Configuration for client.
-    :vartype config: FaceAPIConfiguration
+    :vartype config: FaceClientConfiguration
 
     :ivar face: Face operations
     :vartype face: azure.cognitiveservices.vision.face.operations.FaceOperations
@@ -68,23 +64,19 @@ class FaceAPI(object):
     :ivar face_list: FaceList operations
     :vartype face_list: azure.cognitiveservices.vision.face.operations.FaceListOperations
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.face.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        self.config = FaceAPIConfiguration(azure_region, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = FaceClientConfiguration(endpoint, credentials)
+        super(FaceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

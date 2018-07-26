@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class FaceRectangle(Model):
     """A rectangle within which a face can be found.
 
-    :param width: The width of the rectangle, in pixels.
+    All required parameters must be populated in order to send to Azure.
+
+    :param width: Required. The width of the rectangle, in pixels.
     :type width: int
-    :param height: The height of the rectangle, in pixels.
+    :param height: Required. The height of the rectangle, in pixels.
     :type height: int
-    :param left: The distance from the left edge if the image to the left edge
-     of the rectangle, in pixels.
+    :param left: Required. The distance from the left edge if the image to the
+     left edge of the rectangle, in pixels.
     :type left: int
-    :param top: The distance from the top edge if the image to the top edge of
-     the rectangle, in pixels.
+    :param top: Required. The distance from the top edge if the image to the
+     top edge of the rectangle, in pixels.
     :type top: int
     """
 
@@ -41,9 +43,9 @@ class FaceRectangle(Model):
         'top': {'key': 'top', 'type': 'int'},
     }
 
-    def __init__(self, width, height, left, top):
-        super(FaceRectangle, self).__init__()
-        self.width = width
-        self.height = height
-        self.left = left
-        self.top = top
+    def __init__(self, **kwargs):
+        super(FaceRectangle, self).__init__(**kwargs)
+        self.width = kwargs.get('width', None)
+        self.height = kwargs.get('height', None)
+        self.left = kwargs.get('left', None)
+        self.top = kwargs.get('top', None)

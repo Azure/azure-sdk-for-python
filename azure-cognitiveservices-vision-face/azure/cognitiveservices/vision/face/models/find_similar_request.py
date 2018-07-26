@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class FindSimilarRequest(Model):
     """Request body for find similar operation.
 
-    :param face_id: FaceId of the query face. User needs to call Face - Detect
-     first to get a valid faceId. Note that this faceId is not persisted and
-     will expire 24 hours after the detection call
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_id: Required. FaceId of the query face. User needs to call
+     Face - Detect first to get a valid faceId. Note that this faceId is not
+     persisted and will expire 24 hours after the detection call
     :type face_id: str
     :param face_list_id: An existing user-specified unique candidate face
      list, created in Face List - Create a Face List. Face list contains a set
@@ -53,10 +55,10 @@ class FindSimilarRequest(Model):
         'mode': {'key': 'mode', 'type': 'FindSimilarMatchMode'},
     }
 
-    def __init__(self, face_id, face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson"):
-        super(FindSimilarRequest, self).__init__()
-        self.face_id = face_id
-        self.face_list_id = face_list_id
-        self.face_ids = face_ids
-        self.max_num_of_candidates_returned = max_num_of_candidates_returned
-        self.mode = mode
+    def __init__(self, **kwargs):
+        super(FindSimilarRequest, self).__init__(**kwargs)
+        self.face_id = kwargs.get('face_id', None)
+        self.face_list_id = kwargs.get('face_list_id', None)
+        self.face_ids = kwargs.get('face_ids', None)
+        self.max_num_of_candidates_returned = kwargs.get('max_num_of_candidates_returned', 20)
+        self.mode = kwargs.get('mode', "matchPerson")

@@ -73,9 +73,9 @@ class FaceOperations(object):
         body = models.FindSimilarRequest(face_id=face_id, face_list_id=face_list_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, mode=mode)
 
         # Construct URL
-        url = '/findsimilars'
+        url = self.find_similar.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -84,6 +84,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -92,9 +93,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(body, 'FindSimilarRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -109,6 +109,7 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    find_similar.metadata = {'url': '/findsimilars'}
 
     def group(
             self, face_ids, custom_headers=None, raw=False, **operation_config):
@@ -131,9 +132,9 @@ class FaceOperations(object):
         body = models.GroupRequest(face_ids=face_ids)
 
         # Construct URL
-        url = '/group'
+        url = self.group.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -142,6 +143,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -150,9 +152,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(body, 'GroupRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -167,6 +168,7 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    group.metadata = {'url': '/group'}
 
     def identify(
             self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None, custom_headers=None, raw=False, **operation_config):
@@ -201,9 +203,9 @@ class FaceOperations(object):
         body = models.IdentifyRequest(person_group_id=person_group_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, confidence_threshold=confidence_threshold)
 
         # Construct URL
-        url = '/identify'
+        url = self.identify.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -212,6 +214,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -220,9 +223,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(body, 'IdentifyRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -237,6 +239,7 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    identify.metadata = {'url': '/identify'}
 
     def verify_face_to_face(
             self, face_id1, face_id2, custom_headers=None, raw=False, **operation_config):
@@ -261,9 +264,9 @@ class FaceOperations(object):
         body = models.VerifyFaceToFaceRequest(face_id1=face_id1, face_id2=face_id2)
 
         # Construct URL
-        url = '/verify'
+        url = self.verify_face_to_face.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -272,6 +275,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -280,9 +284,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(body, 'VerifyFaceToFaceRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -297,13 +300,14 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    verify_face_to_face.metadata = {'url': '/verify'}
 
     def detect_with_url(
             self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, custom_headers=None, raw=False, **operation_config):
         """Detect human faces in an image and returns face locations, and
         optionally with faceIds, landmarks, and attributes.
 
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
         :param return_face_id: A value indicating whether the operation should
          return faceIds of detected faces.
@@ -333,9 +337,9 @@ class FaceOperations(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/detect'
+        url = self.detect_with_url.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -350,6 +354,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -358,9 +363,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -375,6 +379,7 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    detect_with_url.metadata = {'url': '/detect'}
 
     def verify_face_to_person(
             self, face_id, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
@@ -404,9 +409,9 @@ class FaceOperations(object):
         body = models.VerifyFaceToPersonRequest(face_id=face_id, person_group_id=person_group_id, person_id=person_id)
 
         # Construct URL
-        url = '/verify'
+        url = self.verify_face_to_person.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -415,6 +420,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -423,9 +429,8 @@ class FaceOperations(object):
         body_content = self._serialize.body(body, 'VerifyFaceToPersonRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -440,6 +445,7 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    verify_face_to_person.metadata = {'url': '/verify'}
 
     def detect_with_stream(
             self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -479,9 +485,9 @@ class FaceOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/detect'
+        url = self.detect_with_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -496,6 +502,7 @@ class FaceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -504,9 +511,8 @@ class FaceOperations(object):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -521,3 +527,4 @@ class FaceOperations(object):
             return client_raw_response
 
         return deserialized
+    detect_with_stream.metadata = {'url': '/detect'}
