@@ -11,7 +11,7 @@ import time
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
 
-def test_iothub_receive(iot_connection_str, device_id):
+def test_iothub_receive_sync(iot_connection_str, device_id):
     client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
     receiver = client.add_receiver("$default", "0", operation='/messages/events')
     try:

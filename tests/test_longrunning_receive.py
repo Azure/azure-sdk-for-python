@@ -48,7 +48,7 @@ async def pump(_pid, receiver, _args, _dl):
                             _pid,
                             total,
                             batch[-1].sequence_number,
-                            batch[-1].offset))
+                            batch[-1].offset.value))
         print("{}: total received {}".format(
             _pid,
             total))

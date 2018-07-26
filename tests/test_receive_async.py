@@ -46,7 +46,7 @@ async def test_receive_with_offset_async(connection_str, senders):
         assert len(received) == 1
         offset = received[0].offset
 
-        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
+        offset_receiver = client.add_async_receiver("$default", "0", offset=offset)
         await client.run_async()
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -73,7 +73,7 @@ async def test_receive_with_inclusive_offset_async(connection_str, senders):
         assert len(received) == 1
         offset = received[0].offset
 
-        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset, inclusive=True))
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset.value, inclusive=True))
         await client.run_async()
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
@@ -217,12 +217,14 @@ async def test_epoch_receiver_async(connection_str, senders):
 async def test_multiple_receiver_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
     partitions = await client.get_eventhub_info_async()
+    assert partitions["partition_ids"] == ["0", "1"]
     receivers = []
     for i in range(2):
         receivers.append(client.add_async_receiver("$default", "0", prefetch=10))
     try:
         await client.run_async()
         more_partitions = await client.get_eventhub_info_async()
+        assert more_partitions["partition_ids"] == ["0", "1"]
         outputs = await asyncio.gather(
             pump(receivers[0]),
             pump(receivers[1]),

@@ -164,8 +164,8 @@ def test_send_partition_batch(connection_str, receivers):
     assert len(partition_1) == 10
 
 
-def test_send_array(connection_str, receivers):
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+def test_send_array_sync(connection_str, receivers):
+    client = EventHubClient.from_connection_string(connection_str, debug=True)
     sender = client.add_sender()
     try:
         client.run()

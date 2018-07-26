@@ -181,7 +181,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
 async def test_receive_from_invalid_partitions_async(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
-        client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
+        client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
         receiver = client.add_async_receiver("$default", p)
         try:
             with pytest.raises(EventHubError):
