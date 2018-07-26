@@ -17,7 +17,7 @@ class DPMProtectedItemExtendedInfo(Model):
 
     :param protectable_object_load_path: Attribute to provide information on
      various DBs.
-    :type protectable_object_load_path: dict
+    :type protectable_object_load_path: dict[str, str]
     :param protected: To check if backup item is disk protected.
     :type protected: bool
     :param is_present_on_cloud: To check if backup item is cloud protected.
@@ -63,18 +63,19 @@ class DPMProtectedItemExtendedInfo(Model):
         'total_disk_storage_size_in_bytes': {'key': 'totalDiskStorageSizeInBytes', 'type': 'str'},
     }
 
-    def __init__(self, protectable_object_load_path=None, protected=None, is_present_on_cloud=None, last_backup_status=None, last_refreshed_at=None, oldest_recovery_point=None, recovery_point_count=None, on_premise_oldest_recovery_point=None, on_premise_latest_recovery_point=None, on_premise_recovery_point_count=None, is_collocated=None, protection_group_name=None, disk_storage_used_in_bytes=None, total_disk_storage_size_in_bytes=None):
-        self.protectable_object_load_path = protectable_object_load_path
-        self.protected = protected
-        self.is_present_on_cloud = is_present_on_cloud
-        self.last_backup_status = last_backup_status
-        self.last_refreshed_at = last_refreshed_at
-        self.oldest_recovery_point = oldest_recovery_point
-        self.recovery_point_count = recovery_point_count
-        self.on_premise_oldest_recovery_point = on_premise_oldest_recovery_point
-        self.on_premise_latest_recovery_point = on_premise_latest_recovery_point
-        self.on_premise_recovery_point_count = on_premise_recovery_point_count
-        self.is_collocated = is_collocated
-        self.protection_group_name = protection_group_name
-        self.disk_storage_used_in_bytes = disk_storage_used_in_bytes
-        self.total_disk_storage_size_in_bytes = total_disk_storage_size_in_bytes
+    def __init__(self, **kwargs):
+        super(DPMProtectedItemExtendedInfo, self).__init__(**kwargs)
+        self.protectable_object_load_path = kwargs.get('protectable_object_load_path', None)
+        self.protected = kwargs.get('protected', None)
+        self.is_present_on_cloud = kwargs.get('is_present_on_cloud', None)
+        self.last_backup_status = kwargs.get('last_backup_status', None)
+        self.last_refreshed_at = kwargs.get('last_refreshed_at', None)
+        self.oldest_recovery_point = kwargs.get('oldest_recovery_point', None)
+        self.recovery_point_count = kwargs.get('recovery_point_count', None)
+        self.on_premise_oldest_recovery_point = kwargs.get('on_premise_oldest_recovery_point', None)
+        self.on_premise_latest_recovery_point = kwargs.get('on_premise_latest_recovery_point', None)
+        self.on_premise_recovery_point_count = kwargs.get('on_premise_recovery_point_count', None)
+        self.is_collocated = kwargs.get('is_collocated', None)
+        self.protection_group_name = kwargs.get('protection_group_name', None)
+        self.disk_storage_used_in_bytes = kwargs.get('disk_storage_used_in_bytes', None)
+        self.total_disk_storage_size_in_bytes = kwargs.get('total_disk_storage_size_in_bytes', None)

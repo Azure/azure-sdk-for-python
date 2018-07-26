@@ -18,7 +18,10 @@ class ContainerServiceVMDiagnostics(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Whether the VM diagnostic agent is provisioned on the VM.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Whether the VM diagnostic agent is provisioned
+     on the VM.
     :type enabled: bool
     :ivar storage_uri: The URI of the storage account where diagnostics are
      stored.
@@ -35,7 +38,7 @@ class ContainerServiceVMDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, enabled):
-        super(ContainerServiceVMDiagnostics, self).__init__()
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(ContainerServiceVMDiagnostics, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
         self.storage_uri = None

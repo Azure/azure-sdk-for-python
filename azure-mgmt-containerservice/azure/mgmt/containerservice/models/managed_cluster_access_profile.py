@@ -18,18 +18,20 @@ class ManagedClusterAccessProfile(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param kube_config: Base64-encoded Kubernetes configuration file.
-    :type kube_config: str
+    :type kube_config: bytearray
     """
 
     _validation = {
@@ -45,9 +47,9 @@ class ManagedClusterAccessProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
+        'kube_config': {'key': 'properties.kubeConfig', 'type': 'bytearray'},
     }
 
-    def __init__(self, location, tags=None, kube_config=None):
-        super(ManagedClusterAccessProfile, self).__init__(location=location, tags=tags)
-        self.kube_config = kube_config
+    def __init__(self, **kwargs):
+        super(ManagedClusterAccessProfile, self).__init__(**kwargs)
+        self.kube_config = kwargs.get('kube_config', None)

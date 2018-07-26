@@ -21,18 +21,20 @@ class Origin(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param host_name: The address of the origin. Domain names, IPv4 addresses,
-     and IPv6 addresses are supported.
+    :param host_name: Required. The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
@@ -71,10 +73,10 @@ class Origin(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, host_name, tags=None, http_port=None, https_port=None):
-        super(Origin, self).__init__(location=location, tags=tags)
-        self.host_name = host_name
-        self.http_port = http_port
-        self.https_port = https_port
+    def __init__(self, **kwargs):
+        super(Origin, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
         self.resource_state = None
         self.provisioning_state = None

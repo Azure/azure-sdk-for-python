@@ -20,6 +20,9 @@ try:
     from .resource_delete_failure_data_py3 import ResourceDeleteFailureData
     from .resource_delete_cancel_data_py3 import ResourceDeleteCancelData
     from .event_grid_event_py3 import EventGridEvent
+    from .subscription_validation_event_data_py3 import SubscriptionValidationEventData
+    from .subscription_validation_response_py3 import SubscriptionValidationResponse
+    from .subscription_deleted_event_data_py3 import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data_py3 import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
     from .device_twin_metadata_py3 import DeviceTwinMetadata
@@ -35,6 +38,9 @@ try:
     from .container_registry_event_actor_py3 import ContainerRegistryEventActor
     from .container_registry_event_source_py3 import ContainerRegistryEventSource
     from .container_registry_event_data_py3 import ContainerRegistryEventData
+    from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
+    from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
+    from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -46,6 +52,9 @@ except (SyntaxError, ImportError):
     from .resource_delete_failure_data import ResourceDeleteFailureData
     from .resource_delete_cancel_data import ResourceDeleteCancelData
     from .event_grid_event import EventGridEvent
+    from .subscription_validation_event_data import SubscriptionValidationEventData
+    from .subscription_validation_response import SubscriptionValidationResponse
+    from .subscription_deleted_event_data import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
     from .device_twin_metadata import DeviceTwinMetadata
@@ -61,6 +70,12 @@ except (SyntaxError, ImportError):
     from .container_registry_event_actor import ContainerRegistryEventActor
     from .container_registry_event_source import ContainerRegistryEventSource
     from .container_registry_event_data import ContainerRegistryEventData
+    from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
+    from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
+    from .media_job_state_change_event_data import MediaJobStateChangeEventData
+from .event_grid_client_enums import (
+    JobState,
+)
 
 __all__ = [
     'StorageBlobCreatedEventData',
@@ -73,6 +88,9 @@ __all__ = [
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
     'EventGridEvent',
+    'SubscriptionValidationEventData',
+    'SubscriptionValidationResponse',
+    'SubscriptionDeletedEventData',
     'IotHubDeviceCreatedEventData',
     'IotHubDeviceDeletedEventData',
     'DeviceTwinMetadata',
@@ -88,4 +106,8 @@ __all__ = [
     'ContainerRegistryEventActor',
     'ContainerRegistryEventSource',
     'ContainerRegistryEventData',
+    'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
+    'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
+    'MediaJobStateChangeEventData',
+    'JobState',
 ]

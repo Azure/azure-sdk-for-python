@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-notificationhubs"
+package_pprint_name = "Notification Hubs Management"
+package_doc_id = "notification-hubs"
+is_stable = true

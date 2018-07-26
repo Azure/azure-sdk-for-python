@@ -19,7 +19,7 @@ except ImportError:
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-datalake-store"
-PACKAGE_PPRINT_NAME = "Data Lake Store Management Client"
+PACKAGE_PPRINT_NAME = "Data Lake Store Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -77,7 +77,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure>=0.4.20,<2.0.0',
+        'msrestazure>=0.4.27,<2.0.0',
         'azure-common~=1.1',
     ],
     cmdclass=cmdclass

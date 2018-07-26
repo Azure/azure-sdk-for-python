@@ -15,10 +15,12 @@ from .operation_result_info_base import OperationResultInfoBase
 class OperationResultInfo(OperationResultInfoBase):
     """Operation result info.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param job_list: List of jobs created by this operation.
-    :type job_list: list of str
+    :type job_list: list[str]
     """
 
     _validation = {
@@ -30,7 +32,7 @@ class OperationResultInfo(OperationResultInfoBase):
         'job_list': {'key': 'jobList', 'type': '[str]'},
     }
 
-    def __init__(self, job_list=None):
-        super(OperationResultInfo, self).__init__()
-        self.job_list = job_list
+    def __init__(self, **kwargs):
+        super(OperationResultInfo, self).__init__(**kwargs)
+        self.job_list = kwargs.get('job_list', None)
         self.object_type = 'OperationResultInfo'

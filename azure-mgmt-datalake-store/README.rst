@@ -36,7 +36,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Data Lake Store Management Client
+For code examples, see `Data Lake Store Management
 <https://docs.microsoft.com/python/api/overview/azure/data-lake-store>`__
 on docs.microsoft.com.
 

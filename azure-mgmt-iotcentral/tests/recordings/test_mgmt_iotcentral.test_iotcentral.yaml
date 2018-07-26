@@ -1,0 +1,218 @@
+interactions:
+- request:
+    body: !!python/unicode '{"name": "iot14f90eeb"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['23']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.IoTCentral/checkNameAvailability?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"nameAvailable":true}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['22']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:55:38 GMT']
+      etag: [W/"16-4/x+wI91pK3bZiWtoOg+Zr/n2HE"]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-msedge-ref: ['Ref A: 4B41CCBE8946485186EFE5A15767BC04 Ref B: CO1EDGE0209 Ref
+          C: 2018-07-17T04:55:39Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode '{"sku": {"name": "S1"}, "properties": {"subdomain": "iot14f90eeb",
+      "displayName": "iot14f90eeb"}, "location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['119']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb","name":"iot14f90eeb","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"6e6180ee-848d-4db2-b799-6485d41e3cc3","state":"created","displayName":"iot14f90eeb","subdomain":"iot14f90eeb","createdDate":"2018-07-17T04:55:41.692Z","template":"iotc-default@1.0.0"},"sku":{"name":"S1"},"etag":"\"ad0546d3-0000-0000-0000-5b4d76cd0000\""}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['535']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:55:41 GMT']
+      etag: ['"ad0546d3-0000-0000-0000-5b4d76cd0000"']
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-msedge-ref: ['Ref A: 97E7C9A38B7743FF991800D9CC52DA8B Ref B: CO1EDGE0112 Ref
+          C: 2018-07-17T04:55:41Z']
+      x-powered-by: [Express]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb","name":"iot14f90eeb","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"6e6180ee-848d-4db2-b799-6485d41e3cc3","state":"created","displayName":"iot14f90eeb","subdomain":"iot14f90eeb","createdDate":"2018-07-17T04:55:41.692Z","template":"iotc-default@1.0.0"},"sku":{"name":"S1"},"etag":"\"ad0546d3-0000-0000-0000-5b4d76cd0000\""}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['535']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:56:13 GMT']
+      etag: [W/"ad0546d3-0000-0000-0000-5b4d76cd0000"]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-msedge-ref: ['Ref A: 701D22B5B1784B2BA9DF3A2127653BF6 Ref B: CO1EDGE0517 Ref
+          C: 2018-07-17T04:56:13Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb","name":"iot14f90eeb","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"6e6180ee-848d-4db2-b799-6485d41e3cc3","state":"created","displayName":"iot14f90eeb","subdomain":"iot14f90eeb","createdDate":"2018-07-17T04:55:41.692Z","template":"iotc-default@1.0.0"},"sku":{"name":"S1"},"etag":"\"ad0546d3-0000-0000-0000-5b4d76cd0000\""}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['535']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:56:13 GMT']
+      etag: [W/"ad0546d3-0000-0000-0000-5b4d76cd0000"]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-msedge-ref: ['Ref A: 4BB978D7AA7140CAB2ECC96A3AAE001B Ref B: CO1EDGE0322 Ref
+          C: 2018-07-17T04:56:13Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb","name":"iot14f90eeb","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"6e6180ee-848d-4db2-b799-6485d41e3cc3","state":"created","displayName":"iot14f90eeb","subdomain":"iot14f90eeb","createdDate":"2018-07-17T04:55:41.692Z","template":"iotc-default@1.0.0"},"sku":{"name":"S1"},"etag":"\"ad0546d3-0000-0000-0000-5b4d76cd0000\""}],"nextLink":null}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['563']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:56:14 GMT']
+      etag: [W/"233-hXriBvXlRcSweK2V6YmT80XXHsQ"]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-msedge-ref: ['Ref A: C28C2311346A4C4DACCACEA4E0CF1FDD Ref B: CO1EDGE0413 Ref
+          C: 2018-07-17T04:56:14Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.IoTCentral/IoTApps?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/IOTC/providers/Microsoft.IoTCentral/IoTApps/shakpaid01-91c6e47b","name":"shakpaid01-91c6e47b","type":"Microsoft.IoTCentral/IoTApps","location":"eastus","tags":{},"properties":{"applicationId":"34480abf-808b-4b60-8ca9-c29af2d59762","state":"created","displayName":"shakpaid01","tenant":"72f988bf-86f1-41af-91ab-2d7cd011db47","subdomain":"shakpaid01","createdDate":"2018-07-12T00:32:24.408Z","template":"iotc-demo@1.0.0"},"sku":{"name":"S1"},"etag":"\"59029e24-0000-0000-0000-5b46a1980000\""},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/juste/providers/Microsoft.IoTCentral/IoTApps/juste-test","name":"juste-test","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"1ad2651a-9c5d-4925-b3f3-f1335917ff86","state":"created","displayName":"juste-test","subdomain":"juste-test","createdDate":"2018-07-16T18:42:18.314Z","template":"iotc-default@1.0.0"},"sku":{"name":"F1"},"etag":"\"a8057a79-0000-0000-0000-5b4ce70a0000\""},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb","name":"iot14f90eeb","type":"Microsoft.IoTCentral/IoTApps","location":"westus","properties":{"applicationId":"6e6180ee-848d-4db2-b799-6485d41e3cc3","state":"created","displayName":"iot14f90eeb","subdomain":"iot14f90eeb","createdDate":"2018-07-17T04:55:41.692Z","template":"iotc-default@1.0.0"},"sku":{"name":"S1"},"etag":"\"ad0546d3-0000-0000-0000-5b4d76cd0000\""}],"nextLink":null}'}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['1621']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 17 Jul 2018 04:56:15 GMT']
+      etag: [W/"655-8HYdqOzkhWlr0zM37lPGN0ZyJrs"]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-msedge-ref: ['Ref A: CC7E00D41601432EB228F231B6C18261 Ref B: CO1EDGE0121 Ref
+          C: 2018-07-17T04:56:15Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/2.7.14 (Windows-10-10.0.17134) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-iotcentral/2017-07-01-privatepreview Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iotcentral_test_iotcentral14f90eeb/providers/Microsoft.IoTCentral/IoTApps/iot14f90eeb?api-version=2017-07-01-privatepreview
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: ['no-store, must-revalidate, no-cache, max-stale=0, private,
+          post-check=0, pre-check=0']
+      content-length: ['0']
+      date: ['Tue, 17 Jul 2018 04:56:17 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-iot-cluster: [iotcprodwestus01]
+      x-iot-version: ['20180713.4']
+      x-ms-ratelimit-remaining-subscription-deletes: ['14999']
+      x-msedge-ref: ['Ref A: C1613914BC874622AE0246A141AED4C9 Ref B: CO1EDGE0311 Ref
+          C: 2018-07-17T04:56:16Z']
+      x-powered-by: [Express]
+    status: {code: 200, message: OK}
+version: 1

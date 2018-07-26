@@ -5,10 +5,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from contextlib import contextmanager
 
 import azure.mgmt.recoveryservicesbackup
-from testutils.common_recordingtestcase import record
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from recoveryservicesbackup_testcase import MgmtRecoveryServicesBackupTestDefinition, MgmtRecoveryServicesBackupTestHelper
 

@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class KeySignParameters(Model):
     """The key operations parameters.
 
-    :param algorithm: The signing/verification algorithm identifier. For more
-     information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
-     Possible values include: 'PS256', 'PS384', 'PS512', 'RS256', 'RS384',
-     'RS512', 'RSNULL'
-    :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-     <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
-    :param value:
+    All required parameters must be populated in order to send to Azure.
+
+    :param algorithm: Required. The signing/verification algorithm identifier.
+     For more information on possible algorithm types, see
+     JsonWebKeySignatureAlgorithm. Possible values include: 'PS256', 'PS384',
+     'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256', 'ES384', 'ES512',
+     'ES256K'
+    :type algorithm: str or
+     ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
+    :param value: Required.
     :type value: bytes
     """
 
@@ -35,6 +38,7 @@ class KeySignParameters(Model):
         'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, algorithm, value):
-        self.algorithm = algorithm
-        self.value = value
+    def __init__(self, **kwargs):
+        super(KeySignParameters, self).__init__(**kwargs)
+        self.algorithm = kwargs.get('algorithm', None)
+        self.value = kwargs.get('value', None)

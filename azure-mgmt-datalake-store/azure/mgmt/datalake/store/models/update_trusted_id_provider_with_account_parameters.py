@@ -16,7 +16,10 @@ class UpdateTrustedIdProviderWithAccountParameters(Model):
     """The parameters used to update a trusted identity provider while updating a
     Data Lake Store account.
 
-    :param name: The unique name of the trusted identity provider to update.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the trusted identity provider to
+     update.
     :type name: str
     :param id_provider: The URL of this trusted identity provider.
     :type id_provider: str
@@ -31,7 +34,7 @@ class UpdateTrustedIdProviderWithAccountParameters(Model):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, name, id_provider=None):
-        super(UpdateTrustedIdProviderWithAccountParameters, self).__init__()
-        self.name = name
-        self.id_provider = id_provider
+    def __init__(self, **kwargs):
+        super(UpdateTrustedIdProviderWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id_provider = kwargs.get('id_provider', None)

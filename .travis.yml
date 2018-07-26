@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 sudo: required
 cache: pip
 language: python
@@ -8,16 +8,20 @@ matrix:
       python: "2.7"
     - os: linux
       python: "3.4"
+      dist: trusty
     - os: linux
       python: "3.5"
     - os: linux
       python: "3.6"
+    - os: linux
+      python: "3.7"
     - os: linux
       python: "nightly"
 #    - os: linux
 #      python: "pypy2.7-5.8.0"
     - os: linux
       python: "pypy3.5-5.8.0"
+      dist: trusty
     - os: osx
       osx_image: xcode7.3
       language: generic

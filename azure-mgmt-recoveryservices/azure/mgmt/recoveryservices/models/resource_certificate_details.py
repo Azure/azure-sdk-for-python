@@ -15,6 +15,12 @@ from msrest.serialization import Model
 class ResourceCertificateDetails(Model):
     """Certificate details representing the Vault credentials.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ResourceCertificateAndAadDetails,
+    ResourceCertificateAndAcsDetails
+
+    All required parameters must be populated in order to send to Azure.
+
     :param certificate: The base64 encoded certificate raw data string.
     :type certificate: bytearray
     :param friendly_name: Certificate friendlyname.
@@ -31,7 +37,7 @@ class ResourceCertificateDetails(Model):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Required. Constant filled by server.
     :type auth_type: str
     """
 
@@ -55,13 +61,14 @@ class ResourceCertificateDetails(Model):
         'auth_type': {'AzureActiveDirectory': 'ResourceCertificateAndAadDetails', 'AccessControlService': 'ResourceCertificateAndAcsDetails'}
     }
 
-    def __init__(self, certificate=None, friendly_name=None, issuer=None, resource_id=None, subject=None, thumbprint=None, valid_from=None, valid_to=None):
-        self.certificate = certificate
-        self.friendly_name = friendly_name
-        self.issuer = issuer
-        self.resource_id = resource_id
-        self.subject = subject
-        self.thumbprint = thumbprint
-        self.valid_from = valid_from
-        self.valid_to = valid_to
+    def __init__(self, **kwargs):
+        super(ResourceCertificateDetails, self).__init__(**kwargs)
+        self.certificate = kwargs.get('certificate', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.issuer = kwargs.get('issuer', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.subject = kwargs.get('subject', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.valid_from = kwargs.get('valid_from', None)
+        self.valid_to = kwargs.get('valid_to', None)
         self.auth_type = None
