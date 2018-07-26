@@ -58,7 +58,7 @@ class UsageDetail(Resource):
     :vartype pretax_cost: decimal.Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
-    :ivar meter_id: The meter id.
+    :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
@@ -78,6 +78,16 @@ class UsageDetail(Resource):
     :ivar cost_center: The cost center of this department if it is a
      department and a costcenter exists
     :vartype cost_center: str
+    :ivar part_number: Part Number
+    :vartype part_number: str
+    :ivar resource_guid: Resource Guid
+    :vartype resource_guid: str
+    :ivar offer_id: Offer Id
+    :vartype offer_id: str
+    :ivar charges_billed_separately: Charges billed separately
+    :vartype charges_billed_separately: bool
+    :ivar location: Resource Location
+    :vartype location: str
     :ivar additional_properties: Additional details of this usage item. By
      default this is not populated, unless it's specified in $expand.
     :vartype additional_properties: str
@@ -109,6 +119,11 @@ class UsageDetail(Resource):
         'product': {'readonly': True},
         'consumed_service': {'readonly': True},
         'cost_center': {'readonly': True},
+        'part_number': {'readonly': True},
+        'resource_guid': {'readonly': True},
+        'offer_id': {'readonly': True},
+        'charges_billed_separately': {'readonly': True},
+        'location': {'readonly': True},
         'additional_properties': {'readonly': True},
     }
 
@@ -138,11 +153,16 @@ class UsageDetail(Resource):
         'product': {'key': 'properties.product', 'type': 'str'},
         'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
         'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'part_number': {'key': 'properties.partNumber', 'type': 'str'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'offer_id': {'key': 'properties.offerId', 'type': 'str'},
+        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'bool'},
+        'location': {'key': 'properties.location', 'type': 'str'},
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(UsageDetail, self).__init__()
+    def __init__(self, **kwargs):
+        super(UsageDetail, self).__init__(**kwargs)
         self.billing_period_id = None
         self.invoice_id = None
         self.usage_start = None
@@ -164,4 +184,9 @@ class UsageDetail(Resource):
         self.product = None
         self.consumed_service = None
         self.cost_center = None
+        self.part_number = None
+        self.resource_guid = None
+        self.offer_id = None
+        self.charges_billed_separately = None
+        self.location = None
         self.additional_properties = None
