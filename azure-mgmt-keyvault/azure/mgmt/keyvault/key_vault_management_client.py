@@ -110,7 +110,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_02_14 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def operations(self):
         """Instance depends on the API version:
