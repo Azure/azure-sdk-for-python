@@ -19,6 +19,9 @@ try:
     from .resource_delete_success_data_py3 import ResourceDeleteSuccessData
     from .resource_delete_failure_data_py3 import ResourceDeleteFailureData
     from .resource_delete_cancel_data_py3 import ResourceDeleteCancelData
+    from .resource_action_success_data_py3 import ResourceActionSuccessData
+    from .resource_action_failure_data_py3 import ResourceActionFailureData
+    from .resource_action_cancel_data_py3 import ResourceActionCancelData
     from .event_grid_event_py3 import EventGridEvent
     from .subscription_validation_event_data_py3 import SubscriptionValidationEventData
     from .subscription_validation_response_py3 import SubscriptionValidationResponse
@@ -55,6 +58,9 @@ except (SyntaxError, ImportError):
     from .resource_delete_success_data import ResourceDeleteSuccessData
     from .resource_delete_failure_data import ResourceDeleteFailureData
     from .resource_delete_cancel_data import ResourceDeleteCancelData
+    from .resource_action_success_data import ResourceActionSuccessData
+    from .resource_action_failure_data import ResourceActionFailureData
+    from .resource_action_cancel_data import ResourceActionCancelData
     from .event_grid_event import EventGridEvent
     from .subscription_validation_event_data import SubscriptionValidationEventData
     from .subscription_validation_response import SubscriptionValidationResponse
@@ -95,6 +101,9 @@ __all__ = [
     'ResourceDeleteSuccessData',
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
+    'ResourceActionSuccessData',
+    'ResourceActionFailureData',
+    'ResourceActionCancelData',
     'EventGridEvent',
     'SubscriptionValidationEventData',
     'SubscriptionValidationResponse',
