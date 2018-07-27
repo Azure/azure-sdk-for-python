@@ -92,7 +92,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         super(NetworkManagementClient, self).__init__(
             credentials,
-            self.config
+            self.config,
             api_version=api_version,
             profile=profile
         )
