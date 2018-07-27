@@ -26,6 +26,8 @@ try:
     from .regenerate_key_parameters_py3 import RegenerateKeyParameters
     from .signal_rcreate_parameters_py3 import SignalRCreateParameters
     from .signal_rupdate_parameters_py3 import SignalRUpdateParameters
+    from .signal_rusage_name_py3 import SignalRUsageName
+    from .signal_rusage_py3 import SignalRUsage
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .metric_specification import MetricSpecification
@@ -43,8 +45,11 @@ except (SyntaxError, ImportError):
     from .regenerate_key_parameters import RegenerateKeyParameters
     from .signal_rcreate_parameters import SignalRCreateParameters
     from .signal_rupdate_parameters import SignalRUpdateParameters
+    from .signal_rusage_name import SignalRUsageName
+    from .signal_rusage import SignalRUsage
 from .operation_paged import OperationPaged
 from .signal_rresource_paged import SignalRResourcePaged
+from .signal_rusage_paged import SignalRUsagePaged
 from .signal_rmanagement_client_enums import (
     SignalRSkuTier,
     ProvisioningState,
@@ -68,8 +73,11 @@ __all__ = [
     'RegenerateKeyParameters',
     'SignalRCreateParameters',
     'SignalRUpdateParameters',
+    'SignalRUsageName',
+    'SignalRUsage',
     'OperationPaged',
     'SignalRResourcePaged',
+    'SignalRUsagePaged',
     'SignalRSkuTier',
     'ProvisioningState',
     'KeyType',
