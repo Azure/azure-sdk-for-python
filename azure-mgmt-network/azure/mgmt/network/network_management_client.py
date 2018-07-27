@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -33,8 +33,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    def __init__(self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -52,7 +51,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class NetworkManagementClient(MultiApiClientMixin):
+class NetworkManagementClient(MultiApiClientMixin, SDKClient):
     """Network Client
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -60,7 +59,7 @@ class NetworkManagementClient(MultiApiClientMixin):
     By default, uses latest API version available on public Azure.
     For production, you should stick a particular api-version and/or profile.
     The profile sets a mapping between the operation group and an API version.
-    The api-version parameter sets the default API version if the operation 
+    The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
     :ivar config: Configuration for client.
@@ -80,7 +79,7 @@ class NetworkManagementClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-02-01'
+    DEFAULT_API_VERSION = '2018-06-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -90,16 +89,13 @@ class NetworkManagementClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         super(NetworkManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
     def check_dns_name_availability(
             self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
@@ -127,7 +123,11 @@ class NetworkManagementClient(MultiApiClientMixin):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2018-02-01':
+        if api_version == '2018-06-01':
+            from .v2018_06_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-02-01':
             from .v2018_02_01 import NetworkManagementClient as ClientClass
         elif api_version == '2018-01-01':
             from .v2018_01_01 import NetworkManagementClient as ClientClass
@@ -222,7 +222,7 @@ class NetworkManagementClient(MultiApiClientMixin):
             from .v2018_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def application_gateways(self):
         """Instance depends on the API version:
