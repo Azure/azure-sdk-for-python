@@ -18,7 +18,6 @@ class DeployedApplicationsHealthEvaluation(HealthEvaluation):
     aggregated health state.
     Can be returned when evaluating application health and the aggregated
     health state is either Error or Warning.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

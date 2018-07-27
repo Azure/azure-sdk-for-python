@@ -23,7 +23,6 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     regional or datacenter boundaries. Note that since this is an optimization
     it is possible that the Primary replica may not end up located in this
     domain due to failures, capacity limits, or other constraints.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

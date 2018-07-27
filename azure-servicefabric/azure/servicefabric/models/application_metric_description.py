@@ -16,7 +16,6 @@ class ApplicationMetricDescription(Model):
     """Describes capacity information for a custom resource balancing metric. This
     can be used to limit the total consumption of this metric by the services
     of this application.
-    .
 
     :param name: The name of the metric.
     :type name: str

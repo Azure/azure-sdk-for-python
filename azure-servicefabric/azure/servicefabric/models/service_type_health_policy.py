@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ServiceTypeHealthPolicy(Model):
     """Represents the health policy used to evaluate the health of services
     belonging to a service type.
-    .
 
     :param max_percent_unhealthy_partitions_per_service: The maximum allowed
      percentage of unhealthy partitions per service. Allowed values are Byte
@@ -27,8 +26,7 @@ class ServiceTypeHealthPolicy(Model):
      The percentage is calculated by dividing the number of unhealthy
      partitions over the total number of partitions in the service.
      The computation rounds up to tolerate one failure on small numbers of
-     partitions. Default percentage is zero.
-     . Default value: 0 .
+     partitions. Default percentage is zero. Default value: 0 .
     :type max_percent_unhealthy_partitions_per_service: int
     :param max_percent_unhealthy_replicas_per_partition: The maximum allowed
      percentage of unhealthy replicas per partition. Allowed values are Byte
@@ -40,8 +38,7 @@ class ServiceTypeHealthPolicy(Model):
      The percentage is calculated by dividing the number of unhealthy replicas
      over the total number of replicas in the partition.
      The computation rounds up to tolerate one failure on small numbers of
-     replicas. Default percentage is zero.
-     . Default value: 0 .
+     replicas. Default percentage is zero. Default value: 0 .
     :type max_percent_unhealthy_replicas_per_partition: int
     :param max_percent_unhealthy_services: The maximum maximum allowed
      percentage of unhealthy services. Allowed values are Byte values from zero
@@ -54,8 +51,7 @@ class ServiceTypeHealthPolicy(Model):
      specific service type over the total number of services of the specific
      service type.
      The computation rounds up to tolerate one failure on small numbers of
-     services. Default percentage is zero.
-     . Default value: 0 .
+     services. Default percentage is zero. Default value: 0 .
     :type max_percent_unhealthy_services: int
     """
 

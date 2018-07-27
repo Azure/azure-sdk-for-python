@@ -17,7 +17,6 @@ class ReplicatorStatus(Model):
     Contains information about the service fabric replicator like the
     replication/copy queue utilization, last acknowledgement received
     timestamp, etc.
-    .
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: PrimaryReplicatorStatus, SecondaryReplicatorStatus

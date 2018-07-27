@@ -20,7 +20,6 @@ class ReplicatorQueueStatus(Model):
     timestamp, etc.
     Depending on the role of the replicator, the properties in this type imply
     different meanings.
-    .
 
     :param queue_utilization_percentage: Represents the utilization of the
      queue. A value of 0 indicates that the queue is empty and a value of 100

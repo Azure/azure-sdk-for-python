@@ -31,7 +31,6 @@ class ChaosTargetFilter(Model):
     nodeTypeY that is included
     in NodeTypeInclusionList. If both NodeTypeInclusionList and
     ApplicationInclusionList are null or empty, an ArgumentException is thrown.
-    .
 
     :param node_type_inclusion_list: A list of node types to include in Chaos
      faults.

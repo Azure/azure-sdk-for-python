@@ -22,7 +22,6 @@ class DeployedServicePackageHealthStateFilter(Model):
     the cluster health chunk.
     One filter can match zero, one or multiple deployed service packages,
     depending on its properties.
-    .
 
     :param service_manifest_name_filter: The name of the service manifest
      which identifies the deployed service packages that matches the filter.
@@ -68,8 +67,7 @@ class DeployedServicePackageHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     """
 

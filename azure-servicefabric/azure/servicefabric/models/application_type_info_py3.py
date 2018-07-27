@@ -25,17 +25,16 @@ class ApplicationTypeInfo(Model):
      can be overridden when creating or updating the application.
     :type default_parameter_list:
      list[~azure.servicefabric.models.ApplicationParameter]
-    :param status: The status of the application type.
-     . Possible values include: 'Invalid', 'Provisioning', 'Available',
-     'Unprovisioning', 'Failed'
+    :param status: The status of the application type. Possible values
+     include: 'Invalid', 'Provisioning', 'Available', 'Unprovisioning',
+     'Failed'
     :type status: str or ~azure.servicefabric.models.ApplicationTypeStatus
     :param status_details: Additional detailed information about the status of
      the application type.
     :type status_details: str
     :param application_type_definition_kind: The mechanism used to define a
-     Service Fabric application type.
-     . Possible values include: 'Invalid', 'ServiceFabricApplicationPackage',
-     'Compose'
+     Service Fabric application type. Possible values include: 'Invalid',
+     'ServiceFabricApplicationPackage', 'Compose'
     :type application_type_definition_kind: str or
      ~azure.servicefabric.models.ApplicationTypeDefinitionKind
     """

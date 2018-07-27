@@ -18,7 +18,6 @@ class ResourceRequests(Model):
     container can consume more than requested resources up to the specified
     limits before being restarted. Currently, the requested resources are
     treated as limits.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

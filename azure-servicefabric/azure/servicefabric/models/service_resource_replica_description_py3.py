@@ -18,8 +18,7 @@ class ServiceResourceReplicaDescription(ServiceReplicaProperties):
     All required parameters must be populated in order to send to Azure.
 
     :param os_type: Required. The Operating system type required by the code
-     in service.
-     . Possible values include: 'Linux', 'Windows'
+     in service. Possible values include: 'Linux', 'Windows'
     :type os_type: str or ~azure.servicefabric.models.OperatingSystemTypes
     :param code_packages: Required. Describes the set of code packages that
      forms the service. A code package describes the container and the

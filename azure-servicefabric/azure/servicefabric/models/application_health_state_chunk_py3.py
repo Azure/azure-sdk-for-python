@@ -17,7 +17,6 @@ class ApplicationHealthStateChunk(EntityHealthStateChunk):
     The application health state chunk contains the application name, its
     aggregated health state and any children services and deployed applications
     that respect the filters in cluster health chunk query description.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
