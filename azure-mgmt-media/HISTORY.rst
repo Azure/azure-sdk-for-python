@@ -3,6 +3,22 @@
 Release History
 ===============
 
+1.0.0rc2 (2018-07-19)
++++++++++++++++++++++
+
+**Features**
+
+- Model LiveEventPreview has a new parameter alternative_media_id
+- Model StreamingLocator has a new parameter alternative_media_id
+- Model EnvelopeEncryption has a new parameter custom_key_acquisition_url_template
+- Model Job has a new parameter correlation_data
+
+**Breaking changes**
+
+- Model EnvelopeEncryption no longer has parameter custom_license_acquisition_url_template
+
+API version endpoint is now 2018-06-01-preview
+
 1.0.0rc1 (2018-04-23)
 +++++++++++++++++++++
 
@@ -10,6 +26,8 @@ Release History
 
 This is a complete rewriting of the package and a completly new RestAPI,
 and no compatibility at all is possible.
+
+API version endpoint is now 2018-03-30-preview
 
 0.2.0 (2017-09-14)
 ++++++++++++++++++

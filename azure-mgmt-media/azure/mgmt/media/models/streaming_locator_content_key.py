@@ -15,33 +15,37 @@ from msrest.serialization import Model
 class StreamingLocatorContentKey(Model):
     """Class for content key in Streaming Locator.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param label: Label of Content Key
-    :type label: str
-    :param type: Required. Encryption type of Content Key. Possible values
-     include: 'CommonEncryptionCenc', 'CommonEncryptionCbcs',
-     'EnvelopeEncryption'
-    :type type: str or ~azure.mgmt.media.models.StreamingLocatorContentKeyType
     :param id: Required. ID of Content Key
     :type id: str
+    :ivar type: Encryption type of Content Key. Possible values include:
+     'CommonEncryptionCenc', 'CommonEncryptionCbcs', 'EnvelopeEncryption'
+    :vartype type: str or
+     ~azure.mgmt.media.models.StreamingLocatorContentKeyType
+    :param label: Label of Content Key
+    :type label: str
     :param value: Value of  of Content Key
     :type value: str
-    :param policy_name: ContentKeyPolicy used by Content Key
-    :type policy_name: str
+    :ivar policy_name: ContentKeyPolicy used by Content Key
+    :vartype policy_name: str
     :param tracks: Tracks which use this Content Key
     :type tracks: list[~azure.mgmt.media.models.TrackSelection]
     """
 
     _validation = {
-        'type': {'required': True},
         'id': {'required': True},
+        'type': {'readonly': True},
+        'policy_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'StreamingLocatorContentKeyType'},
         'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'StreamingLocatorContentKeyType'},
+        'label': {'key': 'label', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
         'policy_name': {'key': 'policyName', 'type': 'str'},
         'tracks': {'key': 'tracks', 'type': '[TrackSelection]'},
@@ -49,9 +53,9 @@ class StreamingLocatorContentKey(Model):
 
     def __init__(self, **kwargs):
         super(StreamingLocatorContentKey, self).__init__(**kwargs)
-        self.label = kwargs.get('label', None)
-        self.type = kwargs.get('type', None)
         self.id = kwargs.get('id', None)
+        self.type = None
+        self.label = kwargs.get('label', None)
         self.value = kwargs.get('value', None)
-        self.policy_name = kwargs.get('policy_name', None)
+        self.policy_name = None
         self.tracks = kwargs.get('tracks', None)

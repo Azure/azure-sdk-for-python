@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-media"
+package_pprint_name = "Media Services"
+package_doc_id = "media-services"
+is_stable = false
+is_arm = true
