@@ -21,7 +21,7 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
      'fabric:' URI scheme.
     :type application_name: str
     :param upgrade_state: The state of the compose deployment upgrade.
-     . Possible values include: 'Invalid', 'ProvisioningTarget',
+     Possible values include: 'Invalid', 'ProvisioningTarget',
      'RollingForwardInProgress', 'RollingForwardPending',
      'UnprovisioningCurrent', 'RollingForwardCompleted',
      'RollingBackInProgress', 'UnprovisioningTarget', 'RollingBackCompleted',

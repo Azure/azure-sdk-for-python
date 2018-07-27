@@ -16,7 +16,6 @@ class PartitionHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a partition, which contains the
     partition ID, its aggregated health state and any replicas that respect the
     filters in the cluster health chunk query description.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible

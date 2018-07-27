@@ -14,17 +14,15 @@ from msrest.serialization import Model
 
 class Chaos(Model):
     """Contains a description of Chaos.
-    .
 
     :param chaos_parameters: If Chaos is running, these are the parameters
      Chaos is running with.
     :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
-    :param status: Current status of the Chaos run.
-     . Possible values include: 'Invalid', 'Running', 'Stopped'
+    :param status: Current status of the Chaos run. Possible values include:
+     'Invalid', 'Running', 'Stopped'
     :type status: str or ~azure.servicefabric.models.ChaosStatus
-    :param schedule_status: Current status of the schedule.
-     . Possible values include: 'Invalid', 'Stopped', 'Active', 'Expired',
-     'Pending'
+    :param schedule_status: Current status of the schedule. Possible values
+     include: 'Invalid', 'Stopped', 'Active', 'Expired', 'Pending'
     :type schedule_status: str or
      ~azure.servicefabric.models.ChaosScheduleStatus
     """

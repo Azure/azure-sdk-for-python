@@ -14,7 +14,6 @@ from msrest.serialization import Model
 
 class CreateComposeDeploymentDescription(Model):
     """Defines description for creating a Service Fabric compose deployment.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

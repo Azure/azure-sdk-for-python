@@ -14,15 +14,13 @@ from msrest.serialization import Model
 
 class BackupSuspensionInfo(Model):
     """Describes the backup suspension details.
-    .
 
     :param is_suspended: Indicates whether periodic backup is suspended at
      this level or not.
     :type is_suspended: bool
     :param suspension_inherited_from: Specifies the scope at which the backup
-     suspension was applied.
-     . Possible values include: 'Invalid', 'Partition', 'Service',
-     'Application'
+     suspension was applied. Possible values include: 'Invalid', 'Partition',
+     'Service', 'Application'
     :type suspension_inherited_from: str or
      ~azure.servicefabric.models.BackupSuspensionScope
     """

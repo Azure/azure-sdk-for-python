@@ -32,9 +32,8 @@ class ApplicationInfo(Model):
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
-    :param status: The status of the application.
-     . Possible values include: 'Invalid', 'Ready', 'Upgrading', 'Creating',
-     'Deleting', 'Failed'
+    :param status: The status of the application. Possible values include:
+     'Invalid', 'Ready', 'Upgrading', 'Creating', 'Deleting', 'Failed'
     :type status: str or ~azure.servicefabric.models.ApplicationStatus
     :param parameters: List of application parameters with overridden values
      from their default values specified in the application manifest.
@@ -44,8 +43,7 @@ class ApplicationInfo(Model):
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type health_state: str or ~azure.servicefabric.models.HealthState
     :param application_definition_kind: The mechanism used to define a Service
-     Fabric application.
-     . Possible values include: 'Invalid',
+     Fabric application. Possible values include: 'Invalid',
      'ServiceFabricApplicationDescription', 'Compose'
     :type application_definition_kind: str or
      ~azure.servicefabric.models.ApplicationDefinitionKind

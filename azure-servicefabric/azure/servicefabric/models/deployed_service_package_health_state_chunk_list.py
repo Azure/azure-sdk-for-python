@@ -16,7 +16,6 @@ class DeployedServicePackageHealthStateChunkList(Model):
     """The list of deployed service package health state chunks that respect the
     input filters in the chunk query. Returned by get cluster health state
     chunks query.
-    .
 
     :param items: The list of deployed service package health state chunks
      that respect the input filters in the chunk query.

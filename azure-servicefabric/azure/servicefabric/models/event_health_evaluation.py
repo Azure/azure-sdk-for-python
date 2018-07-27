@@ -17,7 +17,6 @@ class EventHealthEvaluation(HealthEvaluation):
     entity.
     The health evaluation is returned when evaluating health of an entity
     results in Error or Warning.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

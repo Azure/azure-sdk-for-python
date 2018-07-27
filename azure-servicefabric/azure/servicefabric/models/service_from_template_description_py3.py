@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ServiceFromTemplateDescription(Model):
     """Defines description for creating a Service Fabric service from a template
     defined in the application manifest.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

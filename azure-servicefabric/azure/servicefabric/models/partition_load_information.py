@@ -18,7 +18,6 @@ class PartitionLoadInformation(Model):
     In case there is no load reported, PartitionLoadInformation will contain
     the default load for the service of the partition.
     For default loads, LoadMetricReport's LastReportedUtc is set to 0.
-    .
 
     :param partition_id: Id of the partition.
     :type partition_id: str

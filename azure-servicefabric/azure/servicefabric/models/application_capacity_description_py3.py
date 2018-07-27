@@ -19,8 +19,7 @@ class ApplicationCapacityDescription(Model):
     - Limiting the total number of nodes that services of this application can
     run on
     - Limiting the custom capacity metrics to limit the total consumption of
-    this metric by the services of this application
-    .
+    this metric by the services of this application.
 
     :param minimum_nodes: The minimum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean

@@ -23,9 +23,8 @@ class ServiceBackupConfigurationInfo(BackupConfigurationInfo):
      this Service Fabric application or service or partition.
     :type policy_name: str
     :param policy_inherited_from: Specifies the scope at which the backup
-     policy is applied.
-     . Possible values include: 'Invalid', 'Partition', 'Service',
-     'Application'
+     policy is applied. Possible values include: 'Invalid', 'Partition',
+     'Service', 'Application'
     :type policy_inherited_from: str or
      ~azure.servicefabric.models.BackupPolicyScope
     :param suspension_info: Describes the backup suspension details.

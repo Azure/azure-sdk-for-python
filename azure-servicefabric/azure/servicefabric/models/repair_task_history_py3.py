@@ -16,7 +16,6 @@ class RepairTaskHistory(Model):
     """A record of the times when the repair task entered each state.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
     :param created_utc_timestamp: The time when the repair task entered the
      Created state.

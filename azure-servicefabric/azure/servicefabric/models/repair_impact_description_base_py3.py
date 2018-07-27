@@ -16,7 +16,6 @@ class RepairImpactDescriptionBase(Model):
     """Describes the expected impact of executing a repair task.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: NodeRepairImpactDescription

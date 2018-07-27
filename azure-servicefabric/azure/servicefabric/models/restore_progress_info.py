@@ -16,9 +16,8 @@ class RestoreProgressInfo(Model):
     """Describes the progress of a restore operation on a partition.
 
     :param restore_state: Represents the current state of the partition
-     restore operation.
-     . Possible values include: 'Invalid', 'Accepted', 'RestoreInProgress',
-     'Success', 'Failure', 'Timeout'
+     restore operation. Possible values include: 'Invalid', 'Accepted',
+     'RestoreInProgress', 'Success', 'Failure', 'Timeout'
     :type restore_state: str or ~azure.servicefabric.models.RestoreState
     :param time_stamp_utc: Timestamp when operation succeeded or failed.
     :type time_stamp_utc: datetime

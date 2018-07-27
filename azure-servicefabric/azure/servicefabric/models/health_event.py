@@ -15,7 +15,6 @@ from .health_information import HealthInformation
 class HealthEvent(HealthInformation):
     """Represents health information reported on a health entity, such as cluster,
     application or node, with additional metadata added by the Health Manager.
-    .
 
     All required parameters must be populated in order to send to Azure.
 
