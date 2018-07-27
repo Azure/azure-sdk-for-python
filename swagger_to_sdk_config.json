@@ -18,15 +18,6 @@
       "wrapper_filesOrDirs": [
         "azure-batch/azure/batch/batch_auth.py"
       ]
-    },
-    "keyvault.data": {
-      "build_dir": "azure-keyvault",
-      "markdown": "specification/keyvault/data-plane/readme.md",
-      "wrapper_filesOrDirs": [
-        "azure-keyvault/azure/keyvault/custom",
-        "azure-keyvault/azure/keyvault/generated",
-        "azure-keyvault/azure/keyvault/__init__.py"
-      ]
     }
   }
 }
