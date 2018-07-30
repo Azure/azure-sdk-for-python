@@ -384,7 +384,7 @@ class ComputerVisionClient(SDKClient):
     recognize_printed_text.metadata = {'url': '/ocr'}
 
     def describe_image(
-            self, url, max_candidates="1", language="en", custom_headers=None, raw=False, **operation_config):
+            self, url, max_candidates=1, language="en", custom_headers=None, raw=False, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -399,7 +399,7 @@ class ComputerVisionClient(SDKClient):
         :type url: str
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
-        :type max_candidates: str
+        :type max_candidates: int
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -430,7 +430,7 @@ class ComputerVisionClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if max_candidates is not None:
-            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
@@ -756,8 +756,9 @@ class ComputerVisionClient(SDKClient):
         :param details: A string indicating which domain-specific details to
          return. Multiple values should be comma-separated. Valid visual
          feature types include:Celebrities - identifies celebrities if detected
-         in the image. Possible values include: 'Celebrities', 'Landmarks'
-        :type details: str
+         in the image.
+        :type details: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.Details]
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -793,7 +794,7 @@ class ComputerVisionClient(SDKClient):
         if visual_features is not None:
             query_parameters['visualFeatures'] = self._serialize.query("visual_features", visual_features, '[VisualFeatureTypes]', div=',')
         if details is not None:
-            query_parameters['details'] = self._serialize.query("details", details, 'str')
+            query_parameters['details'] = self._serialize.query("details", details, '[Details]', div=',')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
@@ -989,7 +990,7 @@ class ComputerVisionClient(SDKClient):
     recognize_printed_text_in_stream.metadata = {'url': '/ocr'}
 
     def describe_image_in_stream(
-            self, image, max_candidates="1", language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, max_candidates=1, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -1004,7 +1005,7 @@ class ComputerVisionClient(SDKClient):
         :type image: Generator
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
-        :type max_candidates: str
+        :type max_candidates: int
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -1038,7 +1039,7 @@ class ComputerVisionClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if max_candidates is not None:
-            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
