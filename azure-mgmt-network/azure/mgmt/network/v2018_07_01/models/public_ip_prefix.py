@@ -38,6 +38,11 @@ class PublicIPPrefix(Resource):
     :type ip_tags: list[~azure.mgmt.network.v2018_07_01.models.IpTag]
     :param prefix_length: The Length of the Public IP Prefix.
     :type prefix_length: int
+    :param ip_prefix: The allocated Prefix
+    :type ip_prefix: str
+    :param public_ip_addresses: The list of all referenced PublicIPAddresses
+    :type public_ip_addresses:
+     list[~azure.mgmt.network.v2018_07_01.models.ReferencedPublicIpAddress]
     :param idle_timeout_in_minutes: The idle timeout of the public IP prefix.
     :type idle_timeout_in_minutes: int
     :param resource_guid: The resource GUID property of the public IP prefix
@@ -69,6 +74,8 @@ class PublicIPPrefix(Resource):
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
+        'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
+        'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -82,6 +89,8 @@ class PublicIPPrefix(Resource):
         self.public_ip_address_version = kwargs.get('public_ip_address_version', None)
         self.ip_tags = kwargs.get('ip_tags', None)
         self.prefix_length = kwargs.get('prefix_length', None)
+        self.ip_prefix = kwargs.get('ip_prefix', None)
+        self.public_ip_addresses = kwargs.get('public_ip_addresses', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
