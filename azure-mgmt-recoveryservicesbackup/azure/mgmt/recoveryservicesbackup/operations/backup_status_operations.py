@@ -27,13 +27,14 @@ class BackupStatusOperations(object):
     """
 
     models = models
+    default_api_version = "2017-07-01"
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer, api_version=default_api_version):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01"
+        self.api_version = api_version
 
         self.config = config
 

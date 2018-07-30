@@ -172,7 +172,7 @@ class RecoveryServicesBackupClient(SDKClient):
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None, api_version=None):
 
         self.config = RecoveryServicesBackupClientConfiguration(credentials, subscription_id, base_url)
         super(RecoveryServicesBackupClient, self).__init__(self.config.credentials, self.config)
@@ -184,7 +184,7 @@ class RecoveryServicesBackupClient(SDKClient):
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize, api_version=api_version)
         self.feature_support = FeatureSupportOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_jobs = BackupJobsOperations(
