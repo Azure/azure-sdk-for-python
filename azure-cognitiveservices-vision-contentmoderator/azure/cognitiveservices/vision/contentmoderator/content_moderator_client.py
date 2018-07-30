@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.image_moderation_operations import ImageModerationOperations
@@ -65,7 +65,7 @@ class ContentModeratorClientConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ContentModeratorClient(object):
+class ContentModeratorClient(SDKClient):
     """You use the API to scan your content as it is generated. Content Moderator then processes your content and sends the results along with relevant information either back to your systems or to the built-in review tool. You can use this information to take decisions e.g. take it down, send to human judge, etc.
     When using the API, images need to have a minimum of 128 pixels and a maximum file size of 4MB.
     Text can be at most 1024 characters long.
@@ -120,7 +120,7 @@ class ContentModeratorClient(object):
             self, base_url_parameter, credentials):
 
         self.config = ContentModeratorClientConfiguration(base_url_parameter, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ContentModeratorClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

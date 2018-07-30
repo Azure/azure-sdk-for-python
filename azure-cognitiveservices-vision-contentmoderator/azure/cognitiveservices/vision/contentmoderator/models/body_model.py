@@ -26,7 +26,7 @@ class BodyModel(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, data_representation="URL", value=None):
-        super(BodyModel, self).__init__()
-        self.data_representation = data_representation
-        self.value = value
+    def __init__(self, **kwargs):
+        super(BodyModel, self).__init__(**kwargs)
+        self.data_representation = kwargs.get('data_representation', "URL")
+        self.value = kwargs.get('value', None)

@@ -23,6 +23,6 @@ class JobId(Model):
         'job_id': {'key': 'JobId', 'type': 'str'},
     }
 
-    def __init__(self, job_id=None):
-        super(JobId, self).__init__()
-        self.job_id = job_id
+    def __init__(self, **kwargs):
+        super(JobId, self).__init__(**kwargs)
+        self.job_id = kwargs.get('job_id', None)

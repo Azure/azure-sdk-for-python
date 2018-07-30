@@ -50,14 +50,14 @@ class Job(Model):
         'job_execution_report': {'key': 'JobExecutionReport', 'type': '[JobExecutionReportDetails]'},
     }
 
-    def __init__(self, id=None, team_name=None, status=None, workflow_id=None, type=None, call_back_endpoint=None, review_id=None, result_meta_data=None, job_execution_report=None):
-        super(Job, self).__init__()
-        self.id = id
-        self.team_name = team_name
-        self.status = status
-        self.workflow_id = workflow_id
-        self.type = type
-        self.call_back_endpoint = call_back_endpoint
-        self.review_id = review_id
-        self.result_meta_data = result_meta_data
-        self.job_execution_report = job_execution_report
+    def __init__(self, **kwargs):
+        super(Job, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.team_name = kwargs.get('team_name', None)
+        self.status = kwargs.get('status', None)
+        self.workflow_id = kwargs.get('workflow_id', None)
+        self.type = kwargs.get('type', None)
+        self.call_back_endpoint = kwargs.get('call_back_endpoint', None)
+        self.review_id = kwargs.get('review_id', None)
+        self.result_meta_data = kwargs.get('result_meta_data', None)
+        self.job_execution_report = kwargs.get('job_execution_report', None)
