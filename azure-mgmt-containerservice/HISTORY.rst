@@ -3,6 +3,19 @@
 Release History
 ===============
 
+4.2.0 (2018-07-30)
+++++++++++++++++++
+
+**Features**
+
+- Add managed_clusters.list_cluster_admin_credentials
+- Add managed_clusters.list_cluster_user_credentials
+- Add managed_clusters.update_tags
+
+**Bugfixes**
+
+- Fix incorrect JSON description of ManagedCluster class
+
 4.1.0 (2018-06-13)
 ++++++++++++++++++
 
