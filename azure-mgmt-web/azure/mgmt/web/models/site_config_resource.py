@@ -65,9 +65,6 @@ class SiteConfigResource(ProxyOnlyResource):
     :type publishing_username: str
     :param app_settings: Application settings.
     :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
-    :param azure_storage_accounts: User-provided Azure storage accounts.
-    :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
     :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
@@ -185,7 +182,6 @@ class SiteConfigResource(ProxyOnlyResource):
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
         'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'azure_storage_accounts': {'key': 'properties.azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
         'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
@@ -240,7 +236,6 @@ class SiteConfigResource(ProxyOnlyResource):
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
         self.app_settings = kwargs.get('app_settings', None)
-        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
         self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
         self.handler_mappings = kwargs.get('handler_mappings', None)

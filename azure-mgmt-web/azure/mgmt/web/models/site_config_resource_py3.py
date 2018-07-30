@@ -65,9 +65,6 @@ class SiteConfigResource(ProxyOnlyResource):
     :type publishing_username: str
     :param app_settings: Application settings.
     :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
-    :param azure_storage_accounts: User-provided Azure storage accounts.
-    :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
     :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
@@ -185,7 +182,6 @@ class SiteConfigResource(ProxyOnlyResource):
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
         'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'azure_storage_accounts': {'key': 'properties.azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
         'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
@@ -221,7 +217,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'reserved_instance_count': {'key': 'properties.reservedInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, azure_storage_accounts=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, reserved_instance_count: int=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, reserved_instance_count: int=None, **kwargs) -> None:
         super(SiteConfigResource, self).__init__(kind=kind, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -240,7 +236,6 @@ class SiteConfigResource(ProxyOnlyResource):
         self.detailed_error_logging_enabled = detailed_error_logging_enabled
         self.publishing_username = publishing_username
         self.app_settings = app_settings
-        self.azure_storage_accounts = azure_storage_accounts
         self.connection_strings = connection_strings
         self.machine_key = None
         self.handler_mappings = handler_mappings
