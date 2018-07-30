@@ -51,14 +51,14 @@ class Evaluate(Model):
         'status': {'key': 'Status', 'type': 'Status'},
     }
 
-    def __init__(self, cache_id=None, result=None, tracking_id=None, adult_classification_score=None, is_image_adult_classified=None, racy_classification_score=None, is_image_racy_classified=None, advanced_info=None, status=None):
-        super(Evaluate, self).__init__()
-        self.cache_id = cache_id
-        self.result = result
-        self.tracking_id = tracking_id
-        self.adult_classification_score = adult_classification_score
-        self.is_image_adult_classified = is_image_adult_classified
-        self.racy_classification_score = racy_classification_score
-        self.is_image_racy_classified = is_image_racy_classified
-        self.advanced_info = advanced_info
-        self.status = status
+    def __init__(self, **kwargs):
+        super(Evaluate, self).__init__(**kwargs)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.result = kwargs.get('result', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.adult_classification_score = kwargs.get('adult_classification_score', None)
+        self.is_image_adult_classified = kwargs.get('is_image_adult_classified', None)
+        self.racy_classification_score = kwargs.get('racy_classification_score', None)
+        self.is_image_racy_classified = kwargs.get('is_image_racy_classified', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.status = kwargs.get('status', None)

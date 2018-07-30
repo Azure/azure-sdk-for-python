@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class CreateVideoReviewsBodyItemVideoFramesItem(Model):
     """CreateVideoReviewsBodyItemVideoFramesItem.
 
-    :param id: Id of the frame.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Id of the frame.
     :type id: str
-    :param timestamp: Timestamp of the frame.
+    :param timestamp: Required. Timestamp of the frame.
     :type timestamp: int
-    :param frame_image: Frame image Url.
+    :param frame_image: Required. Frame image Url.
     :type frame_image: str
     :param reviewer_result_tags:
     :type reviewer_result_tags:
@@ -43,10 +45,10 @@ class CreateVideoReviewsBodyItemVideoFramesItem(Model):
         'metadata': {'key': 'Metadata', 'type': '[CreateVideoReviewsBodyItemVideoFramesItemMetadataItem]'},
     }
 
-    def __init__(self, id, timestamp, frame_image, reviewer_result_tags=None, metadata=None):
-        super(CreateVideoReviewsBodyItemVideoFramesItem, self).__init__()
-        self.id = id
-        self.timestamp = timestamp
-        self.frame_image = frame_image
-        self.reviewer_result_tags = reviewer_result_tags
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemVideoFramesItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.frame_image = kwargs.get('frame_image', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
+        self.metadata = kwargs.get('metadata', None)

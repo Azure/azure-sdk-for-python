@@ -29,8 +29,8 @@ class IPA(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, sub_type=None, text=None, index=None):
-        super(IPA, self).__init__()
-        self.sub_type = sub_type
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(IPA, self).__init__(**kwargs)
+        self.sub_type = kwargs.get('sub_type', None)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)

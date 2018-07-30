@@ -23,6 +23,6 @@ class JobListResult(Model):
         'value': {'key': 'Value', 'type': '[str]'},
     }
 
-    def __init__(self, value=None):
-        super(JobListResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(JobListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

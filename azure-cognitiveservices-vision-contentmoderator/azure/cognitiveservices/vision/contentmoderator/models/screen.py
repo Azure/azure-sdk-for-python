@@ -53,15 +53,15 @@ class Screen(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, original_text=None, normalized_text=None, auto_corrected_text=None, misrepresentation=None, classification=None, status=None, pii=None, language=None, terms=None, tracking_id=None):
-        super(Screen, self).__init__()
-        self.original_text = original_text
-        self.normalized_text = normalized_text
-        self.auto_corrected_text = auto_corrected_text
-        self.misrepresentation = misrepresentation
-        self.classification = classification
-        self.status = status
-        self.pii = pii
-        self.language = language
-        self.terms = terms
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(Screen, self).__init__(**kwargs)
+        self.original_text = kwargs.get('original_text', None)
+        self.normalized_text = kwargs.get('normalized_text', None)
+        self.auto_corrected_text = kwargs.get('auto_corrected_text', None)
+        self.misrepresentation = kwargs.get('misrepresentation', None)
+        self.classification = kwargs.get('classification', None)
+        self.status = kwargs.get('status', None)
+        self.pii = kwargs.get('pii', None)
+        self.language = kwargs.get('language', None)
+        self.terms = kwargs.get('terms', None)
+        self.tracking_id = kwargs.get('tracking_id', None)

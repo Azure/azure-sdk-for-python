@@ -29,8 +29,8 @@ class Status(Model):
         'exception': {'key': 'Exception', 'type': 'str'},
     }
 
-    def __init__(self, code=None, description=None, exception=None):
-        super(Status, self).__init__()
-        self.code = code
-        self.description = description
-        self.exception = exception
+    def __init__(self, **kwargs):
+        super(Status, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.description = kwargs.get('description', None)
+        self.exception = kwargs.get('exception', None)

@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class CreateReviewBodyItem(Model):
     """Schema items of the body.
 
-    :param type: Type of the content. Possible values include: 'Image', 'Text'
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Type of the content. Possible values include:
+     'Image', 'Text'
     :type type: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.enum
-    :param content: Content to review.
+    :param content: Required. Content to review.
     :type content: str
-    :param content_id: Content Identifier.
+    :param content_id: Required. Content Identifier.
     :type content_id: str
     :param callback_endpoint: Optional CallbackEndpoint.
     :type callback_endpoint: str
@@ -43,10 +46,10 @@ class CreateReviewBodyItem(Model):
         'metadata': {'key': 'Metadata', 'type': '[CreateReviewBodyItemMetadataItem]'},
     }
 
-    def __init__(self, type, content, content_id, callback_endpoint=None, metadata=None):
-        super(CreateReviewBodyItem, self).__init__()
-        self.type = type
-        self.content = content
-        self.content_id = content_id
-        self.callback_endpoint = callback_endpoint
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(CreateReviewBodyItem, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)
+        self.metadata = kwargs.get('metadata', None)

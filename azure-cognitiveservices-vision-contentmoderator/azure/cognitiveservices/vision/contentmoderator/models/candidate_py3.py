@@ -12,19 +12,21 @@
 from msrest.serialization import Model
 
 
-class Score(Model):
-    """The classification score details of the text. <a
-    href="https://aka.ms/textClassifyCategories">Click here</a> for more
-    details on category classification.
+class Candidate(Model):
+    """OCR candidate text.
 
-    :param score: The category score.
-    :type score: float
+    :param text: The text found.
+    :type text: str
+    :param confidence: The confidence level.
+    :type confidence: float
     """
 
     _attribute_map = {
-        'score': {'key': 'Score', 'type': 'float'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'confidence': {'key': 'Confidence', 'type': 'float'},
     }
 
-    def __init__(self, score=None):
-        super(Score, self).__init__()
-        self.score = score
+    def __init__(self, *, text: str=None, confidence: float=None, **kwargs) -> None:
+        super(Candidate, self).__init__(**kwargs)
+        self.text = text
+        self.confidence = confidence

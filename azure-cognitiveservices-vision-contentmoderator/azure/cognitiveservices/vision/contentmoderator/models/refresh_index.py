@@ -37,10 +37,10 @@ class RefreshIndex(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, content_source_id=None, is_update_success=None, advanced_info=None, status=None, tracking_id=None):
-        super(RefreshIndex, self).__init__()
-        self.content_source_id = content_source_id
-        self.is_update_success = is_update_success
-        self.advanced_info = advanced_info
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(RefreshIndex, self).__init__(**kwargs)
+        self.content_source_id = kwargs.get('content_source_id', None)
+        self.is_update_success = kwargs.get('is_update_success', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)

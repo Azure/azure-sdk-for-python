@@ -26,7 +26,7 @@ class JobExecutionReportDetails(Model):
         'msg': {'key': 'Msg', 'type': 'str'},
     }
 
-    def __init__(self, ts=None, msg=None):
-        super(JobExecutionReportDetails, self).__init__()
-        self.ts = ts
-        self.msg = msg
+    def __init__(self, **kwargs):
+        super(JobExecutionReportDetails, self).__init__(**kwargs)
+        self.ts = kwargs.get('ts', None)
+        self.msg = kwargs.get('msg', None)
