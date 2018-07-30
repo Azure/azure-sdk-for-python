@@ -65,9 +65,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param ipv6_peering_config: The IPv6 peering configuration.
     :type ipv6_peering_config:
      ~azure.mgmt.network.v2018_01_01.models.Ipv6ExpressRouteCircuitPeeringConfig
-    :param name: Gets name of the resource that is unique within a resource
+    :ivar name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
-    :type name: str
+    :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -75,6 +75,7 @@ class ExpressRouteCircuitPeering(SubResource):
 
     _validation = {
         'peer_asn': {'maximum': 4294967295, 'minimum': 1},
+        'name': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -101,7 +102,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, peering_type=None, state=None, azure_asn: int=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, primary_azure_port: str=None, secondary_azure_port: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, stats=None, provisioning_state: str=None, gateway_manager_etag: str=None, last_modified_by: str=None, route_filter=None, ipv6_peering_config=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, peering_type=None, state=None, azure_asn: int=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, primary_azure_port: str=None, secondary_azure_port: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, stats=None, provisioning_state: str=None, gateway_manager_etag: str=None, last_modified_by: str=None, route_filter=None, ipv6_peering_config=None, **kwargs) -> None:
         super(ExpressRouteCircuitPeering, self).__init__(id=id, **kwargs)
         self.peering_type = peering_type
         self.state = state
@@ -120,5 +121,5 @@ class ExpressRouteCircuitPeering(SubResource):
         self.last_modified_by = last_modified_by
         self.route_filter = route_filter
         self.ipv6_peering_config = ipv6_peering_config
-        self.name = name
+        self.name = None
         self.etag = None
