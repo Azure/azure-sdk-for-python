@@ -65,9 +65,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param ipv6_peering_config: The IPv6 peering configuration.
     :type ipv6_peering_config:
      ~azure.mgmt.network.v2018_01_01.models.Ipv6ExpressRouteCircuitPeeringConfig
-    :param name: Gets name of the resource that is unique within a resource
+    :ivar name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
-    :type name: str
+    :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -75,6 +75,7 @@ class ExpressRouteCircuitPeering(SubResource):
 
     _validation = {
         'peer_asn': {'maximum': 4294967295, 'minimum': 1},
+        'name': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -120,5 +121,5 @@ class ExpressRouteCircuitPeering(SubResource):
         self.last_modified_by = kwargs.get('last_modified_by', None)
         self.route_filter = kwargs.get('route_filter', None)
         self.ipv6_peering_config = kwargs.get('ipv6_peering_config', None)
-        self.name = kwargs.get('name', None)
+        self.name = None
         self.etag = None
