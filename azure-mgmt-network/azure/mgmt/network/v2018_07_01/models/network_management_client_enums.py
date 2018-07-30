@@ -93,6 +93,11 @@ class PublicIPAddressSkuName(str, Enum):
     standard = "Standard"
 
 
+class PublicIPPrefixSkuName(str, Enum):
+
+    standard = "Standard"
+
+
 class ApplicationGatewayProtocol(str, Enum):
 
     http = "Http"

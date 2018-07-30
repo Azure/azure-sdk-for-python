@@ -33,6 +33,8 @@ try:
     from .public_ip_address_sku_py3 import PublicIPAddressSku
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
     from .ip_tag_py3 import IpTag
+    from .public_ip_prefix_sku_py3 import PublicIPPrefixSku
+    from .public_ip_prefix_py3 import PublicIPPrefix
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
@@ -248,6 +250,8 @@ except (SyntaxError, ImportError):
     from .public_ip_address_sku import PublicIPAddressSku
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
     from .ip_tag import IpTag
+    from .public_ip_prefix_sku import PublicIPPrefixSku
+    from .public_ip_prefix import PublicIPPrefix
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
@@ -466,6 +470,7 @@ from .packet_capture_result_paged import PacketCaptureResultPaged
 from .connection_monitor_result_paged import ConnectionMonitorResultPaged
 from .operation_paged import OperationPaged
 from .public_ip_address_paged import PublicIPAddressPaged
+from .public_ip_prefix_paged import PublicIPPrefixPaged
 from .route_filter_paged import RouteFilterPaged
 from .route_filter_rule_paged import RouteFilterRulePaged
 from .route_table_paged import RouteTablePaged
@@ -499,6 +504,7 @@ from .network_management_client_enums import (
     SecurityRuleDirection,
     RouteNextHopType,
     PublicIPAddressSkuName,
+    PublicIPPrefixSkuName,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
@@ -591,6 +597,8 @@ __all__ = [
     'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
     'IpTag',
+    'PublicIPPrefixSku',
+    'PublicIPPrefix',
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
@@ -809,6 +817,7 @@ __all__ = [
     'ConnectionMonitorResultPaged',
     'OperationPaged',
     'PublicIPAddressPaged',
+    'PublicIPPrefixPaged',
     'RouteFilterPaged',
     'RouteFilterRulePaged',
     'RouteTablePaged',
@@ -841,6 +850,7 @@ __all__ = [
     'SecurityRuleDirection',
     'RouteNextHopType',
     'PublicIPAddressSkuName',
+    'PublicIPPrefixSkuName',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',
