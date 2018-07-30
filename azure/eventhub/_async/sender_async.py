@@ -10,6 +10,7 @@ from uamqp import SendClientAsync
 
 from azure.eventhub import EventHubError
 from azure.eventhub.sender import Sender
+from azure.eventhub.common import _error_handler
 
 class AsyncSender(Sender):
     """
@@ -26,23 +27,28 @@ class AsyncSender(Sender):
         :type target: str
         :param loop: An event loop.
         """
+        self.loop = loop or asyncio.get_event_loop()
+        self.client = client
+        self.target = target
+        self.partition = partition
+        self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.redirected = None
         self.error = None
-        self.debug = client.debug
-        self.partition = partition
         if partition:
-            target += "/Partitions/" + partition
-        self.loop = loop or asyncio.get_event_loop()
+            self.target += "/Partitions/" + partition
         self._handler = SendClientAsync(
-            target,
-            auth=client.auth,
-            debug=self.debug,
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties(),
             loop=self.loop)
         self._outcome = None
         self._condition = None
 
-    async def open_async(self, connection):
+    async def open_async(self):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -52,12 +58,39 @@ class AsyncSender(Sender):
         :type: connection:~uamqp._async.connection_async.ConnectionAsync
         """
         if self.redirected:
+            self.target = self.redirected.address
             self._handler = SendClientAsync(
-                self.redirected.address,
-                auth=None,
-                debug=self.debug,
-                msg_timeout=Sender.TIMEOUT)
-        await self._handler.open_async(connection=connection)
+                self.target,
+                auth=self.client.get_auth(),
+                debug=self.client.debug,
+                msg_timeout=Sender.TIMEOUT,
+                error_policy=self.retry_policy,
+                keep_alive_interval=30,
+                properties=self.client.create_properties(),
+                loop=self.loop)
+        await self._handler.open_async()
+        while not await self.has_started():
+            await self._handler._connection.work_async()  # pylint: disable=protected-access
+
+    async def reconnect_async(self):
+        """If the Receiver was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
+        pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
+        unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
+        await self._handler.close_async()
+        self._handler = SendClientAsync(
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
+            msg_timeout=Sender.TIMEOUT,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties(),
+            loop=self.loop)
+        await self._handler.open_async()
+        self._handler._pending_messages = unsent_events
+        await self._handler.wait_async()
 
     async def has_started(self):
         """
@@ -76,7 +109,7 @@ class AsyncSender(Sender):
             raise EventHubError("Authorization timeout.")
         elif auth_in_progress:
             return False
-        elif not await self._handler._client_ready():
+        elif not await self._handler._client_ready_async():
             return False
         else:
             return True
@@ -97,6 +130,8 @@ class AsyncSender(Sender):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
+        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+            self.error = EventHubError(str(exception), exception)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
@@ -122,10 +157,15 @@ class AsyncSender(Sender):
             await self._handler.send_message_async(event_data.message)
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
-        except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
-            await self.close_async(exception=error)
-            raise error
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
+                await self.reconnect_async()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except errors.MessageHandlerError:
+            await self.reconnect_async()
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
             await self.close_async(exception=error)
@@ -141,5 +181,14 @@ class AsyncSender(Sender):
             raise self.error
         try:
             await self._handler.wait_async()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
+                await self.reconnect_async()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except errors.MessageHandlerError:
+            await self.reconnect_async()
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))

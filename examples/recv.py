@@ -41,7 +41,7 @@ try:
     for event_data in receiver.receive(timeout=100):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
-        print("Received: {}, {}".format(last_offset, last_sn))
+        print("Received: {}, {}".format(last_offset.value, last_sn))
         total += 1
 
     end_time = time.time()

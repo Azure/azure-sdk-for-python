@@ -8,15 +8,14 @@ import datetime
 import sys
 import uuid
 import time
+import functools
 try:
     from urllib import urlparse, unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 import uamqp
-from uamqp import Connection
 from uamqp import Message
-from uamqp import Source
 from uamqp import authentication
 from uamqp import constants
 
@@ -89,7 +88,7 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
     """
 
-    def __init__(self, address, username=None, password=None, debug=False):
+    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -105,19 +104,25 @@ class EventHubClient(object):
         :param debug: Whether to output network trace logs to the logger. Default
          is `False`.
         :type debug: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
+        self.eh_name = self.address.path.lstrip('/')
+        self.http_proxy = http_proxy
+        self.mgmt_target = "amqps://{}/{}".format(self.address.hostname, self.eh_name)
         url_username = unquote_plus(self.address.username) if self.address.username else None
         username = username or url_username
         url_password = unquote_plus(self.address.password) if self.address.password else None
         password = password or url_password
         if not username or not password:
             raise ValueError("Missing username and/or password.")
-        auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.auth = self._create_auth(auth_uri, username, password)
-        self._auth_config = None
-        self.connection = None
+        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+        self._auth_config = {'username': username, 'password': password}
+        self.get_auth = functools.partial(self._create_auth)
         self.debug = debug
 
         self.clients = []
@@ -146,10 +151,14 @@ class EventHubClient(object):
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
         client = cls("amqps://" + address, username=username, password=password, **kwargs)
-        client._auth_config = {'username': policy, 'password': key}  # pylint: disable=protected-access
+        client._auth_config = {  # pylint: disable=protected-access
+            'iot_username': policy,
+            'iot_password': key,
+            'username': username,
+            'password': password}
         return client
 
-    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
+    def _create_auth(self, username=None, password=None):
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
@@ -161,11 +170,15 @@ class EventHubClient(object):
         :param password: The shared access key.
         :type password: str
         """
+        username = username or self._auth_config['username']
+        password = password or self._auth_config['password']
         if "@sas.root" in username:
-            return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
+            return authentication.SASLPlain(
+                self.address.hostname, username, password, http_proxy=self.http_proxy)
+        return authentication.SASTokenAuth.from_shared_access_key(
+            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
 
-    def _create_properties(self):  # pylint: disable=no-self-use
+    def create_properties(self):  # pylint: disable=no-self-use
         """
         Format the properties with which to instantiate the connection.
         This acts like a user agent over HTTP.
@@ -179,29 +192,6 @@ class EventHubClient(object):
         properties["platform"] = sys.platform
         return properties
 
-    def _create_connection(self):
-        """
-        Create a new ~uamqp.connection.Connection instance that will be shared between all
-        Sender/Receiver clients.
-        """
-        if not self.connection:
-            log.info("{}: Creating connection with address={}".format(
-                self.container_id, self.address.geturl()))
-            self.connection = Connection(
-                self.address.hostname,
-                self.auth,
-                container_id=self.container_id,
-                properties=self._create_properties(),
-                debug=self.debug)
-
-    def _close_connection(self):
-        """
-        Close and destroy the connection.
-        """
-        if self.connection:
-            self.connection.destroy()
-            self.connection = None
-
     def _close_clients(self):
         """
         Close all open Sender/Receiver clients.
@@ -212,21 +202,26 @@ class EventHubClient(object):
     def _start_clients(self):
         for client in self.clients:
             try:
-                client.open(self.connection)
-                while not client.has_started():
-                    self.connection.work()
+                client.open()
             except Exception as exp:  # pylint: disable=broad-except
                 client.close(exception=exp)
+
+    def _process_redirect_uri(self, redirect):
+        redirect_uri = redirect.address.decode('utf-8')
+        auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
+        self.address = urlparse(auth_uri)
+        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+        self.eh_name = self.address.path.lstrip('/')
+        self.mgmt_target = redirect_uri
 
     def _handle_redirect(self, redirects):
         if len(redirects) != len(self.clients):
             raise EventHubError("Some clients are attempting to redirect the connection.")
         if not all(r.hostname == redirects[0].hostname for r in redirects):
             raise EventHubError("Multiple clients attempting to redirect to different hosts.")
-        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
-        self.connection.redirect(redirects[0], self.auth)
+        self._process_redirect_uri(redirects[0])
         for client in self.clients:
-            client.open(self.connection)
+            client.open()
 
     def run(self):
         """
@@ -241,7 +236,6 @@ class EventHubClient(object):
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
-        self._create_connection()
         try:
             self._start_clients()
             redirects = [c.redirected for c in self.clients if c.redirected]
@@ -268,7 +262,6 @@ class EventHubClient(object):
         log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
         self.stopped = True
         self._close_clients()
-        self._close_connection()
 
     def get_eventhub_info(self):
         """
@@ -282,13 +275,14 @@ class EventHubClient(object):
 
         :rtype: dict
         """
-        self._create_connection()
-        eh_name = self.address.path.lstrip('/')
-        target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        mgmt_client = uamqp.AMQPClient(target, auth=self.auth, debug=self.debug)
-        mgmt_client.open(self.connection)
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password":self._auth_config.get("iot_password")}
         try:
-            mgmt_msg = Message(application_properties={'name': eh_name})
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = uamqp.AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
+            mgmt_client.open()
+            mgmt_msg = Message(application_properties={'name': self.eh_name})
             response = mgmt_client.mgmt_request(
                 mgmt_msg,
                 constants.READ_OPERATION,
@@ -329,10 +323,7 @@ class EventHubClient(object):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        source = Source(source_url)
-        if offset is not None:
-            source.set_filter(offset.selector())
-        handler = Receiver(self, source, prefetch=prefetch)
+        handler = Receiver(self, source_url, offset=offset, prefetch=prefetch)
         self.clients.append(handler)
         return handler
 

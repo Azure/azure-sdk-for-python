@@ -35,15 +35,18 @@ class PartitionManager:
         :rtype: list[str]
         """
         if not self.partition_ids:
-            eh_client = EventHubClientAsync(
-                self.host.eh_config.client_address,
-                debug=self.host.eph_options.debug_trace)
             try:
-                eh_info = await eh_client.get_eventhub_info_async()
-                self.partition_ids = eh_info['partition_ids']
-            except Exception as err:  # pylint: disable=broad-except
-                raise Exception("Failed to get partition ids", repr(err))
-
+                eh_client = EventHubClientAsync(
+                    self.host.eh_config.client_address,
+                    debug=self.host.eph_options.debug_trace,
+                    http_proxy=self.host.eph_options.http_proxy)
+                try:
+                    eh_info = await eh_client.get_eventhub_info_async()
+                    self.partition_ids = eh_info['partition_ids']
+                except Exception as err:  # pylint: disable=broad-except
+                    raise Exception("Failed to get partition ids", repr(err))
+            finally:
+                await eh_client.stop_async()
         return self.partition_ids
 
     async def start_async(self):

@@ -24,43 +24,29 @@ async def pump(receiver, sleep=None):
     return messages
 
 
-@pytest.mark.asyncio
-async def test_iothub_receive_async(iot_connection_str):
-    client = EventHubClientAsync.from_iothub_connection_string(iot_connection_str, debug=True)
-    receivers = []
-    for i in range(2):
-        receivers.append(client.add_async_receiver("$default", "0", prefetch=1000, operation='/messages/events'))
-    await client.run_async()
+async def get_partitions(iot_connection_str):
     try:
-        outputs = await asyncio.gather(
-            pump(receivers[0]),
-            pump(receivers[1]),
-            return_exceptions=True)
-
-        assert isinstance(outputs[0], int) and outputs[0] == 0
-        assert isinstance(outputs[1], int) and outputs[1] == 0
-    except:
-        raise
+        client = EventHubClientAsync.from_iothub_connection_string(iot_connection_str, debug=True)
+        client.add_async_receiver("$default", "0", prefetch=1000, operation='/messages/events')
+        await client.run_async()
+        partitions = await client.get_eventhub_info_async()
+        return partitions["partition_ids"]
     finally:
         await client.stop_async()
 
 
 @pytest.mark.asyncio
-async def test_iothub_receive_detach_async(iot_connection_str):
+async def test_iothub_receive_multiple_async(iot_connection_str):
+    partitions = await get_partitions(iot_connection_str)
     client = EventHubClientAsync.from_iothub_connection_string(iot_connection_str, debug=True)
-    receivers = []
-    for i in range(2):
-        receivers.append(client.add_async_receiver("$default", str(i), prefetch=1000, operation='/messages/events'))
-    await client.run_async()
     try:
-        outputs = await asyncio.gather(
-            pump(receivers[0]),
-            pump(receivers[1]),
-            return_exceptions=True)
+        receivers = []
+        for p in partitions:
+            receivers.append(client.add_async_receiver("$default", p, prefetch=1000, operation='/messages/events'))
+        await client.run_async()
+        outputs = await asyncio.gather(*[pump(r) for r in receivers])
 
         assert isinstance(outputs[0], int) and outputs[0] == 0
-        assert isinstance(outputs[1], EventHubError)
-    except:
-        raise
+        assert isinstance(outputs[1], int) and outputs[1] == 0
     finally:
         await client.stop_async()

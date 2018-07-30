@@ -4,9 +4,9 @@
 # --------------------------------------------------------------------------------------------
 
 from uamqp import types, errors
-from uamqp import ReceiveClient
+from uamqp import ReceiveClient, Source
 
-from azure.eventhub.common import EventHubError, EventData, Offset
+from azure.eventhub.common import EventHubError, EventData, _error_handler
 
 
 class Receiver:
@@ -16,38 +16,46 @@ class Receiver:
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, prefetch=300, epoch=None):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None):
         """
         Instantiate a receiver.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient
         :param source: The source EventHub from which to receive events.
-        :type source: ~uamqp.address.Source
+        :type source: str
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
         :param epoch: An optional epoch value.
         :type epoch: int
         """
-        self.offset = None
+        self.client = client
+        self.source = source
+        self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
+        self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.properties = None
         self.redirected = None
-        self.debug = client.debug
         self.error = None
+        source = Source(self.source)
+        if self.offset is not None:
+            source.set_filter(self.offset.selector())
         if epoch:
             self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
         self._handler = ReceiveClient(
             source,
-            auth=client.auth,
-            debug=self.debug,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
             prefetch=self.prefetch,
             link_properties=self.properties,
-            timeout=self.timeout)
+            timeout=self.timeout,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
 
-    def open(self, connection):
+    def open(self):
         """
         Open the Receiver using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -56,15 +64,53 @@ class Receiver:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
+        # pylint: disable=protected-access
         if self.redirected:
+            self.source = self.redirected.address
+            source = Source(self.source)
+            if self.offset is not None:
+                source.set_filter(self.offset.selector())
+            alt_creds = {
+                "username": self.client._auth_config.get("iot_username"),
+                "password":self.client._auth_config.get("iot_password")}
             self._handler = ReceiveClient(
-                self.redirected.address,
-                auth=None,
-                debug=self.debug,
+                source,
+                auth=self.client.get_auth(**alt_creds),
+                debug=self.client.debug,
                 prefetch=self.prefetch,
                 link_properties=self.properties,
-                timeout=self.timeout)
-        self._handler.open(connection)
+                timeout=self.timeout,
+                error_policy=self.retry_policy,
+                keep_alive_interval=30,
+                properties=self.client.create_properties())
+        self._handler.open()
+        while not self.has_started():
+            self._handler._connection.work()
+
+    def reconnect(self):
+        """If the Receiver was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
+        alt_creds = {
+            "username": self.client._auth_config.get("iot_username"),
+            "password":self.client._auth_config.get("iot_password")}
+        self._handler.close()
+        source = Source(self.source)
+        if self.offset is not None:
+            source.set_filter(self.offset.selector())
+        self._handler = ReceiveClient(
+            source,
+            auth=self.client.get_auth(**alt_creds),
+            debug=self.client.debug,
+            prefetch=self.prefetch,
+            link_properties=self.properties,
+            timeout=self.timeout,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
+        self._handler.open()
+        while not self.has_started():
+            self._handler._connection.work()
 
     def get_handler_state(self):
         """
@@ -146,34 +192,29 @@ class Receiver:
         """
         if self.error:
             raise self.error
+        data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0
             message_batch = self._handler.receive_message_batch(
                 max_batch_size=max_batch_size,
                 timeout=timeout_ms)
-            data_batch = []
             for message in message_batch:
                 event_data = EventData(message=message)
                 self.offset = event_data.offset
                 data_batch.append(event_data)
             return data_batch
-        except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
-            self.close(exception=error)
-            raise error
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
+                self.reconnect()
+                return data_batch
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except errors.MessageHandlerError:
+            self.reconnect()
+            return data_batch
         except Exception as e:
             error = EventHubError("Receive failed: {}".format(e))
             self.close(exception=error)
             raise error
-
-    def selector(self, default):
-        """
-        Create a selector for the current offset if it is set.
-
-        :param default: The fallback receive offset.
-        :type default: ~azure.eventhub.common.Offset
-        :rtype: ~azure.eventhub.common.Offset
-        """
-        if self.offset is not None:
-            return Offset(self.offset).selector()
-        return default

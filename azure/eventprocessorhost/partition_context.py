@@ -34,7 +34,7 @@ class PartitionContext:
         """
         if not event_data:
             raise Exception(event_data)
-        self.offset = event_data.offset
+        self.offset = event_data.offset.value
         self.sequence_number = event_data.sequence_number
 
     async def get_initial_offset_async(self): # throws InterruptedException, ExecutionException
@@ -84,7 +84,7 @@ class PartitionContext:
             raise ValueError("Argument Out Of Range event_data x-opt-sequence-number")
 
         await self.persist_checkpoint_async(Checkpoint(self.partition_id,
-                                                       event_data.offset,
+                                                       event_data.offset.value,
                                                        event_data.sequence_number))
 
     def to_string(self):

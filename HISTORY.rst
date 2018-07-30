@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.2.0rc2 (2018-07-29)
++++++++++++++++++++++
+
+- **Breaking change** `EventData.offset` will now return an object of type `~uamqp.common.Offset` rather than str.
+  The original string value can be retrieved from `~uamqp.common.Offset.value`.
+- Each sender/receiver will now run in its own independent connection.
+- Updated uAMQP dependency to 0.2.0
+- Fixed issue with IoTHub clients not being able to retrieve partition information.
+- Added support for HTTP proxy settings to both EventHubClient and EPH.
+- Added error handling policy to automatically reconnect on retryable error.
+- Added keep-alive thread for maintaining an unused connection.
+
+
 0.2.0rc1 (2018-07-06)
 +++++++++++++++++++++
 

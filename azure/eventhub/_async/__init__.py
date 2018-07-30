@@ -7,11 +7,14 @@ import logging
 import asyncio
 import time
 import datetime
+try:
+    from urllib import urlparse, unquote_plus, urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (
     Message,
-    Source,
     ConnectionAsync,
     AMQPClientAsync,
     SendClientAsync,
@@ -37,7 +40,7 @@ class EventHubClientAsync(EventHubClient):
     sending events to and receiving events from the Azure Event Hubs service.
     """
 
-    def _create_auth(self, auth_uri, username, password):  # pylint: disable=no-self-use
+    def _create_auth(self, username=None, password=None):  # pylint: disable=no-self-use
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
@@ -49,32 +52,13 @@ class EventHubClientAsync(EventHubClient):
         :param password: The shared access key.
         :type password: str
         """
+        username = username or self._auth_config['username']
+        password = password or self._auth_config['password']
         if "@sas.root" in username:
-            return authentication.SASLPlain(self.address.hostname, username, password)
-        return authentication.SASTokenAsync.from_shared_access_key(auth_uri, username, password)
-
-    def _create_connection_async(self):
-        """
-        Create a new ~uamqp._async.connection_async.ConnectionAsync instance that will be shared between all
-        AsyncSender/AsyncReceiver clients.
-        """
-        if not self.connection:
-            log.info("{}: Creating connection with address={}".format(
-                self.container_id, self.address.geturl()))
-            self.connection = ConnectionAsync(
-                self.address.hostname,
-                self.auth,
-                container_id=self.container_id,
-                properties=self._create_properties(),
-                debug=self.debug)
-
-    async def _close_connection_async(self):
-        """
-        Close and destroy the connection async.
-        """
-        if self.connection:
-            await self.connection.destroy_async()
-            self.connection = None
+            return authentication.SASLPlain(
+                self.address.hostname, username, password, http_proxy=self.http_proxy)
+        return authentication.SASTokenAsync.from_shared_access_key(
+            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
 
     async def _close_clients_async(self):
         """
@@ -85,17 +69,13 @@ class EventHubClientAsync(EventHubClient):
     async def _wait_for_client(self, client):
         try:
             while client.get_handler_state().value == 2:
-                await self.connection.work_async()
+                await client._handler._connection.work_async()  # pylint: disable=protected-access
         except Exception as exp:  # pylint: disable=broad-except
             await client.close_async(exception=exp)
 
     async def _start_client_async(self, client):
         try:
-            await client.open_async(self.connection)
-            started = await client.has_started()
-            while not started:
-                await self.connection.work_async()
-                started = await client.has_started()
+            await client.open_async()
         except Exception as exp:  # pylint: disable=broad-except
             await client.close_async(exception=exp)
 
@@ -108,9 +88,8 @@ class EventHubClientAsync(EventHubClient):
             redirects = [c.redirected for c in self.clients if c.redirected]
         if not all(r.hostname == redirects[0].hostname for r in redirects):
             raise EventHubError("Multiple clients attempting to redirect to different hosts.")
-        self.auth = self._create_auth(redirects[0].address.decode('utf-8'), **self._auth_config)
-        await self.connection.redirect_async(redirects[0], self.auth)
-        await asyncio.gather(*[c.open_async(self.connection) for c in self.clients])
+        self._process_redirect_uri(redirects[0])
+        await asyncio.gather(*[c.open_async() for c in self.clients])
 
     async def run_async(self):
         """
@@ -125,7 +104,6 @@ class EventHubClientAsync(EventHubClient):
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
-        self._create_connection_async()
         tasks = [self._start_client_async(c) for c in self.clients]
         try:
             await asyncio.gather(*tasks)
@@ -153,7 +131,6 @@ class EventHubClientAsync(EventHubClient):
         log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
         self.stopped = True
         await self._close_clients_async()
-        await self._close_connection_async()
 
     async def get_eventhub_info_async(self):
         """
@@ -161,10 +138,14 @@ class EventHubClientAsync(EventHubClient):
 
         :rtype: dict
         """
-        eh_name = self.address.path.lstrip('/')
-        target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        async with AMQPClientAsync(target, auth=self.auth, debug=self.debug) as mgmt_client:
-            mgmt_msg = Message(application_properties={'name': eh_name})
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password":self._auth_config.get("iot_password")}
+        try:
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
+            await mgmt_client.open_async()
+            mgmt_msg = Message(application_properties={'name': self.eh_name})
             response = await mgmt_client.mgmt_request_async(
                 mgmt_msg,
                 constants.READ_OPERATION,
@@ -180,6 +161,8 @@ class EventHubClientAsync(EventHubClient):
                 output['partition_count'] = eh_info[b'partition_count']
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
+        finally:
+            await mgmt_client.close_async()
 
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None, loop=None):
         """
@@ -201,10 +184,7 @@ class EventHubClientAsync(EventHubClient):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        source = Source(source_url)
-        if offset is not None:
-            source.set_filter(offset.selector())
-        handler = AsyncReceiver(self, source, prefetch=prefetch, loop=loop)
+        handler = AsyncReceiver(self, source_url, offset=offset, prefetch=prefetch, loop=loop)
         self.clients.append(handler)
         return handler
 

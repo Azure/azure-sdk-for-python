@@ -6,7 +6,7 @@
 from uamqp import constants, errors
 from uamqp import SendClient
 
-from azure.eventhub.common import EventHubError
+from azure.eventhub.common import EventHubError, _error_handler
 
 
 class Sender:
@@ -24,21 +24,26 @@ class Sender:
         :param target: The URI of the EventHub to send to.
         :type target: str
         """
+        self.client = client
+        self.target = target
+        self.partition = partition
         self.redirected = None
         self.error = None
-        self.debug = client.debug
-        self.partition = partition
+        self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         if partition:
-            target += "/Partitions/" + partition
+            self.target += "/Partitions/" + partition
         self._handler = SendClient(
-            target,
-            auth=client.auth,
-            debug=self.debug,
-            msg_timeout=Sender.TIMEOUT)
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
+            msg_timeout=Sender.TIMEOUT,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
         self._outcome = None
         self._condition = None
 
-    def open(self, connection):
+    def open(self):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -48,12 +53,37 @@ class Sender:
         :type: connection: ~uamqp.connection.Connection
         """
         if self.redirected:
+            self.target = self.redirected.address
             self._handler = SendClient(
-                self.redirected.address,
-                auth=None,
-                debug=self.debug,
-                msg_timeout=Sender.TIMEOUT)
-        self._handler.open(connection)
+                self.target,
+                auth=self.client.get_auth(),
+                debug=self.client.debug,
+                msg_timeout=Sender.TIMEOUT,
+                error_policy=self.retry_policy,
+                keep_alive_interval=30,
+                properties=self.client.create_properties())
+        self._handler.open()
+        while not self.has_started():
+            self._handler._connection.work()  # pylint: disable=protected-access
+
+    def reconnect(self):
+        """If the Sender was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        # pylint: disable=protected-access
+        pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
+        unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
+        self._handler.close()
+        self._handler = SendClient(
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.debug,
+            msg_timeout=Sender.TIMEOUT,
+            error_policy=self.retry_policy,
+            keep_alive_interval=30,
+            properties=self.client.create_properties())
+        self._handler.open()
+        self._handler._pending_messages = unsent_events
+        self._handler.wait()
 
     def get_handler_state(self):
         """
@@ -130,10 +160,19 @@ class Sender:
             self._handler.send_message(event_data.message)
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
-        except errors.LinkDetach as detach:
-            error = EventHubError(str(detach))
+        except errors.MessageException as failed:
+            error = EventHubError(str(failed), failed)
             self.close(exception=error)
             raise error
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except errors.MessageHandlerError:
+            self.reconnect()
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
             self.close(exception=error)
@@ -167,6 +206,15 @@ class Sender:
             raise self.error
         try:
             self._handler.wait()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except errors.MessageHandlerError:
+            self.reconnect()
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))
 

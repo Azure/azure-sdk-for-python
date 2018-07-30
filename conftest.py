@@ -79,7 +79,7 @@ def invalid_policy():
 @pytest.fixture()
 def iot_connection_str():
     try:
-        return os.environ['IOT_HUB_CONNECTION_STR']
+        return os.environ['IOTHUB_CONNECTION_STR']
     except KeyError:
         pytest.skip("No IotHub connection string found.")
 
@@ -94,7 +94,7 @@ def device_id():
 
 @pytest.fixture()
 def receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
 
@@ -114,7 +114,7 @@ def receivers(connection_str):
 
 @pytest.fixture()
 def senders(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, debug=True)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
 
