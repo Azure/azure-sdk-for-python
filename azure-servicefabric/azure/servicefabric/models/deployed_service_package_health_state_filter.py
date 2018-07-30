@@ -53,7 +53,7 @@ class DeployedServicePackageHealthStateFilter(Model):
      package ID is specified. If the filter has default value and deployed
      service package ID is specified, the matching deployed service package is
      returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches deployed service
      packages with HealthState value of OK (2) and Warning (4).

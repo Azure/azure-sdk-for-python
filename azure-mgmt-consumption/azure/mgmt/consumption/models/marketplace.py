@@ -60,7 +60,7 @@ class Marketplace(Resource):
     :vartype pretax_cost: decimal.Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
-    :ivar meter_id: The meter id.
+    :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
     :ivar subscription_guid: Subscription guid.
     :vartype subscription_guid: str
@@ -146,8 +146,8 @@ class Marketplace(Resource):
         'plan_name': {'key': 'properties.planName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Marketplace, self).__init__()
+    def __init__(self, **kwargs):
+        super(Marketplace, self).__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None

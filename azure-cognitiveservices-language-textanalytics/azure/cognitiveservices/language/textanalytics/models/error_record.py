@@ -26,7 +26,7 @@ class ErrorRecord(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, id=None, message=None):
-        super(ErrorRecord, self).__init__()
-        self.id = id
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorRecord, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.message = kwargs.get('message', None)
