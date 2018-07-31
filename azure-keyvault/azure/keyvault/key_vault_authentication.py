@@ -3,18 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 #---------------------------------------------------------------------------------------------
 
-import threading
-import requests
 import inspect
+import threading
 from collections import namedtuple
+
+import requests
+from azure.keyvault import http_bearer_challenge_cache as ChallengeCache
+from azure.keyvault.http_challenge import HttpChallenge
+from azure.keyvault.http_message_security import HttpMessageSecurity
+from azure.keyvault._internal import _RsaKey
+from msrest.authentication import OAuthTokenAuthentication
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
-from .http_challenge import HttpChallenge
-from . import http_bearer_challenge_cache as ChallengeCache
-from msrest.authentication import OAuthTokenAuthentication
-from .http_message_security import HttpMessageSecurity
-from .internal import _RsaKey
-
 
 AccessToken = namedtuple('AccessToken', ['scheme', 'token', 'key'])
 AccessToken.__new__.__defaults__ = ('Bearer', None, None)

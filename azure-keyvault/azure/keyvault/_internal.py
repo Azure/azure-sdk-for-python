@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateNumbers, RSA
 from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
 from cryptography.hazmat.primitives import hashes, constant_time, padding, hmac
 
-from ..models import JsonWebKey
+from azure.keyvault.models import JsonWebKey
 
 def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
     if not key or not len(key) >= 32:
