@@ -12,22 +12,17 @@
 from msrest.serialization import Model
 
 
-class IpTag(Model):
-    """Contains the IpTag associated with the object.
+class ReferencedPublicIpAddress(Model):
+    """ReferencedPublicIpAddress.
 
-    :param ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage.
-    :type ip_tag_type: str
-    :param tag: Gets or sets value of the IpTag associated with the public IP.
-     Example SQL, Storage etc
-    :type tag: str
+    :param id: The PublicIPAddress Reference
+    :type id: str
     """
 
     _attribute_map = {
-        'ip_tag_type': {'key': 'ipTagType', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(IpTag, self).__init__(**kwargs)
-        self.ip_tag_type = kwargs.get('ip_tag_type', None)
-        self.tag = kwargs.get('tag', None)
+        super(ReferencedPublicIpAddress, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

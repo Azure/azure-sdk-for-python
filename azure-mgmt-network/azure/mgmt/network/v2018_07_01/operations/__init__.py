@@ -39,6 +39,7 @@ from .packet_captures_operations import PacketCapturesOperations
 from .connection_monitors_operations import ConnectionMonitorsOperations
 from .operations import Operations
 from .public_ip_addresses_operations import PublicIPAddressesOperations
+from .public_ip_prefixes_operations import PublicIPPrefixesOperations
 from .route_filters_operations import RouteFiltersOperations
 from .route_filter_rules_operations import RouteFilterRulesOperations
 from .route_tables_operations import RouteTablesOperations
@@ -90,6 +91,7 @@ __all__ = [
     'ConnectionMonitorsOperations',
     'Operations',
     'PublicIPAddressesOperations',
+    'PublicIPPrefixesOperations',
     'RouteFiltersOperations',
     'RouteFilterRulesOperations',
     'RouteTablesOperations',

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IpTag(Model):
-    """Contains the IpTag associated with the public IP address.
+    """Contains the IpTag associated with the object.
 
     :param ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage.
     :type ip_tag_type: str
