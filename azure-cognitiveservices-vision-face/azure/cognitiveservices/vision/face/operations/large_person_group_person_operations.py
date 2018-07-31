@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PersonGroupPersonOperations(object):
-    """PersonGroupPersonOperations operations.
+class LargePersonGroupPersonOperations(object):
+    """LargePersonGroupPersonOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,11 +34,12 @@ class PersonGroupPersonOperations(object):
         self.config = config
 
     def create(
-            self, person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Create a new person in a specified person group.
+            self, large_person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Create a new person in a specified large person group.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param name: User defined name, maximum length is 128.
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
@@ -60,7 +61,7 @@ class PersonGroupPersonOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,16 +95,17 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/persongroups/{personGroupId}/persons'}
+    create.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons'}
 
     def list(
-            self, person_group_id, start=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """List all persons in a person group, and retrieve person information
-        (including personId, name, userData and persistedFaceIds of registered
-        faces of the person).
+            self, large_person_group_id, start=None, top=None, custom_headers=None, raw=False, **operation_config):
+        """List all persons in a large person group, and retrieve person
+        information (including personId, name, userData and persistedFaceIds of
+        registered faces of the person).
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param start: Starting person id to return (used to list a range of
          persons).
         :type start: str
@@ -125,7 +127,7 @@ class PersonGroupPersonOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -159,15 +161,16 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/persongroups/{personGroupId}/persons'}
+    list.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons'}
 
     def delete(
-            self, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing person from a person group. All stored person data,
-        and face features in the person entry will be deleted.
+            self, large_person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
+        """Delete an existing person from a large person group. All stored person
+        data, and face features in the person entry will be deleted.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -184,7 +187,7 @@ class PersonGroupPersonOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -207,15 +210,16 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
+    delete.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def get(
-            self, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve a person's information, including registered persisted faces,
         name and userData.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -233,7 +237,7 @@ class PersonGroupPersonOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -264,14 +268,15 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
+    get.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def update(
-            self, person_group_id, person_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
         """Update name or userData of a person.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param name: User defined name, maximum length is 128.
@@ -294,7 +299,7 @@ class PersonGroupPersonOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -321,15 +326,16 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
+    update.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def delete_face(
-            self, person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
         """Delete a face from a person. Relative feature for the persisted face
         will also be deleted.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param persisted_face_id: Id referencing a particular persistedFaceId
@@ -349,7 +355,7 @@ class PersonGroupPersonOperations(object):
         url = self.delete_face.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str'),
             'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
         }
@@ -373,15 +379,16 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    delete_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def get_face(
-            self, person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve information about a persisted face (specified by
-        persistedFaceId, personId and its belonging personGroupId).
+        persistedFaceId, personId and its belonging largePersonGroupId).
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param persisted_face_id: Id referencing a particular persistedFaceId
@@ -402,7 +409,7 @@ class PersonGroupPersonOperations(object):
         url = self.get_face.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str'),
             'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
         }
@@ -434,14 +441,15 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    get_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    get_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def update_face(
-            self, person_group_id, person_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
         """Update a person persisted face's userData field.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param persisted_face_id: Id referencing a particular persistedFaceId
@@ -466,7 +474,7 @@ class PersonGroupPersonOperations(object):
         url = self.update_face.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str'),
             'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
         }
@@ -494,15 +502,16 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    update_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def add_person_face_from_url(
-            self, person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param url: Publicly reachable URL of an image
@@ -533,7 +542,7 @@ class PersonGroupPersonOperations(object):
         url = self.add_person_face_from_url.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -572,15 +581,16 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    add_person_face_from_url.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'}
+    add_person_face_from_url.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces'}
 
     def add_person_face_from_stream(
-            self, person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, large_person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param person_id: Id referencing a particular person.
         :type person_id: str
         :param image: An image stream.
@@ -614,7 +624,7 @@ class PersonGroupPersonOperations(object):
         url = self.add_person_face_from_stream.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
             'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -653,4 +663,4 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    add_person_face_from_stream.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'}
+    add_person_face_from_stream.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces'}

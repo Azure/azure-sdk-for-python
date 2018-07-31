@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PersonGroupOperations(object):
-    """PersonGroupOperations operations.
+class LargePersonGroupOperations(object):
+    """LargePersonGroupOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,12 +34,13 @@ class PersonGroupOperations(object):
         self.config = config
 
     def create(
-            self, person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Create a new person group with specified personGroupId, name and
-        user-provided userData.
+            self, large_person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Create a new large person group with specified largePersonGroupId, name
+        and user-provided userData.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param name: User defined name, maximum length is 128.
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
@@ -60,7 +61,7 @@ class PersonGroupOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -86,15 +87,16 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create.metadata = {'url': '/persongroups/{personGroupId}'}
+    create.metadata = {'url': '/largepersongroups/{largePersonGroupId}'}
 
     def delete(
-            self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing person group. Persisted face features of all people
-        in the person group will also be deleted.
+            self, large_person_group_id, custom_headers=None, raw=False, **operation_config):
+        """Delete an existing large person group. Persisted face features of all
+        people in the large person group will also be deleted.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -109,7 +111,7 @@ class PersonGroupOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -131,23 +133,24 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/persongroups/{personGroupId}'}
+    delete.metadata = {'url': '/largepersongroups/{largePersonGroupId}'}
 
     def get(
-            self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the information of a person group, including its name and
-        userData.
+            self, large_person_group_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the information of a large person group, including its name
+        and userData.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PersonGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.PersonGroup or
-         ~msrest.pipeline.ClientRawResponse
+        :return: LargePersonGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.LargePersonGroup
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -155,7 +158,7 @@ class PersonGroupOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -178,22 +181,23 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PersonGroup', response)
+            deserialized = self._deserialize('LargePersonGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/persongroups/{personGroupId}'}
+    get.metadata = {'url': '/largepersongroups/{largePersonGroupId}'}
 
     def update(
-            self, person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Update an existing person group's display name and userData. The
+            self, large_person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Update an existing large person group's display name and userData. The
         properties which does not appear in request body will not be updated.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param name: User defined name, maximum length is 128.
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
@@ -214,7 +218,7 @@ class PersonGroupOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -240,14 +244,16 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/persongroups/{personGroupId}'}
+    update.metadata = {'url': '/largepersongroups/{largePersonGroupId}'}
 
     def get_training_status(
-            self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the training status of a person group (completed or ongoing).
+            self, large_person_group_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the training status of a large person group (completed or
+        ongoing).
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -263,7 +269,7 @@ class PersonGroupOperations(object):
         url = self.get_training_status.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -293,16 +299,16 @@ class PersonGroupOperations(object):
             return client_raw_response
 
         return deserialized
-    get_training_status.metadata = {'url': '/persongroups/{personGroupId}/training'}
+    get_training_status.metadata = {'url': '/largepersongroups/{largePersonGroupId}/training'}
 
     def list(
             self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
-        """List person groups and their information.
+        """List large person groups and their information.
 
-        :param start: List person groups from the least personGroupId greater
-         than the "start".
+        :param start: List large person groups from the least
+         largePersonGroupId greater than the "start".
         :type start: str
-        :param top: The number of person groups to list.
+        :param top: The number of large person groups to list.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -310,8 +316,9 @@ class PersonGroupOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.cognitiveservices.vision.face.models.PersonGroup]
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         list[~azure.cognitiveservices.vision.face.models.LargePersonGroup] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -345,22 +352,23 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[PersonGroup]', response)
+            deserialized = self._deserialize('[LargePersonGroup]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/persongroups'}
+    list.metadata = {'url': '/largepersongroups'}
 
     def train(
-            self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Queue a person group training task, the training task may not be
+            self, large_person_group_id, custom_headers=None, raw=False, **operation_config):
+        """Queue a large person group training task, the training task may not be
         started immediately.
 
-        :param person_group_id: Id referencing a particular person group.
-        :type person_group_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -375,7 +383,7 @@ class PersonGroupOperations(object):
         url = self.train.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -397,4 +405,4 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    train.metadata = {'url': '/persongroups/{personGroupId}/train'}
+    train.metadata = {'url': '/largepersongroups/{largePersonGroupId}/train'}

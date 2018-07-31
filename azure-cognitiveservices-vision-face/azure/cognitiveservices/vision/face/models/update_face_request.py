@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class UpdatePersonFaceRequest(Model):
-    """Request to update person face data.
+class UpdateFaceRequest(Model):
+    """Request to update face data.
 
     :param user_data: User-provided data attached to the face. The size limit
      is 1KB.
@@ -28,6 +28,6 @@ class UpdatePersonFaceRequest(Model):
         'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, *, user_data: str=None, **kwargs) -> None:
-        super(UpdatePersonFaceRequest, self).__init__(**kwargs)
-        self.user_data = user_data
+    def __init__(self, **kwargs):
+        super(UpdateFaceRequest, self).__init__(**kwargs)
+        self.user_data = kwargs.get('user_data', None)

@@ -34,9 +34,9 @@ class FaceOperations(object):
         self.config = config
 
     def find_similar(
-            self, face_id, face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson", custom_headers=None, raw=False, **operation_config):
+            self, face_id, face_list_id=None, large_face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson", custom_headers=None, raw=False, **operation_config):
         """Given query face's faceId, find the similar-looking faces from a faceId
-        array or a faceListId.
+        array, a face list or a large face list.
 
         :param face_id: FaceId of the query face. User needs to call Face -
          Detect first to get a valid faceId. Note that this faceId is not
@@ -45,12 +45,20 @@ class FaceOperations(object):
         :param face_list_id: An existing user-specified unique candidate face
          list, created in Face List - Create a Face List. Face list contains a
          set of persistedFaceIds which are persisted and will never expire.
-         Parameter faceListId and faceIds should not be provided at the same
-         time
+         Parameter faceListId, largeFaceListId and faceIds should not be
+         provided at the same time。
         :type face_list_id: str
+        :param large_face_list_id: An existing user-specified unique candidate
+         large face list, created in LargeFaceList - Create. Large face list
+         contains a set of persistedFaceIds which are persisted and will never
+         expire. Parameter faceListId, largeFaceListId and faceIds should not
+         be provided at the same time.
+        :type large_face_list_id: str
         :param face_ids: An array of candidate faceIds. All of them are
          created by Face - Detect and the faceIds will expire 24 hours after
-         the detection call.
+         the detection call. The number of faceIds is limited to 1000.
+         Parameter faceListId, largeFaceListId and faceIds should not be
+         provided at the same time.
         :type face_ids: list[str]
         :param max_num_of_candidates_returned: The number of top similar faces
          returned. The valid range is [1, 1000].
@@ -70,7 +78,7 @@ class FaceOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.FindSimilarRequest(face_id=face_id, face_list_id=face_list_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, mode=mode)
+        body = models.FindSimilarRequest(face_id=face_id, face_list_id=face_list_id, large_face_list_id=large_face_list_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, mode=mode)
 
         # Construct URL
         url = self.find_similar.metadata['url']
@@ -171,16 +179,23 @@ class FaceOperations(object):
     group.metadata = {'url': '/group'}
 
     def identify(
-            self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None, custom_headers=None, raw=False, **operation_config):
-        """Identify unknown faces from a person group.
+            self, face_ids, person_group_id=None, large_person_group_id=None, max_num_of_candidates_returned=1, confidence_threshold=None, custom_headers=None, raw=False, **operation_config):
+        """1-to-many identification to find the closest matches of the specific
+        query person face from a person group or large person group.
 
-        :param person_group_id: PersonGroupId of the target person group,
-         created by PersonGroups.Create
-        :type person_group_id: str
         :param face_ids: Array of query faces faceIds, created by the Face -
          Detect. Each of the faces are identified independently. The valid
          number of faceIds is between [1, 10].
         :type face_ids: list[str]
+        :param person_group_id: PersonGroupId of the target person group,
+         created by PersonGroup - Create. Parameter personGroupId and
+         largePersonGroupId should not be provided at the same time.
+        :type person_group_id: str
+        :param large_person_group_id: LargePersonGroupId of the target large
+         person group, created by LargePersonGroup - Create. Parameter
+         personGroupId and largePersonGroupId should not be provided at the
+         same time.
+        :type large_person_group_id: str
         :param max_num_of_candidates_returned: The range of
          maxNumOfCandidatesReturned is between 1 and 5 (default is 1).
         :type max_num_of_candidates_returned: int
@@ -200,7 +215,7 @@ class FaceOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.IdentifyRequest(person_group_id=person_group_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, confidence_threshold=confidence_threshold)
+        body = models.IdentifyRequest(face_ids=face_ids, person_group_id=person_group_id, large_person_group_id=large_person_group_id, max_num_of_candidates_returned=max_num_of_candidates_returned, confidence_threshold=confidence_threshold)
 
         # Construct URL
         url = self.identify.metadata['url']
@@ -382,19 +397,26 @@ class FaceOperations(object):
     detect_with_url.metadata = {'url': '/detect'}
 
     def verify_face_to_person(
-            self, face_id, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
+            self, face_id, person_id, person_group_id=None, large_person_group_id=None, custom_headers=None, raw=False, **operation_config):
         """Verify whether two faces belong to a same person. Compares a face Id
         with a Person Id.
 
-        :param face_id: FaceId the face, comes from Face - Detect
+        :param face_id: FaceId of the face, comes from Face - Detect
         :type face_id: str
-        :param person_group_id: Using existing personGroupId and personId for
-         fast loading a specified person. personGroupId is created in Person
-         Groups.Create.
-        :type person_group_id: str
-        :param person_id: Specify a certain person in a person group. personId
-         is created in Persons.Create.
+        :param person_id: Specify a certain person in a person group or a
+         large person group. personId is created in PersonGroup Person - Create
+         or LargePersonGroup Person - Create.
         :type person_id: str
+        :param person_group_id: Using existing personGroupId and personId for
+         fast loading a specified person. personGroupId is created in
+         PersonGroup - Create. Parameter personGroupId and largePersonGroupId
+         should not be provided at the same time.
+        :type person_group_id: str
+        :param large_person_group_id: Using existing largePersonGroupId and
+         personId for fast loading a specified person. largePersonGroupId is
+         created in LargePersonGroup - Create. Parameter personGroupId and
+         largePersonGroupId should not be provided at the same time.
+        :type large_person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -406,7 +428,7 @@ class FaceOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.VerifyFaceToPersonRequest(face_id=face_id, person_group_id=person_group_id, person_id=person_id)
+        body = models.VerifyFaceToPersonRequest(face_id=face_id, person_group_id=person_group_id, large_person_group_id=large_person_group_id, person_id=person_id)
 
         # Construct URL
         url = self.verify_face_to_person.metadata['url']

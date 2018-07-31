@@ -21,8 +21,8 @@ class PersonGroup(NameAndUserDataContract):
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
-    :param person_group_id: Required. PersonGroupId of the existing person
-     groups.
+    :param person_group_id: Required. PersonGroupId of the target person
+     group.
     :type person_group_id: str
     """
 
