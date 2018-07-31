@@ -59,6 +59,8 @@ from .virtual_hubs_operations import VirtualHubsOperations
 from .hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
 from .vpn_gateways_operations import VpnGatewaysOperations
 from .vpn_connections_operations import VpnConnectionsOperations
+from .service_endpoint_policies_operations import ServiceEndpointPoliciesOperations
+from .service_endpoint_policy_definitions_operations import ServiceEndpointPolicyDefinitionsOperations
 
 __all__ = [
     'AzureFirewallsOperations',
@@ -111,4 +113,6 @@ __all__ = [
     'HubVirtualNetworkConnectionsOperations',
     'VpnGatewaysOperations',
     'VpnConnectionsOperations',
+    'ServiceEndpointPoliciesOperations',
+    'ServiceEndpointPolicyDefinitionsOperations',
 ]

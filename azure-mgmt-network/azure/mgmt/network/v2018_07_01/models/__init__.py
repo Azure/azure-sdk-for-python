@@ -30,6 +30,8 @@ try:
     from .route_py3 import Route
     from .route_table_py3 import RouteTable
     from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition_py3 import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy_py3 import ServiceEndpointPolicy
     from .public_ip_address_sku_py3 import PublicIPAddressSku
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
     from .ip_tag_py3 import IpTag
@@ -248,6 +250,8 @@ except (SyntaxError, ImportError):
     from .route import Route
     from .route_table import RouteTable
     from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy import ServiceEndpointPolicy
     from .public_ip_address_sku import PublicIPAddressSku
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
     from .ip_tag import IpTag
@@ -493,6 +497,8 @@ from .virtual_hub_paged import VirtualHubPaged
 from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPaged
 from .vpn_gateway_paged import VpnGatewayPaged
 from .vpn_connection_paged import VpnConnectionPaged
+from .service_endpoint_policy_paged import ServiceEndpointPolicyPaged
+from .service_endpoint_policy_definition_paged import ServiceEndpointPolicyDefinitionPaged
 from .network_management_client_enums import (
     ProvisioningState,
     AzureFirewallRCActionType,
@@ -596,6 +602,8 @@ __all__ = [
     'Route',
     'RouteTable',
     'ServiceEndpointPropertiesFormat',
+    'ServiceEndpointPolicyDefinition',
+    'ServiceEndpointPolicy',
     'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
     'IpTag',
@@ -841,6 +849,8 @@ __all__ = [
     'HubVirtualNetworkConnectionPaged',
     'VpnGatewayPaged',
     'VpnConnectionPaged',
+    'ServiceEndpointPolicyPaged',
+    'ServiceEndpointPolicyDefinitionPaged',
     'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
