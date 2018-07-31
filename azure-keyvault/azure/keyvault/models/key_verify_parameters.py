@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class KeyVerifyParameters(Model):
     """The key verify parameters.
 
-    :param algorithm: The signing/verification algorithm. For more information
-     on possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible
-     values include: 'PS256', 'PS384', 'PS512', 'RS256', 'RS384', 'RS512',
-     'RSNULL'
-    :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-     <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
-    :param digest: The digest used for signing.
+    All required parameters must be populated in order to send to Azure.
+
+    :param algorithm: Required. The signing/verification algorithm. For more
+     information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
+     Possible values include: 'PS256', 'PS384', 'PS512', 'RS256', 'RS384',
+     'RS512', 'RSNULL', 'ES256', 'ES384', 'ES512', 'ES256K'
+    :type algorithm: str or
+     ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
+    :param digest: Required. The digest used for signing.
     :type digest: bytes
-    :param signature: The signature to be verified.
+    :param signature: Required. The signature to be verified.
     :type signature: bytes
     """
 
@@ -39,7 +41,8 @@ class KeyVerifyParameters(Model):
         'signature': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, algorithm, digest, signature):
-        self.algorithm = algorithm
-        self.digest = digest
-        self.signature = signature
+    def __init__(self, **kwargs):
+        super(KeyVerifyParameters, self).__init__(**kwargs)
+        self.algorithm = kwargs.get('algorithm', None)
+        self.digest = kwargs.get('digest', None)
+        self.signature = kwargs.get('signature', None)

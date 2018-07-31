@@ -16,7 +16,7 @@ from msrest.exceptions import HttpOperationError
 class ApiError(Model):
     """The API error.
 
-    :param error: ApiError. The error properties.
+    :param error: The error properties.
     :type error: ~azure.mgmt.media.models.ODataError
     """
 

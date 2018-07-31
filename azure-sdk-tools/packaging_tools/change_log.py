@@ -75,7 +75,11 @@ class ChangeLog:
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new model?
-        _, mtype, model_name, *remaining_path = path
+        _, mtype, *remaining_path = path
+        if not remaining_path:
+            # Seen once in Network, because exceptions were added. Bypass
+            return
+        model_name, *remaining_path = remaining_path
         if not remaining_path:
             # A new model or a model deletion is not very interesting by itself
             # since it usually means that there is a new operation

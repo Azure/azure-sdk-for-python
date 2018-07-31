@@ -3,6 +3,25 @@
 Release History
 ===============
 
+1.1.14 (2018-07-23)
++++++++++++++++++++
+
+**Features**
+
+- Adding KeyVault to profile v2017_03_09_profile
+
+1.1.13 (2018-07-03)
++++++++++++++++++++
+
+**Features**
+
+- get_azure_cli_credentials has a new parameter "with_tenant" to get default CLI tenant ID
+
+**Bugfixes**
+
+- get_client_from_cli_profile now supports the "azure-graphrbac" package #2867
+- get_client_from_auth_file now supports the "azure-graphrbac" package #2867
+
 1.1.12 (2018-05-29)
 +++++++++++++++++++
 

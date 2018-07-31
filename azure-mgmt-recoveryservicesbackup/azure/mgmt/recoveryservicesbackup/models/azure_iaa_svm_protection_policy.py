@@ -29,6 +29,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
      retention ranges.
     :type retention_policy:
      ~azure.mgmt.recoveryservicesbackup.models.RetentionPolicy
+    :param instant_rp_retention_range_in_days: Instant RP retention policy
+     range in days
+    :type instant_rp_retention_range_in_days: int
     :param time_zone: TimeZone optional input as string. For example: TimeZone
      = "Pacific Standard Time".
     :type time_zone: str
@@ -43,6 +46,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+        'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
@@ -50,5 +54,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         super(AzureIaaSVMProtectionPolicy, self).__init__(**kwargs)
         self.schedule_policy = kwargs.get('schedule_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
+        self.instant_rp_retention_range_in_days = kwargs.get('instant_rp_retention_range_in_days', None)
         self.time_zone = kwargs.get('time_zone', None)
         self.backup_management_type = 'AzureIaasVM'

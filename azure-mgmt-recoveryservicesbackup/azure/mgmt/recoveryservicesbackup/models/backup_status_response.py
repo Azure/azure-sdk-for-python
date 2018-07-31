@@ -22,15 +22,15 @@ class BackupStatusResponse(Model):
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
     :param vault_id: Specifies the arm resource id of the vault
     :type vault_id: str
-    :param fabric_name: Specifies the fabric name - Azure or AAD. Possible
+    :param fabric_name: Specifies the fabric name - Azure or AD. Possible
      values include: 'Invalid', 'Azure'
     :type fabric_name: str or
      ~azure.mgmt.recoveryservicesbackup.models.FabricName
     :param container_name: Specifies the product specific container name. E.g.
-     iaasvmcontainer;iaasvmcontainer;csname;vmname. This is required for portal
+     iaasvmcontainer;iaasvmcontainer;csname;vmname.
     :type container_name: str
     :param protected_item_name: Specifies the product specific ds name. E.g.
-     vm;iaasvmcontainer;csname;vmname. This is required for portal
+     vm;iaasvmcontainer;csname;vmname.
     :type protected_item_name: str
     :param error_code: ErrorCode in case of intent failed
     :type error_code: str

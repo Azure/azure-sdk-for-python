@@ -23,14 +23,22 @@ class ProtectionPolicyQueryObject(Model):
      ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param fabric_name: Fabric name for filter
     :type fabric_name: str
+    :param workload_type: Workload type for the backup policy. Possible values
+     include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
+     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
+     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """
 
     _attribute_map = {
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, fabric_name: str=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, fabric_name: str=None, workload_type=None, **kwargs) -> None:
         super(ProtectionPolicyQueryObject, self).__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.fabric_name = fabric_name
+        self.workload_type = workload_type

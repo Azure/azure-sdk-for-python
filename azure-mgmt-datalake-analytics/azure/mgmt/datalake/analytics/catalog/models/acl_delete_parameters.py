@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class AclDeleteParameters(Model):
     """The parameters used to delete an access control list (ACL) entry.
 
-    :param ace_type: the access control list (ACL) entry type. UserObj and
-     GroupObj denote the owning user and group, respectively. Possible values
-     include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
+    All required parameters must be populated in order to send to Azure.
+
+    :param ace_type: Required. the access control list (ACL) entry type.
+     UserObj and GroupObj denote the owning user and group, respectively.
+     Possible values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
     :type ace_type: str or
      ~azure.mgmt.datalake.analytics.catalog.models.AclType
-    :param principal_id: the Azure AD object ID of the user or group being
-     specified in the access control list (ACL) entry.
+    :param principal_id: Required. the Azure AD object ID of the user or group
+     being specified in the access control list (ACL) entry.
     :type principal_id: str
     """
 
@@ -35,7 +37,7 @@ class AclDeleteParameters(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, ace_type, principal_id):
-        super(AclDeleteParameters, self).__init__()
-        self.ace_type = ace_type
-        self.principal_id = principal_id
+    def __init__(self, **kwargs):
+        super(AclDeleteParameters, self).__init__(**kwargs)
+        self.ace_type = kwargs.get('ace_type', None)
+        self.principal_id = kwargs.get('principal_id', None)

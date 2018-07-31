@@ -15,15 +15,16 @@ from msrest.serialization import Model
 class CertificateMergeParameters(Model):
     """The certificate merge parameters.
 
-    :param x509_certificates: The certificate or the certificate chain to
-     merge.
-    :type x509_certificates: list of bytearray
+    All required parameters must be populated in order to send to Azure.
+
+    :param x509_certificates: Required. The certificate or the certificate
+     chain to merge.
+    :type x509_certificates: list[bytearray]
     :param certificate_attributes: The attributes of the certificate
      (optional).
-    :type certificate_attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type certificate_attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -36,7 +37,8 @@ class CertificateMergeParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, x509_certificates, certificate_attributes=None, tags=None):
-        self.x509_certificates = x509_certificates
-        self.certificate_attributes = certificate_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CertificateMergeParameters, self).__init__(**kwargs)
+        self.x509_certificates = kwargs.get('x509_certificates', None)
+        self.certificate_attributes = kwargs.get('certificate_attributes', None)
+        self.tags = kwargs.get('tags', None)

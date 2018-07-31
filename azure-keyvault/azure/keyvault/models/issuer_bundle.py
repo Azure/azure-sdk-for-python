@@ -23,15 +23,12 @@ class IssuerBundle(Model):
     :param provider: The issuer provider.
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
-    :type credentials: :class:`IssuerCredentials
-     <azure.keyvault.models.IssuerCredentials>`
+    :type credentials: ~azure.keyvault.models.IssuerCredentials
     :param organization_details: Details of the organization as provided to
      the issuer.
-    :type organization_details: :class:`OrganizationDetails
-     <azure.keyvault.models.OrganizationDetails>`
+    :type organization_details: ~azure.keyvault.models.OrganizationDetails
     :param attributes: Attributes of the issuer object.
-    :type attributes: :class:`IssuerAttributes
-     <azure.keyvault.models.IssuerAttributes>`
+    :type attributes: ~azure.keyvault.models.IssuerAttributes
     """
 
     _validation = {
@@ -46,9 +43,10 @@ class IssuerBundle(Model):
         'attributes': {'key': 'attributes', 'type': 'IssuerAttributes'},
     }
 
-    def __init__(self, provider=None, credentials=None, organization_details=None, attributes=None):
+    def __init__(self, **kwargs):
+        super(IssuerBundle, self).__init__(**kwargs)
         self.id = None
-        self.provider = provider
-        self.credentials = credentials
-        self.organization_details = organization_details
-        self.attributes = attributes
+        self.provider = kwargs.get('provider', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.organization_details = kwargs.get('organization_details', None)
+        self.attributes = kwargs.get('attributes', None)
