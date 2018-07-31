@@ -339,7 +339,7 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_face.metadata = {'url': '/facelists/{faceListId}/persistedFaces/{persistedFaceId}'}
+    delete_face.metadata = {'url': '/facelists/{faceListId}/persistedfaces/{persistedFaceId}'}
 
     def add_face_from_url(
             self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
@@ -415,7 +415,7 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_url.metadata = {'url': '/facelists/{faceListId}/persistedFaces'}
+    add_face_from_url.metadata = {'url': '/facelists/{faceListId}/persistedfaces'}
 
     def add_face_from_stream(
             self, face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -494,4 +494,4 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_stream.metadata = {'url': '/facelists/{faceListId}/persistedFaces'}
+    add_face_from_stream.metadata = {'url': '/facelists/{faceListId}/persistedfaces'}

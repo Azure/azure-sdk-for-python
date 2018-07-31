@@ -379,7 +379,7 @@ class LargePersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    delete_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
     def get_face(
             self, large_person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
@@ -441,7 +441,7 @@ class LargePersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    get_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    get_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
     def update_face(
             self, large_person_group_id, person_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -502,7 +502,7 @@ class LargePersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
+    update_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
     def add_person_face_from_url(
             self, large_person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
@@ -581,7 +581,7 @@ class LargePersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    add_person_face_from_url.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces'}
+    add_person_face_from_url.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces'}
 
     def add_person_face_from_stream(
             self, large_person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -663,4 +663,4 @@ class LargePersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    add_person_face_from_stream.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedFaces'}
+    add_person_face_from_stream.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces'}

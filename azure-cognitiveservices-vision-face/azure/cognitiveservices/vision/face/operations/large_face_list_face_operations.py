@@ -98,4 +98,4 @@ class LargeFaceListFaceOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces'}
+    list.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces'}

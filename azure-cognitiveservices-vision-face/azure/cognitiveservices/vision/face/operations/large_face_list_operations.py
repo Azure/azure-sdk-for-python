@@ -446,7 +446,7 @@ class LargeFaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces/{persistedFaceId}'}
+    delete_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces/{persistedFaceId}'}
 
     def get_face(
             self, large_face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
@@ -505,7 +505,7 @@ class LargeFaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    get_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces/{persistedFaceId}'}
+    get_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces/{persistedFaceId}'}
 
     def update_face(
             self, large_face_list_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -563,7 +563,7 @@ class LargeFaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces/{persistedFaceId}'}
+    update_face.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces/{persistedFaceId}'}
 
     def add_face_from_url(
             self, large_face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
@@ -640,7 +640,7 @@ class LargeFaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_url.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces'}
+    add_face_from_url.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces'}
 
     def add_face_from_stream(
             self, large_face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -720,4 +720,4 @@ class LargeFaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_stream.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedFaces'}
+    add_face_from_stream.metadata = {'url': '/largefacelists/{largeFaceListId}/persistedfaces'}
