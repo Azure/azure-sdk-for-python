@@ -48,6 +48,7 @@ from .operations.packet_captures_operations import PacketCapturesOperations
 from .operations.connection_monitors_operations import ConnectionMonitorsOperations
 from .operations.operations import Operations
 from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
+from .operations.public_ip_prefixes_operations import PublicIPPrefixesOperations
 from .operations.route_filters_operations import RouteFiltersOperations
 from .operations.route_filter_rules_operations import RouteFilterRulesOperations
 from .operations.route_tables_operations import RouteTablesOperations
@@ -170,6 +171,8 @@ class NetworkManagementClient(SDKClient):
     :vartype operations: azure.mgmt.network.v2018_07_01.operations.Operations
     :ivar public_ip_addresses: PublicIPAddresses operations
     :vartype public_ip_addresses: azure.mgmt.network.v2018_07_01.operations.PublicIPAddressesOperations
+    :ivar public_ip_prefixes: PublicIPPrefixes operations
+    :vartype public_ip_prefixes: azure.mgmt.network.v2018_07_01.operations.PublicIPPrefixesOperations
     :ivar route_filters: RouteFilters operations
     :vartype route_filters: azure.mgmt.network.v2018_07_01.operations.RouteFiltersOperations
     :ivar route_filter_rules: RouteFilterRules operations
@@ -288,6 +291,8 @@ class NetworkManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.public_ip_prefixes = PublicIPPrefixesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.route_filters = RouteFiltersOperations(
             self._client, self.config, self._serialize, self._deserialize)

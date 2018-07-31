@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class PublicIPAddress(Resource):
-    """Public IP address resource.
+class PublicIPPrefix(Resource):
+    """Public IP prefix resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,40 +28,27 @@ class PublicIPAddress(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param sku: The public IP address SKU.
-    :type sku: ~azure.mgmt.network.v2018_07_01.models.PublicIPAddressSku
-    :param public_ip_allocation_method: The public IP allocation method.
-     Possible values are: 'Static' and 'Dynamic'. Possible values include:
-     'Static', 'Dynamic'
-    :type public_ip_allocation_method: str or
-     ~azure.mgmt.network.v2018_07_01.models.IPAllocationMethod
+    :param sku: The public IP prefix SKU.
+    :type sku: ~azure.mgmt.network.v2018_07_01.models.PublicIPPrefixSku
     :param public_ip_address_version: The public IP address version. Possible
      values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or
      ~azure.mgmt.network.v2018_07_01.models.IPVersion
-    :ivar ip_configuration: The IP configuration associated with the public IP
-     address.
-    :vartype ip_configuration:
-     ~azure.mgmt.network.v2018_07_01.models.IPConfiguration
-    :param dns_settings: The FQDN of the DNS record associated with the public
-     IP address.
-    :type dns_settings:
-     ~azure.mgmt.network.v2018_07_01.models.PublicIPAddressDnsSettings
-    :param ip_tags: The list of tags associated with the public IP address.
+    :param ip_tags: The list of tags associated with the public IP prefix.
     :type ip_tags: list[~azure.mgmt.network.v2018_07_01.models.IpTag]
-    :param ip_address: The IP address associated with the public IP address
-     resource.
-    :type ip_address: str
-    :param public_ip_prefix: The Public IP Prefix this Public IP Address
-     should be allocated from.
-    :type public_ip_prefix:
-     ~azure.mgmt.network.v2018_07_01.models.PublicIPPrefix
-    :param idle_timeout_in_minutes: The idle timeout of the public IP address.
+    :param prefix_length: The Length of the Public IP Prefix.
+    :type prefix_length: int
+    :param ip_prefix: The allocated Prefix
+    :type ip_prefix: str
+    :param public_ip_addresses: The list of all referenced PublicIPAddresses
+    :type public_ip_addresses:
+     list[~azure.mgmt.network.v2018_07_01.models.ReferencedPublicIpAddress]
+    :param idle_timeout_in_minutes: The idle timeout of the public IP prefix.
     :type idle_timeout_in_minutes: int
-    :param resource_guid: The resource GUID property of the public IP
+    :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
-    :param provisioning_state: The provisioning state of the PublicIP
+    :param provisioning_state: The provisioning state of the Public IP prefix
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param etag: A unique read-only string that changes whenever the resource
@@ -75,7 +62,6 @@ class PublicIPAddress(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -84,14 +70,12 @@ class PublicIPAddress(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'PublicIPAddressSku'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'PublicIPPrefixSku'},
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'PublicIPPrefix'},
+        'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
+        'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
+        'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -100,15 +84,13 @@ class PublicIPAddress(Resource):
     }
 
     def __init__(self, **kwargs):
-        super(PublicIPAddress, self).__init__(**kwargs)
+        super(PublicIPPrefix, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
-        self.public_ip_allocation_method = kwargs.get('public_ip_allocation_method', None)
         self.public_ip_address_version = kwargs.get('public_ip_address_version', None)
-        self.ip_configuration = None
-        self.dns_settings = kwargs.get('dns_settings', None)
         self.ip_tags = kwargs.get('ip_tags', None)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
+        self.prefix_length = kwargs.get('prefix_length', None)
+        self.ip_prefix = kwargs.get('ip_prefix', None)
+        self.public_ip_addresses = kwargs.get('public_ip_addresses', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
