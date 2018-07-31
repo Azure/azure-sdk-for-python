@@ -30,9 +30,6 @@ class SlotConfigNamesResource(ProxyOnlyResource):
     :type connection_string_names: list[str]
     :param app_setting_names: List of application settings names.
     :type app_setting_names: list[str]
-    :param azure_storage_config_names: List of external Azure storage account
-     identifiers.
-    :type azure_storage_config_names: list[str]
     """
 
     _validation = {
@@ -48,11 +45,9 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         'type': {'key': 'type', 'type': 'str'},
         'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
-        'azure_storage_config_names': {'key': 'properties.azureStorageConfigNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(SlotConfigNamesResource, self).__init__(**kwargs)
         self.connection_string_names = kwargs.get('connection_string_names', None)
         self.app_setting_names = kwargs.get('app_setting_names', None)
-        self.azure_storage_config_names = kwargs.get('azure_storage_config_names', None)

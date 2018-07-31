@@ -115,19 +115,6 @@ class ConnectionStringType(str, Enum):
     postgre_sql = "PostgreSQL"
 
 
-class AzureStorageType(str, Enum):
-
-    azure_files = "AzureFiles"
-    azure_blob = "AzureBlob"
-
-
-class AzureStorageState(str, Enum):
-
-    ok = "Ok"
-    invalid_credentials = "InvalidCredentials"
-    invalid_share = "InvalidShare"
-
-
 class ScmType(str, Enum):
 
     none = "None"
