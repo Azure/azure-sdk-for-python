@@ -19,8 +19,8 @@ class ServiceLoadMetricDescription(Model):
 
     :param name: Required. The name of the metric. If the service chooses to
      report load during runtime, the load metric name should match the name
-     that is specified in Name exactly. Note that metric names are case
-     sensitive.
+     that is specified in Name exactly. Note that metric names are
+     case-sensitive.
     :type name: str
     :param weight: The service load metric relative weight, compared to other
      metrics configured for this service, as a number. Possible values include:

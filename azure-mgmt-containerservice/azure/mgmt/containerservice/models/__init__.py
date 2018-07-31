@@ -25,6 +25,8 @@ try:
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .container_service_py3 import ContainerService
     from .operation_value_py3 import OperationValue
+    from .tags_object_py3 import TagsObject
+    from .managed_cluster_service_principal_profile_py3 import ManagedClusterServicePrincipalProfile
     from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
     from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
@@ -34,6 +36,8 @@ try:
     from .managed_cluster_access_profile_py3 import ManagedClusterAccessProfile
     from .managed_cluster_pool_upgrade_profile_py3 import ManagedClusterPoolUpgradeProfile
     from .managed_cluster_upgrade_profile_py3 import ManagedClusterUpgradeProfile
+    from .credential_result_py3 import CredentialResult
+    from .credential_results_py3 import CredentialResults
     from .orchestrator_version_profile_py3 import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result_py3 import OrchestratorVersionProfileListResult
 except (SyntaxError, ImportError):
@@ -52,6 +56,8 @@ except (SyntaxError, ImportError):
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .container_service import ContainerService
     from .operation_value import OperationValue
+    from .tags_object import TagsObject
+    from .managed_cluster_service_principal_profile import ManagedClusterServicePrincipalProfile
     from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
     from .container_service_network_profile import ContainerServiceNetworkProfile
     from .managed_cluster_addon_profile import ManagedClusterAddonProfile
@@ -61,6 +67,8 @@ except (SyntaxError, ImportError):
     from .managed_cluster_access_profile import ManagedClusterAccessProfile
     from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
     from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
+    from .credential_result import CredentialResult
+    from .credential_results import CredentialResults
     from .orchestrator_version_profile import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
@@ -91,6 +99,8 @@ __all__ = [
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
     'OperationValue',
+    'TagsObject',
+    'ManagedClusterServicePrincipalProfile',
     'ManagedClusterAgentPoolProfile',
     'ContainerServiceNetworkProfile',
     'ManagedClusterAddonProfile',
@@ -100,6 +110,8 @@ __all__ = [
     'ManagedClusterAccessProfile',
     'ManagedClusterPoolUpgradeProfile',
     'ManagedClusterUpgradeProfile',
+    'CredentialResult',
+    'CredentialResults',
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
