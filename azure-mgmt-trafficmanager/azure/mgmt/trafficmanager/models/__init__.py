@@ -18,6 +18,7 @@ try:
     from .traffic_flow_py3 import TrafficFlow
     from .heat_map_model_py3 import HeatMapModel
     from .user_metrics_model_py3 import UserMetricsModel
+    from .heat_map_location_py3 import HeatMapLocation
     from .endpoint_py3 import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config_py3 import DnsConfig
@@ -40,6 +41,7 @@ except (SyntaxError, ImportError):
     from .traffic_flow import TrafficFlow
     from .heat_map_model import HeatMapModel
     from .user_metrics_model import UserMetricsModel
+    from .heat_map_location import HeatMapLocation
     from .endpoint import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config import DnsConfig
@@ -73,6 +75,7 @@ __all__ = [
     'TrafficFlow',
     'HeatMapModel',
     'UserMetricsModel',
+    'HeatMapLocation',
     'Endpoint',
     'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
     'DnsConfig',
