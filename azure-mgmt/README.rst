@@ -37,7 +37,6 @@ Note that versions are fixed at the minor version number level
 -  `azure-mgmt-batch v5.x <https://pypi.python.org/pypi/azure-mgmt-batch>`__
 -  `azure-mgmt-batchai v2.x <https://pypi.python.org/pypi/azure-mgmt-batchai>`__
 -  `azure-mgmt-billing v0.2.x <https://pypi.python.org/pypi/azure-mgmt-billing>`__
--  `azure-mgmt-botservice v0.1.x <https://pypi.python.org/pypi/azure-mgmt-botservice>`__
 -  `azure-mgmt-cdn v3.x <https://pypi.python.org/pypi/azure-mgmt-cdn>`__
 -  `azure-mgmt-cognitiveservices v3.x <https://pypi.python.org/pypi/azure-mgmt-cognitiveservices>`__
 -  `azure-mgmt-commerce v1.x <https://pypi.python.org/pypi/azure-mgmt-commerce>`__
