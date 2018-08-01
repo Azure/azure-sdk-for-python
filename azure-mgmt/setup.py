@@ -84,7 +84,7 @@ setup(
         'azure-mgmt-scheduler~=2.0',
         'azure-mgmt-search~=2.0',
         'azure-mgmt-servicebus~=0.5.1',
-        'azure-mgmt-servicefabric~=0.1.0',
+        'azure-mgmt-servicefabric~=0.2.0',
         'azure-mgmt-signalr~=0.1.0',
         'azure-mgmt-sql~=0.9.1',
         'azure-mgmt-storage~=2.0',
