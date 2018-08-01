@@ -15,9 +15,6 @@ from .factory_repo_configuration_py3 import FactoryRepoConfiguration
 class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     """Factory's GitHub repo information.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param account_name: Required. Account name.
@@ -32,8 +29,9 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     :type last_commit_id: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :ivar host_name: GitHub repo host name.
-    :vartype host_name: str
+    :param host_name: GitHub Enterprise host name. For example:
+     https://github.mydomain.com
+    :type host_name: str
     """
 
     _validation = {
@@ -42,7 +40,6 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         'collaboration_branch': {'required': True},
         'root_folder': {'required': True},
         'type': {'required': True},
-        'host_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,7 +52,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         'host_name': {'key': 'hostName', 'type': 'str'},
     }
 
-    def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, last_commit_id: str=None, **kwargs) -> None:
+    def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, last_commit_id: str=None, host_name: str=None, **kwargs) -> None:
         super(FactoryGitHubConfiguration, self).__init__(account_name=account_name, repository_name=repository_name, collaboration_branch=collaboration_branch, root_folder=root_folder, last_commit_id=last_commit_id, **kwargs)
-        self.host_name = None
+        self.host_name = host_name
         self.type = 'FactoryGithubConfiguration'
