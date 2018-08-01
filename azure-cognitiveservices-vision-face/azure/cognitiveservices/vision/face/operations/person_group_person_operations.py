@@ -496,7 +496,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
     update_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
-    def add_person_face_from_url(
+    def add_face_from_url(
             self, person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
@@ -530,7 +530,7 @@ class PersonGroupPersonOperations(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = self.add_person_face_from_url.metadata['url']
+        url = self.add_face_from_url.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -572,7 +572,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
-    add_person_face_from_url.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedfaces'}
+    add_face_from_url.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedfaces'}
 
     def add_person_face_from_stream(
             self, person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
