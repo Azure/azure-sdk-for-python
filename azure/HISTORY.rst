@@ -1,3 +1,9 @@
+Disclaimer
+++++++++++
+
+Starting azure 3.0.0, we don't provide anymore a ChangeLog for the bundle package. Please refer to the ChangeLog
+of each individual package.
+
 2017-05-16 azure 2.0.0
 ++++++++++++++++++++++
 
@@ -133,7 +139,7 @@ Some values that are constants and were incorrectly suggested as method paramete
 
 **Meta-package**
 
-The 2.0.0rc6 is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time 
+The 2.0.0rc6 is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time
 be considered "stable" - it will be officially labeled as such in September (in sync with other languages).
 We are not planning on any further major changes until then.
 
@@ -175,7 +181,7 @@ listed before.
 - azure-mgmt-trafficmanager 0.30.0rc6
 - azure-mgmt-web 0.30.0rc6
 
-  
+
 2016-08-01 azure-servicemanagement-legacy 0.20.4
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -232,7 +238,7 @@ Thank you to brandondahler, schaefi for their contributions.
             subscription_id
         )
     )
-    
+
   to this::
 
     resource_client = ResourceManagementClient(
@@ -243,7 +249,7 @@ Thank you to brandondahler, schaefi for their contributions.
   If you were using the Configuration class, it is still available using the `config` attribute after Client creation::
 
     resource_client.config.long_running_operation_timeout = 5
-    
+
 **New**
 
 * you can now simplify your call by passing a dict directly and not an instance. This removes the needs to import each model::
@@ -258,7 +264,7 @@ Thank you to brandondahler, schaefi for their contributions.
     )
 
   can now be written directly::
-    
+
     resource_client.resource_groups.create_or_update(
         group_name,
         {
@@ -281,7 +287,7 @@ Thank you to brandondahler, schaefi for their contributions.
   you might receive a CloudError exception.
 
   A "strict" enum must follow one of the authorized enum values. Strings are still accepted, but if your value is not valid
-  you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received 
+  you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received
   a `CloudError` if the server refused the request.
 
 * Latest Swagger update for Redis (API-version 2016-04-01)
@@ -299,21 +305,21 @@ Thank you to brandondahler, schaefi for their contributions.
 * azure-storage 0.32.0
 
   * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
-    
-    
+
+
 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
 +++++++++++++++++++++++++++++++++++++++
 
 **Disclaimer**
 There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
 However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3::
- 
+
     TypeError: __init__() got an unexpected keyword argument 'type'
-    
+
 or::
 
     TypeError: __init__() takes exactly 1 positional argument (2 given)
-    
+
 You can remove the involved parameter safely, as it should not have been there in the first place.
 
 **New**
@@ -470,7 +476,7 @@ azure-mgmt-network 0.20.1
 
 azure-mgmt-resource 0.20.1
   * Add missing model class ResourceIdentity
-  * Add documentation examples for generic resource creation and deployment 
+  * Add documentation examples for generic resource creation and deployment
     using JSON templates
 
 azure-storage 0.20.2
@@ -620,7 +626,7 @@ easy production AND consumption of SAS for blob, queue and table storage.
  * To consume a SAS, init BlobService/QueueService/TableService with
    account_name & sas_token (no account_key)
  * For blob storage, you can now pass a sas_token to make_blob_url
- * For blob storage, you can now consume public containers/blobs, init 
+ * For blob storage, you can now consume public containers/blobs, init
    BlobService/QueueService/TableService with account_name only
    (no account_key or sas_token)
 
@@ -662,7 +668,7 @@ The upgrade to this new version causes some breaking changes for Python SDK user
 
 * Metrics for blob, queue, table service properties, which used to be accessed
   with the 'metrics' field are now accessed via 'hour_metrics' and 'minute_metrics'.
-  Note that a backwards compatible 'metrics' property was added to redirect access 
+  Note that a backwards compatible 'metrics' property was added to redirect access
   to 'hour_metrics'.
 * Url is no longer returned from list_containers, list_blobs, list_queues.
   For blob, you can use the utility function make_blob_url as an alternate
@@ -685,7 +691,7 @@ The other changes in this release are:
   your azure publish settings file
 * Ability to adjust the global http timeout
 * Service bus event hub support (create/update/delete hubs + send events)
-* Documentation for API Reference is now available at 
+* Documentation for API Reference is now available at
   http://azure-sdk-for-python.readthedocs.org/en/documentation/index.html
 
 **Bugfixes**
@@ -768,7 +774,7 @@ The other changes in this release are:
 
 * Preliminary Scheduler management API
 * Add metrics to Service Bus management API
-* Delete Blob - support for x-ms-delete-snapshots header 
+* Delete Blob - support for x-ms-delete-snapshots header
 
 **Bugfixes**
 
@@ -837,19 +843,19 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 **Bugfixes**
 
 * #145 Missing DataVirtualHardDisks in Cloud Service Properties
-* #144 Added configuration sets for role and added list virtual network function 
+* #144 Added configuration sets for role and added list virtual network function
 * #139 How to start "Deallocated" role
 * #127 Add WinRM options to create_virtual_machine_deployment()
 * #131 Missing role instance endpoint in get_deployment_by_X
 * #128 Update __init__.py for missing host_name attribute on RoleInstance
-* #140 Table Service deletes empty strings 
+* #140 Table Service deletes empty strings
 * #40  Edm.Binary and null support in table storage entities
 
 2014-02-10 Version 0.8.0pr1
 +++++++++++++++++++++++++++
 
- * Migrate to using httplib on Windows. This is now the default, unless a 
-   Windows Certificate Store management certificate is used. Make sure to use 
+ * Migrate to using httplib on Windows. This is now the default, unless a
+   Windows Certificate Store management certificate is used. Make sure to use
    CPython 2.7.4 or later when using OpenSSL .pem certificates on Windows.
  * Added high-level functions to upload/download blobs with chunking and progress notifications
  * Added support for Python 3.3
@@ -869,7 +875,7 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 
 * #118 Proxy doesn't support specifying credentials
 * #117 Service bus authorization code doesn't go through the proxy server
-* #108 Create VM, Administrator Password Base-64 Encoding 
+* #108 Create VM, Administrator Password Base-64 Encoding
 * #106 Why isn't setup.py in the root of the project?
 * #96  Change default connection protocol to https
 
@@ -886,11 +892,11 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 
 * #90  get_blob_metadata returns more than the metadata (also get_container_metadata and get_queue_metadata)
 * #87  Proxy support for \*NIX systems
-* #86  Fix capitalization in the 'Fingerprint' tag for XML of serialization of SSH keys configuration 
+* #86  Fix capitalization in the 'Fingerprint' tag for XML of serialization of SSH keys configuration
 * #83  Fixed an issue that prevented the creation of endpoints for a VM
 * #80  Error deserializing datetime value from Table Store
 * #79  Specify VirtualNetworkName when creating Virtual Machine
- 
+
 Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard for their bug reports and fixes.
 
 2013-03-20 Version 0.6.2
@@ -899,16 +905,16 @@ Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard fo
 **Bugfixes**
 
 * #75  crash on python 2.7 x64 windows
-* #73  _convert_query_string return a wrong query string parameter   
+* #73  _convert_query_string return a wrong query string parameter
 
 2012-12-17 Version 0.6.1
 ++++++++++++++++++++++++
 
 **Bugfixes**
 
-* #69  _get_readable_id doesn't support queues with slashes in their names   
-* #68  Service bus cache of tokens doesn't support multiple creds in same app  
-* #66  Need to change the default timeout for httprequest on windows  
+* #69  _get_readable_id doesn't support queues with slashes in their names
+* #68  Service bus cache of tokens doesn't support multiple creds in same app
+* #66  Need to change the default timeout for httprequest on windows
 * Improved support for unicode data
 
 2012-10-16 Version 0.6.0
