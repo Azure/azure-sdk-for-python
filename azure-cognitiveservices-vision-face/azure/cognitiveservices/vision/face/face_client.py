@@ -19,7 +19,6 @@ from .operations.face_list_operations import FaceListOperations
 from .operations.large_person_group_person_operations import LargePersonGroupPersonOperations
 from .operations.large_person_group_operations import LargePersonGroupOperations
 from .operations.large_face_list_operations import LargeFaceListOperations
-from .operations.large_face_list_face_operations import LargeFaceListFaceOperations
 from . import models
 
 
@@ -73,8 +72,6 @@ class FaceClient(SDKClient):
     :vartype large_person_group: azure.cognitiveservices.vision.face.operations.LargePersonGroupOperations
     :ivar large_face_list: LargeFaceList operations
     :vartype large_face_list: azure.cognitiveservices.vision.face.operations.LargeFaceListOperations
-    :ivar large_face_list_face: LargeFaceListFace operations
-    :vartype large_face_list_face: azure.cognitiveservices.vision.face.operations.LargeFaceListFaceOperations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
@@ -108,6 +105,4 @@ class FaceClient(SDKClient):
         self.large_person_group = LargePersonGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.large_face_list = LargeFaceListOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.large_face_list_face = LargeFaceListFaceOperations(
             self._client, self.config, self._serialize, self._deserialize)
