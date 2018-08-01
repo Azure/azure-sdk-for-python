@@ -33,8 +33,8 @@ class BackupItem(ProxyOnlyResource):
     :vartype storage_account_url: str
     :ivar blob_name: Name of the blob which contains data for this backup.
     :vartype blob_name: str
-    :ivar backup_item_name: Name of this backup.
-    :vartype backup_item_name: str
+    :ivar backup_name: Name of this backup.
+    :vartype backup_name: str
     :ivar status: Backup status. Possible values include: 'InProgress',
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
@@ -70,7 +70,7 @@ class BackupItem(ProxyOnlyResource):
         'backup_id': {'readonly': True},
         'storage_account_url': {'readonly': True},
         'blob_name': {'readonly': True},
-        'backup_item_name': {'readonly': True},
+        'backup_name': {'readonly': True},
         'status': {'readonly': True},
         'size_in_bytes': {'readonly': True},
         'created': {'readonly': True},
@@ -91,7 +91,7 @@ class BackupItem(ProxyOnlyResource):
         'backup_id': {'key': 'properties.id', 'type': 'int'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'blob_name': {'key': 'properties.blobName', 'type': 'str'},
-        'backup_item_name': {'key': 'properties.name', 'type': 'str'},
+        'backup_name': {'key': 'properties.backupName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'BackupItemStatus'},
         'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
@@ -109,7 +109,7 @@ class BackupItem(ProxyOnlyResource):
         self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None
-        self.backup_item_name = None
+        self.backup_name = None
         self.status = None
         self.size_in_bytes = None
         self.created = None
