@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VerifyFaceToFaceRequest(Model):
-    """Request body for verify operation.
+    """Request body for face to face verification.
 
     All required parameters must be populated in order to send to Azure.
 

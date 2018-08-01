@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class FaceListOperations(object):
-    """FaceListOperations operations.
+class LargePersonGroupPersonOperations(object):
+    """LargePersonGroupPersonOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,16 +34,145 @@ class FaceListOperations(object):
         self.config = config
 
     def create(
-            self, face_list_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Create an empty face list. Up to 64 face lists are allowed to exist in
-        one subscription.
+            self, large_person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Create a new person in a specified large person group.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
         :param name: User defined name, maximum length is 128.
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Person or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.Person or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+        """
+        body = models.NameAndUserDataContract(name=name, user_data=user_data)
+
+        # Construct URL
+        url = self.create.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(body, 'NameAndUserDataContract')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Person', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons'}
+
+    def list(
+            self, large_person_group_id, start=None, top=None, custom_headers=None, raw=False, **operation_config):
+        """List all persons in a large person group, and retrieve person
+        information (including personId, name, userData and persistedFaceIds of
+        registered faces of the person).
+
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param start: Starting person id to return (used to list a range of
+         persons).
+        :type start: str
+        :param top: Number of persons to return starting with the person id
+         indicated by the 'start' parameter.
+        :type top: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.cognitiveservices.vision.face.models.Person] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+        """
+        # Construct URL
+        url = self.list.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if start is not None:
+            query_parameters['start'] = self._serialize.query("start", start, 'str')
+        if top is not None:
+            query_parameters['top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[Person]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons'}
+
+    def delete(
+            self, large_person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
+        """Delete an existing person from a large person group. All stored person
+        data, and face features in the person entry will be deleted.
+
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,13 +183,12 @@ class FaceListOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.NameAndUserDataContract(name=name, user_data=user_data)
-
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,15 +197,11 @@ class FaceListOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
-        # Construct body
-        body_content = self._serialize.body(body, 'NameAndUserDataContract')
-
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -86,21 +210,25 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create.metadata = {'url': '/facelists/{faceListId}'}
+    delete.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def get(
-            self, face_list_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a face list's information.
+            self, large_person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieve a person's information, including registered persisted faces,
+        name and userData.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: FaceList or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.FaceList or
+        :return: Person or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.Person or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -109,7 +237,8 @@ class FaceListOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -132,21 +261,24 @@ class FaceListOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('FaceList', response)
+            deserialized = self._deserialize('Person', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/facelists/{faceListId}'}
+    get.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def update(
-            self, face_list_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Update information of a face list.
+            self, large_person_group_id, person_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Update name or userData of a person.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param name: User defined name, maximum length is 128.
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
@@ -167,7 +299,8 @@ class FaceListOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -193,112 +326,18 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/facelists/{faceListId}'}
-
-    def delete(
-            self, face_list_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing face list according to faceListId. Persisted face
-        images in the face list will also be deleted.
-
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
-        """
-        # Construct URL
-        url = self.delete.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete.metadata = {'url': '/facelists/{faceListId}'}
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Retrieve information about all existing face lists. Only faceListId,
-        name and userData will be returned.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.cognitiveservices.vision.face.models.FaceList] or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
-        """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[FaceList]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/facelists'}
+    update.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}'}
 
     def delete_face(
-            self, face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing face from a face list (given by a persisitedFaceId
-        and a faceListId). Persisted image related to the face will also be
-        deleted.
+            self, large_person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
+        """Delete a face from a person. Relative feature for the persisted face
+        will also be deleted.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param persisted_face_id: Id referencing a particular persistedFaceId
          of an existing face.
         :type persisted_face_id: str
@@ -316,7 +355,8 @@ class FaceListOperations(object):
         url = self.delete_face.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str'),
             'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -339,16 +379,141 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_face.metadata = {'url': '/facelists/{faceListId}/persistedfaces/{persistedFaceId}'}
+    delete_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
+
+    def get_face(
+            self, large_person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieve information about a persisted face (specified by
+        persistedFaceId, personId and its belonging largePersonGroupId).
+
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
+        :param persisted_face_id: Id referencing a particular persistedFaceId
+         of an existing face.
+        :type persisted_face_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PersistedFace or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+        """
+        # Construct URL
+        url = self.get_face.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str'),
+            'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PersistedFace', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
+
+    def update_face(
+            self, large_person_group_id, person_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
+        """Update a person persisted face's userData field.
+
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
+        :param persisted_face_id: Id referencing a particular persistedFaceId
+         of an existing face.
+        :type persisted_face_id: str
+        :param user_data: User-provided data attached to the face. The size
+         limit is 1KB.
+        :type user_data: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+        """
+        body = models.UpdateFaceRequest(user_data=user_data)
+
+        # Construct URL
+        url = self.update_face.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str'),
+            'persistedFaceId': self._serialize.url("persisted_face_id", persisted_face_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(body, 'UpdateFaceRequest')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
     def add_face_from_url(
-            self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
-        """Add a face to a face list. The input face is specified as an image with
-        a targetFace rectangle. It returns a persistedFaceId representing the
-        added face, and persistedFaceId will not expire.
+            self, large_person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+        """Add a representative face to a person for identification. The input
+        face is specified as an image with a targetFace rectangle.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param url: Publicly reachable URL of an image
         :type url: str
         :param user_data: User-specified data about the face for any purpose.
@@ -377,7 +542,8 @@ class FaceListOperations(object):
         url = self.add_face_from_url.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -415,16 +581,18 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_url.metadata = {'url': '/facelists/{faceListId}/persistedfaces'}
+    add_face_from_url.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces'}
 
     def add_face_from_stream(
-            self, face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Add a face to a face list. The input face is specified as an image with
-        a targetFace rectangle. It returns a persistedFaceId representing the
-        added face, and persistedFaceId will not expire.
+            self, large_person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Add a representative face to a person for identification. The input
+        face is specified as an image with a targetFace rectangle.
 
-        :param face_list_id: Id referencing a particular face list.
-        :type face_list_id: str
+        :param large_person_group_id: Id referencing a particular large person
+         group.
+        :type large_person_group_id: str
+        :param person_id: Id referencing a particular person.
+        :type person_id: str
         :param image: An image stream.
         :type image: Generator
         :param user_data: User-specified data about the face for any purpose.
@@ -456,7 +624,8 @@ class FaceListOperations(object):
         url = self.add_face_from_stream.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'largePersonGroupId': self._serialize.url("large_person_group_id", large_person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
+            'personId': self._serialize.url("person_id", person_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -494,4 +663,4 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
-    add_face_from_stream.metadata = {'url': '/facelists/{faceListId}/persistedfaces'}
+    add_face_from_stream.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces'}
