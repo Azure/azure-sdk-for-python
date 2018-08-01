@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class SnapshotRecoveryTarget(Model):
-    """Specifies the web app that snapshot contents will be written to.
+class SnapshotRecoverySource(Model):
+    """Specifies the web app that snapshot contents will be retrieved from.
 
-    :param location: Geographical location of the target web app, e.g.
+    :param location: Geographical location of the source web app, e.g.
      SouthEastAsia, SouthCentralUS
     :type location: str
-    :param id: ARM resource ID of the target app.
+    :param id: ARM resource ID of the source app.
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
      for production slots and
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
@@ -31,7 +31,7 @@ class SnapshotRecoveryTarget(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, location=None, id=None):
-        super(SnapshotRecoveryTarget, self).__init__()
-        self.location = location
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SnapshotRecoverySource, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = kwargs.get('id', None)
