@@ -200,7 +200,7 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplicationProperties')
+        body_content = self._serialize.body(parameters, 'Application')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -232,7 +232,7 @@ class ApplicationsOperations(object):
         :param application_name: The constant value for the application name.
         :type application_name: str
         :param parameters: The application create request.
-        :type parameters: ~azure.mgmt.hdinsight.models.ApplicationProperties
+        :type parameters: ~azure.mgmt.hdinsight.models.Application
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
