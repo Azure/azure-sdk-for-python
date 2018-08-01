@@ -36,7 +36,7 @@ Note that versions are fixed at the minor version number level
 -  `azure-keyvault v1.x <https://pypi.python.org/pypi/azure-keyvault>`__
 -  `azure-loganalytics v0.1.x <https://pypi.python.org/pypi/azure-loganalytics>`__
 -  `azure-servicebus v0.21.x <https://pypi.python.org/pypi/azure-servicebus>`__
--  `azure-servicefabric v6.2.0.0 <https://pypi.python.org/pypi/azure-servicefabric>`__
+-  `azure-servicefabric v6.3.0.0 <https://pypi.python.org/pypi/azure-servicefabric>`__
 -  `azure-servicemanagement-legacy v0.20.x <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__
 -  `azure-storage-blob v1.x <https://pypi.python.org/pypi/azure-storage-blob>`__
 -  `azure-storage-queue v1.x <https://pypi.python.org/pypi/azure-storage-queue>`__

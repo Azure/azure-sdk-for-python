@@ -42,7 +42,7 @@ setup(
         'azure-keyvault~=1.0',
         'azure-loganalytics~=0.1.0',
         'azure-servicebus~=0.21.1',
-        'azure-servicefabric~=6.2.0.0',
+        'azure-servicefabric~=6.3.0.0',
         'azure-servicemanagement-legacy~=0.20.6',
         'azure-storage-blob~=1.3',
         'azure-storage-queue~=1.3',
