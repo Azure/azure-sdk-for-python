@@ -20,9 +20,9 @@ class ServiceSasParameters(Model):
     :param canonicalized_resource: Required. The canonical path to the signed
      resource.
     :type canonicalized_resource: str
-    :param resource: Required. The signed services accessible with the service
-     SAS. Possible values include: Blob (b), Container (c), File (f), Share
-     (s). Possible values include: 'b', 'c', 'f', 's'
+    :param resource: The signed services accessible with the service SAS.
+     Possible values include: Blob (b), Container (c), File (f), Share (s).
+     Possible values include: 'b', 'c', 'f', 's'
     :type resource: str or
      ~azure.mgmt.storage.v2018_02_01.models.SignedResource
     :param permissions: The signed permissions for the service SAS. Possible
@@ -74,7 +74,6 @@ class ServiceSasParameters(Model):
 
     _validation = {
         'canonicalized_resource': {'required': True},
-        'resource': {'required': True},
         'identifier': {'max_length': 64},
     }
 
