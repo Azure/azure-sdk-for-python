@@ -52,7 +52,7 @@ Note that versions are fixed at the minor version number level
 -  `azure-mgmt-datamigration v1.x <https://pypi.python.org/pypi/azure-mgmt-datamigration>`__
 -  `azure-mgmt-devspaces v0.1.x <https://pypi.python.org/pypi/azure-mgmt-devspaces>`__
 -  `azure-mgmt-devtestlabs v2.x <https://pypi.python.org/pypi/azure-mgmt-devtestlabs>`__
--  `azure-mgmt-dns v1.x <https://pypi.python.org/pypi/azure-mgmt-dns>`__
+-  `azure-mgmt-dns v2.x <https://pypi.python.org/pypi/azure-mgmt-dns>`__
 -  `azure-mgmt-eventgrid v1.x <https://pypi.python.org/pypi/azure-mgmt-eventgrid>`__
 -  `azure-mgmt-eventhub v2.x <https://pypi.python.org/pypi/azure-mgmt-eventhub>`__
 -  `azure-mgmt-hanaonazure v0.1.x <https://pypi.python.org/pypi/azure-mgmt-hanaonazure>`__

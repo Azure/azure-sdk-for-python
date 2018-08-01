@@ -52,7 +52,7 @@ setup(
         'azure-mgmt-datamigration~=1.0',
         'azure-mgmt-devspaces~=0.1.0',
         'azure-mgmt-devtestlabs~=2.2',
-        'azure-mgmt-dns~=1.2',
+        'azure-mgmt-dns~=2.0',
         'azure-mgmt-eventgrid~=1.0',
         'azure-mgmt-eventhub~=2.1',
         'azure-mgmt-hanaonazure~=0.1.1',
