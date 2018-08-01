@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_resource_properties import ServiceResourceProperties
+from .service_properties import ServiceProperties
 
 
-class StatefulServiceProperties(ServiceResourceProperties):
+class StatefulServiceProperties(ServiceProperties):
     """The properties of a stateful service resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -24,30 +26,27 @@ class StatefulServiceProperties(ServiceResourceProperties):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the
-     service with other services.
+    :param correlation_scheme:
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array
-     of ServiceLoadMetricDescription objects.
+    :param service_load_metrics:
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation
-     of the service with other services.
+    :param service_placement_policies:
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service.
-     Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :param default_move_cost: Possible values include: 'Zero', 'Low',
+     'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
     :param service_type_name: The name of the service type
     :type service_type_name: str
-    :param partition_description: Describes how the service is partitioned.
+    :param partition_description:
     :type partition_description:
      ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param has_persisted_state: A flag indicating whether this is a persistent
      service which stores states on the local disk. If it is then the value of
@@ -96,12 +95,12 @@ class StatefulServiceProperties(ServiceResourceProperties):
         'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'iso-8601'},
     }
 
-    def __init__(self, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name=None, partition_description=None, has_persisted_state=None, target_replica_set_size=None, min_replica_set_size=None, replica_restart_wait_duration=None, quorum_loss_wait_duration=None, stand_by_replica_keep_duration=None):
-        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, service_type_name=service_type_name, partition_description=partition_description)
-        self.has_persisted_state = has_persisted_state
-        self.target_replica_set_size = target_replica_set_size
-        self.min_replica_set_size = min_replica_set_size
-        self.replica_restart_wait_duration = replica_restart_wait_duration
-        self.quorum_loss_wait_duration = quorum_loss_wait_duration
-        self.stand_by_replica_keep_duration = stand_by_replica_keep_duration
+    def __init__(self, **kwargs):
+        super(StatefulServiceProperties, self).__init__(**kwargs)
+        self.has_persisted_state = kwargs.get('has_persisted_state', None)
+        self.target_replica_set_size = kwargs.get('target_replica_set_size', None)
+        self.min_replica_set_size = kwargs.get('min_replica_set_size', None)
+        self.replica_restart_wait_duration = kwargs.get('replica_restart_wait_duration', None)
+        self.quorum_loss_wait_duration = kwargs.get('quorum_loss_wait_duration', None)
+        self.stand_by_replica_keep_duration = kwargs.get('stand_by_replica_keep_duration', None)
         self.service_kind = 'Stateful'

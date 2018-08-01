@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_resource_update_properties import ServiceResourceUpdateProperties
+from .service_update_properties import ServiceUpdateProperties
 
 
-class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
+class StatefulServiceUpdateProperties(ServiceUpdateProperties):
     """The properties of a stateful service resource for patch operations.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -21,22 +23,19 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the
-     service with other services.
+    :param correlation_scheme:
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array
-     of ServiceLoadMetricDescription objects.
+    :param service_load_metrics:
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation
-     of the service with other services.
+    :param service_placement_policies:
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service.
-     Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: Constant filled by server.
+    :param default_move_cost: Possible values include: 'Zero', 'Low',
+     'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: int
@@ -76,11 +75,11 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
         'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'iso-8601'},
     }
 
-    def __init__(self, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, target_replica_set_size=None, min_replica_set_size=None, replica_restart_wait_duration=None, quorum_loss_wait_duration=None, stand_by_replica_keep_duration=None):
-        super(StatefulServiceUpdateProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
-        self.target_replica_set_size = target_replica_set_size
-        self.min_replica_set_size = min_replica_set_size
-        self.replica_restart_wait_duration = replica_restart_wait_duration
-        self.quorum_loss_wait_duration = quorum_loss_wait_duration
-        self.stand_by_replica_keep_duration = stand_by_replica_keep_duration
+    def __init__(self, **kwargs):
+        super(StatefulServiceUpdateProperties, self).__init__(**kwargs)
+        self.target_replica_set_size = kwargs.get('target_replica_set_size', None)
+        self.min_replica_set_size = kwargs.get('min_replica_set_size', None)
+        self.replica_restart_wait_duration = kwargs.get('replica_restart_wait_duration', None)
+        self.quorum_loss_wait_duration = kwargs.get('quorum_loss_wait_duration', None)
+        self.stand_by_replica_keep_duration = kwargs.get('stand_by_replica_keep_duration', None)
         self.service_kind = 'Stateful'

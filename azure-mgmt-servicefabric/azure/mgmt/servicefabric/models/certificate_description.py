@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class CertificateDescription(Model):
     """Describes the certificate details.
 
-    :param thumbprint: Thumbprint of the primary certificate.
+    All required parameters must be populated in order to send to Azure.
+
+    :param thumbprint: Required. Thumbprint of the primary certificate.
     :type thumbprint: str
     :param thumbprint_secondary: Thumbprint of the secondary certificate.
     :type thumbprint_secondary: str
@@ -35,8 +37,8 @@ class CertificateDescription(Model):
         'x509_store_name': {'key': 'x509StoreName', 'type': 'str'},
     }
 
-    def __init__(self, thumbprint, thumbprint_secondary=None, x509_store_name=None):
-        super(CertificateDescription, self).__init__()
-        self.thumbprint = thumbprint
-        self.thumbprint_secondary = thumbprint_secondary
-        self.x509_store_name = x509_store_name
+    def __init__(self, **kwargs):
+        super(CertificateDescription, self).__init__(**kwargs)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.thumbprint_secondary = kwargs.get('thumbprint_secondary', None)
+        self.x509_store_name = kwargs.get('x509_store_name', None)

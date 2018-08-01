@@ -23,6 +23,6 @@ class ServiceResourceList(Model):
         'value': {'key': 'value', 'type': '[ServiceResource]'},
     }
 
-    def __init__(self, value=None):
-        super(ServiceResourceList, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ServiceResourceList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

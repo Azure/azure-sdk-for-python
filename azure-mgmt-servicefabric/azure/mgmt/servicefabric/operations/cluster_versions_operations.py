@@ -23,7 +23,6 @@ class ClusterVersionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2018-02-01" for this specification. Constant value: "2018-02-01".
     """
 
     models = models
@@ -33,22 +32,24 @@ class ClusterVersionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
 
         self.config = config
 
     def get(
-            self, location, cluster_version, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a Service Fabric cluster code version available
-        in the specified location.
+            self, location, api_version, subscription_id, cluster_version, custom_headers=None, raw=False, **operation_config):
+        """Get cluster code versions.
 
-        Gets information about an available Service Fabric cluster code
-        version.
+        Get cluster code versions by location
+        .
 
-        :param location: The location for the cluster code versions. This is
-         different from cluster location.
+        :param location: The location for the cluster code versions, this is
+         different from cluster location
         :type location: str
-        :param cluster_version: The cluster code version.
+        :param api_version: The version of the API.
+        :type api_version: str
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
+        :param cluster_version: The cluster code version
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -65,18 +66,18 @@ class ClusterVersionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'clusterVersion': self._serialize.url("cluster_version", cluster_version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -85,8 +86,8 @@ class ClusterVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -106,20 +107,23 @@ class ClusterVersionsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/clusterVersions/{clusterVersion}'}
 
     def get_by_environment(
-            self, location, environment, cluster_version, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a Service Fabric cluster code version available
-        for the specified environment.
+            self, location, environment, api_version, subscription_id, cluster_version, custom_headers=None, raw=False, **operation_config):
+        """Get cluster code versions by environment.
 
-        Gets information about an available Service Fabric cluster code version
-        by environment.
+        Get cluster code versions by environment
+        .
 
-        :param location: The location for the cluster code versions. This is
-         different from cluster location.
+        :param location: The location for the cluster code versions, this is
+         different from cluster location
         :type location: str
-        :param environment: The operating system of the cluster. The default
-         means all. Possible values include: 'Windows', 'Linux'
+        :param environment: Cluster operating system, the default means all.
+         Possible values include: 'Windows', 'Linux'
         :type environment: str
-        :param cluster_version: The cluster code version.
+        :param api_version: The version of the API.
+        :type api_version: str
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
+        :param cluster_version: The cluster code version
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -137,18 +141,18 @@ class ClusterVersionsOperations(object):
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'environment': self._serialize.url("environment", environment, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'clusterVersion': self._serialize.url("cluster_version", cluster_version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -157,8 +161,8 @@ class ClusterVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -178,16 +182,19 @@ class ClusterVersionsOperations(object):
     get_by_environment.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/environments/{environment}/clusterVersions/{clusterVersion}'}
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of Service Fabric cluster code versions available for the
-        specified location.
+            self, location, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+        """List cluster code versions by location.
 
-        Gets all available code versions for Service Fabric cluster resources
-        by location.
+        List cluster code versions by location
+        .
 
-        :param location: The location for the cluster code versions. This is
-         different from cluster location.
+        :param location: The location for the cluster code versions, this is
+         different from cluster location
         :type location: str
+        :param api_version: The version of the API.
+        :type api_version: str
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -203,17 +210,17 @@ class ClusterVersionsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -222,8 +229,8 @@ class ClusterVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -243,19 +250,22 @@ class ClusterVersionsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/clusterVersions'}
 
     def list_by_environment(
-            self, location, environment, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of Service Fabric cluster code versions available for the
-        specified environment.
+            self, location, environment, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+        """List cluster code versions by environment.
 
-        Gets all available code versions for Service Fabric cluster resources
-        by environment.
+        List cluster code versions by environment
+        .
 
-        :param location: The location for the cluster code versions. This is
-         different from cluster location.
+        :param location: The location for the cluster code versions, this is
+         different from cluster location
         :type location: str
-        :param environment: The operating system of the cluster. The default
-         means all. Possible values include: 'Windows', 'Linux'
+        :param environment: Cluster operating system, the default means all.
+         Possible values include: 'Windows', 'Linux'
         :type environment: str
+        :param api_version: The version of the API.
+        :type api_version: str
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,17 +282,17 @@ class ClusterVersionsOperations(object):
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'environment': self._serialize.url("environment", environment, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -291,8 +301,8 @@ class ClusterVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

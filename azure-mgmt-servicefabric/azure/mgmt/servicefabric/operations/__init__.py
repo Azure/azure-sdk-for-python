@@ -12,17 +12,17 @@
 from .clusters_operations import ClustersOperations
 from .cluster_versions_operations import ClusterVersionsOperations
 from .operations import Operations
-from .application_types_operations import ApplicationTypesOperations
-from .application_type_versions_operations import ApplicationTypeVersionsOperations
-from .applications_operations import ApplicationsOperations
-from .services_operations import ServicesOperations
+from .application_type_operations import ApplicationTypeOperations
+from .version_operations import VersionOperations
+from .application_operations import ApplicationOperations
+from .service_operations import ServiceOperations
 
 __all__ = [
     'ClustersOperations',
     'ClusterVersionsOperations',
     'Operations',
-    'ApplicationTypesOperations',
-    'ApplicationTypeVersionsOperations',
-    'ApplicationsOperations',
-    'ServicesOperations',
+    'ApplicationTypeOperations',
+    'VersionOperations',
+    'ApplicationOperations',
+    'ServiceOperations',
 ]

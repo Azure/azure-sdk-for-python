@@ -16,7 +16,9 @@ class NodeTypeDescription(Model):
     """Describes a node type in the cluster, each node type represents sub set of
     nodes in the cluster.
 
-    :param name: The name of the node type.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the node type.
     :type name: str
     :param placement_properties: The placement tags applied to nodes in the
      node type, which can be used to indicate where certain services (workload)
@@ -26,22 +28,14 @@ class NodeTypeDescription(Model):
      type, the cluster resource manager uses these tags to understand how much
      resource a node has.
     :type capacities: dict[str, str]
-    :param client_connection_endpoint_port: The TCP cluster management
-     endpoint port.
+    :param client_connection_endpoint_port: Required. The TCP cluster
+     management endpoint port.
     :type client_connection_endpoint_port: int
-    :param http_gateway_endpoint_port: The HTTP cluster management endpoint
-     port.
+    :param http_gateway_endpoint_port: Required. The HTTP cluster management
+     endpoint port.
     :type http_gateway_endpoint_port: int
-    :param durability_level: The durability level of the node type. Learn
-     about
-     [DurabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
-     - Bronze - No privileges. This is the default.
-     - Silver - The infrastructure jobs can be paused for a duration of 10
-     minutes per UD.
-     - Gold - The infrastructure jobs can be paused for a duration of 2 hours
-     per UD. Gold durability can be enabled only on full node VM skus like
-     D15_V2, G5 etc.
-     . Possible values include: 'Bronze', 'Silver', 'Gold'
+    :param durability_level: Possible values include: 'Bronze', 'Silver',
+     'Gold'
     :type durability_level: str or ~azure.mgmt.servicefabric.models.enum
     :param application_ports: The range of ports from which cluster assigned
      port to Service Fabric applications.
@@ -51,12 +45,12 @@ class NodeTypeDescription(Model):
      node type should be configured with.
     :type ephemeral_ports:
      ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param is_primary: The node type on which system services will run. Only
-     one node type should be marked as primary. Primary node type cannot be
-     deleted or changed for existing clusters.
+    :param is_primary: Required. The node type on which system services will
+     run. Only one node type should be marked as primary. Primary node type
+     cannot be deleted or changed for existing clusters.
     :type is_primary: bool
-    :param vm_instance_count: The number of nodes in the node type. This count
-     should match the capacity property in the corresponding
+    :param vm_instance_count: Required. The number of nodes in the node type.
+     This count should match the capacity property in the corresponding
      VirtualMachineScaleSet resource.
     :type vm_instance_count: int
     :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
@@ -85,16 +79,16 @@ class NodeTypeDescription(Model):
         'reverse_proxy_endpoint_port': {'key': 'reverseProxyEndpointPort', 'type': 'int'},
     }
 
-    def __init__(self, name, client_connection_endpoint_port, http_gateway_endpoint_port, is_primary, vm_instance_count, placement_properties=None, capacities=None, durability_level=None, application_ports=None, ephemeral_ports=None, reverse_proxy_endpoint_port=None):
-        super(NodeTypeDescription, self).__init__()
-        self.name = name
-        self.placement_properties = placement_properties
-        self.capacities = capacities
-        self.client_connection_endpoint_port = client_connection_endpoint_port
-        self.http_gateway_endpoint_port = http_gateway_endpoint_port
-        self.durability_level = durability_level
-        self.application_ports = application_ports
-        self.ephemeral_ports = ephemeral_ports
-        self.is_primary = is_primary
-        self.vm_instance_count = vm_instance_count
-        self.reverse_proxy_endpoint_port = reverse_proxy_endpoint_port
+    def __init__(self, **kwargs):
+        super(NodeTypeDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.placement_properties = kwargs.get('placement_properties', None)
+        self.capacities = kwargs.get('capacities', None)
+        self.client_connection_endpoint_port = kwargs.get('client_connection_endpoint_port', None)
+        self.http_gateway_endpoint_port = kwargs.get('http_gateway_endpoint_port', None)
+        self.durability_level = kwargs.get('durability_level', None)
+        self.application_ports = kwargs.get('application_ports', None)
+        self.ephemeral_ports = kwargs.get('ephemeral_ports', None)
+        self.is_primary = kwargs.get('is_primary', None)
+        self.vm_instance_count = kwargs.get('vm_instance_count', None)
+        self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)

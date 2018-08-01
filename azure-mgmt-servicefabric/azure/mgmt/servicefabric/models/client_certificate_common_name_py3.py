@@ -12,27 +12,37 @@
 from msrest.serialization import Model
 
 
-class ServerCertificateCommonName(Model):
-    """Describes the server certificate details using common name.
+class ClientCertificateCommonName(Model):
+    """Describes the client certificate details using common name.
 
-    :param certificate_common_name: The common name of the server certificate.
-    :type certificate_common_name: str
-    :param certificate_issuer_thumbprint: The issuer thumbprint of the server
+    All required parameters must be populated in order to send to Azure.
+
+    :param is_admin: Required. Indicates if the client certificate has admin
+     access to the cluster. Non admin clients can perform only read only
+     operations on the cluster.
+    :type is_admin: bool
+    :param certificate_common_name: Required. The common name of the client
      certificate.
+    :type certificate_common_name: str
+    :param certificate_issuer_thumbprint: Required. The issuer thumbprint of
+     the client certificate.
     :type certificate_issuer_thumbprint: str
     """
 
     _validation = {
+        'is_admin': {'required': True},
         'certificate_common_name': {'required': True},
         'certificate_issuer_thumbprint': {'required': True},
     }
 
     _attribute_map = {
+        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
         'certificate_common_name': {'key': 'certificateCommonName', 'type': 'str'},
         'certificate_issuer_thumbprint': {'key': 'certificateIssuerThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, certificate_common_name, certificate_issuer_thumbprint):
-        super(ServerCertificateCommonName, self).__init__()
+    def __init__(self, *, is_admin: bool, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs) -> None:
+        super(ClientCertificateCommonName, self).__init__(**kwargs)
+        self.is_admin = is_admin
         self.certificate_common_name = certificate_common_name
         self.certificate_issuer_thumbprint = certificate_issuer_thumbprint

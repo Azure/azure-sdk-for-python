@@ -11,20 +11,19 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class ServicesOperations(object):
-    """ServicesOperations operations.
+class ServiceOperations(object):
+    """ServiceOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2017-07-01-preview" for this specification. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -34,26 +33,26 @@ class ServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a Service Fabric service resource.
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
+        """Returns a service resource with the specified name.
 
-        Get a Service Fabric service resource created or in the process of
-        being created in the Service Fabric application resource.
-
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource.
+        :param cluster_name: The name of the cluster resource
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
+        :param api_version: The version of the API.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -68,7 +67,7 @@ class ServicesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -78,11 +77,11 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -91,8 +90,8 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorModelException(self._deserialize, response)
@@ -110,12 +109,12 @@ class ServicesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
 
-    def _create_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
+    def _put_initial(
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.put.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -125,10 +124,11 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -141,9 +141,8 @@ class ServicesOperations(object):
         body_content = self._serialize.body(parameters, 'ServiceResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.ErrorModelException(self._deserialize, response)
@@ -159,67 +158,53 @@ class ServicesOperations(object):
 
         return deserialized
 
-    def create(
-            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a Service Fabric service resource.
+    def put(
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a service resource with the specified name.
 
-        Create or update a Service Fabric service resource with the specified
-        name.
-
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource.
+        :param cluster_name: The name of the cluster resource
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
+        :param api_version: The version of the API.
+        :type api_version: str
         :param parameters: The service resource.
         :type parameters: ~azure.mgmt.servicefabric.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ServiceResource or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ServiceResource or
+         ClientRawResponse<ServiceResource> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ServiceResource]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.ServiceResource]]
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._put_initial(
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorModelException(self._deserialize, response)
-
             deserialized = self._deserialize('ServiceResource', response)
 
             if raw:
@@ -228,21 +213,22 @@ class ServicesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
 
-    def _update_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
+    def _patch_initial(
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.patch.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -252,10 +238,11 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -268,9 +255,8 @@ class ServicesOperations(object):
         body_content = self._serialize.body(parameters, 'ServiceResourceUpdate')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.ErrorModelException(self._deserialize, response)
@@ -286,67 +272,54 @@ class ServicesOperations(object):
 
         return deserialized
 
-    def update(
-            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates a Service Fabric service resource.
+    def patch(
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates a service resource with the specified name.
 
-        Update a Service Fabric service resource with the specified name.
-
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource.
+        :param cluster_name: The name of the cluster resource
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
+        :param api_version: The version of the API.
+        :type api_version: str
         :param parameters: The service resource for patch operations.
         :type parameters:
          ~azure.mgmt.servicefabric.models.ServiceResourceUpdate
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ServiceResourceUpdate or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ServiceResourceUpdate
+         or ClientRawResponse<ServiceResourceUpdate> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ServiceResourceUpdate]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.ServiceResourceUpdate]]
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        raw_result = self._update_initial(
+        raw_result = self._patch_initial(
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorModelException(self._deserialize, response)
-
             deserialized = self._deserialize('ServiceResourceUpdate', response)
 
             if raw:
@@ -355,21 +328,22 @@ class ServicesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -379,11 +353,10 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -392,8 +365,8 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             raise models.ErrorModelException(self._deserialize, response)
@@ -403,87 +376,74 @@ class ServicesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Service Fabric service resource.
+            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a service resource with the specified name.
 
-        Delete a Service Fabric service resource with the specified name.
-
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource.
+        :param cluster_name: The name of the cluster resource
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
+        :param api_version: The version of the API.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._delete_initial(
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
+            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202, 204]:
-                raise models.ErrorModelException(self._deserialize, response)
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
     def list(
-            self, resource_group_name, cluster_name, application_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of service resources created in the specified Service
-        Fabric application resource.
+            self, subscription_id, resource_group_name, cluster_name, application_name, api_version, custom_headers=None, raw=False, **operation_config):
+        """Returns all service resources in the specified application.
 
-        Gets all service resources created or in the process of being created
-        in the Service Fabric application resource.
-
+        :param subscription_id: The customer subscription identifier
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource.
+        :param cluster_name: The name of the cluster resource
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
+        :param api_version: The version of the API.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -498,7 +458,7 @@ class ServicesOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str')
@@ -507,11 +467,11 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -520,8 +480,8 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorModelException(self._deserialize, response)

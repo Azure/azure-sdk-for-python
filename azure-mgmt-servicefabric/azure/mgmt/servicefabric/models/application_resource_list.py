@@ -23,6 +23,6 @@ class ApplicationResourceList(Model):
         'value': {'key': 'value', 'type': '[ApplicationResource]'},
     }
 
-    def __init__(self, value=None):
-        super(ApplicationResourceList, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ApplicationResourceList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

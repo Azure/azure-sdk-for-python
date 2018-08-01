@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_resource_update_properties import ServiceResourceUpdateProperties
+from .service_update_properties import ServiceUpdateProperties
 
 
-class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
+class StatelessServiceUpdateProperties(ServiceUpdateProperties):
     """The properties of a stateless service resource for patch operations.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -21,22 +23,19 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the
-     service with other services.
+    :param correlation_scheme:
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array
-     of ServiceLoadMetricDescription objects.
+    :param service_load_metrics:
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation
-     of the service with other services.
+    :param service_placement_policies:
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service.
-     Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: Constant filled by server.
+    :param default_move_cost: Possible values include: 'Zero', 'Low',
+     'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
@@ -57,7 +56,7 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
     }
 
-    def __init__(self, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, instance_count=None):
-        super(StatelessServiceUpdateProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
-        self.instance_count = instance_count
+    def __init__(self, **kwargs):
+        super(StatelessServiceUpdateProperties, self).__init__(**kwargs)
+        self.instance_count = kwargs.get('instance_count', None)
         self.service_kind = 'Stateless'

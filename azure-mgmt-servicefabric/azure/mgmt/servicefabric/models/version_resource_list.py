@@ -12,19 +12,17 @@
 from msrest.serialization import Model
 
 
-class ApplicationTypeVersionResourceList(Model):
-    """The list of application type version resources for the specified
-    application type name resource.
+class VersionResourceList(Model):
+    """The list of version resources for the specified application type name.
 
     :param value:
-    :type value:
-     list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
+    :type value: list[~azure.mgmt.servicefabric.models.VersionResource]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationTypeVersionResource]'},
+        'value': {'key': 'value', 'type': '[VersionResource]'},
     }
 
-    def __init__(self, value=None):
-        super(ApplicationTypeVersionResourceList, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(VersionResourceList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

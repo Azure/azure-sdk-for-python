@@ -30,8 +30,8 @@ class ClusterVersionDetails(Model):
         'environment': {'key': 'environment', 'type': 'str'},
     }
 
-    def __init__(self, code_version=None, support_expiry_utc=None, environment=None):
-        super(ClusterVersionDetails, self).__init__()
-        self.code_version = code_version
-        self.support_expiry_utc = support_expiry_utc
-        self.environment = environment
+    def __init__(self, **kwargs):
+        super(ClusterVersionDetails, self).__init__(**kwargs)
+        self.code_version = kwargs.get('code_version', None)
+        self.support_expiry_utc = kwargs.get('support_expiry_utc', None)
+        self.environment = kwargs.get('environment', None)

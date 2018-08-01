@@ -32,9 +32,9 @@ class OperationResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, next_link=None):
-        super(OperationResult, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(OperationResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.next_link = kwargs.get('next_link', None)

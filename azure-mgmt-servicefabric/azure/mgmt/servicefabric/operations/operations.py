@@ -36,14 +36,11 @@ class Operations(object):
 
     def list(
             self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Service Fabric resource provider API
+        """Lists all of the available ServiceFabric Resource Manager REST API
         operations.
 
-        Get the list of available Service Fabric resource provider API
-        operations.
-
-        :param api_version: The version of the Service Fabric resouce provider
-         API
+        :param api_version: The version of the ServiceFabric resouce provider
+         api
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -72,7 +69,7 @@ class Operations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -81,9 +78,8 @@ class Operations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorModelException(self._deserialize, response)

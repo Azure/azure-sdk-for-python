@@ -29,8 +29,8 @@ class AzureActiveDirectory(Model):
         'client_application': {'key': 'clientApplication', 'type': 'str'},
     }
 
-    def __init__(self, tenant_id=None, cluster_application=None, client_application=None):
-        super(AzureActiveDirectory, self).__init__()
-        self.tenant_id = tenant_id
-        self.cluster_application = cluster_application
-        self.client_application = client_application
+    def __init__(self, **kwargs):
+        super(AzureActiveDirectory, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.cluster_application = kwargs.get('cluster_application', None)
+        self.client_application = kwargs.get('client_application', None)

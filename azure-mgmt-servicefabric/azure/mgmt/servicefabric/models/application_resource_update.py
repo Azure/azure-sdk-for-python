@@ -18,22 +18,22 @@ class ApplicationResourceUpdate(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource ID.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: Required. Resource location.
     :type location: str
-    :param type_version: The version of the application type as defined in the
-     application manifest.
+    :param type_version:
     :type type_version: str
-    :param parameters: List of application parameters with overridden values
-     from their default values specified in the application manifest.
-    :type parameters: dict[str, str]
-    :param upgrade_policy: Describes the policy for a monitored application
-     upgrade.
+    :param parameters:
+    :type parameters:
+     list[~azure.mgmt.servicefabric.models.ApplicationParameter]
+    :param upgrade_policy:
     :type upgrade_policy:
      ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
     :param minimum_nodes: The minimum number of nodes where Service Fabric
@@ -49,10 +49,9 @@ class ApplicationResourceUpdate(ProxyResource):
      nodes. By default, the value of this property is zero and it means that
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
-    :param remove_application_capacity: Remove the current application
-     capacity settings.
+    :param remove_application_capacity: The version of the application type
     :type remove_application_capacity: bool
-    :param metrics: List of application capacity metric description.
+    :param metrics:
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
     """
@@ -61,6 +60,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
     }
@@ -71,7 +71,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
+        'parameters': {'key': 'properties.parameters', 'type': '[ApplicationParameter]'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
         'minimum_nodes': {'key': 'properties.minimumNodes', 'type': 'long'},
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
@@ -79,12 +79,12 @@ class ApplicationResourceUpdate(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, location=None, type_version=None, parameters=None, upgrade_policy=None, minimum_nodes=None, maximum_nodes=0, remove_application_capacity=None, metrics=None):
-        super(ApplicationResourceUpdate, self).__init__(location=location)
-        self.type_version = type_version
-        self.parameters = parameters
-        self.upgrade_policy = upgrade_policy
-        self.minimum_nodes = minimum_nodes
-        self.maximum_nodes = maximum_nodes
-        self.remove_application_capacity = remove_application_capacity
-        self.metrics = metrics
+    def __init__(self, **kwargs):
+        super(ApplicationResourceUpdate, self).__init__(**kwargs)
+        self.type_version = kwargs.get('type_version', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.upgrade_policy = kwargs.get('upgrade_policy', None)
+        self.minimum_nodes = kwargs.get('minimum_nodes', None)
+        self.maximum_nodes = kwargs.get('maximum_nodes', 0)
+        self.remove_application_capacity = kwargs.get('remove_application_capacity', None)
+        self.metrics = kwargs.get('metrics', None)

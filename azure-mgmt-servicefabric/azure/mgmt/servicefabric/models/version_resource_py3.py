@@ -9,38 +9,40 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
-class ApplicationTypeVersionResource(ProxyResource):
-    """An application type version resource for the specified application type
-    name resource.
+class VersionResource(ProxyResource):
+    """A version resource for the specified application type name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource ID.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: Required. Resource location.
     :type location: str
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
-    :param app_package_url: The URL to the application package
+    :param app_package_url: Required. The URL to the application package
     :type app_package_url: str
-    :ivar default_parameter_list: List of application type parameters that can
-     be overridden when creating or updating the application.
-    :vartype default_parameter_list: dict[str, str]
+    :ivar default_parameter_list:
+    :vartype default_parameter_list:
+     list[~azure.mgmt.servicefabric.models.ApplicationParameter]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'app_package_url': {'required': True},
         'default_parameter_list': {'readonly': True},
@@ -53,11 +55,11 @@ class ApplicationTypeVersionResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
-        'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '{str}'},
+        'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '[ApplicationParameter]'},
     }
 
-    def __init__(self, app_package_url, location=None):
-        super(ApplicationTypeVersionResource, self).__init__(location=location)
+    def __init__(self, *, location: str, app_package_url: str, **kwargs) -> None:
+        super(VersionResource, self).__init__(location=location, **kwargs)
         self.provisioning_state = None
         self.app_package_url = app_package_url
         self.default_parameter_list = None

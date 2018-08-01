@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ServicePlacementPolicyDescription(Model):
     """Describes the policy to be used for placement of a Service Fabric service.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -27,6 +29,6 @@ class ServicePlacementPolicyDescription(Model):
         'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ServicePlacementPolicyDescription, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServicePlacementPolicyDescription, self).__init__(**kwargs)
         self.type = None

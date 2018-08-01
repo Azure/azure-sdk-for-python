@@ -12,26 +12,33 @@
 from msrest.serialization import Model
 
 
-class ServerCertificateCommonNames(Model):
-    """Describes a list of server certificates referenced by common name that are
-    used to secure the cluster.
+class CertificateDescription(Model):
+    """Describes the certificate details.
 
-    :param common_names: The list of server certificates referenced by common
-     name that are used to secure the cluster.
-    :type common_names:
-     list[~azure.mgmt.servicefabric.models.ServerCertificateCommonName]
+    All required parameters must be populated in order to send to Azure.
+
+    :param thumbprint: Required. Thumbprint of the primary certificate.
+    :type thumbprint: str
+    :param thumbprint_secondary: Thumbprint of the secondary certificate.
+    :type thumbprint_secondary: str
     :param x509_store_name: The local certificate store location. Possible
      values include: 'AddressBook', 'AuthRoot', 'CertificateAuthority',
      'Disallowed', 'My', 'Root', 'TrustedPeople', 'TrustedPublisher'
     :type x509_store_name: str or ~azure.mgmt.servicefabric.models.enum
     """
 
+    _validation = {
+        'thumbprint': {'required': True},
+    }
+
     _attribute_map = {
-        'common_names': {'key': 'commonNames', 'type': '[ServerCertificateCommonName]'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'thumbprint_secondary': {'key': 'thumbprintSecondary', 'type': 'str'},
         'x509_store_name': {'key': 'x509StoreName', 'type': 'str'},
     }
 
-    def __init__(self, common_names=None, x509_store_name=None):
-        super(ServerCertificateCommonNames, self).__init__()
-        self.common_names = common_names
+    def __init__(self, *, thumbprint: str, thumbprint_secondary: str=None, x509_store_name=None, **kwargs) -> None:
+        super(CertificateDescription, self).__init__(**kwargs)
+        self.thumbprint = thumbprint
+        self.thumbprint_secondary = thumbprint_secondary
         self.x509_store_name = x509_store_name

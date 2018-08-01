@@ -15,14 +15,17 @@ from msrest.serialization import Model
 class ClientCertificateCommonName(Model):
     """Describes the client certificate details using common name.
 
-    :param is_admin: Indicates if the client certificate has admin access to
-     the cluster. Non admin clients can perform only read only operations on
-     the cluster.
+    All required parameters must be populated in order to send to Azure.
+
+    :param is_admin: Required. Indicates if the client certificate has admin
+     access to the cluster. Non admin clients can perform only read only
+     operations on the cluster.
     :type is_admin: bool
-    :param certificate_common_name: The common name of the client certificate.
-    :type certificate_common_name: str
-    :param certificate_issuer_thumbprint: The issuer thumbprint of the client
+    :param certificate_common_name: Required. The common name of the client
      certificate.
+    :type certificate_common_name: str
+    :param certificate_issuer_thumbprint: Required. The issuer thumbprint of
+     the client certificate.
     :type certificate_issuer_thumbprint: str
     """
 
@@ -38,8 +41,8 @@ class ClientCertificateCommonName(Model):
         'certificate_issuer_thumbprint': {'key': 'certificateIssuerThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, is_admin, certificate_common_name, certificate_issuer_thumbprint):
-        super(ClientCertificateCommonName, self).__init__()
-        self.is_admin = is_admin
-        self.certificate_common_name = certificate_common_name
-        self.certificate_issuer_thumbprint = certificate_issuer_thumbprint
+    def __init__(self, **kwargs):
+        super(ClientCertificateCommonName, self).__init__(**kwargs)
+        self.is_admin = kwargs.get('is_admin', None)
+        self.certificate_common_name = kwargs.get('certificate_common_name', None)
+        self.certificate_issuer_thumbprint = kwargs.get('certificate_issuer_thumbprint', None)
