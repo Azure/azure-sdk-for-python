@@ -24,6 +24,7 @@ class VersionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -33,11 +34,12 @@ class VersionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
         """Returns an application type version resource.
 
         :param resource_group_name: The name of the resource group.
@@ -49,8 +51,6 @@ class VersionOperations(object):
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -75,7 +75,7 @@ class VersionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -108,7 +108,7 @@ class VersionOperations(object):
 
 
     def _put_initial(
-            self, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url, custom_headers=None, raw=False, **operation_config):
         parameters = models.VersionResource(location=location, app_package_url=app_package_url)
 
         # Construct URL
@@ -124,7 +124,7 @@ class VersionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -159,7 +159,7 @@ class VersionOperations(object):
         return deserialized
 
     def put(
-            self, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url, custom_headers=None, raw=False, polling=True, **operation_config):
         """Provisions an application type version resource.
 
         :param resource_group_name: The name of the resource group.
@@ -171,8 +171,6 @@ class VersionOperations(object):
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param location: Resource location.
         :type location: str
         :param app_package_url: The URL to the application package
@@ -196,7 +194,6 @@ class VersionOperations(object):
             cluster_name=cluster_name,
             application_type_name=application_type_name,
             version=version,
-            api_version=api_version,
             location=location,
             app_package_url=app_package_url,
             custom_headers=custom_headers,
@@ -224,7 +221,7 @@ class VersionOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -238,7 +235,7 @@ class VersionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -261,7 +258,7 @@ class VersionOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Unprovisions an application type version resource.
 
         :param resource_group_name: The name of the resource group.
@@ -273,8 +270,6 @@ class VersionOperations(object):
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -292,7 +287,6 @@ class VersionOperations(object):
             cluster_name=cluster_name,
             application_type_name=application_type_name,
             version=version,
-            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -313,7 +307,7 @@ class VersionOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
     def list(
-            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Returns all versions for the specified application type.
 
         :param resource_group_name: The name of the resource group.
@@ -323,8 +317,6 @@ class VersionOperations(object):
         :param application_type_name: The name of the application type name
          resource
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -348,7 +340,7 @@ class VersionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

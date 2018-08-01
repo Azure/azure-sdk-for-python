@@ -24,6 +24,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -33,12 +34,13 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
 
     def _create_initial(
-            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -50,7 +52,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -85,7 +87,7 @@ class ClustersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a ServiceFabric cluster.
 
         Create cluster resource
@@ -95,8 +97,6 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param parameters: The cluster resource.
         :type parameters: ~azure.mgmt.servicefabric.models.Cluster
         :param dict custom_headers: headers that will be added to the request
@@ -116,7 +116,6 @@ class ClustersOperations(object):
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -142,7 +141,7 @@ class ClustersOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def delete(
-            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Delete cluster resource.
 
         Delete cluster resource
@@ -152,8 +151,6 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -175,7 +172,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -199,7 +196,7 @@ class ClustersOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def get(
-            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Get cluster resource.
 
         Get cluster resource
@@ -209,8 +206,6 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -233,7 +228,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -266,7 +261,7 @@ class ClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -278,7 +273,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -313,7 +308,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update cluster configuration.
 
         Update cluster configuration
@@ -323,8 +318,6 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param parameters: The parameters which contains the property value
          and property name which used to update the cluster configuration.
         :type parameters:
@@ -346,7 +339,6 @@ class ClustersOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -372,7 +364,7 @@ class ClustersOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """List cluster resource by resource group.
 
         List cluster resource by resource group
@@ -380,8 +372,6 @@ class ClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -403,7 +393,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -435,14 +425,12 @@ class ClustersOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters'}
 
     def list(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """List cluster resource.
 
         List cluster resource
         .
 
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -463,7 +451,7 @@ class ClustersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

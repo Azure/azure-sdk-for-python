@@ -24,6 +24,7 @@ class ServiceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -33,11 +34,12 @@ class ServiceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
         """Returns a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
@@ -49,8 +51,6 @@ class ServiceOperations(object):
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -75,7 +75,7 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -108,7 +108,7 @@ class ServiceOperations(object):
 
 
     def _put_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
@@ -122,7 +122,7 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -157,7 +157,7 @@ class ServiceOperations(object):
         return deserialized
 
     def put(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
@@ -169,8 +169,6 @@ class ServiceOperations(object):
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param parameters: The service resource.
         :type parameters: ~azure.mgmt.servicefabric.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
@@ -192,7 +190,6 @@ class ServiceOperations(object):
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
-            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -219,7 +216,7 @@ class ServiceOperations(object):
 
 
     def _patch_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
@@ -233,7 +230,7 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -268,7 +265,7 @@ class ServiceOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
@@ -280,8 +277,6 @@ class ServiceOperations(object):
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param parameters: The service resource for patch operations.
         :type parameters:
          ~azure.mgmt.servicefabric.models.ServiceResourceUpdate
@@ -304,7 +299,6 @@ class ServiceOperations(object):
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
-            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -331,7 +325,7 @@ class ServiceOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -345,7 +339,7 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -368,7 +362,7 @@ class ServiceOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
@@ -380,8 +374,6 @@ class ServiceOperations(object):
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}.
         :type service_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -399,7 +391,6 @@ class ServiceOperations(object):
             cluster_name=cluster_name,
             application_name=application_name,
             service_name=service_name,
-            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -420,7 +411,7 @@ class ServiceOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
     def list(
-            self, resource_group_name, cluster_name, application_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, custom_headers=None, raw=False, **operation_config):
         """Returns all service resources in the specified application.
 
         :param resource_group_name: The name of the resource group.
@@ -429,8 +420,6 @@ class ServiceOperations(object):
         :type cluster_name: str
         :param application_name: The name of the application resource.
         :type application_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -454,7 +443,7 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

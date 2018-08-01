@@ -24,6 +24,7 @@ class ApplicationTypeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
     """
 
     models = models
@@ -33,11 +34,12 @@ class ApplicationTypeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-07-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Returns an application type name resource.
 
         :param resource_group_name: The name of the resource group.
@@ -47,8 +49,6 @@ class ApplicationTypeOperations(object):
         :param application_type_name: The name of the application type name
          resource
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -72,7 +72,7 @@ class ApplicationTypeOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -104,7 +104,7 @@ class ApplicationTypeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
     def put(
-            self, resource_group_name, cluster_name, application_type_name, api_version, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, location, custom_headers=None, raw=False, **operation_config):
         """Creates the application type name resource.
 
         :param resource_group_name: The name of the resource group.
@@ -114,8 +114,6 @@ class ApplicationTypeOperations(object):
         :param application_type_name: The name of the application type name
          resource
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param location: Resource location.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -143,7 +141,7 @@ class ApplicationTypeOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -180,7 +178,7 @@ class ApplicationTypeOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -193,7 +191,7 @@ class ApplicationTypeOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -216,7 +214,7 @@ class ApplicationTypeOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the application type name resource.
 
         :param resource_group_name: The name of the resource group.
@@ -226,8 +224,6 @@ class ApplicationTypeOperations(object):
         :param application_type_name: The name of the application type name
          resource
         :type application_type_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -244,7 +240,6 @@ class ApplicationTypeOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
-            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -265,15 +260,13 @@ class ApplicationTypeOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
     def list(
-            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Returns all application type names in the specified cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
-        :param api_version: The version of the API.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -296,7 +289,7 @@ class ApplicationTypeOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
