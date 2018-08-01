@@ -131,7 +131,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         new_lease.with_source(lease)
         new_lease.offset = checkpoint.offset
         new_lease.sequence_number = checkpoint.sequence_number
-        await self.update_lease_async(new_lease)
+        return await self.update_lease_async(new_lease)
 
     async def delete_checkpoint_async(self, partition_id):
         """
@@ -331,7 +331,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             lease.owner = self.host.host_name
             lease.increment_epoch()
             # check if this solves the issue
-            await self.update_lease_async(lease)
+            retval = await self.update_lease_async(lease)
         except Exception as err:  # pylint: disable=broad-except
             _logger.error("Failed to acquire lease {!r} {} {}".format(
                 err, partition_id, lease.token))
@@ -361,7 +361,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     timeout=self.lease_duration))
         except Exception as err:  # pylint: disable=broad-except
             if "LeaseIdMismatchWithLeaseOperation" in str(err):
-                _logger.info("LeaseLost")
+                _logger.info("LeaseLost on partition {}".format(lease.partition_id))
             else:
                 _logger.error("Failed to renew lease on partition {} with token {} {!r}".format(
                     lease.partition_id, lease.token, err))

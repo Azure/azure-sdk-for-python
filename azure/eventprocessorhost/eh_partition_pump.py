@@ -73,6 +73,7 @@ class EventHubPartitionPump(PartitionPump):
             self.partition_context.partition_id,
             Offset(self.partition_context.offset),
             prefetch=self.host.eph_options.prefetch_count,
+            keep_alive=None,
             loop=self.loop)
         self.partition_receiver = PartitionReceiver(self)
 
@@ -95,7 +96,12 @@ class EventHubPartitionPump(PartitionPump):
         :type reason: str
         """
         self.partition_receiver.eh_partition_pump.set_pump_status("Errored")
-        await self.running
+        try:
+            await self.running
+        except TypeError:
+            _logger.debug("No partition pump running.")
+        except Exception as err:
+            _logger.info("Error on closing partition pump: {!r}".format(err))
         await self.clean_up_clients_async()
 
 

@@ -115,7 +115,9 @@ class PartitionContext:
                     _logger.info("persisting checkpoint {}".format(checkpoint.__dict__))
                     await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
-                await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint)
+                if not await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint):
+                    _logger.error("Failed to persist checkpoint for partition: {}".format(self.partition_id))
+                    raise Exception("failed to persist checkpoint")
                 self.lease.offset = checkpoint.offset
                 self.lease.sequence_number = checkpoint.sequence_number
             else:

@@ -303,7 +303,7 @@ class EventHubClient(object):
         finally:
             mgmt_client.close()
 
-    def add_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None):
+    def add_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None, keep_alive=30):
         """
         Add a receiver to the client for a particular consumer group and partition.
 
@@ -323,11 +323,11 @@ class EventHubClient(object):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = Receiver(self, source_url, offset=offset, prefetch=prefetch)
+        handler = Receiver(self, source_url, offset=offset, prefetch=prefetch, keep_alive=keep_alive)
         self.clients.append(handler)
         return handler
 
-    def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, operation=None):
+    def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, operation=None, keep_alive=30):
         """
         Add a receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -350,11 +350,11 @@ class EventHubClient(object):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = Receiver(self, source_url, prefetch=prefetch, epoch=epoch)
+        handler = Receiver(self, source_url, prefetch=prefetch, epoch=epoch, keep_alive=keep_alive)
         self.clients.append(handler)
         return handler
 
-    def add_sender(self, partition=None, operation=None):
+    def add_sender(self, partition=None, operation=None, keep_alive=30):
         """
         Add a sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -371,6 +371,6 @@ class EventHubClient(object):
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
-        handler = Sender(self, target, partition=partition)
+        handler = Sender(self, target, partition=partition, keep_alive=keep_alive)
         self.clients.append(handler)
         return handler

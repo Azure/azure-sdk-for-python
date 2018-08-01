@@ -190,6 +190,7 @@ class PartitionManager:
                             self.host.guid, partition_id))
                         await self.check_and_add_pump_async(partition_id, updated_lease)
                     else:
+                        _logger.debug("Removing pump due to lost lease.")
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:  # pylint: disable=broad-except
                     _logger.error("Failed to update lease {!r}".format(err))

@@ -15,7 +15,7 @@ class Sender:
     """
     TIMEOUT = 60.0
 
-    def __init__(self, client, target, partition=None):
+    def __init__(self, client, target, partition=None, keep_alive=None):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -29,6 +29,7 @@ class Sender:
         self.partition = partition
         self.redirected = None
         self.error = None
+        self.keep_alive = keep_alive
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         if partition:
             self.target += "/Partitions/" + partition
@@ -38,7 +39,7 @@ class Sender:
             debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties())
         self._outcome = None
         self._condition = None
@@ -60,7 +61,7 @@ class Sender:
                 debug=self.client.debug,
                 msg_timeout=Sender.TIMEOUT,
                 error_policy=self.retry_policy,
-                keep_alive_interval=30,
+                keep_alive_interval=self.keep_alive,
                 properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
@@ -79,7 +80,7 @@ class Sender:
             debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties())
         self._handler.open()
         self._handler._pending_messages = unsent_events

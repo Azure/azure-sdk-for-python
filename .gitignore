@@ -110,4 +110,5 @@ ENV/
 azure/mgmt/
 azure/common/
 azure/profiles/
+azure/servicebus/
 features/steps/mgmt_settings_real.py

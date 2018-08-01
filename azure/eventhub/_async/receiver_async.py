@@ -18,7 +18,7 @@ class AsyncReceiver(Receiver):
     Implements the async API of a Receiver.
     """
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an async receiver.
 
@@ -39,6 +39,7 @@ class AsyncReceiver(Receiver):
         self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
+        self.keep_alive = keep_alive
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.redirected = None
         self.error = None
@@ -56,7 +57,7 @@ class AsyncReceiver(Receiver):
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             loop=self.loop)
 
     async def open_async(self):
@@ -85,7 +86,7 @@ class AsyncReceiver(Receiver):
                 link_properties=self.properties,
                 timeout=self.timeout,
                 error_policy=self.retry_policy,
-                keep_alive_interval=30,
+                keep_alive_interval=self.keep_alive,
                 loop=self.loop)
         await self._handler.open_async()
         while not await self.has_started():
@@ -110,7 +111,7 @@ class AsyncReceiver(Receiver):
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties(),
             loop=self.loop)
         await self._handler.open_async()

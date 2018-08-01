@@ -17,7 +17,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, partition=None, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(self, client, target, partition=None, keep_alive=None, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an EventHub event SenderAsync handler.
 
@@ -31,6 +31,7 @@ class AsyncSender(Sender):
         self.client = client
         self.target = target
         self.partition = partition
+        self.keep_alive = keep_alive
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.redirected = None
         self.error = None
@@ -42,7 +43,7 @@ class AsyncSender(Sender):
             debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties(),
             loop=self.loop)
         self._outcome = None
@@ -65,7 +66,7 @@ class AsyncSender(Sender):
                 debug=self.client.debug,
                 msg_timeout=Sender.TIMEOUT,
                 error_policy=self.retry_policy,
-                keep_alive_interval=30,
+                keep_alive_interval=self.keep_alive,
                 properties=self.client.create_properties(),
                 loop=self.loop)
         await self._handler.open_async()
@@ -85,7 +86,7 @@ class AsyncSender(Sender):
             debug=self.client.debug,
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties(),
             loop=self.loop)
         await self._handler.open_async()

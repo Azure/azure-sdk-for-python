@@ -16,7 +16,7 @@ class Receiver:
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None):
         """
         Instantiate a receiver.
 
@@ -35,6 +35,7 @@ class Receiver:
         self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
+        self.keep_alive = keep_alive
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.properties = None
         self.redirected = None
@@ -52,7 +53,7 @@ class Receiver:
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties())
 
     def open(self):
@@ -81,7 +82,7 @@ class Receiver:
                 link_properties=self.properties,
                 timeout=self.timeout,
                 error_policy=self.retry_policy,
-                keep_alive_interval=30,
+                keep_alive_interval=self.keep_alive,
                 properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
@@ -106,7 +107,7 @@ class Receiver:
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
             properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
