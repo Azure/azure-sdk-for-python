@@ -43,7 +43,7 @@ class AzureStorageLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: str
     """
 
     _validation = {
@@ -59,10 +59,10 @@ class AzureStorageLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
-        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, sas_uri=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, sas_uri=None, encrypted_credential: str=None, **kwargs) -> None:
         super(AzureStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
         self.sas_uri = sas_uri

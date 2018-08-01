@@ -138,6 +138,8 @@ try:
     from .azure_sql_database_linked_service_py3 import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service_py3 import SqlServerLinkedService
     from .azure_sql_dw_linked_service_py3 import AzureSqlDWLinkedService
+    from .azure_table_storage_linked_service_py3 import AzureTableStorageLinkedService
+    from .azure_blob_storage_linked_service_py3 import AzureBlobStorageLinkedService
     from .azure_storage_linked_service_py3 import AzureStorageLinkedService
     from .responsys_object_dataset_py3 import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset_py3 import SalesforceMarketingCloudObjectDataset
@@ -471,6 +473,8 @@ except (SyntaxError, ImportError):
     from .azure_sql_database_linked_service import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service import SqlServerLinkedService
     from .azure_sql_dw_linked_service import AzureSqlDWLinkedService
+    from .azure_table_storage_linked_service import AzureTableStorageLinkedService
+    from .azure_blob_storage_linked_service import AzureBlobStorageLinkedService
     from .azure_storage_linked_service import AzureStorageLinkedService
     from .responsys_object_dataset import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
@@ -872,6 +876,8 @@ __all__ = [
     'AzureSqlDatabaseLinkedService',
     'SqlServerLinkedService',
     'AzureSqlDWLinkedService',
+    'AzureTableStorageLinkedService',
+    'AzureBlobStorageLinkedService',
     'AzureStorageLinkedService',
     'ResponsysObjectDataset',
     'SalesforceMarketingCloudObjectDataset',
