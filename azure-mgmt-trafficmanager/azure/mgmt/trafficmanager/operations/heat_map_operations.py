@@ -23,7 +23,6 @@ class HeatMapOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar heat_map_type: The type of HeatMap for the Traffic Manager profile. Constant value: "default".
     :ivar api_version: Client Api Version. Constant value: "2018-04-01".
     """
 
@@ -34,13 +33,12 @@ class HeatMapOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.heat_map_type = "default"
         self.api_version = "2018-04-01"
 
         self.config = config
 
     def get(
-            self, resource_group_name, profile_name, top_left=None, bot_right=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, heat_map_type, top_left=None, bot_right=None, custom_headers=None, raw=False, **operation_config):
         """Gets latest heatmap for Traffic Manager profile.
 
         :param resource_group_name: The name of the resource group containing
@@ -48,6 +46,9 @@ class HeatMapOperations(object):
         :type resource_group_name: str
         :param profile_name: The name of the Traffic Manager profile.
         :type profile_name: str
+        :param heat_map_type: The type of HeatMap for the Traffic Manager
+         profile. Possible values include: 'default', 'ASN', 'Country', 'State'
+        :type heat_map_type: str
         :param top_left: The top left latitude,longitude pair of the
          rectangular viewport to query for.
         :type top_left: list[float]
@@ -70,7 +71,7 @@ class HeatMapOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'heatMapType': self._serialize.url("self.heat_map_type", self.heat_map_type, 'str')
+            'heatMapType': self._serialize.url("heat_map_type", heat_map_type, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
