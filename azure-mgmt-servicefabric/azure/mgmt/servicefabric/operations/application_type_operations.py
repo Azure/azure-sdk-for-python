@@ -37,11 +37,9 @@ class ApplicationTypeOperations(object):
         self.config = config
 
     def get(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns an application type name resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -65,7 +63,7 @@ class ApplicationTypeOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
@@ -106,11 +104,9 @@ class ApplicationTypeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
     def put(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, api_version, location, custom_headers=None, raw=False, **operation_config):
         """Creates the application type name resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -138,7 +134,7 @@ class ApplicationTypeOperations(object):
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
@@ -184,11 +180,11 @@ class ApplicationTypeOperations(object):
 
 
     def _delete_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
@@ -220,11 +216,9 @@ class ApplicationTypeOperations(object):
             return client_raw_response
 
     def delete(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the application type name resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -247,7 +241,6 @@ class ApplicationTypeOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._delete_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
@@ -272,11 +265,9 @@ class ApplicationTypeOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
     def list(
-            self, subscription_id, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns all application type names in the specified cluster.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -297,7 +288,7 @@ class ApplicationTypeOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
         }

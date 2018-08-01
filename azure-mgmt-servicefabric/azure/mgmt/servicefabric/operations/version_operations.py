@@ -37,11 +37,9 @@ class VersionOperations(object):
         self.config = config
 
     def get(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns an application type version resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -67,7 +65,7 @@ class VersionOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
@@ -110,13 +108,13 @@ class VersionOperations(object):
 
 
     def _put_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, **operation_config):
         parameters = models.VersionResource(location=location, app_package_url=app_package_url)
 
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
@@ -161,11 +159,9 @@ class VersionOperations(object):
         return deserialized
 
     def put(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, api_version, location, app_package_url, custom_headers=None, raw=False, polling=True, **operation_config):
         """Provisions an application type version resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -196,7 +192,6 @@ class VersionOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._put_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
@@ -229,11 +224,11 @@ class VersionOperations(object):
 
 
     def _delete_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
@@ -266,11 +261,9 @@ class VersionOperations(object):
             return client_raw_response
 
     def delete(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Unprovisions an application type version resource.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -295,7 +288,6 @@ class VersionOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._delete_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
@@ -321,11 +313,9 @@ class VersionOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
     def list(
-            self, subscription_id, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns all versions for the specified application type.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -349,7 +339,7 @@ class VersionOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')

@@ -37,11 +37,9 @@ class ServiceOperations(object):
         self.config = config
 
     def get(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns a service resource with the specified name.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -67,7 +65,7 @@ class ServiceOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -110,11 +108,11 @@ class ServiceOperations(object):
 
 
     def _put_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -159,11 +157,9 @@ class ServiceOperations(object):
         return deserialized
 
     def put(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a service resource with the specified name.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -192,7 +188,6 @@ class ServiceOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._put_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
@@ -224,11 +219,11 @@ class ServiceOperations(object):
 
 
     def _patch_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -273,11 +268,9 @@ class ServiceOperations(object):
         return deserialized
 
     def patch(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a service resource with the specified name.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -307,7 +300,6 @@ class ServiceOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._patch_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
@@ -339,11 +331,11 @@ class ServiceOperations(object):
 
 
     def _delete_initial(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str'),
@@ -376,11 +368,9 @@ class ServiceOperations(object):
             return client_raw_response
 
     def delete(
-            self, subscription_id, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a service resource with the specified name.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -405,7 +395,6 @@ class ServiceOperations(object):
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
         raw_result = self._delete_initial(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
@@ -431,11 +420,9 @@ class ServiceOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}/services/{serviceName}'}
 
     def list(
-            self, subscription_id, resource_group_name, cluster_name, application_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Returns all service resources in the specified application.
 
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
@@ -458,7 +445,7 @@ class ServiceOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'applicationName': self._serialize.url("application_name", application_name, 'str')

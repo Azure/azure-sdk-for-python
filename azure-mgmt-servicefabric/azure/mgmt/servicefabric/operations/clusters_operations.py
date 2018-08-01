@@ -38,13 +38,13 @@ class ClustersOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,7 +85,7 @@ class ClustersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a ServiceFabric cluster.
 
         Create cluster resource
@@ -97,8 +97,6 @@ class ClustersOperations(object):
         :type cluster_name: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param parameters: The cluster resource.
         :type parameters: ~azure.mgmt.servicefabric.models.Cluster
         :param dict custom_headers: headers that will be added to the request
@@ -119,7 +117,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             api_version=api_version,
-            subscription_id=subscription_id,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -145,7 +142,7 @@ class ClustersOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def delete(
-            self, resource_group_name, cluster_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Delete cluster resource.
 
         Delete cluster resource
@@ -157,8 +154,6 @@ class ClustersOperations(object):
         :type cluster_name: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -174,7 +169,7 @@ class ClustersOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -204,7 +199,7 @@ class ClustersOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def get(
-            self, resource_group_name, cluster_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Get cluster resource.
 
         Get cluster resource
@@ -216,8 +211,6 @@ class ClustersOperations(object):
         :type cluster_name: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -234,7 +227,7 @@ class ClustersOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -273,13 +266,13 @@ class ClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -320,7 +313,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, api_version, subscription_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update cluster configuration.
 
         Update cluster configuration
@@ -332,8 +325,6 @@ class ClustersOperations(object):
         :type cluster_name: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param parameters: The parameters which contains the property value
          and property name which used to update the cluster configuration.
         :type parameters:
@@ -356,7 +347,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             api_version=api_version,
-            subscription_id=subscription_id,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -382,7 +372,7 @@ class ClustersOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, api_version, custom_headers=None, raw=False, **operation_config):
         """List cluster resource by resource group.
 
         List cluster resource by resource group
@@ -392,8 +382,6 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -409,7 +397,7 @@ class ClustersOperations(object):
         url = self.list_by_resource_group.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -447,7 +435,7 @@ class ClustersOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters'}
 
     def list(
-            self, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, api_version, custom_headers=None, raw=False, **operation_config):
         """List cluster resource.
 
         List cluster resource
@@ -455,8 +443,6 @@ class ClustersOperations(object):
 
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -471,7 +457,7 @@ class ClustersOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

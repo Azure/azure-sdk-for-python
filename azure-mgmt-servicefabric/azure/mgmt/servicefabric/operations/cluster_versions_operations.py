@@ -36,7 +36,7 @@ class ClusterVersionsOperations(object):
         self.config = config
 
     def get(
-            self, location, api_version, subscription_id, cluster_version, custom_headers=None, raw=False, **operation_config):
+            self, location, api_version, cluster_version, custom_headers=None, raw=False, **operation_config):
         """Get cluster code versions.
 
         Get cluster code versions by location
@@ -47,8 +47,6 @@ class ClusterVersionsOperations(object):
         :type location: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param cluster_version: The cluster code version
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -66,7 +64,7 @@ class ClusterVersionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'clusterVersion': self._serialize.url("cluster_version", cluster_version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -107,7 +105,7 @@ class ClusterVersionsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/clusterVersions/{clusterVersion}'}
 
     def get_by_environment(
-            self, location, environment, api_version, subscription_id, cluster_version, custom_headers=None, raw=False, **operation_config):
+            self, location, environment, api_version, cluster_version, custom_headers=None, raw=False, **operation_config):
         """Get cluster code versions by environment.
 
         Get cluster code versions by environment
@@ -121,8 +119,6 @@ class ClusterVersionsOperations(object):
         :type environment: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param cluster_version: The cluster code version
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -141,7 +137,7 @@ class ClusterVersionsOperations(object):
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'environment': self._serialize.url("environment", environment, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'clusterVersion': self._serialize.url("cluster_version", cluster_version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -182,7 +178,7 @@ class ClusterVersionsOperations(object):
     get_by_environment.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/environments/{environment}/clusterVersions/{clusterVersion}'}
 
     def list(
-            self, location, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, location, api_version, custom_headers=None, raw=False, **operation_config):
         """List cluster code versions by location.
 
         List cluster code versions by location
@@ -193,8 +189,6 @@ class ClusterVersionsOperations(object):
         :type location: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -210,7 +204,7 @@ class ClusterVersionsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -250,7 +244,7 @@ class ClusterVersionsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/clusterVersions'}
 
     def list_by_environment(
-            self, location, environment, api_version, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, location, environment, api_version, custom_headers=None, raw=False, **operation_config):
         """List cluster code versions by environment.
 
         List cluster code versions by environment
@@ -264,8 +258,6 @@ class ClusterVersionsOperations(object):
         :type environment: str
         :param api_version: The version of the API.
         :type api_version: str
-        :param subscription_id: The customer subscription identifier
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -282,7 +274,7 @@ class ClusterVersionsOperations(object):
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'environment': self._serialize.url("environment", environment, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
