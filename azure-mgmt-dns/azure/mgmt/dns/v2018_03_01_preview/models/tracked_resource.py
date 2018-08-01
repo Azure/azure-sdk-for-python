@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource import Resource
 
 
-class Zone(TrackedResource):
-    """Describes a DNS zone.
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -32,19 +32,6 @@ class Zone(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param etag: The etag of the zone.
-    :type etag: str
-    :param max_number_of_record_sets: The maximum number of record sets that
-     can be created in this DNS zone.  This is a read-only property and any
-     attempt to set this value will be ignored.
-    :type max_number_of_record_sets: long
-    :param number_of_record_sets: The current number of record sets in this
-     DNS zone.  This is a read-only property and any attempt to set this value
-     will be ignored.
-    :type number_of_record_sets: long
-    :ivar name_servers: The name servers for this DNS zone. This is a
-     read-only property and any attempt to set this value will be ignored.
-    :vartype name_servers: list[str]
     """
 
     _validation = {
@@ -52,7 +39,6 @@ class Zone(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'name_servers': {'readonly': True},
     }
 
     _attribute_map = {
@@ -61,15 +47,9 @@ class Zone(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'max_number_of_record_sets': {'key': 'properties.maxNumberOfRecordSets', 'type': 'long'},
-        'number_of_record_sets': {'key': 'properties.numberOfRecordSets', 'type': 'long'},
-        'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
-        super(Zone, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.max_number_of_record_sets = kwargs.get('max_number_of_record_sets', None)
-        self.number_of_record_sets = kwargs.get('number_of_record_sets', None)
-        self.name_servers = None
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)

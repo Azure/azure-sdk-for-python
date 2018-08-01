@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """Resource.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -40,8 +41,5 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
