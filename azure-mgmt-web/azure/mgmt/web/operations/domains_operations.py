@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +25,7 @@ class DomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2015-04-01".
+    :ivar api_version: API Version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class DomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-04-01"
+        self.api_version = "2018-02-01"
 
         self.config = config
 
@@ -56,7 +56,8 @@ class DomainsOperations(object):
          raw=true
         :rtype: ~azure.mgmt.web.models.DomainAvailablilityCheckResult or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         identifier = models.NameIdentifier(name=name)
 
@@ -90,9 +91,7 @@ class DomainsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -120,7 +119,8 @@ class DomainsOperations(object):
         :return: An iterator like instance of Domain
         :rtype:
          ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -156,9 +156,7 @@ class DomainsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -188,7 +186,8 @@ class DomainsOperations(object):
          raw=true
         :rtype: ~azure.mgmt.web.models.DomainControlCenterSsoRequest or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_control_center_sso_request.metadata['url']
@@ -216,9 +215,7 @@ class DomainsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -251,7 +248,8 @@ class DomainsOperations(object):
         :return: An iterator like instance of NameIdentifier
         :rtype:
          ~azure.mgmt.web.models.NameIdentifierPaged[~azure.mgmt.web.models.NameIdentifier]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
 
@@ -292,9 +290,7 @@ class DomainsOperations(object):
                 request, header_parameters, body_content, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -326,7 +322,8 @@ class DomainsOperations(object):
         :return: An iterator like instance of Domain
         :rtype:
          ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -363,9 +360,7 @@ class DomainsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -399,7 +394,8 @@ class DomainsOperations(object):
         :return: Domain or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.Domain or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -429,9 +425,7 @@ class DomainsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -480,9 +474,7 @@ class DomainsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -498,7 +490,7 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -511,14 +503,18 @@ class DomainsOperations(object):
         :param domain: Domain registration information.
         :type domain: ~azure.mgmt.web.models.Domain
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns Domain or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Domain or
+         ClientRawResponse<Domain> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.Domain]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.Domain]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -528,30 +524,8 @@ class DomainsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('Domain', response)
 
             if raw:
@@ -560,12 +534,13 @@ class DomainsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
     def delete(
@@ -652,7 +627,8 @@ class DomainsOperations(object):
         :return: Domain or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.Domain or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -686,9 +662,7 @@ class DomainsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -723,7 +697,8 @@ class DomainsOperations(object):
         :return: An iterator like instance of DomainOwnershipIdentifier
         :rtype:
          ~azure.mgmt.web.models.DomainOwnershipIdentifierPaged[~azure.mgmt.web.models.DomainOwnershipIdentifier]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -761,9 +736,7 @@ class DomainsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -799,7 +772,8 @@ class DomainsOperations(object):
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ownership_identifier.metadata['url']
@@ -830,9 +804,7 @@ class DomainsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -873,7 +845,8 @@ class DomainsOperations(object):
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
@@ -910,9 +883,7 @@ class DomainsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1013,7 +984,8 @@ class DomainsOperations(object):
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
@@ -1050,9 +1022,7 @@ class DomainsOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1084,8 +1054,7 @@ class DomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.renew.metadata['url']
@@ -1114,8 +1083,10 @@ class DomainsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 202, 204, 400, 500]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

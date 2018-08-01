@@ -26,7 +26,7 @@ class VirtualDirectory(Model):
         'physical_path': {'key': 'physicalPath', 'type': 'str'},
     }
 
-    def __init__(self, virtual_path=None, physical_path=None):
-        super(VirtualDirectory, self).__init__()
-        self.virtual_path = virtual_path
-        self.physical_path = physical_path
+    def __init__(self, **kwargs):
+        super(VirtualDirectory, self).__init__(**kwargs)
+        self.virtual_path = kwargs.get('virtual_path', None)
+        self.physical_path = kwargs.get('physical_path', None)

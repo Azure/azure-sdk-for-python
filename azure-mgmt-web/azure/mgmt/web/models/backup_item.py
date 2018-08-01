@@ -104,8 +104,8 @@ class BackupItem(ProxyOnlyResource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, kind=None):
-        super(BackupItem, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(BackupItem, self).__init__(**kwargs)
         self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None

@@ -57,8 +57,8 @@ class DetectorDefinition(ProxyOnlyResource):
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None):
-        super(DetectorDefinition, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(DetectorDefinition, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.rank = None

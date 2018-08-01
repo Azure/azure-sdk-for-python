@@ -26,6 +26,6 @@ class CsmPublishingProfileOptions(Model):
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, format=None):
-        super(CsmPublishingProfileOptions, self).__init__()
-        self.format = format
+    def __init__(self, **kwargs):
+        super(CsmPublishingProfileOptions, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
