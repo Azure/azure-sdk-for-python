@@ -67,7 +67,7 @@ setup(
         'azure-mgmt-managementpartner~=0.1.0',
         'azure-mgmt-maps~=0.1.0',
         'azure-mgmt-marketplaceordering~=0.1.0',
-        'azure-mgmt-media~=0.2.0',
+        'azure-mgmt-media~=1.0.0rc2',
         'azure-mgmt-monitor~=0.5.2',
         'azure-mgmt-msi~=0.2.0',
         'azure-mgmt-network~=2.0',

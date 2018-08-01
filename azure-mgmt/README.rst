@@ -67,7 +67,7 @@ Note that versions are fixed at the minor version number level
 -  `azure-mgmt-managementpartner v0.1.x <https://pypi.python.org/pypi/azure-mgmt-managementpartner>`__
 -  `azure-mgmt-maps v0.1.x <https://pypi.python.org/pypi/azure-mgmt-maps>`__
 -  `azure-mgmt-marketplaceordering v0.1.x <https://pypi.python.org/pypi/azure-mgmt-marketplaceordering>`__
--  `azure-mgmt-media v0.2.x <https://pypi.python.org/pypi/azure-mgmt-media>`__
+-  `azure-mgmt-media v1.0.x <https://pypi.python.org/pypi/azure-mgmt-media>`__
 -  `azure-mgmt-monitor v0.5.x <https://pypi.python.org/pypi/azure-mgmt-monitor>`__
 -  `azure-mgmt-msi v0.2.x <https://pypi.python.org/pypi/azure-mgmt-msi>`__
 -  `azure-mgmt-network v2.x <https://pypi.python.org/pypi/azure-mgmt-network>`__
