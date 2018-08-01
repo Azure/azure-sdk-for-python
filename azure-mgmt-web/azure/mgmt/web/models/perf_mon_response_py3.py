@@ -10,36 +10,27 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
-class ErrorResponse(Model):
-    """Error Response.
+class PerfMonResponse(Model):
+    """Performance monitor API response.
 
-    :param code: Error code.
+    :param code: The response code.
     :type code: str
-    :param message: Error message indicating why the operation failed.
+    :param message: The message.
     :type message: str
+    :param data: The performance monitor counters.
+    :type data: ~azure.mgmt.web.models.PerfMonSet
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'data': {'key': 'data', 'type': 'PerfMonSet'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(ErrorResponse, self).__init__()
+    def __init__(self, *, code: str=None, message: str=None, data=None, **kwargs) -> None:
+        super(PerfMonResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+        self.data = data

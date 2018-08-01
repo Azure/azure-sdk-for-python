@@ -62,8 +62,8 @@ class CertificateDetails(Model):
         'raw_data': {'key': 'rawData', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(CertificateDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(CertificateDetails, self).__init__(**kwargs)
         self.version = None
         self.serial_number = None
         self.thumbprint = None

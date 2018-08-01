@@ -47,7 +47,7 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, kind=None, connection_string_names=None, app_setting_names=None):
-        super(SlotConfigNamesResource, self).__init__(kind=kind)
-        self.connection_string_names = connection_string_names
-        self.app_setting_names = app_setting_names
+    def __init__(self, **kwargs):
+        super(SlotConfigNamesResource, self).__init__(**kwargs)
+        self.connection_string_names = kwargs.get('connection_string_names', None)
+        self.app_setting_names = kwargs.get('app_setting_names', None)

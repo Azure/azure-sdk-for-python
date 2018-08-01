@@ -26,7 +26,7 @@ class SkuInfos(Model):
         'skus': {'key': 'skus', 'type': '[GlobalCsmSkuDescription]'},
     }
 
-    def __init__(self, resource_type=None, skus=None):
-        super(SkuInfos, self).__init__()
-        self.resource_type = resource_type
-        self.skus = skus
+    def __init__(self, **kwargs):
+        super(SkuInfos, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.skus = kwargs.get('skus', None)
