@@ -31,11 +31,11 @@ class Project(TrackedResource):
     :param location: Required. Resource location.
     :type location: str
     :param source_platform: Required. Source platform for the project.
-     Possible values include: 'SQL', 'Unknown'
+     Possible values include: 'SQL', 'MySQL', 'Unknown'
     :type source_platform: str or
      ~azure.mgmt.datamigration.models.ProjectSourcePlatform
     :param target_platform: Required. Target platform for the project.
-     Possible values include: 'SQLDB', 'Unknown'
+     Possible values include: 'SQLDB', 'SQLMI', 'AzureDbForMySql', 'Unknown'
     :type target_platform: str or
      ~azure.mgmt.datamigration.models.ProjectTargetPlatform
     :ivar creation_time: UTC Date and time when project was created
@@ -52,6 +52,9 @@ class Project(TrackedResource):
      values include: 'Deleting', 'Succeeded'
     :vartype provisioning_state: str or
      ~azure.mgmt.datamigration.models.ProjectProvisioningState
+    :param data_movement: Type of data movement. Possible values include:
+     'OneTimeMigration', 'Continuous'. Default value: "OneTimeMigration" .
+    :type data_movement: str or ~azure.mgmt.datamigration.models.DataMovement
     """
 
     _validation = {
@@ -78,6 +81,7 @@ class Project(TrackedResource):
         'target_connection_info': {'key': 'properties.targetConnectionInfo', 'type': 'ConnectionInfo'},
         'databases_info': {'key': 'properties.databasesInfo', 'type': '[DatabaseInfo]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'data_movement': {'key': 'properties.dataMovement', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -89,3 +93,4 @@ class Project(TrackedResource):
         self.target_connection_info = kwargs.get('target_connection_info', None)
         self.databases_info = kwargs.get('databases_info', None)
         self.provisioning_state = None
+        self.data_movement = kwargs.get('data_movement', "OneTimeMigration")

@@ -36,6 +36,9 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
     :ivar last_executed_on: UTC Date and time when the AgentJob was last
      executed.
     :vartype last_executed_on: datetime
+    :ivar validation_errors: Validation errors
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
     :ivar migration_eligibility: Information about eligiblity of agent job for
      migration.
     :vartype migration_eligibility:
@@ -50,6 +53,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         'is_enabled': {'readonly': True},
         'job_owner': {'readonly': True},
         'last_executed_on': {'readonly': True},
+        'validation_errors': {'readonly': True},
         'migration_eligibility': {'readonly': True},
     }
 
@@ -61,6 +65,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'job_owner': {'key': 'jobOwner', 'type': 'str'},
         'last_executed_on': {'key': 'lastExecutedOn', 'type': 'iso-8601'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
         'migration_eligibility': {'key': 'migrationEligibility', 'type': 'MigrationEligibilityInfo'},
     }
 
@@ -71,5 +76,6 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         self.is_enabled = None
         self.job_owner = None
         self.last_executed_on = None
+        self.validation_errors = None
         self.migration_eligibility = None
         self.result_type = 'AgentJobLevelOutput'

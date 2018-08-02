@@ -13,7 +13,7 @@ from .tracked_resource_py3 import TrackedResource
 
 
 class DataMigrationService(TrackedResource):
-    """A Database Migration Service resource.
+    """A Data Migration Service resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

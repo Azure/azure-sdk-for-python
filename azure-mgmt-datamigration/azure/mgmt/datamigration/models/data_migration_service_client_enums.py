@@ -12,6 +12,81 @@
 from enum import Enum
 
 
+class CommandState(str, Enum):
+
+    unknown = "Unknown"
+    accepted = "Accepted"
+    running = "Running"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class SqlSourcePlatform(str, Enum):
+
+    sql_on_prem = "SqlOnPrem"
+
+
+class AuthenticationType(str, Enum):
+
+    none = "None"
+    windows_authentication = "WindowsAuthentication"
+    sql_authentication = "SqlAuthentication"
+    active_directory_integrated = "ActiveDirectoryIntegrated"
+    active_directory_password = "ActiveDirectoryPassword"
+
+
+class BackupType(str, Enum):
+
+    database = "Database"
+    transaction_log = "TransactionLog"
+    file = "File"
+    differential_database = "DifferentialDatabase"
+    differential_file = "DifferentialFile"
+    partial = "Partial"
+    differential_partial = "DifferentialPartial"
+
+
+class BackupMode(str, Enum):
+
+    create_backup = "CreateBackup"
+    existing_backup = "ExistingBackup"
+
+
+class SyncTableMigrationState(str, Enum):
+
+    before_load = "BEFORE_LOAD"
+    full_load = "FULL_LOAD"
+    completed = "COMPLETED"
+    canceled = "CANCELED"
+    error = "ERROR"
+    failed = "FAILED"
+
+
+class SyncDatabaseMigrationReportingState(str, Enum):
+
+    undefined = "UNDEFINED"
+    configuring = "CONFIGURING"
+    initialiazing = "INITIALIAZING"
+    starting = "STARTING"
+    running = "RUNNING"
+    ready_to_complete = "READY_TO_COMPLETE"
+    completing = "COMPLETING"
+    complete = "COMPLETE"
+    cancelling = "CANCELLING"
+    cancelled = "CANCELLED"
+    failed = "FAILED"
+
+
+class SyncMigrationState(str, Enum):
+
+    undefined = "UNDEFINED"
+    validating = "VALIDATING"
+    pending = "PENDING"
+    complete = "COMPLETE"
+    action_required = "ACTION_REQUIRED"
+    failed = "FAILED"
+
+
 class ValidationStatus(str, Enum):
 
     default = "Default"
@@ -20,8 +95,8 @@ class ValidationStatus(str, Enum):
     in_progress = "InProgress"
     completed = "Completed"
     completed_with_issues = "CompletedWithIssues"
-    failed = "Failed"
     stopped = "Stopped"
+    failed = "Failed"
 
 
 class Severity(str, Enum):
@@ -82,13 +157,17 @@ class MigrationStatus(str, Enum):
     completed_with_warnings = "CompletedWithWarnings"
 
 
-class AuthenticationType(str, Enum):
+class LoginMigrationStage(str, Enum):
 
     none = "None"
-    windows_authentication = "WindowsAuthentication"
-    sql_authentication = "SqlAuthentication"
-    active_directory_integrated = "ActiveDirectoryIntegrated"
-    active_directory_password = "ActiveDirectoryPassword"
+    initialize = "Initialize"
+    login_migration = "LoginMigration"
+    establish_user_mapping = "EstablishUserMapping"
+    assign_role_membership = "AssignRoleMembership"
+    assign_role_ownership = "AssignRoleOwnership"
+    establish_server_permissions = "EstablishServerPermissions"
+    establish_object_permissions = "EstablishObjectPermissions"
+    completed = "Completed"
 
 
 class LoginType(str, Enum):
@@ -139,6 +218,10 @@ class ServerLevelPermissionsGroup(str, Enum):
 
     default = "Default"
     migration_from_sql_server_to_azure_db = "MigrationFromSqlServerToAzureDB"
+    migration_from_sql_server_to_azure_mi = "MigrationFromSqlServerToAzureMI"
+    migration_from_my_sql_to_sql = "MigrationFromMySQLToSQL"
+    migration_from_my_sql_to_azure_db = "MigrationFromMySQLToAzureDB"
+    migration_from_my_sql_to_azure_db_for_my_sql = "MigrationFromMySQLToAzureDBForMySQL"
 
 
 class TaskState(str, Enum):
@@ -170,12 +253,15 @@ class ServiceProvisioningState(str, Enum):
 class ProjectTargetPlatform(str, Enum):
 
     sqldb = "SQLDB"
+    sqlmi = "SQLMI"
+    azure_db_for_my_sql = "AzureDbForMySql"
     unknown = "Unknown"
 
 
 class ProjectSourcePlatform(str, Enum):
 
     sql = "SQL"
+    my_sql = "MySQL"
     unknown = "Unknown"
 
 
@@ -183,6 +269,12 @@ class ProjectProvisioningState(str, Enum):
 
     deleting = "Deleting"
     succeeded = "Succeeded"
+
+
+class DataMovement(str, Enum):
+
+    one_time_migration = "OneTimeMigration"
+    continuous = "Continuous"
 
 
 class NameCheckFailureReason(str, Enum):
@@ -216,6 +308,12 @@ class ResourceSkuCapacityScaleType(str, Enum):
     none = "None"
 
 
+class MySqlTargetPlatformType(str, Enum):
+
+    sql_server = "SqlServer"
+    azure_db_for_my_sql = "AzureDbForMySQL"
+
+
 class ErrorType(str, Enum):
 
     default = "Default"
@@ -223,14 +321,11 @@ class ErrorType(str, Enum):
     error = "Error"
 
 
-class LoginMigrationStage(str, Enum):
+class DataMigrationResultCode(str, Enum):
 
-    none = "None"
-    initialize = "Initialize"
-    login_migration = "LoginMigration"
-    establish_user_mapping = "EstablishUserMapping"
-    assign_role_membership = "AssignRoleMembership"
-    assign_role_ownership = "AssignRoleOwnership"
-    establish_server_permissions = "EstablishServerPermissions"
-    establish_object_permissions = "EstablishObjectPermissions"
+    initial = "Initial"
     completed = "Completed"
+    object_not_exists_in_source = "ObjectNotExistsInSource"
+    object_not_exists_in_target = "ObjectNotExistsInTarget"
+    target_object_is_inaccessible = "TargetObjectIsInaccessible"
+    fatal_error = "FatalError"
