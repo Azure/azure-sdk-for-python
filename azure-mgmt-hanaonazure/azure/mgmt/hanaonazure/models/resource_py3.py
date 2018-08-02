@@ -26,8 +26,6 @@ class Resource(Model):
     :vartype type: str
     :ivar location: Resource location
     :vartype location: str
-    :ivar power_state: Resource power state
-    :vartype power_state: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
     """
@@ -37,7 +35,6 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'power_state': {'readonly': True},
         'tags': {'readonly': True},
     }
 
@@ -46,7 +43,6 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'power_state': {'key': 'powerState', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -56,5 +52,4 @@ class Resource(Model):
         self.name = None
         self.type = None
         self.location = None
-        self.power_state = None
         self.tags = None

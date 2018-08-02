@@ -26,8 +26,6 @@ class HanaInstance(Resource):
     :vartype type: str
     :ivar location: Resource location
     :vartype location: str
-    :ivar power_state: Resource power state
-    :vartype power_state: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
     :param hardware_profile: Specifies the hardware settings for the HANA
@@ -44,6 +42,8 @@ class HanaInstance(Resource):
     :type network_profile: ~azure.mgmt.hanaonazure.models.NetworkProfile
     :ivar hana_instance_id: Specifies the HANA instance unique ID.
     :vartype hana_instance_id: str
+    :ivar power_state: Resource power state
+    :vartype power_state: str
     """
 
     _validation = {
@@ -51,9 +51,9 @@ class HanaInstance(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'power_state': {'readonly': True},
         'tags': {'readonly': True},
         'hana_instance_id': {'readonly': True},
+        'power_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -61,13 +61,13 @@ class HanaInstance(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'power_state': {'key': 'powerState', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
+        'power_state': {'key': 'properties.powerState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -77,3 +77,4 @@ class HanaInstance(Resource):
         self.os_profile = kwargs.get('os_profile', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.hana_instance_id = None
+        self.power_state = None
