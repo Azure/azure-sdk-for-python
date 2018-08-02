@@ -37,3 +37,13 @@ class HanaInstanceSizeNamesEnum(str, Enum):
     s768m = "S768m"
     s768xm = "S768xm"
     s960m = "S960m"
+
+
+class HanaInstancePowerStateEnum(str, Enum):
+
+    starting = "starting"
+    started = "started"
+    stopping = "stopping"
+    stopped = "stopped"
+    restarting = "restarting"
+    unknown = "unknown"

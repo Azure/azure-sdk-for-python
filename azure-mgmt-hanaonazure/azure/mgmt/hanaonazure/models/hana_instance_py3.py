@@ -42,8 +42,10 @@ class HanaInstance(Resource):
     :type network_profile: ~azure.mgmt.hanaonazure.models.NetworkProfile
     :ivar hana_instance_id: Specifies the HANA instance unique ID.
     :vartype hana_instance_id: str
-    :ivar power_state: Resource power state
-    :vartype power_state: str
+    :ivar power_state: Resource power state. Possible values include:
+     'starting', 'started', 'stopping', 'stopped', 'restarting', 'unknown'
+    :vartype power_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaInstancePowerStateEnum
     """
 
     _validation = {

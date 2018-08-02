@@ -38,6 +38,7 @@ from .hana_instance_paged import HanaInstancePaged
 from .hana_management_client_enums import (
     HanaHardwareTypeNamesEnum,
     HanaInstanceSizeNamesEnum,
+    HanaInstancePowerStateEnum,
 )
 
 __all__ = [
@@ -56,4 +57,5 @@ __all__ = [
     'HanaInstancePaged',
     'HanaHardwareTypeNamesEnum',
     'HanaInstanceSizeNamesEnum',
+    'HanaInstancePowerStateEnum',
 ]
