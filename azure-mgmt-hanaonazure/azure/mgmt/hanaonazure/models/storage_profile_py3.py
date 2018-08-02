@@ -34,7 +34,7 @@ class StorageProfile(Model):
         'os_disks': {'key': 'osDisks', 'type': '[Disk]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os_disks=None, **kwargs) -> None:
         super(StorageProfile, self).__init__(**kwargs)
         self.nfs_ip_address = None
-        self.os_disks = kwargs.get('os_disks', None)
+        self.os_disks = os_disks

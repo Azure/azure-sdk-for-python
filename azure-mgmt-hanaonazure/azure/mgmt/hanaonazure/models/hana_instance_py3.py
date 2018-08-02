@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class HanaInstance(Resource):
@@ -70,10 +70,10 @@ class HanaInstance(Resource):
         'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, **kwargs) -> None:
         super(HanaInstance, self).__init__(**kwargs)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
+        self.hardware_profile = hardware_profile
+        self.storage_profile = storage_profile
+        self.os_profile = os_profile
+        self.network_profile = network_profile
         self.hana_instance_id = None
