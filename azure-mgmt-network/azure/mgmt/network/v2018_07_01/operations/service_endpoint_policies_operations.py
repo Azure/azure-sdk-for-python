@@ -395,7 +395,7 @@ class ServiceEndpointPoliciesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}'}
 
-    def list_all(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets all the service endpoint policies in a subscription.
 
@@ -413,7 +413,7 @@ class ServiceEndpointPoliciesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_all.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -457,9 +457,9 @@ class ServiceEndpointPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/ServiceEndpointPolicies'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/ServiceEndpointPolicies'}
 
-    def list(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets all service endpoint Policies in a resource group.
 
@@ -479,7 +479,7 @@ class ServiceEndpointPoliciesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -524,4 +524,4 @@ class ServiceEndpointPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies'}

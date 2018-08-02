@@ -306,7 +306,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}/serviceEndpointPolicyDefinition/{serviceEndpointPolicyDefinitionName}'}
 
-    def list(
+    def list_by_resource_group(
             self, resource_group_name, service_endpoint_policy_name, custom_headers=None, raw=False, **operation_config):
         """Gets all service endpoint policy definitions in a service end point
         policy.
@@ -330,7 +330,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
@@ -376,4 +376,4 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{ServiceEndpointPolicyName}/serviceEndpointPolicyDefinitions'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{ServiceEndpointPolicyName}/serviceEndpointPolicyDefinitions'}
