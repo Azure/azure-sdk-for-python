@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Action(Model):
-    """Action.
+    """Action descriptor.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AlertingAction
