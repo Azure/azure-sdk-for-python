@@ -22,9 +22,11 @@ class WebChatSite(Model):
     :vartype site_id: str
     :param site_name: Site name
     :type site_name: str
-    :ivar key: Primary key
+    :ivar key: Primary key. Value only returned through POST to the action
+     Channel List API, otherwise empty.
     :vartype key: str
-    :ivar key2: Secondary key
+    :ivar key2: Secondary key. Value only returned through POST to the action
+     Channel List API, otherwise empty.
     :vartype key2: str
     :param is_enabled: Whether this site is enabled for DirectLine channel
     :type is_enabled: bool

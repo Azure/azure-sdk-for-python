@@ -17,7 +17,8 @@ class EmailChannelProperties(Model):
 
     :param email_address: The email address
     :type email_address: str
-    :param password: The password for the email address
+    :param password: The password for the email address. Value only returned
+     through POST to the action Channel List API, otherwise empty.
     :type password: str
     :param is_enabled: Whether this channel is enabled for the bot
     :type is_enabled: bool

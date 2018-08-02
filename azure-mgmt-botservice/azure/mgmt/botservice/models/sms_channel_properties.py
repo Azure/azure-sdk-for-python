@@ -17,9 +17,11 @@ class SmsChannelProperties(Model):
 
     :param phone: The Sms phone
     :type phone: str
-    :param account_sid: The Sms account SID
+    :param account_sid: The Sms account SID. Value only returned through POST
+     to the action Channel List API, otherwise empty.
     :type account_sid: str
-    :param auth_token: The Sms auth token
+    :param auth_token: The Sms auth token. Value only returned through POST to
+     the action Channel List API, otherwise empty.
     :type auth_token: str
     :param is_validated: Whether this channel is validated for the bot
     :type is_validated: bool

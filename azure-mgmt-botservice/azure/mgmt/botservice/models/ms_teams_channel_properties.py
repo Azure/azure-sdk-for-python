@@ -15,16 +15,10 @@ from msrest.serialization import Model
 class MsTeamsChannelProperties(Model):
     """The parameters to provide for the Microsoft Teams channel.
 
-    :param enable_messaging: Enable messaging for Microsoft Teams channel
-    :type enable_messaging: bool
-    :param enable_media_cards: Enable media cards for Microsoft Teams channel
-    :type enable_media_cards: bool
-    :param enable_video: Enable video for Microsoft Teams channel
-    :type enable_video: bool
     :param enable_calling: Enable calling for Microsoft Teams channel
     :type enable_calling: bool
-    :param call_mode: Enable messaging for Microsoft Teams channel
-    :type call_mode: str
+    :param calling_web_hook: Webhook for Microsoft Teams channel calls
+    :type calling_web_hook: str
     :param is_enabled: Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
@@ -34,18 +28,12 @@ class MsTeamsChannelProperties(Model):
     }
 
     _attribute_map = {
-        'enable_messaging': {'key': 'enableMessaging', 'type': 'bool'},
-        'enable_media_cards': {'key': 'enableMediaCards', 'type': 'bool'},
-        'enable_video': {'key': 'enableVideo', 'type': 'bool'},
         'enable_calling': {'key': 'enableCalling', 'type': 'bool'},
-        'call_mode': {'key': 'callMode', 'type': 'str'},
+        'calling_web_hook': {'key': 'callingWebHook', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, is_enabled, enable_messaging=None, enable_media_cards=None, enable_video=None, enable_calling=None, call_mode=None):
-        self.enable_messaging = enable_messaging
-        self.enable_media_cards = enable_media_cards
-        self.enable_video = enable_video
+    def __init__(self, is_enabled, enable_calling=None, calling_web_hook=None):
         self.enable_calling = enable_calling
-        self.call_mode = call_mode
+        self.calling_web_hook = calling_web_hook
         self.is_enabled = is_enabled

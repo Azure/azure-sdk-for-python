@@ -18,16 +18,16 @@ class FacebookChannelProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar verify_token: Verify token
+    :ivar verify_token: Verify token. Value only returned through POST to the
+     action Channel List API, otherwise empty.
     :vartype verify_token: str
-    :param page_id: Page id
-    :type page_id: str
+    :param pages: The list of Facebook pages
+    :type pages: list[~azure.mgmt.botservice.models.FacebookPage]
     :param app_id: Facebook application id
     :type app_id: str
-    :param app_secret: Facebook application secret
+    :param app_secret: Facebook application secret. Value only returned
+     through POST to the action Channel List API, otherwise empty.
     :type app_secret: str
-    :param access_token: Facebook application access token
-    :type access_token: str
     :ivar callback_url: Callback Url
     :vartype callback_url: str
     :param is_enabled: Whether this channel is enabled for the bot
@@ -36,7 +36,6 @@ class FacebookChannelProperties(Model):
 
     _validation = {
         'verify_token': {'readonly': True},
-        'page_id': {'required': True},
         'app_id': {'required': True},
         'app_secret': {'required': True},
         'callback_url': {'readonly': True},
@@ -45,19 +44,17 @@ class FacebookChannelProperties(Model):
 
     _attribute_map = {
         'verify_token': {'key': 'verifyToken', 'type': 'str'},
-        'page_id': {'key': 'pageId', 'type': 'str'},
+        'pages': {'key': 'pages', 'type': '[FacebookPage]'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'app_secret': {'key': 'appSecret', 'type': 'str'},
-        'access_token': {'key': 'accessToken', 'type': 'str'},
         'callback_url': {'key': 'callbackUrl', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, page_id, app_id, app_secret, is_enabled, access_token=None):
+    def __init__(self, app_id, app_secret, is_enabled, pages=None):
         self.verify_token = None
-        self.page_id = page_id
+        self.pages = pages
         self.app_id = app_id
         self.app_secret = app_secret
-        self.access_token = access_token
         self.callback_url = None
         self.is_enabled = is_enabled

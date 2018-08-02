@@ -20,9 +20,11 @@ class SlackChannelProperties(Model):
 
     :param client_id: The Slack client id
     :type client_id: str
-    :param client_secret: The Slack client secret
+    :param client_secret: The Slack client secret. Value only returned through
+     POST to the action Channel List API, otherwise empty.
     :type client_secret: str
-    :param verification_token: The Slack verification token
+    :param verification_token: The Slack verification token. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type verification_token: str
     :param landing_page_url: The Slack landing page Url
     :type landing_page_url: str

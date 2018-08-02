@@ -17,7 +17,8 @@ class KikChannelProperties(Model):
 
     :param user_name: The Kik user name
     :type user_name: str
-    :param api_key: Kik API key
+    :param api_key: Kik API key. Value only returned through POST to the
+     action Channel List API, otherwise empty.
     :type api_key: str
     :param is_validated: Whether this channel is validated for the bot
     :type is_validated: bool

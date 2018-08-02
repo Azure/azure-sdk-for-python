@@ -12,30 +12,26 @@
 from msrest.serialization import Model
 
 
-class TelegramChannelProperties(Model):
-    """The parameters to provide for the Telegram channel.
+class FacebookPage(Model):
+    """A Facebook page for Facebook channel registration.
 
-    :param access_token: The Telegram access token. Value only returned
-     through POST to the action Channel List API, otherwise empty.
+    :param id: Page id
+    :type id: str
+    :param access_token: Facebook application access token. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type access_token: str
-    :param is_validated: Whether this channel is validated for the bot
-    :type is_validated: bool
-    :param is_enabled: Whether this channel is enabled for the bot
-    :type is_enabled: bool
     """
 
     _validation = {
+        'id': {'required': True},
         'access_token': {'required': True},
-        'is_enabled': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'access_token': {'key': 'accessToken', 'type': 'str'},
-        'is_validated': {'key': 'isValidated', 'type': 'bool'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, access_token, is_enabled, is_validated=None):
+    def __init__(self, id, access_token):
+        self.id = id
         self.access_token = access_token
-        self.is_validated = is_validated
-        self.is_enabled = is_enabled

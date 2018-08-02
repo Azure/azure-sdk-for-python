@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .bots_operations import BotsOperations
-from .channels_operations import ChannelsOperations
-from .operations import Operations
-from .bot_connection_operations import BotConnectionOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'BotsOperations',
-    'ChannelsOperations',
-    'Operations',
-    'BotConnectionOperations',
-]
+
+class ServiceProvider(Model):
+    """Service Provider Definition.
+
+    :param properties: The Properties of a Service Provider Object
+    :type properties: ~azure.mgmt.botservice.models.ServiceProviderProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'ServiceProviderProperties'},
+    }
+
+    def __init__(self, properties=None):
+        self.properties = properties
