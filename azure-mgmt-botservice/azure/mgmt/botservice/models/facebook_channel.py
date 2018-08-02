@@ -15,7 +15,9 @@ from .channel import Channel
 class FacebookChannel(Channel):
     """Facebook channel definition.
 
-    :param channel_name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param channel_name: Required. Constant filled by server.
     :type channel_name: str
     :param properties: The set of properties specific to bot facebook channel
     :type properties: ~azure.mgmt.botservice.models.FacebookChannelProperties
@@ -30,7 +32,7 @@ class FacebookChannel(Channel):
         'properties': {'key': 'properties', 'type': 'FacebookChannelProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(FacebookChannel, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(FacebookChannel, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.channel_name = 'FacebookChannel'
