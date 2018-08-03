@@ -68,6 +68,8 @@ from .operations.virtual_hubs_operations import VirtualHubsOperations
 from .operations.hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
 from .operations.vpn_gateways_operations import VpnGatewaysOperations
 from .operations.vpn_connections_operations import VpnConnectionsOperations
+from .operations.service_endpoint_policies_operations import ServiceEndpointPoliciesOperations
+from .operations.service_endpoint_policy_definitions_operations import ServiceEndpointPolicyDefinitionsOperations
 from . import models
 
 
@@ -211,6 +213,10 @@ class NetworkManagementClient(SDKClient):
     :vartype vpn_gateways: azure.mgmt.network.v2018_07_01.operations.VpnGatewaysOperations
     :ivar vpn_connections: VpnConnections operations
     :vartype vpn_connections: azure.mgmt.network.v2018_07_01.operations.VpnConnectionsOperations
+    :ivar service_endpoint_policies: ServiceEndpointPolicies operations
+    :vartype service_endpoint_policies: azure.mgmt.network.v2018_07_01.operations.ServiceEndpointPoliciesOperations
+    :ivar service_endpoint_policy_definitions: ServiceEndpointPolicyDefinitions operations
+    :vartype service_endpoint_policy_definitions: azure.mgmt.network.v2018_07_01.operations.ServiceEndpointPolicyDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -331,6 +337,10 @@ class NetworkManagementClient(SDKClient):
         self.vpn_gateways = VpnGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.vpn_connections = VpnConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_endpoint_policies = ServiceEndpointPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
