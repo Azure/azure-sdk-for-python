@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class HeatMapLocation(Model):
+class TrafficLocation(Model):
     """Class which represents locations of traffic sources and percentage.
 
     :param location: Location of heatmap traffic sources.
@@ -26,7 +26,7 @@ class HeatMapLocation(Model):
         'percentage': {'key': 'percentage', 'type': 'float'},
     }
 
-    def __init__(self, *, location: str=None, percentage: float=None, **kwargs) -> None:
-        super(HeatMapLocation, self).__init__(**kwargs)
-        self.location = location
-        self.percentage = percentage
+    def __init__(self, **kwargs):
+        super(TrafficLocation, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.percentage = kwargs.get('percentage', None)
