@@ -23,14 +23,12 @@ class ProjectTaskProperties(Model):
     MigrateMySqlAzureDbForMySqlSyncTaskProperties,
     MigrateSqlServerSqlDbSyncTaskProperties,
     MigrateSqlServerSqlDbTaskProperties, MigrateSqlServerSqlMITaskProperties,
-    GetProjectDetailsMySqlSqlTaskProperties,
     ConnectToTargetAzureDbForMySqlTaskProperties,
     ConnectToTargetSqlMITaskProperties, GetUserTablesSqlSyncTaskProperties,
     GetUserTablesSqlTaskProperties, ConnectToTargetSqlSqlDbSyncTaskProperties,
     ConnectToTargetSqlDbTaskProperties,
     ConnectToSourceSqlServerSyncTaskProperties,
-    ConnectToSourceSqlServerTaskProperties, ConnectToSourceMySqlTaskProperties,
-    MigrateMySqlSqlTaskProperties
+    ConnectToSourceSqlServerTaskProperties, ConnectToSourceMySqlTaskProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -65,7 +63,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'GetProjectDetails.MySql.Sql': 'GetProjectDetailsMySqlSqlTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'Migrate.MySql.Sql': 'MigrateMySqlSqlTaskProperties'}
+        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties'}
     }
 
     def __init__(self, **kwargs) -> None:

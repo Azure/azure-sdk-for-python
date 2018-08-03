@@ -22,13 +22,12 @@ class ConnectToSourceMySqlTaskInput(Model):
     :type source_connection_info:
      ~azure.mgmt.datamigration.models.MySqlConnectionInfo
     :param target_platform: Target Platform for the migration. Possible values
-     include: 'SqlServer', 'AzureDbForMySQL'
+     include: 'AzureDbForMySQL'
     :type target_platform: str or
      ~azure.mgmt.datamigration.models.MySqlTargetPlatformType
     :param check_permissions_group: Permission group for validations. Possible
      values include: 'Default', 'MigrationFromSqlServerToAzureDB',
-     'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToSQL',
-     'MigrationFromMySQLToAzureDBForMySQL'
+     'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToAzureDBForMySQL'
     :type check_permissions_group: str or
      ~azure.mgmt.datamigration.models.ServerLevelPermissionsGroup
     """

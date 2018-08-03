@@ -87,12 +87,6 @@ try:
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties_py3 import MigrateSqlServerSqlMITaskProperties
-    from .migration_table_metadata_py3 import MigrationTableMetadata
-    from .data_migration_project_metadata_py3 import DataMigrationProjectMetadata
-    from .my_sql_data_migration_project_metadata_py3 import MySqlDataMigrationProjectMetadata
-    from .get_project_details_my_sql_sql_task_output_py3 import GetProjectDetailsMySqlSqlTaskOutput
-    from .get_project_details_non_sql_task_input_py3 import GetProjectDetailsNonSqlTaskInput
-    from .get_project_details_my_sql_sql_task_properties_py3 import GetProjectDetailsMySqlSqlTaskProperties
     from .connect_to_target_azure_db_for_my_sql_task_output_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input_py3 import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
@@ -147,17 +141,17 @@ try:
     from .server_properties_py3 import ServerProperties
     from .connect_to_source_non_sql_task_output_py3 import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties_py3 import ConnectToSourceMySqlTaskProperties
-    from .migrate_my_sql_sql_task_input_py3 import MigrateMySqlSqlTaskInput
-    from .migrate_my_sql_sql_task_output_py3 import MigrateMySqlSqlTaskOutput
-    from .migrate_my_sql_sql_task_properties_py3 import MigrateMySqlSqlTaskProperties
-    from .data_migration_error_py3 import DataMigrationError
-    from .non_sql_data_migration_table_result_py3 import NonSqlDataMigrationTableResult
-    from .non_sql_migration_task_output_py3 import NonSqlMigrationTaskOutput
-    from .non_sql_data_migration_table_py3 import NonSqlDataMigrationTable
-    from .non_sql_migration_task_input_py3 import NonSqlMigrationTaskInput
     from .project_artifacts_response_py3 import ProjectArtifactsResponse
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
+    from .migration_table_metadata_py3 import MigrationTableMetadata
+    from .data_migration_project_metadata_py3 import DataMigrationProjectMetadata
+    from .get_project_details_non_sql_task_input_py3 import GetProjectDetailsNonSqlTaskInput
+    from .non_sql_data_migration_table_py3 import NonSqlDataMigrationTable
+    from .non_sql_migration_task_input_py3 import NonSqlMigrationTaskInput
+    from .data_migration_error_py3 import DataMigrationError
+    from .non_sql_data_migration_table_result_py3 import NonSqlDataMigrationTableResult
+    from .non_sql_migration_task_output_py3 import NonSqlMigrationTaskOutput
     from .database_file_input_py3 import DatabaseFileInput
     from .migrate_sql_server_sql_server_database_input_py3 import MigrateSqlServerSqlServerDatabaseInput
 except (SyntaxError, ImportError):
@@ -238,12 +232,6 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties import MigrateSqlServerSqlMITaskProperties
-    from .migration_table_metadata import MigrationTableMetadata
-    from .data_migration_project_metadata import DataMigrationProjectMetadata
-    from .my_sql_data_migration_project_metadata import MySqlDataMigrationProjectMetadata
-    from .get_project_details_my_sql_sql_task_output import GetProjectDetailsMySqlSqlTaskOutput
-    from .get_project_details_non_sql_task_input import GetProjectDetailsNonSqlTaskInput
-    from .get_project_details_my_sql_sql_task_properties import GetProjectDetailsMySqlSqlTaskProperties
     from .connect_to_target_azure_db_for_my_sql_task_output import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties import ConnectToTargetAzureDbForMySqlTaskProperties
@@ -298,17 +286,17 @@ except (SyntaxError, ImportError):
     from .server_properties import ServerProperties
     from .connect_to_source_non_sql_task_output import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties import ConnectToSourceMySqlTaskProperties
-    from .migrate_my_sql_sql_task_input import MigrateMySqlSqlTaskInput
-    from .migrate_my_sql_sql_task_output import MigrateMySqlSqlTaskOutput
-    from .migrate_my_sql_sql_task_properties import MigrateMySqlSqlTaskProperties
-    from .data_migration_error import DataMigrationError
-    from .non_sql_data_migration_table_result import NonSqlDataMigrationTableResult
-    from .non_sql_migration_task_output import NonSqlMigrationTaskOutput
-    from .non_sql_data_migration_table import NonSqlDataMigrationTable
-    from .non_sql_migration_task_input import NonSqlMigrationTaskInput
     from .project_artifacts_response import ProjectArtifactsResponse
     from .database import Database
     from .database_object_name import DatabaseObjectName
+    from .migration_table_metadata import MigrationTableMetadata
+    from .data_migration_project_metadata import DataMigrationProjectMetadata
+    from .get_project_details_non_sql_task_input import GetProjectDetailsNonSqlTaskInput
+    from .non_sql_data_migration_table import NonSqlDataMigrationTable
+    from .non_sql_migration_task_input import NonSqlMigrationTaskInput
+    from .data_migration_error import DataMigrationError
+    from .non_sql_data_migration_table_result import NonSqlDataMigrationTableResult
+    from .non_sql_migration_task_output import NonSqlMigrationTaskOutput
     from .database_file_input import DatabaseFileInput
     from .migrate_sql_server_sql_server_database_input import MigrateSqlServerSqlServerDatabaseInput
 from .resource_sku_paged import ResourceSkuPaged
@@ -350,8 +338,8 @@ from .data_migration_service_client_enums import (
     ResourceSkuRestrictionsReasonCode,
     ResourceSkuCapacityScaleType,
     MySqlTargetPlatformType,
-    ErrorType,
     DataMigrationResultCode,
+    ErrorType,
 )
 
 __all__ = [
@@ -432,12 +420,6 @@ __all__ = [
     'MigrateSqlServerSqlMITaskOutput',
     'MigrateSqlServerSqlMITaskInput',
     'MigrateSqlServerSqlMITaskProperties',
-    'MigrationTableMetadata',
-    'DataMigrationProjectMetadata',
-    'MySqlDataMigrationProjectMetadata',
-    'GetProjectDetailsMySqlSqlTaskOutput',
-    'GetProjectDetailsNonSqlTaskInput',
-    'GetProjectDetailsMySqlSqlTaskProperties',
     'ConnectToTargetAzureDbForMySqlTaskOutput',
     'ConnectToTargetAzureDbForMySqlTaskInput',
     'ConnectToTargetAzureDbForMySqlTaskProperties',
@@ -492,17 +474,17 @@ __all__ = [
     'ServerProperties',
     'ConnectToSourceNonSqlTaskOutput',
     'ConnectToSourceMySqlTaskProperties',
-    'MigrateMySqlSqlTaskInput',
-    'MigrateMySqlSqlTaskOutput',
-    'MigrateMySqlSqlTaskProperties',
-    'DataMigrationError',
-    'NonSqlDataMigrationTableResult',
-    'NonSqlMigrationTaskOutput',
-    'NonSqlDataMigrationTable',
-    'NonSqlMigrationTaskInput',
     'ProjectArtifactsResponse',
     'Database',
     'DatabaseObjectName',
+    'MigrationTableMetadata',
+    'DataMigrationProjectMetadata',
+    'GetProjectDetailsNonSqlTaskInput',
+    'NonSqlDataMigrationTable',
+    'NonSqlMigrationTaskInput',
+    'DataMigrationError',
+    'NonSqlDataMigrationTableResult',
+    'NonSqlMigrationTaskOutput',
     'DatabaseFileInput',
     'MigrateSqlServerSqlServerDatabaseInput',
     'ResourceSkuPaged',
@@ -543,6 +525,6 @@ __all__ = [
     'ResourceSkuRestrictionsReasonCode',
     'ResourceSkuCapacityScaleType',
     'MySqlTargetPlatformType',
-    'ErrorType',
     'DataMigrationResultCode',
+    'ErrorType',
 ]

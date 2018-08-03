@@ -24,8 +24,7 @@ class ConnectToSourceSqlServerTaskInput(Model):
      ~azure.mgmt.datamigration.models.SqlConnectionInfo
     :param check_permissions_group: Permission group for validations. Possible
      values include: 'Default', 'MigrationFromSqlServerToAzureDB',
-     'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToSQL',
-     'MigrationFromMySQLToAzureDBForMySQL'
+     'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToAzureDBForMySQL'
     :type check_permissions_group: str or
      ~azure.mgmt.datamigration.models.ServerLevelPermissionsGroup
     :param collect_logins: Flag for whether to collect logins from source
