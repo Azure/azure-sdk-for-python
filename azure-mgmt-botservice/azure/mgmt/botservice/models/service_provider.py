@@ -24,4 +24,5 @@ class ServiceProvider(Model):
     }
 
     def __init__(self, properties=None):
+        super(ServiceProvider, self).__init__()
         self.properties = properties

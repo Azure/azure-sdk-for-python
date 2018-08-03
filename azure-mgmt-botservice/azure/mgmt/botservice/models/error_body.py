@@ -32,5 +32,6 @@ class ErrorBody(Model):
     }
 
     def __init__(self, code, message):
+        super(ErrorBody, self).__init__()
         self.code = code
         self.message = message

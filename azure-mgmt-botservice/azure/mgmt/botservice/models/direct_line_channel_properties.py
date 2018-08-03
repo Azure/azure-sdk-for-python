@@ -24,4 +24,5 @@ class DirectLineChannelProperties(Model):
     }
 
     def __init__(self, sites=None):
+        super(DirectLineChannelProperties, self).__init__()
         self.sites = sites

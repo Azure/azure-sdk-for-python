@@ -34,5 +34,6 @@ class WebChatChannelProperties(Model):
     }
 
     def __init__(self, sites=None):
+        super(WebChatChannelProperties, self).__init__()
         self.web_chat_embed_code = None
         self.sites = sites

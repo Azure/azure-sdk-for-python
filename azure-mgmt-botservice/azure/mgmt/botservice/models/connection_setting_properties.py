@@ -54,6 +54,7 @@ class ConnectionSettingProperties(Model):
     }
 
     def __init__(self, client_id=None, client_secret=None, scopes=None, service_provider_id=None, service_provider_display_name=None, parameters=None):
+        super(ConnectionSettingProperties, self).__init__()
         self.client_id = client_id
         self.setting_id = None
         self.client_secret = client_secret

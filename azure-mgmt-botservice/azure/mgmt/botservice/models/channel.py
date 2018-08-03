@@ -37,4 +37,5 @@ class Channel(Model):
     }
 
     def __init__(self):
+        super(Channel, self).__init__()
         self.channel_name = None

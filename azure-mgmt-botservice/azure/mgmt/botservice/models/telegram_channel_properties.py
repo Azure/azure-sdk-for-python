@@ -36,6 +36,7 @@ class TelegramChannelProperties(Model):
     }
 
     def __init__(self, access_token, is_enabled, is_validated=None):
+        super(TelegramChannelProperties, self).__init__()
         self.access_token = access_token
         self.is_validated = is_validated
         self.is_enabled = is_enabled

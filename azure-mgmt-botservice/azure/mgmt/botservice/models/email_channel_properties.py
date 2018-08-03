@@ -37,6 +37,7 @@ class EmailChannelProperties(Model):
     }
 
     def __init__(self, email_address, password, is_enabled):
+        super(EmailChannelProperties, self).__init__()
         self.email_address = email_address
         self.password = password
         self.is_enabled = is_enabled

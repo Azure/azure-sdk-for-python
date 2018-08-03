@@ -34,6 +34,7 @@ class MsTeamsChannelProperties(Model):
     }
 
     def __init__(self, is_enabled, enable_calling=None, calling_web_hook=None):
+        super(MsTeamsChannelProperties, self).__init__()
         self.enable_calling = enable_calling
         self.calling_web_hook = calling_web_hook
         self.is_enabled = is_enabled

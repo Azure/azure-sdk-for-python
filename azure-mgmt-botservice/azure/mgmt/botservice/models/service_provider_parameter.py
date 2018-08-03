@@ -51,6 +51,7 @@ class ServiceProviderParameter(Model):
     }
 
     def __init__(self):
+        super(ServiceProviderParameter, self).__init__()
         self.name = None
         self.type = None
         self.display_name = None

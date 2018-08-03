@@ -55,6 +55,7 @@ class Resource(Model):
     }
 
     def __init__(self, location=None, tags=None, sku=None, kind=None, etag=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.location = location

@@ -75,6 +75,7 @@ class BotProperties(Model):
     }
 
     def __init__(self, display_name, endpoint, msa_app_id, description=None, icon_url=None, developer_app_insight_key=None, developer_app_insights_api_key=None, developer_app_insights_application_id=None, luis_app_ids=None, luis_key=None):
+        super(BotProperties, self).__init__()
         self.display_name = display_name
         self.description = description
         self.icon_url = icon_url

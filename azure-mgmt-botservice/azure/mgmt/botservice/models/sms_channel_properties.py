@@ -45,6 +45,7 @@ class SmsChannelProperties(Model):
     }
 
     def __init__(self, phone, account_sid, auth_token, is_enabled, is_validated=None):
+        super(SmsChannelProperties, self).__init__()
         self.phone = phone
         self.account_sid = account_sid
         self.auth_token = auth_token

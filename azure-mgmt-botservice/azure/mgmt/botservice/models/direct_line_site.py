@@ -59,6 +59,7 @@ class DirectLineSite(Model):
     }
 
     def __init__(self, site_name, is_enabled, is_v1_enabled, is_v3_enabled):
+        super(DirectLineSite, self).__init__()
         self.site_id = None
         self.site_name = site_name
         self.key = None

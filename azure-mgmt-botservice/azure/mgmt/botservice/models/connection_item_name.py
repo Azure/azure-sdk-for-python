@@ -31,4 +31,5 @@ class ConnectionItemName(Model):
     }
 
     def __init__(self):
+        super(ConnectionItemName, self).__init__()
         self.name = None

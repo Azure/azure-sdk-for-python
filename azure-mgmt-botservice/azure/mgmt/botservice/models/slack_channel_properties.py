@@ -65,6 +65,7 @@ class SlackChannelProperties(Model):
     }
 
     def __init__(self, client_id, client_secret, verification_token, is_enabled, landing_page_url=None):
+        super(SlackChannelProperties, self).__init__()
         self.client_id = client_id
         self.client_secret = client_secret
         self.verification_token = verification_token

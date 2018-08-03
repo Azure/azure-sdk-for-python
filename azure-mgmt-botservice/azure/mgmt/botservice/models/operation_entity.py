@@ -33,6 +33,7 @@ class OperationEntity(Model):
     }
 
     def __init__(self, name=None, display=None, origin=None, properties=None):
+        super(OperationEntity, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

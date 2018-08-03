@@ -36,5 +36,6 @@ class ServiceProviderResponseList(Model):
     }
 
     def __init__(self, next_link=None):
+        super(ServiceProviderResponseList, self).__init__()
         self.next_link = next_link
         self.value = None

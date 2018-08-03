@@ -33,5 +33,6 @@ class FacebookPage(Model):
     }
 
     def __init__(self, id, access_token):
+        super(FacebookPage, self).__init__()
         self.id = id
         self.access_token = access_token

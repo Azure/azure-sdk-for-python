@@ -52,6 +52,7 @@ class FacebookChannelProperties(Model):
     }
 
     def __init__(self, app_id, app_secret, is_enabled, pages=None):
+        super(FacebookChannelProperties, self).__init__()
         self.verify_token = None
         self.pages = pages
         self.app_id = app_id

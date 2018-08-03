@@ -54,6 +54,7 @@ class WebChatSite(Model):
     }
 
     def __init__(self, site_name, is_enabled, enable_preview):
+        super(WebChatSite, self).__init__()
         self.site_id = None
         self.site_name = site_name
         self.key = None

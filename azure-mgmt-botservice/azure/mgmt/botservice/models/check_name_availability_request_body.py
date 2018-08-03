@@ -30,5 +30,6 @@ class CheckNameAvailabilityRequestBody(Model):
     }
 
     def __init__(self, name=None, type=None):
+        super(CheckNameAvailabilityRequestBody, self).__init__()
         self.name = name
         self.type = type

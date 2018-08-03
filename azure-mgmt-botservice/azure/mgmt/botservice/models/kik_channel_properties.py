@@ -40,6 +40,7 @@ class KikChannelProperties(Model):
     }
 
     def __init__(self, user_name, api_key, is_enabled, is_validated=None):
+        super(KikChannelProperties, self).__init__()
         self.user_name = user_name
         self.api_key = api_key
         self.is_validated = is_validated

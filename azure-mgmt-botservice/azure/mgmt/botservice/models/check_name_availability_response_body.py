@@ -29,5 +29,6 @@ class CheckNameAvailabilityResponseBody(Model):
     }
 
     def __init__(self, valid=None, message=None):
+        super(CheckNameAvailabilityResponseBody, self).__init__()
         self.valid = valid
         self.message = message

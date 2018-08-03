@@ -52,6 +52,7 @@ class SkypeChannelProperties(Model):
     }
 
     def __init__(self, is_enabled, enable_messaging=None, enable_media_cards=None, enable_video=None, enable_calling=None, enable_screen_sharing=None, enable_groups=None, groups_mode=None, calling_web_hook=None):
+        super(SkypeChannelProperties, self).__init__()
         self.enable_messaging = enable_messaging
         self.enable_media_cards = enable_media_cards
         self.enable_video = enable_video
