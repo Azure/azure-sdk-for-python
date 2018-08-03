@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ChannelsOperations(object):
-    """ChannelsOperations operations.
+class EnterpriseChannelsOperations(object):
+    """EnterpriseChannelsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,42 +36,30 @@ class ChannelsOperations(object):
 
         self.config = config
 
-    def create(
-            self, resource_group_name, resource_name, channel_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a Channel registration for a Bot Service.
+    def get_check_name_availability(
+            self, name=None, custom_headers=None, raw=False, **operation_config):
+        """Check whether an Enterprise Channel name is available.
 
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Channel resource. Possible values
-         include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
-         'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
-         'WebChatChannel', 'DirectLineChannel', 'SmsChannel'
-        :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
-        :param parameters: The parameters to provide for the created bot.
-        :type parameters: ~azure.mgmt.botservice.models.BotChannel
+        :param name: the name of the Enterprise Channel for which availability
+         needs to be checked.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BotChannel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotChannel or
-         ~msrest.pipeline.ClientRawResponse
+        :return: EnterpriseChannelCheckNameAvailabilityResponseBody or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.botservice.models.EnterpriseChannelCheckNameAvailabilityResponseBody
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
+        parameters = models.EnterpriseChannelCheckNameAvailabilityRequestBody(name=name)
+
         # Construct URL
-        url = self.create.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.get_check_name_availability.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -89,223 +77,10 @@ class ChannelsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BotChannel')
+        body_content = self._serialize.body(parameters, 'EnterpriseChannelCheckNameAvailabilityRequestBody')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.ErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('BotChannel', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('BotChannel', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
-
-    def update(
-            self, resource_group_name, resource_name, channel_name, location=None, tags=None, sku=None, kind=None, etag=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Updates a Channel registration for a Bot Service.
-
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Channel resource. Possible values
-         include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
-         'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
-         'WebChatChannel', 'DirectLineChannel', 'SmsChannel'
-        :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
-        :param location: Specifies the location of the resource.
-        :type location: str
-        :param tags: Contains resource tags defined as key/value pairs.
-        :type tags: dict[str, str]
-        :param sku: Gets or sets the SKU of the resource.
-        :type sku: ~azure.mgmt.botservice.models.Sku
-        :param kind: Required. Gets or sets the Kind of the resource. Possible
-         values include: 'sdk', 'designer', 'bot', 'function'
-        :type kind: str or ~azure.mgmt.botservice.models.Kind
-        :param etag: Entity Tag
-        :type etag: str
-        :param properties: The set of properties specific to bot channel
-         resource
-        :type properties: ~azure.mgmt.botservice.models.Channel
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BotChannel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotChannel or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
-        """
-        parameters = models.BotChannel(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
-
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'BotChannel')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.ErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('BotChannel', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('BotChannel', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
-
-    def delete(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Channel registration from a Bot Service.
-
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Bot resource.
-        :type channel_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
-        """
-        # Construct URL
-        url = self.delete.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            raise models.ErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
-
-    def get(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a BotService Channel registration specified by the parameters.
-
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Bot resource.
-        :type channel_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BotChannel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotChannel or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.get(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -314,101 +89,31 @@ class ChannelsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BotChannel', response)
+            deserialized = self._deserialize('EnterpriseChannelCheckNameAvailabilityResponseBody', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}'}
-
-    def list_with_keys(
-            self, resource_group_name, resource_name, channel_name, custom_headers=None, raw=False, **operation_config):
-        """Lists a Channel registration for a Bot Service including secrets.
-
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Channel resource. Possible values
-         include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
-         'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
-         'WebChatChannel', 'DirectLineChannel', 'SmsChannel'
-        :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BotChannel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotChannel or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
-        """
-        # Construct URL
-        url = self.list_with_keys.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('BotChannel', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_with_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}/listChannelWithKeys'}
+    get_check_name_availability.metadata = {'url': '/providers/Microsoft.BotService/checkECNameAvailability'}
 
     def list_by_resource_group(
-            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all the Channel registrations of a particular BotService
-        resource.
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Returns all the resources of a particular type belonging to a resource
+        group.
 
         :param resource_group_name: The name of the Bot resource group in the
          user subscription.
         :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BotChannel
+        :return: An iterator like instance of EnterpriseChannel
         :rtype:
-         ~azure.mgmt.botservice.models.BotChannelPaged[~azure.mgmt.botservice.models.BotChannel]
+         ~azure.mgmt.botservice.models.EnterpriseChannelPaged[~azure.mgmt.botservice.models.EnterpriseChannel]
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
@@ -419,7 +124,6 @@ class ChannelsOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-                    'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -452,12 +156,283 @@ class ChannelsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.BotChannelPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EnterpriseChannelPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.BotChannelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EnterpriseChannelPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/enterpriseChannels'}
+
+    def create(
+            self, resource_group_name, resource_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates an Enterprise Channel.
+
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
+        :param parameters: The parameters to provide for the new Enterprise
+         Channel.
+        :type parameters: ~azure.mgmt.botservice.models.EnterpriseChannel
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EnterpriseChannel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.EnterpriseChannel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+        """
+        # Construct URL
+        url = self.create.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'EnterpriseChannel')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EnterpriseChannel', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('EnterpriseChannel', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/enterpriseChannels/{resourceName}'}
+
+    def update(
+            self, resource_group_name, resource_name, location=None, tags=None, sku=None, kind=None, etag=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        """Updates an Enterprise Channel.
+
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
+        :param location: Specifies the location of the resource.
+        :type location: str
+        :param tags: Contains resource tags defined as key/value pairs.
+        :type tags: dict[str, str]
+        :param sku: Gets or sets the SKU of the resource.
+        :type sku: ~azure.mgmt.botservice.models.Sku
+        :param kind: Required. Gets or sets the Kind of the resource. Possible
+         values include: 'sdk', 'designer', 'bot', 'function'
+        :type kind: str or ~azure.mgmt.botservice.models.Kind
+        :param etag: Entity Tag
+        :type etag: str
+        :param properties: The set of properties specific to an Enterprise
+         Channel resource
+        :type properties:
+         ~azure.mgmt.botservice.models.EnterpriseChannelProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EnterpriseChannel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.EnterpriseChannel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+        """
+        parameters = models.EnterpriseChannel(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'EnterpriseChannel')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EnterpriseChannel', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('EnterpriseChannel', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/enterpriseChannels/{resourceName}'}
+
+    def delete(
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an Enterprise Channel from the resource group.
+
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.ErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/enterpriseChannels/{resourceName}'}
+
+    def get(
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+        """Returns an Enterprise Channel specified by the parameters.
+
+        :param resource_group_name: The name of the Bot resource group in the
+         user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EnterpriseChannel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.EnterpriseChannel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EnterpriseChannel', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/enterpriseChannels/{resourceName}'}

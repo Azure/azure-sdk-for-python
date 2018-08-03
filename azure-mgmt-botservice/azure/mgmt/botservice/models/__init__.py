@@ -53,6 +53,11 @@ try:
     from .operation_entity_py3 import OperationEntity
     from .check_name_availability_request_body_py3 import CheckNameAvailabilityRequestBody
     from .check_name_availability_response_body_py3 import CheckNameAvailabilityResponseBody
+    from .enterprise_channel_check_name_availability_request_body_py3 import EnterpriseChannelCheckNameAvailabilityRequestBody
+    from .enterprise_channel_check_name_availability_response_body_py3 import EnterpriseChannelCheckNameAvailabilityResponseBody
+    from .enterprise_channel_node_py3 import EnterpriseChannelNode
+    from .enterprise_channel_properties_py3 import EnterpriseChannelProperties
+    from .enterprise_channel_py3 import EnterpriseChannel
 except (SyntaxError, ImportError):
     from .sku import Sku
     from .resource import Resource
@@ -97,10 +102,16 @@ except (SyntaxError, ImportError):
     from .operation_entity import OperationEntity
     from .check_name_availability_request_body import CheckNameAvailabilityRequestBody
     from .check_name_availability_response_body import CheckNameAvailabilityResponseBody
+    from .enterprise_channel_check_name_availability_request_body import EnterpriseChannelCheckNameAvailabilityRequestBody
+    from .enterprise_channel_check_name_availability_response_body import EnterpriseChannelCheckNameAvailabilityResponseBody
+    from .enterprise_channel_node import EnterpriseChannelNode
+    from .enterprise_channel_properties import EnterpriseChannelProperties
+    from .enterprise_channel import EnterpriseChannel
 from .bot_paged import BotPaged
 from .bot_channel_paged import BotChannelPaged
 from .operation_entity_paged import OperationEntityPaged
 from .connection_setting_paged import ConnectionSettingPaged
+from .enterprise_channel_paged import EnterpriseChannelPaged
 from .azure_bot_service_enums import (
     SkuName,
     SkuTier,
@@ -152,10 +163,16 @@ __all__ = [
     'OperationEntity',
     'CheckNameAvailabilityRequestBody',
     'CheckNameAvailabilityResponseBody',
+    'EnterpriseChannelCheckNameAvailabilityRequestBody',
+    'EnterpriseChannelCheckNameAvailabilityResponseBody',
+    'EnterpriseChannelNode',
+    'EnterpriseChannelProperties',
+    'EnterpriseChannel',
     'BotPaged',
     'BotChannelPaged',
     'OperationEntityPaged',
     'ConnectionSettingPaged',
+    'EnterpriseChannelPaged',
     'SkuName',
     'SkuTier',
     'Kind',
