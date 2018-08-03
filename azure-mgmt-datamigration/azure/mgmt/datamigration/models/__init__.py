@@ -141,7 +141,6 @@ try:
     from .server_properties_py3 import ServerProperties
     from .connect_to_source_non_sql_task_output_py3 import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties_py3 import ConnectToSourceMySqlTaskProperties
-    from .project_artifacts_response_py3 import ProjectArtifactsResponse
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
@@ -286,7 +285,6 @@ except (SyntaxError, ImportError):
     from .server_properties import ServerProperties
     from .connect_to_source_non_sql_task_output import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties import ConnectToSourceMySqlTaskProperties
-    from .project_artifacts_response import ProjectArtifactsResponse
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
@@ -474,7 +472,6 @@ __all__ = [
     'ServerProperties',
     'ConnectToSourceNonSqlTaskOutput',
     'ConnectToSourceMySqlTaskProperties',
-    'ProjectArtifactsResponse',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',
