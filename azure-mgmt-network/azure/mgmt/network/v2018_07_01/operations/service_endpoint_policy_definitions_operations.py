@@ -88,7 +88,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
          Policy.
         :type service_endpoint_policy_name: str
         :param service_endpoint_policy_definition_name: The name of the
-         security rule.
+         service endpoint policy definition.
         :type service_endpoint_policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -196,7 +196,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, service_endpoint_policy_name, service_endpoint_policy_definition_name, service_endpoint_policy_definition_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_endpoint_policy_name, service_endpoint_policy_definition_name, service_endpoint_policy_definitions, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -223,7 +223,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(service_endpoint_policy_definition_parameters, 'ServiceEndpointPolicyDefinition')
+        body_content = self._serialize.body(service_endpoint_policy_definitions, 'ServiceEndpointPolicyDefinition')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -248,9 +248,9 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, service_endpoint_policy_name, service_endpoint_policy_definition_name, service_endpoint_policy_definition_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a security rule in the specified service endpoint
-        policy.
+            self, resource_group_name, service_endpoint_policy_name, service_endpoint_policy_definition_name, service_endpoint_policy_definitions, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a service endpoint policy definition in the
+        specified service endpoint policy.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -260,9 +260,9 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
         :param service_endpoint_policy_definition_name: The name of the
          service endpoint policy definition name.
         :type service_endpoint_policy_definition_name: str
-        :param service_endpoint_policy_definition_parameters: Parameters
-         supplied to the create or update service endpoint policy operation.
-        :type service_endpoint_policy_definition_parameters:
+        :param service_endpoint_policy_definitions: Parameters supplied to the
+         create or update service endpoint policy operation.
+        :type service_endpoint_policy_definitions:
          ~azure.mgmt.network.v2018_07_01.models.ServiceEndpointPolicyDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -282,7 +282,7 @@ class ServiceEndpointPolicyDefinitionsOperations(object):
             resource_group_name=resource_group_name,
             service_endpoint_policy_name=service_endpoint_policy_name,
             service_endpoint_policy_definition_name=service_endpoint_policy_definition_name,
-            service_endpoint_policy_definition_parameters=service_endpoint_policy_definition_parameters,
+            service_endpoint_policy_definitions=service_endpoint_policy_definitions,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

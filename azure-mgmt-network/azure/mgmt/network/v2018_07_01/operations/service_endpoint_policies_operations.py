@@ -293,12 +293,12 @@ class ServiceEndpointPoliciesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}'}
 
 
-    def _update_tags_initial(
+    def _update_initial(
             self, resource_group_name, service_endpoint_policy_name, tags=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.TagsObject(tags=tags)
 
         # Construct URL
-        url = self.update_tags.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
@@ -344,9 +344,9 @@ class ServiceEndpointPoliciesOperations(object):
 
         return deserialized
 
-    def update_tags(
+    def update(
             self, resource_group_name, service_endpoint_policy_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates service Endpoint Policies tags.
+        """Updates service Endpoint Policies.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -368,7 +368,7 @@ class ServiceEndpointPoliciesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_07_01.models.ServiceEndpointPolicy]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._update_tags_initial(
+        raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             service_endpoint_policy_name=service_endpoint_policy_name,
             tags=tags,
@@ -393,7 +393,7 @@ class ServiceEndpointPoliciesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
