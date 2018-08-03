@@ -50,4 +50,4 @@ class HeatMapProperties(HeatMapPropertyBase):
         self.end_time = end_time
         self.endpoints = endpoints
         self.traffic_flows = traffic_flows
-        self.heat_map_type = 'default'
+        self.heat_map_type = 'Microsoft.Network/trafficManagerProfiles/heatMaps/latencyVolumeByLocation'

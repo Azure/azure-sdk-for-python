@@ -36,4 +36,4 @@ class HeatMapPropertyState(HeatMapPropertyBase):
     def __init__(self, *, traffic_flows=None, **kwargs) -> None:
         super(HeatMapPropertyState, self).__init__(**kwargs)
         self.traffic_flows = traffic_flows
-        self.heat_map_type = 'state'
+        self.heat_map_type = 'Microsoft.Network/trafficManagerProfiles/heatMaps/stateTrafficFraction'

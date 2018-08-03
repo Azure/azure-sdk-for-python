@@ -34,7 +34,7 @@ class HeatMapPropertyBase(Model):
     }
 
     _subtype_map = {
-        'heat_map_type': {'default': 'HeatMapProperties', 'asn': 'HeatMapPropertyAsn', 'country': 'HeatMapPropertyCountry', 'state': 'HeatMapPropertyState'}
+        'heat_map_type': {'Microsoft.Network/trafficManagerProfiles/heatMaps/latencyVolumeByLocation': 'HeatMapProperties', 'Microsoft.Network/trafficManagerProfiles/heatMaps/asnTrafficFraction': 'HeatMapPropertyAsn', 'Microsoft.Network/trafficManagerProfiles/heatMaps/countryTrafficFraction': 'HeatMapPropertyCountry', 'Microsoft.Network/trafficManagerProfiles/heatMaps/stateTrafficFraction': 'HeatMapPropertyState'}
     }
 
     def __init__(self, **kwargs) -> None:

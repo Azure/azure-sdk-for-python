@@ -36,4 +36,4 @@ class HeatMapPropertyAsn(HeatMapPropertyBase):
     def __init__(self, **kwargs):
         super(HeatMapPropertyAsn, self).__init__(**kwargs)
         self.traffic_flows = kwargs.get('traffic_flows', None)
-        self.heat_map_type = 'asn'
+        self.heat_map_type = 'Microsoft.Network/trafficManagerProfiles/heatMaps/asnTrafficFraction'

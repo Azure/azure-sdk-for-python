@@ -36,4 +36,4 @@ class HeatMapPropertyCountry(HeatMapPropertyBase):
     def __init__(self, *, traffic_flows=None, **kwargs) -> None:
         super(HeatMapPropertyCountry, self).__init__(**kwargs)
         self.traffic_flows = traffic_flows
-        self.heat_map_type = 'country'
+        self.heat_map_type = 'Microsoft.Network/trafficManagerProfiles/heatMaps/countryTrafficFraction'

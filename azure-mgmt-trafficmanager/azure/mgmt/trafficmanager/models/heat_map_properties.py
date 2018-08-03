@@ -50,4 +50,4 @@ class HeatMapProperties(HeatMapPropertyBase):
         self.end_time = kwargs.get('end_time', None)
         self.endpoints = kwargs.get('endpoints', None)
         self.traffic_flows = kwargs.get('traffic_flows', None)
-        self.heat_map_type = 'default'
+        self.heat_map_type = 'Microsoft.Network/trafficManagerProfiles/heatMaps/latencyVolumeByLocation'
