@@ -20,7 +20,9 @@ class Channel(Model):
     SkypeChannel, KikChannel, WebChatChannel, DirectLineChannel,
     TelegramChannel, SmsChannel, SlackChannel
 
-    :param channel_name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param channel_name: Required. Constant filled by server.
     :type channel_name: str
     """
 
@@ -36,5 +38,6 @@ class Channel(Model):
         'channel_name': {'FacebookChannel': 'FacebookChannel', 'EmailChannel': 'EmailChannel', 'MsTeamsChannel': 'MsTeamsChannel', 'SkypeChannel': 'SkypeChannel', 'KikChannel': 'KikChannel', 'WebChatChannel': 'WebChatChannel', 'DirectLineChannel': 'DirectLineChannel', 'TelegramChannel': 'TelegramChannel', 'SmsChannel': 'SmsChannel', 'SlackChannel': 'SlackChannel'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Channel, self).__init__(**kwargs)
         self.channel_name = None
