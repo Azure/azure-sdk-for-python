@@ -41,7 +41,7 @@ class UsagesOperations(object):
         """Get resource quotas and usage information.
 
         This method returns region-specific quotas and resource usage
-        information for the Data Migration Service.
+        information for the Database Migration Service.
 
         :param location: The Azure region of the operation
         :type location: str

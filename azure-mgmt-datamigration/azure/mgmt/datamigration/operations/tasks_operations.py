@@ -41,8 +41,8 @@ class TasksOperations(object):
         """Get tasks in a service.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This method returns a list of tasks owned by a
-        service resource. Some tasks may have a status of Unknown, which
+        Database Migration Service. This method returns a list of tasks owned
+        by a service resource. Some tasks may have a status of Unknown, which
         indicates that an error occurred while querying the status of that
         task.
 

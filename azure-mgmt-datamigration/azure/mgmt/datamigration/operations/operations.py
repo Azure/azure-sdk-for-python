@@ -40,7 +40,7 @@ class Operations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get available resource provider actions (operations).
 
-        Lists all available actions exposed by the Data Migration Service
+        Lists all available actions exposed by the Database Migration Service
         resource provider.
 
         :param dict custom_headers: headers that will be added to the request
