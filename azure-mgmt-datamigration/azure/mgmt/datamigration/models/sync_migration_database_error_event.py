@@ -22,7 +22,7 @@ class SyncMigrationDatabaseErrorEvent(Model):
     :vartype timestamp_string: str
     :ivar event_type_string: Event type.
     :vartype event_type_string: str
-    :ivar event_text: Error text.
+    :ivar event_text: Event text.
     :vartype event_text: str
     """
 

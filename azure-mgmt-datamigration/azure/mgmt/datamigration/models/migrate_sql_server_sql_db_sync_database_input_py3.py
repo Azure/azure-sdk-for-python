@@ -16,6 +16,10 @@ class MigrateSqlServerSqlDbSyncDatabaseInput(Model):
     """Database specific information for SQL to Azure SQL DB sync migration task
     inputs.
 
+    :param id: Unique identifier for database
+    :type id: str
+    :param name: Name of database
+    :type name: str
     :param target_database_name: Target database name
     :type target_database_name: str
     :param schema_name: Schema name to be migrated
@@ -31,30 +35,26 @@ class MigrateSqlServerSqlDbSyncDatabaseInput(Model):
     :param target_setting: Target settings to tune target endpoint migration
      behavior
     :type target_setting: dict[str, str]
-    :param id: Unique identifier for database
-    :type id: str
-    :param name: Name of database
-    :type name: str
     """
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'target_database_name': {'key': 'targetDatabaseName', 'type': 'str'},
         'schema_name': {'key': 'schemaName', 'type': 'str'},
         'table_map': {'key': 'tableMap', 'type': '{str}'},
         'migration_setting': {'key': 'migrationSetting', 'type': '{str}'},
         'source_setting': {'key': 'sourceSetting', 'type': '{str}'},
         'target_setting': {'key': 'targetSetting', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, target_database_name: str=None, schema_name: str=None, table_map=None, migration_setting=None, source_setting=None, target_setting=None, id: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, name: str=None, target_database_name: str=None, schema_name: str=None, table_map=None, migration_setting=None, source_setting=None, target_setting=None, **kwargs) -> None:
         super(MigrateSqlServerSqlDbSyncDatabaseInput, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
         self.target_database_name = target_database_name
         self.schema_name = schema_name
         self.table_map = table_map
         self.migration_setting = migration_setting
         self.source_setting = source_setting
         self.target_setting = target_setting
-        self.id = id
-        self.name = name

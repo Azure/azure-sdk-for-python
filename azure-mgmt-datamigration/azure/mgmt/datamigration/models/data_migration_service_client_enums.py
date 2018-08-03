@@ -77,16 +77,6 @@ class SyncDatabaseMigrationReportingState(str, Enum):
     failed = "FAILED"
 
 
-class SyncMigrationState(str, Enum):
-
-    undefined = "UNDEFINED"
-    validating = "VALIDATING"
-    pending = "PENDING"
-    complete = "COMPLETE"
-    action_required = "ACTION_REQUIRED"
-    failed = "FAILED"
-
-
 class ValidationStatus(str, Enum):
 
     default = "Default"
@@ -220,7 +210,6 @@ class ServerLevelPermissionsGroup(str, Enum):
     migration_from_sql_server_to_azure_db = "MigrationFromSqlServerToAzureDB"
     migration_from_sql_server_to_azure_mi = "MigrationFromSqlServerToAzureMI"
     migration_from_my_sql_to_sql = "MigrationFromMySQLToSQL"
-    migration_from_my_sql_to_azure_db = "MigrationFromMySQLToAzureDB"
     migration_from_my_sql_to_azure_db_for_my_sql = "MigrationFromMySQLToAzureDBForMySQL"
 
 
@@ -269,12 +258,6 @@ class ProjectProvisioningState(str, Enum):
 
     deleting = "Deleting"
     succeeded = "Succeeded"
-
-
-class DataMovement(str, Enum):
-
-    one_time_migration = "OneTimeMigration"
-    continuous = "Continuous"
 
 
 class NameCheckFailureReason(str, Enum):

@@ -28,10 +28,6 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel(MigrateMySqlAzureD
     :vartype started_on: datetime
     :ivar ended_on: Migration end time
     :vartype ended_on: datetime
-    :ivar state: Current state of migration. Possible values include:
-     'UNDEFINED', 'VALIDATING', 'PENDING', 'COMPLETE', 'ACTION_REQUIRED',
-     'FAILED'
-    :vartype state: str or ~azure.mgmt.datamigration.models.SyncMigrationState
     :ivar source_server_version: Source server version
     :vartype source_server_version: str
     :ivar source_server: Source server name
@@ -47,7 +43,6 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel(MigrateMySqlAzureD
         'result_type': {'required': True},
         'started_on': {'readonly': True},
         'ended_on': {'readonly': True},
-        'state': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server': {'readonly': True},
         'target_server_version': {'readonly': True},
@@ -59,7 +54,6 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel(MigrateMySqlAzureD
         'result_type': {'key': 'resultType', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server': {'key': 'sourceServer', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
@@ -70,7 +64,6 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel(MigrateMySqlAzureD
         super(MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel, self).__init__(**kwargs)
         self.started_on = None
         self.ended_on = None
-        self.state = None
         self.source_server_version = None
         self.source_server = None
         self.target_server_version = None

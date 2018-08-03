@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ProjectArtifactsResponse(Model):
     """Project artifacts properties.
 
-    :param artifacts_location: An URL that points to the drop location to
+    :param artifacts_location: A URL that points to the drop location to
      access project artifacts. When accessing this URL, requestor should
      provide an Authorization header with the Bearer authorization scheme,
      followed by his ARM JWT signature. Typical JWT will look like three

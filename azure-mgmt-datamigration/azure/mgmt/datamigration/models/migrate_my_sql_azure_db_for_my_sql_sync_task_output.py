@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class MigrateMySqlAzureDbForMySqlSyncTaskOutput(Model):
     """Output for the task that migrates MySQL databases to Azure Database for
-    MySQL with continuous sync.
+    MySQL for online migrations.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError,

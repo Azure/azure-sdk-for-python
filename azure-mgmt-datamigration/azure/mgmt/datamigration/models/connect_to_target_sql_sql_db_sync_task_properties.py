@@ -14,7 +14,7 @@ from .project_task_properties import ProjectTaskProperties
 
 class ConnectToTargetSqlSqlDbSyncTaskProperties(ProjectTaskProperties):
     """Properties for the task that validates connection to SQL DB and target
-    server requirements for sync scenario.
+    server requirements for online migration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

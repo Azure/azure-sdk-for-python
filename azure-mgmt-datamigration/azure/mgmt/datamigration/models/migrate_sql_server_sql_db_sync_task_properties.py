@@ -14,7 +14,7 @@ from .project_task_properties import ProjectTaskProperties
 
 class MigrateSqlServerSqlDbSyncTaskProperties(ProjectTaskProperties):
     """Properties for the task that migrates on-prem SQL Server databases to Azure
-    SQL Database with continuous sync.
+    SQL Database for online migrations.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

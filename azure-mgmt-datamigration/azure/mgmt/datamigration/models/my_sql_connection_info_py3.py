@@ -13,7 +13,7 @@ from .connection_info_py3 import ConnectionInfo
 
 
 class MySqlConnectionInfo(ConnectionInfo):
-    """Information for connecting to MySQL source.
+    """Information for connecting to MySQL server.
 
     All required parameters must be populated in order to send to Azure.
 

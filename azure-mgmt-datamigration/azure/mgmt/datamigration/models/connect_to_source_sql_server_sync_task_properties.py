@@ -13,8 +13,8 @@ from .project_task_properties import ProjectTaskProperties
 
 
 class ConnectToSourceSqlServerSyncTaskProperties(ProjectTaskProperties):
-    """Properties for the task that validates connection to SQL Server and also
-    validates source server requirements.
+    """Properties for the task that validates connection to SQL Server and source
+    server requirements for online migration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

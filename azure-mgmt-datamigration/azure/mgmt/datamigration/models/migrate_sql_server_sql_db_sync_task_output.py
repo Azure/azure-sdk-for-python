@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class MigrateSqlServerSqlDbSyncTaskOutput(Model):
     """Output for the task that migrates on-prem SQL Server databases to Azure SQL
-    Database with continuous sync.
+    Database for online migrations.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MigrateSqlServerSqlDbSyncTaskOutputDatabaseError,

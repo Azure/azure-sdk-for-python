@@ -34,7 +34,7 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel(MigrateMySqlAzureDbFor
     :vartype cdc_update_counter: str
     :ivar cdc_delete_counter: Number of applied deletes
     :vartype cdc_delete_counter: str
-    :ivar full_load_est_finish_time: Estimate to finish FullLoad
+    :ivar full_load_est_finish_time: Estimate to finish full load
     :vartype full_load_est_finish_time: datetime
     :ivar full_load_started_on: Full load start time
     :vartype full_load_started_on: datetime

@@ -14,37 +14,37 @@ from msrest.serialization import Model
 
 class MigrateMySqlAzureDbForMySqlSyncTaskInput(Model):
     """Input for the task that migrates MySQL databases to Azure Database for
-    MySQL with continuous sync.
+    MySQL for online migrations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param selected_databases: Required. Databases to migrate
-    :type selected_databases:
-     list[~azure.mgmt.datamigration.models.MigrateMySqlAzureDbForMySqlSyncDatabaseInput]
-    :param target_connection_info: Required. Connection information for target
-     Azure Database for MySQL
-    :type target_connection_info:
-     ~azure.mgmt.datamigration.models.MySqlConnectionInfo
     :param source_connection_info: Required. Connection information for source
      MySQL
     :type source_connection_info:
      ~azure.mgmt.datamigration.models.MySqlConnectionInfo
+    :param target_connection_info: Required. Connection information for target
+     Azure Database for MySQL
+    :type target_connection_info:
+     ~azure.mgmt.datamigration.models.MySqlConnectionInfo
+    :param selected_databases: Required. Databases to migrate
+    :type selected_databases:
+     list[~azure.mgmt.datamigration.models.MigrateMySqlAzureDbForMySqlSyncDatabaseInput]
     """
 
     _validation = {
-        'selected_databases': {'required': True},
-        'target_connection_info': {'required': True},
         'source_connection_info': {'required': True},
+        'target_connection_info': {'required': True},
+        'selected_databases': {'required': True},
     }
 
     _attribute_map = {
-        'selected_databases': {'key': 'selectedDatabases', 'type': '[MigrateMySqlAzureDbForMySqlSyncDatabaseInput]'},
-        'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'MySqlConnectionInfo'},
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'MySqlConnectionInfo'},
+        'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'MySqlConnectionInfo'},
+        'selected_databases': {'key': 'selectedDatabases', 'type': '[MigrateMySqlAzureDbForMySqlSyncDatabaseInput]'},
     }
 
-    def __init__(self, *, selected_databases, target_connection_info, source_connection_info, **kwargs) -> None:
+    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, **kwargs) -> None:
         super(MigrateMySqlAzureDbForMySqlSyncTaskInput, self).__init__(**kwargs)
-        self.selected_databases = selected_databases
-        self.target_connection_info = target_connection_info
         self.source_connection_info = source_connection_info
+        self.target_connection_info = target_connection_info
+        self.selected_databases = selected_databases
