@@ -73,7 +73,8 @@ class EventHubPartitionPump(PartitionPump):
             self.partition_context.partition_id,
             Offset(self.partition_context.offset),
             prefetch=self.host.eph_options.prefetch_count,
-            keep_alive=None,
+            keep_alive=self.host.eph_options.keep_alive_interval,
+            auto_reconnect=self.host.eph_options.auto_reconnect_on_error,
             loop=self.loop)
         self.partition_receiver = PartitionReceiver(self)
 
