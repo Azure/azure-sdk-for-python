@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import uuid
+
 from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
@@ -16,7 +18,7 @@ class Receiver:
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True):
         """
         Instantiate a receiver.
 
@@ -36,10 +38,13 @@ class Receiver:
         self.prefetch = prefetch
         self.epoch = epoch
         self.keep_alive = keep_alive
+        self.auto_reconnect = True
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.properties = None
         self.redirected = None
         self.error = None
+        partition = self.source.split('/')[-1]
+        self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
         if self.offset is not None:
             source.set_filter(self.offset.selector())
@@ -54,6 +59,7 @@ class Receiver:
             timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties())
 
     def open(self):
@@ -83,6 +89,7 @@ class Receiver:
                 timeout=self.timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
+                client_name=self.name,
                 properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
@@ -108,6 +115,7 @@ class Receiver:
             timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
@@ -205,16 +213,21 @@ class Receiver:
                 data_batch.append(event_data)
             return data_batch
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
                 self.reconnect()
                 return data_batch
             else:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            self.reconnect()
-            return data_batch
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                self.reconnect()
+                return data_batch
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
         except Exception as e:
             error = EventHubError("Receive failed: {}".format(e))
             self.close(exception=error)

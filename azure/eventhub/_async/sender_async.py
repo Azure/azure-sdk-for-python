@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import uuid
 import asyncio
 
 from uamqp import constants, errors
@@ -17,7 +18,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, partition=None, keep_alive=None, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(self, client, target, partition=None, keep_alive=None, auto_reconnect=True, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an EventHub event SenderAsync handler.
 
@@ -32,11 +33,14 @@ class AsyncSender(Sender):
         self.target = target
         self.partition = partition
         self.keep_alive = keep_alive
+        self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.name = "EHSender-{}".format(uuid.uuid4())
         self.redirected = None
         self.error = None
         if partition:
             self.target += "/Partitions/" + partition
+            self.name += "-partition{}".format(partition)
         self._handler = SendClientAsync(
             self.target,
             auth=self.client.get_auth(),
@@ -44,6 +48,7 @@ class AsyncSender(Sender):
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
         self._outcome = None
@@ -67,6 +72,7 @@ class AsyncSender(Sender):
                 msg_timeout=Sender.TIMEOUT,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
+                client_name=self.name,
                 properties=self.client.create_properties(),
                 loop=self.loop)
         await self._handler.open_async()
@@ -87,6 +93,7 @@ class AsyncSender(Sender):
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
         await self._handler.open_async()
@@ -159,14 +166,19 @@ class AsyncSender(Sender):
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
                 await self.reconnect_async()
             else:
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            await self.reconnect_async()
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                await self.reconnect_async()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
             await self.close_async(exception=error)
@@ -183,13 +195,18 @@ class AsyncSender(Sender):
         try:
             await self._handler.wait_async()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
                 await self.reconnect_async()
             else:
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            await self.reconnect_async()
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                await self.reconnect_async()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))

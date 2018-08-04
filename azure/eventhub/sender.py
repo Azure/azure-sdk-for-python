@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import uuid
+
 from uamqp import constants, errors
 from uamqp import SendClient
 
@@ -15,7 +17,7 @@ class Sender:
     """
     TIMEOUT = 60.0
 
-    def __init__(self, client, target, partition=None, keep_alive=None):
+    def __init__(self, client, target, partition=None, keep_alive=None, auto_reconnect=True):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -30,9 +32,12 @@ class Sender:
         self.redirected = None
         self.error = None
         self.keep_alive = keep_alive
+        self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.name = "EHSender-{}".format(uuid.uuid4())
         if partition:
             self.target += "/Partitions/" + partition
+            self.name += "-partition{}".format(partition)
         self._handler = SendClient(
             self.target,
             auth=self.client.get_auth(),
@@ -40,6 +45,7 @@ class Sender:
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties())
         self._outcome = None
         self._condition = None
@@ -62,6 +68,7 @@ class Sender:
                 msg_timeout=Sender.TIMEOUT,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
+                client_name=self.name,
                 properties=self.client.create_properties())
         self._handler.open()
         while not self.has_started():
@@ -81,6 +88,7 @@ class Sender:
             msg_timeout=Sender.TIMEOUT,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties())
         self._handler.open()
         self._handler._pending_messages = unsent_events
@@ -166,14 +174,19 @@ class Sender:
             self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
                 self.reconnect()
             else:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            self.reconnect()
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
         except Exception as e:
             error = EventHubError("Send failed: {}".format(e))
             self.close(exception=error)
@@ -208,14 +221,19 @@ class Sender:
         try:
             self._handler.wait()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
                 self.reconnect()
             else:
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            self.reconnect()
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))
 

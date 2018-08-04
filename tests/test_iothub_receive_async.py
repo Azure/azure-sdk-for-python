@@ -18,9 +18,7 @@ async def pump(receiver, sleep=None):
     if sleep:
         await asyncio.sleep(sleep)
     batch = await receiver.receive(timeout=1)
-    while batch:
-        messages += len(batch)
-        batch = await receiver.receive(timeout=1)
+    messages += len(batch)
     return messages
 
 
@@ -42,11 +40,11 @@ async def test_iothub_receive_multiple_async(iot_connection_str):
     try:
         receivers = []
         for p in partitions:
-            receivers.append(client.add_async_receiver("$default", p, prefetch=1000, operation='/messages/events'))
+            receivers.append(client.add_async_receiver("$default", p, prefetch=10, operation='/messages/events'))
         await client.run_async()
         outputs = await asyncio.gather(*[pump(r) for r in receivers])
 
-        assert isinstance(outputs[0], int) and outputs[0] == 0
-        assert isinstance(outputs[1], int) and outputs[1] == 0
+        assert isinstance(outputs[0], int) and outputs[0] <= 10
+        assert isinstance(outputs[1], int) and outputs[1] <= 10
     finally:
         await client.stop_async()
