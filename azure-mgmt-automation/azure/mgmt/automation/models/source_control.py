@@ -24,27 +24,26 @@ class SourceControl(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param repo_url: Gets or sets the repo url of the source control.
+    :param repo_url: The repo url of the source control.
     :type repo_url: str
-    :param branch: Gets or sets the repo branch of the source control. Include
-     branch as empty string for VsoTfvc.
+    :param branch: The repo branch of the source control. Include branch as
+     empty string for VsoTfvc.
     :type branch: str
-    :param folder_path: Gets or sets the folder path of the source control.
+    :param folder_path: The folder path of the source control.
     :type folder_path: str
-    :param auto_sync: Gets or sets auto async of the source control. Default
-     is false.
+    :param auto_sync: The auto sync of the source control. Default is false.
     :type auto_sync: bool
-    :param publish_runbook: Gets or sets the auto publish of the source
-     control. Default is true.
+    :param publish_runbook: The auto publish of the source control. Default is
+     true.
     :type publish_runbook: bool
     :param source_type: The source type. Must be one of VsoGit, VsoTfvc,
      GitHub. Possible values include: 'VsoGit', 'VsoTfvc', 'GitHub'
     :type source_type: str or ~azure.mgmt.automation.models.SourceType
-    :param description: Gets or sets the description.
+    :param description: The description.
     :type description: str
-    :param creation_time: Gets or sets the creation time.
+    :param creation_time: The creation time.
     :type creation_time: datetime
-    :param last_modified_time: Gets or sets the last modified time.
+    :param last_modified_time: The last modified time.
     :type last_modified_time: datetime
     """
 

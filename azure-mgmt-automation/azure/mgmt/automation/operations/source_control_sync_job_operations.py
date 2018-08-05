@@ -48,8 +48,8 @@ class SourceControlSyncJobOperations(object):
         :type source_control_name: str
         :param source_control_sync_job_id: The source control sync job id.
         :type source_control_sync_job_id: str
-        :param commit_id: Sets the commit id of the source control sync job.
-         If not syncing to a commitId, enter an empty string.
+        :param commit_id: The commit id of the source control sync job. If not
+         syncing to a commitId, enter an empty string.
         :type commit_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

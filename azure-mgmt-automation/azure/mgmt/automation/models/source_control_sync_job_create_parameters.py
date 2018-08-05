@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class SourceControlSyncJobCreateParameters(Model):
     """The parameters supplied to the create source control sync job operation.
 
-    :param commit_id: Sets the commit id of the source control sync job. If
-     not syncing to a commitId, enter an empty string.
+    :param commit_id: The commit id of the source control sync job. If not
+     syncing to a commitId, enter an empty string.
     :type commit_id: str
     """
 

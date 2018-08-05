@@ -15,30 +15,28 @@ from msrest.serialization import Model
 class SourceControlCreateOrUpdateParameters(Model):
     """The parameters supplied to the create or update source control operation.
 
-    :param repo_url: Gets or sets the repo url of the source control.
+    :param repo_url: The repo url of the source control.
     :type repo_url: str
-    :param branch: Gets or sets the repo branch of the source control. Include
-     branch as empty string for VsoTfvc.
+    :param branch: The repo branch of the source control. Include branch as
+     empty string for VsoTfvc.
     :type branch: str
-    :param folder_path: Gets or sets the folder path of the source control.
-     Path must be relative.
+    :param folder_path: The folder path of the source control. Path must be
+     relative.
     :type folder_path: str
-    :param auto_sync: Gets or sets auto async of the source control. Default
-     is false.
+    :param auto_sync: The auto async of the source control. Default is false.
     :type auto_sync: bool
-    :param publish_runbook: Gets or sets the auto publish of the source
-     control. Default is true.
+    :param publish_runbook: The auto publish of the source control. Default is
+     true.
     :type publish_runbook: bool
     :param source_type: The source type. Must be one of VsoGit, VsoTfvc,
      GitHub, case sensitive. Possible values include: 'VsoGit', 'VsoTfvc',
      'GitHub'
     :type source_type: str or ~azure.mgmt.automation.models.SourceType
-    :param security_token: Gets or sets the authorization token for the repo
-     of the source control.
+    :param security_token: The authorization token for the repo of the source
+     control.
     :type security_token:
      ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
-    :param description: Gets or sets the user description of the source
-     control.
+    :param description: The user description of the source control.
     :type description: str
     """
 

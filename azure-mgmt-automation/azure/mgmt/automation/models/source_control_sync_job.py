@@ -24,20 +24,20 @@ class SourceControlSyncJob(Model):
     :vartype type: str
     :ivar id: Resource id.
     :vartype id: str
-    :param source_control_sync_job_id: Gets the source control sync job id.
+    :param source_control_sync_job_id: The source control sync job id.
     :type source_control_sync_job_id: str
-    :ivar creation_time: Gets the creation time of the job.
+    :ivar creation_time: The creation time of the job.
     :vartype creation_time: datetime
-    :param provisioning_state: Gets the provisioning state of the job.
-     Possible values include: 'Completed', 'Failed', 'Running'
+    :param provisioning_state: The provisioning state of the job. Possible
+     values include: 'Completed', 'Failed', 'Running'
     :type provisioning_state: str or
      ~azure.mgmt.automation.models.ProvisioningState
-    :ivar start_time: Gets the start time of the job.
+    :ivar start_time: The start time of the job.
     :vartype start_time: datetime
-    :ivar end_time: Gets the end time of the job.
+    :ivar end_time: The end time of the job.
     :vartype end_time: datetime
-    :param start_type: Gets the type of start for the sync job. Possible
-     values include: 'AutoSync', 'ManualSync'
+    :param start_type: The type of start for the sync job. Possible values
+     include: 'AutoSync', 'ManualSync'
     :type start_type: str or ~azure.mgmt.automation.models.StartType
     """
 

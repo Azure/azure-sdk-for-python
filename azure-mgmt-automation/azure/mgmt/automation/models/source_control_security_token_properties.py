@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class SourceControlSecurityTokenProperties(Model):
     """SourceControlSecurityTokenProperties.
 
-    :param access_token: Gets or sets the access token.
+    :param access_token: The access token.
     :type access_token: str
-    :param refresh_token: Gets or sets the refresh token.
+    :param refresh_token: The refresh token.
     :type refresh_token: str
     :param token_type: The token type. Must be either PersonalAccessToken or
      Oauth. Possible values include: 'PersonalAccessToken', 'Oauth'
