@@ -15,14 +15,19 @@ from msrest.serialization import Model
 class SourceControlSyncJobCreateParameters(Model):
     """The parameters supplied to the create source control sync job operation.
 
-    :param commit_id: Sets the commit id of the source control sync job.
+    :param commit_id: Sets the commit id of the source control sync job. If
+     not syncing to a commitId, enter an empty string.
     :type commit_id: str
     """
+
+    _validation = {
+        'commit_id': {'required': True, 'min_length': 0},
+    }
 
     _attribute_map = {
         'commit_id': {'key': 'properties.commitId', 'type': 'str'},
     }
 
-    def __init__(self, commit_id=None):
+    def __init__(self, commit_id):
         super(SourceControlSyncJobCreateParameters, self).__init__()
         self.commit_id = commit_id

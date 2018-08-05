@@ -37,7 +37,7 @@ class SourceControlSyncJobOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, automation_account_name, source_control_name, source_control_sync_job_id, commit_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, source_control_name, source_control_sync_job_id, commit_id, custom_headers=None, raw=False, **operation_config):
         """Creates the sync job for a source control.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -49,6 +49,7 @@ class SourceControlSyncJobOperations(object):
         :param source_control_sync_job_id: The source control sync job id.
         :type source_control_sync_job_id: str
         :param commit_id: Sets the commit id of the source control sync job.
+         If not syncing to a commitId, enter an empty string.
         :type commit_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

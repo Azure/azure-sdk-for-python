@@ -35,7 +35,8 @@ class SourceControlCreateOrUpdateParameters(Model):
     :type source_type: str or ~azure.mgmt.automation.models.SourceType
     :param security_token: Gets or sets the authorization token for the repo
      of the source control.
-    :type security_token: str
+    :type security_token:
+     ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
     :param description: Gets or sets the user description of the source
      control.
     :type description: str
@@ -45,7 +46,6 @@ class SourceControlCreateOrUpdateParameters(Model):
         'repo_url': {'max_length': 2000},
         'branch': {'max_length': 255},
         'folder_path': {'max_length': 255},
-        'security_token': {'max_length': 1024},
         'description': {'max_length': 512},
     }
 
@@ -56,7 +56,7 @@ class SourceControlCreateOrUpdateParameters(Model):
         'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
         'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
         'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
+        'security_token': {'key': 'properties.securityToken', 'type': 'SourceControlSecurityTokenProperties'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 

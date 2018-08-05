@@ -20,8 +20,8 @@ class SourceControlSyncJobById(Model):
 
     :param id: Gets the id of the job.
     :type id: str
-    :param sync_job_id: Gets the source control sync job id.
-    :type sync_job_id: str
+    :param source_control_sync_job_id: Gets the source control sync job id.
+    :type source_control_sync_job_id: str
     :ivar creation_time: Gets the creation time of the job.
     :vartype creation_time: datetime
     :param provisioning_state: Gets the provisioning state of the job.
@@ -48,7 +48,7 @@ class SourceControlSyncJobById(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'sync_job_id': {'key': 'properties.syncJobId', 'type': 'str'},
+        'source_control_sync_job_id': {'key': 'properties.sourceControlSyncJobId', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
@@ -57,10 +57,10 @@ class SourceControlSyncJobById(Model):
         'exception': {'key': 'properties.exception', 'type': 'str'},
     }
 
-    def __init__(self, id=None, sync_job_id=None, provisioning_state=None, start_type=None, exception=None):
+    def __init__(self, id=None, source_control_sync_job_id=None, provisioning_state=None, start_type=None, exception=None):
         super(SourceControlSyncJobById, self).__init__()
         self.id = id
-        self.sync_job_id = sync_job_id
+        self.source_control_sync_job_id = source_control_sync_job_id
         self.creation_time = None
         self.provisioning_state = provisioning_state
         self.start_time = None
