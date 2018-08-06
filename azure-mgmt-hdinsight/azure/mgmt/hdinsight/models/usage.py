@@ -23,6 +23,12 @@ class Usage(Model):
     :type limit: int
     :param name: The details about the localizable name of the used resource.
     :type name: ~azure.mgmt.hdinsight.models.LocalizedName
+    :param new_prop: The details about the localizable name of the used
+     resource.
+    :type new_prop: ~azure.mgmt.hdinsight.models.LocalizedName
+    :param vm_size_filter: The details about the localizable name of the used
+     resource.
+    :type vm_size_filter: ~azure.mgmt.hdinsight.models.LocalizedName
     """
 
     _attribute_map = {
@@ -30,11 +36,15 @@ class Usage(Model):
         'current_value': {'key': 'currentValue', 'type': 'int'},
         'limit': {'key': 'limit', 'type': 'int'},
         'name': {'key': 'name', 'type': 'LocalizedName'},
+        'new_prop': {'key': 'newProp', 'type': 'LocalizedName'},
+        'vm_size_filter': {'key': 'vmSize_filter', 'type': 'LocalizedName'},
     }
 
-    def __init__(self, unit=None, current_value=None, limit=None, name=None):
+    def __init__(self, unit=None, current_value=None, limit=None, name=None, new_prop=None, vm_size_filter=None):
         super(Usage, self).__init__()
         self.unit = unit
         self.current_value = current_value
         self.limit = limit
         self.name = name
+        self.new_prop = new_prop
+        self.vm_size_filter = vm_size_filter
