@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TagsOperations(object):
-    """TagsOperations operations.
+class AggregatedcostByManagementGroupOperations(object):
+    """AggregatedcostByManagementGroupOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,27 +36,31 @@ class TagsOperations(object):
 
         self.config = config
 
-    def get(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Get all available tag keys for a billing account.
+    def by_billing_period(
+            self, billing_period_name, custom_headers=None, raw=False, **operation_config):
+        """Provides the aggregate cost of a management group and all child
+        management groups by specified billing period.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
+        :param billing_period_name: Billing Period Name.
+        :type billing_period_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TagsResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.TagsResult or
+        :return: ManagementGroupAggregatedCostResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.by_billing_period.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str'),
+            'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -84,11 +88,11 @@ class TagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TagsResult', response)
+            deserialized = self._deserialize('ManagementGroupAggregatedCostResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/tags'}
+    by_billing_period.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedcost'}

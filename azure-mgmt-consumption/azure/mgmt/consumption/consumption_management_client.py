@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from msrest.pipeline import ClientRawResponse
+import uuid
 from .operations.usage_details_operations import UsageDetailsOperations
 from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.balances_operations import BalancesOperations
@@ -25,6 +27,8 @@ from .operations.cost_tags_operations import CostTagsOperations
 from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
+from .operations.usage_details_by_management_group_operations import UsageDetailsByManagementGroupOperations
+from .operations.aggregatedcost_by_management_group_operations import AggregatedcostByManagementGroupOperations
 from . import models
 
 
@@ -38,16 +42,20 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param management_group_id: Azure Management Group ID.
+    :type management_group_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, management_group_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if management_group_id is None:
+            raise ValueError("Parameter 'management_group_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -58,6 +66,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.management_group_id = management_group_id
 
 
 class ConsumptionManagementClient(SDKClient):
@@ -90,19 +99,25 @@ class ConsumptionManagementClient(SDKClient):
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
+    :ivar usage_details_by_management_group: UsageDetailsByManagementGroup operations
+    :vartype usage_details_by_management_group: azure.mgmt.consumption.operations.UsageDetailsByManagementGroupOperations
+    :ivar aggregatedcost_by_management_group: AggregatedcostByManagementGroup operations
+    :vartype aggregatedcost_by_management_group: azure.mgmt.consumption.operations.AggregatedcostByManagementGroupOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param management_group_id: Azure Management Group ID.
+    :type management_group_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, management_group_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, management_group_id, base_url)
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -134,3 +149,65 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_management_group = UsageDetailsByManagementGroupOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.aggregatedcost_by_management_group = AggregatedcostByManagementGroupOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+
+    def aggregatedcost_by_management_group(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Provides the aggregate cost of a management group and all child
+        management groups by current billing period.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ManagementGroupAggregatedCostResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.aggregatedcost_by_management_group.metadata['url']
+        path_format_arguments = {
+            'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ManagementGroupAggregatedCostResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    aggregatedcost_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Consumption/aggregatedcost'}

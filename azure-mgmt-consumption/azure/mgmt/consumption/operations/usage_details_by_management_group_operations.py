@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ForecastsOperations(object):
-    """ForecastsOperations operations.
+class UsageDetailsByManagementGroupOperations(object):
+    """UsageDetailsByManagementGroupOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,40 +37,72 @@ class ForecastsOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the forecast charges by subscriptionId.
+            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the usage detail records for all subscriptions belonging to a
+        management group scope by current billing period. Usage details are
+        available via this API only for May 1, 2014 or later.
 
-        :param filter: May be used to filter forecasts by properties/usageDate
-         (Utc time), properties/chargeType or properties/grain. The filter
-         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
-         currently support 'ne', 'or', or 'not'.
+        :param expand: May be used to expand the
+         properties/additionalProperties or properties/meterDetails within a
+         list of usage details. By default, these fields are not included when
+         listing usage details.
+        :type expand: str
+        :param filter: May be used to filter usageDetails by
+         properties/usageEnd (Utc time), properties/usageStart (Utc time),
+         properties/resourceGroup, properties/instanceName,
+         properties/instanceId or tags. The filter supports 'eq', 'lt', 'gt',
+         'le', 'ge', and 'and'. It does not currently support 'ne', 'or', or
+         'not'. Tag filter is a key value pair string where key and value is
+         separated by a colon (:).
         :type filter: str
+        :param skiptoken: Skiptoken is only used if a previous operation
+         returned a partial result. If a previous response contains a nextLink
+         element, the value of the nextLink element will include a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
+        :param query_options: Additional parameters for the operation
+        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Forecast
+        :return: An iterator like instance of UsageDetail
         :rtype:
-         ~azure.mgmt.consumption.models.ForecastPaged[~azure.mgmt.consumption.models.Forecast]
+         ~azure.mgmt.consumption.models.UsageDetailPaged[~azure.mgmt.consumption.models.UsageDetail]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
+        apply = None
+        if query_options is not None:
+            apply = query_options.apply
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
             else:
                 url = next_link
@@ -96,12 +128,12 @@ class ForecastsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ForecastPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ForecastPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/forecasts'}
+    list.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Consumption/usageDetails'}

@@ -32,6 +32,7 @@ try:
     from .price_sheet_result_py3 import PriceSheetResult
     from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
     from .forecast_py3 import Forecast
+    from .management_group_aggregated_cost_result_py3 import ManagementGroupAggregatedCostResult
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .operation_display_py3 import OperationDisplay
@@ -63,6 +64,7 @@ except (SyntaxError, ImportError):
     from .price_sheet_result import PriceSheetResult
     from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
     from .forecast import Forecast
+    from .management_group_aggregated_cost_result import ManagementGroupAggregatedCostResult
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
     from .operation_display import OperationDisplay
@@ -113,6 +115,7 @@ __all__ = [
     'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
+    'ManagementGroupAggregatedCostResult',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',

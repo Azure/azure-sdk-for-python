@@ -21,6 +21,8 @@ from .cost_tags_operations import CostTagsOperations
 from .tags_operations import TagsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
+from .usage_details_by_management_group_operations import UsageDetailsByManagementGroupOperations
+from .aggregatedcost_by_management_group_operations import AggregatedcostByManagementGroupOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -35,4 +37,6 @@ __all__ = [
     'TagsOperations',
     'ForecastsOperations',
     'Operations',
+    'UsageDetailsByManagementGroupOperations',
+    'AggregatedcostByManagementGroupOperations',
 ]
