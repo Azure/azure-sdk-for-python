@@ -219,6 +219,12 @@ class SourceType(Enum):
     git_hub = "GitHub"
 
 
+class TokenType(Enum):
+
+    personal_access_token = "PersonalAccessToken"
+    oauth = "Oauth"
+
+
 class ProvisioningState(Enum):
 
     completed = "Completed"
