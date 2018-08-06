@@ -16,35 +16,32 @@ class Recurrence(Model):
     """The repeating times at which this profile begins. This element is not used
     if the FixedDate element is used.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar frequency: Required. the recurrence frequency. How often the
+    :param frequency: Required. the recurrence frequency. How often the
      schedule profile should take effect. This value must be Week, meaning each
      week will have the same set of profiles. For example, to set a daily
      schedule, set **schedule** to every day of the week. The frequency
-     property specifies that the schedule is repeated weekly. Default value:
-     "Week" .
-    :vartype frequency: str
+     property specifies that the schedule is repeated weekly. Possible values
+     include: 'None', 'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month',
+     'Year'
+    :type frequency: str or ~azure.mgmt.monitor.models.RecurrenceFrequency
     :param schedule: Required. the scheduling constraints for when the profile
      begins.
     :type schedule: ~azure.mgmt.monitor.models.RecurrentSchedule
     """
 
     _validation = {
-        'frequency': {'required': True, 'constant': True},
+        'frequency': {'required': True},
         'schedule': {'required': True},
     }
 
     _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'str'},
+        'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'schedule': {'key': 'schedule', 'type': 'RecurrentSchedule'},
     }
 
-    frequency = "Week"
-
     def __init__(self, **kwargs):
         super(Recurrence, self).__init__(**kwargs)
+        self.frequency = kwargs.get('frequency', None)
         self.schedule = kwargs.get('schedule', None)
