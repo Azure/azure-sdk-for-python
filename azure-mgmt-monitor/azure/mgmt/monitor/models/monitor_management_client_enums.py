@@ -53,6 +53,18 @@ class ScaleType(str, Enum):
     exact_count = "ExactCount"
 
 
+class RecurrenceFrequency(str, Enum):
+
+    none = "None"
+    second = "Second"
+    minute = "Minute"
+    hour = "Hour"
+    day = "Day"
+    week = "Week"
+    month = "Month"
+    year = "Year"
+
+
 class ConditionOperator(str, Enum):
 
     greater_than = "GreaterThan"
