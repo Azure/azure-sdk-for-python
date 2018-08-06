@@ -49,6 +49,10 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
 class KeyVaultClient(MultiApiClientMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
+    Implementation depends on the API version:
+
+         * 2016-10-01: :class:`v2016_10_01.KeyVaultClient<azure.keyvault.v2016_10_01.KeyVaultClient>`
+         * 7.0: :class:`v7_0.KeyVaultClient<azure.mgmt.keyvault.v7_0.KeyVaultClient>`
 
     :ivar config: Configuration for client.
     :vartype config: KeyVaultClientConfiguration
@@ -76,6 +80,7 @@ class KeyVaultClient(MultiApiClientMixin):
     def __init__(self, credentials, api_version=None, profile=KnownProfiles.default):
         self.config = KeyVaultClientConfiguration(credentials)
         self._client_impls = {}
+        self._entered = False
         super(KeyVaultClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -93,6 +98,10 @@ class KeyVaultClient(MultiApiClientMixin):
 
     @property
     def models(self):
+        """Module depends on the API version:
+            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault.v2016_10_01.models>`
+            * 7.0: :mod:`v7_0.models<azure.keyvault.v7_0.models>`
+         """
         api_version = self._get_api_version(None)
 
         if api_version == v7_0_VERSION:
@@ -100,47 +109,86 @@ class KeyVaultClient(MultiApiClientMixin):
         elif api_version == v2016_10_01_VERSION:
             from azure.keyvault.v2016_10_01 import models as implModels
         else:
-            raise ValueError('unrecognized api_version')
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return implModels
 
     def _get_client_impl(self):
+        """
+        Get the versioned client implementation corresponding to the current profile.
+        :return:  The versioned client implementation.
+        """
         api_version = self._get_api_version(None)
         if api_version not in self._client_impls:
-            self._client_impls[api_version] = self._create_client_impl(api_version)
+            self._create_client_impl(api_version)
         return self._client_impls[api_version]
 
     def _create_client_impl(self, api_version):
+        """
+        Creates the client implementation corresponding to the specifeid api_version.
+        :param api_version:
+        :return:
+        """
         if api_version == v7_0_VERSION:
             from azure.keyvault.v7_0 import KeyVaultClient as ImplClient
         elif api_version == v2016_10_01_VERSION:
             from azure.keyvault.v2016_10_01 import KeyVaultClient as ImplClient
         else:
-            raise ValueError('unrecognized api_version')
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
         impl = ImplClient(credentials=self._credentials)
-        if hasattr(impl, '__enter__'):
-            impl.__enter__()
         impl.config = self.config
 
+        # if __enter__ has previously been called and the impl client has __enter__ defined we need to call it
+        if self._entered and hasattr(impl, '__enter__'):
+            impl.__enter__()
+
+        self._client_impls[api_version] = impl
         return impl
 
     def __enter__(self, *args, **kwargs):
+        """
+        Calls __enter__ on all client implementations which support it
+        :param args: positional arguments to relay to client implementations of __enter__
+        :param kwargs: keyword arguments to relay to client implementations of __enter__
+        :return: returns the current KeyVaultClient instance
+        """
         for _, impl in self._client_impls.items():
             if hasattr(impl, '__enter__'):
                 impl.__enter__(*args, **kwargs)
+        # mark the current KeyVaultClient as _entered so that client implementations instantiated
+        # subsequently will also have __enter__ called on them as appropriate
+        self._entered = True
         return self
 
     def __exit__(self, *args, **kwargs):
+        """
+        Calls __exit__ on all client implementations which support it
+        :param args: positional arguments to relay to client implementations of __enter__
+        :param kwargs: keyword arguments to relay to client implementations of __enter__
+        :return: returns the current KeyVaultClient instance
+        """
         for _, impl in self._client_impls.items():
             if hasattr(impl, '__exit__'):
                 impl.__exit__(*args, **kwargs)
         return self
 
-    def __getattr__(self, name, *args, **kwargs):
+    def __getattr__(self, name):
+        """
+        In the case that the attribute is not defined on the custom KeyVaultClient.  Attempt to get
+        the attribute from the versioned client implementation corresponding to the current profile.
+        :param name: Name of the attribute retrieve from the current versioned client implementation
+        :return: The value of the specified attribute on the current client implementation.
+        """
         impl = self._get_client_impl()
         return getattr(impl, name)
 
     def __setattr__(self, name, attr):
+        """
+        Sets the specified attribute either on the custom KeyVaultClient or the current underlying implementation.
+        :param name: Name of the attribute to set
+        :param attr: Value of the attribute to set
+        :return: None
+        """
         if self._init_complete and not hasattr(self, name):
             impl = self._get_client_impl()
             setattr(impl, name, attr)
@@ -179,7 +227,6 @@ class KeyVaultClient(MultiApiClientMixin):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         header_parameters['Accept'] = 'application/pkcs10'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -189,8 +236,8 @@ class KeyVaultClient(MultiApiClientMixin):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise self.models.KeyVaultErrorException(self._deserialize, response)
@@ -198,7 +245,7 @@ class KeyVaultClient(MultiApiClientMixin):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = response.content
+            deserialized = response.body() if hasattr(response, 'body') else response.content
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
