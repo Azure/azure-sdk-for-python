@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class FacebookPage(Model):
     """A Facebook page for Facebook channel registration.
 
-    :param id: Page id
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Page id
     :type id: str
-    :param access_token: Facebook application access token. Value only
-     returned through POST to the action Channel List API, otherwise empty.
+    :param access_token: Required. Facebook application access token. Value
+     only returned through POST to the action Channel List API, otherwise
+     empty.
     :type access_token: str
     """
 
@@ -32,7 +35,7 @@ class FacebookPage(Model):
         'access_token': {'key': 'accessToken', 'type': 'str'},
     }
 
-    def __init__(self, id, access_token):
-        super(FacebookPage, self).__init__()
-        self.id = id
-        self.access_token = access_token
+    def __init__(self, **kwargs):
+        super(FacebookPage, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.access_token = kwargs.get('access_token', None)

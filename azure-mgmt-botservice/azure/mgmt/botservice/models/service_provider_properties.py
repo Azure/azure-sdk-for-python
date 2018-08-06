@@ -50,11 +50,11 @@ class ServiceProviderProperties(Model):
         'parameters': {'key': 'parameters', 'type': '[ServiceProviderParameter]'},
     }
 
-    def __init__(self, parameters=None):
-        super(ServiceProviderProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServiceProviderProperties, self).__init__(**kwargs)
         self.id = None
         self.display_name = None
         self.service_provider_name = None
         self.dev_portal_url = None
         self.icon_url = None
-        self.parameters = parameters
+        self.parameters = kwargs.get('parameters', None)

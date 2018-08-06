@@ -50,8 +50,8 @@ class ServiceProviderParameter(Model):
         'default': {'key': 'default', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ServiceProviderParameter, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServiceProviderParameter, self).__init__(**kwargs)
         self.name = None
         self.type = None
         self.display_name = None

@@ -30,7 +30,7 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name,
             parameters = Bot(
                 location= location,
-                sku = sku.Sku(sku_name),
+                sku = sku.Sku(name=sku_name),
                 kind= kind,
                 properties= BotProperties(
                     display_name = display_name,

@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class MsTeamsChannelProperties(Model):
     """The parameters to provide for the Microsoft Teams channel.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param enable_calling: Enable calling for Microsoft Teams channel
     :type enable_calling: bool
     :param calling_web_hook: Webhook for Microsoft Teams channel calls
     :type calling_web_hook: str
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -33,8 +35,8 @@ class MsTeamsChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, is_enabled, enable_calling=None, calling_web_hook=None):
-        super(MsTeamsChannelProperties, self).__init__()
-        self.enable_calling = enable_calling
-        self.calling_web_hook = calling_web_hook
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(MsTeamsChannelProperties, self).__init__(**kwargs)
+        self.enable_calling = kwargs.get('enable_calling', None)
+        self.calling_web_hook = kwargs.get('calling_web_hook', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

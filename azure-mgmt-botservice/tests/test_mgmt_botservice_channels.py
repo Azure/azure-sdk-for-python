@@ -31,7 +31,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name,
             parameters = Bot(
                 location= location,
-                sku = sku.Sku(sku_name),
+                sku = sku.Sku(name=sku_name),
                 kind= kind,
                 properties= BotProperties(
                     display_name = display_name,
@@ -204,7 +204,11 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         self.resource_group_name = resource_group.name
         channel = DirectLineChannel(
             properties=DirectLineChannelProperties(
-                sites=[DirectLineSite('default', True, False, True)]
+                sites=[DirectLineSite(
+                    site_name='default',
+                    is_enabled=True,
+                    is_v1_enabled=False,
+                    is_v3_enabled=True)]
             )
         )
 

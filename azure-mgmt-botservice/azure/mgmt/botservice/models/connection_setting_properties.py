@@ -53,12 +53,12 @@ class ConnectionSettingProperties(Model):
         'parameters': {'key': 'parameters', 'type': '[ConnectionSettingParameter]'},
     }
 
-    def __init__(self, client_id=None, client_secret=None, scopes=None, service_provider_id=None, service_provider_display_name=None, parameters=None):
-        super(ConnectionSettingProperties, self).__init__()
-        self.client_id = client_id
+    def __init__(self, **kwargs):
+        super(ConnectionSettingProperties, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
         self.setting_id = None
-        self.client_secret = client_secret
-        self.scopes = scopes
-        self.service_provider_id = service_provider_id
-        self.service_provider_display_name = service_provider_display_name
-        self.parameters = parameters
+        self.client_secret = kwargs.get('client_secret', None)
+        self.scopes = kwargs.get('scopes', None)
+        self.service_provider_id = kwargs.get('service_provider_id', None)
+        self.service_provider_display_name = kwargs.get('service_provider_display_name', None)
+        self.parameters = kwargs.get('parameters', None)

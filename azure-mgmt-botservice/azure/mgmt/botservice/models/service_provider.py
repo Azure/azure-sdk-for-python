@@ -23,6 +23,6 @@ class ServiceProvider(Model):
         'properties': {'key': 'properties', 'type': 'ServiceProviderProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(ServiceProvider, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ServiceProvider, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

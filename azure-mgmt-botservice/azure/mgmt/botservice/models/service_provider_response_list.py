@@ -35,7 +35,7 @@ class ServiceProviderResponseList(Model):
         'value': {'key': 'value', 'type': '[ServiceProvider]'},
     }
 
-    def __init__(self, next_link=None):
-        super(ServiceProviderResponseList, self).__init__()
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(ServiceProviderResponseList, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
         self.value = None

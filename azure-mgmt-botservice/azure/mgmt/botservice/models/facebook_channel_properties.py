@@ -18,19 +18,21 @@ class FacebookChannelProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar verify_token: Verify token. Value only returned through POST to the
      action Channel List API, otherwise empty.
     :vartype verify_token: str
     :param pages: The list of Facebook pages
     :type pages: list[~azure.mgmt.botservice.models.FacebookPage]
-    :param app_id: Facebook application id
+    :param app_id: Required. Facebook application id
     :type app_id: str
-    :param app_secret: Facebook application secret. Value only returned
-     through POST to the action Channel List API, otherwise empty.
+    :param app_secret: Required. Facebook application secret. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type app_secret: str
     :ivar callback_url: Callback Url
     :vartype callback_url: str
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -51,11 +53,11 @@ class FacebookChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, app_id, app_secret, is_enabled, pages=None):
-        super(FacebookChannelProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(FacebookChannelProperties, self).__init__(**kwargs)
         self.verify_token = None
-        self.pages = pages
-        self.app_id = app_id
-        self.app_secret = app_secret
+        self.pages = kwargs.get('pages', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.app_secret = kwargs.get('app_secret', None)
         self.callback_url = None
-        self.is_enabled = is_enabled
+        self.is_enabled = kwargs.get('is_enabled', None)

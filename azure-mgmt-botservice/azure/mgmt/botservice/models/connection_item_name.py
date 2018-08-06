@@ -30,6 +30,6 @@ class ConnectionItemName(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ConnectionItemName, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConnectionItemName, self).__init__(**kwargs)
         self.name = None
