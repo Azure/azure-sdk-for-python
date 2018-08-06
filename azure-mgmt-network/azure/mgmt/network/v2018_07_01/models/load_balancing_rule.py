@@ -55,6 +55,10 @@ class LoadBalancingRule(SubResource):
      Groups in SQL server. This setting can't be changed after you create the
      endpoint.
     :type enable_floating_ip: bool
+    :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle
+     timeout or unexpected connection termination. This element is only used
+     when the protocol is set to TCP.
+    :type enable_tcp_reset: bool
     :param disable_outbound_snat: Configures SNAT for the VMs in the backend
      pool to use the publicIP address specified in the frontend of the load
      balancing rule.
@@ -86,6 +90,7 @@ class LoadBalancingRule(SubResource):
         'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
+        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
         'disable_outbound_snat': {'key': 'properties.disableOutboundSnat', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -103,6 +108,7 @@ class LoadBalancingRule(SubResource):
         self.backend_port = kwargs.get('backend_port', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
+        self.enable_tcp_reset = kwargs.get('enable_tcp_reset', None)
         self.disable_outbound_snat = kwargs.get('disable_outbound_snat', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)

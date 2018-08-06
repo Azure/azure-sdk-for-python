@@ -48,6 +48,10 @@ class InboundNatRule(SubResource):
      Groups in SQL server. This setting can't be changed after you create the
      endpoint.
     :type enable_floating_ip: bool
+    :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle
+     timeout or unexpected connection termination. This element is only used
+     when the protocol is set to TCP.
+    :type enable_tcp_reset: bool
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -72,12 +76,13 @@ class InboundNatRule(SubResource):
         'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
+        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, frontend_ip_configuration=None, protocol=None, frontend_port: int=None, backend_port: int=None, idle_timeout_in_minutes: int=None, enable_floating_ip: bool=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, frontend_ip_configuration=None, protocol=None, frontend_port: int=None, backend_port: int=None, idle_timeout_in_minutes: int=None, enable_floating_ip: bool=None, enable_tcp_reset: bool=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(InboundNatRule, self).__init__(id=id, **kwargs)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.backend_ip_configuration = None
@@ -86,6 +91,7 @@ class InboundNatRule(SubResource):
         self.backend_port = backend_port
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.enable_floating_ip = enable_floating_ip
+        self.enable_tcp_reset = enable_tcp_reset
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
