@@ -12,30 +12,24 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """HANA operation information.
+class IpAddress(Model):
+    """Specifies the IP address of the network interaface.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the operation being performed on this particular
-     object. This name should match the action name that appears in RBAC / the
-     event service.
-    :vartype name: str
-    :param display: Displayed HANA operation information
-    :type display: ~azure.mgmt.hanaonazure.models.Display
+    :ivar ip_address: Specifies the IP address of the network interface.
+    :vartype ip_address: str
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'ip_address': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'Display'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
-        self.display = kwargs.get('display', None)
+    def __init__(self, **kwargs) -> None:
+        super(IpAddress, self).__init__(**kwargs)
+        self.ip_address = None

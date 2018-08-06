@@ -40,7 +40,7 @@ class HardwareProfile(Model):
         'hana_instance_size': {'key': 'hanaInstanceSize', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(HardwareProfile, self).__init__(**kwargs)
         self.hardware_type = None
         self.hana_instance_size = None
