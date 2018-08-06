@@ -10,13 +10,15 @@
 # --------------------------------------------------------------------------
 
 from .bots_operations import BotsOperations
-from .bot_services_operations import BotServicesOperations
 from .channels_operations import ChannelsOperations
 from .operations import Operations
+from .bot_connection_operations import BotConnectionOperations
+from .enterprise_channels_operations import EnterpriseChannelsOperations
 
 __all__ = [
     'BotsOperations',
-    'BotServicesOperations',
     'ChannelsOperations',
     'Operations',
+    'BotConnectionOperations',
+    'EnterpriseChannelsOperations',
 ]

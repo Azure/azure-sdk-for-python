@@ -23,5 +23,6 @@ class DirectLineChannelProperties(Model):
         'sites': {'key': 'sites', 'type': '[DirectLineSite]'},
     }
 
-    def __init__(self, sites=None):
-        self.sites = sites
+    def __init__(self, **kwargs):
+        super(DirectLineChannelProperties, self).__init__(**kwargs)
+        self.sites = kwargs.get('sites', None)
