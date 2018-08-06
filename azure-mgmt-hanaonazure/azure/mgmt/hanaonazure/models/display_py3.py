@@ -58,7 +58,7 @@ class Display(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Display, self).__init__(**kwargs)
         self.provider = None
         self.resource = None

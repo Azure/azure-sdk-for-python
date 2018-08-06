@@ -35,7 +35,7 @@ class NetworkProfile(Model):
         'circuit_id': {'key': 'circuitId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, network_interfaces=None, **kwargs) -> None:
         super(NetworkProfile, self).__init__(**kwargs)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = network_interfaces
         self.circuit_id = None
