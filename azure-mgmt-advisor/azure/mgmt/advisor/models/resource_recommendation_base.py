@@ -49,6 +49,8 @@ class ResourceRecommendationBase(Resource):
     :param suppression_ids: The list of snoozed and dismissed rules for the
      recommendation.
     :type suppression_ids: list[str]
+    :param extended_properties: Extended properties
+    :type extended_properties: dict[str, str]
     """
 
     _validation = {
@@ -71,6 +73,7 @@ class ResourceRecommendationBase(Resource):
         'risk': {'key': 'properties.risk', 'type': 'str'},
         'short_description': {'key': 'properties.shortDescription', 'type': 'ShortDescription'},
         'suppression_ids': {'key': 'properties.suppressionIds', 'type': '[str]'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -85,3 +88,4 @@ class ResourceRecommendationBase(Resource):
         self.risk = kwargs.get('risk', None)
         self.short_description = kwargs.get('short_description', None)
         self.suppression_ids = kwargs.get('suppression_ids', None)
+        self.extended_properties = kwargs.get('extended_properties', None)
