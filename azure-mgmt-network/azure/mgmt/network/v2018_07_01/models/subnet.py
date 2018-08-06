@@ -31,6 +31,9 @@ class Subnet(SubResource):
     :param service_endpoints: An array of service endpoints.
     :type service_endpoints:
      list[~azure.mgmt.network.v2018_07_01.models.ServiceEndpointPropertiesFormat]
+    :param service_endpoint_policies: An array of service endpoint policies.
+    :type service_endpoint_policies:
+     list[~azure.mgmt.network.v2018_07_01.models.ServiceEndpointPolicy]
     :ivar ip_configurations: Gets an array of references to the network
      interface IP configurations using subnet.
     :vartype ip_configurations:
@@ -59,6 +62,7 @@ class Subnet(SubResource):
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
         'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
+        'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -72,6 +76,7 @@ class Subnet(SubResource):
         self.network_security_group = kwargs.get('network_security_group', None)
         self.route_table = kwargs.get('route_table', None)
         self.service_endpoints = kwargs.get('service_endpoints', None)
+        self.service_endpoint_policies = kwargs.get('service_endpoint_policies', None)
         self.ip_configurations = None
         self.resource_navigation_links = kwargs.get('resource_navigation_links', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)

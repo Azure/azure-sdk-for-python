@@ -1778,6 +1778,32 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def service_endpoint_policies(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2018_07_01.operations.ServiceEndpointPoliciesOperations>`
+        """
+        api_version = self._get_api_version('service_endpoint_policies')
+        if api_version == '2018-07-01':
+            from .v2018_07_01.operations import ServiceEndpointPoliciesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def service_endpoint_policy_definitions(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2018_07_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
+        """
+        api_version = self._get_api_version('service_endpoint_policy_definitions')
+        if api_version == '2018-07-01':
+            from .v2018_07_01.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def subnets(self):
         """Instance depends on the API version:
 

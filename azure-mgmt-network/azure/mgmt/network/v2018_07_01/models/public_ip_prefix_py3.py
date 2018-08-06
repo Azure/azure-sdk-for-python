@@ -43,8 +43,6 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2018_07_01.models.ReferencedPublicIpAddress]
-    :param idle_timeout_in_minutes: The idle timeout of the public IP prefix.
-    :type idle_timeout_in_minutes: int
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -76,14 +74,13 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, public_ip_address_version=None, ip_tags=None, prefix_length: int=None, ip_prefix: str=None, public_ip_addresses=None, idle_timeout_in_minutes: int=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, public_ip_address_version=None, ip_tags=None, prefix_length: int=None, ip_prefix: str=None, public_ip_addresses=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(PublicIPPrefix, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.public_ip_address_version = public_ip_address_version
@@ -91,7 +88,6 @@ class PublicIPPrefix(Resource):
         self.prefix_length = prefix_length
         self.ip_prefix = ip_prefix
         self.public_ip_addresses = public_ip_addresses
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

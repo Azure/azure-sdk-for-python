@@ -55,6 +55,10 @@ class LoadBalancingRule(SubResource):
      Groups in SQL server. This setting can't be changed after you create the
      endpoint.
     :type enable_floating_ip: bool
+    :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle
+     timeout or unexpected connection termination. This element is only used
+     when the protocol is set to TCP.
+    :type enable_tcp_reset: bool
     :param disable_outbound_snat: Configures SNAT for the VMs in the backend
      pool to use the publicIP address specified in the frontend of the load
      balancing rule.
@@ -86,13 +90,14 @@ class LoadBalancingRule(SubResource):
         'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
+        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
         'disable_outbound_snat': {'key': 'properties.disableOutboundSnat', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, protocol, frontend_port: int, id: str=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port: int=None, idle_timeout_in_minutes: int=None, enable_floating_ip: bool=None, disable_outbound_snat: bool=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, protocol, frontend_port: int, id: str=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port: int=None, idle_timeout_in_minutes: int=None, enable_floating_ip: bool=None, enable_tcp_reset: bool=None, disable_outbound_snat: bool=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(LoadBalancingRule, self).__init__(id=id, **kwargs)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.backend_address_pool = backend_address_pool
@@ -103,6 +108,7 @@ class LoadBalancingRule(SubResource):
         self.backend_port = backend_port
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.enable_floating_ip = enable_floating_ip
+        self.enable_tcp_reset = enable_tcp_reset
         self.disable_outbound_snat = disable_outbound_snat
         self.provisioning_state = provisioning_state
         self.name = name
