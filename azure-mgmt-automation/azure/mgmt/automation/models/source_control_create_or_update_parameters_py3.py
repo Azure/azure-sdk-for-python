@@ -15,29 +15,28 @@ from msrest.serialization import Model
 class SourceControlCreateOrUpdateParameters(Model):
     """The parameters supplied to the create or update source control operation.
 
-    :param repo_url: Gets or sets the repo url of the source control.
+    :param repo_url: The repo url of the source control.
     :type repo_url: str
-    :param branch: Gets or sets the repo branch of the source control. Include
-     branch as empty string for VsoTfvc.
+    :param branch: The repo branch of the source control. Include branch as
+     empty string for VsoTfvc.
     :type branch: str
-    :param folder_path: Gets or sets the folder path of the source control.
-     Path must be relative.
+    :param folder_path: The folder path of the source control. Path must be
+     relative.
     :type folder_path: str
-    :param auto_sync: Gets or sets auto async of the source control. Default
-     is false.
+    :param auto_sync: The auto async of the source control. Default is false.
     :type auto_sync: bool
-    :param publish_runbook: Gets or sets the auto publish of the source
-     control. Default is true.
+    :param publish_runbook: The auto publish of the source control. Default is
+     true.
     :type publish_runbook: bool
     :param source_type: The source type. Must be one of VsoGit, VsoTfvc,
      GitHub, case sensitive. Possible values include: 'VsoGit', 'VsoTfvc',
      'GitHub'
     :type source_type: str or ~azure.mgmt.automation.models.SourceType
-    :param security_token: Gets or sets the authorization token for the repo
-     of the source control.
-    :type security_token: str
-    :param description: Gets or sets the user description of the source
+    :param security_token: The authorization token for the repo of the source
      control.
+    :type security_token:
+     ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
+    :param description: The user description of the source control.
     :type description: str
     """
 
@@ -45,7 +44,6 @@ class SourceControlCreateOrUpdateParameters(Model):
         'repo_url': {'max_length': 2000},
         'branch': {'max_length': 255},
         'folder_path': {'max_length': 255},
-        'security_token': {'max_length': 1024},
         'description': {'max_length': 512},
     }
 
@@ -56,11 +54,11 @@ class SourceControlCreateOrUpdateParameters(Model):
         'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
         'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
         'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
+        'security_token': {'key': 'properties.securityToken', 'type': 'SourceControlSecurityTokenProperties'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, repo_url: str=None, branch: str=None, folder_path: str=None, auto_sync: bool=None, publish_runbook: bool=None, source_type=None, security_token: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, repo_url: str=None, branch: str=None, folder_path: str=None, auto_sync: bool=None, publish_runbook: bool=None, source_type=None, security_token=None, description: str=None, **kwargs) -> None:
         super(SourceControlCreateOrUpdateParameters, self).__init__(**kwargs)
         self.repo_url = repo_url
         self.branch = branch

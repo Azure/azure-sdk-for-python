@@ -20,13 +20,13 @@ class SourceControlSyncJobStream(Model):
 
     :ivar id: Resource id.
     :vartype id: str
-    :param sync_job_stream_id: Gets the sync job stream id.
+    :param sync_job_stream_id: The sync job stream id.
     :type sync_job_stream_id: str
-    :param summary: Gets the summary of the sync job stream.
+    :param summary: The summary of the sync job stream.
     :type summary: str
-    :ivar time: Gets the time of the sync job stream.
+    :ivar time: The time of the sync job stream.
     :vartype time: datetime
-    :param stream_type: Gets the type of the sync job stream. Possible values
+    :param stream_type: The type of the sync job stream. Possible values
      include: 'Error', 'Output'
     :type stream_type: str or ~azure.mgmt.automation.models.StreamType
     """

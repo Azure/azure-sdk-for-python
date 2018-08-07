@@ -52,15 +52,15 @@ class Review(Model):
         'callback_endpoint': {'key': 'CallbackEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, review_id=None, sub_team=None, status=None, reviewer_result_tags=None, created_by=None, metadata=None, type=None, content=None, content_id=None, callback_endpoint=None):
-        super(Review, self).__init__()
-        self.review_id = review_id
-        self.sub_team = sub_team
-        self.status = status
-        self.reviewer_result_tags = reviewer_result_tags
-        self.created_by = created_by
-        self.metadata = metadata
-        self.type = type
-        self.content = content
-        self.content_id = content_id
-        self.callback_endpoint = callback_endpoint
+    def __init__(self, **kwargs):
+        super(Review, self).__init__(**kwargs)
+        self.review_id = kwargs.get('review_id', None)
+        self.sub_team = kwargs.get('sub_team', None)
+        self.status = kwargs.get('status', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
+        self.created_by = kwargs.get('created_by', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.type = kwargs.get('type', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)

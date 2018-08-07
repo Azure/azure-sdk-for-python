@@ -26,7 +26,7 @@ class Candidate(Model):
         'confidence': {'key': 'Confidence', 'type': 'float'},
     }
 
-    def __init__(self, text=None, confidence=None):
-        super(Candidate, self).__init__()
-        self.text = text
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(Candidate, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.confidence = kwargs.get('confidence', None)

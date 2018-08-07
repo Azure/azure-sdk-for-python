@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class NameAndUserDataContract(Model):
     """A combination of user defined name and user specified data for the person,
-    personGroup, and faceList.
+    largePersonGroup/personGroup, and largeFaceList/faceList.
 
     :param name: User defined name, maximum length is 128.
     :type name: str

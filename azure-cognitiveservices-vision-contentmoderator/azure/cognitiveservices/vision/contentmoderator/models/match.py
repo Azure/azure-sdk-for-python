@@ -35,10 +35,10 @@ class Match(Model):
         'label': {'key': 'Label', 'type': 'str'},
     }
 
-    def __init__(self, score=None, match_id=None, source=None, tags=None, label=None):
-        super(Match, self).__init__()
-        self.score = score
-        self.match_id = match_id
-        self.source = source
-        self.tags = tags
-        self.label = label
+    def __init__(self, **kwargs):
+        super(Match, self).__init__(**kwargs)
+        self.score = kwargs.get('score', None)
+        self.match_id = kwargs.get('match_id', None)
+        self.source = kwargs.get('source', None)
+        self.tags = kwargs.get('tags', None)
+        self.label = kwargs.get('label', None)

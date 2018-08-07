@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class CreateVideoReviewsBodyItemVideoFramesItemMetadataItem(Model):
     """CreateVideoReviewsBodyItemVideoFramesItemMetadataItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -31,7 +33,7 @@ class CreateVideoReviewsBodyItemVideoFramesItemMetadataItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(CreateVideoReviewsBodyItemVideoFramesItemMetadataItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemVideoFramesItemMetadataItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

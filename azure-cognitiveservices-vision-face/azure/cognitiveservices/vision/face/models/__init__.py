@@ -42,7 +42,9 @@ try:
     from .face_list_py3 import FaceList
     from .person_group_py3 import PersonGroup
     from .person_py3 import Person
-    from .update_person_face_request_py3 import UpdatePersonFaceRequest
+    from .large_face_list_py3 import LargeFaceList
+    from .large_person_group_py3 import LargePersonGroup
+    from .update_face_request_py3 import UpdateFaceRequest
     from .training_status_py3 import TrainingStatus
     from .name_and_user_data_contract_py3 import NameAndUserDataContract
     from .image_url_py3 import ImageUrl
@@ -79,7 +81,9 @@ except (SyntaxError, ImportError):
     from .face_list import FaceList
     from .person_group import PersonGroup
     from .person import Person
-    from .update_person_face_request import UpdatePersonFaceRequest
+    from .large_face_list import LargeFaceList
+    from .large_person_group import LargePersonGroup
+    from .update_face_request import UpdateFaceRequest
     from .training_status import TrainingStatus
     from .name_and_user_data_contract import NameAndUserDataContract
     from .image_url import ImageUrl
@@ -129,7 +133,9 @@ __all__ = [
     'FaceList',
     'PersonGroup',
     'Person',
-    'UpdatePersonFaceRequest',
+    'LargeFaceList',
+    'LargePersonGroup',
+    'UpdateFaceRequest',
     'TrainingStatus',
     'NameAndUserDataContract',
     'ImageUrl',

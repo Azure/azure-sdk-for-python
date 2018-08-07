@@ -20,19 +20,19 @@ class SourceControlSyncJobStreamById(Model):
 
     :ivar id: Resource id.
     :vartype id: str
-    :param sync_job_stream_id: Gets the sync job stream id.
+    :param sync_job_stream_id: The sync job stream id.
     :type sync_job_stream_id: str
-    :param summary: Gets the summary of the sync job stream.
+    :param summary: The summary of the sync job stream.
     :type summary: str
-    :ivar time: Gets the time of the sync job stream.
+    :ivar time: The time of the sync job stream.
     :vartype time: datetime
-    :param stream_type: Gets the type of the sync job stream. Possible values
+    :param stream_type: The type of the sync job stream. Possible values
      include: 'Error', 'Output'
     :type stream_type: str or ~azure.mgmt.automation.models.StreamType
-    :param stream_text: Gets the text of the sync job stream.
+    :param stream_text: The text of the sync job stream.
     :type stream_text: str
-    :param value: Gets the value of the sync job stream.
-    :type value: str
+    :param value: The values of the job stream.
+    :type value: dict[str, object]
     """
 
     _validation = {
@@ -47,10 +47,10 @@ class SourceControlSyncJobStreamById(Model):
         'time': {'key': 'properties.time', 'type': 'iso-8601'},
         'stream_type': {'key': 'properties.streamType', 'type': 'str'},
         'stream_text': {'key': 'properties.streamText', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': '{object}'},
     }
 
-    def __init__(self, *, sync_job_stream_id: str=None, summary: str=None, stream_type=None, stream_text: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, *, sync_job_stream_id: str=None, summary: str=None, stream_type=None, stream_text: str=None, value=None, **kwargs) -> None:
         super(SourceControlSyncJobStreamById, self).__init__(**kwargs)
         self.id = None
         self.sync_job_stream_id = sync_job_stream_id

@@ -90,8 +90,8 @@ class PersonGroupOperations(object):
 
     def delete(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing person group. Persisted face images of all people in
-        the person group will also be deleted.
+        """Delete an existing person group. Persisted face features of all people
+        in the person group will also be deleted.
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str

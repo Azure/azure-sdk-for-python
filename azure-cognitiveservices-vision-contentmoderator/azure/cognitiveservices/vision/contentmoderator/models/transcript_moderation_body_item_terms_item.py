@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class TranscriptModerationBodyItemTermsItem(Model):
     """TranscriptModerationBodyItemTermsItem.
 
-    :param index: Index of the word
+    All required parameters must be populated in order to send to Azure.
+
+    :param index: Required. Index of the word
     :type index: int
-    :param term: Detected word.
+    :param term: Required. Detected word.
     :type term: str
     """
 
@@ -31,7 +33,7 @@ class TranscriptModerationBodyItemTermsItem(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, index, term):
-        super(TranscriptModerationBodyItemTermsItem, self).__init__()
-        self.index = index
-        self.term = term
+    def __init__(self, **kwargs):
+        super(TranscriptModerationBodyItemTermsItem, self).__init__(**kwargs)
+        self.index = kwargs.get('index', None)
+        self.term = kwargs.get('term', None)

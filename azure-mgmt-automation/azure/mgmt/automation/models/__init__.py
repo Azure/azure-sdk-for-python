@@ -104,6 +104,7 @@ try:
     from .software_update_configuration_machine_run_py3 import SoftwareUpdateConfigurationMachineRun
     from .software_update_configuration_machine_run_list_result_py3 import SoftwareUpdateConfigurationMachineRunListResult
     from .source_control_py3 import SourceControl
+    from .source_control_security_token_properties_py3 import SourceControlSecurityTokenProperties
     from .source_control_update_parameters_py3 import SourceControlUpdateParameters
     from .source_control_create_or_update_parameters_py3 import SourceControlCreateOrUpdateParameters
     from .source_control_sync_job_py3 import SourceControlSyncJob
@@ -229,6 +230,7 @@ except (SyntaxError, ImportError):
     from .software_update_configuration_machine_run import SoftwareUpdateConfigurationMachineRun
     from .software_update_configuration_machine_run_list_result import SoftwareUpdateConfigurationMachineRunListResult
     from .source_control import SourceControl
+    from .source_control_security_token_properties import SourceControlSecurityTokenProperties
     from .source_control_update_parameters import SourceControlUpdateParameters
     from .source_control_create_or_update_parameters import SourceControlCreateOrUpdateParameters
     from .source_control_sync_job import SourceControlSyncJob
@@ -308,6 +310,7 @@ from .automation_client_enums import (
     WindowsUpdateClasses,
     LinuxUpdateClasses,
     SourceType,
+    TokenType,
     ProvisioningState,
     StartType,
     StreamType,
@@ -412,6 +415,7 @@ __all__ = [
     'SoftwareUpdateConfigurationMachineRun',
     'SoftwareUpdateConfigurationMachineRunListResult',
     'SourceControl',
+    'SourceControlSecurityTokenProperties',
     'SourceControlUpdateParameters',
     'SourceControlCreateOrUpdateParameters',
     'SourceControlSyncJob',
@@ -490,6 +494,7 @@ __all__ = [
     'WindowsUpdateClasses',
     'LinuxUpdateClasses',
     'SourceType',
+    'TokenType',
     'ProvisioningState',
     'StartType',
     'StreamType',

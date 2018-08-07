@@ -15,22 +15,21 @@ from msrest.serialization import Model
 class SourceControlUpdateParameters(Model):
     """The parameters supplied to the update source control operation.
 
-    :param branch: Gets or sets the repo branch of the source control.
+    :param branch: The repo branch of the source control.
     :type branch: str
-    :param folder_path: Gets or sets the folder path of the source control.
-     Path must be relative.
+    :param folder_path: The folder path of the source control. Path must be
+     relative.
     :type folder_path: str
-    :param auto_sync: Gets or sets auto async of the source control. Default
-     is false.
+    :param auto_sync: The auto sync of the source control. Default is false.
     :type auto_sync: bool
-    :param publish_runbook: Gets or sets the auto publish of the source
-     control. Default is true.
+    :param publish_runbook: The auto publish of the source control. Default is
+     true.
     :type publish_runbook: bool
-    :param security_token: Gets or sets the authorization token for the repo
-     of the source control.
-    :type security_token: str
-    :param description: Gets or sets the user description of the source
+    :param security_token: The authorization token for the repo of the source
      control.
+    :type security_token:
+     ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
+    :param description: The user description of the source control.
     :type description: str
     """
 
@@ -39,11 +38,11 @@ class SourceControlUpdateParameters(Model):
         'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
         'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
         'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
+        'security_token': {'key': 'properties.securityToken', 'type': 'SourceControlSecurityTokenProperties'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, branch: str=None, folder_path: str=None, auto_sync: bool=None, publish_runbook: bool=None, security_token: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, branch: str=None, folder_path: str=None, auto_sync: bool=None, publish_runbook: bool=None, security_token=None, description: str=None, **kwargs) -> None:
         super(SourceControlUpdateParameters, self).__init__(**kwargs)
         self.branch = branch
         self.folder_path = folder_path

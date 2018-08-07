@@ -28,7 +28,7 @@ class Terms(Model):
         'paging': {'key': 'Paging', 'type': 'TermsPaging'},
     }
 
-    def __init__(self, data=None, paging=None):
-        super(Terms, self).__init__()
-        self.data = data
-        self.paging = paging
+    def __init__(self, **kwargs):
+        super(Terms, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
+        self.paging = kwargs.get('paging', None)
