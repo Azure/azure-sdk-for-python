@@ -413,7 +413,6 @@ class VirtualMachineExtensionsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineExtension', response)
 

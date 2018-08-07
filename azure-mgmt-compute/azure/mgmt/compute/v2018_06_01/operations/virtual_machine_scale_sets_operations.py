@@ -375,7 +375,6 @@ class VirtualMachineScaleSetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSet', response)
 
@@ -626,7 +625,6 @@ class VirtualMachineScaleSetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSetInstanceView', response)
 
@@ -653,8 +651,7 @@ class VirtualMachineScaleSetsOperations(object):
          ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -684,6 +681,11 @@ class VirtualMachineScaleSetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -694,12 +696,10 @@ class VirtualMachineScaleSetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets'}
@@ -721,8 +721,7 @@ class VirtualMachineScaleSetsOperations(object):
          ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']
@@ -751,6 +750,11 @@ class VirtualMachineScaleSetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -761,12 +765,10 @@ class VirtualMachineScaleSetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineScaleSetPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/virtualMachineScaleSets'}
@@ -790,8 +792,7 @@ class VirtualMachineScaleSetsOperations(object):
          ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetSkuPaged[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_skus.metadata['url']
@@ -822,6 +823,11 @@ class VirtualMachineScaleSetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -832,12 +838,10 @@ class VirtualMachineScaleSetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineScaleSetSkuPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineScaleSetSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineScaleSetSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/skus'}
@@ -861,8 +865,7 @@ class VirtualMachineScaleSetsOperations(object):
          ~azure.mgmt.compute.v2018_06_01.models.UpgradeOperationHistoricalStatusInfoPaged[~azure.mgmt.compute.v2018_06_01.models.UpgradeOperationHistoricalStatusInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.get_os_upgrade_history.metadata['url']
@@ -893,6 +896,11 @@ class VirtualMachineScaleSetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -903,12 +911,10 @@ class VirtualMachineScaleSetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.UpgradeOperationHistoricalStatusInfoPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.UpgradeOperationHistoricalStatusInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.UpgradeOperationHistoricalStatusInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     get_os_upgrade_history.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/osUpgradeHistory'}
@@ -1735,7 +1741,6 @@ class VirtualMachineScaleSetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RecoveryWalkResponse', response)
 

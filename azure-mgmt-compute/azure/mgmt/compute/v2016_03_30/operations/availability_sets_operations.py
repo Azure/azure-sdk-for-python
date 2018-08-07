@@ -96,7 +96,6 @@ class AvailabilitySetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AvailabilitySet', response)
 
@@ -158,7 +157,6 @@ class AvailabilitySetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatusResponse', response)
 
@@ -220,7 +218,6 @@ class AvailabilitySetsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AvailabilitySet', response)
 
@@ -245,8 +242,7 @@ class AvailabilitySetsOperations(object):
          ~azure.mgmt.compute.v2016_03_30.models.AvailabilitySetPaged[~azure.mgmt.compute.v2016_03_30.models.AvailabilitySet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -275,6 +271,11 @@ class AvailabilitySetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -285,12 +286,10 @@ class AvailabilitySetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/availabilitySets'}
@@ -311,8 +310,7 @@ class AvailabilitySetsOperations(object):
          ~azure.mgmt.compute.v2016_03_30.models.AvailabilitySetPaged[~azure.mgmt.compute.v2016_03_30.models.AvailabilitySet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -342,6 +340,11 @@ class AvailabilitySetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -352,12 +355,10 @@ class AvailabilitySetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AvailabilitySetPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets'}
@@ -381,8 +382,7 @@ class AvailabilitySetsOperations(object):
          ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2016_03_30.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_available_sizes.metadata['url']
@@ -413,6 +413,11 @@ class AvailabilitySetsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -423,12 +428,10 @@ class AvailabilitySetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_available_sizes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}/vmSizes'}

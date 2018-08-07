@@ -97,7 +97,6 @@ class VirtualMachineImagesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineImage', response)
 
@@ -179,7 +178,6 @@ class VirtualMachineImagesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[VirtualMachineImageResource]', response)
 
@@ -243,7 +241,6 @@ class VirtualMachineImagesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[VirtualMachineImageResource]', response)
 
@@ -304,7 +301,6 @@ class VirtualMachineImagesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[VirtualMachineImageResource]', response)
 
@@ -371,7 +367,6 @@ class VirtualMachineImagesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[VirtualMachineImageResource]', response)
 

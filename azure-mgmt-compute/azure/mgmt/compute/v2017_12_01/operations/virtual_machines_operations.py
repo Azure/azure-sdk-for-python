@@ -97,7 +97,6 @@ class VirtualMachinesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineExtensionsListResult', response)
 
@@ -571,7 +570,6 @@ class VirtualMachinesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachine', response)
 
@@ -634,7 +632,6 @@ class VirtualMachinesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineInstanceView', response)
 
@@ -886,7 +883,6 @@ class VirtualMachinesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatusResponse', response)
 
@@ -915,8 +911,7 @@ class VirtualMachinesOperations(object):
          ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePaged[~azure.mgmt.compute.v2017_12_01.models.VirtualMachine]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -946,6 +941,11 @@ class VirtualMachinesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -956,12 +956,10 @@ class VirtualMachinesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines'}
@@ -982,8 +980,7 @@ class VirtualMachinesOperations(object):
          ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePaged[~azure.mgmt.compute.v2017_12_01.models.VirtualMachine]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']
@@ -1012,6 +1009,11 @@ class VirtualMachinesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1022,12 +1024,10 @@ class VirtualMachinesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/virtualMachines'}
@@ -1051,8 +1051,7 @@ class VirtualMachinesOperations(object):
          ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_available_sizes.metadata['url']
@@ -1083,6 +1082,11 @@ class VirtualMachinesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1093,12 +1097,10 @@ class VirtualMachinesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_available_sizes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/vmSizes'}
