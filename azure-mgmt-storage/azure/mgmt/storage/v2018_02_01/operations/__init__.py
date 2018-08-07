@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .skus_operations import SkusOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usage_operations import UsageOperations
-from .blob_containers_operations import BlobContainersOperations
+try:
+    from .operations_async import Operations
+    from .skus_operations_async import SkusOperations
+    from .storage_accounts_operations_async import StorageAccountsOperations
+    from .usage_operations_async import UsageOperations
+    from .blob_containers_operations_async import BlobContainersOperations
+except (SyntaxError, ImportError):
+    from .operations import Operations
+    from .skus_operations import SkusOperations
+    from .storage_accounts_operations import StorageAccountsOperations
+    from .usage_operations import UsageOperations
+    from .blob_containers_operations import BlobContainersOperations
 
 __all__ = [
     'Operations',

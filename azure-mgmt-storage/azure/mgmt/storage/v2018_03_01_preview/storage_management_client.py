@@ -13,11 +13,11 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.operations import Operations
-from .operations.skus_operations import SkusOperations
-from .operations.storage_accounts_operations import StorageAccountsOperations
-from .operations.usages_operations import UsagesOperations
-from .operations.blob_containers_operations import BlobContainersOperations
+from .operations import Operations
+from .operations import SkusOperations
+from .operations import StorageAccountsOperations
+from .operations import UsagesOperations
+from .operations import BlobContainersOperations
 from . import models
 
 

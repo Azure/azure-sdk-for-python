@@ -14,31 +14,13 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 
 from .. import models
+from .usages_operations import UsagesOperations as _UsagesOperations
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-03-01-preview".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
-
-        self.config = config
+class UsagesOperations(_UsagesOperations):
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, *, custom_headers=None, raw=False, **operation_config):
         """Gets the current usage count and the limit for the resources under the
         subscription.
 
@@ -95,17 +77,30 @@ class UsagesOperations(object):
 
             return response
 
+        async def internal_paging_async(next_link=None):
+            request = prepare_request(next_link)
+
+            response = await self._client.async_send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
         # Deserialize response
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.UsagePaged(
+            internal_paging, self._deserialize.dependencies, header_dict, async_command=internal_paging_async)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/usages'}
 
     def list_by_location(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, location, *, custom_headers=None, raw=False, **operation_config):
         """Gets the current usage count and the limit for the resources of the
         location under the subscription.
 
@@ -165,11 +160,24 @@ class UsagesOperations(object):
 
             return response
 
+        async def internal_paging_async(next_link=None):
+            request = prepare_request(next_link)
+
+            response = await self._client.async_send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
         # Deserialize response
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.UsagePaged(
+            internal_paging, self._deserialize.dependencies, header_dict, async_command=internal_paging_async)
 
         return deserialized
     list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/locations/{location}/usages'}

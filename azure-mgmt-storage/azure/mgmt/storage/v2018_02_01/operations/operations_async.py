@@ -14,56 +14,33 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 
 from .. import models
+from .operations import Operations as _Operations
 
 
-class UsageOperations(object):
-    """UsageOperations operations.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-10-01".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2017-10-01"
-
-        self.config = config
+class Operations(_Operations):
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets the current usage count and the limit for the resources under the
-        subscription.
+            self, *, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available Storage Rest API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Usage
+        :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.storage.v2017_10_01.models.UsagePaged[~azure.mgmt.storage.v2017_10_01.models.Usage]
+         ~azure.mgmt.storage.v2018_02_01.models.OperationPaged[~azure.mgmt.storage.v2018_02_01.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -95,11 +72,24 @@ class UsageOperations(object):
 
             return response
 
+        async def internal_paging_async(next_link=None):
+            request = prepare_request(next_link)
+
+            response = await self._client.async_send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
         # Deserialize response
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.OperationPaged(
+            internal_paging, self._deserialize.dependencies, header_dict, async_command=internal_paging_async)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/usages'}
+    list.metadata = {'url': '/providers/Microsoft.Storage/operations'}
