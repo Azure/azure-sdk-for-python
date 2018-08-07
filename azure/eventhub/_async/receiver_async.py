@@ -22,9 +22,9 @@ class AsyncReceiver(Receiver):
     Implements the async API of a Receiver.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
             self, client, source, offset=None, prefetch=300, epoch=None,
-            keep_alive=None, auto_reconnect=True, loop=None):  # pylint: disable=super-init-not-called
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
 
