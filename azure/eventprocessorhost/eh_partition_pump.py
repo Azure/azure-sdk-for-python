@@ -128,6 +128,7 @@ class PartitionReceiver:
                         max_batch_size=self.max_batch_size,
                         timeout=self.recieve_timeout)
                 except Exception as e:  # pylint: disable=broad-except
+                    _logger.info("Error raised while attempting to receive messages: {}".format(e))
                     await self.process_error_async(e)
                 else:
                     if not msgs:

@@ -77,6 +77,7 @@ class EventHubClientAsync(EventHubClient):
         try:
             await client.open_async()
         except Exception as exp:  # pylint: disable=broad-except
+            log.info("Encountered error while starting handler: {}".format(exp))
             await client.close_async(exception=exp)
 
     async def _handle_redirect(self, redirects):
@@ -164,7 +165,9 @@ class EventHubClientAsync(EventHubClient):
         finally:
             await mgmt_client.close_async()
 
-    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+    def add_async_receiver(
+            self, consumer_group, partition, offset=None, prefetch=300,
+            operation=None, keep_alive=30, auto_reconnect=True, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
 
@@ -184,11 +187,15 @@ class EventHubClientAsync(EventHubClient):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = AsyncReceiver(self, source_url, offset=offset, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+        handler = AsyncReceiver(
+            self, source_url, offset=offset, prefetch=prefetch,
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
         return handler
 
-    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+    def add_async_epoch_receiver(
+            self, consumer_group, partition, epoch, prefetch=300,
+            operation=None, keep_alive=30, auto_reconnect=True, loop=None):
         """
         Add an async receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -211,7 +218,9 @@ class EventHubClientAsync(EventHubClient):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch, keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+        handler = AsyncReceiver(
+            self, source_url, prefetch=prefetch, epoch=epoch,
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
         return handler
 
@@ -232,6 +241,8 @@ class EventHubClientAsync(EventHubClient):
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
-        handler = AsyncSender(self, target, partition=partition, keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+        handler = AsyncSender(
+            self, target, partition=partition, keep_alive=keep_alive,
+            auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
         return handler

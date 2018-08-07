@@ -3,6 +3,22 @@
 Release History
 ===============
 
+0.2.0 (2018-08-06)
+++++++++++++++++++
+
+- Stability improvements for EPH.
+- Updated uAMQP version.
+- Added new configuration options for Sender and Receiver; `keep_alive` and `auto_reconnect`.
+  These flags have been added to the following:
+
+  - `EventHubClient.add_receiver`
+  - `EventHubClient.add_sender`
+  - `EventHubClientAsync.add_async_receiver`
+  - `EventHubClientAsync.add_async_sender`
+  - `EPHOptions.keey_alive_interval`
+  - `EPHOptions.auto_reconnect_on_error`
+
+
 0.2.0rc2 (2018-07-29)
 +++++++++++++++++++++
 

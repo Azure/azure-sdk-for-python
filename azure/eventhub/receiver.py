@@ -38,7 +38,7 @@ class Receiver:
         self.prefetch = prefetch
         self.epoch = epoch
         self.keep_alive = keep_alive
-        self.auto_reconnect = True
+        self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.properties = None
         self.redirected = None
