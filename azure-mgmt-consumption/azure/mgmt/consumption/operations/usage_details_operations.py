@@ -875,11 +875,13 @@ class UsageDetailsOperations(object):
     list_for_billing_period_by_enrollment_account.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_management_group(
-            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, management_group_id, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage detail records for all subscriptions belonging to a
         management group scope by current billing period. Usage details are
         available via this API only for May 1, 2014 or later.
 
+        :param management_group_id: Azure Management Group ID.
+        :type management_group_id: str
         :param expand: May be used to expand the
          properties/additionalProperties or properties/meterDetails within a
          list of usage details. By default, these fields are not included when
@@ -924,7 +926,7 @@ class UsageDetailsOperations(object):
                 # Construct URL
                 url = self.list_by_management_group.metadata['url']
                 path_format_arguments = {
-                    'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str')
+                    'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -977,11 +979,13 @@ class UsageDetailsOperations(object):
     list_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_for_billing_period_by_management_group(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, management_group_id, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage detail records for all subscriptions belonging to a
         management group scope by specified billing period. Usage details are
         available via this API only for May 1, 2014 or later.
 
+        :param management_group_id: Azure Management Group ID.
+        :type management_group_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param expand: May be used to expand the
@@ -1028,7 +1032,7 @@ class UsageDetailsOperations(object):
                 # Construct URL
                 url = self.list_for_billing_period_by_management_group.metadata['url']
                 path_format_arguments = {
-                    'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str'),
+                    'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

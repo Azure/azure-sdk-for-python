@@ -39,20 +39,16 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param management_group_id: Azure Management Group ID.
-    :type management_group_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, management_group_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if management_group_id is None:
-            raise ValueError("Parameter 'management_group_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -63,7 +59,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.management_group_id = management_group_id
 
 
 class ConsumptionManagementClient(SDKClient):
@@ -104,15 +99,13 @@ class ConsumptionManagementClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param management_group_id: Azure Management Group ID.
-    :type management_group_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, management_group_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, management_group_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
