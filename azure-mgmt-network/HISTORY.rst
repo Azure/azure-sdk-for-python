@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.0.1 (2018-08-07)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix packet_captures.get_status empty output
+
 2.0.0 (2018-07-27)
 ++++++++++++++++++
 
