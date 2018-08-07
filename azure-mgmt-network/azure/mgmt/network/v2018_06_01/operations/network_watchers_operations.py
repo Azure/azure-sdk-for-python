@@ -1580,8 +1580,8 @@ class NetworkWatchersOperations(object):
 
 
     def _get_network_configuration_diagnostic_initial(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
-        parameters = models.NetworkConfigurationDiagnosticParameters(target_resource_id=target_resource_id)
+            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, **operation_config):
+        parameters = models.NetworkConfigurationDiagnosticParameters(target_resource_id=target_resource_id, queries=queries)
 
         # Construct URL
         url = self.get_network_configuration_diagnostic.metadata['url']
@@ -1633,7 +1633,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_network_configuration_diagnostic(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get network configuration diagnostic.
 
         :param resource_group_name: The name of the resource group.
@@ -1644,6 +1644,9 @@ class NetworkWatchersOperations(object):
          network configuration diagnostic. Valid options are VM,
          NetworkInterface, VMSS/NetworkInterface and Application Gateway.
         :type target_resource_id: str
+        :param queries: List of traffic queries.
+        :type queries:
+         list[~azure.mgmt.network.v2018_06_01.models.TrafficQuery]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1662,6 +1665,7 @@ class NetworkWatchersOperations(object):
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
             target_resource_id=target_resource_id,
+            queries=queries,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
