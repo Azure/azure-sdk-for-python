@@ -41,6 +41,9 @@ content_packages = [p for p in packages if p not in nspkg_packages+meta_packages
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
 
+pip_command('git+https://github.com/Azure/msrest-for-python@pipeline')
+pip_command('git+https://github.com/Azure/msrestazure-for-python@async')
+
 # install packages
 for package_list in [nspkg_packages, content_packages]:
     for package_name in package_list:
