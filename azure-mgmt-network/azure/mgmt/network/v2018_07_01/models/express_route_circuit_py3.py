@@ -60,6 +60,8 @@ class ExpressRouteCircuit(Resource):
     :type provisioning_state: str
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
+    :param allow_global_reach: Flag to enable Global Reach on the circuit.
+    :type allow_global_reach: bool
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -88,10 +90,11 @@ class ExpressRouteCircuit(Resource):
         'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
+        'allow_global_reach': {'key': 'properties.allowGlobalReach', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, allow_classic_operations: bool=None, circuit_provisioning_state: str=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key: str=None, service_provider_notes: str=None, service_provider_properties=None, provisioning_state: str=None, gateway_manager_etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, allow_classic_operations: bool=None, circuit_provisioning_state: str=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key: str=None, service_provider_notes: str=None, service_provider_properties=None, provisioning_state: str=None, gateway_manager_etag: str=None, allow_global_reach: bool=None, **kwargs) -> None:
         super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
@@ -104,4 +107,5 @@ class ExpressRouteCircuit(Resource):
         self.service_provider_properties = service_provider_properties
         self.provisioning_state = provisioning_state
         self.gateway_manager_etag = gateway_manager_etag
+        self.allow_global_reach = allow_global_reach
         self.etag = None
