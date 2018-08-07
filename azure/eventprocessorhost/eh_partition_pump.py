@@ -101,7 +101,7 @@ class EventHubPartitionPump(PartitionPump):
             await self.running
         except TypeError:
             _logger.debug("No partition pump running.")
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             _logger.info("Error on closing partition pump: {!r}".format(err))
         await self.clean_up_clients_async()
 
