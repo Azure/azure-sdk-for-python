@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .signal_roperations import SignalROperations
-from .usages_operations import UsagesOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'Operations',
-    'SignalROperations',
-    'UsagesOperations',
-]
+
+class SignalRUsagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SignalRUsage <azure.mgmt.signalr.models.SignalRUsage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SignalRUsage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SignalRUsagePaged, self).__init__(*args, **kwargs)
