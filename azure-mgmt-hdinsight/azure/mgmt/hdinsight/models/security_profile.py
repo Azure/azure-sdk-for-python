@@ -47,12 +47,12 @@ class SecurityProfile(Model):
         'cluster_users_group_dns': {'key': 'clusterUsersGroupDNs', 'type': '[str]'},
     }
 
-    def __init__(self, directory_type=None, domain=None, organizational_unit_dn=None, ldaps_urls=None, domain_username=None, domain_user_password=None, cluster_users_group_dns=None):
-        super(SecurityProfile, self).__init__()
-        self.directory_type = directory_type
-        self.domain = domain
-        self.organizational_unit_dn = organizational_unit_dn
-        self.ldaps_urls = ldaps_urls
-        self.domain_username = domain_username
-        self.domain_user_password = domain_user_password
-        self.cluster_users_group_dns = cluster_users_group_dns
+    def __init__(self, **kwargs):
+        super(SecurityProfile, self).__init__(**kwargs)
+        self.directory_type = kwargs.get('directory_type', None)
+        self.domain = kwargs.get('domain', None)
+        self.organizational_unit_dn = kwargs.get('organizational_unit_dn', None)
+        self.ldaps_urls = kwargs.get('ldaps_urls', None)
+        self.domain_username = kwargs.get('domain_username', None)
+        self.domain_user_password = kwargs.get('domain_user_password', None)
+        self.cluster_users_group_dns = kwargs.get('cluster_users_group_dns', None)

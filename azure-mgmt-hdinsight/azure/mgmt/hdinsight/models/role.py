@@ -46,13 +46,13 @@ class Role(Model):
         'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
     }
 
-    def __init__(self, name=None, min_instance_count=None, target_instance_count=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None):
-        super(Role, self).__init__()
-        self.name = name
-        self.min_instance_count = min_instance_count
-        self.target_instance_count = target_instance_count
-        self.hardware_profile = hardware_profile
-        self.os_profile = os_profile
-        self.virtual_network_profile = virtual_network_profile
-        self.data_disks_groups = data_disks_groups
-        self.script_actions = script_actions
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.target_instance_count = kwargs.get('target_instance_count', None)
+        self.hardware_profile = kwargs.get('hardware_profile', None)
+        self.os_profile = kwargs.get('os_profile', None)
+        self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
+        self.data_disks_groups = kwargs.get('data_disks_groups', None)
+        self.script_actions = kwargs.get('script_actions', None)

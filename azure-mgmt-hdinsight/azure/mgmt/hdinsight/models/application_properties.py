@@ -70,17 +70,17 @@ class ApplicationProperties(Model):
         'additional_properties': {'key': 'additionalProperties', 'type': 'str'},
     }
 
-    def __init__(self, compute_profile=None, install_script_actions=None, uninstall_script_actions=None, https_endpoints=None, ssh_endpoints=None, application_type=None, errors=None, additional_properties=None):
-        super(ApplicationProperties, self).__init__()
-        self.compute_profile = compute_profile
-        self.install_script_actions = install_script_actions
-        self.uninstall_script_actions = uninstall_script_actions
-        self.https_endpoints = https_endpoints
-        self.ssh_endpoints = ssh_endpoints
+    def __init__(self, **kwargs):
+        super(ApplicationProperties, self).__init__(**kwargs)
+        self.compute_profile = kwargs.get('compute_profile', None)
+        self.install_script_actions = kwargs.get('install_script_actions', None)
+        self.uninstall_script_actions = kwargs.get('uninstall_script_actions', None)
+        self.https_endpoints = kwargs.get('https_endpoints', None)
+        self.ssh_endpoints = kwargs.get('ssh_endpoints', None)
         self.provisioning_state = None
-        self.application_type = application_type
+        self.application_type = kwargs.get('application_type', None)
         self.application_state = None
-        self.errors = errors
+        self.errors = kwargs.get('errors', None)
         self.created_date = None
         self.marketplace_identifier = None
-        self.additional_properties = additional_properties
+        self.additional_properties = kwargs.get('additional_properties', None)

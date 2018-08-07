@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ExecuteScriptActionParameters(Model):
     """The parameters for the script actions to execute on a running cluster.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param script_actions: The list of run time script actions.
     :type script_actions:
      list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
-    :param persist_on_success: Gets or sets if the scripts needs to be
-     persisted.
+    :param persist_on_success: Required. Gets or sets if the scripts needs to
+     be persisted.
     :type persist_on_success: bool
     """
 
@@ -32,7 +34,7 @@ class ExecuteScriptActionParameters(Model):
         'persist_on_success': {'key': 'persistOnSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, persist_on_success, script_actions=None):
-        super(ExecuteScriptActionParameters, self).__init__()
-        self.script_actions = script_actions
-        self.persist_on_success = persist_on_success
+    def __init__(self, **kwargs):
+        super(ExecuteScriptActionParameters, self).__init__(**kwargs)
+        self.script_actions = kwargs.get('script_actions', None)
+        self.persist_on_success = kwargs.get('persist_on_success', None)

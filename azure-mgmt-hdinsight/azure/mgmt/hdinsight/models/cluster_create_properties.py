@@ -43,12 +43,12 @@ class ClusterCreateProperties(Model):
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
     }
 
-    def __init__(self, cluster_version=None, os_type=None, tier=None, cluster_definition=None, security_profile=None, compute_profile=None, storage_profile=None):
-        super(ClusterCreateProperties, self).__init__()
-        self.cluster_version = cluster_version
-        self.os_type = os_type
-        self.tier = tier
-        self.cluster_definition = cluster_definition
-        self.security_profile = security_profile
-        self.compute_profile = compute_profile
-        self.storage_profile = storage_profile
+    def __init__(self, **kwargs):
+        super(ClusterCreateProperties, self).__init__(**kwargs)
+        self.cluster_version = kwargs.get('cluster_version', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.tier = kwargs.get('tier', None)
+        self.cluster_definition = kwargs.get('cluster_definition', None)
+        self.security_profile = kwargs.get('security_profile', None)
+        self.compute_profile = kwargs.get('compute_profile', None)
+        self.storage_profile = kwargs.get('storage_profile', None)

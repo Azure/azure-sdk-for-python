@@ -29,8 +29,8 @@ class LinuxOperatingSystemProfile(Model):
         'ssh_profile': {'key': 'sshProfile', 'type': 'SshProfile'},
     }
 
-    def __init__(self, username=None, password=None, ssh_profile=None):
-        super(LinuxOperatingSystemProfile, self).__init__()
-        self.username = username
-        self.password = password
-        self.ssh_profile = ssh_profile
+    def __init__(self, **kwargs):
+        super(LinuxOperatingSystemProfile, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.ssh_profile = kwargs.get('ssh_profile', None)

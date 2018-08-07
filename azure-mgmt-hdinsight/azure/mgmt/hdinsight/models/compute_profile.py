@@ -23,6 +23,6 @@ class ComputeProfile(Model):
         'roles': {'key': 'roles', 'type': '[Role]'},
     }
 
-    def __init__(self, roles=None):
-        super(ComputeProfile, self).__init__()
-        self.roles = roles
+    def __init__(self, **kwargs):
+        super(ComputeProfile, self).__init__(**kwargs)
+        self.roles = kwargs.get('roles', None)

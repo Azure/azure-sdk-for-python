@@ -12,24 +12,24 @@
 from enum import Enum
 
 
-class DirectoryType(Enum):
+class DirectoryType(str, Enum):
 
     active_directory = "ActiveDirectory"
 
 
-class OSType(Enum):
+class OSType(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
 
 
-class Tier(Enum):
+class Tier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
 
 
-class HDInsightClusterProvisioningState(Enum):
+class HDInsightClusterProvisioningState(str, Enum):
 
     in_progress = "InProgress"
     failed = "Failed"
@@ -38,7 +38,7 @@ class HDInsightClusterProvisioningState(Enum):
     deleting = "Deleting"
 
 
-class AsyncOperationState(Enum):
+class AsyncOperationState(str, Enum):
 
     in_progress = "InProgress"
     succeeded = "Succeeded"

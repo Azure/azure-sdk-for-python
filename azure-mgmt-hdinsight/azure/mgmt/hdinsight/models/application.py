@@ -47,8 +47,8 @@ class Application(ProxyResource):
         'properties': {'key': 'properties', 'type': 'ApplicationProperties'},
     }
 
-    def __init__(self, etag=None, tags=None, properties=None):
-        super(Application, self).__init__()
-        self.etag = etag
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Application, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

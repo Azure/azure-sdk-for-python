@@ -26,7 +26,7 @@ class VirtualNetworkProfile(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subnet=None):
-        super(VirtualNetworkProfile, self).__init__()
-        self.id = id
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(VirtualNetworkProfile, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.subnet = kwargs.get('subnet', None)

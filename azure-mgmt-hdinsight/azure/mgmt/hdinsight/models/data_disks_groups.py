@@ -38,8 +38,8 @@ class DataDisksGroups(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, disks_per_node=None):
-        super(DataDisksGroups, self).__init__()
-        self.disks_per_node = disks_per_node
+    def __init__(self, **kwargs):
+        super(DataDisksGroups, self).__init__(**kwargs)
+        self.disks_per_node = kwargs.get('disks_per_node', None)
         self.storage_account_type = None
         self.disk_size_gb = None

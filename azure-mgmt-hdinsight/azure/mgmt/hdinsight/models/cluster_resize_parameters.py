@@ -23,6 +23,6 @@ class ClusterResizeParameters(Model):
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, target_instance_count=None):
-        super(ClusterResizeParameters, self).__init__()
-        self.target_instance_count = target_instance_count
+    def __init__(self, **kwargs):
+        super(ClusterResizeParameters, self).__init__(**kwargs)
+        self.target_instance_count = kwargs.get('target_instance_count', None)

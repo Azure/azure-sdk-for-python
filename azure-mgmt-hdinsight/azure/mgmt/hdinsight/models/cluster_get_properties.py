@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class ClusterGetProperties(Model):
     """The properties of cluster.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param cluster_version: The version of the cluster.
     :type cluster_version: str
     :param os_type: The type of operating system. Possible values include:
@@ -23,7 +25,7 @@ class ClusterGetProperties(Model):
     :param tier: The cluster tier. Possible values include: 'Standard',
      'Premium'
     :type tier: str or ~azure.mgmt.hdinsight.models.Tier
-    :param cluster_definition: The cluster definition.
+    :param cluster_definition: Required. The cluster definition.
     :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
     :param security_profile: The security profile.
     :type security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
@@ -66,17 +68,17 @@ class ClusterGetProperties(Model):
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
     }
 
-    def __init__(self, cluster_definition, cluster_version=None, os_type=None, tier=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date=None, cluster_state=None, quota_info=None, errors=None, connectivity_endpoints=None):
-        super(ClusterGetProperties, self).__init__()
-        self.cluster_version = cluster_version
-        self.os_type = os_type
-        self.tier = tier
-        self.cluster_definition = cluster_definition
-        self.security_profile = security_profile
-        self.compute_profile = compute_profile
-        self.provisioning_state = provisioning_state
-        self.created_date = created_date
-        self.cluster_state = cluster_state
-        self.quota_info = quota_info
-        self.errors = errors
-        self.connectivity_endpoints = connectivity_endpoints
+    def __init__(self, **kwargs):
+        super(ClusterGetProperties, self).__init__(**kwargs)
+        self.cluster_version = kwargs.get('cluster_version', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.tier = kwargs.get('tier', None)
+        self.cluster_definition = kwargs.get('cluster_definition', None)
+        self.security_profile = kwargs.get('security_profile', None)
+        self.compute_profile = kwargs.get('compute_profile', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.cluster_state = kwargs.get('cluster_state', None)
+        self.quota_info = kwargs.get('quota_info', None)
+        self.errors = kwargs.get('errors', None)
+        self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)

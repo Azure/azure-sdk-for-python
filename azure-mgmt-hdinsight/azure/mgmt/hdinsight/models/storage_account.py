@@ -38,10 +38,10 @@ class StorageAccount(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, name=None, is_default=None, container=None, file_system=None, key=None):
-        super(StorageAccount, self).__init__()
-        self.name = name
-        self.is_default = is_default
-        self.container = container
-        self.file_system = file_system
-        self.key = key
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.container = kwargs.get('container', None)
+        self.file_system = kwargs.get('file_system', None)
+        self.key = kwargs.get('key', None)

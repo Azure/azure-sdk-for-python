@@ -35,10 +35,10 @@ class ScriptActionPersistedGetResponseSpec(Model):
         'application_name': {'key': 'applicationName', 'type': 'str'},
     }
 
-    def __init__(self, name=None, uri=None, parameters=None, roles=None, application_name=None):
-        super(ScriptActionPersistedGetResponseSpec, self).__init__()
-        self.name = name
-        self.uri = uri
-        self.parameters = parameters
-        self.roles = roles
-        self.application_name = application_name
+    def __init__(self, **kwargs):
+        super(ScriptActionPersistedGetResponseSpec, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.uri = kwargs.get('uri', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.roles = kwargs.get('roles', None)
+        self.application_name = kwargs.get('application_name', None)

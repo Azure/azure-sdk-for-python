@@ -23,6 +23,6 @@ class QuotaInfo(Model):
         'cores_used': {'key': 'coresUsed', 'type': 'int'},
     }
 
-    def __init__(self, cores_used=None):
-        super(QuotaInfo, self).__init__()
-        self.cores_used = cores_used
+    def __init__(self, **kwargs):
+        super(QuotaInfo, self).__init__(**kwargs)
+        self.cores_used = kwargs.get('cores_used', None)

@@ -29,8 +29,8 @@ class ApplicationGetEndpoint(Model):
         'public_port': {'key': 'publicPort', 'type': 'int'},
     }
 
-    def __init__(self, location=None, destination_port=None, public_port=None):
-        super(ApplicationGetEndpoint, self).__init__()
-        self.location = location
-        self.destination_port = destination_port
-        self.public_port = public_port
+    def __init__(self, **kwargs):
+        super(ApplicationGetEndpoint, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.destination_port = kwargs.get('destination_port', None)
+        self.public_port = kwargs.get('public_port', None)

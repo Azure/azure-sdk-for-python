@@ -35,7 +35,7 @@ class ClusterListRuntimeScriptActionDetailResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ClusterListRuntimeScriptActionDetailResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(ClusterListRuntimeScriptActionDetailResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

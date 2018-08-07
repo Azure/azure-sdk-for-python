@@ -23,6 +23,6 @@ class SshPublicKey(Model):
         'certificate_data': {'key': 'certificateData', 'type': 'str'},
     }
 
-    def __init__(self, certificate_data=None):
-        super(SshPublicKey, self).__init__()
-        self.certificate_data = certificate_data
+    def __init__(self, **kwargs):
+        super(SshPublicKey, self).__init__(**kwargs)
+        self.certificate_data = kwargs.get('certificate_data', None)

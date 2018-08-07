@@ -23,6 +23,6 @@ class StorageProfile(Model):
         'storageaccounts': {'key': 'storageaccounts', 'type': '[StorageAccount]'},
     }
 
-    def __init__(self, storageaccounts=None):
-        super(StorageProfile, self).__init__()
-        self.storageaccounts = storageaccounts
+    def __init__(self, **kwargs):
+        super(StorageProfile, self).__init__(**kwargs)
+        self.storageaccounts = kwargs.get('storageaccounts', None)

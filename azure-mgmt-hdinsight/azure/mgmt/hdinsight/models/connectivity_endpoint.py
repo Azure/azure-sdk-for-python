@@ -32,9 +32,9 @@ class ConnectivityEndpoint(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, name=None, protocol=None, location=None, port=None):
-        super(ConnectivityEndpoint, self).__init__()
-        self.name = name
-        self.protocol = protocol
-        self.location = location
-        self.port = port
+    def __init__(self, **kwargs):
+        super(ConnectivityEndpoint, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.location = kwargs.get('location', None)
+        self.port = kwargs.get('port', None)
