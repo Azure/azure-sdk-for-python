@@ -64,7 +64,7 @@ setup(
     author_email='azurekeyvault@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -77,7 +77,8 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure>=0.4.27,<2.0.0',
+        'msrest>=0.5.0',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'cryptography>=2.1.4',
         'requests>=2.18.4'
