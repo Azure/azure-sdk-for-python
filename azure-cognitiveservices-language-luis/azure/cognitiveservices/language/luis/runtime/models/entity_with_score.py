@@ -26,10 +26,10 @@ class EntityWithScore(EntityModel):
     :type type: str
     :param start_index: Required. The position of the first character of the
      matched entity within the utterance.
-    :type start_index: float
+    :type start_index: int
     :param end_index: Required. The position of the last character of the
      matched entity within the utterance.
-    :type end_index: float
+    :type end_index: int
     :param score: Required. Associated prediction score for the intent
      (float).
     :type score: float
@@ -47,8 +47,8 @@ class EntityWithScore(EntityModel):
         'additional_properties': {'key': '', 'type': '{object}'},
         'entity': {'key': 'entity', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'float'},
-        'end_index': {'key': 'endIndex', 'type': 'float'},
+        'start_index': {'key': 'startIndex', 'type': 'int'},
+        'end_index': {'key': 'endIndex', 'type': 'int'},
         'score': {'key': 'score', 'type': 'float'},
     }
 

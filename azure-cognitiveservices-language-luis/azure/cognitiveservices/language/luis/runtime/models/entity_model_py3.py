@@ -26,10 +26,10 @@ class EntityModel(Model):
     :type type: str
     :param start_index: Required. The position of the first character of the
      matched entity within the utterance.
-    :type start_index: float
+    :type start_index: int
     :param end_index: Required. The position of the last character of the
      matched entity within the utterance.
-    :type end_index: float
+    :type end_index: int
     """
 
     _validation = {
@@ -43,11 +43,11 @@ class EntityModel(Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'entity': {'key': 'entity', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'float'},
-        'end_index': {'key': 'endIndex', 'type': 'float'},
+        'start_index': {'key': 'startIndex', 'type': 'int'},
+        'end_index': {'key': 'endIndex', 'type': 'int'},
     }
 
-    def __init__(self, *, entity: str, type: str, start_index: float, end_index: float, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, entity: str, type: str, start_index: int, end_index: int, additional_properties=None, **kwargs) -> None:
         super(EntityModel, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.entity = entity

@@ -26,10 +26,10 @@ class EntityWithResolution(EntityModel):
     :type type: str
     :param start_index: Required. The position of the first character of the
      matched entity within the utterance.
-    :type start_index: float
+    :type start_index: int
     :param end_index: Required. The position of the last character of the
      matched entity within the utterance.
-    :type end_index: float
+    :type end_index: int
     :param resolution: Required. Resolution values for pre-built LUIS
      entities.
     :type resolution: object
@@ -47,11 +47,11 @@ class EntityWithResolution(EntityModel):
         'additional_properties': {'key': '', 'type': '{object}'},
         'entity': {'key': 'entity', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'float'},
-        'end_index': {'key': 'endIndex', 'type': 'float'},
+        'start_index': {'key': 'startIndex', 'type': 'int'},
+        'end_index': {'key': 'endIndex', 'type': 'int'},
         'resolution': {'key': 'resolution', 'type': 'object'},
     }
 
-    def __init__(self, *, entity: str, type: str, start_index: float, end_index: float, resolution, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, entity: str, type: str, start_index: int, end_index: int, resolution, additional_properties=None, **kwargs) -> None:
         super(EntityWithResolution, self).__init__(additional_properties=additional_properties, entity=entity, type=type, start_index=start_index, end_index=end_index, **kwargs)
         self.resolution = resolution

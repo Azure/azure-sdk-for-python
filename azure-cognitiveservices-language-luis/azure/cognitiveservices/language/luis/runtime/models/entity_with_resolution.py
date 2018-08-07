@@ -26,10 +26,10 @@ class EntityWithResolution(EntityModel):
     :type type: str
     :param start_index: Required. The position of the first character of the
      matched entity within the utterance.
-    :type start_index: float
+    :type start_index: int
     :param end_index: Required. The position of the last character of the
      matched entity within the utterance.
-    :type end_index: float
+    :type end_index: int
     :param resolution: Required. Resolution values for pre-built LUIS
      entities.
     :type resolution: object
@@ -47,8 +47,8 @@ class EntityWithResolution(EntityModel):
         'additional_properties': {'key': '', 'type': '{object}'},
         'entity': {'key': 'entity', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'float'},
-        'end_index': {'key': 'endIndex', 'type': 'float'},
+        'start_index': {'key': 'startIndex', 'type': 'int'},
+        'end_index': {'key': 'endIndex', 'type': 'int'},
         'resolution': {'key': 'resolution', 'type': 'object'},
     }
 
