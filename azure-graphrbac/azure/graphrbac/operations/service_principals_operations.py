@@ -223,13 +223,12 @@ class ServicePrincipalsOperations(object):
     delete.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}'}
 
     def get(
-            self, object_id, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets service principal information from the directory.
+            self, object_id, custom_headers=None, raw=False, **operation_config):
+        """Gets service principal information from the directory. Query by
+        objectId or pass a filter to query by appId.
 
         :param object_id: The object ID of the service principal to get.
         :type object_id: str
-        :param filter:
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -251,8 +250,6 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

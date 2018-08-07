@@ -39,7 +39,7 @@ class OAuth2Operations(object):
 
     def get(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
+        """Queries OAuth2 permissions for the relevant SP ObjectId of an app.
 
         :param filter:
         :type filter: str
@@ -99,7 +99,7 @@ class OAuth2Operations(object):
 
     def post(
             self, body=None, custom_headers=None, raw=False, **operation_config):
-        """
+        """Grants OAuth2 permissions for the relevant resource Ids of an app.
 
         :param body:
         :type body: ~azure.graphrbac.models.OAuth2
