@@ -237,7 +237,7 @@ class KeyVaultClient(MultiApiClientMixin):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise self.models.KeyVaultErrorException(self._deserialize, response)
