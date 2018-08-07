@@ -22,7 +22,7 @@ class ResourceLinksOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
     """
 
@@ -57,7 +57,7 @@ class ResourceLinksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{linkId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -89,6 +89,7 @@ class ResourceLinksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{linkId}'}
 
     def create_or_update(
             self, link_id, properties=None, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +117,7 @@ class ResourceLinksOperations(object):
         parameters = models.ResourceLink(properties=properties)
 
         # Construct URL
-        url = '/{linkId}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -161,6 +162,7 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/{linkId}'}
 
     def get(
             self, link_id, custom_headers=None, raw=False, **operation_config):
@@ -181,7 +183,7 @@ class ResourceLinksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{linkId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -220,6 +222,7 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{linkId}'}
 
     def list_at_subscription(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -243,7 +246,7 @@ class ResourceLinksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/links'
+                url = self.list_at_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -290,6 +293,7 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/links'}
 
     def list_at_source_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -318,7 +322,7 @@ class ResourceLinksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Resources/links'
+                url = self.list_at_source_scope.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -365,3 +369,4 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_source_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/links'}

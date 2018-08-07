@@ -33,7 +33,7 @@ class EffectiveRouteListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None):
-        super(EffectiveRouteListResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EffectiveRouteListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.next_link = None

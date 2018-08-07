@@ -22,7 +22,7 @@ class ManagementLocksOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
     """
 
@@ -68,7 +68,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.create_or_update_at_resource_group_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
@@ -115,6 +115,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def delete_at_resource_group_level(
             self, resource_group_name, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -140,7 +141,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.delete_at_resource_group_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
@@ -174,6 +175,7 @@ class ManagementLocksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def get_at_resource_group_level(
             self, resource_group_name, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -195,7 +197,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.get_at_resource_group_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
@@ -236,6 +238,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    get_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def create_or_update_by_scope(
             self, scope, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -265,7 +268,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.create_or_update_by_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str')
@@ -311,6 +314,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def delete_by_scope(
             self, scope, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -330,7 +334,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.delete_by_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str')
@@ -363,6 +367,7 @@ class ManagementLocksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def get_by_scope(
             self, scope, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -384,7 +389,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.get_by_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str')
@@ -424,6 +429,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def create_or_update_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -468,7 +474,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.create_or_update_at_resource_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -519,6 +525,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def delete_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -556,7 +563,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.delete_at_resource_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -594,6 +601,7 @@ class ManagementLocksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def get_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -625,7 +633,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.get_at_resource_level.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -670,6 +678,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    get_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def create_or_update_at_subscription_level(
             self, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -700,7 +709,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.create_or_update_at_subscription_level.metadata['url']
         path_format_arguments = {
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -746,6 +755,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def delete_at_subscription_level(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -768,7 +778,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.delete_at_subscription_level.metadata['url']
         path_format_arguments = {
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -801,6 +811,7 @@ class ManagementLocksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def get_at_subscription_level(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
@@ -820,7 +831,7 @@ class ManagementLocksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
+        url = self.get_at_subscription_level.metadata['url']
         path_format_arguments = {
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -860,6 +871,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    get_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}
 
     def list_at_resource_group_level(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -884,7 +896,7 @@ class ManagementLocksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks'
+                url = self.list_at_resource_group_level.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -932,6 +944,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks'}
 
     def list_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -966,7 +979,7 @@ class ManagementLocksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks'
+                url = self.list_at_resource_level.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -1018,6 +1031,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks'}
 
     def list_at_subscription_level(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -1039,7 +1053,7 @@ class ManagementLocksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks'
+                url = self.list_at_subscription_level.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -1086,3 +1100,4 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks'}

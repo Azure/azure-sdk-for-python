@@ -410,7 +410,7 @@ class ImagesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/images/search'
+        url = self.search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -494,6 +494,7 @@ class ImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    search.metadata = {'url': '/images/search'}
 
     def details(
             self, query, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, crop_bottom=None, crop_left=None, crop_right=None, crop_top=None, crop_type=None, country_code=None, id=None, image_url=None, insights_token=None, modules=None, market=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
@@ -826,7 +827,7 @@ class ImagesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/images/details'
+        url = self.details.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -894,6 +895,7 @@ class ImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    details.metadata = {'url': '/images/details'}
 
     def trending(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
@@ -1108,7 +1110,7 @@ class ImagesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/images/trending'
+        url = self.trending.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1155,3 +1157,4 @@ class ImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    trending.metadata = {'url': '/images/trending'}

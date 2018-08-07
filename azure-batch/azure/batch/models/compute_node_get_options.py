@@ -34,6 +34,7 @@ class ComputeNodeGetOptions(Model):
     """
 
     def __init__(self, select=None, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(ComputeNodeGetOptions, self).__init__()
         self.select = select
         self.timeout = timeout
         self.client_request_id = client_request_id

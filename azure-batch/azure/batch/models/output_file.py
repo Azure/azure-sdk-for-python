@@ -54,6 +54,7 @@ class OutputFile(Model):
     }
 
     def __init__(self, file_pattern, destination, upload_options):
+        super(OutputFile, self).__init__()
         self.file_pattern = file_pattern
         self.destination = destination
         self.upload_options = upload_options

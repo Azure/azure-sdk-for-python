@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class AzureReachabilityReportLocation(Model):
     """Parameters that define a geographic location.
 
-    :param country: The name of the country.
+    All required parameters must be populated in order to send to Azure.
+
+    :param country: Required. The name of the country.
     :type country: str
     :param state: The name of the state.
     :type state: str
@@ -33,8 +35,8 @@ class AzureReachabilityReportLocation(Model):
         'city': {'key': 'city', 'type': 'str'},
     }
 
-    def __init__(self, country, state=None, city=None):
-        super(AzureReachabilityReportLocation, self).__init__()
-        self.country = country
-        self.state = state
-        self.city = city
+    def __init__(self, **kwargs):
+        super(AzureReachabilityReportLocation, self).__init__(**kwargs)
+        self.country = kwargs.get('country', None)
+        self.state = kwargs.get('state', None)
+        self.city = kwargs.get('city', None)

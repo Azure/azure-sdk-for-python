@@ -15,13 +15,15 @@ from .sub_resource import SubResource
 class Route(SubResource):
     """Route resource.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :param address_prefix: The destination CIDR to which the route applies.
     :type address_prefix: str
-    :param next_hop_type: The type of Azure hop the packet should be sent to.
-     Possible values are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
-     'VirtualAppliance', and 'None'. Possible values include:
+    :param next_hop_type: Required. The type of Azure hop the packet should be
+     sent to. Possible values are: 'VirtualNetworkGateway', 'VnetLocal',
+     'Internet', 'VirtualAppliance', and 'None'. Possible values include:
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
     :type next_hop_type: str or
@@ -55,11 +57,11 @@ class Route(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, next_hop_type, id=None, address_prefix=None, next_hop_ip_address=None, provisioning_state=None, name=None, etag=None):
-        super(Route, self).__init__(id=id)
-        self.address_prefix = address_prefix
-        self.next_hop_type = next_hop_type
-        self.next_hop_ip_address = next_hop_ip_address
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(Route, self).__init__(**kwargs)
+        self.address_prefix = kwargs.get('address_prefix', None)
+        self.next_hop_type = kwargs.get('next_hop_type', None)
+        self.next_hop_ip_address = kwargs.get('next_hop_ip_address', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

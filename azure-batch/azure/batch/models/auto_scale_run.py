@@ -38,6 +38,7 @@ class AutoScaleRun(Model):
     }
 
     def __init__(self, timestamp, results=None, error=None):
+        super(AutoScaleRun, self).__init__()
         self.timestamp = timestamp
         self.results = results
         self.error = error

@@ -86,22 +86,22 @@ class ExpressRouteCircuitPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, gateway_manager_etag=None, last_modified_by=None, name=None, etag=None):
-        super(ExpressRouteCircuitPeering, self).__init__(id=id)
-        self.peering_type = peering_type
-        self.state = state
-        self.azure_asn = azure_asn
-        self.peer_asn = peer_asn
-        self.primary_peer_address_prefix = primary_peer_address_prefix
-        self.secondary_peer_address_prefix = secondary_peer_address_prefix
-        self.primary_azure_port = primary_azure_port
-        self.secondary_azure_port = secondary_azure_port
-        self.shared_key = shared_key
-        self.vlan_id = vlan_id
-        self.microsoft_peering_config = microsoft_peering_config
-        self.stats = stats
-        self.provisioning_state = provisioning_state
-        self.gateway_manager_etag = gateway_manager_etag
-        self.last_modified_by = last_modified_by
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitPeering, self).__init__(**kwargs)
+        self.peering_type = kwargs.get('peering_type', None)
+        self.state = kwargs.get('state', None)
+        self.azure_asn = kwargs.get('azure_asn', None)
+        self.peer_asn = kwargs.get('peer_asn', None)
+        self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
+        self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
+        self.primary_azure_port = kwargs.get('primary_azure_port', None)
+        self.secondary_azure_port = kwargs.get('secondary_azure_port', None)
+        self.shared_key = kwargs.get('shared_key', None)
+        self.vlan_id = kwargs.get('vlan_id', None)
+        self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
+        self.stats = kwargs.get('stats', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

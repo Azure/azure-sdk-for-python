@@ -15,16 +15,19 @@ from msrest.serialization import Model
 class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     """Application gateway web application firewall configuration.
 
-    :param enabled: Whether the web application firewall is enabled or not.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Whether the web application firewall is enabled
+     or not.
     :type enabled: bool
-    :param firewall_mode: Web application firewall mode. Possible values
-     include: 'Detection', 'Prevention'
+    :param firewall_mode: Required. Web application firewall mode. Possible
+     values include: 'Detection', 'Prevention'
     :type firewall_mode: str or
      ~azure.mgmt.network.v2017_11_01.models.ApplicationGatewayFirewallMode
-    :param rule_set_type: The type of the web application firewall rule set.
-     Possible values are: 'OWASP'.
+    :param rule_set_type: Required. The type of the web application firewall
+     rule set. Possible values are: 'OWASP'.
     :type rule_set_type: str
-    :param rule_set_version: The version of the rule set type.
+    :param rule_set_version: Required. The version of the rule set type.
     :type rule_set_version: str
     :param disabled_rule_groups: The disabled rule groups.
     :type disabled_rule_groups:
@@ -46,10 +49,10 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'disabled_rule_groups': {'key': 'disabledRuleGroups', 'type': '[ApplicationGatewayFirewallDisabledRuleGroup]'},
     }
 
-    def __init__(self, enabled, firewall_mode, rule_set_type, rule_set_version, disabled_rule_groups=None):
-        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__()
-        self.enabled = enabled
-        self.firewall_mode = firewall_mode
-        self.rule_set_type = rule_set_type
-        self.rule_set_version = rule_set_version
-        self.disabled_rule_groups = disabled_rule_groups
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.firewall_mode = kwargs.get('firewall_mode', None)
+        self.rule_set_type = kwargs.get('rule_set_type', None)
+        self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.disabled_rule_groups = kwargs.get('disabled_rule_groups', None)

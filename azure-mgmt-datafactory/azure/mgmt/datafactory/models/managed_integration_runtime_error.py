@@ -18,6 +18,9 @@ class ManagedIntegrationRuntimeError(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar time: The time when the error occurred.
     :vartype time: datetime
     :ivar code: Error code.
@@ -36,14 +39,16 @@ class ManagedIntegrationRuntimeError(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'time': {'key': 'time', 'type': 'iso-8601'},
         'code': {'key': 'code', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '[str]'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
         super(ManagedIntegrationRuntimeError, self).__init__()
+        self.additional_properties = additional_properties
         self.time = None
         self.code = None
         self.parameters = None

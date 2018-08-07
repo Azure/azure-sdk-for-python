@@ -24,6 +24,6 @@ class SourceVault(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(SourceVault, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SourceVault, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

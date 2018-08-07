@@ -15,9 +15,11 @@ from .property_value import PropertyValue
 class Int64PropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Int64.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data: The data of the property value.
+    :param data: Required. The data of the property value.
     :type data: str
     """
 
@@ -31,7 +33,7 @@ class Int64PropertyValue(PropertyValue):
         'data': {'key': 'Data', 'type': 'str'},
     }
 
-    def __init__(self, data):
-        super(Int64PropertyValue, self).__init__()
-        self.data = data
+    def __init__(self, **kwargs):
+        super(Int64PropertyValue, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
         self.kind = 'Int64'

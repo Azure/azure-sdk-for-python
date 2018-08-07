@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class Reason(Enum):
+class Reason(str, Enum):
 
     account_name_invalid = "AccountNameInvalid"
     already_exists = "AlreadyExists"
 
 
-class AccountType(Enum):
+class AccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     standard_zrs = "Standard_ZRS"
@@ -27,20 +27,20 @@ class AccountType(Enum):
     premium_lrs = "Premium_LRS"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     resolving_dns = "ResolvingDNS"
     succeeded = "Succeeded"
 
 
-class AccountStatus(Enum):
+class AccountStatus(str, Enum):
 
     available = "Available"
     unavailable = "Unavailable"
 
 
-class UsageUnit(Enum):
+class UsageUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"

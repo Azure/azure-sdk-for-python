@@ -3,9 +3,37 @@
 Release History
 ===============
 
+4.1.3 (2018-04-24)
+++++++++++++++++++
+
+- Update some APIs' comments
+- New property `leaving_pool` in `node_counts` type.
+
+4.1.2 (2018-04-23)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- Compatibility with msrestazure 0.4.28
+
+4.1.1 (2018-03-26)
+++++++++++++++++++
+
+- Fix regression on method `enable_auto_scale`.
+
+4.1.0 (2018-03-07)
+++++++++++++++++++
+
+- Using REST API version 2018-03-01.6.1.
+- Added the ability to query pool node counts by state, via the new `list_pool_node_counts` method.
+- Added the ability to upload Azure Batch node agent logs from a particular node, via the `upload_batch_service_logs` method.
+   - This is intended for use in debugging by Microsoft support when there are problems on a node.
+
 4.0.0 (2017-09-25)
 ++++++++++++++++++
 
+- Using REST API version 2017-09-01.6.0.
 - Added the ability to get a discount on Windows VM pricing if you have on-premises licenses for the OS SKUs you are deploying, via `license_type` on `VirtualMachineConfiguration`.
 - Added support for attaching empty data drives to `VirtualMachineConfiguration` based pools, via the new `data_disks` attribute on `VirtualMachineConfiguration`.
 - [Breaking] Custom images must now be deployed using a reference to an ARM Image, instead of pointing to .vhd files in blobs directly.

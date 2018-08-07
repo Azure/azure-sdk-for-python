@@ -13,20 +13,20 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
         \"Import\",\r\n      \"sourceUri\": \"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\"\r\n
         \   },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\":
         true\r\n  },\r\n  \"location\": \"westus\"\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2017-03-30']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2018-04-01']
       Cache-Control: [no-cache]
       Content-Length: ['290']
       Content-Type: [application/json; charset=utf-8]
       Date: ['Fri, 30 Jun 2017 02:04:07 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?monitor=true&api-version=2017-03-30']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?monitor=true&api-version=2018-04-01']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
@@ -48,7 +48,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"startTime\": \"2017-06-30T02:04:06.8961345+00:00\",\r\n
         \ \"endTime\": \"2017-06-30T02:04:07.7398687+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
@@ -83,7 +83,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\":
         \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n

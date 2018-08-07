@@ -32,8 +32,8 @@ class VirtualMachineAgentInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, vm_agent_version=None, extension_handlers=None, statuses=None):
-        super(VirtualMachineAgentInstanceView, self).__init__()
-        self.vm_agent_version = vm_agent_version
-        self.extension_handlers = extension_handlers
-        self.statuses = statuses
+    def __init__(self, **kwargs):
+        super(VirtualMachineAgentInstanceView, self).__init__(**kwargs)
+        self.vm_agent_version = kwargs.get('vm_agent_version', None)
+        self.extension_handlers = kwargs.get('extension_handlers', None)
+        self.statuses = kwargs.get('statuses', None)

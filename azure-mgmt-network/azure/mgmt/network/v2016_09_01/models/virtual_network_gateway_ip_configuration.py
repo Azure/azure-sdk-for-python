@@ -18,6 +18,8 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :param private_ip_allocation_method: The private IP allocation method.
@@ -25,9 +27,10 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
      'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
-    :param subnet: The reference of the subnet resource.
+    :param subnet: Required. The reference of the subnet resource.
     :type subnet: ~azure.mgmt.network.v2016_09_01.models.SubResource
-    :param public_ip_address: The reference of the public IP resource.
+    :param public_ip_address: Required. The reference of the public IP
+     resource.
     :type public_ip_address:
      ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the public IP
@@ -57,11 +60,11 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, subnet, public_ip_address, id=None, private_ip_allocation_method=None, name=None, etag=None):
-        super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id)
-        self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = subnet
-        self.public_ip_address = public_ip_address
+    def __init__(self, **kwargs):
+        super(VirtualNetworkGatewayIPConfiguration, self).__init__(**kwargs)
+        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
         self.provisioning_state = None
-        self.name = name
-        self.etag = etag
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

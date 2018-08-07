@@ -52,6 +52,7 @@ class JobScheduleAddParameter(Model):
     }
 
     def __init__(self, id, schedule, job_specification, display_name=None, metadata=None):
+        super(JobScheduleAddParameter, self).__init__()
         self.id = id
         self.display_name = display_name
         self.schedule = schedule

@@ -23,6 +23,12 @@ class AmazonMWSLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param endpoint: The endpoint of the Amazon MWS server, (i.e.
@@ -68,6 +74,8 @@ class AmazonMWSLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'marketplace_id': {'key': 'typeProperties.marketplaceID', 'type': 'object'},
@@ -81,8 +89,8 @@ class AmazonMWSLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, endpoint, marketplace_id, seller_id, access_key_id, additional_properties=None, connect_via=None, description=None, mws_auth_token=None, secret_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(AmazonMWSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, endpoint, marketplace_id, seller_id, access_key_id, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, mws_auth_token=None, secret_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
+        super(AmazonMWSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.endpoint = endpoint
         self.marketplace_id = marketplace_id
         self.seller_id = seller_id

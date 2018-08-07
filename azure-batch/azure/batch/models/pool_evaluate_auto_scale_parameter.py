@@ -34,4 +34,5 @@ class PoolEvaluateAutoScaleParameter(Model):
     }
 
     def __init__(self, auto_scale_formula):
+        super(PoolEvaluateAutoScaleParameter, self).__init__()
         self.auto_scale_formula = auto_scale_formula

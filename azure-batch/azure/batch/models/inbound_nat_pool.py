@@ -34,17 +34,17 @@ class InboundNATPool(Model):
      external ports that will be used to provide inbound access to the
      backendPort on individual compute nodes. Acceptable values range between 1
      and 65534 except ports from 50000 to 55000 which are reserved. All ranges
-     within a pool must be distinct and cannot overlap. If any reserved or
-     overlapping values are provided the request fails with HTTP status code
-     400.
+     within a pool must be distinct and cannot overlap. Each range must contain
+     at least 40 ports. If any reserved or overlapping values are provided the
+     request fails with HTTP status code 400.
     :type frontend_port_range_start: int
     :param frontend_port_range_end: The last port number in the range of
      external ports that will be used to provide inbound access to the
      backendPort on individual compute nodes. Acceptable values range between 1
      and 65534 except ports from 50000 to 55000 which are reserved by the Batch
-     service. All ranges within a pool must be distinct and cannot overlap. If
-     any reserved or overlapping values are provided the request fails with
-     HTTP status code 400.
+     service. All ranges within a pool must be distinct and cannot overlap.
+     Each range must contain at least 40 ports. If any reserved or overlapping
+     values are provided the request fails with HTTP status code 400.
     :type frontend_port_range_end: int
     :param network_security_group_rules: A list of network security group
      rules that will be applied to the endpoint. The maximum number of rules
@@ -75,6 +75,7 @@ class InboundNATPool(Model):
     }
 
     def __init__(self, name, protocol, backend_port, frontend_port_range_start, frontend_port_range_end, network_security_group_rules=None):
+        super(InboundNATPool, self).__init__()
         self.name = name
         self.protocol = protocol
         self.backend_port = backend_port

@@ -32,4 +32,5 @@ class PoolEndpointConfiguration(Model):
     }
 
     def __init__(self, inbound_nat_pools):
+        super(PoolEndpointConfiguration, self).__init__()
         self.inbound_nat_pools = inbound_nat_pools

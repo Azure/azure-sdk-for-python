@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class TroubleshootingParameters(Model):
     """Parameters that define the resource to troubleshoot.
 
-    :param target_resource_id: The target resource to troubleshoot.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The target resource to troubleshoot.
     :type target_resource_id: str
-    :param storage_id: The ID for the storage account to save the troubleshoot
-     result.
+    :param storage_id: Required. The ID for the storage account to save the
+     troubleshoot result.
     :type storage_id: str
-    :param storage_path: The path to the blob to save the troubleshoot result
-     in.
+    :param storage_path: Required. The path to the blob to save the
+     troubleshoot result in.
     :type storage_path: str
     """
 
@@ -37,8 +39,8 @@ class TroubleshootingParameters(Model):
         'storage_path': {'key': 'properties.storagePath', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id, storage_id, storage_path):
-        super(TroubleshootingParameters, self).__init__()
-        self.target_resource_id = target_resource_id
-        self.storage_id = storage_id
-        self.storage_path = storage_path
+    def __init__(self, **kwargs):
+        super(TroubleshootingParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.storage_id = kwargs.get('storage_id', None)
+        self.storage_path = kwargs.get('storage_path', None)

@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class LogProfileResourcePatch(Model):
     """The log profile resource for patch operations.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param storage_account_id: the resource id of the storage account to which
@@ -25,15 +27,16 @@ class LogProfileResourcePatch(Model):
      the Activity Log. The rule ID is of the format: '{service bus resource
      ID}/authorizationrules/{key name}'.
     :type service_bus_rule_id: str
-    :param locations: List of regions for which Activity Log events should be
-     stored or streamed. It is a comma separated list of valid ARM locations
-     including the 'global' location.
+    :param locations: Required. List of regions for which Activity Log events
+     should be stored or streamed. It is a comma separated list of valid ARM
+     locations including the 'global' location.
     :type locations: list[str]
-    :param categories: the categories of the logs. These categories are
-     created as is convenient to the user. Some values are: 'Write', 'Delete',
-     and/or 'Action.'
+    :param categories: Required. the categories of the logs. These categories
+     are created as is convenient to the user. Some values are: 'Write',
+     'Delete', and/or 'Action.'
     :type categories: list[str]
-    :param retention_policy: the retention policy for the events in the log.
+    :param retention_policy: Required. the retention policy for the events in
+     the log.
     :type retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
     """
 
@@ -52,10 +55,11 @@ class LogProfileResourcePatch(Model):
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, locations, categories, retention_policy, tags=None, storage_account_id=None, service_bus_rule_id=None):
-        self.tags = tags
-        self.storage_account_id = storage_account_id
-        self.service_bus_rule_id = service_bus_rule_id
-        self.locations = locations
-        self.categories = categories
-        self.retention_policy = retention_policy
+    def __init__(self, **kwargs):
+        super(LogProfileResourcePatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.service_bus_rule_id = kwargs.get('service_bus_rule_id', None)
+        self.locations = kwargs.get('locations', None)
+        self.categories = kwargs.get('categories', None)
+        self.retention_policy = kwargs.get('retention_policy', None)

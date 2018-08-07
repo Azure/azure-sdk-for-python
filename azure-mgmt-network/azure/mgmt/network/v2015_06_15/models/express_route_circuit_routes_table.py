@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ExpressRouteCircuitRoutesTable(Model):
     """The routes table associated with the ExpressRouteCircuit.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param address_prefix: Gets AddressPrefix.
     :type address_prefix: str
-    :param next_hop_type: Gets NextHopType. Possible values include:
+    :param next_hop_type: Required. Gets NextHopType. Possible values include:
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
     :type next_hop_type: str or
@@ -39,9 +41,9 @@ class ExpressRouteCircuitRoutesTable(Model):
         'as_path': {'key': 'asPath', 'type': 'str'},
     }
 
-    def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None):
-        super(ExpressRouteCircuitRoutesTable, self).__init__()
-        self.address_prefix = address_prefix
-        self.next_hop_type = next_hop_type
-        self.next_hop_ip = next_hop_ip
-        self.as_path = as_path
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitRoutesTable, self).__init__(**kwargs)
+        self.address_prefix = kwargs.get('address_prefix', None)
+        self.next_hop_type = kwargs.get('next_hop_type', None)
+        self.next_hop_ip = kwargs.get('next_hop_ip', None)
+        self.as_path = kwargs.get('as_path', None)

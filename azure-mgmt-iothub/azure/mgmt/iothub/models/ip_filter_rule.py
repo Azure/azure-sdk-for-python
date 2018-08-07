@@ -15,14 +15,15 @@ from msrest.serialization import Model
 class IpFilterRule(Model):
     """The IP filter rules for the IoT hub.
 
-    :param filter_name: The name of the IP filter rule.
+    All required parameters must be populated in order to send to Azure.
+
+    :param filter_name: Required. The name of the IP filter rule.
     :type filter_name: str
-    :param action: The desired action for requests captured by this rule.
-     Possible values include: 'Accept', 'Reject'
-    :type action: str or :class:`IpFilterActionType
-     <azure.mgmt.iothub.models.IpFilterActionType>`
-    :param ip_mask: A string that contains the IP address range in CIDR
-     notation for the rule.
+    :param action: Required. The desired action for requests captured by this
+     rule. Possible values include: 'Accept', 'Reject'
+    :type action: str or ~azure.mgmt.iothub.models.IpFilterActionType
+    :param ip_mask: Required. A string that contains the IP address range in
+     CIDR notation for the rule.
     :type ip_mask: str
     """
 
@@ -38,7 +39,8 @@ class IpFilterRule(Model):
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
     }
 
-    def __init__(self, filter_name, action, ip_mask):
-        self.filter_name = filter_name
-        self.action = action
-        self.ip_mask = ip_mask
+    def __init__(self, **kwargs):
+        super(IpFilterRule, self).__init__(**kwargs)
+        self.filter_name = kwargs.get('filter_name', None)
+        self.action = kwargs.get('action', None)
+        self.ip_mask = kwargs.get('ip_mask', None)

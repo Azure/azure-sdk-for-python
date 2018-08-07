@@ -65,6 +65,10 @@ class EndpointUpdateParameters(Model):
      CDN endpoint. Each geo filter defines an acess rule to a specified path or
      content, e.g. block APAC for path /pictures/
     :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
+    :param delivery_policy: A policy that specifies the delivery rules to be
+     used for an endpoint.
+    :type delivery_policy:
+     ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
     """
 
     _attribute_map = {
@@ -79,18 +83,20 @@ class EndpointUpdateParameters(Model):
         'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
+        'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
     }
 
-    def __init__(self, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, probe_path=None, geo_filters=None):
-        super(EndpointUpdateParameters, self).__init__()
-        self.tags = tags
-        self.origin_host_header = origin_host_header
-        self.origin_path = origin_path
-        self.content_types_to_compress = content_types_to_compress
-        self.is_compression_enabled = is_compression_enabled
-        self.is_http_allowed = is_http_allowed
-        self.is_https_allowed = is_https_allowed
-        self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
-        self.probe_path = probe_path
-        self.geo_filters = geo_filters
+    def __init__(self, **kwargs):
+        super(EndpointUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
+        self.origin_path = kwargs.get('origin_path', None)
+        self.content_types_to_compress = kwargs.get('content_types_to_compress', None)
+        self.is_compression_enabled = kwargs.get('is_compression_enabled', None)
+        self.is_http_allowed = kwargs.get('is_http_allowed', None)
+        self.is_https_allowed = kwargs.get('is_https_allowed', None)
+        self.query_string_caching_behavior = kwargs.get('query_string_caching_behavior', None)
+        self.optimization_type = kwargs.get('optimization_type', None)
+        self.probe_path = kwargs.get('probe_path', None)
+        self.geo_filters = kwargs.get('geo_filters', None)
+        self.delivery_policy = kwargs.get('delivery_policy', None)

@@ -29,8 +29,8 @@ class NameAvailability(Model):
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, message=None, name_available=None, reason=None):
-        super(NameAvailability, self).__init__()
-        self.message = message
-        self.name_available = name_available
-        self.reason = reason
+    def __init__(self, **kwargs):
+        super(NameAvailability, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)

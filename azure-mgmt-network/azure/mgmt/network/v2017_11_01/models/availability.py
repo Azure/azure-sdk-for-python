@@ -29,8 +29,8 @@ class Availability(Model):
         'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self, time_grain=None, retention=None, blob_duration=None):
-        super(Availability, self).__init__()
-        self.time_grain = time_grain
-        self.retention = retention
-        self.blob_duration = blob_duration
+    def __init__(self, **kwargs):
+        super(Availability, self).__init__(**kwargs)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.retention = kwargs.get('retention', None)
+        self.blob_duration = kwargs.get('blob_duration', None)

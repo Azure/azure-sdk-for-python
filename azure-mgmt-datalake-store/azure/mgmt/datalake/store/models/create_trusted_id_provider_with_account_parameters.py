@@ -16,9 +16,12 @@ class CreateTrustedIdProviderWithAccountParameters(Model):
     """The parameters used to create a new trusted identity provider while
     creating a new Data Lake Store account.
 
-    :param name: The unique name of the trusted identity provider to create.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the trusted identity provider to
+     create.
     :type name: str
-    :param id_provider: The URL of this trusted identity provider.
+    :param id_provider: Required. The URL of this trusted identity provider.
     :type id_provider: str
     """
 
@@ -32,7 +35,7 @@ class CreateTrustedIdProviderWithAccountParameters(Model):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, name, id_provider):
-        super(CreateTrustedIdProviderWithAccountParameters, self).__init__()
-        self.name = name
-        self.id_provider = id_provider
+    def __init__(self, **kwargs):
+        super(CreateTrustedIdProviderWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id_provider = kwargs.get('id_provider', None)

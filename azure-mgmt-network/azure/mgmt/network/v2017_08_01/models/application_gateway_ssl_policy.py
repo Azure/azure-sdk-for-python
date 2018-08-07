@@ -47,10 +47,10 @@ class ApplicationGatewaySslPolicy(Model):
         'min_protocol_version': {'key': 'minProtocolVersion', 'type': 'str'},
     }
 
-    def __init__(self, disabled_ssl_protocols=None, policy_type=None, policy_name=None, cipher_suites=None, min_protocol_version=None):
-        super(ApplicationGatewaySslPolicy, self).__init__()
-        self.disabled_ssl_protocols = disabled_ssl_protocols
-        self.policy_type = policy_type
-        self.policy_name = policy_name
-        self.cipher_suites = cipher_suites
-        self.min_protocol_version = min_protocol_version
+    def __init__(self, **kwargs):
+        super(ApplicationGatewaySslPolicy, self).__init__(**kwargs)
+        self.disabled_ssl_protocols = kwargs.get('disabled_ssl_protocols', None)
+        self.policy_type = kwargs.get('policy_type', None)
+        self.policy_name = kwargs.get('policy_name', None)
+        self.cipher_suites = kwargs.get('cipher_suites', None)
+        self.min_protocol_version = kwargs.get('min_protocol_version', None)

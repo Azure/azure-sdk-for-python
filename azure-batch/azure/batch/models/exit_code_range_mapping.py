@@ -38,6 +38,7 @@ class ExitCodeRangeMapping(Model):
     }
 
     def __init__(self, start, end, exit_options):
+        super(ExitCodeRangeMapping, self).__init__()
         self.start = start
         self.end = end
         self.exit_options = exit_options

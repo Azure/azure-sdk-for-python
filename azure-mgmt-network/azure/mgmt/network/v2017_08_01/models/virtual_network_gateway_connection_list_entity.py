@@ -18,6 +18,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :ivar name: Resource name.
@@ -30,8 +32,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :type tags: dict[str, str]
     :param authorization_key: The authorizationKey.
     :type authorization_key: str
-    :param virtual_network_gateway1: The reference to virtual network gateway
-     resource.
+    :param virtual_network_gateway1: Required. The reference to virtual
+     network gateway resource.
     :type virtual_network_gateway1:
      ~azure.mgmt.network.v2017_08_01.models.VirtualNetworkConnectionGatewayReference
     :param virtual_network_gateway2: The reference to virtual network gateway
@@ -42,8 +44,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      resource.
     :type local_network_gateway2:
      ~azure.mgmt.network.v2017_08_01.models.VirtualNetworkConnectionGatewayReference
-    :param connection_type: Gateway connection type. Possible values are:
-     'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
+    :param connection_type: Required. Gateway connection type. Possible values
+     are: 'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnectionType
@@ -128,23 +130,23 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_gateway1, connection_type, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, use_policy_based_traffic_selectors=None, ipsec_policies=None, resource_guid=None, etag=None):
-        super(VirtualNetworkGatewayConnectionListEntity, self).__init__(id=id, location=location, tags=tags)
-        self.authorization_key = authorization_key
-        self.virtual_network_gateway1 = virtual_network_gateway1
-        self.virtual_network_gateway2 = virtual_network_gateway2
-        self.local_network_gateway2 = local_network_gateway2
-        self.connection_type = connection_type
-        self.routing_weight = routing_weight
-        self.shared_key = shared_key
+    def __init__(self, **kwargs):
+        super(VirtualNetworkGatewayConnectionListEntity, self).__init__(**kwargs)
+        self.authorization_key = kwargs.get('authorization_key', None)
+        self.virtual_network_gateway1 = kwargs.get('virtual_network_gateway1', None)
+        self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
+        self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
+        self.connection_type = kwargs.get('connection_type', None)
+        self.routing_weight = kwargs.get('routing_weight', None)
+        self.shared_key = kwargs.get('shared_key', None)
         self.connection_status = None
         self.tunnel_connection_status = None
         self.egress_bytes_transferred = None
         self.ingress_bytes_transferred = None
-        self.peer = peer
-        self.enable_bgp = enable_bgp
-        self.use_policy_based_traffic_selectors = use_policy_based_traffic_selectors
-        self.ipsec_policies = ipsec_policies
-        self.resource_guid = resource_guid
+        self.peer = kwargs.get('peer', None)
+        self.enable_bgp = kwargs.get('enable_bgp', None)
+        self.use_policy_based_traffic_selectors = kwargs.get('use_policy_based_traffic_selectors', None)
+        self.ipsec_policies = kwargs.get('ipsec_policies', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = None
-        self.etag = etag
+        self.etag = kwargs.get('etag', None)

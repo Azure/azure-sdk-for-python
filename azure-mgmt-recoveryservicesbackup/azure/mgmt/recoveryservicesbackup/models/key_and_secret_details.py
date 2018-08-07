@@ -18,21 +18,26 @@ class KeyAndSecretDetails(Model):
     If the VM was encrypted then we will store follwing details :
     1. Secret(BEK) - Url + Backup Data + vaultId.
     2. Key(KEK) - Url + Backup Data + vaultId.
+    3. EncryptionMechanism
     BEK and KEK can potentiallty have different vault ids.
 
     :param kek_details: KEK is encryption key for BEK.
-    :type kek_details: :class:`KEKDetails
-     <azure.mgmt.recoveryservicesbackup.models.KEKDetails>`
+    :type kek_details: ~azure.mgmt.recoveryservicesbackup.models.KEKDetails
     :param bek_details: BEK is bitlocker encrpytion key.
-    :type bek_details: :class:`BEKDetails
-     <azure.mgmt.recoveryservicesbackup.models.BEKDetails>`
+    :type bek_details: ~azure.mgmt.recoveryservicesbackup.models.BEKDetails
+    :param encryption_mechanism: Encryption mechanism: None/ SinglePass/
+     DoublePass
+    :type encryption_mechanism: str
     """
 
     _attribute_map = {
         'kek_details': {'key': 'kekDetails', 'type': 'KEKDetails'},
         'bek_details': {'key': 'bekDetails', 'type': 'BEKDetails'},
+        'encryption_mechanism': {'key': 'encryptionMechanism', 'type': 'str'},
     }
 
-    def __init__(self, kek_details=None, bek_details=None):
-        self.kek_details = kek_details
-        self.bek_details = bek_details
+    def __init__(self, **kwargs):
+        super(KeyAndSecretDetails, self).__init__(**kwargs)
+        self.kek_details = kwargs.get('kek_details', None)
+        self.bek_details = kwargs.get('bek_details', None)
+        self.encryption_mechanism = kwargs.get('encryption_mechanism', None)

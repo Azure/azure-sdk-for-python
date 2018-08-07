@@ -18,6 +18,8 @@ class DataMaskingRule(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -36,17 +38,17 @@ class DataMaskingRule(ProxyResource):
      enabled, regardless of the provided value of ruleState. Possible values
      include: 'Disabled', 'Enabled'
     :type rule_state: str or ~azure.mgmt.sql.models.DataMaskingRuleState
-    :param schema_name: The schema name on which the data masking rule is
-     applied.
+    :param schema_name: Required. The schema name on which the data masking
+     rule is applied.
     :type schema_name: str
-    :param table_name: The table name on which the data masking rule is
-     applied.
+    :param table_name: Required. The table name on which the data masking rule
+     is applied.
     :type table_name: str
-    :param column_name: The column name on which the data masking rule is
-     applied.
+    :param column_name: Required. The column name on which the data masking
+     rule is applied.
     :type column_name: str
-    :param masking_function: The masking function that is used for the data
-     masking rule. Possible values include: 'Default', 'CCN', 'Email',
+    :param masking_function: Required. The masking function that is used for
+     the data masking rule. Possible values include: 'Default', 'CCN', 'Email',
      'Number', 'SSN', 'Text'
     :type masking_function: str or ~azure.mgmt.sql.models.DataMaskingFunction
     :param number_from: The numberFrom property of the masking rule. Required
@@ -109,19 +111,19 @@ class DataMaskingRule(ProxyResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, schema_name, table_name, column_name, masking_function, alias_name=None, rule_state=None, number_from=None, number_to=None, prefix_size=None, suffix_size=None, replacement_string=None):
-        super(DataMaskingRule, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataMaskingRule, self).__init__(**kwargs)
         self.data_masking_rule_id = None
-        self.alias_name = alias_name
-        self.rule_state = rule_state
-        self.schema_name = schema_name
-        self.table_name = table_name
-        self.column_name = column_name
-        self.masking_function = masking_function
-        self.number_from = number_from
-        self.number_to = number_to
-        self.prefix_size = prefix_size
-        self.suffix_size = suffix_size
-        self.replacement_string = replacement_string
+        self.alias_name = kwargs.get('alias_name', None)
+        self.rule_state = kwargs.get('rule_state', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.column_name = kwargs.get('column_name', None)
+        self.masking_function = kwargs.get('masking_function', None)
+        self.number_from = kwargs.get('number_from', None)
+        self.number_to = kwargs.get('number_to', None)
+        self.prefix_size = kwargs.get('prefix_size', None)
+        self.suffix_size = kwargs.get('suffix_size', None)
+        self.replacement_string = kwargs.get('replacement_string', None)
         self.location = None
         self.kind = None

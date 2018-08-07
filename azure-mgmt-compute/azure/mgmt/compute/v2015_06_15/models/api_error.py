@@ -35,10 +35,10 @@ class ApiError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, details=None, innererror=None, code=None, target=None, message=None):
-        super(ApiError, self).__init__()
-        self.details = details
-        self.innererror = innererror
-        self.code = code
-        self.target = target
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ApiError, self).__init__(**kwargs)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
+        self.code = kwargs.get('code', None)
+        self.target = kwargs.get('target', None)
+        self.message = kwargs.get('message', None)

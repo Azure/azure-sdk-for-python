@@ -39,7 +39,14 @@ class VirtualMachineConfiguration(Model):
     :param data_disks: The configuration for data disks attached to the
      comptue nodes in the pool. This property must be specified if the compute
      nodes in the pool need to have empty data disks attached to them. This
-     cannot be updated.
+     cannot be updated. Each node gets its own disk (the disk is not a file
+     share). Existing disks cannot be attached, each attached disk is empty.
+     When the node is removed from the pool, the disk and all data associated
+     with it is also deleted. The disk is not formatted after being attached,
+     it must be formatted before use - for more information see
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
+     and
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :type data_disks: list[~azure.batch.models.DataDisk]
     :param license_type: The type of on-premises license to be used when
      deploying the operating system. This only applies to images that contain
@@ -73,6 +80,7 @@ class VirtualMachineConfiguration(Model):
     }
 
     def __init__(self, image_reference, node_agent_sku_id, os_disk=None, windows_configuration=None, data_disks=None, license_type=None, container_configuration=None):
+        super(VirtualMachineConfiguration, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.node_agent_sku_id = node_agent_sku_id

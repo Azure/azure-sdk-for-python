@@ -34,6 +34,7 @@ class TaskContainerExecutionInformation(Model):
     }
 
     def __init__(self, container_id=None, state=None, error=None):
+        super(TaskContainerExecutionInformation, self).__init__()
         self.container_id = container_id
         self.state = state
         self.error = error

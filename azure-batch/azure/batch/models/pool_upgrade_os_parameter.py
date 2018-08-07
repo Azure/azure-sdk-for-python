@@ -29,4 +29,5 @@ class PoolUpgradeOSParameter(Model):
     }
 
     def __init__(self, target_os_version):
+        super(PoolUpgradeOSParameter, self).__init__()
         self.target_os_version = target_os_version

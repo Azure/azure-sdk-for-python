@@ -15,19 +15,21 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetDataDisk(Model):
     """Describes a virtual machine scale set data disk.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param name: The disk name.
     :type name: str
-    :param lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
+    :param lun: Required. Specifies the logical unit number of the data disk.
+     This value is used to identify data disks within the VM and therefore must
+     be unique for each data disk attached to a VM.
     :type lun: int
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_03_30.models.CachingTypes
-    :param create_option: The create option. Possible values include:
-     'FromImage', 'Empty', 'Attach'
+    :param create_option: Required. The create option. Possible values
+     include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
@@ -53,11 +55,11 @@ class VirtualMachineScaleSetDataDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, lun, create_option, name=None, caching=None, disk_size_gb=None, managed_disk=None):
-        super(VirtualMachineScaleSetDataDisk, self).__init__()
-        self.name = name
-        self.lun = lun
-        self.caching = caching
-        self.create_option = create_option
-        self.disk_size_gb = disk_size_gb
-        self.managed_disk = managed_disk
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetDataDisk, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.lun = kwargs.get('lun', None)
+        self.caching = kwargs.get('caching', None)
+        self.create_option = kwargs.get('create_option', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.managed_disk = kwargs.get('managed_disk', None)

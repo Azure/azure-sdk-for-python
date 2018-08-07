@@ -26,7 +26,7 @@ class RetentionPolicyParameters(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, days=0, enabled=False):
-        super(RetentionPolicyParameters, self).__init__()
-        self.days = days
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(RetentionPolicyParameters, self).__init__(**kwargs)
+        self.days = kwargs.get('days', 0)
+        self.enabled = kwargs.get('enabled', False)

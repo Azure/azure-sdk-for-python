@@ -15,12 +15,8 @@ from msrest.serialization import Model
 class StartTaskInformation(Model):
     """Information about a start task running on a compute node.
 
-    :param state: The state of the start task on the compute node. Values are:
-     running - The start task is currently running.
-     completed - The start task has exited with exit code 0, or the start task
-     has failed and the retry limit has reached, or the start task process did
-     not run due to task preparation errors (such as resource file download
-     failures). Possible values include: 'running', 'completed'
+    :param state: The state of the start task on the compute node. Possible
+     values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.StartTaskState
     :param start_time: The time at which the start task started running. This
      value is reset every time the task is restarted or retried (that is, this
@@ -88,6 +84,7 @@ class StartTaskInformation(Model):
     }
 
     def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, result=None):
+        super(StartTaskInformation, self).__init__()
         self.state = state
         self.start_time = start_time
         self.end_time = end_time

@@ -24,4 +24,5 @@ class TaskAddCollectionResult(Model):
     }
 
     def __init__(self, value=None):
+        super(TaskAddCollectionResult, self).__init__()
         self.value = value

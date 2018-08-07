@@ -41,8 +41,8 @@ class StorageProfile(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
     }
 
-    def __init__(self, image_reference=None, os_disk=None, data_disks=None):
-        super(StorageProfile, self).__init__()
-        self.image_reference = image_reference
-        self.os_disk = os_disk
-        self.data_disks = data_disks
+    def __init__(self, **kwargs):
+        super(StorageProfile, self).__init__(**kwargs)
+        self.image_reference = kwargs.get('image_reference', None)
+        self.os_disk = kwargs.get('os_disk', None)
+        self.data_disks = kwargs.get('data_disks', None)

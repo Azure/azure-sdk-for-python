@@ -82,6 +82,7 @@ class SubtaskInformation(Model):
     }
 
     def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, container_info=None, failure_info=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, result=None):
+        super(SubtaskInformation, self).__init__()
         self.id = id
         self.node_info = node_info
         self.start_time = start_time

@@ -35,6 +35,7 @@ class ApplicationListOptions(Model):
     """
 
     def __init__(self, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(ApplicationListOptions, self).__init__()
         self.max_results = max_results
         self.timeout = timeout
         self.client_request_id = client_request_id

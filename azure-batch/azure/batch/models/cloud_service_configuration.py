@@ -52,6 +52,7 @@ class CloudServiceConfiguration(Model):
     }
 
     def __init__(self, os_family, target_os_version=None):
+        super(CloudServiceConfiguration, self).__init__()
         self.os_family = os_family
         self.target_os_version = target_os_version
         self.current_os_version = None

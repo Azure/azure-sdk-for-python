@@ -18,14 +18,16 @@ class DataMaskingPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param data_masking_state: The state of the data masking policy. Possible
-     values include: 'Disabled', 'Enabled'
+    :param data_masking_state: Required. The state of the data masking policy.
+     Possible values include: 'Disabled', 'Enabled'
     :type data_masking_state: str or ~azure.mgmt.sql.models.DataMaskingState
     :param exempt_principals: The list of the exempt principals. Specifies the
      semicolon-separated list of database users for which the data masking
@@ -68,10 +70,10 @@ class DataMaskingPolicy(ProxyResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, data_masking_state, exempt_principals=None):
-        super(DataMaskingPolicy, self).__init__()
-        self.data_masking_state = data_masking_state
-        self.exempt_principals = exempt_principals
+    def __init__(self, **kwargs):
+        super(DataMaskingPolicy, self).__init__(**kwargs)
+        self.data_masking_state = kwargs.get('data_masking_state', None)
+        self.exempt_principals = kwargs.get('exempt_principals', None)
         self.application_principals = None
         self.masking_level = None
         self.location = None

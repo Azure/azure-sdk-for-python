@@ -28,7 +28,7 @@ class VerificationIPFlowResult(Model):
         'rule_name': {'key': 'ruleName', 'type': 'str'},
     }
 
-    def __init__(self, access=None, rule_name=None):
-        super(VerificationIPFlowResult, self).__init__()
-        self.access = access
-        self.rule_name = rule_name
+    def __init__(self, **kwargs):
+        super(VerificationIPFlowResult, self).__init__(**kwargs)
+        self.access = kwargs.get('access', None)
+        self.rule_name = kwargs.get('rule_name', None)

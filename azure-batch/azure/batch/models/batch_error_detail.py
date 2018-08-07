@@ -28,5 +28,6 @@ class BatchErrorDetail(Model):
     }
 
     def __init__(self, key=None, value=None):
+        super(BatchErrorDetail, self).__init__()
         self.key = key
         self.value = value

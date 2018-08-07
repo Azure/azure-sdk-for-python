@@ -34,5 +34,6 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
     }
 
     def __init__(self, remote_login_ip_address, remote_login_port):
+        super(ComputeNodeGetRemoteLoginSettingsResult, self).__init__()
         self.remote_login_ip_address = remote_login_ip_address
         self.remote_login_port = remote_login_port

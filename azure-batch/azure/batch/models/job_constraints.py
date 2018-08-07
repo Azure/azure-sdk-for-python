@@ -40,5 +40,6 @@ class JobConstraints(Model):
     }
 
     def __init__(self, max_wall_clock_time=None, max_task_retry_count=None):
+        super(JobConstraints, self).__init__()
         self.max_wall_clock_time = max_wall_clock_time
         self.max_task_retry_count = max_task_retry_count

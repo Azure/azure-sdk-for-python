@@ -16,15 +16,15 @@ class UpdateJobParameters(Model):
     """The parameters that can be used to update existing Data Lake Analytics job
     information properties. (Only for use internally with Scope job type.).
 
-    :param degree_of_parallelism: the degree of parallelism used for this job.
+    :param degree_of_parallelism: The degree of parallelism used for this job.
      This must be greater than 0, if set to less than 0 it will default to 1.
     :type degree_of_parallelism: int
-    :param priority: the priority value for the current job. Lower numbers
+    :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
     :type priority: int
-    :param tags: the key-value pairs used to add additional metadata to the
-     job information. (Only for use internally with Scope job type.)
+    :param tags: The key-value pairs used to add additional metadata to the
+     job information.
     :type tags: dict[str, str]
     """
 
@@ -34,8 +34,8 @@ class UpdateJobParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, degree_of_parallelism=None, priority=None, tags=None):
-        super(UpdateJobParameters, self).__init__()
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(UpdateJobParameters, self).__init__(**kwargs)
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', None)
+        self.priority = kwargs.get('priority', None)
+        self.tags = kwargs.get('tags', None)

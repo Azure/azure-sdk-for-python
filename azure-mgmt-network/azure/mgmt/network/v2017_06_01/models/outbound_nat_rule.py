@@ -15,6 +15,8 @@ from .sub_resource import SubResource
 class OutboundNatRule(SubResource):
     """Outbound NAT pool of the load balancer.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :param allocated_outbound_ports: The number of outbound ports to be used
@@ -24,8 +26,8 @@ class OutboundNatRule(SubResource):
      balancer.
     :type frontend_ip_configurations:
      list[~azure.mgmt.network.v2017_06_01.models.SubResource]
-    :param backend_address_pool: A reference to a pool of DIPs. Outbound
-     traffic is randomly load balanced across IPs in the backend IPs.
+    :param backend_address_pool: Required. A reference to a pool of DIPs.
+     Outbound traffic is randomly load balanced across IPs in the backend IPs.
     :type backend_address_pool:
      ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param provisioning_state: Gets the provisioning state of the PublicIP
@@ -53,11 +55,11 @@ class OutboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, backend_address_pool, id=None, allocated_outbound_ports=None, frontend_ip_configurations=None, provisioning_state=None, name=None, etag=None):
-        super(OutboundNatRule, self).__init__(id=id)
-        self.allocated_outbound_ports = allocated_outbound_ports
-        self.frontend_ip_configurations = frontend_ip_configurations
-        self.backend_address_pool = backend_address_pool
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(OutboundNatRule, self).__init__(**kwargs)
+        self.allocated_outbound_ports = kwargs.get('allocated_outbound_ports', None)
+        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

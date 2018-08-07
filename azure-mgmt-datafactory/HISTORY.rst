@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.6.0 (2018-03-22)
+++++++++++++++++++
+
+- Added new AzureDatabricks LinkedService and DatabricksNotebook Activity
+- Added headNodeSize and dataNodeSize properties in HDInsightOnDemand LinkedService
+- Added LinkedService, Dataset, CopySource for SalesforceMarketingCloud
+- Added support for SecureOutput on all activities
+- Added new BatchCount property on ForEach activity which controls how many concurrent activities to run
+- Added DELETE method for Web Activity
+- Added new Filter Activity
+- Added Linked Service Parameters support
+
 0.5.0 (2018-02-16)
 ++++++++++++++++++
 

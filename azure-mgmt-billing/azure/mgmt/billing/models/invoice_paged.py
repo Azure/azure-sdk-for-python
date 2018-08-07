@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class InvoicePaged(Paged):
     """
-    A paging container for iterating over a list of Invoice object
+    A paging container for iterating over a list of :class:`Invoice <azure.mgmt.billing.models.Invoice>` object
     """
 
     _attribute_map = {

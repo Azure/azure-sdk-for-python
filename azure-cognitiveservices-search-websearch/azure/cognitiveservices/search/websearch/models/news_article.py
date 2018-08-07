@@ -18,7 +18,9 @@ class NewsArticle(Article):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -62,6 +64,21 @@ class NewsArticle(Article):
         'word_count': {'readonly': True},
     }
 
-    def __init__(self):
-        super(NewsArticle, self).__init__()
+    _attribute_map = {
+        '_type': {'key': '_type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'image': {'key': 'image', 'type': 'ImageObject'},
+        'description': {'key': 'description', 'type': 'str'},
+        'bing_id': {'key': 'bingId', 'type': 'str'},
+        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': '[Thing]'},
+        'text': {'key': 'text', 'type': 'str'},
+        'word_count': {'key': 'wordCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NewsArticle, self).__init__(**kwargs)
         self._type = 'NewsArticle'

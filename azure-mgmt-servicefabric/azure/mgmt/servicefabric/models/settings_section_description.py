@@ -13,14 +13,15 @@ from msrest.serialization import Model
 
 
 class SettingsSectionDescription(Model):
-    """ServiceFabric section settings.
+    """Describes a section in the fabric settings of the cluster.
 
-    :param name: The name of settings section
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The section name of the fabric settings.
     :type name: str
-    :param parameters: Collection of settings in the section, each setting is
-     a tuple consisting of setting name and value
-    :type parameters: list of :class:`SettingsParameterDescription
-     <azure.mgmt.servicefabric.models.SettingsParameterDescription>`
+    :param parameters: Required. The collection of parameters in the section.
+    :type parameters:
+     list[~azure.mgmt.servicefabric.models.SettingsParameterDescription]
     """
 
     _validation = {
@@ -33,6 +34,7 @@ class SettingsSectionDescription(Model):
         'parameters': {'key': 'parameters', 'type': '[SettingsParameterDescription]'},
     }
 
-    def __init__(self, name, parameters):
-        self.name = name
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(SettingsSectionDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.parameters = kwargs.get('parameters', None)

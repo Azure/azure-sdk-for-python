@@ -15,16 +15,19 @@ from msrest.serialization import Model
 class Usage(Model):
     """Describes Storage Resource Usage.
 
-    :param unit: The unit of measurement. Possible values include: 'Count',
-     'Bytes', 'Seconds', 'Percent', 'CountsPerSecond', 'BytesPerSecond'
+    All required parameters must be populated in order to send to Azure.
+
+    :param unit: Required. The unit of measurement. Possible values include:
+     'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
+     'BytesPerSecond'
     :type unit: str or ~azure.mgmt.storage.v2015_06_15.models.UsageUnit
-    :param current_value: The current count of the allocated resources in the
-     subscription.
+    :param current_value: Required. The current count of the allocated
+     resources in the subscription.
     :type current_value: int
-    :param limit: The maximum count of the resources that can be allocated in
-     the subscription.
+    :param limit: Required. The maximum count of the resources that can be
+     allocated in the subscription.
     :type limit: int
-    :param name: The name of the type of usage.
+    :param name: Required. The name of the type of usage.
     :type name: ~azure.mgmt.storage.v2015_06_15.models.UsageName
     """
 
@@ -42,9 +45,9 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, unit, current_value, limit, name):
-        super(Usage, self).__init__()
-        self.unit = unit
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
+        self.unit = kwargs.get('unit', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)

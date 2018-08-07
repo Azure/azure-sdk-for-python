@@ -62,10 +62,10 @@ class RouteTable(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, routes=None, disable_bgp_route_propagation=None, provisioning_state=None, etag=None):
-        super(RouteTable, self).__init__(id=id, location=location, tags=tags)
-        self.routes = routes
+    def __init__(self, **kwargs):
+        super(RouteTable, self).__init__(**kwargs)
+        self.routes = kwargs.get('routes', None)
         self.subnets = None
-        self.disable_bgp_route_propagation = disable_bgp_route_propagation
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+        self.disable_bgp_route_propagation = kwargs.get('disable_bgp_route_propagation', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

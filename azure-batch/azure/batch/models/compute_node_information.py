@@ -43,6 +43,7 @@ class ComputeNodeInformation(Model):
     }
 
     def __init__(self, affinity_id=None, node_url=None, pool_id=None, node_id=None, task_root_directory=None, task_root_directory_url=None):
+        super(ComputeNodeInformation, self).__init__()
         self.affinity_id = affinity_id
         self.node_url = node_url
         self.pool_id = pool_id

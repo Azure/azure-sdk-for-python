@@ -5,27 +5,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:33:44 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:06 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:33:34.0851994Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:33:45 GMT']
-      request-id: [76fd9717-8ec8-4206-9e86-44b9d90760a7]
+      date: ['Tue, 13 Mar 2018 06:09:07 GMT']
+      request-id: [e947d54e-63bf-4837-9104-ef30924484d9]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -37,27 +32,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:33:55 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:17 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:33:34.0851994Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:33:56 GMT']
-      request-id: [0999d61f-c74a-4089-94e3-87497733c9e7]
+      date: ['Tue, 13 Mar 2018 06:09:17 GMT']
+      request-id: [86216ba2-19fd-4287-8b77-54e9f717fbd5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -69,27 +59,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:06 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:27 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:33:34.0851994Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:34:07 GMT']
-      request-id: [22cb1c2a-d0de-4b6d-a04a-357c17ae6513]
+      date: ['Tue, 13 Mar 2018 06:09:27 GMT']
+      request-id: [64824ba0-8f0f-4f22-ab9f-f52be42a4dcf]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -101,27 +86,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:17 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:38 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:33:34.0851994Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:34:17 GMT']
-      request-id: [ec812401-2159-4432-a746-80c7c7f9f937]
+      date: ['Tue, 13 Mar 2018 06:09:39 GMT']
+      request-id: [ed7c7f92-7013-40c6-bcde-25d7567d34e7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -133,27 +113,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:27 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:49 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:33:34.0851994Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:34:28 GMT']
-      request-id: [cb8bd5b2-e222-46c4-a94c-6502fbb446c6]
+      date: ['Tue, 13 Mar 2018 06:09:49 GMT']
+      request-id: [ae8ffe66-7a85-4c78-8047-0df23678c27b]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -165,27 +140,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:38 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:09:59 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:34:38 GMT']
-      request-id: [a766cd03-6d05-4c6c-be1a-b407c5653b4d]
+      date: ['Tue, 13 Mar 2018 06:10:00 GMT']
+      request-id: [35c72345-fd9b-495a-8352-bf4cb60ae8f1]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -197,27 +167,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:48 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:10:10 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:34:49 GMT']
-      request-id: [daf100d5-02c1-4587-8e9c-372dd0adf321]
+      date: ['Tue, 13 Mar 2018 06:10:11 GMT']
+      request-id: [d854d38f-86c8-4747-8c5f-ee5f61853c7e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -229,27 +194,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:34:59 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:10:21 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:00 GMT']
-      request-id: [23b30809-11b3-46f2-882d-bee5bcbf0a4c]
+      date: ['Tue, 13 Mar 2018 06:10:21 GMT']
+      request-id: [a3ed0508-6869-433e-b264-63a2e36c2419]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -261,27 +221,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:35:10 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:10:31 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:10 GMT']
-      request-id: [f78e5d47-e7c4-4671-b0e2-901bc559da1c]
+      date: ['Tue, 13 Mar 2018 06:10:32 GMT']
+      request-id: [dc59a4db-6e55-4f62-a9de-f37bd32d656c]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -293,27 +248,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:35:20 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:10:42 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:21 GMT']
-      request-id: [24c4e6fc-d0e5-44aa-9448-826d2d670a44]
+      date: ['Tue, 13 Mar 2018 06:10:42 GMT']
+      request-id: [10df0550-62b2-4682-ad31-2cbece413259]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -325,27 +275,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:35:31 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:10:52 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:32 GMT']
-      request-id: [736af99b-e483-43e9-bf65-4a779a132765]
+      date: ['Tue, 13 Mar 2018 06:10:52 GMT']
+      request-id: [469d6809-21b9-4779-bca4-fbbb4832887c]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -357,27 +302,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:35:42 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:03 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:42 GMT']
-      request-id: [e0f15947-a2be-4f58-80b4-42d2df565702]
+      date: ['Tue, 13 Mar 2018 06:11:04 GMT']
+      request-id: [fc38b109-0940-46eb-9c3c-dd60a38010a7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -389,27 +329,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:35:52 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:14 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:35:53 GMT']
-      request-id: [b5ef1ce6-1a73-45ec-ae38-42caa09b3321]
+      date: ['Tue, 13 Mar 2018 06:11:14 GMT']
+      request-id: [35f5395b-ae42-452f-a206-e7bdc074e62e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -421,27 +356,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:03 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:24 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:03 GMT']
-      request-id: [5548467e-16c6-4d43-a03b-908a9fcaa09d]
+      date: ['Tue, 13 Mar 2018 06:11:25 GMT']
+      request-id: [5550e980-30d6-414a-a2eb-640cefe465c0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -453,27 +383,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:13 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:35 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:13 GMT']
-      request-id: [eb92a9b2-fedf-4a00-9bd0-95aa0776c01f]
+      date: ['Tue, 13 Mar 2018 06:11:35 GMT']
+      request-id: [1616a4fe-5c67-40df-8534-ef877117ca33]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -485,27 +410,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:24 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:45 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:24 GMT']
-      request-id: [47bf1e40-f9c4-4604-8586-62242b9b64de]
+      date: ['Tue, 13 Mar 2018 06:11:46 GMT']
+      request-id: [a9f4d262-1e04-44f9-8dda-0ef60bb36d2e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -517,27 +437,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:35 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:11:56 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:36 GMT']
-      request-id: [4f409faf-6c8b-452c-8575-938c16e48586]
+      date: ['Tue, 13 Mar 2018 06:11:57 GMT']
+      request-id: [57312756-1d1c-45d6-906e-af5c239a3b17]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -549,27 +464,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:45 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:12:07 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:46 GMT']
-      request-id: [65073541-8654-4dae-8eed-654d5d5753e9]
+      date: ['Tue, 13 Mar 2018 06:12:07 GMT']
+      request-id: [d2f68d28-b51a-4559-8e45-7380abd51c91]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -581,27 +491,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:36:56 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:12:17 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:36:56 GMT']
-      request-id: [cd026d2f-6f76-4f8b-a3a1-3a2b77050f81]
+      date: ['Tue, 13 Mar 2018 06:12:17 GMT']
+      request-id: [7bdfe882-9107-4d42-a045-cc795138a928]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -613,27 +518,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:37:06 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:12:28 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:07 GMT']
-      request-id: [1b55a34b-f4b5-434d-a30e-162e3cb24fbd]
+      date: ['Tue, 13 Mar 2018 06:12:28 GMT']
+      request-id: [0a5945bd-e157-46d5-9fc6-4d981e6b2e9a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -645,27 +545,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:37:17 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:12:38 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:18 GMT']
-      request-id: [95e2a3a7-f6a6-4d17-864d-dcb88e147c9b]
+      date: ['Tue, 13 Mar 2018 06:12:39 GMT']
+      request-id: [0e12beba-2b60-4348-92d8-0123f1b61da6]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -677,27 +572,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:37:28 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:12:49 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:28 GMT']
-      request-id: [fe33b5c8-5c47-49c7-8fdf-b66c4f31481f]
+      date: ['Tue, 13 Mar 2018 06:12:50 GMT']
+      request-id: [5da22b2b-37aa-4233-aabc-11c2c7d1781b]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -709,27 +599,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:37:38 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:00 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:39 GMT']
-      request-id: [f8ca1265-393f-4884-901d-07b5902448f2]
+      date: ['Tue, 13 Mar 2018 06:13:00 GMT']
+      request-id: [bece6006-bddb-4df3-adde-36ce1867712d]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -741,27 +626,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:37:49 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:10 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:50 GMT']
-      request-id: [ef786d36-4093-426b-818a-add19983b0d2]
+      date: ['Tue, 13 Mar 2018 06:13:11 GMT']
+      request-id: [1c2cb0c9-e109-4a0b-8062-62b93e82925a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -773,27 +653,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:00 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:21 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:37:59 GMT']
-      request-id: [969d5e8a-68ca-4927-90b0-52c771b5bb77]
+      date: ['Tue, 13 Mar 2018 06:13:21 GMT']
+      request-id: [91effe40-ce7a-43cb-89d6-8dbf0fdb2f77]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -805,27 +680,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:10 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:31 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:38:11 GMT']
-      request-id: [c31ca32f-4e44-48a7-9116-89f417d54b42]
+      date: ['Tue, 13 Mar 2018 06:13:31 GMT']
+      request-id: [1899c9fe-62ae-4279-96a4-129d551cd8c5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -837,27 +707,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:21 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:42 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:38:21 GMT']
-      request-id: [46c388fb-608a-4dc1-9d31-225c0e2dca0c]
+      date: ['Tue, 13 Mar 2018 06:13:42 GMT']
+      request-id: [0d6b9d66-9c78-4d8f-a3ce-41ddfcfccb2a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -869,27 +734,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:31 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:13:52 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:38:32 GMT']
-      request-id: [8c39f236-8553-4b02-9e35-2eee94aa4596]
+      date: ['Tue, 13 Mar 2018 06:13:53 GMT']
+      request-id: [dee48c6c-2235-45d3-919b-81e323c3704b]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -901,27 +761,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:42 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:03 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:38:43 GMT']
-      request-id: [6cc25d5c-d4d6-4cc4-94cb-b91360af8949]
+      date: ['Tue, 13 Mar 2018 06:14:04 GMT']
+      request-id: [61d19be1-0a3c-436b-b110-61dc434e4343]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -933,27 +788,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:38:53 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:14 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:38:52 GMT']
-      request-id: [c30e615c-9a47-482f-a212-176ee4a8843e]
+      date: ['Tue, 13 Mar 2018 06:14:14 GMT']
+      request-id: [c3e8710f-9cf8-4f6b-96a1-c13c5a15173e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -965,27 +815,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:03 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:24 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:04 GMT']
-      request-id: [88c0577f-347c-4b58-a6a1-95f77da91af0]
+      date: ['Tue, 13 Mar 2018 06:14:25 GMT']
+      request-id: [51bff745-82fd-4120-b122-ee4f66167ac2]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -997,27 +842,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:14 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:35 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:14 GMT']
-      request-id: [b68e5f88-836c-44fa-a002-dfdd527ab15a]
+      date: ['Tue, 13 Mar 2018 06:14:35 GMT']
+      request-id: [3bcb21c0-5bd1-40af-ab6b-c73bc1c337be]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1029,27 +869,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:24 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:46 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:25 GMT']
-      request-id: [7682fce8-4147-4c90-a6bc-0ae4443befb8]
+      date: ['Tue, 13 Mar 2018 06:14:46 GMT']
+      request-id: [6f0cfc8b-f8c3-4add-9944-32185bbbed2e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1061,27 +896,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:35 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:14:56 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:36 GMT']
-      request-id: [04f9ae94-e748-4c8d-8f30-01ceef65c111]
+      date: ['Tue, 13 Mar 2018 06:14:57 GMT']
+      request-id: [4913377d-abc1-449c-831b-1dc1835a58e4]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1093,27 +923,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:46 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:15:07 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:46 GMT']
-      request-id: [fc75c885-0182-4299-94c6-d4fb7c62cf15]
+      date: ['Tue, 13 Mar 2018 06:15:07 GMT']
+      request-id: [aabfe21a-3524-4eb8-ac9f-05d8662932f7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1125,27 +950,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:39:56 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:15:17 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:39:57 GMT']
-      request-id: [d790b25c-0012-40b5-b50f-eae0a0a21691]
+      date: ['Tue, 13 Mar 2018 06:15:18 GMT']
+      request-id: [6336d909-8922-4dc0-b6c8-35050e7a1065]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1157,27 +977,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:40:07 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:15:28 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:40:08 GMT']
-      request-id: [e0a162d6-64da-4a2c-b111-9aaf6adc7948]
+      date: ['Tue, 13 Mar 2018 06:15:28 GMT']
+      request-id: [4257fbd2-e9ec-4981-9290-9f8e36495546]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1189,27 +1004,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:40:18 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:15:39 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:40:17 GMT']
-      request-id: [0476281b-d3c5-49f7-8fd1-bbd79122c5cc]
+      date: ['Tue, 13 Mar 2018 06:15:39 GMT']
+      request-id: [172964e6-6882-4954-b0dc-ee000a888c73]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1221,27 +1031,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:40:28 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:15:49 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:40:29 GMT']
-      request-id: [39adb77c-7c25-4027-b44c-a18e00ab0517]
+      date: ['Tue, 13 Mar 2018 06:15:50 GMT']
+      request-id: [9c938077-c351-4bac-8a3f-375753c1ef21]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1253,27 +1058,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:40:39 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:00 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:40:40 GMT']
-      request-id: [ca176ffb-a98f-4b3a-8791-d83702b0d196]
+      date: ['Tue, 13 Mar 2018 06:16:00 GMT']
+      request-id: [63c23a7a-c1e2-4ab0-8d10-f048b5190319]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1285,27 +1085,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:40:49 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:11 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:40:50 GMT']
-      request-id: [b84c569d-36ef-4b3a-b169-aa8e5fef76c6]
+      date: ['Tue, 13 Mar 2018 06:16:11 GMT']
+      request-id: [1fff688e-e24e-42ae-8c30-f6a01eab86da]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1317,27 +1112,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:00 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:21 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:01 GMT']
-      request-id: [27df8433-ed27-4e3b-b236-7ace9e784df6]
+      date: ['Tue, 13 Mar 2018 06:16:21 GMT']
+      request-id: [31dc8ec8-e650-47b9-a216-e5a92cff54a8]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1349,27 +1139,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:10 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:32 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:11 GMT']
-      request-id: [38338c99-e487-4a08-9c7e-7a05da44a971]
+      date: ['Tue, 13 Mar 2018 06:16:31 GMT']
+      request-id: [e8e2da6c-df7f-4607-9427-11db36351342]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1381,27 +1166,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:21 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:42 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:22 GMT']
-      request-id: [612457df-33b7-43d3-90d1-8d5ec847eefc]
+      date: ['Tue, 13 Mar 2018 06:16:43 GMT']
+      request-id: [141e9493-b250-44e2-b942-f1e89b0d34c1]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1413,27 +1193,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:32 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:16:53 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:08:57.762527Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:32 GMT']
-      request-id: [7a489755-039b-4bfc-80a3-9c63d3892436]
+      date: ['Tue, 13 Mar 2018 06:16:53 GMT']
+      request-id: [bae3a084-d178-4808-8f3d-9d9eeaeb5a80]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1445,27 +1220,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:42 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:17:04 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\"\
-        ,\"ipAddress\":\"100.77.164.86\",\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\"\
-        ,\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n    }\r\n\
-        \  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:43 GMT']
-      request-id: [7c04ae01-f2b8-47f8-857d-a63f577beff9]
+      date: ['Tue, 13 Mar 2018 06:17:04 GMT']
+      request-id: [5e8a78b4-207e-4b11-8029-781e57a17c5e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1477,28 +1247,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:41:53 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:17:14 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:34:34.2085836Z\",\"lastBootTime\":\"2017-11-08T23:41:42.2679879Z\"\
-        ,\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\",\"ipAddress\":\"100.77.164.86\"\
-        ,\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\",\"vmSize\":\"small\"\
-        ,\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"\
-        isDedicated\":true\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:41:54 GMT']
-      request-id: [1b33154d-401e-4261-82cb-eba66b18af97]
+      date: ['Tue, 13 Mar 2018 06:17:14 GMT']
+      request-id: [42eb2c64-5123-4e4d-b813-9eabd0b3e146]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1510,28 +1274,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:04 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:17:25 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:42:02.8765224Z\",\"lastBootTime\":\"2017-11-08T23:41:42.2679879Z\"\
-        ,\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\",\"ipAddress\":\"100.77.164.86\"\
-        ,\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\",\"vmSize\":\"small\"\
-        ,\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"\
-        isDedicated\":true\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:04 GMT']
-      request-id: [62af8e50-a3a2-4355-83d2-2e5f086a7600]
+      date: ['Tue, 13 Mar 2018 06:17:25 GMT']
+      request-id: [f59d349e-ab5c-4ab5-96b2-bbc5b06a49b0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1543,55 +1301,265 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:04 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:17:35 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.japanwest.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-1641561676_1-20171108t233334z\"\
-        ,\"url\":\"https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z\"\
-        ,\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2017-11-08T23:42:02.8765224Z\",\"lastBootTime\":\"2017-11-08T23:41:42.2679879Z\"\
-        ,\"allocationTime\":\"2017-11-08T23:33:34.0851994Z\",\"ipAddress\":\"100.77.164.86\"\
-        ,\"affinityId\":\"TVM:tvm-1641561676_1-20171108t233334z\",\"vmSize\":\"small\"\
-        ,\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"\
-        isDedicated\":true\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:04 GMT']
-      request-id: [3f48a597-381f-40f9-8bde-6e2d2817c686]
+      date: ['Tue, 13 Mar 2018 06:17:35 GMT']
+      request-id: [6c591b41-c6ee-497b-8221-e0fd051f9543]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"name": "BatchPythonSDKUser", "isAdmin": false, "password": "kt#_gahr!@aGERDXA"}'
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:17:46 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:17:46 GMT']
+      request-id: [794eef7f-c91a-4028-9858-5187af19b6cd]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:17:56 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:17:56 GMT']
+      request-id: [94b9fc55-592d-446b-887b-5ffe7edd90c0]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:07 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:07 GMT']
+      request-id: [98087c55-be47-419f-949a-12c83bf1804b]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:17 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:17 GMT']
+      request-id: [9d743543-6e0c-48bf-8702-d5c07442e377]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:28 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:28 GMT']
+      request-id: [8819c99d-a7a9-4cdd-8e36-bcf54bd0a8be]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:38 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:16:57.86036Z\",\"lastBootTime\":\"2018-03-13T06:18:34.5667116Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:39 GMT']
+      request-id: [7ff00011-adef-498c-89bd-070ecc9c5644]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:49 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:18:44.3818137Z\",\"lastBootTime\":\"2018-03-13T06:18:34.5667116Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:50 GMT']
+      request-id: [d933ca50-930c-4db5-8a05-04146b9b2f60]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 06:18:50 GMT']
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2018-03-01.6.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-3840119875_1-20180313t060857z\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2018-03-13T06:18:44.3818137Z\",\"lastBootTime\":\"2018-03-13T06:18:34.5667116Z\",\"allocationTime\":\"2018-03-13T06:08:57.762527Z\",\"ipAddress\":\"10.72.24.177\",\"affinityId\":\"TVM:tvm-3840119875_1-20180313t060857z\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true\r\n
+        \   }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Tue, 13 Mar 2018 06:18:50 GMT']
+      request-id: [cbcd50a9-d1f5-48d0-a990-f06af1ae31b8]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"password": "kt#_gahr!@aGERDXA", "isAdmin": false, "name": "BatchPythonSDKUser"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['81']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:05 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:18:50 GMT']
     method: POST
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users/BatchPythonSDKUser']
+      dataserviceid: ['https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users/BatchPythonSDKUser']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:18 GMT']
-      location: ['https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users/BatchPythonSDKUser']
-      request-id: [7e976564-5be4-47b0-a0fe-b4e2cff7bfcd]
+      date: ['Tue, 13 Mar 2018 06:19:00 GMT']
+      location: ['https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users/BatchPythonSDKUser']
+      request-id: [606c85a5-5cab-4516-a410-405225a00589]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1605,19 +1573,19 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['36']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:19 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:19:00 GMT']
     method: PUT
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users/BatchPythonSDKUser?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users/BatchPythonSDKUser?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users/BatchPythonSDKUser']
+      dataserviceid: ['https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users/BatchPythonSDKUser']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:20 GMT']
-      request-id: [e1136eaa-3b20-4538-815f-7b6909355af9]
+      date: ['Tue, 13 Mar 2018 06:19:01 GMT']
+      request-id: [d5bb8d4b-a33d-4164-8c36-ff9cbcdede5f]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1629,20 +1597,20 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:20 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:19:01 GMT']
     method: GET
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/rdp?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/rdp?api-version=2018-03-01.6.1
   response:
-    body: {string: "full address:s:104.215.53.112\r\nLoadBalanceInfo:s:Cookie: mstshash=TVM#TVM_IN_0"}
+    body: {string: "full address:s:52.161.153.70\r\nLoadBalanceInfo:s:Cookie: mstshash=TVM#TVM_IN_0"}
     headers:
       content-type: [application/octet-stream]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:21 GMT']
-      request-id: [83f77fae-8936-44ae-b08b-651c489817b9]
+      date: ['Tue, 13 Mar 2018 06:19:01 GMT']
+      request-id: [79522e94-105a-435d-81aa-e5fb3f7394a4]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -1655,19 +1623,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 23:42:21 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 06:19:01 GMT']
     method: DELETE
-    uri: https://batch3c670ff0.japanwest.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1641561676_1-20171108t233334z/users/BatchPythonSDKUser?api-version=2017-09-01.6.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-3840119875_1-20180313t060857z/users/BatchPythonSDKUser?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 23:42:26 GMT']
-      request-id: [80cbaa99-c5b0-4e62-99dd-2b3f5f628023]
+      date: ['Tue, 13 Mar 2018 06:19:23 GMT']
+      request-id: [ea322cce-dbf0-4acd-bd4d-70530aad0c54]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

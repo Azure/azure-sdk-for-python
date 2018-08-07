@@ -32,4 +32,5 @@ class TaskAddCollectionParameter(Model):
     }
 
     def __init__(self, value):
+        super(TaskAddCollectionParameter, self).__init__()
         self.value = value

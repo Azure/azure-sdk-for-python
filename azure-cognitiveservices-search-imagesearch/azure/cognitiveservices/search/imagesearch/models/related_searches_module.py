@@ -31,6 +31,6 @@ class RelatedSearchesModule(Model):
         'value': {'key': 'value', 'type': '[Query]'},
     }
 
-    def __init__(self):
-        super(RelatedSearchesModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(RelatedSearchesModule, self).__init__(**kwargs)
         self.value = None

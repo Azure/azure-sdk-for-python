@@ -18,6 +18,8 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :ivar name: Resource name.
@@ -31,13 +33,14 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :param provisioning_state: The provisioning state of the web application
      firewall rule set.
     :type provisioning_state: str
-    :param rule_set_type: The type of the web application firewall rule set.
+    :param rule_set_type: Required. The type of the web application firewall
+     rule set.
     :type rule_set_type: str
-    :param rule_set_version: The version of the web application firewall rule
-     set type.
+    :param rule_set_version: Required. The version of the web application
+     firewall rule set type.
     :type rule_set_version: str
-    :param rule_groups: The rule groups of the web application firewall rule
-     set.
+    :param rule_groups: Required. The rule groups of the web application
+     firewall rule set.
     :type rule_groups:
      list[~azure.mgmt.network.v2017_09_01.models.ApplicationGatewayFirewallRuleGroup]
     """
@@ -62,9 +65,9 @@ class ApplicationGatewayFirewallRuleSet(Resource):
         'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ApplicationGatewayFirewallRuleGroup]'},
     }
 
-    def __init__(self, rule_set_type, rule_set_version, rule_groups, id=None, location=None, tags=None, provisioning_state=None):
-        super(ApplicationGatewayFirewallRuleSet, self).__init__(id=id, location=location, tags=tags)
-        self.provisioning_state = provisioning_state
-        self.rule_set_type = rule_set_type
-        self.rule_set_version = rule_set_version
-        self.rule_groups = rule_groups
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayFirewallRuleSet, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.rule_set_type = kwargs.get('rule_set_type', None)
+        self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.rule_groups = kwargs.get('rule_groups', None)

@@ -3,17 +3,25 @@ import os
 import pkgutil
 import re
 import sys
+import types
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 try:
     import msrestazure
 except:  # Install msrestazure. Would be best to mock it, since we don't need it, but all scenarios I know are fine with a pip install for now
     import subprocess
-    subprocess.call("pip install msrestazure", shell=True)  # Use shell to use venv if available
+    subprocess.call(sys.executable + " -m pip install msrestazure", shell=True)  # Use shell to use venv if available
 
-    # The following DOES not work, since it bypasses venv for some reason
-    # import pip
-    # pip.main(["install", "msrestazure"])
+try:
+    import azure.common
+except:
+    sdk_root = Path(__file__).parents[1]
+    sys.path.append(str((sdk_root / "azure-common").resolve()))
+    import azure.common
+
+import pkg_resources
+pkg_resources.declare_namespace('azure')
 
 _GENERATE_MARKER = "############ Generated from here ############\n"
 
@@ -32,7 +40,9 @@ def get_versionned_modules(package_name, module_name, sdk_root=None):
     if not sdk_root:
         sdk_root = Path(__file__).parents[1]
 
-    sys.path.append(str((sdk_root / package_name).resolve()))
+    azure.__path__.append(str((sdk_root / package_name / "azure").resolve()))
+    # Doesn't work with namespace package
+    # sys.path.append(str((sdk_root / package_name).resolve()))
     module_to_generate = importlib.import_module(module_name)
     return [(label, importlib.import_module('.'+label, module_to_generate.__name__))
             for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
@@ -108,7 +118,7 @@ def build_operation_group(module_name, operation_name, versions):
     template_intro_doc= '        """Instance depends on the API version:\n\n'
     template_inside_doc="           * {api_version}: :class:`{clsname}<{module_name}.{api_version_module}.operations.{clsname}>`\n"
     template_end_doc='        """\n'
-    template_code_prefix="        api_version = self.profile.get('{attr}', self.api_version)"
+    template_code_prefix="        api_version = self._get_api_version('{attr}')"
     template_if = """        {first}if api_version == '{api_version}':
             from .{api_version_module}.operations import {clsname} as OperationClass"""
     template_end_def = """        else:

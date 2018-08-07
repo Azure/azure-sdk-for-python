@@ -23,6 +23,6 @@ class VirtualHardDisk(Model):
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, uri=None):
-        super(VirtualHardDisk, self).__init__()
-        self.uri = uri
+    def __init__(self, **kwargs):
+        super(VirtualHardDisk, self).__init__(**kwargs)
+        self.uri = kwargs.get('uri', None)

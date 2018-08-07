@@ -40,6 +40,7 @@ class TaskFailureInformation(Model):
     }
 
     def __init__(self, category, code=None, message=None, details=None):
+        super(TaskFailureInformation, self).__init__()
         self.category = category
         self.code = code
         self.message = message

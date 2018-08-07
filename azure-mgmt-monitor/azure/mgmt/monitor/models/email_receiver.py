@@ -18,10 +18,12 @@ class EmailReceiver(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the email receiver. Names must be unique across
-     all receivers within an action group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the email receiver. Names must be
+     unique across all receivers within an action group.
     :type name: str
-    :param email_address: The email address of this receiver.
+    :param email_address: Required. The email address of this receiver.
     :type email_address: str
     :ivar status: The receiver status of the e-mail. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled'
@@ -40,7 +42,8 @@ class EmailReceiver(Model):
         'status': {'key': 'status', 'type': 'ReceiverStatus'},
     }
 
-    def __init__(self, name, email_address):
-        self.name = name
-        self.email_address = email_address
+    def __init__(self, **kwargs):
+        super(EmailReceiver, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.email_address = kwargs.get('email_address', None)
         self.status = None

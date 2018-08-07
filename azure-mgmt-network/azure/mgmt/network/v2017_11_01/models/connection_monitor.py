@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class ConnectionMonitor(Model):
     """Parameters that define the operation to create a connection monitor.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param location: Connection monitor location.
     :type location: str
     :param tags: Connection monitor tags.
     :type tags: dict[str, str]
-    :param source:
+    :param source: Required.
     :type source:
      ~azure.mgmt.network.v2017_11_01.models.ConnectionMonitorSource
-    :param destination:
+    :param destination: Required.
     :type destination:
      ~azure.mgmt.network.v2017_11_01.models.ConnectionMonitorDestination
     :param auto_start: Determines if the connection monitor will start
@@ -47,11 +49,11 @@ class ConnectionMonitor(Model):
         'monitoring_interval_in_seconds': {'key': 'properties.monitoringIntervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, source, destination, location=None, tags=None, auto_start=True, monitoring_interval_in_seconds=60):
-        super(ConnectionMonitor, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.source = source
-        self.destination = destination
-        self.auto_start = auto_start
-        self.monitoring_interval_in_seconds = monitoring_interval_in_seconds
+    def __init__(self, **kwargs):
+        super(ConnectionMonitor, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.source = kwargs.get('source', None)
+        self.destination = kwargs.get('destination', None)
+        self.auto_start = kwargs.get('auto_start', True)
+        self.monitoring_interval_in_seconds = kwargs.get('monitoring_interval_in_seconds', 60)

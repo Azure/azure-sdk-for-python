@@ -50,6 +50,7 @@ class InboundEndpoint(Model):
     }
 
     def __init__(self, name, protocol, public_ip_address, public_fqdn, frontend_port, backend_port):
+        super(InboundEndpoint, self).__init__()
         self.name = name
         self.protocol = protocol
         self.public_ip_address = public_ip_address

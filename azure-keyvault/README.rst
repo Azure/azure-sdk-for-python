@@ -3,13 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Key Vault Client Library.
 
-Azure Resource Manager (ARM) is the next generation of management APIs that
-replace the old Azure Service Management (ASM).
-
-This package has been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
-
-For the older Azure Service Management (ASM) libraries, see
-`azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
+This package has been tested with Python 2.7, 3.4, 3.5 and 3.6.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
@@ -37,8 +31,8 @@ Usage
 =====
 
 For code examples, see `Key Vault
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-keyvault.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/key-vault>`__
+on docs.microsoft.com.
 
 
 Provide Feedback

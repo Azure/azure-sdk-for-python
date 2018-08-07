@@ -48,7 +48,10 @@ class JobReleaseTask(Model):
      shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command
      line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
-     MyCommand" in Linux.
+     MyCommand" in Linux. If the command line refers to file paths, it should
+     use a relative path (relative to the task working directory), or use the
+     Batch provided environment variable
+     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Release task runs. When this is specified, all directories recursively
@@ -100,6 +103,7 @@ class JobReleaseTask(Model):
     }
 
     def __init__(self, command_line, id=None, container_settings=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, user_identity=None):
+        super(JobReleaseTask, self).__init__()
         self.id = id
         self.command_line = command_line
         self.container_settings = container_settings

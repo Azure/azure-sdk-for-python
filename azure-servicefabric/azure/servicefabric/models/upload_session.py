@@ -26,6 +26,6 @@ class UploadSession(Model):
         'upload_sessions': {'key': 'UploadSessions', 'type': '[UploadSessionInfo]'},
     }
 
-    def __init__(self, upload_sessions=None):
-        super(UploadSession, self).__init__()
-        self.upload_sessions = upload_sessions
+    def __init__(self, **kwargs):
+        super(UploadSession, self).__init__(**kwargs)
+        self.upload_sessions = kwargs.get('upload_sessions', None)

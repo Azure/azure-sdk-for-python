@@ -49,10 +49,10 @@ class StorageAccountUpdateParameters(Model):
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
     }
 
-    def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None):
-        super(StorageAccountUpdateParameters, self).__init__()
-        self.sku = sku
-        self.tags = tags
-        self.custom_domain = custom_domain
-        self.encryption = encryption
-        self.access_tier = access_tier
+    def __init__(self, **kwargs):
+        super(StorageAccountUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
+        self.custom_domain = kwargs.get('custom_domain', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.access_tier = kwargs.get('access_tier', None)

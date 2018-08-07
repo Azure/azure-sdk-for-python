@@ -36,5 +36,6 @@ class DownloadUrl(Model):
     }
 
     def __init__(self):
+        super(DownloadUrl, self).__init__()
         self.expiry_time = None
         self.url = None

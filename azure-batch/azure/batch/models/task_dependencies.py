@@ -37,5 +37,6 @@ class TaskDependencies(Model):
     }
 
     def __init__(self, task_ids=None, task_id_ranges=None):
+        super(TaskDependencies, self).__init__()
         self.task_ids = task_ids
         self.task_id_ranges = task_id_ranges

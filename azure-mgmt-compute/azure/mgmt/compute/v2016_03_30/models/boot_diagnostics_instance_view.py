@@ -26,7 +26,7 @@ class BootDiagnosticsInstanceView(Model):
         'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
     }
 
-    def __init__(self, console_screenshot_blob_uri=None, serial_console_log_blob_uri=None):
-        super(BootDiagnosticsInstanceView, self).__init__()
-        self.console_screenshot_blob_uri = console_screenshot_blob_uri
-        self.serial_console_log_blob_uri = serial_console_log_blob_uri
+    def __init__(self, **kwargs):
+        super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
+        self.console_screenshot_blob_uri = kwargs.get('console_screenshot_blob_uri', None)
+        self.serial_console_log_blob_uri = kwargs.get('serial_console_log_blob_uri', None)

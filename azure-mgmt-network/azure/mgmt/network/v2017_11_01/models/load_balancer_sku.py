@@ -25,6 +25,6 @@ class LoadBalancerSku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(LoadBalancerSku, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(LoadBalancerSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

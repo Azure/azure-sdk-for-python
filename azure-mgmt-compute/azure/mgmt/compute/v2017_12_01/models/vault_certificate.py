@@ -40,7 +40,7 @@ class VaultCertificate(Model):
         'certificate_store': {'key': 'certificateStore', 'type': 'str'},
     }
 
-    def __init__(self, certificate_url=None, certificate_store=None):
-        super(VaultCertificate, self).__init__()
-        self.certificate_url = certificate_url
-        self.certificate_store = certificate_store
+    def __init__(self, **kwargs):
+        super(VaultCertificate, self).__init__(**kwargs)
+        self.certificate_url = kwargs.get('certificate_url', None)
+        self.certificate_store = kwargs.get('certificate_store', None)

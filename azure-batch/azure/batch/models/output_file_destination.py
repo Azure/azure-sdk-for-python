@@ -25,4 +25,5 @@ class OutputFileDestination(Model):
     }
 
     def __init__(self, container=None):
+        super(OutputFileDestination, self).__init__()
         self.container = container

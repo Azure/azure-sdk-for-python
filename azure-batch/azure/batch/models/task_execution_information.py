@@ -94,6 +94,7 @@ class TaskExecutionInformation(Model):
     }
 
     def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, last_requeue_time=None, result=None):
+        super(TaskExecutionInformation, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code

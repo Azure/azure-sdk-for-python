@@ -46,8 +46,8 @@ class OperationStatusResponse(Model):
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
-    def __init__(self):
-        super(OperationStatusResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(OperationStatusResponse, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.start_time = None

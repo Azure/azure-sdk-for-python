@@ -38,10 +38,10 @@ class VirtualMachineExtensionInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, type=None, type_handler_version=None, substatuses=None, statuses=None):
-        super(VirtualMachineExtensionInstanceView, self).__init__()
-        self.name = name
-        self.type = type
-        self.type_handler_version = type_handler_version
-        self.substatuses = substatuses
-        self.statuses = statuses
+    def __init__(self, **kwargs):
+        super(VirtualMachineExtensionInstanceView, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.substatuses = kwargs.get('substatuses', None)
+        self.statuses = kwargs.get('statuses', None)

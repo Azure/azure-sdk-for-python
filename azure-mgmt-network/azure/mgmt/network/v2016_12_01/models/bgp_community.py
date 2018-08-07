@@ -35,9 +35,9 @@ class BGPCommunity(Model):
         'community_prefixes': {'key': 'communityPrefixes', 'type': '[str]'},
     }
 
-    def __init__(self, service_supported_region=None, community_name=None, community_value=None, community_prefixes=None):
-        super(BGPCommunity, self).__init__()
-        self.service_supported_region = service_supported_region
-        self.community_name = community_name
-        self.community_value = community_value
-        self.community_prefixes = community_prefixes
+    def __init__(self, **kwargs):
+        super(BGPCommunity, self).__init__(**kwargs)
+        self.service_supported_region = kwargs.get('service_supported_region', None)
+        self.community_name = kwargs.get('community_name', None)
+        self.community_value = kwargs.get('community_value', None)
+        self.community_prefixes = kwargs.get('community_prefixes', None)

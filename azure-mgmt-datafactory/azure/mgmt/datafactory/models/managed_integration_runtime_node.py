@@ -18,6 +18,9 @@ class ManagedIntegrationRuntimeNode(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values
@@ -35,13 +38,15 @@ class ManagedIntegrationRuntimeNode(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'node_id': {'key': 'nodeId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[ManagedIntegrationRuntimeError]'},
     }
 
-    def __init__(self, errors=None):
+    def __init__(self, additional_properties=None, errors=None):
         super(ManagedIntegrationRuntimeNode, self).__init__()
+        self.additional_properties = additional_properties
         self.node_id = None
         self.status = None
         self.errors = errors

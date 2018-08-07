@@ -33,9 +33,9 @@ class AvailableProvidersListParameters(Model):
         'city': {'key': 'city', 'type': 'str'},
     }
 
-    def __init__(self, azure_locations=None, country=None, state=None, city=None):
-        super(AvailableProvidersListParameters, self).__init__()
-        self.azure_locations = azure_locations
-        self.country = country
-        self.state = state
-        self.city = city
+    def __init__(self, **kwargs):
+        super(AvailableProvidersListParameters, self).__init__(**kwargs)
+        self.azure_locations = kwargs.get('azure_locations', None)
+        self.country = kwargs.get('country', None)
+        self.state = kwargs.get('state', None)
+        self.city = kwargs.get('city', None)

@@ -31,7 +31,7 @@ class AzureReachabilityReportLatencyInfo(Model):
         'score': {'key': 'score', 'type': 'int'},
     }
 
-    def __init__(self, time_stamp=None, score=None):
-        super(AzureReachabilityReportLatencyInfo, self).__init__()
-        self.time_stamp = time_stamp
-        self.score = score
+    def __init__(self, **kwargs):
+        super(AzureReachabilityReportLatencyInfo, self).__init__(**kwargs)
+        self.time_stamp = kwargs.get('time_stamp', None)
+        self.score = kwargs.get('score', None)

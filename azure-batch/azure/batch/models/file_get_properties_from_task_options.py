@@ -41,6 +41,7 @@ class FileGetPropertiesFromTaskOptions(Model):
     """
 
     def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None, if_modified_since=None, if_unmodified_since=None):
+        super(FileGetPropertiesFromTaskOptions, self).__init__()
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id

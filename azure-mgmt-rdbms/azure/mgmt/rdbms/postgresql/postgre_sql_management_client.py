@@ -9,17 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
+from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.operations import Operations
 from . import models
 
@@ -57,8 +59,8 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class PostgreSQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations with new business model.
+class PostgreSQLManagementClient(SDKClient):
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security alert policies, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
     :vartype config: PostgreSQLManagementClientConfiguration
@@ -67,6 +69,8 @@ class PostgreSQLManagementClient(object):
     :vartype servers: azure.mgmt.rdbms.postgresql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.rdbms.postgresql.operations.FirewallRulesOperations
+    :ivar virtual_network_rules: VirtualNetworkRules operations
+    :vartype virtual_network_rules: azure.mgmt.rdbms.postgresql.operations.VirtualNetworkRulesOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.rdbms.postgresql.operations.DatabasesOperations
     :ivar configurations: Configurations operations
@@ -77,6 +81,8 @@ class PostgreSQLManagementClient(object):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
 
@@ -93,16 +99,18 @@ class PostgreSQLManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(PostgreSQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-12-01-preview'
+        self.api_version = '2017-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -113,6 +121,8 @@ class PostgreSQLManagementClient(object):
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

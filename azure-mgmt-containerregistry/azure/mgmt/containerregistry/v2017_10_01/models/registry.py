@@ -18,18 +18,20 @@ class Registry(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource ID.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource. This cannot be changed
-     after the resource is created.
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param sku: The SKU of the container registry.
+    :param sku: Required. The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2017_10_01.models.Sku
     :ivar login_server: The URL that can be used to log into the container
      registry.
@@ -81,12 +83,12 @@ class Registry(Resource):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, location, sku, tags=None, admin_user_enabled=False, storage_account=None):
-        super(Registry, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(Registry, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
         self.status = None
-        self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
+        self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
+        self.storage_account = kwargs.get('storage_account', None)

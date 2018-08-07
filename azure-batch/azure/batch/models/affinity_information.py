@@ -34,4 +34,5 @@ class AffinityInformation(Model):
     }
 
     def __init__(self, affinity_id):
+        super(AffinityInformation, self).__init__()
         self.affinity_id = affinity_id

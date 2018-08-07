@@ -33,12 +33,13 @@ class IotHubQuotaMetricInfo(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'current_value': {'key': 'CurrentValue', 'type': 'long'},
-        'max_value': {'key': 'MaxValue', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
+        'max_value': {'key': 'maxValue', 'type': 'long'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(IotHubQuotaMetricInfo, self).__init__(**kwargs)
         self.name = None
         self.current_value = None
         self.max_value = None

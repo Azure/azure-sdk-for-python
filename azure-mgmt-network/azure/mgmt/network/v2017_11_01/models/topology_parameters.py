@@ -32,8 +32,8 @@ class TopologyParameters(Model):
         'target_subnet': {'key': 'targetSubnet', 'type': 'SubResource'},
     }
 
-    def __init__(self, target_resource_group_name=None, target_virtual_network=None, target_subnet=None):
-        super(TopologyParameters, self).__init__()
-        self.target_resource_group_name = target_resource_group_name
-        self.target_virtual_network = target_virtual_network
-        self.target_subnet = target_subnet
+    def __init__(self, **kwargs):
+        super(TopologyParameters, self).__init__(**kwargs)
+        self.target_resource_group_name = kwargs.get('target_resource_group_name', None)
+        self.target_virtual_network = kwargs.get('target_virtual_network', None)
+        self.target_subnet = kwargs.get('target_subnet', None)

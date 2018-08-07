@@ -49,7 +49,8 @@ class Incident(Model):
         'resolved_time': {'key': 'resolvedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Incident, self).__init__(**kwargs)
         self.name = None
         self.rule_name = None
         self.is_active = None

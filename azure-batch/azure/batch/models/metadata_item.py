@@ -35,5 +35,6 @@ class MetadataItem(Model):
     }
 
     def __init__(self, name, value):
+        super(MetadataItem, self).__init__()
         self.name = name
         self.value = value

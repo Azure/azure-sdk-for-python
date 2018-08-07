@@ -21,7 +21,7 @@ class RegionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
 
@@ -57,7 +57,7 @@ class RegionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/sku/{sku}/regions'
+                url = self.list_by_sku.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'sku': self._serialize.url("sku", sku, 'str', max_length=50, min_length=1)
@@ -101,3 +101,4 @@ class RegionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_sku.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/sku/{sku}/regions'}

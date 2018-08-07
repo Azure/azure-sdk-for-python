@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WorkflowRunPaged(Paged):
     """
-    A paging container for iterating over a list of WorkflowRun object
+    A paging container for iterating over a list of :class:`WorkflowRun <azure.mgmt.logic.models.WorkflowRun>` object
     """
 
     _attribute_map = {

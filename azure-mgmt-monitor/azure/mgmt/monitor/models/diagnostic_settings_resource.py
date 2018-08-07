@@ -62,11 +62,11 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_id=None, event_hub_authorization_rule_id=None, event_hub_name=None, metrics=None, logs=None, workspace_id=None):
-        super(DiagnosticSettingsResource, self).__init__()
-        self.storage_account_id = storage_account_id
-        self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
-        self.event_hub_name = event_hub_name
-        self.metrics = metrics
-        self.logs = logs
-        self.workspace_id = workspace_id
+    def __init__(self, **kwargs):
+        super(DiagnosticSettingsResource, self).__init__(**kwargs)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.event_hub_authorization_rule_id = kwargs.get('event_hub_authorization_rule_id', None)
+        self.event_hub_name = kwargs.get('event_hub_name', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.logs = kwargs.get('logs', None)
+        self.workspace_id = kwargs.get('workspace_id', None)

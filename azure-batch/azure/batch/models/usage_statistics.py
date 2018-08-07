@@ -40,6 +40,7 @@ class UsageStatistics(Model):
     }
 
     def __init__(self, start_time, last_update_time, dedicated_core_time):
+        super(UsageStatistics, self).__init__()
         self.start_time = start_time
         self.last_update_time = last_update_time
         self.dedicated_core_time = dedicated_core_time

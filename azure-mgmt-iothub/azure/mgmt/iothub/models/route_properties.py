@@ -16,24 +16,26 @@ class RouteProperties(Model):
     """The properties of a routing rule that your IoT hub uses to route messages
     to endpoints.
 
-    :param name: The name of the route. The name can only include alphanumeric
-     characters, periods, underscores, hyphens, has a maximum length of 64
-     characters, and must be unique.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the route. The name can only include
+     alphanumeric characters, periods, underscores, hyphens, has a maximum
+     length of 64 characters, and must be unique.
     :type name: str
-    :param source: The source that the routing rule is to be applied to, such
-     as DeviceMessages. Possible values include: 'DeviceMessages',
+    :param source: Required. The source that the routing rule is to be applied
+     to, such as DeviceMessages. Possible values include: 'DeviceMessages',
      'TwinChangeEvents', 'DeviceLifecycleEvents', 'DeviceJobLifecycleEvents'
-    :type source: str or :class:`RoutingSource
-     <azure.mgmt.iothub.models.RoutingSource>`
+    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
      grammar, see:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
     :type condition: str
-    :param endpoint_names: The list of endpoints to which messages that
-     satisfy the condition are routed. Currently only one endpoint is allowed.
-    :type endpoint_names: list of str
-    :param is_enabled: Used to specify whether a route is enabled.
+    :param endpoint_names: Required. The list of endpoints to which messages
+     that satisfy the condition are routed. Currently only one endpoint is
+     allowed.
+    :type endpoint_names: list[str]
+    :param is_enabled: Required. Used to specify whether a route is enabled.
     :type is_enabled: bool
     """
 
@@ -52,9 +54,10 @@ class RouteProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, name, source, endpoint_names, is_enabled, condition=None):
-        self.name = name
-        self.source = source
-        self.condition = condition
-        self.endpoint_names = endpoint_names
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(RouteProperties, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.source = kwargs.get('source', None)
+        self.condition = kwargs.get('condition', None)
+        self.endpoint_names = kwargs.get('endpoint_names', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

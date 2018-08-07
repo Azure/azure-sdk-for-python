@@ -25,4 +25,5 @@ class JobTerminateParameter(Model):
     }
 
     def __init__(self, terminate_reason=None):
+        super(JobTerminateParameter, self).__init__()
         self.terminate_reason = terminate_reason

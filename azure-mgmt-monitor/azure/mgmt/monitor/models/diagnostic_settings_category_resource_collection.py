@@ -24,5 +24,6 @@ class DiagnosticSettingsCategoryResourceCollection(Model):
         'value': {'key': 'value', 'type': '[DiagnosticSettingsCategoryResource]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(DiagnosticSettingsCategoryResourceCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

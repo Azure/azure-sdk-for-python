@@ -15,15 +15,16 @@ from msrest.serialization import Model
 class EdifactOneWayAgreement(Model):
     """The Edifact one way agreement.
 
-    :param sender_business_identity: The sender business identity
-    :type sender_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param receiver_business_identity: The receiver business identity
-    :type receiver_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param protocol_settings: The EDIFACT protocol settings.
-    :type protocol_settings: :class:`EdifactProtocolSettings
-     <azure.mgmt.logic.models.EdifactProtocolSettings>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param sender_business_identity: Required. The sender business identity
+    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :param receiver_business_identity: Required. The receiver business
+     identity
+    :type receiver_business_identity:
+     ~azure.mgmt.logic.models.BusinessIdentity
+    :param protocol_settings: Required. The EDIFACT protocol settings.
+    :type protocol_settings: ~azure.mgmt.logic.models.EdifactProtocolSettings
     """
 
     _validation = {
@@ -38,7 +39,8 @@ class EdifactOneWayAgreement(Model):
         'protocol_settings': {'key': 'protocolSettings', 'type': 'EdifactProtocolSettings'},
     }
 
-    def __init__(self, sender_business_identity, receiver_business_identity, protocol_settings):
-        self.sender_business_identity = sender_business_identity
-        self.receiver_business_identity = receiver_business_identity
-        self.protocol_settings = protocol_settings
+    def __init__(self, **kwargs):
+        super(EdifactOneWayAgreement, self).__init__(**kwargs)
+        self.sender_business_identity = kwargs.get('sender_business_identity', None)
+        self.receiver_business_identity = kwargs.get('receiver_business_identity', None)
+        self.protocol_settings = kwargs.get('protocol_settings', None)

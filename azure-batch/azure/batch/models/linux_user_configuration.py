@@ -41,6 +41,7 @@ class LinuxUserConfiguration(Model):
     }
 
     def __init__(self, uid=None, gid=None, ssh_private_key=None):
+        super(LinuxUserConfiguration, self).__init__()
         self.uid = uid
         self.gid = gid
         self.ssh_private_key = ssh_private_key

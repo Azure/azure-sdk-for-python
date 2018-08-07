@@ -28,6 +28,16 @@ class JobManagerTask(Model):
     have priority over tasks in other jobs. Across jobs, only job level
     priorities are observed. For example, if a Job Manager in a priority 0 job
     needs to be restarted, it will not displace tasks of a priority 1 job.
+    Batch will retry tasks when a recovery operation is triggered on a compute
+    node. Examples of recovery operations include (but are not limited to) when
+    an unhealthy compute node is rebooted or a compute node disappeared due to
+    host failure. Retries due to recovery operations are independent of and are
+    not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is
+    0, an internal retry due to a recovery operation may occur. Because of
+    this, all tasks should be idempotent. This means tasks need to tolerate
+    being interrupted and restarted without causing any corruption or duplicate
+    data. The best practice for long running tasks is to use some form of
+    checkpointing.
 
     :param id: A string that uniquely identifies the Job Manager task within
      the job. The ID can contain any combination of alphanumeric characters
@@ -43,7 +53,10 @@ class JobManagerTask(Model):
      shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command
      line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
-     MyCommand" in Linux.
+     MyCommand" in Linux. If the command line refers to file paths, it should
+     use a relative path (relative to the task working directory), or use the
+     Batch provided environment variable
+     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Manager task runs. If the pool that will run this task has
@@ -118,7 +131,7 @@ class JobManagerTask(Model):
     :type authentication_token_settings:
      ~azure.batch.models.AuthenticationTokenSettings
     :param allow_low_priority_node: Whether the Job Manager task may run on a
-     low-priority compute node. The default value is false.
+     low-priority compute node. The default value is true.
     :type allow_low_priority_node: bool
     """
 
@@ -145,6 +158,7 @@ class JobManagerTask(Model):
     }
 
     def __init__(self, id, command_line, display_name=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
+        super(JobManagerTask, self).__init__()
         self.id = id
         self.display_name = display_name
         self.command_line = command_line

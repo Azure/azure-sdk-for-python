@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class OrchestratorProfile(Model):
     """Contains information about orchestrator.
 
-    :param orchestrator_type: Orchestrator type.
+    All required parameters must be populated in order to send to Azure.
+
+    :param orchestrator_type: Required. Orchestrator type.
     :type orchestrator_type: str
-    :param orchestrator_version: Orchestrator version (major, minor, patch).
+    :param orchestrator_version: Required. Orchestrator version (major, minor,
+     patch).
     :type orchestrator_version: str
     """
 
@@ -31,7 +34,7 @@ class OrchestratorProfile(Model):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
     }
 
-    def __init__(self, orchestrator_type, orchestrator_version):
-        super(OrchestratorProfile, self).__init__()
-        self.orchestrator_type = orchestrator_type
-        self.orchestrator_version = orchestrator_version
+    def __init__(self, **kwargs):
+        super(OrchestratorProfile, self).__init__(**kwargs)
+        self.orchestrator_type = kwargs.get('orchestrator_type', None)
+        self.orchestrator_version = kwargs.get('orchestrator_version', None)

@@ -44,7 +44,7 @@ class Database(ProxyResource):
         'collation': {'key': 'properties.collation', 'type': 'str'},
     }
 
-    def __init__(self, charset=None, collation=None):
-        super(Database, self).__init__()
-        self.charset = charset
-        self.collation = collation
+    def __init__(self, **kwargs):
+        super(Database, self).__init__(**kwargs)
+        self.charset = kwargs.get('charset', None)
+        self.collation = kwargs.get('collation', None)

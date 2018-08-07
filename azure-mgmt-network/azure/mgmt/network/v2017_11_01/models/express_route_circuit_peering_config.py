@@ -45,11 +45,11 @@ class ExpressRouteCircuitPeeringConfig(Model):
         'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
     }
 
-    def __init__(self, advertised_public_prefixes=None, advertised_communities=None, advertised_public_prefixes_state=None, legacy_mode=None, customer_asn=None, routing_registry_name=None):
-        super(ExpressRouteCircuitPeeringConfig, self).__init__()
-        self.advertised_public_prefixes = advertised_public_prefixes
-        self.advertised_communities = advertised_communities
-        self.advertised_public_prefixes_state = advertised_public_prefixes_state
-        self.legacy_mode = legacy_mode
-        self.customer_asn = customer_asn
-        self.routing_registry_name = routing_registry_name
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
+        self.advertised_public_prefixes = kwargs.get('advertised_public_prefixes', None)
+        self.advertised_communities = kwargs.get('advertised_communities', None)
+        self.advertised_public_prefixes_state = kwargs.get('advertised_public_prefixes_state', None)
+        self.legacy_mode = kwargs.get('legacy_mode', None)
+        self.customer_asn = kwargs.get('customer_asn', None)
+        self.routing_registry_name = kwargs.get('routing_registry_name', None)

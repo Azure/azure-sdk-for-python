@@ -40,5 +40,6 @@ class OutputFileBlobContainerDestination(Model):
     }
 
     def __init__(self, container_url, path=None):
+        super(OutputFileBlobContainerDestination, self).__init__()
         self.path = path
         self.container_url = container_url

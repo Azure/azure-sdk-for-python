@@ -16,7 +16,9 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress
     configuration.
 
-    :param name: The publicIP address configuration name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The publicIP address configuration name.
     :type name: str
     :param idle_timeout_in_minutes: The idle timeout of the public IP address.
     :type idle_timeout_in_minutes: int
@@ -36,8 +38,8 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
     }
 
-    def __init__(self, name, idle_timeout_in_minutes=None, dns_settings=None):
-        super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__()
-        self.name = name
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.dns_settings = dns_settings
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.dns_settings = kwargs.get('dns_settings', None)

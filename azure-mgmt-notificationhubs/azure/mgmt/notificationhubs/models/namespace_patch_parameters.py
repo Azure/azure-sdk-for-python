@@ -16,9 +16,9 @@ class NamespacePatchParameters(Model):
     """Parameters supplied to the Patch Namespace operation.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _attribute_map = {
@@ -26,6 +26,7 @@ class NamespacePatchParameters(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, tags=None, sku=None):
-        self.tags = tags
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(NamespacePatchParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)

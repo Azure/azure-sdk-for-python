@@ -37,5 +37,6 @@ class TaskIdRange(Model):
     }
 
     def __init__(self, start, end):
+        super(TaskIdRange, self).__init__()
         self.start = start
         self.end = end

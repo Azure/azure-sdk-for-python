@@ -13,17 +13,18 @@ from msrest.serialization import Model
 
 
 class X12OneWayAgreement(Model):
-    """The X12 oneway agreement.
+    """The X12 one-way agreement.
 
-    :param sender_business_identity: The sender business identity
-    :type sender_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param receiver_business_identity: The receiver business identity
-    :type receiver_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param protocol_settings: The X12 protocol settings.
-    :type protocol_settings: :class:`X12ProtocolSettings
-     <azure.mgmt.logic.models.X12ProtocolSettings>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param sender_business_identity: Required. The sender business identity
+    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :param receiver_business_identity: Required. The receiver business
+     identity
+    :type receiver_business_identity:
+     ~azure.mgmt.logic.models.BusinessIdentity
+    :param protocol_settings: Required. The X12 protocol settings.
+    :type protocol_settings: ~azure.mgmt.logic.models.X12ProtocolSettings
     """
 
     _validation = {
@@ -38,7 +39,8 @@ class X12OneWayAgreement(Model):
         'protocol_settings': {'key': 'protocolSettings', 'type': 'X12ProtocolSettings'},
     }
 
-    def __init__(self, sender_business_identity, receiver_business_identity, protocol_settings):
-        self.sender_business_identity = sender_business_identity
-        self.receiver_business_identity = receiver_business_identity
-        self.protocol_settings = protocol_settings
+    def __init__(self, **kwargs):
+        super(X12OneWayAgreement, self).__init__(**kwargs)
+        self.sender_business_identity = kwargs.get('sender_business_identity', None)
+        self.receiver_business_identity = kwargs.get('receiver_business_identity', None)
+        self.protocol_settings = kwargs.get('protocol_settings', None)

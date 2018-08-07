@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ContainerServiceSshPublicKey(Model):
     """Contains information about SSH certificate public key data.
 
-    :param key_data: Certificate public key used to authenticate with VMs
-     through SSH. The certificate must be in PEM format with or without
-     headers.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_data: Required. Certificate public key used to authenticate
+     with VMs through SSH. The certificate must be in PEM format with or
+     without headers.
     :type key_data: str
     """
 
@@ -29,6 +31,6 @@ class ContainerServiceSshPublicKey(Model):
         'key_data': {'key': 'keyData', 'type': 'str'},
     }
 
-    def __init__(self, key_data):
-        super(ContainerServiceSshPublicKey, self).__init__()
-        self.key_data = key_data
+    def __init__(self, **kwargs):
+        super(ContainerServiceSshPublicKey, self).__init__(**kwargs)
+        self.key_data = kwargs.get('key_data', None)

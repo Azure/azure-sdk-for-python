@@ -18,20 +18,22 @@ class Probe(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :ivar load_balancing_rules: The load balancer rules that use this probe.
     :vartype load_balancing_rules:
      list[~azure.mgmt.network.v2017_06_01.models.SubResource]
-    :param protocol: The protocol of the end point. Possible values are:
-     'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required for the
-     probe to be successful. If 'Http' is specified, a 200 OK response from the
-     specifies URI is required for the probe to be successful. Possible values
-     include: 'Http', 'Tcp'
+    :param protocol: Required. The protocol of the end point. Possible values
+     are: 'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required
+     for the probe to be successful. If 'Http' is specified, a 200 OK response
+     from the specifies URI is required for the probe to be successful.
+     Possible values include: 'Http', 'Tcp'
     :type protocol: str or
      ~azure.mgmt.network.v2017_06_01.models.ProbeProtocol
-    :param port: The port for communicating the probe. Possible values range
-     from 1 to 65535, inclusive.
+    :param port: Required. The port for communicating the probe. Possible
+     values range from 1 to 65535, inclusive.
     :type port: int
     :param interval_in_seconds: The interval, in seconds, for how frequently
      to probe the endpoint for health status. Typically, the interval is
@@ -78,14 +80,14 @@ class Probe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, port, id=None, interval_in_seconds=None, number_of_probes=None, request_path=None, provisioning_state=None, name=None, etag=None):
-        super(Probe, self).__init__(id=id)
+    def __init__(self, **kwargs):
+        super(Probe, self).__init__(**kwargs)
         self.load_balancing_rules = None
-        self.protocol = protocol
-        self.port = port
-        self.interval_in_seconds = interval_in_seconds
-        self.number_of_probes = number_of_probes
-        self.request_path = request_path
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.protocol = kwargs.get('protocol', None)
+        self.port = kwargs.get('port', None)
+        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
+        self.number_of_probes = kwargs.get('number_of_probes', None)
+        self.request_path = kwargs.get('request_path', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

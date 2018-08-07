@@ -29,7 +29,7 @@ class PoolAddParameter(Model):
      machines in a pool are the same size. For information about available
      sizes of virtual machines for Cloud Services pools (pools created with
      cloudServiceConfiguration), see Sizes for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
+     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
      A2V2. For information about available VM sizes for pools using images from
      the Virtual Machines Marketplace (pools created with
@@ -171,6 +171,7 @@ class PoolAddParameter(Model):
     }
 
     def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None):
+        super(PoolAddParameter, self).__init__()
         self.id = id
         self.display_name = display_name
         self.vm_size = vm_size

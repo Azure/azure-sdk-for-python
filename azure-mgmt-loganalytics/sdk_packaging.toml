@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-loganalytics"
+package_pprint_name = "Log Analytics Management"
+package_doc_id = ""
+is_stable = false

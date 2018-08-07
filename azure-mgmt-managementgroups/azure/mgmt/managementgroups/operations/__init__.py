@@ -12,9 +12,11 @@
 from .management_groups_operations import ManagementGroupsOperations
 from .management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
 from .operations import Operations
+from .entities_operations import EntitiesOperations
 
 __all__ = [
     'ManagementGroupsOperations',
     'ManagementGroupSubscriptionsOperations',
     'Operations',
+    'EntitiesOperations',
 ]

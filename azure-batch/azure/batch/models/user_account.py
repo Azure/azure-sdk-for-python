@@ -45,6 +45,7 @@ class UserAccount(Model):
     }
 
     def __init__(self, name, password, elevation_level=None, linux_user_configuration=None):
+        super(UserAccount, self).__init__()
         self.name = name
         self.password = password
         self.elevation_level = elevation_level

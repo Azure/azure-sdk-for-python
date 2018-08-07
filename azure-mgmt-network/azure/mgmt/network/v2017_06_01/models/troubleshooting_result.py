@@ -33,9 +33,9 @@ class TroubleshootingResult(Model):
         'results': {'key': 'results', 'type': '[TroubleshootingDetails]'},
     }
 
-    def __init__(self, start_time=None, end_time=None, code=None, results=None):
-        super(TroubleshootingResult, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.code = code
-        self.results = results
+    def __init__(self, **kwargs):
+        super(TroubleshootingResult, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.code = kwargs.get('code', None)
+        self.results = kwargs.get('results', None)

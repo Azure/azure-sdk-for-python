@@ -29,4 +29,5 @@ class ComputeNodeEndpointConfiguration(Model):
     }
 
     def __init__(self, inbound_endpoints):
+        super(ComputeNodeEndpointConfiguration, self).__init__()
         self.inbound_endpoints = inbound_endpoints
