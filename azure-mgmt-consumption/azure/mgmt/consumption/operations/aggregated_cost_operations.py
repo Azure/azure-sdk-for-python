@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AggregatedcostByManagementGroupOperations(object):
-    """AggregatedcostByManagementGroupOperations operations.
+class AggregatedCostOperations(object):
+    """AggregatedCostOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,7 +36,65 @@ class AggregatedcostByManagementGroupOperations(object):
 
         self.config = config
 
-    def by_billing_period(
+    def by_management_group(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Provides the aggregate cost of a management group and all child
+        management groups by current billing period.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ManagementGroupAggregatedCostResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.by_management_group.metadata['url']
+        path_format_arguments = {
+            'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ManagementGroupAggregatedCostResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Consumption/aggregatedcost'}
+
+    def for_billing_period_by_management_group(
             self, billing_period_name, custom_headers=None, raw=False, **operation_config):
         """Provides the aggregate cost of a management group and all child
         management groups by specified billing period.
@@ -57,7 +115,7 @@ class AggregatedcostByManagementGroupOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.by_billing_period.metadata['url']
+        url = self.for_billing_period_by_management_group.metadata['url']
         path_format_arguments = {
             'managementGroupId': self._serialize.url("self.config.management_group_id", self.config.management_group_id, 'str'),
             'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
@@ -95,4 +153,4 @@ class AggregatedcostByManagementGroupOperations(object):
             return client_raw_response
 
         return deserialized
-    by_billing_period.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedcost'}
+    for_billing_period_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedcost'}
