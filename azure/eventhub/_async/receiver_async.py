@@ -4,6 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 import asyncio
+import uuid
+import logging
 
 from uamqp import errors, types
 from uamqp import ReceiveClientAsync, Source
@@ -12,13 +14,17 @@ from azure.eventhub import EventHubError, EventData
 from azure.eventhub.receiver import Receiver
 from azure.eventhub.common import _error_handler
 
+log = logging.getLogger(__name__)
+
 
 class AsyncReceiver(Receiver):
     """
     Implements the async API of a Receiver.
     """
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
+            self, client, source, offset=None, prefetch=300, epoch=None,
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
 
@@ -39,10 +45,14 @@ class AsyncReceiver(Receiver):
         self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
+        self.keep_alive = keep_alive
+        self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.redirected = None
         self.error = None
         self.properties = None
+        partition = self.source.split('/')[-1]
+        self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
         if self.offset is not None:
             source.set_filter(self.offset.selector())
@@ -56,7 +66,9 @@ class AsyncReceiver(Receiver):
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
+            client_name=self.name,
+            properties=self.client.create_properties(),
             loop=self.loop)
 
     async def open_async(self):
@@ -85,7 +97,9 @@ class AsyncReceiver(Receiver):
                 link_properties=self.properties,
                 timeout=self.timeout,
                 error_policy=self.retry_policy,
-                keep_alive_interval=30,
+                keep_alive_interval=self.keep_alive,
+                client_name=self.name,
+                properties=self.client.create_properties(),
                 loop=self.loop)
         await self._handler.open_async()
         while not await self.has_started():
@@ -110,7 +124,8 @@ class AsyncReceiver(Receiver):
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
-            keep_alive_interval=30,
+            keep_alive_interval=self.keep_alive,
+            client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
         await self._handler.open_async()
@@ -189,17 +204,27 @@ class AsyncReceiver(Receiver):
                 data_batch.append(event_data)
             return data_batch
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
+            if shutdown.action.retry and self.auto_reconnect:
+                log.info("AsyncReceiver detached. Attempting reconnect.")
                 await self.reconnect_async()
                 return data_batch
             else:
+                log.info("AsyncReceiver detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
-        except errors.MessageHandlerError:
-            await self.reconnect_async()
-            return data_batch
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                log.info("AsyncReceiver detached. Attempting reconnect.")
+                await self.reconnect_async()
+                return data_batch
+            else:
+                log.info("AsyncReceiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
         except Exception as e:
+            log.info("Unexpected error occurred ({}). Shutting down.".format(e))
             error = EventHubError("Receive failed: {}".format(e))
             await self.close_async(exception=error)
             raise error

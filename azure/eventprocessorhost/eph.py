@@ -64,6 +64,38 @@ class EventProcessorHost:
 class EPHOptions:
     """
     Class that contains default and overidable EPH option.
+
+    :ivar max_batch_size: The maximum number of events retrieved for processing
+     at a time. This value must be less than or equal to the prefetch count. The actual
+     number of events returned for processing may be any number up to the maximum.
+     The default value is 10.
+    :vartype max_batch_size: int
+    :ivar prefetch_count: The number of events to fetch from the service in advance of
+     processing. The default value is 300.
+    :vartype prefetch_count: int
+    :ivar receive_timeout: The length of time a single partition receiver will wait in
+     order to receive a batch of events. Default is 60 seconds.
+    :vartype receive_timeout: int
+    :ivar release_pump_on_timeout: Whether to shutdown an individual partition receiver if
+     no events were received in the specified timeout. Shutting down the pump will release
+     the lease to allow it to be picked up by another host. Default is False.
+    :vartype release_pump_on_timeout: bool
+    :ivar initial_offset_provider: The initial event offset to receive from if no persisted
+     offset is found. Default is "-1" (i.e. from the first event available).
+    :vartype initial_offset_provider: str
+    :ivar debug_trace: Whether to emit the network traffic in the logs. In order to view
+     these events the logger must be configured to track "uamqp". Default is False.
+    :vartype debug_trace: bool
+    :ivar http_proxy: HTTP proxy configuration. This should be a dictionary with
+     the following keys present: 'proxy_hostname' and 'proxy_port'. Additional optional
+     keys are 'username' and 'password'.
+    :vartype http_proxy: dict
+    :ivar keep_alive_interval: The time in seconds between asynchronously pinging a receiver
+     connection to keep it alive during inactivity. Default is None - i.e. no connection pinging.
+    :vartype keep_alive_interval: int
+    :ivar auto_reconnect_on_error: Whether to automatically attempt to reconnect a receiver
+     connection if it is detach from the service with a retryable error. Default is True.
+    :vartype auto_reconnect_on_error: bool
     """
 
     def __init__(self):
@@ -74,3 +106,5 @@ class EPHOptions:
         self.initial_offset_provider = "-1"
         self.debug_trace = False
         self.http_proxy = None
+        self.keep_alive_interval = None
+        self.auto_reconnect_on_error = True

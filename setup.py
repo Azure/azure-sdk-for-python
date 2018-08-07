@@ -55,7 +55,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=["examples", "tests"]),
     install_requires=[
-        'uamqp~=0.2.0',
+        'uamqp>=0.2.1,<0.3.0',
         'msrestazure~=0.4.11',
         'azure-common~=1.1',
         'azure-storage~=0.36.0'

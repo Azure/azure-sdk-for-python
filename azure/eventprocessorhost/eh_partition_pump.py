@@ -73,6 +73,8 @@ class EventHubPartitionPump(PartitionPump):
             self.partition_context.partition_id,
             Offset(self.partition_context.offset),
             prefetch=self.host.eph_options.prefetch_count,
+            keep_alive=self.host.eph_options.keep_alive_interval,
+            auto_reconnect=self.host.eph_options.auto_reconnect_on_error,
             loop=self.loop)
         self.partition_receiver = PartitionReceiver(self)
 
@@ -95,7 +97,12 @@ class EventHubPartitionPump(PartitionPump):
         :type reason: str
         """
         self.partition_receiver.eh_partition_pump.set_pump_status("Errored")
-        await self.running
+        try:
+            await self.running
+        except TypeError:
+            _logger.debug("No partition pump running.")
+        except Exception as err:  # pylint: disable=broad-except
+            _logger.info("Error on closing partition pump: {!r}".format(err))
         await self.clean_up_clients_async()
 
 
@@ -121,6 +128,7 @@ class PartitionReceiver:
                         max_batch_size=self.max_batch_size,
                         timeout=self.recieve_timeout)
                 except Exception as e:  # pylint: disable=broad-except
+                    _logger.info("Error raised while attempting to receive messages: {}".format(e))
                     await self.process_error_async(e)
                 else:
                     if not msgs:
