@@ -12,8 +12,8 @@
 from .sub_resource import SubResource
 
 
-class OutboundNatRule(SubResource):
-    """Outbound NAT pool of the load balancer.
+class OutboundRule(SubResource):
+    """Outbound pool of the load balancer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -56,7 +56,7 @@ class OutboundNatRule(SubResource):
     }
 
     def __init__(self, **kwargs):
-        super(OutboundNatRule, self).__init__(**kwargs)
+        super(OutboundRule, self).__init__(**kwargs)
         self.allocated_outbound_ports = kwargs.get('allocated_outbound_ports', None)
         self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
         self.backend_address_pool = kwargs.get('backend_address_pool', None)

@@ -62,9 +62,9 @@ class LoadBalancer(Resource):
      an inbound NAT pool. They have to reference individual inbound NAT rules.
     :type inbound_nat_pools:
      list[~azure.mgmt.network.v2018_07_01.models.InboundNatPool]
-    :param outbound_nat_rules: The outbound NAT rules.
-    :type outbound_nat_rules:
-     list[~azure.mgmt.network.v2018_07_01.models.OutboundNatRule]
+    :param outbound_rules: The outbound rules.
+    :type outbound_rules:
+     list[~azure.mgmt.network.v2018_07_01.models.OutboundRule]
     :param resource_guid: The resource GUID property of the load balancer
      resource.
     :type resource_guid: str
@@ -94,13 +94,13 @@ class LoadBalancer(Resource):
         'probes': {'key': 'properties.probes', 'type': '[Probe]'},
         'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
         'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[OutboundRule]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_rules=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(LoadBalancer, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
@@ -109,7 +109,7 @@ class LoadBalancer(Resource):
         self.probes = probes
         self.inbound_nat_rules = inbound_nat_rules
         self.inbound_nat_pools = inbound_nat_pools
-        self.outbound_nat_rules = outbound_nat_rules
+        self.outbound_rules = outbound_rules
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

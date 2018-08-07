@@ -28,9 +28,9 @@ class FrontendIPConfiguration(SubResource):
      frontend IP.
     :vartype inbound_nat_pools:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
-    :ivar outbound_nat_rules: Read only. Outbound rules URIs that use this
+    :ivar outbound_rules: Read only. Outbound rules URIs that use this
      frontend IP.
-    :vartype outbound_nat_rules:
+    :vartype outbound_rules:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
     :ivar load_balancing_rules: Gets load balancing rules URIs that use this
      frontend IP.
@@ -65,7 +65,7 @@ class FrontendIPConfiguration(SubResource):
     _validation = {
         'inbound_nat_rules': {'readonly': True},
         'inbound_nat_pools': {'readonly': True},
-        'outbound_nat_rules': {'readonly': True},
+        'outbound_rules': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
     }
 
@@ -73,7 +73,7 @@ class FrontendIPConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
         'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
@@ -89,7 +89,7 @@ class FrontendIPConfiguration(SubResource):
         super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
         self.inbound_nat_rules = None
         self.inbound_nat_pools = None
-        self.outbound_nat_rules = None
+        self.outbound_rules = None
         self.load_balancing_rules = None
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
