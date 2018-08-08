@@ -26,8 +26,6 @@ try:
     from .current_spend_py3 import CurrentSpend
     from .notification_py3 import Notification
     from .budget_py3 import Budget
-    from .cost_tag_properties_py3 import CostTagProperties
-    from .cost_tag_py3 import CostTag
     from .price_sheet_properties_py3 import PriceSheetProperties
     from .price_sheet_result_py3 import PriceSheetResult
     from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
@@ -57,8 +55,6 @@ except (SyntaxError, ImportError):
     from .current_spend import CurrentSpend
     from .notification import Notification
     from .budget import Budget
-    from .cost_tag_properties import CostTagProperties
-    from .cost_tag import CostTag
     from .price_sheet_properties import PriceSheetProperties
     from .price_sheet_result import PriceSheetResult
     from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
@@ -107,8 +103,6 @@ __all__ = [
     'CurrentSpend',
     'Notification',
     'Budget',
-    'CostTagProperties',
-    'CostTag',
     'PriceSheetProperties',
     'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',
