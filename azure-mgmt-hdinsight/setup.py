@@ -28,7 +28,7 @@ setup(
     name=NAME,
     version=VERSION,
     description="HDInsightManagementClient",
-    author_email="",
+    author_email="wawon@microsoft.com",
     url="",
     keywords=["Swagger", "HDInsightManagementClient"],
     install_requires=REQUIRES,
