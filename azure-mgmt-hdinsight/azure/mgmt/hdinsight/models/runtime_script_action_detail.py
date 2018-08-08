@@ -18,13 +18,15 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the script action.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the script action.
     :type name: str
-    :param uri: The URI to the script.
+    :param uri: Required. The URI to the script.
     :type uri: str
     :param parameters: The parameters for the script
     :type parameters: str
-    :param roles: The list of roles where script will be executed.
+    :param roles: Required. The list of roles where script will be executed.
     :type roles: list[str]
     :ivar application_name: The application name of the script action, if any.
     :vartype application_name: str
@@ -74,8 +76,8 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):
         'debug_information': {'key': 'debugInformation', 'type': 'str'},
     }
 
-    def __init__(self, name, uri, roles, parameters=None):
-        super(RuntimeScriptActionDetail, self).__init__(name=name, uri=uri, parameters=parameters, roles=roles)
+    def __init__(self, **kwargs):
+        super(RuntimeScriptActionDetail, self).__init__(**kwargs)
         self.script_execution_id = None
         self.start_time = None
         self.end_time = None

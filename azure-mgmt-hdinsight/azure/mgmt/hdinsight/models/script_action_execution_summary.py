@@ -35,7 +35,7 @@ class ScriptActionExecutionSummary(Model):
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(ScriptActionExecutionSummary, self).__init__()
+    def __init__(self, **kwargs):
+        super(ScriptActionExecutionSummary, self).__init__(**kwargs)
         self.status = None
         self.instance_count = None

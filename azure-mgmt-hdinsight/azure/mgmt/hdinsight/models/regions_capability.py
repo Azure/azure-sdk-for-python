@@ -23,6 +23,6 @@ class RegionsCapability(Model):
         'available': {'key': 'available', 'type': '[str]'},
     }
 
-    def __init__(self, available=None):
-        super(RegionsCapability, self).__init__()
-        self.available = available
+    def __init__(self, **kwargs):
+        super(RegionsCapability, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)

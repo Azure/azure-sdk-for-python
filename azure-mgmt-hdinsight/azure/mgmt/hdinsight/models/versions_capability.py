@@ -23,6 +23,6 @@ class VersionsCapability(Model):
         'available': {'key': 'available', 'type': '[VersionSpec]'},
     }
 
-    def __init__(self, available=None):
-        super(VersionsCapability, self).__init__()
-        self.available = available
+    def __init__(self, **kwargs):
+        super(VersionsCapability, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)

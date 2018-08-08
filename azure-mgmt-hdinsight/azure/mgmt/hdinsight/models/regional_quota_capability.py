@@ -29,8 +29,8 @@ class RegionalQuotaCapability(Model):
         'cores_available': {'key': 'cores_available', 'type': 'long'},
     }
 
-    def __init__(self, region_name=None, cores_used=None, cores_available=None):
-        super(RegionalQuotaCapability, self).__init__()
-        self.region_name = region_name
-        self.cores_used = cores_used
-        self.cores_available = cores_available
+    def __init__(self, **kwargs):
+        super(RegionalQuotaCapability, self).__init__(**kwargs)
+        self.region_name = kwargs.get('region_name', None)
+        self.cores_used = kwargs.get('cores_used', None)
+        self.cores_available = kwargs.get('cores_available', None)

@@ -28,7 +28,7 @@ class ClusterMonitoringResponse(Model):
         'workspace_id': {'key': 'workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, cluster_monitoring_enabled=None, workspace_id=None):
-        super(ClusterMonitoringResponse, self).__init__()
-        self.cluster_monitoring_enabled = cluster_monitoring_enabled
-        self.workspace_id = workspace_id
+    def __init__(self, **kwargs):
+        super(ClusterMonitoringResponse, self).__init__(**kwargs)
+        self.cluster_monitoring_enabled = kwargs.get('cluster_monitoring_enabled', None)
+        self.workspace_id = kwargs.get('workspace_id', None)

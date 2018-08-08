@@ -32,9 +32,9 @@ class VersionSpec(Model):
         'component_versions': {'key': 'componentVersions', 'type': '{str}'},
     }
 
-    def __init__(self, friendly_name=None, display_name=None, is_default=None, component_versions=None):
-        super(VersionSpec, self).__init__()
-        self.friendly_name = friendly_name
-        self.display_name = display_name
-        self.is_default = is_default
-        self.component_versions = component_versions
+    def __init__(self, **kwargs):
+        super(VersionSpec, self).__init__(**kwargs)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.component_versions = kwargs.get('component_versions', None)

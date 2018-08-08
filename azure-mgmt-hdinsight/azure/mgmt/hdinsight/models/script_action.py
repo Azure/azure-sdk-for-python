@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ScriptAction(Model):
     """Describes a script action on role on the cluster.
 
-    :param name: The name of the script action.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the script action.
     :type name: str
-    :param uri: The URI to the script.
+    :param uri: Required. The URI to the script.
     :type uri: str
-    :param parameters: The parameters for the script provided.
+    :param parameters: Required. The parameters for the script provided.
     :type parameters: str
     """
 
@@ -35,8 +37,8 @@ class ScriptAction(Model):
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
-    def __init__(self, name, uri, parameters):
-        super(ScriptAction, self).__init__()
-        self.name = name
-        self.uri = uri
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(ScriptAction, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.uri = kwargs.get('uri', None)
+        self.parameters = kwargs.get('parameters', None)

@@ -39,11 +39,11 @@ class CapabilitiesResult(Model):
         'quota': {'key': 'quota', 'type': 'QuotaCapability'},
     }
 
-    def __init__(self, versions=None, regions=None, vm_sizes=None, vm_size_filters=None, features=None, quota=None):
-        super(CapabilitiesResult, self).__init__()
-        self.versions = versions
-        self.regions = regions
-        self.vm_sizes = vm_sizes
-        self.vm_size_filters = vm_size_filters
-        self.features = features
-        self.quota = quota
+    def __init__(self, **kwargs):
+        super(CapabilitiesResult, self).__init__(**kwargs)
+        self.versions = kwargs.get('versions', None)
+        self.regions = kwargs.get('regions', None)
+        self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.features = kwargs.get('features', None)
+        self.quota = kwargs.get('quota', None)

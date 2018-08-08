@@ -50,7 +50,7 @@ class Cluster(TrackedResource):
         'properties': {'key': 'properties', 'type': 'ClusterGetProperties'},
     }
 
-    def __init__(self, location=None, tags=None, etag=None, properties=None):
-        super(Cluster, self).__init__(location=location, tags=tags)
-        self.etag = etag
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Cluster, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.properties = kwargs.get('properties', None)

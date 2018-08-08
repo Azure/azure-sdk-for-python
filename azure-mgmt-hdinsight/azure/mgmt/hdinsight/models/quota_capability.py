@@ -24,6 +24,6 @@ class QuotaCapability(Model):
         'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
     }
 
-    def __init__(self, regional_quotas=None):
-        super(QuotaCapability, self).__init__()
-        self.regional_quotas = regional_quotas
+    def __init__(self, **kwargs):
+        super(QuotaCapability, self).__init__(**kwargs)
+        self.regional_quotas = kwargs.get('regional_quotas', None)

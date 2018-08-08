@@ -23,6 +23,6 @@ class SshProfile(Model):
         'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
     }
 
-    def __init__(self, public_keys=None):
-        super(SshProfile, self).__init__()
-        self.public_keys = public_keys
+    def __init__(self, **kwargs):
+        super(SshProfile, self).__init__(**kwargs)
+        self.public_keys = kwargs.get('public_keys', None)

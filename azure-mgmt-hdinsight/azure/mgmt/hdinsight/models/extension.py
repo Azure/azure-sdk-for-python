@@ -27,7 +27,7 @@ class Extension(Model):
         'primary_key': {'key': 'primaryKey', 'type': 'str'},
     }
 
-    def __init__(self, workspace_id=None, primary_key=None):
-        super(Extension, self).__init__()
-        self.workspace_id = workspace_id
-        self.primary_key = primary_key
+    def __init__(self, **kwargs):
+        super(Extension, self).__init__(**kwargs)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.primary_key = kwargs.get('primary_key', None)

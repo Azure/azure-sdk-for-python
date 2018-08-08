@@ -29,8 +29,8 @@ class ClusterCreateParametersExtended(Model):
         'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
     }
 
-    def __init__(self, location=None, tags=None, properties=None):
-        super(ClusterCreateParametersExtended, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ClusterCreateParametersExtended, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

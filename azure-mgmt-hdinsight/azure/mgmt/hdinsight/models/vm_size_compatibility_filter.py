@@ -38,11 +38,11 @@ class VmSizeCompatibilityFilter(Model):
         'vmsizes': {'key': 'vmsizes', 'type': '[str]'},
     }
 
-    def __init__(self, filter_mode=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, vmsizes=None):
-        super(VmSizeCompatibilityFilter, self).__init__()
-        self.filter_mode = filter_mode
-        self.regions = regions
-        self.cluster_flavors = cluster_flavors
-        self.node_types = node_types
-        self.cluster_versions = cluster_versions
-        self.vmsizes = vmsizes
+    def __init__(self, **kwargs):
+        super(VmSizeCompatibilityFilter, self).__init__(**kwargs)
+        self.filter_mode = kwargs.get('filter_mode', None)
+        self.regions = kwargs.get('regions', None)
+        self.cluster_flavors = kwargs.get('cluster_flavors', None)
+        self.node_types = kwargs.get('node_types', None)
+        self.cluster_versions = kwargs.get('cluster_versions', None)
+        self.vmsizes = kwargs.get('vmsizes', None)

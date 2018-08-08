@@ -33,9 +33,9 @@ class ClusterDefinition(Model):
         'configurations': {'key': 'configurations', 'type': 'object'},
     }
 
-    def __init__(self, blueprint=None, kind=None, component_version=None, configurations=None):
-        super(ClusterDefinition, self).__init__()
-        self.blueprint = blueprint
-        self.kind = kind
-        self.component_version = component_version
-        self.configurations = configurations
+    def __init__(self, **kwargs):
+        super(ClusterDefinition, self).__init__(**kwargs)
+        self.blueprint = kwargs.get('blueprint', None)
+        self.kind = kwargs.get('kind', None)
+        self.component_version = kwargs.get('component_version', None)
+        self.configurations = kwargs.get('configurations', None)

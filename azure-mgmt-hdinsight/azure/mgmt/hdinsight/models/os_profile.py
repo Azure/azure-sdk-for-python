@@ -24,6 +24,6 @@ class OsProfile(Model):
         'linux_operating_system_profile': {'key': 'linuxOperatingSystemProfile', 'type': 'LinuxOperatingSystemProfile'},
     }
 
-    def __init__(self, linux_operating_system_profile=None):
-        super(OsProfile, self).__init__()
-        self.linux_operating_system_profile = linux_operating_system_profile
+    def __init__(self, **kwargs):
+        super(OsProfile, self).__init__(**kwargs)
+        self.linux_operating_system_profile = kwargs.get('linux_operating_system_profile', None)
