@@ -134,7 +134,7 @@ class Sensitivity(str, Enum):
     high = "High"
 
 
-class MetricCriteriaOperator(str, Enum):
+class MetricAlertRuleCondition(str, Enum):
 
     equals = "Equals"
     not_equals = "NotEquals"
@@ -144,7 +144,7 @@ class MetricCriteriaOperator(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
 
 
-class MetricCriteriaAggregationType(str, Enum):
+class MetricAlertRuleAggregationTime(str, Enum):
 
     average = "Average"
     minimum = "Minimum"

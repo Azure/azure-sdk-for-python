@@ -26,11 +26,11 @@ class MetricCriteria(Model):
     :param operator: Required. the criteria operator. Possible values include:
      'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
      'LessThanOrEqual'
-    :type operator: str or ~azure.mgmt.monitor.models.MetricCriteriaOperator
+    :type operator: str or ~azure.mgmt.monitor.models.MetricAlertRuleCondition
     :param time_aggregation: Required. the criteria time aggregation types.
      Possible values include: 'Average', 'Minimum', 'Maximum', 'Total'
     :type time_aggregation: str or
-     ~azure.mgmt.monitor.models.MetricCriteriaAggregationType
+     ~azure.mgmt.monitor.models.MetricAlertRuleAggregationTime
     :param threshold: Required. the criteria threshold value that activates
      the alert.
     :type threshold: float
