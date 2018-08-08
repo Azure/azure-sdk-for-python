@@ -39,7 +39,7 @@ from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
 from .get_objects_parameters import GetObjectsParameters
 from .domain import Domain
-from .oauth2 import OAuth2
+from .permissions import Permissions
 from .aad_object_paged import AADObjectPaged
 from .application_paged import ApplicationPaged
 from .directory_object_paged import DirectoryObjectPaged
@@ -85,7 +85,7 @@ __all__ = [
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
     'Domain',
-    'OAuth2',
+    'Permissions',
     'AADObjectPaged',
     'ApplicationPaged',
     'DirectoryObjectPaged',

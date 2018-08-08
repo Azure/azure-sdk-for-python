@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class OAuth2(Model):
-    """OAuth2.
+class Permissions(Model):
+    """Permissions.
 
     :param odatatype: Microsoft.DirectoryServices.OAuth2PermissionGrant
     :type odatatype: str
@@ -46,7 +46,7 @@ class OAuth2(Model):
     }
 
     def __init__(self, odatatype=None, client_id=None, consent_type=None, principal_id=None, resource_id=None, scope=None, start_time=None, expiry_time=None):
-        super(OAuth2, self).__init__()
+        super(Permissions, self).__init__()
         self.odatatype = odatatype
         self.client_id = client_id
         self.consent_type = consent_type

@@ -41,15 +41,16 @@ class OAuth2Operations(object):
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Queries OAuth2 permissions for the relevant SP ObjectId of an app.
 
-        :param filter:
+        :param filter: This is the Service Principal ObjectId associated with
+         the app
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OAuth2 or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.OAuth2 or
+        :return: Permissions or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Permissions or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -88,7 +89,7 @@ class OAuth2Operations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OAuth2', response)
+            deserialized = self._deserialize('Permissions', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -102,14 +103,14 @@ class OAuth2Operations(object):
         """Grants OAuth2 permissions for the relevant resource Ids of an app.
 
         :param body:
-        :type body: ~azure.graphrbac.models.OAuth2
+        :type body: ~azure.graphrbac.models.Permissions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OAuth2 or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.OAuth2 or
+        :return: Permissions or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Permissions or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -136,7 +137,7 @@ class OAuth2Operations(object):
 
         # Construct body
         if body is not None:
-            body_content = self._serialize.body(body, 'OAuth2')
+            body_content = self._serialize.body(body, 'Permissions')
         else:
             body_content = None
 
@@ -153,7 +154,7 @@ class OAuth2Operations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('OAuth2', response)
+            deserialized = self._deserialize('Permissions', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
