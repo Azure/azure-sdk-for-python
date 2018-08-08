@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class HostnameConfiguration(Model):
     """Custom hostname configuration.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Hostname type. Possible values include: 'Proxy',
@@ -47,15 +44,13 @@ class HostnameConfiguration(Model):
      client certificate on the hostname. Default Value is false. Default value:
      False .
     :type negotiate_client_certificate: bool
-    :ivar certificate: Certificate information.
-    :vartype certificate:
-     ~azure.mgmt.apimanagement.models.CertificateInformation
+    :param certificate: Certificate information.
+    :type certificate: ~azure.mgmt.apimanagement.models.CertificateInformation
     """
 
     _validation = {
         'type': {'required': True},
         'host_name': {'required': True},
-        'certificate': {'readonly': True},
     }
 
     _attribute_map = {
@@ -78,4 +73,4 @@ class HostnameConfiguration(Model):
         self.certificate_password = kwargs.get('certificate_password', None)
         self.default_ssl_binding = kwargs.get('default_ssl_binding', False)
         self.negotiate_client_certificate = kwargs.get('negotiate_client_certificate', False)
-        self.certificate = None
+        self.certificate = kwargs.get('certificate', None)
