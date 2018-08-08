@@ -18,19 +18,19 @@ class CredentialResults(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar values:
-    :vartype values:
+    :ivar kubeconfigs:
+    :vartype kubeconfigs:
      list[~azure.mgmt.containerservice.models.CredentialResult]
     """
 
     _validation = {
-        'values': {'readonly': True},
+        'kubeconfigs': {'readonly': True},
     }
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '[CredentialResult]'},
+        'kubeconfigs': {'key': 'kubeconfigs', 'type': '[CredentialResult]'},
     }
 
     def __init__(self, **kwargs):
         super(CredentialResults, self).__init__(**kwargs)
-        self.values = None
+        self.kubeconfigs = None
