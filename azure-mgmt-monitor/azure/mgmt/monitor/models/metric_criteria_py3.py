@@ -30,7 +30,7 @@ class MetricCriteria(Model):
     :param time_aggregation: Required. the criteria time aggregation types.
      Possible values include: 'Average', 'Minimum', 'Maximum', 'Total'
     :type time_aggregation: str or
-     ~azure.mgmt.monitor.models.MetricAlertRuleAggregationTime
+     ~azure.mgmt.monitor.models.MetricAlertRuleTimeAggregation
     :param threshold: Required. the criteria threshold value that activates
      the alert.
     :type threshold: float

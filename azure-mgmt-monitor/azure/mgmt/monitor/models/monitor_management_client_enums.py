@@ -144,7 +144,7 @@ class MetricAlertRuleCondition(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
 
 
-class MetricAlertRuleAggregationTime(str, Enum):
+class MetricAlertRuleTimeAggregation(str, Enum):
 
     average = "Average"
     minimum = "Minimum"
