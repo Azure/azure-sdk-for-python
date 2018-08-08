@@ -21,7 +21,6 @@ from .operations.reservations_details_operations import ReservationsDetailsOpera
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.cost_tags_operations import CostTagsOperations
 from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
@@ -82,8 +81,6 @@ class ConsumptionManagementClient(SDKClient):
     :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
-    :ivar cost_tags: CostTags operations
-    :vartype cost_tags: azure.mgmt.consumption.operations.CostTagsOperations
     :ivar tags: Tags operations
     :vartype tags: azure.mgmt.consumption.operations.TagsOperations
     :ivar forecasts: Forecasts operations
@@ -125,8 +122,6 @@ class ConsumptionManagementClient(SDKClient):
         self.budgets = BudgetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.cost_tags = CostTagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
