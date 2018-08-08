@@ -22,7 +22,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         )
         self.loop = asyncio.get_event_loop()
 
-    def test_storage_usage(self):
+    def test_storage_usage_async(self):
         self.loop.run_until_complete(self._test_storage_usage())
 
     async def _test_storage_usage(self):
@@ -30,7 +30,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertGreater(len(usages), 0)
 
     @ResourceGroupPreparer()
-    def test_storage_accounts(self, resource_group, location):
+    def test_storage_accounts_async(self, resource_group, location):
         self.loop.run_until_complete(self._test_storage_accounts(resource_group, location))
 
     async def _test_storage_accounts(self, resource_group, location):
