@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class ImageListMetadata(Model):
     """Image List Metadata.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, str]
     :param key_one: Optional Key value pair to describe your list.
     :type key_one: str
     :param key_two: Optional Key value pair to describe your list.
@@ -22,11 +25,13 @@ class ImageListMetadata(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{str}'},
         'key_one': {'key': 'Key One', 'type': 'str'},
         'key_two': {'key': 'Key Two', 'type': 'str'},
     }
 
-    def __init__(self, key_one=None, key_two=None):
+    def __init__(self, additional_properties=None, key_one=None, key_two=None):
         super(ImageListMetadata, self).__init__()
+        self.additional_properties = additional_properties
         self.key_one = key_one
         self.key_two = key_two
