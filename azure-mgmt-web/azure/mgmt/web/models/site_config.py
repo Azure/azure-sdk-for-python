@@ -57,6 +57,9 @@ class SiteConfig(Model):
     :type publishing_username: str
     :param app_settings: Application settings.
     :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :param azure_storage_accounts: User-provided Azure storage accounts.
+    :type azure_storage_accounts: dict[str,
+     ~azure.mgmt.web.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
     :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
@@ -167,6 +170,7 @@ class SiteConfig(Model):
         'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
         'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
+        'azure_storage_accounts': {'key': 'azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
         'connection_strings': {'key': 'connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'handlerMappings', 'type': '[HandlerMapping]'},
@@ -221,6 +225,7 @@ class SiteConfig(Model):
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
         self.app_settings = kwargs.get('app_settings', None)
+        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
         self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
         self.handler_mappings = kwargs.get('handler_mappings', None)
