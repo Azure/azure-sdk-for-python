@@ -20,8 +20,8 @@ class CredentialResult(Model):
 
     :ivar name: The name of the credential.
     :vartype name: str
-    :ivar value: The value of the credential.
-    :vartype value: str
+    :ivar value: Base64-encoded Kubernetes configuration file.
+    :vartype value: bytearray
     """
 
     _validation = {
@@ -31,7 +31,7 @@ class CredentialResult(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'bytearray'},
     }
 
     def __init__(self, **kwargs):
