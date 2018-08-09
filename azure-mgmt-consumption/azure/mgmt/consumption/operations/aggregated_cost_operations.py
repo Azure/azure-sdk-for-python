@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class CostTagsOperations(object):
-    """CostTagsOperations operations.
+class AggregatedCostOperations(object):
+    """AggregatedCostOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,27 +36,30 @@ class CostTagsOperations(object):
 
         self.config = config
 
-    def get(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Get cost tags for a billing account.
+    def get_by_management_group(
+            self, management_group_id, custom_headers=None, raw=False, **operation_config):
+        """Provides the aggregate cost of a management group and all child
+        management groups by current billing period.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
+        :param management_group_id: Azure Management Group ID.
+        :type management_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostTag or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostTag or
+        :return: ManagementGroupAggregatedCostResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_by_management_group.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -84,48 +87,42 @@ class CostTagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostTag', response)
+            deserialized = self._deserialize('ManagementGroupAggregatedCostResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    get_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Consumption/aggregatedcost'}
 
-    def create_or_update(
-            self, billing_account_id, e_tag=None, cost_tags=None, custom_headers=None, raw=False, **operation_config):
-        """The operation to create or update cost tags assiciated with a billing
-        account. Update operation requires latest eTag to be set in the request
-        mandatorily. You may obtain the latest eTag by performing a get
-        operation. Create operation does not require eTag.
+    def get_for_billing_period_by_management_group(
+            self, management_group_id, billing_period_name, custom_headers=None, raw=False, **operation_config):
+        """Provides the aggregate cost of a management group and all child
+        management groups by specified billing period.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param e_tag: eTag of the resource. To handle concurrent update
-         scenarion, this field will be used to determine whether the user is
-         updating the latest version or not.
-        :type e_tag: str
-        :param cost_tags: Cost tags.
-        :type cost_tags:
-         list[~azure.mgmt.consumption.models.CostTagProperties]
+        :param management_group_id: Azure Management Group ID.
+        :type management_group_id: str
+        :param billing_period_name: Billing Period Name.
+        :type billing_period_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostTag or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostTag or
+        :return: ManagementGroupAggregatedCostResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        parameters = models.CostTag(e_tag=e_tag, cost_tags=cost_tags)
-
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.get_for_billing_period_by_management_group.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str'),
+            'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -136,7 +133,6 @@ class CostTagsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -144,26 +140,21 @@ class CostTagsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'CostTag')
-
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostTag', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('CostTag', response)
+            deserialized = self._deserialize('ManagementGroupAggregatedCostResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    get_for_billing_period_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/Microsoft.Consumption/aggregatedcost'}
