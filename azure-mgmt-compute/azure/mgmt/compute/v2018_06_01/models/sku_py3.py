@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class Sku(Model):
     """Describes a virtual machine scale set sku.
 
-    :param name: The sku name. Possible values are: **Aligned** for managed
-     disks, and **Classic** for unmanaged disks. Default value is Classic, if
-     not specified.
+    :param name: The sku name.
     :type name: str
     :param tier: Specifies the tier of virtual machines in a scale set.<br
      /><br /> Possible Values:<br /><br /> **Standard**<br /><br /> **Basic**
