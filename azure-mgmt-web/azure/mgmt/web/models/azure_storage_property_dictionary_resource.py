@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class SlotConfigNamesResource(ProxyOnlyResource):
-    """Slot Config names azure resource.
+class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
+    """AzureStorageInfo dictionary resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,13 +26,8 @@ class SlotConfigNamesResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param connection_string_names: List of connection string names.
-    :type connection_string_names: list[str]
-    :param app_setting_names: List of application settings names.
-    :type app_setting_names: list[str]
-    :param azure_storage_config_names: List of external Azure storage account
-     identifiers.
-    :type azure_storage_config_names: list[str]
+    :param properties: Azure storage accounts.
+    :type properties: dict[str, ~azure.mgmt.web.models.AzureStorageInfoValue]
     """
 
     _validation = {
@@ -46,13 +41,9 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
-        'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
-        'azure_storage_config_names': {'key': 'properties.azureStorageConfigNames', 'type': '[str]'},
+        'properties': {'key': 'properties', 'type': '{AzureStorageInfoValue}'},
     }
 
     def __init__(self, **kwargs):
-        super(SlotConfigNamesResource, self).__init__(**kwargs)
-        self.connection_string_names = kwargs.get('connection_string_names', None)
-        self.app_setting_names = kwargs.get('app_setting_names', None)
-        self.azure_storage_config_names = kwargs.get('azure_storage_config_names', None)
+        super(AzureStoragePropertyDictionaryResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
