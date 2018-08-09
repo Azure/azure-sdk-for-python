@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12OneWayAgreement(Model):
-    """The X12 one-way agreement.
+    """The X12 oneway agreement.
 
     All required parameters must be populated in order to send to Azure.
 

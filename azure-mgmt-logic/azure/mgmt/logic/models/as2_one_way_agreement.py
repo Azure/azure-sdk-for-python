@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2OneWayAgreement(Model):
-    """The integration account AS2 one-way agreement.
+    """The integration account AS2 oneway agreement.
 
     All required parameters must be populated in order to send to Azure.
 

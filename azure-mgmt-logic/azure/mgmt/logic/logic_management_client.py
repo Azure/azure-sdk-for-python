@@ -22,12 +22,7 @@ from .operations.workflow_triggers_operations import WorkflowTriggersOperations
 from .operations.workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
-from .operations.workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
-from .operations.workflow_run_action_scoped_repetitions_operations import WorkflowRunActionScopedRepetitionsOperations
-from .operations.workflow_run_operations import WorkflowRunOperations
 from .operations.integration_accounts_operations import IntegrationAccountsOperations
-from .operations.integration_account_assemblies_operations import IntegrationAccountAssembliesOperations
-from .operations.integration_account_batch_configurations_operations import IntegrationAccountBatchConfigurationsOperations
 from .operations.schemas_operations import SchemasOperations
 from .operations.maps_operations import MapsOperations
 from .operations.partners_operations import PartnersOperations
@@ -87,18 +82,8 @@ class LogicManagementClient(SDKClient):
     :vartype workflow_runs: azure.mgmt.logic.operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActions operations
     :vartype workflow_run_actions: azure.mgmt.logic.operations.WorkflowRunActionsOperations
-    :ivar workflow_run_action_repetitions: WorkflowRunActionRepetitions operations
-    :vartype workflow_run_action_repetitions: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsOperations
-    :ivar workflow_run_action_scoped_repetitions: WorkflowRunActionScopedRepetitions operations
-    :vartype workflow_run_action_scoped_repetitions: azure.mgmt.logic.operations.WorkflowRunActionScopedRepetitionsOperations
-    :ivar workflow_run_operations: WorkflowRunOperations operations
-    :vartype workflow_run_operations: azure.mgmt.logic.operations.WorkflowRunOperations
     :ivar integration_accounts: IntegrationAccounts operations
     :vartype integration_accounts: azure.mgmt.logic.operations.IntegrationAccountsOperations
-    :ivar integration_account_assemblies: IntegrationAccountAssemblies operations
-    :vartype integration_account_assemblies: azure.mgmt.logic.operations.IntegrationAccountAssembliesOperations
-    :ivar integration_account_batch_configurations: IntegrationAccountBatchConfigurations operations
-    :vartype integration_account_batch_configurations: azure.mgmt.logic.operations.IntegrationAccountBatchConfigurationsOperations
     :ivar schemas: Schemas operations
     :vartype schemas: azure.mgmt.logic.operations.SchemasOperations
     :ivar maps: Maps operations
@@ -143,17 +128,7 @@ class LogicManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_actions = WorkflowRunActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.workflow_run_action_scoped_repetitions = WorkflowRunActionScopedRepetitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.workflow_run_operations = WorkflowRunOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.integration_accounts = IntegrationAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.schemas = SchemasOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -199,7 +174,7 @@ class LogicManagementClient(SDKClient):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -208,9 +183,8 @@ class LogicManagementClient(SDKClient):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)

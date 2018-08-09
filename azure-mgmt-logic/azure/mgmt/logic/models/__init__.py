@@ -104,34 +104,6 @@ try:
     from .integration_account_session_py3 import IntegrationAccountSession
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .key_vault_reference_py3 import KeyVaultReference
-    from .list_key_vault_keys_definition_py3 import ListKeyVaultKeysDefinition
-    from .key_vault_key_attributes_py3 import KeyVaultKeyAttributes
-    from .key_vault_key_py3 import KeyVaultKey
-    from .tracking_event_error_info_py3 import TrackingEventErrorInfo
-    from .tracking_event_py3 import TrackingEvent
-    from .tracking_events_definition_py3 import TrackingEventsDefinition
-    from .access_key_regenerate_action_definition_py3 import AccessKeyRegenerateActionDefinition
-    from .set_trigger_state_action_definition_py3 import SetTriggerStateActionDefinition
-    from .expression_root_py3 import ExpressionRoot
-    from .azure_resource_error_info_py3 import AzureResourceErrorInfo
-    from .expression_py3 import Expression
-    from .error_info_py3 import ErrorInfo
-    from .repetition_index_py3 import RepetitionIndex
-    from .workflow_run_action_repetition_definition_py3 import WorkflowRunActionRepetitionDefinition
-    from .workflow_run_action_repetition_definition_collection_py3 import WorkflowRunActionRepetitionDefinitionCollection
-    from .operation_result_py3 import OperationResult
-    from .run_action_correlation_py3 import RunActionCorrelation
-    from .operation_result_properties_py3 import OperationResultProperties
-    from .run_correlation_py3 import RunCorrelation
-    from .json_schema_py3 import JsonSchema
-    from .assembly_properties_py3 import AssemblyProperties
-    from .assembly_definition_py3 import AssemblyDefinition
-    from .artifact_content_properties_definition_py3 import ArtifactContentPropertiesDefinition
-    from .artifact_properties_py3 import ArtifactProperties
-    from .batch_release_criteria_py3 import BatchReleaseCriteria
-    from .batch_configuration_properties_py3 import BatchConfigurationProperties
-    from .batch_configuration_py3 import BatchConfiguration
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
@@ -227,46 +199,13 @@ except (SyntaxError, ImportError):
     from .integration_account_session import IntegrationAccountSession
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .key_vault_reference import KeyVaultReference
-    from .list_key_vault_keys_definition import ListKeyVaultKeysDefinition
-    from .key_vault_key_attributes import KeyVaultKeyAttributes
-    from .key_vault_key import KeyVaultKey
-    from .tracking_event_error_info import TrackingEventErrorInfo
-    from .tracking_event import TrackingEvent
-    from .tracking_events_definition import TrackingEventsDefinition
-    from .access_key_regenerate_action_definition import AccessKeyRegenerateActionDefinition
-    from .set_trigger_state_action_definition import SetTriggerStateActionDefinition
-    from .expression_root import ExpressionRoot
-    from .azure_resource_error_info import AzureResourceErrorInfo
-    from .expression import Expression
-    from .error_info import ErrorInfo
-    from .repetition_index import RepetitionIndex
-    from .workflow_run_action_repetition_definition import WorkflowRunActionRepetitionDefinition
-    from .workflow_run_action_repetition_definition_collection import WorkflowRunActionRepetitionDefinitionCollection
-    from .operation_result import OperationResult
-    from .run_action_correlation import RunActionCorrelation
-    from .operation_result_properties import OperationResultProperties
-    from .run_correlation import RunCorrelation
-    from .json_schema import JsonSchema
-    from .assembly_properties import AssemblyProperties
-    from .assembly_definition import AssemblyDefinition
-    from .artifact_content_properties_definition import ArtifactContentPropertiesDefinition
-    from .artifact_properties import ArtifactProperties
-    from .batch_release_criteria import BatchReleaseCriteria
-    from .batch_configuration_properties import BatchConfigurationProperties
-    from .batch_configuration import BatchConfiguration
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
 from .workflow_trigger_history_paged import WorkflowTriggerHistoryPaged
 from .workflow_run_paged import WorkflowRunPaged
 from .workflow_run_action_paged import WorkflowRunActionPaged
-from .expression_root_paged import ExpressionRootPaged
-from .workflow_run_action_repetition_definition_paged import WorkflowRunActionRepetitionDefinitionPaged
 from .integration_account_paged import IntegrationAccountPaged
-from .key_vault_key_paged import KeyVaultKeyPaged
-from .assembly_definition_paged import AssemblyDefinitionPaged
-from .batch_configuration_paged import BatchConfigurationPaged
 from .integration_account_schema_paged import IntegrationAccountSchemaPaged
 from .integration_account_map_paged import IntegrationAccountMapPaged
 from .integration_account_partner_paged import IntegrationAccountPartnerPaged
@@ -302,10 +241,6 @@ from .logic_management_client_enums import (
     MessageFilterType,
     EdifactCharacterSet,
     EdifactDecimalIndicator,
-    TrackEventsOperationOptions,
-    EventLevel,
-    TrackingRecordType,
-    AccessKeyType,
 )
 
 __all__ = [
@@ -403,46 +338,13 @@ __all__ = [
     'IntegrationAccountSession',
     'OperationDisplay',
     'Operation',
-    'KeyVaultReference',
-    'ListKeyVaultKeysDefinition',
-    'KeyVaultKeyAttributes',
-    'KeyVaultKey',
-    'TrackingEventErrorInfo',
-    'TrackingEvent',
-    'TrackingEventsDefinition',
-    'AccessKeyRegenerateActionDefinition',
-    'SetTriggerStateActionDefinition',
-    'ExpressionRoot',
-    'AzureResourceErrorInfo',
-    'Expression',
-    'ErrorInfo',
-    'RepetitionIndex',
-    'WorkflowRunActionRepetitionDefinition',
-    'WorkflowRunActionRepetitionDefinitionCollection',
-    'OperationResult',
-    'RunActionCorrelation',
-    'OperationResultProperties',
-    'RunCorrelation',
-    'JsonSchema',
-    'AssemblyProperties',
-    'AssemblyDefinition',
-    'ArtifactContentPropertiesDefinition',
-    'ArtifactProperties',
-    'BatchReleaseCriteria',
-    'BatchConfigurationProperties',
-    'BatchConfiguration',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
     'WorkflowTriggerHistoryPaged',
     'WorkflowRunPaged',
     'WorkflowRunActionPaged',
-    'ExpressionRootPaged',
-    'WorkflowRunActionRepetitionDefinitionPaged',
     'IntegrationAccountPaged',
-    'KeyVaultKeyPaged',
-    'AssemblyDefinitionPaged',
-    'BatchConfigurationPaged',
     'IntegrationAccountSchemaPaged',
     'IntegrationAccountMapPaged',
     'IntegrationAccountPartnerPaged',
@@ -477,8 +379,4 @@ __all__ = [
     'MessageFilterType',
     'EdifactCharacterSet',
     'EdifactDecimalIndicator',
-    'TrackEventsOperationOptions',
-    'EventLevel',
-    'TrackingRecordType',
-    'AccessKeyType',
 ]

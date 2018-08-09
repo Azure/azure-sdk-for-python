@@ -21,9 +21,9 @@ class WorkflowTriggerRecurrence(Model):
     :param interval: The interval.
     :type interval: int
     :param start_time: The start time.
-    :type start_time: str
+    :type start_time: datetime
     :param end_time: The end time.
-    :type end_time: str
+    :type end_time: datetime
     :param time_zone: The time zone.
     :type time_zone: str
     :param schedule: The recurrence schedule.
@@ -33,8 +33,8 @@ class WorkflowTriggerRecurrence(Model):
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'interval': {'key': 'interval', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
     }

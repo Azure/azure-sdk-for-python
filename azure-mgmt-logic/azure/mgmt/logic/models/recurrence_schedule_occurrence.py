@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RecurrenceScheduleOccurrence(Model):
-    """The recurrence schedule occurrence.
+    """The recurrence schedule occurence.
 
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
