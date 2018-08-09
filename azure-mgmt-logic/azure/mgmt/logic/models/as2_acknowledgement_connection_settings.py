@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2AcknowledgementConnectionSettings(Model):
-    """The AS2 agreement acknowledgement connection settings.
+    """The AS2 agreement acknowledegment connection settings.
 
     All required parameters must be populated in order to send to Azure.
 

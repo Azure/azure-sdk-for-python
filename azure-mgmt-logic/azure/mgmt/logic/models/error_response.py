@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error response indicates Logic service is not able to process the incoming
+    """Error reponse indicates Logic service is not able to process the incoming
     request. The error property contains the error details.
 
     :param error: The error properties.

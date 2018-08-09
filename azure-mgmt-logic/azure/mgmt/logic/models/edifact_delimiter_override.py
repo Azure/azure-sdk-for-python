@@ -21,7 +21,7 @@ class EdifactDelimiterOverride(Model):
     :type message_id: str
     :param message_version: The message version.
     :type message_version: str
-    :param message_release: The message release.
+    :param message_release: The message releaseversion.
     :type message_release: str
     :param data_element_separator: Required. The data element separator.
     :type data_element_separator: int

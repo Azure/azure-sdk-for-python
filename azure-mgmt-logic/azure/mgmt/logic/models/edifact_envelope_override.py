@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactEnvelopeOverride(Model):
-    """The Edifact envelope override settings.
+    """The Edifact enevlope override settings.
 
     :param message_id: The message id on which this envelope settings has to
      be applied.
