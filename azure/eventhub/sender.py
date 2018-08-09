@@ -15,9 +15,8 @@ class Sender:
     """
     Implements a Sender.
     """
-    TIMEOUT = 60.0
 
-    def __init__(self, client, target, partition=None, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -25,10 +24,23 @@ class Sender:
         :type client: ~azure.eventhub.client.EventHubClient.
         :param target: The URI of the EventHub to send to.
         :type target: str
+        :param partition: The specific partition ID to send to. Default is None, in which case the service
+         will assign to all partitions using round-robin.
+        :type partition: str
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: int
+        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+         periods of inactivity. The default value is None, i.e. no keep alive pings.
+        :type keep_alive: int
+        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+         Default value is `True`.
+        :type auto_reconnect: bool
         """
         self.client = client
         self.target = target
         self.partition = partition
+        self.timeout = send_timeout
         self.redirected = None
         self.error = None
         self.keep_alive = keep_alive
@@ -42,7 +54,7 @@ class Sender:
             self.target,
             auth=self.client.get_auth(),
             debug=self.client.debug,
-            msg_timeout=Sender.TIMEOUT,
+            msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
@@ -65,7 +77,7 @@ class Sender:
                 self.target,
                 auth=self.client.get_auth(),
                 debug=self.client.debug,
-                msg_timeout=Sender.TIMEOUT,
+                msg_timeout=self.timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
@@ -78,20 +90,19 @@ class Sender:
         """If the Sender was disconnected from the service with
         a retryable error - attempt to reconnect."""
         # pylint: disable=protected-access
-        pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
-        unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
         self._handler.close()
+        unsent_events = self._handler.pending_messages
         self._handler = SendClient(
             self.target,
             auth=self.client.get_auth(),
             debug=self.client.debug,
-            msg_timeout=Sender.TIMEOUT,
+            msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             properties=self.client.create_properties())
         self._handler.open()
-        self._handler._pending_messages = unsent_events
+        self._handler.queue_message(*unsent_events)
         self._handler.wait()
 
     def get_handler_state(self):

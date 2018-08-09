@@ -18,7 +18,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, partition=None, keep_alive=None, auto_reconnect=True, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True, loop=None):  # pylint: disable=super-init-not-called
         """
         Instantiate an EventHub event SenderAsync handler.
 
@@ -26,7 +26,19 @@ class AsyncSender(Sender):
         :type client: ~azure.eventhub._async.EventHubClientAsync
         :param target: The URI of the EventHub to send to.
         :type target: str
-        :param loop: An event loop.
+        :param partition: The specific partition ID to send to. Default is `None`, in which case the service
+         will assign to all partitions using round-robin.
+        :type partition: str
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: int
+        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+         periods of inactivity. The default value is `None`, i.e. no keep alive pings.
+        :type keep_alive: int
+        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+         Default value is `True`.
+        :type auto_reconnect: bool
+        :param loop: An event loop. If not specified the default event loop will be used.
         """
         self.loop = loop or asyncio.get_event_loop()
         self.client = client
@@ -34,6 +46,7 @@ class AsyncSender(Sender):
         self.partition = partition
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
+        self.timeout = send_timeout
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.name = "EHSender-{}".format(uuid.uuid4())
         self.redirected = None
@@ -45,7 +58,7 @@ class AsyncSender(Sender):
             self.target,
             auth=self.client.get_auth(),
             debug=self.client.debug,
-            msg_timeout=Sender.TIMEOUT,
+            msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
@@ -69,7 +82,7 @@ class AsyncSender(Sender):
                 self.target,
                 auth=self.client.get_auth(),
                 debug=self.client.debug,
-                msg_timeout=Sender.TIMEOUT,
+                msg_timeout=self.timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
@@ -82,22 +95,20 @@ class AsyncSender(Sender):
     async def reconnect_async(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
-        # pylint: disable=protected-access
-        pending_states = (constants.MessageState.WaitingForSendAck, constants.MessageState.WaitingToBeSent)
-        unsent_events = [e for e in self._handler._pending_messages if e.state in pending_states]
         await self._handler.close_async()
+        unsent_events = self._handler.pending_messages
         self._handler = SendClientAsync(
             self.target,
             auth=self.client.get_auth(),
             debug=self.client.debug,
-            msg_timeout=Sender.TIMEOUT,
+            msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
         await self._handler.open_async()
-        self._handler._pending_messages = unsent_events
+        self._handler.queue_message(*unsent_events)
         await self._handler.wait_async()
 
     async def has_started(self):

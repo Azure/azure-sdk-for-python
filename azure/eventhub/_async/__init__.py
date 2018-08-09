@@ -58,7 +58,7 @@ class EventHubClientAsync(EventHubClient):
             return authentication.SASLPlain(
                 self.address.hostname, username, password, http_proxy=self.http_proxy)
         return authentication.SASTokenAsync.from_shared_access_key(
-            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
+            self.auth_uri, username, password, timeout=self.auth_timeout, http_proxy=self.http_proxy)
 
     async def _close_clients_async(self):
         """
@@ -79,6 +79,7 @@ class EventHubClientAsync(EventHubClient):
         except Exception as exp:  # pylint: disable=broad-except
             log.info("Encountered error while starting handler: {}".format(exp))
             await client.close_async(exception=exp)
+            log.info("Finished closing failed handler")
 
     async def _handle_redirect(self, redirects):
         if len(redirects) != len(self.clients):
@@ -224,7 +225,7 @@ class EventHubClientAsync(EventHubClient):
         self.clients.append(handler)
         return handler
 
-    def add_async_sender(self, partition=None, operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+    def add_async_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -236,13 +237,23 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the target URL.
          The value must start with `/` character.
         :type operation: str
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: int
+        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+         periods of inactivity. The default value is 30 seconds. If set to `None`, the connection will not
+         be pinged.
+        :type keep_alive: int
+        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+         Default value is `True`.
+        :type auto_reconnect: bool
         :rtype: ~azure.eventhub._async.sender_async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
         handler = AsyncSender(
-            self, target, partition=partition, keep_alive=keep_alive,
+            self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive,
             auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
         return handler
