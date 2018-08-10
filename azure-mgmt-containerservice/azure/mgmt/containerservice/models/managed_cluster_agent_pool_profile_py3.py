@@ -99,7 +99,7 @@ class ManagedClusterAgentPoolProfile(Model):
     :param type: AgentPoolType represents types of agentpool. Possible values
      include: 'VirtualMachineScaleSets', 'AvailabilitySet'. Default value:
      "VirtualMachineScaleSets" .
-    :type type: str or ~azure.mgmt.containerservice.models.enum
+    :type type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     """
 
     _validation = {

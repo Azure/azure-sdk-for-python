@@ -77,6 +77,7 @@ from .container_service_client_enums import (
     ContainerServiceVMSizeTypes,
     ContainerServiceOrchestratorTypes,
     OSType,
+    AgentPoolType,
     NetworkPlugin,
     NetworkPolicy,
 )
@@ -118,6 +119,7 @@ __all__ = [
     'ContainerServiceVMSizeTypes',
     'ContainerServiceOrchestratorTypes',
     'OSType',
+    'AgentPoolType',
     'NetworkPlugin',
     'NetworkPolicy',
 ]
