@@ -15,17 +15,14 @@ from msrest.serialization import Model
 class ManagedClusterAgentPoolProfile(Model):
     """Profile for the container service agent pool.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+    :param count: Required. Number of agents (VMs) to host docker containers.
+     Allowed values must be in the range of 1 to 100 (inclusive). The default
+     value is 1. . Default value: 1 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -84,11 +81,6 @@ class ManagedClusterAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :ivar storage_profile: Storage profile specifies what kind of storage
-     used. Defaults to ManagedDisks. Possible values include: 'StorageAccount',
-     'ManagedDisks'
-    :vartype storage_profile: str or
-     ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier.
     :type vnet_subnet_id: str
@@ -98,13 +90,22 @@ class ManagedClusterAgentPoolProfile(Model):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
+    :param max_count: Maximun number of nodes for auto-scaling
+    :type max_count: int
+    :param min_count: Minimun number of nodes for auto-scaling
+    :type min_count: int
+    :param enable_auto_scaling: Wheter to enable auto-scaler
+    :type enable_auto_scaling: bool
+    :param type: AgentPoolType represents types of agentpool. Possible values
+     include: 'VirtualMachineScaleSets', 'AvailabilitySet'. Default value:
+     "VirtualMachineScaleSets" .
+    :type type: str or ~azure.mgmt.containerservice.models.enum
     """
 
     _validation = {
         'name': {'required': True},
-        'count': {'maximum': 100, 'minimum': 1},
+        'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
-        'storage_profile': {'readonly': True},
     }
 
     _attribute_map = {
@@ -112,19 +113,25 @@ class ManagedClusterAgentPoolProfile(Model):
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'min_count': {'key': 'minCount', 'type': 'int'},
+        'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type="VirtualMachineScaleSets", **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
-        self.storage_profile = None
         self.vnet_subnet_id = vnet_subnet_id
         self.max_pods = max_pods
         self.os_type = os_type
+        self.max_count = max_count
+        self.min_count = min_count
+        self.enable_auto_scaling = enable_auto_scaling
+        self.type = type
