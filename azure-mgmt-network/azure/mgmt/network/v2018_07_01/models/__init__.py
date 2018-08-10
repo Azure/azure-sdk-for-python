@@ -35,9 +35,6 @@ try:
     from .public_ip_address_sku_py3 import PublicIPAddressSku
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
     from .ip_tag_py3 import IpTag
-    from .public_ip_prefix_sku_py3 import PublicIPPrefixSku
-    from .referenced_public_ip_address_py3 import ReferencedPublicIpAddress
-    from .public_ip_prefix_py3 import PublicIPPrefix
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
@@ -184,6 +181,9 @@ try:
     from .log_specification_py3 import LogSpecification
     from .operation_properties_format_service_specification_py3 import OperationPropertiesFormatServiceSpecification
     from .operation_py3 import Operation
+    from .public_ip_prefix_sku_py3 import PublicIPPrefixSku
+    from .referenced_public_ip_address_py3 import ReferencedPublicIpAddress
+    from .public_ip_prefix_py3 import PublicIPPrefix
     from .patch_route_filter_rule_py3 import PatchRouteFilterRule
     from .patch_route_filter_py3 import PatchRouteFilter
     from .bgp_community_py3 import BGPCommunity
@@ -255,9 +255,6 @@ except (SyntaxError, ImportError):
     from .public_ip_address_sku import PublicIPAddressSku
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
     from .ip_tag import IpTag
-    from .public_ip_prefix_sku import PublicIPPrefixSku
-    from .referenced_public_ip_address import ReferencedPublicIpAddress
-    from .public_ip_prefix import PublicIPPrefix
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
@@ -404,6 +401,9 @@ except (SyntaxError, ImportError):
     from .log_specification import LogSpecification
     from .operation_properties_format_service_specification import OperationPropertiesFormatServiceSpecification
     from .operation import Operation
+    from .public_ip_prefix_sku import PublicIPPrefixSku
+    from .referenced_public_ip_address import ReferencedPublicIpAddress
+    from .public_ip_prefix import PublicIPPrefix
     from .patch_route_filter_rule import PatchRouteFilterRule
     from .patch_route_filter import PatchRouteFilter
     from .bgp_community import BGPCommunity
@@ -512,7 +512,6 @@ from .network_management_client_enums import (
     SecurityRuleDirection,
     RouteNextHopType,
     PublicIPAddressSkuName,
-    PublicIPPrefixSkuName,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
@@ -559,6 +558,7 @@ from .network_management_client_enums import (
     ConnectionMonitorSourceStatus,
     ConnectionState,
     EvaluationState,
+    PublicIPPrefixSkuName,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
@@ -607,9 +607,6 @@ __all__ = [
     'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
     'IpTag',
-    'PublicIPPrefixSku',
-    'ReferencedPublicIpAddress',
-    'PublicIPPrefix',
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
@@ -756,6 +753,9 @@ __all__ = [
     'LogSpecification',
     'OperationPropertiesFormatServiceSpecification',
     'Operation',
+    'PublicIPPrefixSku',
+    'ReferencedPublicIpAddress',
+    'PublicIPPrefix',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -863,7 +863,6 @@ __all__ = [
     'SecurityRuleDirection',
     'RouteNextHopType',
     'PublicIPAddressSkuName',
-    'PublicIPPrefixSkuName',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',
@@ -910,6 +909,7 @@ __all__ = [
     'ConnectionMonitorSourceStatus',
     'ConnectionState',
     'EvaluationState',
+    'PublicIPPrefixSkuName',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',

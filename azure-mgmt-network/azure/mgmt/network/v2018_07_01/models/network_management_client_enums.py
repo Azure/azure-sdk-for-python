@@ -93,11 +93,6 @@ class PublicIPAddressSkuName(str, Enum):
     standard = "Standard"
 
 
-class PublicIPPrefixSkuName(str, Enum):
-
-    standard = "Standard"
-
-
 class ApplicationGatewayProtocol(str, Enum):
 
     http = "Http"
@@ -448,6 +443,11 @@ class EvaluationState(str, Enum):
     not_started = "NotStarted"
     in_progress = "InProgress"
     completed = "Completed"
+
+
+class PublicIPPrefixSkuName(str, Enum):
+
+    standard = "Standard"
 
 
 class VirtualNetworkPeeringState(str, Enum):
