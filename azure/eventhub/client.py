@@ -131,7 +131,7 @@ class EventHubClient(object):
 
         self.clients = []
         self.stopped = False
-        log.info("{}: Created the Event Hub client".format(self.container_id))
+        log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
     def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
@@ -265,16 +265,16 @@ class EventHubClient(object):
 
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
-        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         try:
             self._start_clients()
             redirects = [c.redirected for c in self.clients if c.redirected]
             failed = [c.error for c in self.clients if c.error]
             if failed and len(failed) == len(self.clients):
-                log.warning("{}: All clients failed to start.".format(self.container_id))
+                log.warning("%r: All clients failed to start.", self.container_id)
                 raise failed[0]
             elif failed:
-                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+                log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
             elif redirects:
                 self._handle_redirect(redirects)
         except EventHubError:
@@ -289,7 +289,7 @@ class EventHubClient(object):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
         """
-        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
         self._close_clients()
 

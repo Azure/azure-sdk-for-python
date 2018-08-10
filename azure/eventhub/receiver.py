@@ -4,11 +4,14 @@
 # --------------------------------------------------------------------------------------------
 
 import uuid
+import logging
 
 from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
 from azure.eventhub.common import EventHubError, EventData, _error_handler
+
+log = logging.getLogger(__name__)
 
 
 class Receiver:
@@ -117,9 +120,28 @@ class Receiver:
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             properties=self.client.create_properties())
-        self._handler.open()
-        while not self.has_started():
-            self._handler._connection.work()
+        try:
+            self._handler.open()
+            while not self.has_started():
+                self._handler._connection.work()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry and self.auto_reconnect:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                self.reconnect()
+            else:
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except Exception as e:
+            error = EventHubError("Receiver reconnect failed: {}".format(e))
+            self.close(exception=error)
+            raise error
 
     def get_handler_state(self):
         """

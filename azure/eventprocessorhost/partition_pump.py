@@ -37,7 +37,7 @@ class PartitionPump():
         Updates pump status and logs update to console.
         """
         self.pump_status = status
-        _logger.info("{} partition {}".format(status, self.lease.partition_id))
+        _logger.info("%r partition %r", status, self.lease.partition_id)
 
     def set_lease(self, new_lease):
         """
@@ -99,15 +99,14 @@ class PartitionPump():
         try:
             await self.on_closing_async(reason)
             if self.processor:
-                _logger.info("PartitionPumpInvokeProcessorCloseStart {} {} {}".format(
-                    self.host.guid, self.partition_context.partition_id, reason))
+                _logger.info("PartitionPumpInvokeProcessorCloseStart %r %r %r",
+                    self.host.guid, self.partition_context.partition_id, reason)
                 await self.processor.close_async(self.partition_context, reason)
-                _logger.info("PartitionPumpInvokeProcessorCloseStart {} {}".format(
-                    self.host.guid, self.partition_context.partition_id))
+                _logger.info("PartitionPumpInvokeProcessorCloseStart %r %r",
+                    self.host.guid, self.partition_context.partition_id)
         except Exception as err:  # pylint: disable=broad-except
             await self.process_error_async(err)
-            _logger.error("{} {} {!r}".format(
-                self.host.guid, self.partition_context.partition_id, err))
+            _logger.error("%r %r %r", self.host.guid, self.partition_context.partition_id, err)
             raise err
 
         if reason == "LeaseLost":
@@ -115,8 +114,7 @@ class PartitionPump():
                 _logger.info("Lease Lost releasing ownership")
                 await self.host.storage_manager.release_lease_async(self.partition_context.lease)
             except Exception as err:  # pylint: disable=broad-except
-                _logger.error("{} {} {!r}".format(
-                    self.host.guid, self.partition_context.partition_id, err))
+                _logger.error("%r %r %r", self.host.guid, self.partition_context.partition_id, err)
                 raise err
 
         self.set_pump_status("Closed")

@@ -43,8 +43,8 @@ class PartitionContext:
 
         :rtype: str
         """
-        _logger.info("Calling user-provided initial offset provider {} {}".format(
-            self.host.guid, self.partition_id))
+        _logger.info("Calling user-provided initial offset provider %r %r",
+            self.host.guid, self.partition_id)
         starting_checkpoint = await self.host.storage_manager.get_checkpoint_async(self.partition_id)
         if not starting_checkpoint:
             # No checkpoint was ever stored. Use the initialOffsetProvider instead
@@ -55,8 +55,8 @@ class PartitionContext:
             self.offset = starting_checkpoint.offset
             self.sequence_number = starting_checkpoint.sequence_number
 
-        _logger.info("{} {} Initial offset/sequenceNumber provided {}/{}".format(
-            self.host.guid, self.partition_id, self.offset, self.sequence_number))
+        _logger.info("%r %r Initial offset/sequenceNumber provided %r/%r",
+            self.host.guid, self.partition_id, self.offset, self.sequence_number)
         return self.offset
 
     async def checkpoint_async(self):
@@ -106,34 +106,34 @@ class PartitionContext:
         :param checkpoint: The checkpoint to persist.
         :type checkpoint: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
-        _logger.debug("PartitionPumpCheckpointStart {} {} {} {}".format(
-            self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number))
+        _logger.debug("PartitionPumpCheckpointStart %r %r %r %r",
+            self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number)
         try:
             in_store_checkpoint = await self.host.storage_manager.get_checkpoint_async(checkpoint.partition_id)
             if not in_store_checkpoint or checkpoint.sequence_number >= in_store_checkpoint.sequence_number:
                 if not in_store_checkpoint:
-                    _logger.info("persisting checkpoint {}".format(checkpoint.__dict__))
+                    _logger.info("persisting checkpoint %r", checkpoint.__dict__)
                     await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
                 if not await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint):
-                    _logger.error("Failed to persist checkpoint for partition: {}".format(self.partition_id))
+                    _logger.error("Failed to persist checkpoint for partition: %r", self.partition_id)
                     raise Exception("failed to persist checkpoint")
                 self.lease.offset = checkpoint.offset
                 self.lease.sequence_number = checkpoint.sequence_number
             else:
                 _logger.error(
-                    "Ignoring out of date checkpoint with offset {}/sequence number {} because "
-                    "current persisted checkpoint has higher offset {}/sequence number {}".format(
+                    "Ignoring out of date checkpoint with offset %r/sequence number %r because "
+                    "current persisted checkpoint has higher offset %r/sequence number %r",
                         checkpoint.offset,
                         checkpoint.sequence_number,
                         in_store_checkpoint.offset,
-                        in_store_checkpoint.sequence_number))
+                        in_store_checkpoint.sequence_number)
                 raise Exception("offset/sequenceNumber invalid")
 
         except Exception as err:
-            _logger.error("PartitionPumpCheckpointError {} {} {!r}".format(
-                self.host.guid, checkpoint.partition_id, err))
+            _logger.error("PartitionPumpCheckpointError %r %r %r",
+                self.host.guid, checkpoint.partition_id, err)
             raise
         finally:
-            _logger.debug("PartitionPumpCheckpointStop {} {}".format(
-                self.host.guid, checkpoint.partition_id))
+            _logger.debug("PartitionPumpCheckpointStop %r %r",
+                self.host.guid, checkpoint.partition_id)

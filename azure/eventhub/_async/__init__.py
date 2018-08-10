@@ -77,7 +77,7 @@ class EventHubClientAsync(EventHubClient):
         try:
             await client.open_async()
         except Exception as exp:  # pylint: disable=broad-except
-            log.info("Encountered error while starting handler: {}".format(exp))
+            log.info("Encountered error while starting handler: %r", exp)
             await client.close_async(exception=exp)
             log.info("Finished closing failed handler")
 
@@ -105,17 +105,17 @@ class EventHubClientAsync(EventHubClient):
 
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
-        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         tasks = [self._start_client_async(c) for c in self.clients]
         try:
             await asyncio.gather(*tasks)
             redirects = [c.redirected for c in self.clients if c.redirected]
             failed = [c.error for c in self.clients if c.error]
             if failed and len(failed) == len(self.clients):
-                log.warning("{}: All clients failed to start.".format(self.container_id))
+                log.warning("%r: All clients failed to start.", self.container_id)
                 raise failed[0]
             elif failed:
-                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+                log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
             elif redirects:
                 await self._handle_redirect(redirects)
         except EventHubError:
@@ -130,7 +130,7 @@ class EventHubClientAsync(EventHubClient):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
         """
-        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
         await self._close_clients_async()
 

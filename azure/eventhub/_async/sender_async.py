@@ -5,6 +5,7 @@
 
 import uuid
 import asyncio
+import logging
 
 from uamqp import constants, errors
 from uamqp import SendClientAsync
@@ -12,6 +13,9 @@ from uamqp import SendClientAsync
 from azure.eventhub import EventHubError
 from azure.eventhub.sender import Sender
 from azure.eventhub.common import _error_handler
+
+log = logging.getLogger(__name__)
+
 
 class AsyncSender(Sender):
     """
@@ -107,9 +111,33 @@ class AsyncSender(Sender):
             client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
-        await self._handler.open_async()
-        self._handler.queue_message(*unsent_events)
-        await self._handler.wait_async()
+        try:
+            await self._handler.open_async()
+            self._handler.queue_message(*unsent_events)
+            await self._handler.wait_async()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry and self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
+                await self.reconnect_async()
+            else:
+                log.info("AsyncSender reconnect failed. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
+                await self.reconnect_async()
+            else:
+                log.info("AsyncSender reconnect failed. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
+            error = EventHubError("Sender reconnect failed: {}".format(e))
+            await self.close_async(exception=error)
+            raise error
 
     async def has_started(self):
         """
@@ -178,19 +206,24 @@ class AsyncSender(Sender):
                 raise Sender._error(self._outcome, self._condition)
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
                 await self.reconnect_async()
             else:
+                log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
                 await self.reconnect_async()
             else:
+                log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
         except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Send failed: {}".format(e))
             await self.close_async(exception=error)
             raise error
@@ -207,17 +240,22 @@ class AsyncSender(Sender):
             await self._handler.wait_async()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
                 await self.reconnect_async()
             else:
+                log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
+                log.info("AsyncSender detached. Attempting reconnect.")
                 await self.reconnect_async()
             else:
+                log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
         except Exception as e:
+            log.info("Unexpected error occurred (%r).", e)
             raise EventHubError("Send failed: {}".format(e))
