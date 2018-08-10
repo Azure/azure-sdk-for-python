@@ -55,7 +55,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.get_details.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -107,7 +107,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -166,7 +166,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -228,7 +228,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -284,7 +284,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.get_all_term_lists.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -339,7 +339,7 @@ class ListManagementTermListsOperations(object):
         # Construct URL
         url = self.refresh_index_method.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
