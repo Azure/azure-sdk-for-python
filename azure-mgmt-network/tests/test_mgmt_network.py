@@ -8,7 +8,6 @@
 import unittest
 
 import azure.mgmt.network.models
-from testutils.common_recordingtestcase import record
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,
@@ -70,7 +69,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             resource_group.name,
             nic_info.name
         )
-         
+
         nics = list(self.network_client.network_interfaces.list(
             resource_group.name
         ))
@@ -637,7 +636,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             'AzurePublicPeering',
             {
                 "peering_type": "AzurePublicPeering",
-                "peer_asn": 100, 
+                "peer_asn": 100,
                 "primary_peer_address_prefix": "192.168.1.0/30",
                 "secondary_peer_address_prefix": "192.168.2.0/30",
                 "vlan_id": 200,
