@@ -54,8 +54,7 @@ class PublicIPAddress(Resource):
     :type ip_address: str
     :param public_ip_prefix: The Public IP Prefix this Public IP Address
      should be allocated from.
-    :type public_ip_prefix:
-     ~azure.mgmt.network.v2018_07_01.models.PublicIPPrefix
+    :type public_ip_prefix: ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param idle_timeout_in_minutes: The idle timeout of the public IP address.
     :type idle_timeout_in_minutes: int
     :param resource_guid: The resource GUID property of the public IP
@@ -91,7 +90,7 @@ class PublicIPAddress(Resource):
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'PublicIPPrefix'},
+        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
