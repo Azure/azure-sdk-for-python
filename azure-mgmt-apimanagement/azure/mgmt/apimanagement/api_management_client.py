@@ -25,6 +25,7 @@ from .operations.api_product_operations import ApiProductOperations
 from .operations.api_policy_operations import ApiPolicyOperations
 from .operations.api_schema_operations import ApiSchemaOperations
 from .operations.api_diagnostic_operations import ApiDiagnosticOperations
+from .operations.api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
 from .operations.api_issue_operations import ApiIssueOperations
 from .operations.api_issue_comment_operations import ApiIssueCommentOperations
 from .operations.api_issue_attachment_operations import ApiIssueAttachmentOperations
@@ -34,6 +35,7 @@ from .operations.certificate_operations import CertificateOperations
 from .operations.api_management_operations import ApiManagementOperations
 from .operations.api_management_service_operations import ApiManagementServiceOperations
 from .operations.diagnostic_operations import DiagnosticOperations
+from .operations.diagnostic_logger_operations import DiagnosticLoggerOperations
 from .operations.email_template_operations import EmailTemplateOperations
 from .operations.group_operations import GroupOperations
 from .operations.group_user_operations import GroupUserOperations
@@ -137,6 +139,8 @@ class ApiManagementClient(SDKClient):
     :vartype api_schema: azure.mgmt.apimanagement.operations.ApiSchemaOperations
     :ivar api_diagnostic: ApiDiagnostic operations
     :vartype api_diagnostic: azure.mgmt.apimanagement.operations.ApiDiagnosticOperations
+    :ivar api_diagnostic_logger: ApiDiagnosticLogger operations
+    :vartype api_diagnostic_logger: azure.mgmt.apimanagement.operations.ApiDiagnosticLoggerOperations
     :ivar api_issue: ApiIssue operations
     :vartype api_issue: azure.mgmt.apimanagement.operations.ApiIssueOperations
     :ivar api_issue_comment: ApiIssueComment operations
@@ -155,6 +159,8 @@ class ApiManagementClient(SDKClient):
     :vartype api_management_service: azure.mgmt.apimanagement.operations.ApiManagementServiceOperations
     :ivar diagnostic: Diagnostic operations
     :vartype diagnostic: azure.mgmt.apimanagement.operations.DiagnosticOperations
+    :ivar diagnostic_logger: DiagnosticLogger operations
+    :vartype diagnostic_logger: azure.mgmt.apimanagement.operations.DiagnosticLoggerOperations
     :ivar email_template: EmailTemplate operations
     :vartype email_template: azure.mgmt.apimanagement.operations.EmailTemplateOperations
     :ivar group: Group operations
@@ -245,7 +251,7 @@ class ApiManagementClient(SDKClient):
         super(ApiManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01-preview'
+        self.api_version = '2018-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -273,6 +279,8 @@ class ApiManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.api_diagnostic = ApiDiagnosticOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.api_diagnostic_logger = ApiDiagnosticLoggerOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.api_issue = ApiIssueOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_issue_comment = ApiIssueCommentOperations(
@@ -290,6 +298,8 @@ class ApiManagementClient(SDKClient):
         self.api_management_service = ApiManagementServiceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.diagnostic = DiagnosticOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostic_logger = DiagnosticLoggerOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.email_template = EmailTemplateOperations(
             self._client, self.config, self._serialize, self._deserialize)

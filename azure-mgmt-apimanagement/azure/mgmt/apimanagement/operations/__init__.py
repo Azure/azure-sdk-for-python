@@ -21,6 +21,7 @@ from .api_product_operations import ApiProductOperations
 from .api_policy_operations import ApiPolicyOperations
 from .api_schema_operations import ApiSchemaOperations
 from .api_diagnostic_operations import ApiDiagnosticOperations
+from .api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
 from .api_issue_operations import ApiIssueOperations
 from .api_issue_comment_operations import ApiIssueCommentOperations
 from .api_issue_attachment_operations import ApiIssueAttachmentOperations
@@ -30,6 +31,7 @@ from .certificate_operations import CertificateOperations
 from .api_management_operations import ApiManagementOperations
 from .api_management_service_operations import ApiManagementServiceOperations
 from .diagnostic_operations import DiagnosticOperations
+from .diagnostic_logger_operations import DiagnosticLoggerOperations
 from .email_template_operations import EmailTemplateOperations
 from .group_operations import GroupOperations
 from .group_user_operations import GroupUserOperations
@@ -80,6 +82,7 @@ __all__ = [
     'ApiPolicyOperations',
     'ApiSchemaOperations',
     'ApiDiagnosticOperations',
+    'ApiDiagnosticLoggerOperations',
     'ApiIssueOperations',
     'ApiIssueCommentOperations',
     'ApiIssueAttachmentOperations',
@@ -89,6 +92,7 @@ __all__ = [
     'ApiManagementOperations',
     'ApiManagementServiceOperations',
     'DiagnosticOperations',
+    'DiagnosticLoggerOperations',
     'EmailTemplateOperations',
     'GroupOperations',
     'GroupUserOperations',

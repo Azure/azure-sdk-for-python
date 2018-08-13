@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ProductGroupOperations(object):
-    """ProductGroupOperations operations.
+class ApiDiagnosticLoggerOperations(object):
+    """ApiDiagnosticLoggerOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,28 +36,26 @@ class ProductGroupOperations(object):
 
         self.config = config
 
-    def list_by_product(
-            self, resource_group_name, service_name, product_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the collection of developer groups associated with the specified
-        product.
+    def list_by_service(
+            self, resource_group_name, service_name, api_id, diagnostic_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all loggers assosiated with the specified Diagnostic of an API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param product_id: Product identifier. Must be unique in the current
-         API Management service instance.
-        :type product_id: str
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
+        :type api_id: str
+        :param diagnostic_id: Diagnostic identifier. Must be unique in the
+         current API Management service instance.
+        :type diagnostic_id: str
         :param filter: | Field       | Supported operators    | Supported
-         functions                         |
-         |-------------|------------------------|---------------------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | description | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | type        | eq, ne                 | N/A
+         functions               |
+         |-------------|------------------------|-----------------------------------|
+         | id          | ge, le, eq, ne, gt, lt | substringof, startswith,
+         endswith |
+         | type        | eq                     |
          |
         :type filter: str
         :param top: Number of records to return.
@@ -69,9 +67,9 @@ class ProductGroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GroupContract
+        :return: An iterator like instance of LoggerContract
         :rtype:
-         ~azure.mgmt.apimanagement.models.GroupContractPaged[~azure.mgmt.apimanagement.models.GroupContract]
+         ~azure.mgmt.apimanagement.models.LoggerContractPaged[~azure.mgmt.apimanagement.models.LoggerContract]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -79,24 +77,25 @@ class ProductGroupOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_product.metadata['url']
+                url = self.list_by_service.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -122,31 +121,34 @@ class ProductGroupOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.GroupContractPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.LoggerContractPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.GroupContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.LoggerContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_product.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups'}
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers'}
 
     def check_entity_exists(
-            self, resource_group_name, service_name, product_id, group_id, custom_headers=None, raw=False, **operation_config):
-        """Checks that Group entity specified by identifier is associated with the
-        Product entity.
+            self, resource_group_name, service_name, api_id, diagnostic_id, loggerid, custom_headers=None, raw=False, **operation_config):
+        """Checks that logger entity specified by identifier is associated with
+        the diagnostics entity.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param product_id: Product identifier. Must be unique in the current
-         API Management service instance.
-        :type product_id: str
-        :param group_id: Group identifier. Must be unique in the current API
+        :param api_id: API identifier. Must be unique in the current API
          Management service instance.
-        :type group_id: str
+        :type api_id: str
+        :param diagnostic_id: Diagnostic identifier. Must be unique in the
+         current API Management service instance.
+        :type diagnostic_id: str
+        :param loggerid: Logger identifier. Must be unique in the API
+         Management service instance.
+        :type loggerid: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -162,8 +164,9 @@ class ProductGroupOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'loggerid': self._serialize.url("loggerid", loggerid, 'str', max_length=80, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -193,30 +196,32 @@ class ProductGroupOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
-    check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}'}
+    check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers/{loggerid}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, product_id, group_id, custom_headers=None, raw=False, **operation_config):
-        """Adds the association between the specified developer group with the
-        specified product.
+            self, resource_group_name, service_name, api_id, diagnostic_id, loggerid, custom_headers=None, raw=False, **operation_config):
+        """Attaches a logger to a dignostic for an API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param product_id: Product identifier. Must be unique in the current
-         API Management service instance.
-        :type product_id: str
-        :param group_id: Group identifier. Must be unique in the current API
+        :param api_id: API identifier. Must be unique in the current API
          Management service instance.
-        :type group_id: str
+        :type api_id: str
+        :param diagnostic_id: Diagnostic identifier. Must be unique in the
+         current API Management service instance.
+        :type diagnostic_id: str
+        :param loggerid: Logger identifier. Must be unique in the API
+         Management service instance.
+        :type loggerid: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GroupContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.GroupContract or
+        :return: LoggerContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.LoggerContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -226,8 +231,9 @@ class ProductGroupOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'loggerid': self._serialize.url("loggerid", loggerid, 'str', max_length=80, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -256,31 +262,34 @@ class ProductGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GroupContract', response)
+            deserialized = self._deserialize('LoggerContract', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('GroupContract', response)
+            deserialized = self._deserialize('LoggerContract', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers/{loggerid}'}
 
     def delete(
-            self, resource_group_name, service_name, product_id, group_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the association between the specified group and product.
+            self, resource_group_name, service_name, api_id, diagnostic_id, loggerid, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified Logger from Diagnostic for an API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param product_id: Product identifier. Must be unique in the current
-         API Management service instance.
-        :type product_id: str
-        :param group_id: Group identifier. Must be unique in the current API
+        :param api_id: API identifier. Must be unique in the current API
          Management service instance.
-        :type group_id: str
+        :type api_id: str
+        :param diagnostic_id: Diagnostic identifier. Must be unique in the
+         current API Management service instance.
+        :type diagnostic_id: str
+        :param loggerid: Logger identifier. Must be unique in the API
+         Management service instance.
+        :type loggerid: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -296,8 +305,9 @@ class ProductGroupOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'loggerid': self._serialize.url("loggerid", loggerid, 'str', max_length=80, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -325,4 +335,4 @@ class ProductGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers/{loggerid}'}

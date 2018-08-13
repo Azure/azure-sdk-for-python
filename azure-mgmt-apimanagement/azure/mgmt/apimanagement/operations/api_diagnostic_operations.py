@@ -22,7 +22,7 @@ class ApiDiagnosticOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-06-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ApiDiagnosticOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01-preview"
+        self.api_version = "2018-01-01"
 
         self.config = config
 
@@ -265,7 +265,7 @@ class ApiDiagnosticOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, diagnostic_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, diagnostic_id, enabled, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new Diagnostic for an API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -278,8 +278,9 @@ class ApiDiagnosticOperations(object):
         :param diagnostic_id: Diagnostic identifier. Must be unique in the
          current API Management service instance.
         :type diagnostic_id: str
-        :param parameters: Create parameters.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract
+        :param enabled: Indicates whether a diagnostic should receive data or
+         not.
+        :type enabled: bool
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -294,6 +295,8 @@ class ApiDiagnosticOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
+        parameters = models.DiagnosticContract(enabled=enabled)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -347,7 +350,7 @@ class ApiDiagnosticOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}'}
 
     def update(
-            self, resource_group_name, service_name, api_id, diagnostic_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, diagnostic_id, if_match, enabled, custom_headers=None, raw=False, **operation_config):
         """Updates the details of the Diagnostic for an API specified by its
         identifier.
 
@@ -361,12 +364,13 @@ class ApiDiagnosticOperations(object):
         :param diagnostic_id: Diagnostic identifier. Must be unique in the
          current API Management service instance.
         :type diagnostic_id: str
-        :param parameters: Diagnostic Update parameters.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
+        :param enabled: Indicates whether a diagnostic should receive data or
+         not.
+        :type enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -377,6 +381,8 @@ class ApiDiagnosticOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
+        parameters = models.DiagnosticContract(enabled=enabled)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
