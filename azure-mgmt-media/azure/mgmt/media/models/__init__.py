@@ -17,7 +17,6 @@ try:
     from .account_filter_py3 import AccountFilter
     from .odata_error_py3 import ODataError
     from .api_error_py3 import ApiError, ApiErrorException
-    from .account_filter_collection_py3 import AccountFilterCollection
     from .tracked_resource_py3 import TrackedResource
     from .resource_py3 import Resource
     from .proxy_resource_py3 import ProxyResource
@@ -159,7 +158,6 @@ except (SyntaxError, ImportError):
     from .account_filter import AccountFilter
     from .odata_error import ODataError
     from .api_error import ApiError, ApiErrorException
-    from .account_filter_collection import AccountFilterCollection
     from .tracked_resource import TrackedResource
     from .resource import Resource
     from .proxy_resource import ProxyResource
@@ -293,6 +291,7 @@ except (SyntaxError, ImportError):
     from .streaming_endpoint_access_control import StreamingEndpointAccessControl
     from .streaming_entity_scale_unit import StreamingEntityScaleUnit
     from .streaming_endpoint import StreamingEndpoint
+from .account_filter_paged import AccountFilterPaged
 from .operation_paged import OperationPaged
 from .media_service_paged import MediaServicePaged
 from .subscription_media_service_paged import SubscriptionMediaServicePaged
@@ -355,7 +354,6 @@ __all__ = [
     'AccountFilter',
     'ODataError',
     'ApiError', 'ApiErrorException',
-    'AccountFilterCollection',
     'TrackedResource',
     'Resource',
     'ProxyResource',
@@ -489,6 +487,7 @@ __all__ = [
     'StreamingEndpointAccessControl',
     'StreamingEntityScaleUnit',
     'StreamingEndpoint',
+    'AccountFilterPaged',
     'OperationPaged',
     'MediaServicePaged',
     'SubscriptionMediaServicePaged',
