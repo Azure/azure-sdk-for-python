@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
+          azure-mgmt-marketplaceordering/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MarketplaceOrdering/offerTypes/virtualmachine/publishers/intel-bigdl/offers/bigdl_vm/plans/bigdl_vm_0p4/agreements/current?api-version=2015-06-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MarketplaceOrdering/offerTypes/VirtualMachine/publishers/intel-bigdl/offers/bigdl_vm/plans/bigdl_vm_0p4/agreements/current","name":"bigdl_vm_0p4","type":"Microsoft.MarketplaceOrdering/offertypes","properties":{"publisher":"intel-bigdl","product":"bigdl_vm","plan":"bigdl_vm_0p4","licenseTextLink":"https://storelegalterms.blob.core.windows.net/legalterms/3E5ED_legalterms_INTEL%253a2DBIGDL%253a24BIGDL%253a5FVM%253a24BIGDL%253a5FVM%253a5F0P4%253a24LPVML5SNN52KTQK2VUTTKOQB2GF5VLGDDHYIMTNCI5TVT54RPWAEFUUJFPSGA2SZ7YGQ4EEOVRA6UCUVLHC7JNZNNCNFUJT63EQ2XVI.txt","privacyPolicyLink":"https://www.intel.com/content/www/us/en/privacy/intel-privacy-notice.html","retrieveDatetime":"2018-08-14T23:58:34.7074696Z","signature":"56BERLZED3AH72B3IQG3EOZ26S57XGIOQXV7OKJKPRZMF3RLG7OEEXCGWVEUEWVWYM474VDMI2U5FZB4Y2PKDSSAA3YMNQNQ3RHC6DQ","accepted":false}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['918']
+      content-type: [application/json; charset=utf-8]
+      dataserviceversion: ['5.2.1.486 (AzureUX-Store:master.612750dc.180809-2331)']
+      date: ['Tue, 14 Aug 2018 23:58:34 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
