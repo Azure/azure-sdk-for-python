@@ -41,6 +41,8 @@ class PipelineResource(SubResource):
     :param annotations: List of tags that can be used for describing the
      Pipeline.
     :type annotations: list[object]
+    :param folder: The folder that this Pipeline is in.
+    :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
     """
 
     _validation = {
@@ -62,6 +64,7 @@ class PipelineResource(SubResource):
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
+        'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
     def __init__(self, **kwargs):
@@ -72,3 +75,4 @@ class PipelineResource(SubResource):
         self.parameters = kwargs.get('parameters', None)
         self.concurrency = kwargs.get('concurrency', None)
         self.annotations = kwargs.get('annotations', None)
+        self.folder = kwargs.get('folder', None)

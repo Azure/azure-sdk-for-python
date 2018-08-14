@@ -57,6 +57,8 @@ class Dataset(Model):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
+    :param folder: The folder that this Dataset is in.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -73,6 +75,7 @@ class Dataset(Model):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -88,4 +91,5 @@ class Dataset(Model):
         self.linked_service_name = kwargs.get('linked_service_name', None)
         self.parameters = kwargs.get('parameters', None)
         self.annotations = kwargs.get('annotations', None)
+        self.folder = kwargs.get('folder', None)
         self.type = None

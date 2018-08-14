@@ -34,6 +34,8 @@ class HttpDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
+    :param folder: The folder that this Dataset is in.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
     :param relative_url: The relative URL based on the URL in the
@@ -70,6 +72,7 @@ class HttpDataset(Dataset):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'relative_url': {'key': 'typeProperties.relativeUrl', 'type': 'object'},
         'request_method': {'key': 'typeProperties.requestMethod', 'type': 'object'},
@@ -79,8 +82,8 @@ class HttpDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None, **kwargs) -> None:
-        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, **kwargs)
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None, **kwargs) -> None:
+        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body
