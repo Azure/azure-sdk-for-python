@@ -115,6 +115,7 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .network_watcher_py3 import NetworkWatcher
     from .topology_parameters_py3 import TopologyParameters
     from .topology_association_py3 import TopologyAssociation
@@ -341,6 +342,7 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
+    from .error_response import ErrorResponse, ErrorResponseException
     from .network_watcher import NetworkWatcher
     from .topology_parameters import TopologyParameters
     from .topology_association import TopologyAssociation
@@ -695,6 +697,7 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
+    'ErrorResponse', 'ErrorResponseException',
     'NetworkWatcher',
     'TopologyParameters',
     'TopologyAssociation',
