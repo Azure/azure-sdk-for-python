@@ -12,25 +12,6 @@
 from enum import Enum
 
 
-class StatusType(str, Enum):
-
-    active = "Active"
-    inactive = "Inactive"
-
-
-class RecurrenceType(str, Enum):
-
-    daily = "Daily"
-    weekly = "Weekly"
-    monthly = "Monthly"
-    annually = "Annually"
-
-
-class FormatType(str, Enum):
-
-    csv = "Csv"
-
-
 class TimeframeType(str, Enum):
 
     week_to_date = "WeekToDate"

@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 import uuid
-from .operations.report_config_operations import ReportConfigOperations
 from .operations.billing_account_dimensions_operations import BillingAccountDimensionsOperations
 from .operations.subscription_dimensions_operations import SubscriptionDimensionsOperations
 from .operations.resource_group_dimensions_operations import ResourceGroupDimensionsOperations
@@ -60,8 +59,6 @@ class CostManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CostManagementClientConfiguration
 
-    :ivar report_config: ReportConfig operations
-    :vartype report_config: azure.mgmt.costmanagement.operations.ReportConfigOperations
     :ivar billing_account_dimensions: BillingAccountDimensions operations
     :vartype billing_account_dimensions: azure.mgmt.costmanagement.operations.BillingAccountDimensionsOperations
     :ivar subscription_dimensions: SubscriptionDimensions operations
@@ -88,8 +85,6 @@ class CostManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.report_config = ReportConfigOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.billing_account_dimensions = BillingAccountDimensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_dimensions = SubscriptionDimensionsOperations(
