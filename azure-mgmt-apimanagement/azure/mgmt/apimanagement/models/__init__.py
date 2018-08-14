@@ -44,10 +44,7 @@ try:
     from .issue_contract_py3 import IssueContract
     from .issue_comment_contract_py3 import IssueCommentContract
     from .issue_attachment_contract_py3 import IssueAttachmentContract
-    from .body_diagnostic_settings_py3 import BodyDiagnosticSettings
-    from .http_message_diagnostic_py3 import HttpMessageDiagnostic
-    from .pipeline_diagnostic_settings_py3 import PipelineDiagnosticSettings
-    from .sampling_settings_py3 import SamplingSettings
+    from .logger_contract_py3 import LoggerContract
     from .diagnostic_contract_py3 import DiagnosticContract
     from .product_entity_base_parameters_py3 import ProductEntityBaseParameters
     from .product_tag_resource_contract_properties_py3 import ProductTagResourceContractProperties
@@ -107,7 +104,6 @@ try:
     from .identity_provider_contract_py3 import IdentityProviderContract
     from .identity_provider_update_parameters_py3 import IdentityProviderUpdateParameters
     from .identity_provider_base_parameters_py3 import IdentityProviderBaseParameters
-    from .logger_contract_py3 import LoggerContract
     from .logger_update_contract_py3 import LoggerUpdateContract
     from .recipients_contract_properties_py3 import RecipientsContractProperties
     from .notification_contract_py3 import NotificationContract
@@ -193,10 +189,7 @@ except (SyntaxError, ImportError):
     from .issue_contract import IssueContract
     from .issue_comment_contract import IssueCommentContract
     from .issue_attachment_contract import IssueAttachmentContract
-    from .body_diagnostic_settings import BodyDiagnosticSettings
-    from .http_message_diagnostic import HttpMessageDiagnostic
-    from .pipeline_diagnostic_settings import PipelineDiagnosticSettings
-    from .sampling_settings import SamplingSettings
+    from .logger_contract import LoggerContract
     from .diagnostic_contract import DiagnosticContract
     from .product_entity_base_parameters import ProductEntityBaseParameters
     from .product_tag_resource_contract_properties import ProductTagResourceContractProperties
@@ -256,7 +249,6 @@ except (SyntaxError, ImportError):
     from .identity_provider_contract import IdentityProviderContract
     from .identity_provider_update_parameters import IdentityProviderUpdateParameters
     from .identity_provider_base_parameters import IdentityProviderBaseParameters
-    from .logger_contract import LoggerContract
     from .logger_update_contract import LoggerUpdateContract
     from .recipients_contract_properties import RecipientsContractProperties
     from .notification_contract import NotificationContract
@@ -316,6 +308,7 @@ from .operation_contract_paged import OperationContractPaged
 from .product_contract_paged import ProductContractPaged
 from .schema_contract_paged import SchemaContractPaged
 from .diagnostic_contract_paged import DiagnosticContractPaged
+from .logger_contract_paged import LoggerContractPaged
 from .issue_contract_paged import IssueContractPaged
 from .issue_comment_contract_paged import IssueCommentContractPaged
 from .issue_attachment_contract_paged import IssueAttachmentContractPaged
@@ -328,7 +321,6 @@ from .email_template_contract_paged import EmailTemplateContractPaged
 from .group_contract_paged import GroupContractPaged
 from .user_contract_paged import UserContractPaged
 from .identity_provider_contract_paged import IdentityProviderContractPaged
-from .logger_contract_paged import LoggerContractPaged
 from .notification_contract_paged import NotificationContractPaged
 from .openid_connect_provider_contract_paged import OpenidConnectProviderContractPaged
 from .subscription_contract_paged import SubscriptionContractPaged
@@ -346,8 +338,7 @@ from .api_management_client_enums import (
     SoapApiType,
     ApiType,
     State,
-    SamplingType,
-    AlwaysLog,
+    LoggerType,
     ProductState,
     GrantType,
     AuthorizationMethod,
@@ -362,7 +353,6 @@ from .api_management_client_enums import (
     Confirmation,
     UserState,
     IdentityProviderType,
-    LoggerType,
     ConnectivityStatusType,
     SubscriptionState,
     AsyncOperationStatus,
@@ -409,10 +399,7 @@ __all__ = [
     'IssueContract',
     'IssueCommentContract',
     'IssueAttachmentContract',
-    'BodyDiagnosticSettings',
-    'HttpMessageDiagnostic',
-    'PipelineDiagnosticSettings',
-    'SamplingSettings',
+    'LoggerContract',
     'DiagnosticContract',
     'ProductEntityBaseParameters',
     'ProductTagResourceContractProperties',
@@ -472,7 +459,6 @@ __all__ = [
     'IdentityProviderContract',
     'IdentityProviderUpdateParameters',
     'IdentityProviderBaseParameters',
-    'LoggerContract',
     'LoggerUpdateContract',
     'RecipientsContractProperties',
     'NotificationContract',
@@ -532,6 +518,7 @@ __all__ = [
     'ProductContractPaged',
     'SchemaContractPaged',
     'DiagnosticContractPaged',
+    'LoggerContractPaged',
     'IssueContractPaged',
     'IssueCommentContractPaged',
     'IssueAttachmentContractPaged',
@@ -544,7 +531,6 @@ __all__ = [
     'GroupContractPaged',
     'UserContractPaged',
     'IdentityProviderContractPaged',
-    'LoggerContractPaged',
     'NotificationContractPaged',
     'OpenidConnectProviderContractPaged',
     'SubscriptionContractPaged',
@@ -561,8 +547,7 @@ __all__ = [
     'SoapApiType',
     'ApiType',
     'State',
-    'SamplingType',
-    'AlwaysLog',
+    'LoggerType',
     'ProductState',
     'GrantType',
     'AuthorizationMethod',
@@ -577,7 +562,6 @@ __all__ = [
     'Confirmation',
     'UserState',
     'IdentityProviderType',
-    'LoggerType',
     'ConnectivityStatusType',
     'SubscriptionState',
     'AsyncOperationStatus',
