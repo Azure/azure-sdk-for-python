@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """Storage REST API operation definition.
+    """Microsoft.NetApp REST API operation definition.
 
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
@@ -21,15 +21,17 @@ class Operation(Model):
     :type display: ~azure.mgmt.netapp.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
-    :param properties: Properties of operation, include metric specifications.
-    :type properties: object
+    :param service_specification: One property of operation, include metric
+     specifications.
+    :type service_specification:
+     ~azure.mgmt.netapp.models.ServiceSpecification
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
     def __init__(self, **kwargs):
@@ -37,4 +39,4 @@ class Operation(Model):
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
-        self.properties = kwargs.get('properties', None)
+        self.service_specification = kwargs.get('service_specification', None)

@@ -22,8 +22,8 @@ from .operations.snapshots_operations import SnapshotsOperations
 from . import models
 
 
-class CloudVolumeManagementClientConfiguration(AzureConfiguration):
-    """Configuration for CloudVolumeManagementClient
+class AzureNetAppFilesManagementClientConfiguration(AzureConfiguration):
+    """Configuration for AzureNetAppFilesManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -47,7 +47,7 @@ class CloudVolumeManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(CloudVolumeManagementClientConfiguration, self).__init__(base_url)
+        super(AzureNetAppFilesManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-netapp/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -56,11 +56,11 @@ class CloudVolumeManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class CloudVolumeManagementClient(SDKClient):
+class AzureNetAppFilesManagementClient(SDKClient):
     """Microsoft NetApp Azure Resource Provider specification
 
     :ivar config: Configuration for client.
-    :vartype config: CloudVolumeManagementClientConfiguration
+    :vartype config: AzureNetAppFilesManagementClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.operations.Operations
@@ -88,8 +88,8 @@ class CloudVolumeManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = CloudVolumeManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(CloudVolumeManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = AzureNetAppFilesManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-08-15'

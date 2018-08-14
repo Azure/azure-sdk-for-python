@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cloud_volume_management_client import CloudVolumeManagementClient
+from .azure_net_app_files_management_client import AzureNetAppFilesManagementClient
 from .version import VERSION
 
-__all__ = ['CloudVolumeManagementClient']
+__all__ = ['AzureNetAppFilesManagementClient']
 
 __version__ = VERSION
 

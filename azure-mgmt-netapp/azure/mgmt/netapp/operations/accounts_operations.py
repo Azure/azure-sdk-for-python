@@ -40,7 +40,7 @@ class AccountsOperations(object):
 
     def list(
             self, resource_group, custom_headers=None, raw=False, **operation_config):
-        """Lists all NetApp accounts in the subscription.
+        """Lists all NetApp accounts in the resource group.
 
         :param resource_group: The name of the resource group.
         :type resource_group: str
