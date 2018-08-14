@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class PipelineFolder(Model):
-    """The folder that this Pipeline is in.
+    """The folder that this Pipeline is in. If not specified, Pipeline will appear
+    at the root level.
 
     :param name: The name of the folder that this Pipeline is in.
     :type name: str

@@ -41,7 +41,8 @@ class PipelineResource(SubResource):
     :param annotations: List of tags that can be used for describing the
      Pipeline.
     :type annotations: list[object]
-    :param folder: The folder that this Pipeline is in.
+    :param folder: The folder that this Pipeline is in. If not specified,
+     Pipeline will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
     """
 

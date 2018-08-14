@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class DatasetFolder(Model):
-    """The folder that this Dataset is in.
+    """The folder that this Dataset is in. If not specified, Dataset will appear
+    at the root level.
 
     :param name: The name of the folder that this Dataset is in.
     :type name: str
