@@ -23,7 +23,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     :param audio_language: The language for the audio payload in the input
      using the BCP-47 format of 'language tag-region' (e.g: 'en-US'). The list
      of supported languages are, 'en-US', 'en-GB', 'es-ES', 'es-MX', 'fr-FR',
-     'it-IT', 'ja-JP', 'pt-BR', 'zh-CN'.
+     'it-IT', 'ja-JP', 'pt-BR', 'zh-CN', 'de-DE', 'ar-EG', 'ru-RU', 'hi-IN'.
     :type audio_language: str
     :param audio_insights_only: Whether to only extract audio insights when
      processing a video file.

@@ -25,11 +25,8 @@ class LiveEventPreview(Model):
     :param streaming_policy_name: The name of streaming policy used for
      LiveEvent preview
     :type streaming_policy_name: str
-    :param alternative_media_id: An Alternative Media Identifier associated
-     with the preview url.  This identifier can be used to distinguish the
-     preview of different live events for authorization purposes in the
-     CustomLicenseAcquisitionUrlTemplate or the CustomKeyAcquisitionUrlTemplate
-     of the StreamingPolicy specified in the StreamingPolicyName field.
+    :param alternative_media_id: The alternative Media-Id associated with the
+     preview
     :type alternative_media_id: str
     """
 

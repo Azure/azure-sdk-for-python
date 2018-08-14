@@ -334,6 +334,82 @@ class JobsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/transforms/{transformName}/jobs/{jobName}'}
 
+    def update(
+            self, resource_group_name, account_name, transform_name, job_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Update Job.
+
+        Updates a Job.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param transform_name: The Transform name.
+        :type transform_name: str
+        :param job_name: The Job name.
+        :type job_name: str
+        :param parameters: The request parameters
+        :type parameters: ~azure.mgmt.media.models.Job
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Job or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.Job or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'transformName': self._serialize.url("transform_name", transform_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Job')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ApiErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Job', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/transforms/{transformName}/jobs/{jobName}'}
+
     def cancel_job(
             self, resource_group_name, account_name, transform_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Cancel Job.

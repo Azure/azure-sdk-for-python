@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class AssetStorageEncryptionKey(Model):
-    """The Asset Storage encryption key.
+class ListStreamingLocatorsResponse(Model):
+    """The Streaming Locators associated with this asset.
 
-    :param storage_encryption_key: The Asset storage encryption key.
-    :type storage_encryption_key: str
+    :param streaming_locators: The list of Streaming Locators.
+    :type streaming_locators:
+     list[~azure.mgmt.media.models.AssetStreamingLocator]
     """
 
     _attribute_map = {
-        'storage_encryption_key': {'key': 'storageEncryptionKey', 'type': 'str'},
+        'streaming_locators': {'key': 'streamingLocators', 'type': '[AssetStreamingLocator]'},
     }
 
-    def __init__(self, *, storage_encryption_key: str=None, **kwargs) -> None:
-        super(AssetStorageEncryptionKey, self).__init__(**kwargs)
-        self.storage_encryption_key = storage_encryption_key
+    def __init__(self, **kwargs):
+        super(ListStreamingLocatorsResponse, self).__init__(**kwargs)
+        self.streaming_locators = kwargs.get('streaming_locators', None)

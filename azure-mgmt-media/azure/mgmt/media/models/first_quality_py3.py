@@ -12,17 +12,23 @@
 from msrest.serialization import Model
 
 
-class AssetStorageEncryptionKey(Model):
-    """The Asset Storage encryption key.
+class FirstQuality(Model):
+    """Filter First Quality.
 
-    :param storage_encryption_key: The Asset storage encryption key.
-    :type storage_encryption_key: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param bitrate: Required. The first quality bitrate.
+    :type bitrate: int
     """
 
-    _attribute_map = {
-        'storage_encryption_key': {'key': 'storageEncryptionKey', 'type': 'str'},
+    _validation = {
+        'bitrate': {'required': True},
     }
 
-    def __init__(self, **kwargs):
-        super(AssetStorageEncryptionKey, self).__init__(**kwargs)
-        self.storage_encryption_key = kwargs.get('storage_encryption_key', None)
+    _attribute_map = {
+        'bitrate': {'key': 'bitrate', 'type': 'int'},
+    }
+
+    def __init__(self, *, bitrate: int, **kwargs) -> None:
+        super(FirstQuality, self).__init__(**kwargs)
+        self.bitrate = bitrate

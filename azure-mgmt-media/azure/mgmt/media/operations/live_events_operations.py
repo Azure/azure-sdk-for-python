@@ -245,7 +245,8 @@ class LiveEventsOperations(object):
         :type live_event_name: str
         :param parameters: Live Event properties needed for creation.
         :type parameters: ~azure.mgmt.media.models.LiveEvent
-        :param auto_start: The flag indicates if auto start the Live Event.
+        :param auto_start: The flag indicates if the resource should be
+         automatically started on creation.
         :type auto_start: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

@@ -42,7 +42,7 @@ class LocationsOperations(object):
 
         Checks whether the Media Service resource name is available.
 
-        :param location_name:
+        :param location_name: The name of the location
         :type location_name: str
         :param name: The account name.
         :type name: str

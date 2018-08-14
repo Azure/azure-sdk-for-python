@@ -32,14 +32,15 @@ class StreamingLocatorContentKey(Model):
     :type value: str
     :ivar policy_name: ContentKeyPolicy used by Content Key
     :vartype policy_name: str
-    :param tracks: Tracks which use this Content Key
-    :type tracks: list[~azure.mgmt.media.models.TrackSelection]
+    :ivar tracks: Tracks which use this Content Key
+    :vartype tracks: list[~azure.mgmt.media.models.TrackSelection]
     """
 
     _validation = {
         'id': {'required': True},
         'type': {'readonly': True},
         'policy_name': {'readonly': True},
+        'tracks': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,4 +59,4 @@ class StreamingLocatorContentKey(Model):
         self.label = kwargs.get('label', None)
         self.value = kwargs.get('value', None)
         self.policy_name = None
-        self.tracks = kwargs.get('tracks', None)
+        self.tracks = None
