@@ -24,6 +24,7 @@ from .operations.price_sheet_operations import PriceSheetOperations
 from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
+from .operations.aggregated_cost_operations import AggregatedCostOperations
 from . import models
 
 
@@ -87,6 +88,8 @@ class ConsumptionManagementClient(SDKClient):
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
+    :ivar aggregated_cost: AggregatedCost operations
+    :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -128,4 +131,6 @@ class ConsumptionManagementClient(SDKClient):
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.aggregated_cost = AggregatedCostOperations(
             self._client, self.config, self._serialize, self._deserialize)

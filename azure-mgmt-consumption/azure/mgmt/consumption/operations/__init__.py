@@ -20,6 +20,7 @@ from .price_sheet_operations import PriceSheetOperations
 from .tags_operations import TagsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
+from .aggregated_cost_operations import AggregatedCostOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -33,4 +34,5 @@ __all__ = [
     'TagsOperations',
     'ForecastsOperations',
     'Operations',
+    'AggregatedCostOperations',
 ]
