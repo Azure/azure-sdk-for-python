@@ -48,6 +48,8 @@ class FrontendIPConfiguration(SubResource):
     :param public_ip_address: The reference of the Public IP resource.
     :type public_ip_address:
      ~azure.mgmt.network.v2018_07_01.models.PublicIPAddress
+    :param public_ip_prefix: The reference of the Public IP Prefix resource.
+    :type public_ip_prefix: ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -79,6 +81,7 @@ class FrontendIPConfiguration(SubResource):
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
+        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -95,6 +98,7 @@ class FrontendIPConfiguration(SubResource):
         self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
         self.subnet = kwargs.get('subnet', None)
         self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
