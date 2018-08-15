@@ -87,6 +87,9 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      VirtualNetworkGatewayConnection resource. Possible values are: 'Updating',
      'Deleting', and 'Failed'.
     :vartype provisioning_state: str
+    :param express_route_gateway_bypass: Bypass ExpressRoute Gateway for data
+     forwarding
+    :type express_route_gateway_bypass: bool
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
@@ -127,6 +130,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -149,4 +153,5 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         self.ipsec_policies = kwargs.get('ipsec_policies', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = None
+        self.express_route_gateway_bypass = kwargs.get('express_route_gateway_bypass', None)
         self.etag = kwargs.get('etag', None)
