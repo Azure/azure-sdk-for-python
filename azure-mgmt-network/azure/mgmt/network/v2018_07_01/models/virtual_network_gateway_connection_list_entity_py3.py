@@ -87,6 +87,9 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      VirtualNetworkGatewayConnection resource. Possible values are: 'Updating',
      'Deleting', and 'Failed'.
     :vartype provisioning_state: str
+    :param express_route_gateway_bypass: Bypass ExpressRoute Gateway for data
+     forwarding
+    :type express_route_gateway_bypass: bool
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
@@ -127,10 +130,11 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_network_gateway1, connection_type, id: str=None, location: str=None, tags=None, authorization_key: str=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight: int=None, shared_key: str=None, peer=None, enable_bgp: bool=None, use_policy_based_traffic_selectors: bool=None, ipsec_policies=None, resource_guid: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, virtual_network_gateway1, connection_type, id: str=None, location: str=None, tags=None, authorization_key: str=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight: int=None, shared_key: str=None, peer=None, enable_bgp: bool=None, use_policy_based_traffic_selectors: bool=None, ipsec_policies=None, resource_guid: str=None, express_route_gateway_bypass: bool=None, etag: str=None, **kwargs) -> None:
         super(VirtualNetworkGatewayConnectionListEntity, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
@@ -149,4 +153,5 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         self.ipsec_policies = ipsec_policies
         self.resource_guid = resource_guid
         self.provisioning_state = None
+        self.express_route_gateway_bypass = express_route_gateway_bypass
         self.etag = etag
