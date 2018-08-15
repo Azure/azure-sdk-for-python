@@ -15,10 +15,16 @@ from msrest.serialization import Model
 class GalleryArtifactSource(Model):
     """The source of the gallery artifact.
 
-    :param managed_image:
+    All required parameters must be populated in order to send to Azure.
+
+    :param managed_image: Required.
     :type managed_image:
      ~azure.mgmt.compute.v2018_06_01.models.ManagedArtifact
     """
+
+    _validation = {
+        'managed_image': {'required': True},
+    }
 
     _attribute_map = {
         'managed_image': {'key': 'managedImage', 'type': 'ManagedArtifact'},

@@ -18,9 +18,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param regions: The regions where the artifact is going to be published.
     :type regions: list[str]
-    :param source:
+    :param source: Required.
     :type source: ~azure.mgmt.compute.v2018_06_01.models.GalleryArtifactSource
     :param scale_tier: The scale tier of the gallery image version. Valid
      values are 'S30' and 'S100'. Possible values include: 'S30', 'S100'
@@ -37,6 +39,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     """
 
     _validation = {
+        'source': {'required': True},
         'published_date': {'readonly': True},
     }
 

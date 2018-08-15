@@ -31,7 +31,7 @@ class GalleryImageVersion(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param publishing_profile:
+    :param publishing_profile: Required.
     :type publishing_profile:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The current state of the gallery image version.
@@ -53,6 +53,7 @@ class GalleryImageVersion(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'publishing_profile': {'required': True},
         'provisioning_state': {'readonly': True},
         'storage_profile': {'readonly': True},
         'replication_status': {'readonly': True},
