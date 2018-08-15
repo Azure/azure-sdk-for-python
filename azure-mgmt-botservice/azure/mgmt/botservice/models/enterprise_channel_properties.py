@@ -17,8 +17,10 @@ class EnterpriseChannelProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param state: The current state of the Enterprise Channel
-    :type state: str
+    :param state: The current state of the Enterprise Channel. Possible values
+     include: 'Creating', 'CreateFailed', 'Started', 'Starting', 'StartFailed',
+     'Stopped', 'Stopping', 'StopFailed', 'Deleting', 'DeleteFailed'
+    :type state: str or ~azure.mgmt.botservice.models.State
     :param nodes: Required. The nodes associated with the Enterprise Channel
     :type nodes: list[~azure.mgmt.botservice.models.EnterpriseChannelNode]
     """
