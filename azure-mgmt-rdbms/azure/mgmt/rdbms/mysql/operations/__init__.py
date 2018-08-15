@@ -17,6 +17,7 @@ from .configurations_operations import ConfigurationsOperations
 from .log_files_operations import LogFilesOperations
 from .location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .check_name_availability_operations import CheckNameAvailabilityOperations
+from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
 
 __all__ = [
@@ -28,5 +29,6 @@ __all__ = [
     'LogFilesOperations',
     'LocationBasedPerformanceTierOperations',
     'CheckNameAvailabilityOperations',
+    'ServerSecurityAlertPoliciesOperations',
     'Operations',
 ]
