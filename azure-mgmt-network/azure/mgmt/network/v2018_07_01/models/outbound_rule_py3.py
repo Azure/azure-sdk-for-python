@@ -33,6 +33,15 @@ class OutboundRule(SubResource):
     :param provisioning_state: Gets the provisioning state of the PublicIP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param protocol: Protocol - TCP, UDP or All. Possible values include:
+     'Tcp', 'Udp', 'All'
+    :type protocol: str or ~azure.mgmt.network.v2018_07_01.models.enum
+    :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle
+     timeout or unexpected connection termination. This element is only used
+     when the protocol is set to TCP.
+    :type enable_tcp_reset: bool
+    :param idle_timeout_in_minutes: The timeout for the TCP idle connection
+    :type idle_timeout_in_minutes: int
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -51,15 +60,21 @@ class OutboundRule(SubResource):
         'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]'},
         'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
+        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
+        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, backend_address_pool, id: str=None, allocated_outbound_ports: int=None, frontend_ip_configurations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, backend_address_pool, id: str=None, allocated_outbound_ports: int=None, frontend_ip_configurations=None, provisioning_state: str=None, protocol=None, enable_tcp_reset: bool=None, idle_timeout_in_minutes: int=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(OutboundRule, self).__init__(id=id, **kwargs)
         self.allocated_outbound_ports = allocated_outbound_ports
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pool = backend_address_pool
         self.provisioning_state = provisioning_state
+        self.protocol = protocol
+        self.enable_tcp_reset = enable_tcp_reset
+        self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.name = name
         self.etag = etag
