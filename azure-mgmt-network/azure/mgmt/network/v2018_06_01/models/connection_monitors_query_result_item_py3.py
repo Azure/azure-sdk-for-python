@@ -17,14 +17,14 @@ class ConnectionMonitorsQueryResultItem(Model):
 
     :param resource_id: Connection monitor resource ID.
     :type resource_id: str
-    :param report: List of connection monitors query results.
+    :param report:
     :type report:
-     list[~azure.mgmt.network.v2018_06_01.models.ConnectionMonitorQueryResult]
+     ~azure.mgmt.network.v2018_06_01.models.ConnectionMonitorQueryResult
     """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'report': {'key': 'report', 'type': '[ConnectionMonitorQueryResult]'},
+        'report': {'key': 'report', 'type': 'ConnectionMonitorQueryResult'},
     }
 
     def __init__(self, *, resource_id: str=None, report=None, **kwargs) -> None:
