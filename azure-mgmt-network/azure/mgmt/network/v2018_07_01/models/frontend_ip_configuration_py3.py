@@ -28,9 +28,9 @@ class FrontendIPConfiguration(SubResource):
      frontend IP.
     :vartype inbound_nat_pools:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
-    :ivar outbound_nat_rules: Read only. Outbound rules URIs that use this
+    :ivar outbound_rules: Read only. Outbound rules URIs that use this
      frontend IP.
-    :vartype outbound_nat_rules:
+    :vartype outbound_rules:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
     :ivar load_balancing_rules: Gets load balancing rules URIs that use this
      frontend IP.
@@ -48,6 +48,8 @@ class FrontendIPConfiguration(SubResource):
     :param public_ip_address: The reference of the Public IP resource.
     :type public_ip_address:
      ~azure.mgmt.network.v2018_07_01.models.PublicIPAddress
+    :param public_ip_prefix: The reference of the Public IP Prefix resource.
+    :type public_ip_prefix: ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -65,7 +67,7 @@ class FrontendIPConfiguration(SubResource):
     _validation = {
         'inbound_nat_rules': {'readonly': True},
         'inbound_nat_pools': {'readonly': True},
-        'outbound_nat_rules': {'readonly': True},
+        'outbound_rules': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
     }
 
@@ -73,28 +75,30 @@ class FrontendIPConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
         'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
+        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, private_ip_address: str=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state: str=None, name: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, private_ip_address: str=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, public_ip_prefix=None, provisioning_state: str=None, name: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
         self.inbound_nat_rules = None
         self.inbound_nat_pools = None
-        self.outbound_nat_rules = None
+        self.outbound_rules = None
         self.load_balancing_rules = None
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet
         self.public_ip_address = public_ip_address
+        self.public_ip_prefix = public_ip_prefix
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

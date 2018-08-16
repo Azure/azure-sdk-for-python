@@ -106,7 +106,7 @@ try:
     from .load_balancing_rule_py3 import LoadBalancingRule
     from .probe_py3 import Probe
     from .inbound_nat_pool_py3 import InboundNatPool
-    from .outbound_nat_rule_py3 import OutboundNatRule
+    from .outbound_rule_py3 import OutboundRule
     from .load_balancer_py3 import LoadBalancer
     from .error_details_py3 import ErrorDetails
     from .error_py3 import Error, ErrorException
@@ -338,7 +338,7 @@ except (SyntaxError, ImportError):
     from .load_balancing_rule import LoadBalancingRule
     from .probe import Probe
     from .inbound_nat_pool import InboundNatPool
-    from .outbound_nat_rule import OutboundNatRule
+    from .outbound_rule import OutboundRule
     from .load_balancer import LoadBalancer
     from .error_details import ErrorDetails
     from .error import Error, ErrorException
@@ -702,7 +702,7 @@ __all__ = [
     'LoadBalancingRule',
     'Probe',
     'InboundNatPool',
-    'OutboundNatRule',
+    'OutboundRule',
     'LoadBalancer',
     'ErrorDetails',
     'Error', 'ErrorException',

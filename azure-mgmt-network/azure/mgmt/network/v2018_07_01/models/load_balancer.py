@@ -62,9 +62,9 @@ class LoadBalancer(Resource):
      an inbound NAT pool. They have to reference individual inbound NAT rules.
     :type inbound_nat_pools:
      list[~azure.mgmt.network.v2018_07_01.models.InboundNatPool]
-    :param outbound_nat_rules: The outbound NAT rules.
-    :type outbound_nat_rules:
-     list[~azure.mgmt.network.v2018_07_01.models.OutboundNatRule]
+    :param outbound_rules: The outbound rules.
+    :type outbound_rules:
+     list[~azure.mgmt.network.v2018_07_01.models.OutboundRule]
     :param resource_guid: The resource GUID property of the load balancer
      resource.
     :type resource_guid: str
@@ -94,7 +94,7 @@ class LoadBalancer(Resource):
         'probes': {'key': 'properties.probes', 'type': '[Probe]'},
         'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
         'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[OutboundRule]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -109,7 +109,7 @@ class LoadBalancer(Resource):
         self.probes = kwargs.get('probes', None)
         self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
         self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
-        self.outbound_nat_rules = kwargs.get('outbound_nat_rules', None)
+        self.outbound_rules = kwargs.get('outbound_rules', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)

@@ -28,10 +28,9 @@ class BackendAddressPool(SubResource):
      backend address pool.
     :vartype load_balancing_rules:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
-    :ivar outbound_nat_rule: Gets outbound rules that use this backend address
+    :ivar outbound_rule: Gets outbound rules that use this backend address
      pool.
-    :vartype outbound_nat_rule:
-     ~azure.mgmt.network.v2018_07_01.models.SubResource
+    :vartype outbound_rule: ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -46,14 +45,14 @@ class BackendAddressPool(SubResource):
     _validation = {
         'backend_ip_configurations': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
-        'outbound_nat_rule': {'readonly': True},
+        'outbound_rule': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'outbound_nat_rule': {'key': 'properties.outboundNatRule', 'type': 'SubResource'},
+        'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -63,7 +62,7 @@ class BackendAddressPool(SubResource):
         super(BackendAddressPool, self).__init__(id=id, **kwargs)
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
-        self.outbound_nat_rule = None
+        self.outbound_rule = None
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
