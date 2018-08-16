@@ -9,24 +9,4 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
-
-
-class Error(Model):
-    """Error body.
-
-    :param code:
-    :type code: str
-    :param message:
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
-    }
-
-    def __init__(self, code=None, message=None):
-        super(Error, self).__init__()
-        self.code = code
-        self.message = message
+from msrest.paging import Paged
