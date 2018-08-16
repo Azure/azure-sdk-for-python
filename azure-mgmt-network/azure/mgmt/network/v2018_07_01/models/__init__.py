@@ -183,9 +183,6 @@ try:
     from .network_security_group_result_py3 import NetworkSecurityGroupResult
     from .network_configuration_diagnostic_result_py3 import NetworkConfigurationDiagnosticResult
     from .network_configuration_diagnostic_response_py3 import NetworkConfigurationDiagnosticResponse
-    from .query_connection_monitors_parameters_py3 import QueryConnectionMonitorsParameters
-    from .connection_monitors_query_result_item_py3 import ConnectionMonitorsQueryResultItem
-    from .query_connection_monitors_response_py3 import QueryConnectionMonitorsResponse
     from .operation_display_py3 import OperationDisplay
     from .availability_py3 import Availability
     from .dimension_py3 import Dimension
@@ -415,9 +412,6 @@ except (SyntaxError, ImportError):
     from .network_security_group_result import NetworkSecurityGroupResult
     from .network_configuration_diagnostic_result import NetworkConfigurationDiagnosticResult
     from .network_configuration_diagnostic_response import NetworkConfigurationDiagnosticResponse
-    from .query_connection_monitors_parameters import QueryConnectionMonitorsParameters
-    from .connection_monitors_query_result_item import ConnectionMonitorsQueryResultItem
-    from .query_connection_monitors_response import QueryConnectionMonitorsResponse
     from .operation_display import OperationDisplay
     from .availability import Availability
     from .dimension import Dimension
@@ -779,9 +773,6 @@ __all__ = [
     'NetworkSecurityGroupResult',
     'NetworkConfigurationDiagnosticResult',
     'NetworkConfigurationDiagnosticResponse',
-    'QueryConnectionMonitorsParameters',
-    'ConnectionMonitorsQueryResultItem',
-    'QueryConnectionMonitorsResponse',
     'OperationDisplay',
     'Availability',
     'Dimension',
