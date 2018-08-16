@@ -53,19 +53,9 @@ class ComputeNode(Model):
      task is scheduled, then the task will be scheduled elsewhere.
     :type affinity_id: str
     :param vm_size: The size of the virtual machine hosting the compute node.
-     For information about available sizes of virtual machines for Cloud
-     Services pools (pools created with cloudServiceConfiguration), see Sizes
-     for Cloud Services
-     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
-     A2V2. For information about available VM sizes for pools using images from
-     the Virtual Machines Marketplace (pools created with
-     virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
-     or Sizes for Virtual Machines (Windows)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/).
-     Batch supports all Azure VM sizes except STANDARD_A0 and those with
-     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
+     For information about available sizes of virtual machines in pools, see
+     Choose a VM size for compute nodes in an Azure Batch pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param total_tasks_run: The total number of job tasks completed on the
      compute node. This includes Job Manager tasks and normal tasks, but not
@@ -111,6 +101,9 @@ class ComputeNode(Model):
      node.
     :type endpoint_configuration:
      ~azure.batch.models.ComputeNodeEndpointConfiguration
+    :param node_agent_info: Information about the node agent version and the
+     time the node upgraded to a new version.
+    :type node_agent_info: ~azure.batch.models.NodeAgentInformation
     """
 
     _attribute_map = {
@@ -134,9 +127,10 @@ class ComputeNode(Model):
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
         'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
+        'node_agent_info': {'key': 'nodeAgentInfo', 'type': 'NodeAgentInformation'},
     }
 
-    def __init__(self, *, id: str=None, url: str=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address: str=None, affinity_id: str=None, vm_size: str=None, total_tasks_run: int=None, running_tasks_count: int=None, total_tasks_succeeded: int=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated: bool=None, endpoint_configuration=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, url: str=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address: str=None, affinity_id: str=None, vm_size: str=None, total_tasks_run: int=None, running_tasks_count: int=None, total_tasks_succeeded: int=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated: bool=None, endpoint_configuration=None, node_agent_info=None, **kwargs) -> None:
         super(ComputeNode, self).__init__(**kwargs)
         self.id = id
         self.url = url
@@ -158,3 +152,4 @@ class ComputeNode(Model):
         self.errors = errors
         self.is_dedicated = is_dedicated
         self.endpoint_configuration = endpoint_configuration
+        self.node_agent_info = node_agent_info

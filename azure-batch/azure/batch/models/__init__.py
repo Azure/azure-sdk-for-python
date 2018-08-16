@@ -89,6 +89,7 @@ try:
     from .affinity_information_py3 import AffinityInformation
     from .task_execution_information_py3 import TaskExecutionInformation
     from .compute_node_information_py3 import ComputeNodeInformation
+    from .node_agent_information_py3 import NodeAgentInformation
     from .multi_instance_settings_py3 import MultiInstanceSettings
     from .task_statistics_py3 import TaskStatistics
     from .task_id_range_py3 import TaskIdRange
@@ -290,6 +291,7 @@ except (SyntaxError, ImportError):
     from .affinity_information import AffinityInformation
     from .task_execution_information import TaskExecutionInformation
     from .compute_node_information import ComputeNodeInformation
+    from .node_agent_information import NodeAgentInformation
     from .multi_instance_settings import MultiInstanceSettings
     from .task_statistics import TaskStatistics
     from .task_id_range import TaskIdRange
@@ -449,7 +451,6 @@ from .batch_service_client_enums import (
     JobPreparationTaskState,
     TaskExecutionResult,
     JobReleaseTaskState,
-    TaskCountValidationStatus,
     PoolState,
     AllocationState,
     TaskState,
@@ -545,6 +546,7 @@ __all__ = [
     'AffinityInformation',
     'TaskExecutionInformation',
     'ComputeNodeInformation',
+    'NodeAgentInformation',
     'MultiInstanceSettings',
     'TaskStatistics',
     'TaskIdRange',
@@ -703,7 +705,6 @@ __all__ = [
     'JobPreparationTaskState',
     'TaskExecutionResult',
     'JobReleaseTaskState',
-    'TaskCountValidationStatus',
     'PoolState',
     'AllocationState',
     'TaskState',
