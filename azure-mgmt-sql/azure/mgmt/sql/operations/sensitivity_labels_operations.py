@@ -119,6 +119,92 @@ class SensitivityLabelsOperations(object):
         return deserialized
     list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/sensitivityLabels'}
 
+    def list_by_database_with_source(
+            self, resource_group_name, server_name, database_name, sensitivity_label_source, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the sensitivity labels of a given database.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param sensitivity_label_source: Optional source of the sensitivity
+         label. Valid values are current or recommeneded. In not specified both
+         returned. Possible values include: 'current', 'recommended'
+        :type sensitivity_label_source: str or
+         ~azure.mgmt.sql.models.SensitivityLabelSource
+        :param filter: An OData filter expression that filters elements in the
+         collection.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of SensitivityLabel
+        :rtype:
+         ~azure.mgmt.sql.models.SensitivityLabelPaged[~azure.mgmt.sql.models.SensitivityLabel]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_database_with_source.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'sensitivityLabelSource': self._serialize.url("sensitivity_label_source", sensitivity_label_source, 'SensitivityLabelSource'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SensitivityLabelPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.SensitivityLabelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_database_with_source.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/sensitivityLabels/{sensitivityLabelSource}'}
+
     def get(
             self, resource_group_name, server_name, database_name, schema_name, table_name, column_name, sensitivity_label_source, custom_headers=None, raw=False, **operation_config):
         """Gets the sensitivity label of a given column.
