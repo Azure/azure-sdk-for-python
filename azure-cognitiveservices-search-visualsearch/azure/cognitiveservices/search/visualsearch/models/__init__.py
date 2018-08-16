@@ -98,6 +98,7 @@ from .visual_search_api_enums import (
     ItemAvailability,
     ErrorCode,
     ErrorSubCode,
+    SafeSearch,
 )
 
 __all__ = [
@@ -146,4 +147,5 @@ __all__ = [
     'ItemAvailability',
     'ErrorCode',
     'ErrorSubCode',
+    'SafeSearch',
 ]
