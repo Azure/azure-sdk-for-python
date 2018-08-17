@@ -10,6 +10,11 @@ import unittest
 
 import azure.mgmt.storage.models
 
+from msrest.universal_http.async_requests import AsyncRequestsHTTPSender
+from msrest.pipeline import AsyncPipeline
+from msrest.pipeline.universal import RawDeserializer, HTTPLogger, UserAgentPolicy, HeadersPolicy
+from msrest.pipeline.async_requests import AsyncRequestsCredentialsPolicy, AsyncPipelineRequestsHTTPSender
+
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 
@@ -34,6 +39,33 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.loop.run_until_complete(self._test_storage_accounts(resource_group, location))
 
     async def _test_storage_accounts(self, resource_group, location):
+
+        # Change the pipeline of the current client as example
+        # Add a header x-ms-testing: true to all query
+        self.storage_client.config.async_pipeline = AsyncPipeline(
+            [
+                # This is the msrest default UserAgent, that will inject the msrest/version, etc UA
+                # You could replace this line with a new "UserAgentPolicy()", but the one pre-declared
+                # in the config is already filled with the name of this specific package azure-mgmt-storage
+                self.storage_client.config.user_agent_policy,
+                # This adds the header x-ms-testing: true as POC of the pipeline architecture
+                HeadersPolicy({
+                    "x-ms-testing": "true"
+                }),
+                # This signs the query. It works for "requests" only for now, the sender has to be requests
+                AsyncRequestsCredentialsPolicy(self.storage_client.config.credentials),
+                # This is the raw deserializer, that reads all the bytes and create JSON/XML. Autorest model are built outside of the pipeline for now.
+                RawDeserializer(),
+                # This is the default HTTP logging policy
+                HTTPLogger()
+            ],
+            # This is a pipeline wrapper to any requests based universal HTTP driver
+            AsyncPipelineRequestsHTTPSender(
+                # This creates a Universal HTTP driver based on requests and default msrest configuration
+                AsyncRequestsHTTPSender()
+            )
+        )
+
         account_name = self.get_resource_name('pyarmstorage')
 
         result_check = await self.storage_client.storage_accounts.check_name_availability_async(
