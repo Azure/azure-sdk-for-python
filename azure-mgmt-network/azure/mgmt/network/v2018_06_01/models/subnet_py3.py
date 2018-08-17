@@ -22,8 +22,6 @@ class Subnet(SubResource):
     :type id: str
     :param address_prefix: The address prefix for the subnet.
     :type address_prefix: str
-    :param address_prefixes: List of  address prefixes for the subnet.
-    :type address_prefixes: list[str]
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
     :type network_security_group:
@@ -58,7 +56,6 @@ class Subnet(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
         'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
@@ -69,10 +66,9 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, resource_navigation_links=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, address_prefix: str=None, network_security_group=None, route_table=None, service_endpoints=None, resource_navigation_links=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
-        self.address_prefixes = address_prefixes
         self.network_security_group = network_security_group
         self.route_table = route_table
         self.service_endpoints = service_endpoints
