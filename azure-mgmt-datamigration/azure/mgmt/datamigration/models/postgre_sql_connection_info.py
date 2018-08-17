@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .connection_info import ConnectionInfo
 
 
-class ConnectionInfo(Model):
-    """Defines the connection properties of a server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: PostgreSqlConnectionInfo, MySqlConnectionInfo,
-    SqlConnectionInfo
+class PostgreSqlConnectionInfo(ConnectionInfo):
+    """Information for connecting to PostgreSQL server.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,24 +23,32 @@ class ConnectionInfo(Model):
     :type password: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param server_name: Required. Name of the server
+    :type server_name: str
+    :param database_name: Name of the database
+    :type database_name: str
+    :param port: Required. Port for Server
+    :type port: int
     """
 
     _validation = {
         'type': {'required': True},
+        'server_name': {'required': True},
+        'port': {'required': True},
     }
 
     _attribute_map = {
         'user_name': {'key': 'userName', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
+        'server_name': {'key': 'serverName', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
-        super(ConnectionInfo, self).__init__(**kwargs)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.type = None
+        super(PostgreSqlConnectionInfo, self).__init__(**kwargs)
+        self.server_name = kwargs.get('server_name', None)
+        self.database_name = kwargs.get('database_name', None)
+        self.port = kwargs.get('port', None)
+        self.type = 'PostgreSqlConnectionInfo'

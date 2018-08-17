@@ -21,6 +21,7 @@ try:
     from .get_tde_certificates_sql_task_output_py3 import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input_py3 import SelectedCertificateInput
     from .file_share_py3 import FileShare
+    from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
     from .my_sql_connection_info_py3 import MySqlConnectionInfo
     from .connection_info_py3 import ConnectionInfo
     from .sql_connection_info_py3 import SqlConnectionInfo
@@ -37,6 +38,15 @@ try:
     from .validate_sync_migration_input_sql_server_task_input_py3 import ValidateSyncMigrationInputSqlServerTaskInput
     from .validate_migration_input_sql_server_sql_db_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
     from .sync_migration_database_error_event_py3 import SyncMigrationDatabaseErrorEvent
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
@@ -165,6 +175,7 @@ except (SyntaxError, ImportError):
     from .get_tde_certificates_sql_task_output import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input import SelectedCertificateInput
     from .file_share import FileShare
+    from .postgre_sql_connection_info import PostgreSqlConnectionInfo
     from .my_sql_connection_info import MySqlConnectionInfo
     from .connection_info import ConnectionInfo
     from .sql_connection_info import SqlConnectionInfo
@@ -181,6 +192,15 @@ except (SyntaxError, ImportError):
     from .validate_sync_migration_input_sql_server_task_input import ValidateSyncMigrationInputSqlServerTaskInput
     from .validate_migration_input_sql_server_sql_db_sync_task_properties import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
     from .sync_migration_database_error_event import SyncMigrationDatabaseErrorEvent
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
     from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
@@ -352,6 +372,7 @@ __all__ = [
     'GetTdeCertificatesSqlTaskOutput',
     'SelectedCertificateInput',
     'FileShare',
+    'PostgreSqlConnectionInfo',
     'MySqlConnectionInfo',
     'ConnectionInfo',
     'SqlConnectionInfo',
@@ -368,6 +389,15 @@ __all__ = [
     'ValidateSyncMigrationInputSqlServerTaskInput',
     'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties',
     'SyncMigrationDatabaseErrorEvent',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties',
     'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError',
     'MigrateMySqlAzureDbForMySqlSyncTaskOutputError',
     'MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel',

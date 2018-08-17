@@ -243,6 +243,7 @@ class ProjectTargetPlatform(str, Enum):
     sqldb = "SQLDB"
     sqlmi = "SQLMI"
     azure_db_for_my_sql = "AzureDbForMySql"
+    azure_db_for_postgre_sql = "AzureDbForPostgreSql"
     unknown = "Unknown"
 
 
@@ -250,6 +251,7 @@ class ProjectSourcePlatform(str, Enum):
 
     sql = "SQL"
     my_sql = "MySQL"
+    postgre_sql = "PostgreSql"
     unknown = "Unknown"
 
 
