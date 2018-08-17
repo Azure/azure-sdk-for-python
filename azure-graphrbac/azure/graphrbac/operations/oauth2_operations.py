@@ -102,7 +102,8 @@ class OAuth2Operations(object):
             self, body=None, custom_headers=None, raw=False, **operation_config):
         """Grants OAuth2 permissions for the relevant resource Ids of an app.
 
-        :param body:
+        :param body: The relevant app Service Principal Object Id and the
+         Service Principal Objecit Id you want to grant.
         :type body: ~azure.graphrbac.models.Permissions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
