@@ -66,9 +66,12 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :param reserved: If Linux app service plan <code>true</code>,
      <code>false</code> otherwise. Default value: False .
     :type reserved: bool
-    :param is_xenon: If Hyper-V container app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param is_xenon: Obsolete: If Hyper-V container app service plan
+     <code>true</code>, <code>false</code> otherwise. Default value: False .
     :type is_xenon: bool
+    :param hyper_v: If Hyper-V container app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
+    :type hyper_v: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -113,12 +116,13 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'hyper_v': {'key': 'properties.hyperV', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, *, kind: str=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, **kwargs) -> None:
         super(AppServicePlanPatchResource, self).__init__(kind=kind, **kwargs)
         self.worker_tier_name = worker_tier_name
         self.status = None
@@ -135,6 +139,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self.resource_group = None
         self.reserved = reserved
         self.is_xenon = is_xenon
+        self.hyper_v = hyper_v
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None

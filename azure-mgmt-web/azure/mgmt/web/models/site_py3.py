@@ -64,8 +64,10 @@ class Site(Resource):
     :param reserved: <code>true</code> if reserved; otherwise,
      <code>false</code>. Default value: False .
     :type reserved: bool
-    :param is_xenon: Hyper-V sandbox. Default value: False .
+    :param is_xenon: Obsolete: Hyper-V sandbox. Default value: False .
     :type is_xenon: bool
+    :param hyper_v: Hyper-V sandbox. Default value: False .
+    :type hyper_v: bool
     :ivar last_modified_time_utc: Last time the app was modified, in UTC.
      Read-only.
     :vartype last_modified_time_utc: datetime
@@ -181,6 +183,7 @@ class Site(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'hyper_v': {'key': 'properties.hyperV', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -205,7 +208,7 @@ class Site(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str=None, tags=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, identity=None, **kwargs) -> None:
         super(Site, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.state = None
         self.host_names = None
@@ -218,6 +221,7 @@ class Site(Resource):
         self.server_farm_id = server_farm_id
         self.reserved = reserved
         self.is_xenon = is_xenon
+        self.hyper_v = hyper_v
         self.last_modified_time_utc = None
         self.site_config = site_config
         self.traffic_manager_host_names = None
