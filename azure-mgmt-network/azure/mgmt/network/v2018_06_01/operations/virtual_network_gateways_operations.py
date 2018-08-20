@@ -632,10 +632,10 @@ class VirtualNetworkGatewaysOperations(object):
     reset.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset'}
 
 
-    def _resetvpnclientsharedkey_initial(
+    def _reset_vpn_client_shared_key_initial(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.resetvpnclientsharedkey.metadata['url']
+        url = self.reset_vpn_client_shared_key.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),
@@ -669,7 +669,7 @@ class VirtualNetworkGatewaysOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def resetvpnclientsharedkey(
+    def reset_vpn_client_shared_key(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Resets the VPN client shared key of the virtual network gateway in the
         specified resource group.
@@ -690,7 +690,7 @@ class VirtualNetworkGatewaysOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._resetvpnclientsharedkey_initial(
+        raw_result = self._reset_vpn_client_shared_key_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             custom_headers=custom_headers,
@@ -710,7 +710,7 @@ class VirtualNetworkGatewaysOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    resetvpnclientsharedkey.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/resetvpnclientsharedkey'}
+    reset_vpn_client_shared_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/resetvpnclientsharedkey'}
 
 
     def _generatevpnclientpackage_initial(
