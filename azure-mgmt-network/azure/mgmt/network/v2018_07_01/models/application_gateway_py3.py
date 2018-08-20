@@ -46,6 +46,10 @@ class ApplicationGateway(Resource):
      application gateway resource.
     :type authentication_certificates:
      list[~azure.mgmt.network.v2018_07_01.models.ApplicationGatewayAuthenticationCertificate]
+    :param trusted_root_certificates: Trusted Root certificates of the
+     application gateway resource.
+    :type trusted_root_certificates:
+     list[~azure.mgmt.network.v2018_07_01.models.ApplicationGatewayTrustedRootCertificate]
     :param ssl_certificates: SSL certificates of the application gateway
      resource.
     :type ssl_certificates:
@@ -126,6 +130,7 @@ class ApplicationGateway(Resource):
         'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
         'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[ApplicationGatewayAuthenticationCertificate]'},
+        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[ApplicationGatewayTrustedRootCertificate]'},
         'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
         'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
         'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
@@ -146,13 +151,14 @@ class ApplicationGateway(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.ssl_policy = ssl_policy
         self.operational_state = None
         self.gateway_ip_configurations = gateway_ip_configurations
         self.authentication_certificates = authentication_certificates
+        self.trusted_root_certificates = trusted_root_certificates
         self.ssl_certificates = ssl_certificates
         self.frontend_ip_configurations = frontend_ip_configurations
         self.frontend_ports = frontend_ports
