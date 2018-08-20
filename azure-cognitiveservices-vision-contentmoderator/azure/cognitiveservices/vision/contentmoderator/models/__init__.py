@@ -34,11 +34,8 @@ from .evaluate import Evaluate
 from .match import Match
 from .match_response import MatchResponse
 from .detected_language import DetectedLanguage
-from .image_list_metadata import ImageListMetadata
 from .image_list import ImageList
-from .term_list_metadata import TermListMetadata
 from .term_list import TermList
-from .refresh_index_advanced_info_item import RefreshIndexAdvancedInfoItem
 from .refresh_index import RefreshIndex
 from .image_additional_info_item import ImageAdditionalInfoItem
 from .image import Image
@@ -54,7 +51,6 @@ from .job_list_result import JobListResult
 from .job_id import JobId
 from .error import Error
 from .api_error import APIError, APIErrorException
-from .body_metadata import BodyMetadata
 from .body import Body
 from .create_review_body_item_metadata_item import CreateReviewBodyItemMetadataItem
 from .create_review_body_item import CreateReviewBodyItem
@@ -97,11 +93,8 @@ __all__ = [
     'Match',
     'MatchResponse',
     'DetectedLanguage',
-    'ImageListMetadata',
     'ImageList',
-    'TermListMetadata',
     'TermList',
-    'RefreshIndexAdvancedInfoItem',
     'RefreshIndex',
     'ImageAdditionalInfoItem',
     'Image',
@@ -117,7 +110,6 @@ __all__ = [
     'JobId',
     'Error',
     'APIError', 'APIErrorException',
-    'BodyMetadata',
     'Body',
     'CreateReviewBodyItemMetadataItem',
     'CreateReviewBodyItem',

@@ -20,14 +20,13 @@ class Body(Model):
     :param description: Description of the list.
     :type description: str
     :param metadata: Metadata of the list.
-    :type metadata:
-     ~azure.cognitiveservices.vision.contentmoderator.models.BodyMetadata
+    :type metadata: dict[str, object]
     """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'BodyMetadata'},
+        'metadata': {'key': 'Metadata', 'type': '{object}'},
     }
 
     def __init__(self, name=None, description=None, metadata=None):

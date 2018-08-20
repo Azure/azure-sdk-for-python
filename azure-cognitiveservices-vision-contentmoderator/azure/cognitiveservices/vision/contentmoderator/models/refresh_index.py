@@ -20,8 +20,7 @@ class RefreshIndex(Model):
     :param is_update_success: Update success status.
     :type is_update_success: bool
     :param advanced_info: Advanced info list.
-    :type advanced_info:
-     list[~azure.cognitiveservices.vision.contentmoderator.models.RefreshIndexAdvancedInfoItem]
+    :type advanced_info: list[dict[str, object]]
     :param status: Refresh index status.
     :type status:
      ~azure.cognitiveservices.vision.contentmoderator.models.Status
@@ -32,7 +31,7 @@ class RefreshIndex(Model):
     _attribute_map = {
         'content_source_id': {'key': 'ContentSourceId', 'type': 'str'},
         'is_update_success': {'key': 'IsUpdateSuccess', 'type': 'bool'},
-        'advanced_info': {'key': 'AdvancedInfo', 'type': '[RefreshIndexAdvancedInfoItem]'},
+        'advanced_info': {'key': 'AdvancedInfo', 'type': '[{object}]'},
         'status': {'key': 'Status', 'type': 'Status'},
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }

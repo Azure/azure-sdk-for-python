@@ -22,15 +22,14 @@ class ImageList(Model):
     :param description: Description for image list.
     :type description: str
     :param metadata: Image List Metadata.
-    :type metadata:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ImageListMetadata
+    :type metadata: dict[str, object]
     """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'int'},
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'ImageListMetadata'},
+        'metadata': {'key': 'Metadata', 'type': '{object}'},
     }
 
     def __init__(self, id=None, name=None, description=None, metadata=None):
