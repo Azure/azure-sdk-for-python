@@ -88,7 +88,7 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
     """
 
-    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None, auth_timeout=0):
+    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None, auth_timeout=60):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -418,6 +418,8 @@ class EventHubClient(object):
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
-        handler = Sender(self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+        handler = Sender(
+            self, target, partition=partition, send_timeout=send_timeout,
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
         self.clients.append(handler)
         return handler

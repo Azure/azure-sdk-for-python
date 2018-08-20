@@ -175,10 +175,10 @@ class PartitionManager:
                         _logger.info("Lease to steal %r", steal_this_lease.serializable())
                         if await lease_manager.acquire_lease_async(steal_this_lease):
                             _logger.info("Stole lease sucessfully %r %r",
-                                self.host.guid, steal_this_lease.partition_id)
+                                         self.host.guid, steal_this_lease.partition_id)
                         else:
                             _logger.info("Failed to steal lease for partition %r %r",
-                                self.host.guid, steal_this_lease.partition_id)
+                                         self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:  # pylint: disable=broad-except
                         _logger.error("Failed to steal lease %r", err)
 
@@ -187,7 +187,7 @@ class PartitionManager:
                     updated_lease = all_leases[partition_id]
                     if updated_lease.owner == self.host.host_name:
                         _logger.debug("Attempting to renew lease %r %r",
-                            self.host.guid, partition_id)
+                                      self.host.guid, partition_id)
                         await self.check_and_add_pump_async(partition_id, updated_lease)
                     else:
                         _logger.debug("Removing pump due to lost lease.")
@@ -258,7 +258,7 @@ class PartitionManager:
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
             _logger.debug("No pump found to remove for this partition %r %r",
-                self.host.guid, partition_id)
+                          self.host.guid, partition_id)
 
     async def remove_all_pumps_async(self, reason):
         """
@@ -333,7 +333,7 @@ class PartitionManager:
             possible_lease = await lease_task
             if await possible_lease.is_expired():
                 _logger.info("Trying to aquire lease %r %r",
-                    self.host.guid, possible_lease.partition_id)
+                             self.host.guid, possible_lease.partition_id)
                 if await lease_manager.acquire_lease_async(possible_lease):
                     owned_by_others_q.put((False, possible_lease))
                 else:
@@ -342,7 +342,7 @@ class PartitionManager:
             elif possible_lease.owner == self.host.host_name:
                 try:
                     _logger.debug("Trying to renew lease %r %r",
-                        self.host.guid, possible_lease.partition_id)
+                                  self.host.guid, possible_lease.partition_id)
                     if await lease_manager.renew_lease_async(possible_lease):
                         owned_by_others_q.put((False, possible_lease))
                     else:
@@ -350,7 +350,7 @@ class PartitionManager:
                 except Exception as err:  # pylint: disable=broad-except
                     # Update to 'Lease Lost' exception.
                     _logger.error("Lease lost exception %r %r %r",
-                        err, self.host.guid, possible_lease.partition_id)
+                                  err, self.host.guid, possible_lease.partition_id)
                     owned_by_others_q.put((True, possible_lease))
             else:
                 owned_by_others_q.put((True, possible_lease))

@@ -100,10 +100,10 @@ class PartitionPump():
             await self.on_closing_async(reason)
             if self.processor:
                 _logger.info("PartitionPumpInvokeProcessorCloseStart %r %r %r",
-                    self.host.guid, self.partition_context.partition_id, reason)
+                             self.host.guid, self.partition_context.partition_id, reason)
                 await self.processor.close_async(self.partition_context, reason)
                 _logger.info("PartitionPumpInvokeProcessorCloseStart %r %r",
-                    self.host.guid, self.partition_context.partition_id)
+                             self.host.guid, self.partition_context.partition_id)
         except Exception as err:  # pylint: disable=broad-except
             await self.process_error_async(err)
             _logger.error("%r %r %r", self.host.guid, self.partition_context.partition_id, err)

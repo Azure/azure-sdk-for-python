@@ -22,7 +22,9 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True, loop=None):  # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
+            self, client, target, partition=None, send_timeout=60,
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an EventHub event SenderAsync handler.
 

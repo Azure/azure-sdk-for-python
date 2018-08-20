@@ -225,7 +225,9 @@ class EventHubClientAsync(EventHubClient):
         self.clients.append(handler)
         return handler
 
-    def add_async_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True, loop=None):
+    def add_async_sender(
+            self, partition=None, operation=None, send_timeout=60,
+            keep_alive=30, auto_reconnect=True, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.

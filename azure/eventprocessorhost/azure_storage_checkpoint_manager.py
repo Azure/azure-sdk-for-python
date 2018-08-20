@@ -243,9 +243,9 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             return_lease.partition_id = partition_id
             json_lease = json.dumps(return_lease.serializable())
             _logger.info("Creating Lease %r %r %r",
-                self.lease_container_name,
-                partition_id,
-                json_lease)
+                         self.lease_container_name,
+                         partition_id,
+                         json_lease)
             await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(
@@ -363,7 +363,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                 _logger.info("LeaseLost on partition %r", lease.partition_id)
             else:
                 _logger.error("Failed to renew lease on partition %r with token %r %r",
-                    lease.partition_id, lease.token, err)
+                              lease.partition_id, lease.token, err)
             return False
         return True
 
@@ -403,7 +403,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     lease_id))
         except Exception as err:  # pylint: disable=broad-except
             _logger.error("Failed to release lease %r %r %r",
-                err, lease.partition_id, lease_id)
+                          err, lease.partition_id, lease_id)
             return False
         return True
 
@@ -441,7 +441,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
 
             except Exception as err:  # pylint: disable=broad-except
                 _logger.error("Failed to update lease %r %r %r",
-                    self.host.guid, lease.partition_id, err)
+                              self.host.guid, lease.partition_id, err)
                 raise err
         else:
             return False
