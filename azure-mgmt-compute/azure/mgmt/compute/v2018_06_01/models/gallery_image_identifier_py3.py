@@ -15,13 +15,21 @@ from msrest.serialization import Model
 class GalleryImageIdentifier(Model):
     """This is the gallery image identifier.
 
-    :param publisher: The gallery image publisher name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param publisher: Required. The gallery image publisher name.
     :type publisher: str
-    :param offer: The gallery image offer name.
+    :param offer: Required. The gallery image offer name.
     :type offer: str
-    :param sku: The gallery image sku name.
+    :param sku: Required. The gallery image sku name.
     :type sku: str
     """
+
+    _validation = {
+        'publisher': {'required': True},
+        'offer': {'required': True},
+        'sku': {'required': True},
+    }
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},
@@ -29,7 +37,7 @@ class GalleryImageIdentifier(Model):
         'sku': {'key': 'sku', 'type': 'str'},
     }
 
-    def __init__(self, *, publisher: str=None, offer: str=None, sku: str=None, **kwargs) -> None:
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs) -> None:
         super(GalleryImageIdentifier, self).__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
