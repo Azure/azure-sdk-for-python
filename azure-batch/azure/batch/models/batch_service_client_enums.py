@@ -174,12 +174,6 @@ class JobReleaseTaskState(str, Enum):
     completed = "completed"  #: The task has exited with exit code 0, or the task has exhausted its retry limit, or the Batch service was unable to start the task due to task preparation errors (such as resource file download failures).
 
 
-class TaskCountValidationStatus(str, Enum):
-
-    validated = "validated"  #: The Batch service has validated the state counts against the task states as reported in the List Tasks API.
-    unvalidated = "unvalidated"  #: The Batch service has not been able to check state counts against the task states as reported in the List Tasks API. The validationStatus may be unvalidated if the job contains more than 200,000 tasks.
-
-
 class PoolState(str, Enum):
 
     active = "active"  #: The pool is available to run tasks subject to the availability of compute nodes.

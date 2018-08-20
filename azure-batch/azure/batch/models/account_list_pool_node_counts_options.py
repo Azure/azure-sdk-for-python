@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class AccountListPoolNodeCountsOptions(Model):
     """Additional parameters for list_pool_node_counts operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      Default value: 10 .

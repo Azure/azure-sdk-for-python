@@ -30,10 +30,6 @@ class TaskCounts(Model):
     :param failed: Required. The number of tasks which failed. A task fails if
      its result (found in the executionInfo property) is 'failure'.
     :type failed: int
-    :param validation_status: Required. Whether the task counts have been
-     validated. Possible values include: 'validated', 'unvalidated'
-    :type validation_status: str or
-     ~azure.batch.models.TaskCountValidationStatus
     """
 
     _validation = {
@@ -42,7 +38,6 @@ class TaskCounts(Model):
         'completed': {'required': True},
         'succeeded': {'required': True},
         'failed': {'required': True},
-        'validation_status': {'required': True},
     }
 
     _attribute_map = {
@@ -51,7 +46,6 @@ class TaskCounts(Model):
         'completed': {'key': 'completed', 'type': 'int'},
         'succeeded': {'key': 'succeeded', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
-        'validation_status': {'key': 'validationStatus', 'type': 'TaskCountValidationStatus'},
     }
 
     def __init__(self, **kwargs):
@@ -61,4 +55,3 @@ class TaskCounts(Model):
         self.completed = kwargs.get('completed', None)
         self.succeeded = kwargs.get('succeeded', None)
         self.failed = kwargs.get('failed', None)
-        self.validation_status = kwargs.get('validation_status', None)

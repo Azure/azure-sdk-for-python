@@ -21,7 +21,7 @@ class ContainerConfiguration(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Required. The container technology to be used.  Default value:
-     "docker" .
+     "dockerCompatible" .
     :vartype type: str
     :param container_image_names: The collection of container image names.
      This is the full image reference, as would be specified to "docker pull".
@@ -45,7 +45,7 @@ class ContainerConfiguration(Model):
         'container_registries': {'key': 'containerRegistries', 'type': '[ContainerRegistry]'},
     }
 
-    type = "docker"
+    type = "dockerCompatible"
 
     def __init__(self, *, container_image_names=None, container_registries=None, **kwargs) -> None:
         super(ContainerConfiguration, self).__init__(**kwargs)

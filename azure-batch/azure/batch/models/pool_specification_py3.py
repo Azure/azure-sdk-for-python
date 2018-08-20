@@ -23,18 +23,9 @@ class PoolSpecification(Model):
     :type display_name: str
     :param vm_size: Required. The size of the virtual machines in the pool.
      All virtual machines in a pool are the same size. For information about
-     available sizes of virtual machines for Cloud Services pools (pools
-     created with cloudServiceConfiguration), see Sizes for Cloud Services
-     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
-     A2V2. For information about available VM sizes for pools using images from
-     the Virtual Machines Marketplace (pools created with
-     virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
-     or Sizes for Virtual Machines (Windows)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/).
-     Batch supports all Azure VM sizes except STANDARD_A0 and those with
-     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
+     available sizes of virtual machines in pools, see Choose a VM size for
+     compute nodes in an Azure Batch pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param cloud_service_configuration: The cloud service configuration for
      the pool. This property must be specified if the pool needs to be created
@@ -131,7 +122,9 @@ class PoolSpecification(Model):
      service will make available on each compute node in the pool. The list of
      application licenses must be a subset of available Batch service
      application licenses. If a license is requested which is not supported,
-     pool creation will fail.
+     pool creation will fail. The permitted licenses available on the pool are
+     'maya', 'vray', '3dsmax', 'arnold'. An additional charge applies for each
+     application license added to the pool.
     :type application_licenses: list[str]
     :param user_accounts: The list of user accounts to be created on each node
      in the pool.

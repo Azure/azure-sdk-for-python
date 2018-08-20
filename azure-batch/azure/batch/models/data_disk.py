@@ -23,7 +23,7 @@ class DataDisk(Model):
      distinct lun.
     :type lun: int
     :param caching: The type of caching to be enabled for the data disks. The
-     default value for caching is none. For information about the caching
+     default value for caching is readwrite. For information about the caching
      options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
