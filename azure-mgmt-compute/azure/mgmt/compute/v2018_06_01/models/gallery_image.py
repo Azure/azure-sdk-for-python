@@ -39,19 +39,19 @@ class GalleryImage(Resource):
     :type privacy_statement_uri: str
     :param release_note_uri: The release note uri.
     :type release_note_uri: str
-    :param os_type: This property allows you to specify the type of the OS
-     that is included in the disk if creating a VM from user-image or a
+    :param os_type: Required. This property allows you to specify the type of
+     the OS that is included in the disk if creating a VM from user-image or a
      specialized VHD. <br><br> Possible values are: <br><br> **Windows**
      <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemTypes
-    :param os_state: The OS State. Possible values include: 'Generalized',
-     'Specialized'
+    :param os_state: Required. The OS State. Possible values include:
+     'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemStateTypes
     :param end_of_life_date: The end of life of this gallery image.
     :type end_of_life_date: datetime
-    :param identifier:
+    :param identifier: Required.
     :type identifier:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageIdentifier
     :param recommended:
@@ -75,6 +75,9 @@ class GalleryImage(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'os_type': {'required': True},
+        'os_state': {'required': True},
+        'identifier': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 

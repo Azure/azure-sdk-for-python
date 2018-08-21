@@ -17,21 +17,20 @@ class OutputDirectory(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The name for the output directory. The path of the
-     output directory will be available as a value of an environment variable
-     with AZ_BATCHAI_OUTPUT_<id> name, where <id> is the value of id attribute.
+    :param id: Required. ID. The ID of the output directory. The job can use
+     AZ_BATCHAI_OUTPUT_<id> environment variale to find the directory path,
+     where <id> is the value of id attribute.
     :type id: str
-    :param path_prefix: Required. The prefix path where the output directory
-     will be created. NOTE: This is an absolute path to prefix. E.g.
-     $AZ_BATCHAI_MOUNT_ROOT/MyNFS/MyLogs. You can find the full path to the
+    :param path_prefix: Required. Path prefix. The prefix path where the
+     output directory will be created. Note, this is an absolute path to
+     prefix. E.g. $AZ_BATCHAI_MOUNT_ROOT/MyNFS/MyLogs. The full path to the
      output directory by combining pathPrefix, jobOutputDirectoryPathSegment
      (reported by get job) and pathSuffix.
     :type path_prefix: str
-    :param path_suffix: The suffix path where the output directory will be
-     created. The suffix path where the output directory will be created. E.g.
-     models. You can find the full path to the output directory by combining
-     pathPrefix, jobOutputDirectoryPathSegment (reported by get job) and
-     pathSuffix.
+    :param path_suffix: Path suffix. The suffix path where the output
+     directory will be created. E.g. models. You can find the full path to the
+     output directory by combining pathPrefix, jobOutputDirectoryPathSegment
+     (reported by get job) and pathSuffix.
     :type path_suffix: str
     """
 

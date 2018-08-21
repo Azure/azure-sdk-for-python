@@ -13,21 +13,23 @@ from msrest.serialization import Model
 
 
 class AutoScaleSettings(Model):
-    """The system automatically scales the cluster up and down (within
-    minimumNodeCount and maximumNodeCount) based on the pending and running
-    jobs on the cluster.
+    """Auto-scale settings for the cluster. The system automatically scales the
+    cluster up and down (within minimumNodeCount and maximumNodeCount) based on
+    the number of queued and running jobs assigned to the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param minimum_node_count: Required. Specifies the minimum number of
-     compute nodes the cluster can have.
+    :param minimum_node_count: Required. Minimum node count. The minimum
+     number of compute nodes the Batch AI service will try to allocate for the
+     cluster. Note, the actual number of nodes can be less than the specified
+     value if the subscription has not enough quota to fulfill the request.
     :type minimum_node_count: int
-    :param maximum_node_count: Required. Specifies the maximum number of
-     compute nodes the cluster can have.
+    :param maximum_node_count: Required. Maximum node count. The maximum
+     number of compute nodes the cluster can have.
     :type maximum_node_count: int
-    :param initial_node_count: Specifies the number of compute nodes to
-     allocate on cluster creation. Note that this value is used only during
-     cluster creation.  Default value: 0 .
+    :param initial_node_count: Initial node count. The number of compute nodes
+     to allocate on cluster creation. Note that this value is used only during
+     cluster creation. Default: 0. Default value: 0 .
     :type initial_node_count: int
     """
 

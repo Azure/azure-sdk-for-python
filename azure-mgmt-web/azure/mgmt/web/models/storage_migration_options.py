@@ -18,6 +18,8 @@ class StorageMigrationOptions(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,9 +28,10 @@ class StorageMigrationOptions(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param azurefiles_connection_string: AzureFiles connection string.
+    :param azurefiles_connection_string: Required. AzureFiles connection
+     string.
     :type azurefiles_connection_string: str
-    :param azurefiles_share: AzureFiles share.
+    :param azurefiles_share: Required. AzureFiles share.
     :type azurefiles_share: str
     :param switch_site_after_migration: <code>true</code>if the app should be
      switched over; otherwise, <code>false</code>. Default value: False .
@@ -58,9 +61,9 @@ class StorageMigrationOptions(ProxyOnlyResource):
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, azurefiles_connection_string, azurefiles_share, kind=None, switch_site_after_migration=False, block_write_access_to_site=False):
-        super(StorageMigrationOptions, self).__init__(kind=kind)
-        self.azurefiles_connection_string = azurefiles_connection_string
-        self.azurefiles_share = azurefiles_share
-        self.switch_site_after_migration = switch_site_after_migration
-        self.block_write_access_to_site = block_write_access_to_site
+    def __init__(self, **kwargs):
+        super(StorageMigrationOptions, self).__init__(**kwargs)
+        self.azurefiles_connection_string = kwargs.get('azurefiles_connection_string', None)
+        self.azurefiles_share = kwargs.get('azurefiles_share', None)
+        self.switch_site_after_migration = kwargs.get('switch_site_after_migration', False)
+        self.block_write_access_to_site = kwargs.get('block_write_access_to_site', False)

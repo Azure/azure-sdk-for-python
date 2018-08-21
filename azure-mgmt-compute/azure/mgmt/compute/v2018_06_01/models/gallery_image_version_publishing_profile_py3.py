@@ -18,9 +18,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param regions: The regions where the artifact is going to be published.
     :type regions: list[str]
-    :param source:
+    :param source: Required.
     :type source: ~azure.mgmt.compute.v2018_06_01.models.GalleryArtifactSource
     :param scale_tier: The scale tier of the gallery image version. Valid
      values are 'S30' and 'S100'. Possible values include: 'S30', 'S100'
@@ -37,6 +39,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     """
 
     _validation = {
+        'source': {'required': True},
         'published_date': {'readonly': True},
     }
 
@@ -49,7 +52,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, regions=None, source=None, scale_tier=None, exclude_from_latest: bool=None, end_of_life_date=None, **kwargs) -> None:
+    def __init__(self, *, source, regions=None, scale_tier=None, exclude_from_latest: bool=None, end_of_life_date=None, **kwargs) -> None:
         super(GalleryImageVersionPublishingProfile, self).__init__(regions=regions, source=source, **kwargs)
         self.scale_tier = scale_tier
         self.exclude_from_latest = exclude_from_latest

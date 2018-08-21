@@ -37,8 +37,8 @@ class HostingEnvironmentProfile(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(HostingEnvironmentProfile, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(HostingEnvironmentProfile, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None

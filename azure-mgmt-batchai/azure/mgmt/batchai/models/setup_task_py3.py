@@ -21,29 +21,29 @@ class SetupTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. Command line to be executed on each
-     cluster's node after it being allocated or rebooted. Command line to be
+    :param command_line: Required. Command line. The command line to be
      executed on each cluster's node after it being allocated or rebooted. The
      command is executed in a bash subshell as a root.
     :type command_line: str
-    :param environment_variables: Collection of environment variables to be
-     set for setup task.
+    :param environment_variables: Environment variables. A collection of user
+     defined environment variables to be set for setup task.
     :type environment_variables:
      list[~azure.mgmt.batchai.models.EnvironmentVariable]
-    :param secrets: Collection of environment variables with secret values to
-     be set for setup task. Server will never report values of these variables
-     back.
+    :param secrets: Secrets. A collection of user defined environment
+     variables with secret values to be set for the setup task. Server will
+     never report values of these variables back.
     :type secrets:
      list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
-    :param std_out_err_path_prefix: Required. The prefix of a path where the
-     Batch AI service will upload the stdout and stderr of the setup task.
+    :param std_out_err_path_prefix: Required. Output path prefix. The prefix
+     of a path where the Batch AI service will upload the stdout, stderr and
+     execution log of the setup task.
     :type std_out_err_path_prefix: str
-    :ivar std_out_err_path_suffix: A path segment appended by Batch AI to
-     stdOutErrPathPrefix to form a path where stdout and stderr of the setup
-     task will be uploaded. Batch AI creates the setup task output directories
-     under an unique path to avoid conflicts between different clusters. You
-     can concatinate stdOutErrPathPrefix and stdOutErrPathSuffix to get the
-     full path to the output directory.
+    :ivar std_out_err_path_suffix: Output path suffix. A path segment appended
+     by Batch AI to stdOutErrPathPrefix to form a path where stdout, stderr and
+     execution log of the setup task will be uploaded. Batch AI creates the
+     setup task output directories under an unique path to avoid conflicts
+     between different clusters. The full path can be obtained by concatenation
+     of stdOutErrPathPrefix and stdOutErrPathSuffix.
     :vartype std_out_err_path_suffix: str
     """
 

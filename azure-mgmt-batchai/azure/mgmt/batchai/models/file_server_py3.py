@@ -13,7 +13,7 @@ from .proxy_resource_py3 import ProxyResource
 
 
 class FileServer(ProxyResource):
-    """Contains information about the File Server.
+    """File Server information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,33 +24,32 @@ class FileServer(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param vm_size: The size of the virtual machine of the File Server. For
-     information about available VM sizes for File Server from the Virtual
-     Machines Marketplace, see Sizes for Virtual Machines (Linux).
+    :param vm_size: VM size. VM size of the File Server.
     :type vm_size: str
-    :param ssh_configuration: SSH settings for the File Server.
+    :param ssh_configuration: SSH configuration. SSH configuration for
+     accessing the File Server node.
     :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
-    :param data_disks: Settings for the data disk which would be created for
-     the File Server.
+    :param data_disks: Data disks configuration. Information about disks
+     attached to File Server VM.
     :type data_disks: ~azure.mgmt.batchai.models.DataDisks
-    :param subnet: Specifies the identifier of the subnet.
+    :param subnet: Subnet. File Server virtual network subnet resource ID.
     :type subnet: ~azure.mgmt.batchai.models.ResourceId
-    :ivar mount_settings: Details of the File Server.
+    :ivar mount_settings: Mount settings. File Server mount settings.
     :vartype mount_settings: ~azure.mgmt.batchai.models.MountSettings
-    :ivar provisioning_state_transition_time: Time when the status was
-     changed.
+    :ivar provisioning_state_transition_time: Provisioning State Transition
+     time. Time when the provisioning state was changed.
     :vartype provisioning_state_transition_time: datetime
-    :ivar creation_time: Time when the FileServer was created.
+    :ivar creation_time: Creation time. Time when the FileServer was created.
     :vartype creation_time: datetime
-    :ivar provisioning_state: Specifies the provisioning state of the File
-     Server. Possible values: creating - The File Server is getting created.
-     updating - The File Server creation has been accepted and it is getting
-     updated. deleting - The user has requested that the File Server be
-     deleted, and it is in the process of being deleted. failed - The File
-     Server creation has failed with the specified errorCode. Details about the
-     error code are specified in the message field. succeeded - The File Server
-     creation has succeeded. Possible values include: 'creating', 'updating',
-     'deleting', 'succeeded', 'failed'
+    :ivar provisioning_state: Provisioning state. Provisioning state of the
+     File Server. Possible values: creating - The File Server is getting
+     created; updating - The File Server creation has been accepted and it is
+     getting updated; deleting - The user has requested that the File Server be
+     deleted, and it is in the process of being deleted; failed - The File
+     Server creation has failed with the specified error code. Details about
+     the error code are specified in the message field; succeeded - The File
+     Server creation has succeeded. Possible values include: 'creating',
+     'updating', 'deleting', 'succeeded', 'failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.batchai.models.FileServerProvisioningState
     """

@@ -18,17 +18,20 @@ class NodeStateCounts(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar idle_node_count: Number of compute nodes in idle state.
+    :ivar idle_node_count: Idle node count. Number of compute nodes in idle
+     state.
     :vartype idle_node_count: int
-    :ivar running_node_count: Number of compute nodes which are running jobs.
+    :ivar running_node_count: Running node count. Number of compute nodes
+     which are running jobs.
     :vartype running_node_count: int
-    :ivar preparing_node_count: Number of compute nodes which are being
-     prepared.
+    :ivar preparing_node_count: Preparing node count. Number of compute nodes
+     which are being prepared.
     :vartype preparing_node_count: int
-    :ivar unusable_node_count: Number of compute nodes which are unusable.
+    :ivar unusable_node_count: Unusable node count. Number of compute nodes
+     which are in unusable state.
     :vartype unusable_node_count: int
-    :ivar leaving_node_count: Number of compute nodes which are leaving the
-     cluster.
+    :ivar leaving_node_count: Leaving node count. Number of compute nodes
+     which are leaving the cluster.
     :vartype leaving_node_count: int
     """
 

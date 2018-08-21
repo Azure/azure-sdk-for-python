@@ -27,8 +27,8 @@ class TriggeredJobHistory(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param triggered_job_runs: List of triggered web job runs.
-    :type triggered_job_runs: list[~azure.mgmt.web.models.TriggeredJobRun]
+    :param runs: List of triggered web job runs.
+    :type runs: list[~azure.mgmt.web.models.TriggeredJobRun]
     """
 
     _validation = {
@@ -42,9 +42,9 @@ class TriggeredJobHistory(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'triggered_job_runs': {'key': 'properties.triggeredJobRuns', 'type': '[TriggeredJobRun]'},
+        'runs': {'key': 'properties.runs', 'type': '[TriggeredJobRun]'},
     }
 
-    def __init__(self, kind=None, triggered_job_runs=None):
-        super(TriggeredJobHistory, self).__init__(kind=kind)
-        self.triggered_job_runs = triggered_job_runs
+    def __init__(self, **kwargs):
+        super(TriggeredJobHistory, self).__init__(**kwargs)
+        self.runs = kwargs.get('runs', None)

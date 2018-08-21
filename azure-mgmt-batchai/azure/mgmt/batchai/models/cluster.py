@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class Cluster(ProxyResource):
-    """Contains information about a Cluster.
+    """Information about a Cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,67 +24,64 @@ class Cluster(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param vm_size: The size of the virtual machines in the cluster. All
-     virtual machines in a cluster are the same size. For information about
-     available VM sizes for clusters using images from the Virtual Machines
-     Marketplace (see Sizes for Virtual Machines (Linux) or Sizes for Virtual
-     Machines (Windows). Batch AI service supports all Azure VM sizes except
-     STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series).
+    :param vm_size: VM size. The size of the virtual machines in the cluster.
+     All nodes in a cluster have the same VM size.
     :type vm_size: str
-    :param vm_priority: dedicated or lowpriority. The default value is
-     dedicated. The node can get preempted while the task is running if
-     lowpriority is choosen. This is best suited if the workload is
-     checkpointing and can be restarted. Possible values include: 'dedicated',
-     'lowpriority'. Default value: "dedicated" .
+    :param vm_priority: VM priority. VM priority of cluster nodes. Possible
+     values include: 'dedicated', 'lowpriority'. Default value: "dedicated" .
     :type vm_priority: str or ~azure.mgmt.batchai.models.VmPriority
-    :param scale_settings: Desired scale for the Cluster.
+    :param scale_settings: Scale settings. Scale settings of the cluster.
     :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
-    :param virtual_machine_configuration: Settings for OS image and mounted
-     data volumes.
+    :param virtual_machine_configuration: VM configuration. Virtual machine
+     configuration (OS image) of the compute nodes. All nodes in a cluster have
+     the same OS image configuration.
     :type virtual_machine_configuration:
      ~azure.mgmt.batchai.models.VirtualMachineConfiguration
-    :param node_setup: Setup to be done on all compute nodes in the Cluster.
+    :param node_setup: Node setup. Setup (mount file systems, performance
+     counters settings and custom setup task) to be performed on each compute
+     node in the cluster.
     :type node_setup: ~azure.mgmt.batchai.models.NodeSetup
-    :param user_account_settings: Settings for user account of compute nodes.
+    :param user_account_settings: User account settings. Administrator user
+     account settings which can be used to SSH to compute nodes.
     :type user_account_settings:
      ~azure.mgmt.batchai.models.UserAccountSettings
-    :param subnet: Specifies the identifier of the subnet.
+    :param subnet: Subnet. Virtual network subnet resource ID the cluster
+     nodes belong to.
     :type subnet: ~azure.mgmt.batchai.models.ResourceId
-    :ivar creation_time: The creation time of the cluster.
+    :ivar creation_time: Creation time. The time when the cluster was created.
     :vartype creation_time: datetime
-    :ivar provisioning_state: Specifies the provisioning state of the cluster.
-     Possible value are: creating - Specifies that the cluster is being
-     created. succeeded - Specifies that the cluster has been created
+    :ivar provisioning_state: Provisioning state. Provisioning state of the
+     cluster. Possible value are: creating - Specifies that the cluster is
+     being created. succeeded - Specifies that the cluster has been created
      successfully. failed - Specifies that the cluster creation has failed.
      deleting - Specifies that the cluster is being deleted. Possible values
      include: 'creating', 'succeeded', 'failed', 'deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batchai.models.ProvisioningState
-    :ivar provisioning_state_transition_time: The provisioning state
-     transition time of the cluster.
+    :ivar provisioning_state_transition_time: Provisioning State Transition
+     time. Time when the provisioning state was changed.
     :vartype provisioning_state_transition_time: datetime
-    :ivar allocation_state: Indicates whether the cluster is resizing.
-     Possible values are: steady and resizing. steady state indicates that the
-     cluster is not resizing. There are no changes to the number of compute
-     nodes in the cluster in progress. A cluster enters this state when it is
-     created and when no operations are being performed on the cluster to
-     change the number of compute nodes. resizing state indicates that the
-     cluster is resizing; that is, compute nodes are being added to or removed
-     from the cluster. Possible values include: 'steady', 'resizing'
+    :ivar allocation_state: Allocation state. Allocation state of the cluster.
+     Possible values are: steady - Indicates that the cluster is not resizing.
+     There are no changes to the number of compute nodes in the cluster in
+     progress. A cluster enters this state when it is created and when no
+     operations are being performed on the cluster to change the number of
+     compute nodes. resizing - Indicates that the cluster is resizing; that is,
+     compute nodes are being added to or removed from the cluster. Possible
+     values include: 'steady', 'resizing'
     :vartype allocation_state: str or
      ~azure.mgmt.batchai.models.AllocationState
-    :ivar allocation_state_transition_time: The time at which the cluster
-     entered its current allocation state.
+    :ivar allocation_state_transition_time: Allocation state transition time.
+     The time at which the cluster entered its current allocation state.
     :vartype allocation_state_transition_time: datetime
-    :ivar errors: Contains details of various errors on the cluster including
-     resize and node setup task. This element contains all the errors
-     encountered by various compute nodes during node setup.
+    :ivar errors: Errors. Collection of errors encountered by various compute
+     nodes during node setup.
     :vartype errors: list[~azure.mgmt.batchai.models.BatchAIError]
-    :ivar current_node_count: The number of compute nodes currently assigned
-     to the cluster.
+    :ivar current_node_count: Current node count. The number of compute nodes
+     currently assigned to the cluster.
     :vartype current_node_count: int
-    :ivar node_state_counts: Counts of various node states on the cluster.
+    :ivar node_state_counts: Node state counts. Counts of various node states
+     on the cluster.
     :vartype node_state_counts: ~azure.mgmt.batchai.models.NodeStateCounts
     """
 

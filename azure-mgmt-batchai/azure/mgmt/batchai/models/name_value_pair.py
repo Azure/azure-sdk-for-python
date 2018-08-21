@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class NameValuePair(Model):
-    """Represents a name-value pair.
+    """Name-value pair.
 
-    :param name: The name in the name-value pair.
+    :param name: Name. The name in the name-value pair.
     :type name: str
-    :param value: The value in the name-value pair.
+    :param value: Value. The value in the name-value pair.
     :type value: str
     """
 
