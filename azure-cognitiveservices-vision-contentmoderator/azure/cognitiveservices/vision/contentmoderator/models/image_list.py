@@ -22,14 +22,14 @@ class ImageList(Model):
     :param description: Description for image list.
     :type description: str
     :param metadata: Image List Metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'int'},
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': '{object}'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
     def __init__(self, id=None, name=None, description=None, metadata=None):

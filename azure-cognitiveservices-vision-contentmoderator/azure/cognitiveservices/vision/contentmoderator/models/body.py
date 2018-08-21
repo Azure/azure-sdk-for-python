@@ -20,13 +20,13 @@ class Body(Model):
     :param description: Description of the list.
     :type description: str
     :param metadata: Metadata of the list.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': '{object}'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
     def __init__(self, name=None, description=None, metadata=None):
