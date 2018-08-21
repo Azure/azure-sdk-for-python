@@ -31,6 +31,7 @@ from .operations.recommendations_operations import RecommendationsOperations
 from .operations.web_apps_operations import WebAppsOperations
 from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
 from .operations.app_service_plans_operations import AppServicePlansOperations
+from .operations.resource_health_metadata_operations import ResourceHealthMetadataOperations
 from . import models
 
 
@@ -99,6 +100,8 @@ class WebSiteManagementClient(SDKClient):
     :vartype app_service_environments: azure.mgmt.web.operations.AppServiceEnvironmentsOperations
     :ivar app_service_plans: AppServicePlans operations
     :vartype app_service_plans: azure.mgmt.web.operations.AppServicePlansOperations
+    :ivar resource_health_metadata: ResourceHealthMetadata operations
+    :vartype resource_health_metadata: azure.mgmt.web.operations.ResourceHealthMetadataOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -145,6 +148,8 @@ class WebSiteManagementClient(SDKClient):
         self.app_service_environments = AppServiceEnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.app_service_plans = AppServicePlansOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_health_metadata = ResourceHealthMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def get_publishing_user(

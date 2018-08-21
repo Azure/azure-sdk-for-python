@@ -229,6 +229,7 @@ try:
     from .worker_pool_resource_py3 import WorkerPoolResource
     from .app_service_plan_patch_resource_py3 import AppServicePlanPatchResource
     from .hybrid_connection_limits_py3 import HybridConnectionLimits
+    from .resource_health_metadata_py3 import ResourceHealthMetadata
 except (SyntaxError, ImportError):
     from .app_service_certificate import AppServiceCertificate
     from .app_service_certificate_resource import AppServiceCertificateResource
@@ -449,6 +450,7 @@ except (SyntaxError, ImportError):
     from .worker_pool_resource import WorkerPoolResource
     from .app_service_plan_patch_resource import AppServicePlanPatchResource
     from .hybrid_connection_limits import HybridConnectionLimits
+    from .resource_health_metadata import ResourceHealthMetadata
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
 from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
 from .csm_operation_description_paged import CsmOperationDescriptionPaged
@@ -501,6 +503,7 @@ from .usage_paged import UsagePaged
 from .app_service_plan_paged import AppServicePlanPaged
 from .str_paged import StrPaged
 from .hybrid_connection_paged import HybridConnectionPaged
+from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .web_site_management_client_enums import (
     KeyVaultSecretStatus,
     CertificateProductType,
@@ -787,6 +790,7 @@ __all__ = [
     'WorkerPoolResource',
     'AppServicePlanPatchResource',
     'HybridConnectionLimits',
+    'ResourceHealthMetadata',
     'AppServiceCertificateOrderPaged',
     'AppServiceCertificateResourcePaged',
     'CsmOperationDescriptionPaged',
@@ -839,6 +843,7 @@ __all__ = [
     'AppServicePlanPaged',
     'StrPaged',
     'HybridConnectionPaged',
+    'ResourceHealthMetadataPaged',
     'KeyVaultSecretStatus',
     'CertificateProductType',
     'ProvisioningState',
