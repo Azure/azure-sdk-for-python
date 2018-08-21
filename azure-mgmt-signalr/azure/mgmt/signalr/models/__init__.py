@@ -11,6 +11,7 @@
 
 try:
     from .operation_display_py3 import OperationDisplay
+    from .dimension_py3 import Dimension
     from .metric_specification_py3 import MetricSpecification
     from .service_specification_py3 import ServiceSpecification
     from .operation_properties_py3 import OperationProperties
@@ -30,6 +31,7 @@ try:
     from .signal_rusage_py3 import SignalRUsage
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
+    from .dimension import Dimension
     from .metric_specification import MetricSpecification
     from .service_specification import ServiceSpecification
     from .operation_properties import OperationProperties
@@ -58,6 +60,7 @@ from .signal_rmanagement_client_enums import (
 
 __all__ = [
     'OperationDisplay',
+    'Dimension',
     'MetricSpecification',
     'ServiceSpecification',
     'OperationProperties',
