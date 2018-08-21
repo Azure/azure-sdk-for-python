@@ -11,6 +11,7 @@
 
 from .objects_operations import ObjectsOperations
 from .applications_operations import ApplicationsOperations
+from .deleted_applications_operations import DeletedApplicationsOperations
 from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
 from .users_operations import UsersOperations
@@ -19,6 +20,7 @@ from .domains_operations import DomainsOperations
 __all__ = [
     'ObjectsOperations',
     'ApplicationsOperations',
+    'DeletedApplicationsOperations',
     'GroupsOperations',
     'ServicePrincipalsOperations',
     'UsersOperations',
