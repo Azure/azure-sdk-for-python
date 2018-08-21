@@ -402,6 +402,7 @@ class SelfHostedIntegrationRuntimeNodeStatus(str, Enum):
 
 class IntegrationRuntimeUpdateResult(str, Enum):
 
+    none = "None"
     succeed = "Succeed"
     fail = "Fail"
 
