@@ -95,6 +95,7 @@ class ReservedResourceType(str, Enum):
     virtual_machines = "VirtualMachines"
     sql_databases = "SqlDatabases"
     suse_linux = "SuseLinux"
+    cosmos_db = "CosmosDb"
 
 
 class InstanceFlexibility(str, Enum):
