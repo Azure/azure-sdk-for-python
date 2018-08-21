@@ -28,6 +28,8 @@ class BackupRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
+    :param backup_name: Name of the backup.
+    :type backup_name: str
     :param enabled: True if the backup schedule is enabled (must be included
      in that case), false if the backup schedule should be disabled.
     :type enabled: bool
@@ -52,6 +54,7 @@ class BackupRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'backup_name': {'key': 'properties.backupName', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'backup_schedule': {'key': 'properties.backupSchedule', 'type': 'BackupSchedule'},
@@ -60,6 +63,7 @@ class BackupRequest(ProxyOnlyResource):
 
     def __init__(self, **kwargs):
         super(BackupRequest, self).__init__(**kwargs)
+        self.backup_name = kwargs.get('backup_name', None)
         self.enabled = kwargs.get('enabled', None)
         self.storage_account_url = kwargs.get('storage_account_url', None)
         self.backup_schedule = kwargs.get('backup_schedule', None)
