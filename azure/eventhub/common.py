@@ -45,7 +45,7 @@ def _error_handler(error):
 class EventData(object):
     """
     The EventData class is a holder of event content.
-    Acts as a wrapper to an ~uamqp.message.Message object.
+    Acts as a wrapper to an uamqp.message.Message object.
     """
 
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
@@ -186,7 +186,7 @@ class EventData(object):
         """
         The body of the event data object.
 
-        :rtype: bytes or generator[bytes]
+        :rtype: bytes or Generator[bytes]
         """
         return self.message.get_data()
 
@@ -194,6 +194,7 @@ class EventData(object):
 class Offset(object):
     """
     The offset (position or timestamp) where a receiver starts. Examples:
+
     Beginning of the event stream:
       >>> offset = Offset("-1")
     End of the event stream:
@@ -238,6 +239,14 @@ class Offset(object):
 class EventHubError(Exception):
     """
     Represents an error happened in the client.
+
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar error: The error condition, if available.
+    :vartype error: str
+    :ivar details: The error details, if included in the
+     service response.
+    :vartype details: dict[str, str]
     """
 
     def __init__(self, message, details=None):

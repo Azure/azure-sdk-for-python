@@ -183,7 +183,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -214,7 +214,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -249,7 +249,7 @@ class EventHubClientAsync(EventHubClient):
         :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
-        :rtype: ~azure.eventhub._async.sender_async.SenderAsync
+        :rtype: ~azure.eventhub.async_ops.sender_async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:

@@ -235,7 +235,7 @@ class Sender:
         :type event_data: ~azure.eventhub.common.EventData
         :param callback: Callback to be run once the message has been send.
          This must be a function that accepts two arguments.
-        :type callback: func[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
+        :type callback: callable[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
         """
         if self.error:
             raise self.error

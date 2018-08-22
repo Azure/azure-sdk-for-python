@@ -109,7 +109,7 @@ class EventHubClient(object):
          Additionally the following keys may also be present: 'username', 'password'.
         :type http_proxy: dict[str, Any]
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
@@ -142,6 +142,7 @@ class EventHubClient(object):
         :type conn_str: str
         :param eventhub: The name of the EventHub, if the EntityName is
          not included in the connection string.
+        :type eventhub: str
         :param debug: Whether to output network trace logs to the logger. Default
          is `False`.
         :type debug: bool
@@ -150,7 +151,7 @@ class EventHubClient(object):
          Additionally the following keys may also be present: 'username', 'password'.
         :type http_proxy: dict[str, Any]
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
         """
         address, policy, key, entity = _parse_conn_str(conn_str)
@@ -173,7 +174,7 @@ class EventHubClient(object):
          Additionally the following keys may also be present: 'username', 'password'.
         :type http_proxy: dict[str, Any]
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
         """
         address, policy, key, _ = _parse_conn_str(conn_str)
@@ -297,11 +298,11 @@ class EventHubClient(object):
         """
         Get details on the specified EventHub.
         Keys in the details dictionary include:
-         -'name'
-         -'type'
-         -'created_at'
-         -'partition_count'
-         -'partition_ids'
+            -'name'
+            -'type'
+            -'created_at'
+            -'partition_count'
+            -'partition_ids'
 
         :rtype: dict
         """
@@ -394,8 +395,7 @@ class EventHubClient(object):
 
     def add_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
         """
-        Add a sender to the client to send ~azure.eventhub.common.EventData object
-        to an EventHub.
+        Add a sender to the client to EventData object to an EventHub.
 
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via

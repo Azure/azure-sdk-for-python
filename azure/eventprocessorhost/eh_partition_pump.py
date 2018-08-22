@@ -36,7 +36,7 @@ class EventHubPartitionPump(PartitionPump):
                 _opened_ok = True
             except Exception as err:  # pylint: disable=broad-except
                 _logger.warning(
-                    "%r,%r PartitionPumpWarning: Failure creating client or receiver, "
+                    "%r,%r PartitionPumpWarning: Failure creating client or receiver, " +
                     "retrying: %r", self.host.guid, self.partition_context.partition_id, err)
                 last_exception = err
                 _retry_count += 1
@@ -91,7 +91,7 @@ class EventHubPartitionPump(PartitionPump):
 
     async def on_closing_async(self, reason):
         """
-        Overides partition pump on cleasing.
+        Overides partition pump on closing.
 
         :param reason: The reason for the shutdown.
         :type reason: str
