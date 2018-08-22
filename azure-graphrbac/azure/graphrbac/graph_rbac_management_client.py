@@ -19,6 +19,7 @@ from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
 from .operations.domains_operations import DomainsOperations
+from .operations.oauth2_operations import OAuth2Operations
 from . import models
 
 
@@ -72,6 +73,8 @@ class GraphRbacManagementClient(object):
     :vartype users: azure.graphrbac.operations.UsersOperations
     :ivar domains: Domains operations
     :vartype domains: azure.graphrbac.operations.DomainsOperations
+    :ivar oauth2: OAuth2 operations
+    :vartype oauth2: azure.graphrbac.operations.OAuth2Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -103,4 +106,6 @@ class GraphRbacManagementClient(object):
         self.users = UsersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.oauth2 = OAuth2Operations(
             self._client, self.config, self._serialize, self._deserialize)
