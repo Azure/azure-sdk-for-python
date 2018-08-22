@@ -3,7 +3,7 @@
 Release History
 ===============
 
-1.2.0 (2018-08-27)
+1.2.0 (2018-08-28)
 ++++++++++++++++++
 
 - Event Schemas for new events (IotHub DeviceConnected and DeviceDisconnected events, Resource events related to actions), and breaking changes to the schema for IotHub DeviceCreated event and IotHub DeviceDeleted event.
