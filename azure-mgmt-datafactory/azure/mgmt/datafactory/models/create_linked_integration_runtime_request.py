@@ -17,14 +17,14 @@ class CreateLinkedIntegrationRuntimeRequest(Model):
 
     :param name: The name of the linked integration runtime.
     :type name: str
-    :param subscription_id: The subscription ID for which the linked
-     integration runtime belong to.
+    :param subscription_id: The ID of the subscription that the linked
+     integration runtime belongs to.
     :type subscription_id: str
-    :param data_factory_name: The name of the data factory for which the
-     linked integration runtime belong to.
+    :param data_factory_name: The name of the data factory that the linked
+     integration runtime belongs to.
     :type data_factory_name: str
-    :param data_factory_location: The location of the data factory for which
-     the linked integration runtime belong to.
+    :param data_factory_location: The location of the data factory that the
+     linked integration runtime belongs to.
     :type data_factory_location: str
     """
 
