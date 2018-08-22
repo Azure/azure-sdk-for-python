@@ -22,11 +22,8 @@ class UserAccount(Model):
     :type name: str
     :param password: Required. The password for the user account.
     :type password: str
-    :param elevation_level: The elevation level of the user account. nonAdmin
-     - The auto user is a standard user without elevated access. admin - The
-     auto user is a user with elevated access and operates with full
-     Administrator permissions. The default value is nonAdmin. Possible values
-     include: 'nonAdmin', 'admin'
+    :param elevation_level: The elevation level of the user account. The
+     default value is nonAdmin. Possible values include: 'nonAdmin', 'admin'
     :type elevation_level: str or ~azure.batch.models.ElevationLevel
     :param linux_user_configuration: The Linux-specific user configuration for
      the user account. This property is ignored if specified on a Windows pool.
