@@ -41,7 +41,7 @@ class ExitOptions(Model):
         'dependency_action': {'key': 'dependencyAction', 'type': 'DependencyAction'},
     }
 
-    def __init__(self, job_action=None, dependency_action=None):
-        super(ExitOptions, self).__init__()
-        self.job_action = job_action
-        self.dependency_action = dependency_action
+    def __init__(self, **kwargs):
+        super(ExitOptions, self).__init__(**kwargs)
+        self.job_action = kwargs.get('job_action', None)
+        self.dependency_action = kwargs.get('dependency_action', None)
