@@ -107,7 +107,7 @@ class FeatureClient(MultiApiClientMixin, SDKClient):
             from .v2015_12_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def features(self):
         """Instance depends on the API version:
