@@ -26,6 +26,7 @@ from .activity_operations import ActivityOperations
 from .module_operations import ModuleOperations
 from .object_data_types_operations import ObjectDataTypesOperations
 from .fields_operations import FieldsOperations
+from .python2_package_operations import Python2PackageOperations
 from .runbook_draft_operations import RunbookDraftOperations
 from .runbook_operations import RunbookOperations
 from .test_job_streams_operations import TestJobStreamsOperations
@@ -68,6 +69,7 @@ __all__ = [
     'ModuleOperations',
     'ObjectDataTypesOperations',
     'FieldsOperations',
+    'Python2PackageOperations',
     'RunbookDraftOperations',
     'RunbookOperations',
     'TestJobStreamsOperations',

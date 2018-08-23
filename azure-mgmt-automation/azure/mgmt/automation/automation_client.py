@@ -30,6 +30,7 @@ from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
 from .operations.object_data_types_operations import ObjectDataTypesOperations
 from .operations.fields_operations import FieldsOperations
+from .operations.python2_package_operations import Python2PackageOperations
 from .operations.runbook_draft_operations import RunbookDraftOperations
 from .operations.runbook_operations import RunbookOperations
 from .operations.test_job_streams_operations import TestJobStreamsOperations
@@ -136,6 +137,8 @@ class AutomationClient(SDKClient):
     :vartype object_data_types: azure.mgmt.automation.operations.ObjectDataTypesOperations
     :ivar fields: Fields operations
     :vartype fields: azure.mgmt.automation.operations.FieldsOperations
+    :ivar python2_package: Python2Package operations
+    :vartype python2_package: azure.mgmt.automation.operations.Python2PackageOperations
     :ivar runbook_draft: RunbookDraft operations
     :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
     :ivar runbook: Runbook operations
@@ -239,6 +242,8 @@ class AutomationClient(SDKClient):
         self.object_data_types = ObjectDataTypesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.fields = FieldsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.python2_package = Python2PackageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.runbook_draft = RunbookDraftOperations(
             self._client, self.config, self._serialize, self._deserialize)
