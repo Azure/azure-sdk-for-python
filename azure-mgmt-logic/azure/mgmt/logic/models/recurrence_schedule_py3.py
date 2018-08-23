@@ -31,7 +31,7 @@ class RecurrenceSchedule(Model):
     _attribute_map = {
         'minutes': {'key': 'minutes', 'type': '[int]'},
         'hours': {'key': 'hours', 'type': '[int]'},
-        'week_days': {'key': 'weekDays', 'type': '[DaysOfWeek]'},
+        'week_days': {'key': 'weekDays', 'type': '[str]'},
         'month_days': {'key': 'monthDays', 'type': '[int]'},
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
     }

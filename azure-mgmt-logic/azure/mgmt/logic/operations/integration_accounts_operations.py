@@ -23,7 +23,7 @@ class IntegrationAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -33,7 +33,7 @@ class IntegrationAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
@@ -429,7 +429,7 @@ class IntegrationAccountsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'}
 
-    def get_callback_url(
+    def list_callback_url(
             self, resource_group_name, integration_account_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
         """Gets the integration account callback URL.
 
@@ -455,7 +455,7 @@ class IntegrationAccountsOperations(object):
         parameters = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
 
         # Construct URL
-        url = self.get_callback_url.metadata['url']
+        url = self.list_callback_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -500,7 +500,7 @@ class IntegrationAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'}
+    list_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'}
 
     def list_key_vault_keys(
             self, resource_group_name, integration_account_name, key_vault, skip_token=None, custom_headers=None, raw=False, **operation_config):

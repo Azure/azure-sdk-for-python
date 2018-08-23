@@ -28,7 +28,7 @@ class IntegrationAccountAgreementFilter(Model):
     }
 
     _attribute_map = {
-        'agreement_type': {'key': 'agreementType', 'type': 'AgreementType'},
+        'agreement_type': {'key': 'agreementType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

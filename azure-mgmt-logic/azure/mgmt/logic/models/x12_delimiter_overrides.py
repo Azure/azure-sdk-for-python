@@ -56,7 +56,7 @@ class X12DelimiterOverrides(Model):
         'data_element_separator': {'key': 'dataElementSeparator', 'type': 'int'},
         'component_separator': {'key': 'componentSeparator', 'type': 'int'},
         'segment_terminator': {'key': 'segmentTerminator', 'type': 'int'},
-        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
+        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'str'},
         'replace_character': {'key': 'replaceCharacter', 'type': 'int'},
         'replace_separators_in_payload': {'key': 'replaceSeparatorsInPayload', 'type': 'bool'},
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},

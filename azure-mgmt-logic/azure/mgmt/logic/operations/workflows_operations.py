@@ -23,7 +23,7 @@ class WorkflowsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -33,7 +33,7 @@ class WorkflowsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
@@ -869,7 +869,7 @@ class WorkflowsOperations(object):
             return client_raw_response
     regenerate_access_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/regenerateAccessKey'}
 
-    def validate_workflow(
+    def validate_by_resource_group(
             self, resource_group_name, workflow_name, validate, custom_headers=None, raw=False, **operation_config):
         """Validates the workflow.
 
@@ -889,7 +889,7 @@ class WorkflowsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.validate_workflow.metadata['url']
+        url = self.validate_by_resource_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -926,9 +926,9 @@ class WorkflowsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    validate_workflow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/validate'}
+    validate_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/validate'}
 
-    def validate(
+    def validate_by_location(
             self, resource_group_name, location, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
         """Validates the workflow definition.
 
@@ -950,7 +950,7 @@ class WorkflowsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.validate.metadata['url']
+        url = self.validate_by_location.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -988,4 +988,4 @@ class WorkflowsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/locations/{location}/workflows/{workflowName}/validate'}
+    validate_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/locations/{location}/workflows/{workflowName}/validate'}
