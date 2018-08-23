@@ -57,7 +57,7 @@ class PartitionManager:
             raise Exception("A PartitionManager cannot be started multiple times.")
 
         partition_count = await self.initialize_stores_async()
-        _logger.info("{} PartitionCount: {}".format(self.host.guid, partition_count))
+        _logger.info("%r PartitionCount: %r", self.host.guid, partition_count)
         self.run_task = asyncio.ensure_future(self.run_async())
 
     async def stop_async(self):
@@ -75,10 +75,10 @@ class PartitionManager:
         try:
             await self.run_loop_async()
         except Exception as err:  # pylint: disable=broad-except
-            _logger.error("Run loop failed {!r}".format(err))
+            _logger.error("Run loop failed %r", err)
 
         try:
-            _logger.info("Shutting down all pumps {}".format(self.host.guid))
+            _logger.info("Shutting down all pumps %r", self.host.guid)
             await self.remove_all_pumps_async("Shutdown")
         except Exception as err:  # pylint: disable=broad-except
             raise Exception("Failed to remove all pumps {!r}".format(err))
@@ -128,7 +128,7 @@ class PartitionManager:
                 await func(partition_id)
                 created_okay = True
             except Exception as err:  # pylint: disable=broad-except
-                _logger.error("{} {} {} {!r}".format(retry_message, host_id, partition_id, err))
+                _logger.error("%r %r %r %r", retry_message, host_id, partition_id, err)
                 retry_count += 1
         if not created_okay:
             raise Exception(host_id, final_failure_message)
@@ -172,28 +172,28 @@ class PartitionManager:
                     leases_owned_by_others, our_lease_count)
                 if steal_this_lease:
                     try:
-                        _logger.info("Lease to steal {}".format(steal_this_lease.serializable()))
+                        _logger.info("Lease to steal %r", steal_this_lease.serializable())
                         if await lease_manager.acquire_lease_async(steal_this_lease):
-                            _logger.info("Stole lease sucessfully {} {}".format(
-                                self.host.guid, steal_this_lease.partition_id))
+                            _logger.info("Stole lease sucessfully %r %r",
+                                         self.host.guid, steal_this_lease.partition_id)
                         else:
-                            _logger.info("Failed to steal lease for partition {} {}".format(
-                                self.host.guid, steal_this_lease.partition_id))
+                            _logger.info("Failed to steal lease for partition %r %r",
+                                         self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:  # pylint: disable=broad-except
-                        _logger.error("Failed to steal lease {!r}".format(err))
+                        _logger.error("Failed to steal lease %r", err)
 
             for partition_id in all_leases:
                 try:
                     updated_lease = all_leases[partition_id]
                     if updated_lease.owner == self.host.host_name:
-                        _logger.debug("Attempting to renew lease {} {}".format(
-                            self.host.guid, partition_id))
+                        _logger.debug("Attempting to renew lease %r %r",
+                                      self.host.guid, partition_id)
                         await self.check_and_add_pump_async(partition_id, updated_lease)
                     else:
                         _logger.debug("Removing pump due to lost lease.")
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:  # pylint: disable=broad-except
-                    _logger.error("Failed to update lease {!r}".format(err))
+                    _logger.error("Failed to update lease %r", err)
             await asyncio.sleep(lease_manager.lease_renew_interval)
 
     async def check_and_add_pump_async(self, partition_id, lease):
@@ -217,7 +217,7 @@ class PartitionManager:
                 # when the lease changes then the pump will error and shut down
                 captured_pump.set_lease(lease)
         else:
-            _logger.info("Starting pump {} {}".format(self.host.guid, partition_id))
+            _logger.info("Starting pump %r %r", self.host.guid, partition_id)
             await self.create_new_pump_async(partition_id, lease)
 
     async def create_new_pump_async(self, partition_id, lease):
@@ -234,7 +234,7 @@ class PartitionManager:
         # Do the put after start, if the start fails then put doesn't happen
         loop.create_task(partition_pump.open_async())
         self.partition_pumps[partition_id] = partition_pump
-        _logger.info("Created new partition pump {} {}".format(self.host.guid, partition_id))
+        _logger.info("Created new partition pump %r %r", self.host.guid, partition_id)
 
     async def remove_pump_async(self, partition_id, reason):
         """
@@ -251,14 +251,14 @@ class PartitionManager:
                 await captured_pump.close_async(reason)
             # else, pump is already closing/closed, don't need to try to shut it down again
             del self.partition_pumps[partition_id]  # remove pump
-            _logger.debug("Removed pump {} {}".format(self.host.guid, partition_id))
-            _logger.debug("{} pumps still running".format(len(self.partition_pumps)))
+            _logger.debug("Removed pump %r %r", self.host.guid, partition_id)
+            _logger.debug("%r pumps still running", len(self.partition_pumps))
         else:
             # PartitionManager main loop tries to remove pump for every partition that the
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
-            _logger.debug("No pump found to remove for this partition {} {}".format(
-                self.host.guid, partition_id))
+            _logger.debug("No pump found to remove for this partition %r %r",
+                          self.host.guid, partition_id)
 
     async def remove_all_pumps_async(self, reason):
         """
@@ -332,8 +332,8 @@ class PartitionManager:
         try:
             possible_lease = await lease_task
             if await possible_lease.is_expired():
-                logging.info("Trying to aquire lease {} {}".format(
-                    self.host.guid, possible_lease.partition_id))
+                _logger.info("Trying to aquire lease %r %r",
+                             self.host.guid, possible_lease.partition_id)
                 if await lease_manager.acquire_lease_async(possible_lease):
                     owned_by_others_q.put((False, possible_lease))
                 else:
@@ -341,20 +341,20 @@ class PartitionManager:
 
             elif possible_lease.owner == self.host.host_name:
                 try:
-                    _logger.debug("Trying to renew lease {} {}".format(
-                        self.host.guid, possible_lease.partition_id))
+                    _logger.debug("Trying to renew lease %r %r",
+                                  self.host.guid, possible_lease.partition_id)
                     if await lease_manager.renew_lease_async(possible_lease):
                         owned_by_others_q.put((False, possible_lease))
                     else:
                         owned_by_others_q.put((True, possible_lease))
                 except Exception as err:  # pylint: disable=broad-except
                     # Update to 'Lease Lost' exception.
-                    _logger.error("Lease lost exception {!r} {} {}".format(
-                        err, self.host.guid, possible_lease.partition_id))
+                    _logger.error("Lease lost exception %r %r %r",
+                                  err, self.host.guid, possible_lease.partition_id)
                     owned_by_others_q.put((True, possible_lease))
             else:
                 owned_by_others_q.put((True, possible_lease))
 
         except Exception as err:  # pylint: disable=broad-except
             _logger.error(
-                "Failure during getting/acquiring/renewing lease, skipping {!r}".format(err))
+                "Failure during getting/acquiring/renewing lease, skipping %r", err)

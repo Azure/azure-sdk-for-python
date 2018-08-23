@@ -88,7 +88,7 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
     """
 
-    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None):
+    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None, auth_timeout=60):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -108,6 +108,9 @@ class EventHubClient(object):
          keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
          Additionally the following keys may also be present: 'username', 'password'.
         :type http_proxy: dict[str, Any]
+        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :type auth_timeout: int
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
@@ -124,10 +127,11 @@ class EventHubClient(object):
         self._auth_config = {'username': username, 'password': password}
         self.get_auth = functools.partial(self._create_auth)
         self.debug = debug
+        self.auth_timeout = auth_timeout
 
         self.clients = []
         self.stopped = False
-        log.info("{}: Created the Event Hub client".format(self.container_id))
+        log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
     def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
@@ -138,6 +142,17 @@ class EventHubClient(object):
         :type conn_str: str
         :param eventhub: The name of the EventHub, if the EntityName is
          not included in the connection string.
+        :type eventhub: str
+        :param debug: Whether to output network trace logs to the logger. Default
+         is `False`.
+        :type debug: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
+        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :type auth_timeout: int
         """
         address, policy, key, entity = _parse_conn_str(conn_str)
         entity = eventhub or entity
@@ -146,6 +161,22 @@ class EventHubClient(object):
 
     @classmethod
     def from_iothub_connection_string(cls, conn_str, **kwargs):
+        """
+        Create an EventHubClient from an IoTHub connection string.
+
+        :param conn_str: The connection string.
+        :type conn_str: str
+        :param debug: Whether to output network trace logs to the logger. Default
+         is `False`.
+        :type debug: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
+        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :type auth_timeout: int
+        """
         address, policy, key, _ = _parse_conn_str(conn_str)
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
@@ -176,7 +207,7 @@ class EventHubClient(object):
             return authentication.SASLPlain(
                 self.address.hostname, username, password, http_proxy=self.http_proxy)
         return authentication.SASTokenAuth.from_shared_access_key(
-            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
+            self.auth_uri, username, password, timeout=self.auth_timeout, http_proxy=self.http_proxy)
 
     def create_properties(self):  # pylint: disable=no-self-use
         """
@@ -235,16 +266,16 @@ class EventHubClient(object):
 
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
-        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         try:
             self._start_clients()
             redirects = [c.redirected for c in self.clients if c.redirected]
             failed = [c.error for c in self.clients if c.error]
             if failed and len(failed) == len(self.clients):
-                log.warning("{}: All clients failed to start.".format(self.container_id))
+                log.warning("%r: All clients failed to start.", self.container_id)
                 raise failed[0]
             elif failed:
-                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+                log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
             elif redirects:
                 self._handle_redirect(redirects)
         except EventHubError:
@@ -259,7 +290,7 @@ class EventHubClient(object):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
         """
-        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
         self._close_clients()
 
@@ -267,11 +298,11 @@ class EventHubClient(object):
         """
         Get details on the specified EventHub.
         Keys in the details dictionary include:
-         -'name'
-         -'type'
-         -'created_at'
-         -'partition_count'
-         -'partition_ids'
+            -'name'
+            -'type'
+            -'created_at'
+            -'partition_count'
+            -'partition_ids'
 
         :rtype: dict
         """
@@ -362,10 +393,9 @@ class EventHubClient(object):
         self.clients.append(handler)
         return handler
 
-    def add_sender(self, partition=None, operation=None, keep_alive=30, auto_reconnect=True):
+    def add_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
         """
-        Add a sender to the client to send ~azure.eventhub.common.EventData object
-        to an EventHub.
+        Add a sender to the client to EventData object to an EventHub.
 
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
@@ -374,11 +404,22 @@ class EventHubClient(object):
         :operation: An optional operation to be appended to the hostname in the target URL.
          The value must start with `/` character.
         :type operation: str
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: int
+        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+         periods of inactivity. The default value is 30 seconds. If set to `None`, the connection will not
+         be pinged.
+        :type keep_alive: int
+        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+         Default value is `True`.
         :rtype: ~azure.eventhub.sender.Sender
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
-        handler = Sender(self, target, partition=partition, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+        handler = Sender(
+            self, target, partition=partition, send_timeout=send_timeout,
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
         self.clients.append(handler)
         return handler

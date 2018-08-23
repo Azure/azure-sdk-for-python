@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.0.0 (2018-08-22)
+++++++++++++++++++
+
+- API stable.
+- Renamed internal `_async` module to `async_ops` for docs generation.
+- Added optional `auth_timeout` parameter to `EventHubClient` and `EventHubClientAsync` to configure how long to allow for token
+  negotiation to complete. Default is 60 seconds.
+- Added optional `send_timeout` parameter to `EventHubClient.add_sender` and `EventHubClientAsync.add_async_sender` to determine the
+  timeout for Events to be successfully sent. Default value is 60 seconds.
+- Reformatted logging for performance.
+
+
 0.2.0 (2018-08-06)
 ++++++++++++++++++
 

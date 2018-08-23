@@ -58,7 +58,7 @@ class EventHubClientAsync(EventHubClient):
             return authentication.SASLPlain(
                 self.address.hostname, username, password, http_proxy=self.http_proxy)
         return authentication.SASTokenAsync.from_shared_access_key(
-            self.auth_uri, username, password, timeout=60, http_proxy=self.http_proxy)
+            self.auth_uri, username, password, timeout=self.auth_timeout, http_proxy=self.http_proxy)
 
     async def _close_clients_async(self):
         """
@@ -77,8 +77,9 @@ class EventHubClientAsync(EventHubClient):
         try:
             await client.open_async()
         except Exception as exp:  # pylint: disable=broad-except
-            log.info("Encountered error while starting handler: {}".format(exp))
+            log.info("Encountered error while starting handler: %r", exp)
             await client.close_async(exception=exp)
+            log.info("Finished closing failed handler")
 
     async def _handle_redirect(self, redirects):
         if len(redirects) != len(self.clients):
@@ -104,17 +105,17 @@ class EventHubClientAsync(EventHubClient):
 
         :rtype: list[~azure.eventhub.common.EventHubError]
         """
-        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         tasks = [self._start_client_async(c) for c in self.clients]
         try:
             await asyncio.gather(*tasks)
             redirects = [c.redirected for c in self.clients if c.redirected]
             failed = [c.error for c in self.clients if c.error]
             if failed and len(failed) == len(self.clients):
-                log.warning("{}: All clients failed to start.".format(self.container_id))
+                log.warning("%r: All clients failed to start.", self.container_id)
                 raise failed[0]
             elif failed:
-                log.warning("{}: {} clients failed to start.".format(self.container_id, len(failed)))
+                log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
             elif redirects:
                 await self._handle_redirect(redirects)
         except EventHubError:
@@ -129,7 +130,7 @@ class EventHubClientAsync(EventHubClient):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
         """
-        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
+        log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
         await self._close_clients_async()
 
@@ -182,7 +183,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -213,7 +214,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub._async.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -224,7 +225,9 @@ class EventHubClientAsync(EventHubClient):
         self.clients.append(handler)
         return handler
 
-    def add_async_sender(self, partition=None, operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+    def add_async_sender(
+            self, partition=None, operation=None, send_timeout=60,
+            keep_alive=30, auto_reconnect=True, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -236,13 +239,23 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the target URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub._async.sender_async.SenderAsync
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: int
+        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+         periods of inactivity. The default value is 30 seconds. If set to `None`, the connection will not
+         be pinged.
+        :type keep_alive: int
+        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+         Default value is `True`.
+        :type auto_reconnect: bool
+        :rtype: ~azure.eventhub.async_ops.sender_async.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
         handler = AsyncSender(
-            self, target, partition=partition, keep_alive=keep_alive,
+            self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive,
             auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
         return handler

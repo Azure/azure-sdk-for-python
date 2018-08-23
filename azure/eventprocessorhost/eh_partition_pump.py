@@ -36,8 +36,8 @@ class EventHubPartitionPump(PartitionPump):
                 _opened_ok = True
             except Exception as err:  # pylint: disable=broad-except
                 _logger.warning(
-                    "{},{} PartitionPumpWarning: Failure creating client or receiver, "
-                    "retrying: {!r}".format(self.host.guid, self.partition_context.partition_id, err))
+                    "%r,%r PartitionPumpWarning: Failure creating client or receiver, " +
+                    "retrying: %r", self.host.guid, self.partition_context.partition_id, err)
                 last_exception = err
                 _retry_count += 1
 
@@ -91,7 +91,7 @@ class EventHubPartitionPump(PartitionPump):
 
     async def on_closing_async(self, reason):
         """
-        Overides partition pump on cleasing.
+        Overides partition pump on closing.
 
         :param reason: The reason for the shutdown.
         :type reason: str
@@ -102,7 +102,7 @@ class EventHubPartitionPump(PartitionPump):
         except TypeError:
             _logger.debug("No partition pump running.")
         except Exception as err:  # pylint: disable=broad-except
-            _logger.info("Error on closing partition pump: {!r}".format(err))
+            _logger.info("Error on closing partition pump: %r", err)
         await self.clean_up_clients_async()
 
 
@@ -128,13 +128,13 @@ class PartitionReceiver:
                         max_batch_size=self.max_batch_size,
                         timeout=self.recieve_timeout)
                 except Exception as e:  # pylint: disable=broad-except
-                    _logger.info("Error raised while attempting to receive messages: {}".format(e))
+                    _logger.info("Error raised while attempting to receive messages: %r", e)
                     await self.process_error_async(e)
                 else:
                     if not msgs:
-                        _logger.info("No events received, queue size {}, release {}".format(
-                            self.eh_partition_pump.partition_receive_handler.queue_size,
-                            self.eh_partition_pump.host.eph_options.release_pump_on_timeout))
+                        _logger.info("No events received, queue size %r, release %r",
+                                     self.eh_partition_pump.partition_receive_handler.queue_size,
+                                     self.eh_partition_pump.host.eph_options.release_pump_on_timeout)
                         if self.eh_partition_pump.host.eph_options.release_pump_on_timeout:
                             await self.process_error_async(TimeoutError("No events received"))
                     else:

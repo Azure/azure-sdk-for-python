@@ -29,7 +29,7 @@ class AsyncReceiver(Receiver):
         Instantiate an async receiver.
 
         :param client: The parent EventHubClientAsync.
-        :type client: ~azure.eventhub._async.EventHubClientAsync
+        :type client: ~azure.eventhub.async_ops.EventHubClientAsync
         :param source: The source EventHub from which to receive events.
         :type source: ~uamqp.address.Source
         :param prefetch: The number of events to prefetch from the service
@@ -78,7 +78,7 @@ class AsyncReceiver(Receiver):
         context will be used to create a new handler before opening it.
 
         :param connection: The underlying client shared connection.
-        :type: connection: ~uamqp._async.connection_async.ConnectionAsync
+        :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
         """
         # pylint: disable=protected-access
         if self.redirected:
@@ -128,9 +128,33 @@ class AsyncReceiver(Receiver):
             client_name=self.name,
             properties=self.client.create_properties(),
             loop=self.loop)
-        await self._handler.open_async()
-        while not await self.has_started():
-            await self._handler._connection.work_async()
+        try:
+            await self._handler.open_async()
+            while not await self.has_started():
+                await self._handler._connection.work_async()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry and self.auto_reconnect:
+                log.info("AsyncReceiver detached. Attempting reconnect.")
+                await self.reconnect_async()
+            else:
+                log.info("AsyncReceiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                log.info("AsyncReceiver detached. Attempting reconnect.")
+                await self.reconnect_async()
+            else:
+                log.info("AsyncReceiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
+            error = EventHubError("Receiver reconnect failed: {}".format(e))
+            await self.close_async(exception=error)
+            raise error
 
     async def has_started(self):
         """
@@ -224,7 +248,7 @@ class AsyncReceiver(Receiver):
                 await self.close_async(exception=error)
                 raise error
         except Exception as e:
-            log.info("Unexpected error occurred ({}). Shutting down.".format(e))
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Receive failed: {}".format(e))
             await self.close_async(exception=error)
             raise error
