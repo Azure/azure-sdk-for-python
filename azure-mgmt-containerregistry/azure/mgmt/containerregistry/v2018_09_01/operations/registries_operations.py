@@ -1189,7 +1189,7 @@ class RegistriesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     schedule_run.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/scheduleRun'}
 
-    def list_build_source_upload_url(
+    def get_build_source_upload_url(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
         """Get the upload location for the user to be able to upload the source.
 
@@ -1212,7 +1212,7 @@ class RegistriesOperations(object):
         api_version = "2018-09-01"
 
         # Construct URL
-        url = self.list_build_source_upload_url.metadata['url']
+        url = self.get_build_source_upload_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1253,4 +1253,4 @@ class RegistriesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_build_source_upload_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listBuildSourceUploadUrl'}
+    get_build_source_upload_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listBuildSourceUploadUrl'}

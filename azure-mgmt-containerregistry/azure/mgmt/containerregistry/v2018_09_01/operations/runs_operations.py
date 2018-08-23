@@ -40,7 +40,7 @@ class RunsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, registry_name, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, registry_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the runs for a registry.
 
         :param resource_group_name: The name of the resource group to which
@@ -56,9 +56,6 @@ class RunsOperations(object):
         :param top: $top is supported for get list of runs, which limits the
          maximum number of runs to return.
         :type top: int
-        :param skip_token: $skipToken is supported on get list of runs, which
-         provides the next page in the list of runs.
-        :type skip_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -88,8 +85,6 @@ class RunsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if skip_token is not None:
-                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             else:
                 url = next_link
@@ -303,7 +298,7 @@ class RunsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}'}
 
-    def list_log_sas_url(
+    def get_log_sas_url(
             self, resource_group_name, registry_name, run_id, custom_headers=None, raw=False, **operation_config):
         """Gets a link to download the run logs.
 
@@ -326,7 +321,7 @@ class RunsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_log_sas_url.metadata['url']
+        url = self.get_log_sas_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -368,7 +363,7 @@ class RunsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_log_sas_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/listLogSasUrl'}
+    get_log_sas_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/listLogSasUrl'}
 
 
     def _cancel_initial(

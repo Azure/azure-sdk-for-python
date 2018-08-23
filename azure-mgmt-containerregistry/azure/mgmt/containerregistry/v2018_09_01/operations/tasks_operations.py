@@ -476,7 +476,7 @@ class TasksOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tasks/{taskName}'}
 
-    def list_details(
+    def get_details(
             self, resource_group_name, registry_name, task_name, custom_headers=None, raw=False, **operation_config):
         """Returns a task with extended information that includes all secrets.
 
@@ -498,7 +498,7 @@ class TasksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_details.metadata['url']
+        url = self.get_details.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -540,4 +540,4 @@ class TasksOperations(object):
             return client_raw_response
 
         return deserialized
-    list_details.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tasks/{taskName}/listDetails'}
+    get_details.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tasks/{taskName}/listDetails'}
