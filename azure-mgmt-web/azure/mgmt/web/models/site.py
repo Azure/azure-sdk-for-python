@@ -64,8 +64,10 @@ class Site(Resource):
     :param reserved: <code>true</code> if reserved; otherwise,
      <code>false</code>. Default value: False .
     :type reserved: bool
-    :param is_xenon: Hyper-V sandbox. Default value: False .
+    :param is_xenon: Obsolete: Hyper-V sandbox. Default value: False .
     :type is_xenon: bool
+    :param hyper_v: Hyper-V sandbox. Default value: False .
+    :type hyper_v: bool
     :ivar last_modified_time_utc: Last time the app was modified, in UTC.
      Read-only.
     :vartype last_modified_time_utc: datetime
@@ -181,6 +183,7 @@ class Site(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'hyper_v': {'key': 'properties.hyperV', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -218,6 +221,7 @@ class Site(Resource):
         self.server_farm_id = kwargs.get('server_farm_id', None)
         self.reserved = kwargs.get('reserved', False)
         self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
         self.last_modified_time_utc = None
         self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
