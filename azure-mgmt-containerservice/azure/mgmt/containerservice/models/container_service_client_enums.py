@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class ContainerServiceStorageProfileTypes(str, Enum):
-
-    storage_account = "StorageAccount"
-    managed_disks = "ManagedDisks"
-
-
 class ContainerServiceVMSizeTypes(str, Enum):
 
     standard_a1 = "Standard_A1"
@@ -196,6 +190,24 @@ class ContainerServiceVMSizeTypes(str, Enum):
     standard_nv6 = "Standard_NV6"
 
 
+class OSType(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
+
+
+class OpenShiftAgentPoolProfileRole(str, Enum):
+
+    compute = "compute"
+    infra = "infra"
+
+
+class ContainerServiceStorageProfileTypes(str, Enum):
+
+    storage_account = "StorageAccount"
+    managed_disks = "ManagedDisks"
+
+
 class ContainerServiceOrchestratorTypes(str, Enum):
 
     kubernetes = "Kubernetes"
@@ -203,12 +215,6 @@ class ContainerServiceOrchestratorTypes(str, Enum):
     dcos = "DCOS"
     docker_ce = "DockerCE"
     custom = "Custom"
-
-
-class OSType(str, Enum):
-
-    linux = "Linux"
-    windows = "Windows"
 
 
 class NetworkPlugin(str, Enum):
