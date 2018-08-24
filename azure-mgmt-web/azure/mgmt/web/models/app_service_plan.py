@@ -72,9 +72,12 @@ class AppServicePlan(Resource):
     :param reserved: If Linux app service plan <code>true</code>,
      <code>false</code> otherwise. Default value: False .
     :type reserved: bool
-    :param is_xenon: If Hyper-V container app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param is_xenon: Obsolete: If Hyper-V container app service plan
+     <code>true</code>, <code>false</code> otherwise. Default value: False .
     :type is_xenon: bool
+    :param hyper_v: If Hyper-V container app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
+    :type hyper_v: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -124,6 +127,7 @@ class AppServicePlan(Resource):
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'hyper_v': {'key': 'properties.hyperV', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
@@ -147,6 +151,7 @@ class AppServicePlan(Resource):
         self.resource_group = None
         self.reserved = kwargs.get('reserved', False)
         self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
         self.target_worker_count = kwargs.get('target_worker_count', None)
         self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None
