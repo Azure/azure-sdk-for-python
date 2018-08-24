@@ -297,6 +297,27 @@ class MySqlTargetPlatformType(str, Enum):
     azure_db_for_my_sql = "AzureDbForMySQL"
 
 
+class SchemaMigrationOption(str, Enum):
+
+    none = "None"
+    extract_from_source = "ExtractFromSource"
+    use_storage_file = "UseStorageFile"
+
+
+class SchemaMigrationStage(str, Enum):
+
+    not_started = "NotStarted"
+    validating_inputs = "ValidatingInputs"
+    collecting_objects = "CollectingObjects"
+    downloading_script = "DownloadingScript"
+    generating_script = "GeneratingScript"
+    uploading_script = "UploadingScript"
+    deploying_schema = "DeployingSchema"
+    completed = "Completed"
+    completed_with_warnings = "CompletedWithWarnings"
+    failed = "Failed"
+
+
 class DataMigrationResultCode(str, Enum):
 
     initial = "Initial"

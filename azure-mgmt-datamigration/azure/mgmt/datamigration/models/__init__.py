@@ -151,6 +151,15 @@ try:
     from .server_properties_py3 import ServerProperties
     from .connect_to_source_non_sql_task_output_py3 import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties_py3 import ConnectToSourceMySqlTaskProperties
+    from .schema_migration_setting_py3 import SchemaMigrationSetting
+    from .migrate_schema_sql_server_sql_db_database_input_py3 import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from .migrate_schema_sql_server_sql_db_task_input_py3 import MigrateSchemaSqlServerSqlDbTaskInput
+    from .migrate_schema_sql_server_sql_db_task_output_py3 import MigrateSchemaSqlServerSqlDbTaskOutput
+    from .migrate_schema_sql_server_sql_db_task_properties_py3 import MigrateSchemaSqlServerSqlDbTaskProperties
+    from .migrate_schema_sql_server_sql_db_task_output_migration_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_schema_sql_server_sql_db_task_output_database_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migrate_schema_sql_server_sql_db_task_output_error_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from .migrate_schema_sql_task_output_error_py3 import MigrateSchemaSqlTaskOutputError
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
@@ -305,6 +314,15 @@ except (SyntaxError, ImportError):
     from .server_properties import ServerProperties
     from .connect_to_source_non_sql_task_output import ConnectToSourceNonSqlTaskOutput
     from .connect_to_source_my_sql_task_properties import ConnectToSourceMySqlTaskProperties
+    from .schema_migration_setting import SchemaMigrationSetting
+    from .migrate_schema_sql_server_sql_db_database_input import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from .migrate_schema_sql_server_sql_db_task_input import MigrateSchemaSqlServerSqlDbTaskInput
+    from .migrate_schema_sql_server_sql_db_task_output import MigrateSchemaSqlServerSqlDbTaskOutput
+    from .migrate_schema_sql_server_sql_db_task_properties import MigrateSchemaSqlServerSqlDbTaskProperties
+    from .migrate_schema_sql_server_sql_db_task_output_migration_level import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_schema_sql_server_sql_db_task_output_database_level import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migrate_schema_sql_server_sql_db_task_output_error import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from .migrate_schema_sql_task_output_error import MigrateSchemaSqlTaskOutputError
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
@@ -356,6 +374,8 @@ from .data_migration_service_client_enums import (
     ResourceSkuRestrictionsReasonCode,
     ResourceSkuCapacityScaleType,
     MySqlTargetPlatformType,
+    SchemaMigrationOption,
+    SchemaMigrationStage,
     DataMigrationResultCode,
     ErrorType,
 )
@@ -502,6 +522,15 @@ __all__ = [
     'ServerProperties',
     'ConnectToSourceNonSqlTaskOutput',
     'ConnectToSourceMySqlTaskProperties',
+    'SchemaMigrationSetting',
+    'MigrateSchemaSqlServerSqlDbDatabaseInput',
+    'MigrateSchemaSqlServerSqlDbTaskInput',
+    'MigrateSchemaSqlServerSqlDbTaskOutput',
+    'MigrateSchemaSqlServerSqlDbTaskProperties',
+    'MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel',
+    'MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel',
+    'MigrateSchemaSqlServerSqlDbTaskOutputError',
+    'MigrateSchemaSqlTaskOutputError',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',
@@ -552,6 +581,8 @@ __all__ = [
     'ResourceSkuRestrictionsReasonCode',
     'ResourceSkuCapacityScaleType',
     'MySqlTargetPlatformType',
+    'SchemaMigrationOption',
+    'SchemaMigrationStage',
     'DataMigrationResultCode',
     'ErrorType',
 ]
