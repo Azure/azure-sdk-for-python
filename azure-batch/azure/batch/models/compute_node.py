@@ -53,19 +53,9 @@ class ComputeNode(Model):
      task is scheduled, then the task will be scheduled elsewhere.
     :type affinity_id: str
     :param vm_size: The size of the virtual machine hosting the compute node.
-     For information about available sizes of virtual machines for Cloud
-     Services pools (pools created with cloudServiceConfiguration), see Sizes
-     for Cloud Services
-     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
-     A2V2. For information about available VM sizes for pools using images from
-     the Virtual Machines Marketplace (pools created with
-     virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
-     or Sizes for Virtual Machines (Windows)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/).
-     Batch supports all Azure VM sizes except STANDARD_A0 and those with
-     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
+     For information about available sizes of virtual machines in pools, see
+     Choose a VM size for compute nodes in an Azure Batch pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param total_tasks_run: The total number of job tasks completed on the
      compute node. This includes Job Manager tasks and normal tasks, but not
@@ -111,6 +101,9 @@ class ComputeNode(Model):
      node.
     :type endpoint_configuration:
      ~azure.batch.models.ComputeNodeEndpointConfiguration
+    :param node_agent_info: Information about the node agent version and the
+     time the node upgraded to a new version.
+    :type node_agent_info: ~azure.batch.models.NodeAgentInformation
     """
 
     _attribute_map = {
@@ -134,27 +127,29 @@ class ComputeNode(Model):
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
         'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
+        'node_agent_info': {'key': 'nodeAgentInfo', 'type': 'NodeAgentInformation'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None, endpoint_configuration=None):
-        super(ComputeNode, self).__init__()
-        self.id = id
-        self.url = url
-        self.state = state
-        self.scheduling_state = scheduling_state
-        self.state_transition_time = state_transition_time
-        self.last_boot_time = last_boot_time
-        self.allocation_time = allocation_time
-        self.ip_address = ip_address
-        self.affinity_id = affinity_id
-        self.vm_size = vm_size
-        self.total_tasks_run = total_tasks_run
-        self.running_tasks_count = running_tasks_count
-        self.total_tasks_succeeded = total_tasks_succeeded
-        self.recent_tasks = recent_tasks
-        self.start_task = start_task
-        self.start_task_info = start_task_info
-        self.certificate_references = certificate_references
-        self.errors = errors
-        self.is_dedicated = is_dedicated
-        self.endpoint_configuration = endpoint_configuration
+    def __init__(self, **kwargs):
+        super(ComputeNode, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.url = kwargs.get('url', None)
+        self.state = kwargs.get('state', None)
+        self.scheduling_state = kwargs.get('scheduling_state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.last_boot_time = kwargs.get('last_boot_time', None)
+        self.allocation_time = kwargs.get('allocation_time', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.affinity_id = kwargs.get('affinity_id', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.total_tasks_run = kwargs.get('total_tasks_run', None)
+        self.running_tasks_count = kwargs.get('running_tasks_count', None)
+        self.total_tasks_succeeded = kwargs.get('total_tasks_succeeded', None)
+        self.recent_tasks = kwargs.get('recent_tasks', None)
+        self.start_task = kwargs.get('start_task', None)
+        self.start_task_info = kwargs.get('start_task_info', None)
+        self.certificate_references = kwargs.get('certificate_references', None)
+        self.errors = kwargs.get('errors', None)
+        self.is_dedicated = kwargs.get('is_dedicated', None)
+        self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
+        self.node_agent_info = kwargs.get('node_agent_info', None)
