@@ -13,7 +13,6 @@ try:
     from .storage_sync_error_details_py3 import StorageSyncErrorDetails
     from .storage_sync_error_py3 import StorageSyncError, StorageSyncErrorException
     from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
     from .subscription_state_py3 import SubscriptionState
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
@@ -33,11 +32,11 @@ try:
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
     from .workflow_array_py3 import WorkflowArray
+    from .tracked_resource_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
     from .storage_sync_error import StorageSyncError, StorageSyncErrorException
     from .resource import Resource
-    from .tracked_resource import TrackedResource
     from .subscription_state import SubscriptionState
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
@@ -57,6 +56,7 @@ except (SyntaxError, ImportError):
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
     from .workflow_array import WorkflowArray
+    from .tracked_resource import TrackedResource
 from .operation_entity_paged import OperationEntityPaged
 from .storage_sync_service_paged import StorageSyncServicePaged
 from .sync_group_paged import SyncGroupPaged
@@ -72,7 +72,6 @@ __all__ = [
     'StorageSyncErrorDetails',
     'StorageSyncError', 'StorageSyncErrorException',
     'Resource',
-    'TrackedResource',
     'SubscriptionState',
     'StorageSyncService',
     'SyncGroup',
@@ -92,6 +91,7 @@ __all__ = [
     'BackupRequest',
     'PostBackupResponse',
     'WorkflowArray',
+    'TrackedResource',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
     'SyncGroupPaged',
