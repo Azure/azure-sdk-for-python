@@ -41,8 +41,8 @@ class StreamingLocator(ProxyResource):
      or use one of the predefined streaming polices. The predefined streaming
      policies available are: 'Predefined_DownloadOnly',
      'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming',
-     'Predefined_ClearKey', 'Predefined_SecureStreaming' and
-     'Predefined_SecureStreamingWithFairPlay'
+     'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
+     'Predefined_MultiDrmStreaming'
     :type streaming_policy_name: str
     :param default_content_key_policy_name: Default ContentKeyPolicy used by
      this Streaming Locator

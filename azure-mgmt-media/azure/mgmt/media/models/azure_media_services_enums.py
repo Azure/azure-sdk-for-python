@@ -171,6 +171,13 @@ class EncoderNamedPreset(str, Enum):
     h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
 
 
+class InsightsType(str, Enum):
+
+    audio_insights_only = "AudioInsightsOnly"  #: Generate audio only insights. Ignore video even if present. Fails if no audio is present.
+    video_insights_only = "VideoInsightsOnly"  #: Generate video only insights. Ignore audio if present. Fails if no video is present.
+    all_insights = "AllInsights"  #: Generate both audio and video insights. Fails if either audio or video Insights fail.
+
+
 class OnErrorType(str, Enum):
 
     stop_processing_job = "StopProcessingJob"  #: Tells the service that if this TransformOutput fails, then any other incomplete TransformOutputs can be stopped.
