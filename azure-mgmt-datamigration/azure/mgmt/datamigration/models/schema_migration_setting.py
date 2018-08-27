@@ -25,8 +25,8 @@ class SchemaMigrationSetting(Model):
     """
 
     _attribute_map = {
-        'schema_option': {'key': 'SchemaOption', 'type': 'str'},
-        'file_id': {'key': 'FileId', 'type': 'str'},
+        'schema_option': {'key': 'schemaOption', 'type': 'str'},
+        'file_id': {'key': 'fileId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

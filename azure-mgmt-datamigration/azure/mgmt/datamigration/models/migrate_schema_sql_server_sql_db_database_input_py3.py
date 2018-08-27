@@ -23,8 +23,8 @@ class MigrateSchemaSqlServerSqlDbDatabaseInput(Model):
     """
 
     _attribute_map = {
-        'target_database_name': {'key': 'TargetDatabaseName', 'type': 'str'},
-        'schema_setting': {'key': 'SchemaSetting', 'type': 'SchemaMigrationSetting'},
+        'target_database_name': {'key': 'targetDatabaseName', 'type': 'str'},
+        'schema_setting': {'key': 'schemaSetting', 'type': 'SchemaMigrationSetting'},
     }
 
     def __init__(self, *, target_database_name: str=None, schema_setting=None, **kwargs) -> None:
