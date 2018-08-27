@@ -32,7 +32,7 @@ try:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-    sender = client.add_sender(partition="1")
+    sender = client.add_sender(partition="0")
     client.run()
     try:
         start_time = time.time()
