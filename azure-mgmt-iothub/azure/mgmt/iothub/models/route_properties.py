@@ -23,8 +23,9 @@ class RouteProperties(Model):
      length of 64 characters, and must be unique.
     :type name: str
     :param source: Required. The source that the routing rule is to be applied
-     to, such as DeviceMessages. Possible values include: 'DeviceMessages',
-     'TwinChangeEvents', 'DeviceLifecycleEvents', 'DeviceJobLifecycleEvents'
+     to, such as DeviceMessages. Possible values include: 'Invalid',
+     'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
+     'DeviceJobLifecycleEvents'
     :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
