@@ -31,7 +31,7 @@ class IntegrationAccountMap(Resource):
     :param tags: The resource tags.
     :type tags: dict[str, str]
     :param map_type: Required. The map type. Possible values include:
-     'NotSpecified', 'Xslt'
+     'NotSpecified', 'Xslt', 'Xslt20', 'Xslt30', 'Liquid'
     :type map_type: str or ~azure.mgmt.logic.models.MapType
     :param parameters_schema: The parameters schema of integration account
      map.
@@ -67,7 +67,7 @@ class IntegrationAccountMap(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'map_type': {'key': 'properties.mapType', 'type': 'MapType'},
+        'map_type': {'key': 'properties.mapType', 'type': 'str'},
         'parameters_schema': {'key': 'properties.parametersSchema', 'type': 'IntegrationAccountMapPropertiesParametersSchema'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},

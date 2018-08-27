@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SessionsOperations(object):
-    """SessionsOperations operations.
+class IntegrationAccountSessionsOperations(object):
+    """IntegrationAccountSessionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -32,11 +32,11 @@ class SessionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
-    def list_by_integration_accounts(
+    def list(
             self, resource_group_name, integration_account_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of integration account sessions.
 
@@ -64,7 +64,7 @@ class SessionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_integration_accounts.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -112,7 +112,7 @@ class SessionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_integration_accounts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions'}
 
     def get(
             self, resource_group_name, integration_account_name, session_name, custom_headers=None, raw=False, **operation_config):

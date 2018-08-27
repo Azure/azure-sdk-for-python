@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class MapsOperations(object):
-    """MapsOperations operations.
+class IntegrationAccountSchemasOperations(object):
+    """IntegrationAccountSchemasOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -33,13 +33,13 @@ class MapsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
-    def list_by_integration_accounts(
+    def list(
             self, resource_group_name, integration_account_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of integration account maps.
+        """Gets a list of integration account schemas.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -48,23 +48,23 @@ class MapsOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation. Options for
-         filters include: MapType.
+         filters include: SchemaType.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of IntegrationAccountMap
+        :return: An iterator like instance of IntegrationAccountSchema
         :rtype:
-         ~azure.mgmt.logic.models.IntegrationAccountMapPaged[~azure.mgmt.logic.models.IntegrationAccountMap]
+         ~azure.mgmt.logic.models.IntegrationAccountSchemaPaged[~azure.mgmt.logic.models.IntegrationAccountSchema]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_integration_accounts.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -106,33 +106,33 @@ class MapsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.IntegrationAccountMapPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.IntegrationAccountSchemaPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.IntegrationAccountMapPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.IntegrationAccountSchemaPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_integration_accounts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/maps'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/schemas'}
 
     def get(
-            self, resource_group_name, integration_account_name, map_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an integration account map.
+            self, resource_group_name, integration_account_name, schema_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an integration account schema.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param map_name: The integration account map name.
-        :type map_name: str
+        :param schema_name: The integration account schema name.
+        :type schema_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IntegrationAccountMap or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.IntegrationAccountMap or
+        :return: IntegrationAccountSchema or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountSchema or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -142,7 +142,7 @@ class MapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'mapName': self._serialize.url("map_name", map_name, 'str')
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -172,34 +172,34 @@ class MapsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountMap', response)
+            deserialized = self._deserialize('IntegrationAccountSchema', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/maps/{mapName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/schemas/{schemaName}'}
 
     def create_or_update(
-            self, resource_group_name, integration_account_name, map_name, map, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an integration account map.
+            self, resource_group_name, integration_account_name, schema_name, schema, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an integration account schema.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param map_name: The integration account map name.
-        :type map_name: str
-        :param map: The integration account map.
-        :type map: ~azure.mgmt.logic.models.IntegrationAccountMap
+        :param schema_name: The integration account schema name.
+        :type schema_name: str
+        :param schema: The integration account schema.
+        :type schema: ~azure.mgmt.logic.models.IntegrationAccountSchema
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IntegrationAccountMap or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.IntegrationAccountMap or
+        :return: IntegrationAccountSchema or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountSchema or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -209,7 +209,7 @@ class MapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'mapName': self._serialize.url("map_name", map_name, 'str')
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -229,7 +229,7 @@ class MapsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(map, 'IntegrationAccountMap')
+        body_content = self._serialize.body(schema, 'IntegrationAccountSchema')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -243,27 +243,27 @@ class MapsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountMap', response)
+            deserialized = self._deserialize('IntegrationAccountSchema', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('IntegrationAccountMap', response)
+            deserialized = self._deserialize('IntegrationAccountSchema', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/maps/{mapName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/schemas/{schemaName}'}
 
     def delete(
-            self, resource_group_name, integration_account_name, map_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an integration account map.
+            self, resource_group_name, integration_account_name, schema_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an integration account schema.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param map_name: The integration account map name.
-        :type map_name: str
+        :param schema_name: The integration account schema name.
+        :type schema_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -279,7 +279,7 @@ class MapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'mapName': self._serialize.url("map_name", map_name, 'str')
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -308,18 +308,18 @@ class MapsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/maps/{mapName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/schemas/{schemaName}'}
 
     def list_content_callback_url(
-            self, resource_group_name, integration_account_name, map_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, integration_account_name, schema_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
         """Get the content callback url.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param map_name: The integration account map name.
-        :type map_name: str
+        :param schema_name: The integration account schema name.
+        :type schema_name: str
         :param not_after: The expiry time.
         :type not_after: datetime
         :param key_type: The key type. Possible values include:
@@ -343,7 +343,7 @@ class MapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'mapName': self._serialize.url("map_name", map_name, 'str')
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -384,4 +384,4 @@ class MapsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_content_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/maps/{mapName}/listContentCallbackUrl'}
+    list_content_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/schemas/{schemaName}/listContentCallbackUrl'}

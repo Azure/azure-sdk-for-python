@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class WorkflowRunActionScopedRepetitionsOperations(object):
-    """WorkflowRunActionScopedRepetitionsOperations operations.
+class WorkflowRunActionScopeRepetitionsOperations(object):
+    """WorkflowRunActionScopeRepetitionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -33,7 +33,7 @@ class WorkflowRunActionScopedRepetitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 

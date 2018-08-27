@@ -53,8 +53,8 @@ class X12FramingSettings(Model):
         'replace_separators_in_payload': {'key': 'replaceSeparatorsInPayload', 'type': 'bool'},
         'replace_character': {'key': 'replaceCharacter', 'type': 'int'},
         'segment_terminator': {'key': 'segmentTerminator', 'type': 'int'},
-        'character_set': {'key': 'characterSet', 'type': 'X12CharacterSet'},
-        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
+        'character_set': {'key': 'characterSet', 'type': 'str'},
+        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

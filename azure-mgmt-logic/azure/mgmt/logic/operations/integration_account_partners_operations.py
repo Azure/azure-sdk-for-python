@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PartnersOperations(object):
-    """PartnersOperations operations.
+class IntegrationAccountPartnersOperations(object):
+    """IntegrationAccountPartnersOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -33,11 +33,11 @@ class PartnersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
-    def list_by_integration_accounts(
+    def list(
             self, resource_group_name, integration_account_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of integration account partners.
 
@@ -64,7 +64,7 @@ class PartnersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_integration_accounts.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -114,7 +114,7 @@ class PartnersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_integration_accounts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners'}
 
     def get(
             self, resource_group_name, integration_account_name, partner_name, custom_headers=None, raw=False, **operation_config):

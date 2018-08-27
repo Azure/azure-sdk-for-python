@@ -72,9 +72,9 @@ class EdifactFramingSettings(Model):
         'segment_terminator': {'key': 'segmentTerminator', 'type': 'int'},
         'release_indicator': {'key': 'releaseIndicator', 'type': 'int'},
         'repetition_separator': {'key': 'repetitionSeparator', 'type': 'int'},
-        'character_set': {'key': 'characterSet', 'type': 'EdifactCharacterSet'},
-        'decimal_point_indicator': {'key': 'decimalPointIndicator', 'type': 'EdifactDecimalIndicator'},
-        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
+        'character_set': {'key': 'characterSet', 'type': 'str'},
+        'decimal_point_indicator': {'key': 'decimalPointIndicator', 'type': 'str'},
+        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'str'},
     }
 
     def __init__(self, *, protocol_version: int, data_element_separator: int, component_separator: int, segment_terminator: int, release_indicator: int, repetition_separator: int, character_set, decimal_point_indicator, segment_terminator_suffix, service_code_list_directory_version: str=None, character_encoding: str=None, **kwargs) -> None:

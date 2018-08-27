@@ -77,7 +77,7 @@ class IntegrationAccountAgreement(Resource):
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
-        'agreement_type': {'key': 'properties.agreementType', 'type': 'AgreementType'},
+        'agreement_type': {'key': 'properties.agreementType', 'type': 'str'},
         'host_partner': {'key': 'properties.hostPartner', 'type': 'str'},
         'guest_partner': {'key': 'properties.guestPartner', 'type': 'str'},
         'host_identity': {'key': 'properties.hostIdentity', 'type': 'BusinessIdentity'},
