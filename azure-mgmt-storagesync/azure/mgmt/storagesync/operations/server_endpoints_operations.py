@@ -24,7 +24,7 @@ class ServerEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-04-02".
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-04-02".
     """
 
     models = models
@@ -44,7 +44,7 @@ class ServerEndpointsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -54,10 +54,11 @@ class ServerEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -70,9 +71,8 @@ class ServerEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'ServerEndpoint')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -100,8 +100,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new ServerEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -168,7 +168,7 @@ class ServerEndpointsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -178,10 +178,11 @@ class ServerEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -192,14 +193,13 @@ class ServerEndpointsOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'ServerEndpoint')
+            body_content = self._serialize.body(parameters, 'ServerEndpointUpdateParameters')
         else:
             body_content = None
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -227,8 +227,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Patch a given ServerEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -238,7 +238,8 @@ class ServerEndpointsOperations(object):
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
         :param parameters: Any of the properties applicable in PUT request.
-        :type parameters: ~azure.mgmt.storagesync.models.ServerEndpoint
+        :type parameters:
+         ~azure.mgmt.storagesync.models.ServerEndpointUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -293,8 +294,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Get a ServerEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -317,7 +318,7 @@ class ServerEndpointsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -327,11 +328,11 @@ class ServerEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -340,8 +341,8 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -370,7 +371,7 @@ class ServerEndpointsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -380,11 +381,10 @@ class ServerEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -393,8 +393,8 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -413,8 +413,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a given ServerEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -468,8 +468,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, custom_headers=None, raw=False, **operation_config):
         """Get a ServerEndpoint list.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -493,7 +493,7 @@ class ServerEndpointsOperations(object):
                 # Construct URL
                 url = self.list_by_sync_group.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
                     'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str')
@@ -502,7 +502,7 @@ class ServerEndpointsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -510,7 +510,7 @@ class ServerEndpointsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -519,9 +519,8 @@ class ServerEndpointsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.StorageSyncErrorException(self._deserialize, response)
@@ -545,7 +544,7 @@ class ServerEndpointsOperations(object):
         # Construct URL
         url = self.recall_action.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -555,11 +554,10 @@ class ServerEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -568,8 +566,8 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -588,8 +586,8 @@ class ServerEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Recall a serverendpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.

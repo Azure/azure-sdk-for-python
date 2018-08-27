@@ -18,16 +18,18 @@ class StorageSyncService(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The id of the resource.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource
     :vartype type: str
-    :param location: The location of the resource.
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param tags: The tags of the resource.
-    :type tags: object
     :ivar storage_sync_service_status: Storage Sync service status.
     :vartype storage_sync_service_status: int
     :ivar storage_sync_service_uid: Storage Sync service Uid
@@ -38,6 +40,7 @@ class StorageSyncService(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'storage_sync_service_status': {'readonly': True},
         'storage_sync_service_uid': {'readonly': True},
     }
@@ -46,13 +49,13 @@ class StorageSyncService(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
         'storage_sync_service_status': {'key': 'properties.storageSyncServiceStatus', 'type': 'int'},
         'storage_sync_service_uid': {'key': 'properties.storageSyncServiceUid', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(StorageSyncService, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(StorageSyncService, self).__init__(tags=tags, location=location, **kwargs)
         self.storage_sync_service_status = None
         self.storage_sync_service_uid = None

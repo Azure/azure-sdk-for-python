@@ -13,10 +13,12 @@ from .resource import Resource
 
 
 class TrackedResource(Resource):
-    """ARM tracked resource.
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The id of the resource.
     :vartype id: str
@@ -24,27 +26,28 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource
     :vartype type: str
-    :param location: The location of the resource.
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param tags: The tags of the resource.
-    :type tags: object
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)

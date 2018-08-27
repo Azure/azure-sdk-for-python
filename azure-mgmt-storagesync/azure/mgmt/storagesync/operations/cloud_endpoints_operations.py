@@ -24,7 +24,7 @@ class CloudEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-04-02".
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-04-02".
     """
 
     models = models
@@ -44,7 +44,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -54,10 +54,11 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -70,9 +71,8 @@ class CloudEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'CloudEndpoint')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -101,8 +101,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -168,8 +168,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Get a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -192,7 +192,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -202,11 +202,11 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -215,8 +215,8 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -245,7 +245,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -255,11 +255,10 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -268,8 +267,8 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -290,8 +289,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -347,8 +346,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, custom_headers=None, raw=False, **operation_config):
         """Get a CloudEndpoint List.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -372,7 +371,7 @@ class CloudEndpointsOperations(object):
                 # Construct URL
                 url = self.list_by_sync_group.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
                     'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str')
@@ -381,7 +380,7 @@ class CloudEndpointsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -389,7 +388,7 @@ class CloudEndpointsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -398,9 +397,8 @@ class CloudEndpointsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.StorageSyncErrorException(self._deserialize, response)
@@ -426,7 +424,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.pre_backup.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -436,7 +434,7 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -452,9 +450,8 @@ class CloudEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'BackupRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -473,8 +470,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, azure_file_share=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Pre Backup a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -535,7 +532,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.post_backup.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -545,10 +542,11 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -561,9 +559,8 @@ class CloudEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'BackupRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -590,8 +587,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, azure_file_share=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Post Backup a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -657,7 +654,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.pre_restore.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -667,7 +664,7 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -683,9 +680,8 @@ class CloudEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'PreRestoreRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -704,8 +700,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Pre Restore a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -762,8 +758,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Restore Heartbeat a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
@@ -785,7 +781,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.restoreheartbeat.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -795,11 +791,10 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -808,8 +803,8 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -829,7 +824,7 @@ class CloudEndpointsOperations(object):
         # Construct URL
         url = self.post_restore.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
@@ -839,7 +834,7 @@ class CloudEndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -855,9 +850,8 @@ class CloudEndpointsOperations(object):
         body_content = self._serialize.body(parameters, 'PostRestoreRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
@@ -876,8 +870,8 @@ class CloudEndpointsOperations(object):
             self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Post Restore a given CloudEndpoint.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
