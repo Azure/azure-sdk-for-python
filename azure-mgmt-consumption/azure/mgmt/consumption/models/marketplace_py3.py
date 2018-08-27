@@ -82,9 +82,8 @@ class Marketplace(Resource):
     :vartype publisher_name: str
     :ivar plan_name: The name of plan.
     :vartype plan_name: str
-    :ivar additional_info: Additional info of this usage item.
-    :vartype additional_info: str
-    :ivar is_recurring_charge:
+    :ivar is_recurring_charge: Flag indicating whether this is a recurring
+     charge or not.
     :vartype is_recurring_charge: bool
     """
 
@@ -117,7 +116,6 @@ class Marketplace(Resource):
         'additional_properties': {'readonly': True},
         'publisher_name': {'readonly': True},
         'plan_name': {'readonly': True},
-        'additional_info': {'readonly': True},
         'is_recurring_charge': {'readonly': True},
     }
 
@@ -150,7 +148,6 @@ class Marketplace(Resource):
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
         'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
         'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
         'is_recurring_charge': {'key': 'properties.isRecurringCharge', 'type': 'bool'},
     }
 
@@ -180,5 +177,4 @@ class Marketplace(Resource):
         self.additional_properties = None
         self.publisher_name = None
         self.plan_name = None
-        self.additional_info = None
         self.is_recurring_charge = None
