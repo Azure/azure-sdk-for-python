@@ -29,10 +29,10 @@ class ChargeSummaryByEnrollmentAccount(Resource):
     :ivar billing_period_id: The id of the billing period resource that the
      charge belongs to.
     :vartype billing_period_id: str
-    :ivar start_date: Start date.
-    :vartype start_date: str
-    :ivar end_date: End date.
-    :vartype end_date: str
+    :ivar usage_start: Usage start date.
+    :vartype usage_start: str
+    :ivar usage_end:  Usage end date.
+    :vartype usage_end: str
     :ivar azure_charges: Azure Charges.
     :vartype azure_charges: decimal.Decimal
     :ivar charges_billed_separately: Charges Billed separately.
@@ -49,8 +49,8 @@ class ChargeSummaryByEnrollmentAccount(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
-        'start_date': {'readonly': True},
-        'end_date': {'readonly': True},
+        'usage_start': {'readonly': True},
+        'usage_end': {'readonly': True},
         'azure_charges': {'readonly': True},
         'charges_billed_separately': {'readonly': True},
         'marketplace_charges': {'readonly': True},
@@ -63,8 +63,8 @@ class ChargeSummaryByEnrollmentAccount(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'start_date': {'key': 'properties.startDate', 'type': 'str'},
-        'end_date': {'key': 'properties.endDate', 'type': 'str'},
+        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
+        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
         'azure_charges': {'key': 'properties.azureCharges', 'type': 'decimal'},
         'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'decimal'},
         'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'decimal'},
@@ -74,8 +74,8 @@ class ChargeSummaryByEnrollmentAccount(Resource):
     def __init__(self, **kwargs) -> None:
         super(ChargeSummaryByEnrollmentAccount, self).__init__(**kwargs)
         self.billing_period_id = None
-        self.start_date = None
-        self.end_date = None
+        self.usage_start = None
+        self.usage_end = None
         self.azure_charges = None
         self.charges_billed_separately = None
         self.marketplace_charges = None

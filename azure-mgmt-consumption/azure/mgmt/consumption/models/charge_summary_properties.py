@@ -21,10 +21,10 @@ class ChargeSummaryProperties(Model):
     :ivar billing_period_id: The id of the billing period resource that the
      charge belongs to.
     :vartype billing_period_id: str
-    :ivar start_date: Start date.
-    :vartype start_date: str
-    :ivar end_date: End date.
-    :vartype end_date: str
+    :ivar usage_start: Usage start date.
+    :vartype usage_start: str
+    :ivar usage_end:  Usage end date.
+    :vartype usage_end: str
     :ivar azure_charges: Azure Charges.
     :vartype azure_charges: decimal.Decimal
     :ivar charges_billed_separately: Charges Billed separately.
@@ -37,8 +37,8 @@ class ChargeSummaryProperties(Model):
 
     _validation = {
         'billing_period_id': {'readonly': True},
-        'start_date': {'readonly': True},
-        'end_date': {'readonly': True},
+        'usage_start': {'readonly': True},
+        'usage_end': {'readonly': True},
         'azure_charges': {'readonly': True},
         'charges_billed_separately': {'readonly': True},
         'marketplace_charges': {'readonly': True},
@@ -47,8 +47,8 @@ class ChargeSummaryProperties(Model):
 
     _attribute_map = {
         'billing_period_id': {'key': 'billingPeriodId', 'type': 'str'},
-        'start_date': {'key': 'startDate', 'type': 'str'},
-        'end_date': {'key': 'endDate', 'type': 'str'},
+        'usage_start': {'key': 'usageStart', 'type': 'str'},
+        'usage_end': {'key': 'usageEnd', 'type': 'str'},
         'azure_charges': {'key': 'azureCharges', 'type': 'decimal'},
         'charges_billed_separately': {'key': 'chargesBilledSeparately', 'type': 'decimal'},
         'marketplace_charges': {'key': 'marketplaceCharges', 'type': 'decimal'},
@@ -58,8 +58,8 @@ class ChargeSummaryProperties(Model):
     def __init__(self, **kwargs):
         super(ChargeSummaryProperties, self).__init__(**kwargs)
         self.billing_period_id = None
-        self.start_date = None
-        self.end_date = None
+        self.usage_start = None
+        self.usage_end = None
         self.azure_charges = None
         self.charges_billed_separately = None
         self.marketplace_charges = None
