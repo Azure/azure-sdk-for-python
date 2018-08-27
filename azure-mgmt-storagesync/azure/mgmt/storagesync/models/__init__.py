@@ -17,6 +17,7 @@ try:
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
     from .cloud_endpoint_py3 import CloudEndpoint
+    from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
     from .server_endpoint_py3 import ServerEndpoint
     from .registered_server_py3 import RegisteredServer
     from .resources_move_info_py3 import ResourcesMoveInfo
@@ -32,6 +33,7 @@ try:
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
     from .workflow_array_py3 import WorkflowArray
+    from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
     from .tracked_resource_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
@@ -41,6 +43,7 @@ except (SyntaxError, ImportError):
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
     from .cloud_endpoint import CloudEndpoint
+    from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
     from .server_endpoint import ServerEndpoint
     from .registered_server import RegisteredServer
     from .resources_move_info import ResourcesMoveInfo
@@ -56,6 +59,7 @@ except (SyntaxError, ImportError):
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
     from .workflow_array import WorkflowArray
+    from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
     from .tracked_resource import TrackedResource
 from .operation_entity_paged import OperationEntityPaged
 from .storage_sync_service_paged import StorageSyncServicePaged
@@ -76,6 +80,7 @@ __all__ = [
     'StorageSyncService',
     'SyncGroup',
     'CloudEndpoint',
+    'ServerEndpointUpdateParameters',
     'ServerEndpoint',
     'RegisteredServer',
     'ResourcesMoveInfo',
@@ -91,6 +96,7 @@ __all__ = [
     'BackupRequest',
     'PostBackupResponse',
     'WorkflowArray',
+    'StorageSyncServiceUpdateParameters',
     'TrackedResource',
     'OperationEntityPaged',
     'StorageSyncServicePaged',

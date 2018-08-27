@@ -193,7 +193,7 @@ class ServerEndpointsOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'ServerEndpoint')
+            body_content = self._serialize.body(parameters, 'ServerEndpointUpdateParameters')
         else:
             body_content = None
 
@@ -238,7 +238,8 @@ class ServerEndpointsOperations(object):
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
         :param parameters: Any of the properties applicable in PUT request.
-        :type parameters: ~azure.mgmt.storagesync.models.ServerEndpoint
+        :type parameters:
+         ~azure.mgmt.storagesync.models.ServerEndpointUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

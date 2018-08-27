@@ -247,7 +247,7 @@ class StorageSyncServicesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
 
     def update(
-            self, resource_group_name, storage_sync_service_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Patch a given StorageSyncService.
 
         :param resource_group_name: The name of the resource group. The name
@@ -256,10 +256,11 @@ class StorageSyncServicesOperations(object):
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
         :type storage_sync_service_name: str
-        :param location: The geo-location where the resource lives
-        :type location: str
-        :param tags: Resource tags.
+        :param tags: The user-specified tags associated with the storage sync
+         service.
         :type tags: dict[str, str]
+        :param properties: The properties of the storage sync service.
+        :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,8 +273,8 @@ class StorageSyncServicesOperations(object):
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         parameters = None
-        if tags is not None or location is not None:
-            parameters = models.StorageSyncService(tags=tags, location=location)
+        if tags is not None or properties is not None:
+            parameters = models.StorageSyncServiceUpdateParameters(tags=tags, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -301,7 +302,7 @@ class StorageSyncServicesOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'StorageSyncService')
+            body_content = self._serialize.body(parameters, 'StorageSyncServiceUpdateParameters')
         else:
             body_content = None
 
