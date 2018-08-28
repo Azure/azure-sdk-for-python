@@ -1,17 +1,18 @@
 import collections
 import logging
 import threading
+import types
 
-from ..models import BatchErrorException
-from ..models.batch_service_client_enums import TaskAddStatus
+from . import errors
+from .. import models
+from ..models import BatchErrorException, TaskAddCollectionResult, TaskAddCollectionParameter, TaskAddStatus
 from ..operations.task_operations import TaskOperations
 
+from msrest import Serializer, Deserializer
 from msrest.pipeline import ClientRawResponse
 
 MAX_TASKS_PER_REQUEST = 100
-
-def patch_client(client):
-    client.TaskOperations.add_collection = bulk_add_collection
+_LOGGER = logging.getLogger(__name__)
 
 class _TaskWorkflowManager(object):
     """Worker class for one add_collection request
@@ -34,7 +35,7 @@ class _TaskWorkflowManager(object):
 
     def __init__(
             self,
-            task_operations,
+            client,
             job_id,
             tasks_to_add,
             task_add_collection_options=None,
@@ -50,7 +51,7 @@ class _TaskWorkflowManager(object):
 
         # synchronized through lock variables
         self.error = None  # Only written once all threads have completed
-        self._max_tasks_per_request = task_operations.MAX_TASKS_PER_REQUEST
+        self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
         self._tasks_to_add = collections.deque(tasks_to_add)
 
         self._error_lock = threading.Lock()
@@ -58,7 +59,8 @@ class _TaskWorkflowManager(object):
         self._pending_queue_lock = threading.Lock()
 
         # Variables to be used for task add_collection requests
-        self._task_operations = task_operations
+        self._client = TaskOperations(
+            client._client, client.config, client._serialize, client._deserialize)
         self._job_id = job_id
         self._task_add_collection_options = task_add_collection_options
         self._custom_headers = custom_headers
@@ -75,7 +77,7 @@ class _TaskWorkflowManager(object):
         """
 
         try:
-            add_collection_response = original_add_collection(
+            add_collection_response = self._client.add_collection(
                 self._job_id,
                 chunk_tasks_to_add,
                 self._task_add_collection_options,
@@ -93,8 +95,8 @@ class _TaskWorkflowManager(object):
                 if len(chunk_tasks_to_add) == 1:
                     failed_task = chunk_tasks_to_add.pop()
                     results_queue.appendleft(e)
-                    logging.error("Task ID " + failed_task.id + " failed to add due to exceeding the request body" +
-                                    " being too large")
+                    _LOGGER.error("Task ID %s failed to add due to exceeding the request"
+                                  " body being too large", failed_task.id)
                     self._has_early_termination_error = True
                 else:
                     # Assumption: Tasks are relatively close in size therefore if one batch exceeds size limit
@@ -106,9 +108,9 @@ class _TaskWorkflowManager(object):
                     with self._max_tasks_lock:
                         if midpoint < self._max_tasks_per_request:
                             self._max_tasks_per_request = midpoint
-                            logging.info("Amount of tasks per request reduced from " +
-                                            str(self._max_tasks_per_request) + " to " + str(midpoint) +
-                                            " due to the request body being too large")
+                            _LOGGER.info("Amount of tasks per request reduced from %s to %s due to the"
+                                         " request body being too large", str(self._max_tasks_per_request),
+                                         str(midpoint))
 
                     # Not the most efficient solution for all cases, but the goal of this is to handle this
                     # exception and have it work in all cases where tasks are well behaved
@@ -123,8 +125,10 @@ class _TaskWorkflowManager(object):
         except Exception as e:  # pylint: disable=broad-except
             results_queue.appendleft(e)
         else:
-            if isinstance(add_collection_response, ClientRawResponse):
+            try:
                 add_collection_response = add_collection_response.output
+            except AttributeError:
+                pass
 
             for task_result in add_collection_response.value:  # pylint: disable=no-member
                 if task_result.status == TaskAddStatus.server_error:
@@ -147,28 +151,26 @@ class _TaskWorkflowManager(object):
 
         :param collections.deque results_queue: Queue for worker to output results to
         """
-        while len(self._tasks_to_add) != 0 and not self._has_early_termination_error:
+        while self._tasks_to_add and not self._has_early_termination_error:
             max_tasks = self._max_tasks_per_request  # local copy
             chunk_tasks_to_add = []
             with self._pending_queue_lock:
-                while len(chunk_tasks_to_add) < max_tasks and len(self._tasks_to_add) != 0:
+                while len(chunk_tasks_to_add) < max_tasks and self._tasks_to_add:
                     chunk_tasks_to_add.append(self._tasks_to_add.pop())
 
-            if len(chunk_tasks_to_add) != 0:
+            if chunk_tasks_to_add:
                 self._bulk_add_tasks(results_queue, chunk_tasks_to_add)
 
 
         # Only define error if all threads have finished and there were failures
         with self._error_lock:
-            if threading.active_count() == 1 and len(self._failures) > 0:
+            if threading.active_count() == 1 and self._failures:
                 self.error = errors.CreateTasksErrorException(
                     "One or more tasks failed to be added",
                     self._failures,
                     self._tasks_to_add)
-            else:
-                return
 
-@staticmethod
+
 def _handle_output(results_queue):
     """Scan output for exceptions
 
@@ -180,7 +182,7 @@ def _handle_output(results_queue):
     :rtype: list[~TaskAddResult]
     """
     results = []
-    while len(results_queue) != 0:
+    while results_queue:
         queue_item = results_queue.pop()
         if isinstance(queue_item, Exception):
             raise queue_item
@@ -188,8 +190,17 @@ def _handle_output(results_queue):
             results.append(queue_item)
     return results
 
+def patch_client(client):
+    client.task.add_collection = types.MethodType(bulk_add_collection, client.task)
+
 def bulk_add_collection(
-        self, job_id, value, task_add_collection_options=None, custom_headers=None, raw=False, threads=None,
+        client,
+        job_id,
+        value,
+        task_add_collection_options=None,
+        custom_headers=None,
+        raw=False,
+        threads=0,
         **operation_config):
     """Adds a collection of tasks to the specified job.
 
@@ -242,8 +253,8 @@ def bulk_add_collection(
     """
 
     results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
-    task_workflow_manager = self._TaskWorkflowManager(
-        self,
+    task_workflow_manager = _TaskWorkflowManager(
+        client,
         job_id,
         value,
         task_add_collection_options,
@@ -252,139 +263,25 @@ def bulk_add_collection(
         **operation_config)
 
     # multi-threaded behavior
-    if threads and threads > 0:
+    if threads:
+        if threads < 0:
+            raise ValueError("Threads must be positive or 0")
+
         active_threads = []
         for i in range(threads):
             active_threads.append(threading.Thread(
                 target=task_workflow_manager.task_collection_thread_handler,
                 args=(results_queue,)))
-            active_threads[i].start()
+            active_threads[-1].start()
         for thread in active_threads:
             thread.join()
     # single-threaded behavior
     else:
         task_workflow_manager.task_collection_thread_handler(results_queue)
 
-    submitted_tasks = ExtendedTaskOperations._handle_output(results_queue)
+    submitted_tasks = _handle_output(results_queue)
     if task_workflow_manager.error:
         raise task_workflow_manager.error  # pylint: disable=raising-bad-type
     else:
-        return models.TaskAddCollectionResult(value=submitted_tasks)
+        return TaskAddCollectionResult(value=submitted_tasks)
     bulk_add_collection.metadata = {'url': '/jobs/{jobId}/addtaskcollection'}
-
-def original_add_collection(
-        self, job_id, value, task_add_collection_options=None, custom_headers=None, raw=False, **operation_config):
-    """Adds a collection of tasks to the specified job.
-
-    Note that each task must have a unique ID. The Batch service may not
-    return the results for each task in the same order the tasks were
-    submitted in this request. If the server times out or the connection is
-    closed during the request, the request may have been partially or fully
-    processed, or not at all. In such cases, the user should re-issue the
-    request. Note that it is up to the user to correctly handle failures
-    when re-issuing a request. For example, you should use the same task
-    IDs during a retry so that if the prior operation succeeded, the retry
-    will not create extra tasks unexpectedly. If the response contains any
-    tasks which failed to add, a client can retry the request. In a retry,
-    it is most efficient to resubmit only tasks that failed to add, and to
-    omit tasks that were successfully added on the first attempt. The
-    maximum lifetime of a task from addition to completion is 7 days. If a
-    task has not completed within 7 days of being added it will be
-    terminated by the Batch service and left in whatever state it was in at
-    that time.
-
-    :param job_id: The ID of the job to which the task collection is to be
-        added.
-    :type job_id: str
-    :param value: The collection of tasks to add. The total serialized
-        size of this collection must be less than 4MB. If it is greater than
-        4MB (for example if each task has 100's of resource files or
-        environment variables), the request will fail with code
-        'RequestBodyTooLarge' and should be retried again with fewer tasks.
-    :type value: list[~azure.batch.models.TaskAddParameter]
-    :param task_add_collection_options: Additional parameters for the
-        operation
-    :type task_add_collection_options:
-        ~azure.batch.models.TaskAddCollectionOptions
-    :param dict custom_headers: headers that will be added to the request
-    :param bool raw: returns the direct response alongside the
-        deserialized response
-    :param operation_config: :ref:`Operation configuration
-        overrides<msrest:optionsforoperations>`.
-    :return: TaskAddCollectionResult or ClientRawResponse if raw=true
-    :rtype: ~azure.batch.models.TaskAddCollectionResult or
-        ~msrest.pipeline.ClientRawResponse
-    :raises:
-        :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
-    """
-    timeout = None
-    if task_add_collection_options is not None:
-        timeout = task_add_collection_options.timeout
-    client_request_id = None
-    if task_add_collection_options is not None:
-        client_request_id = task_add_collection_options.client_request_id
-    return_client_request_id = None
-    if task_add_collection_options is not None:
-        return_client_request_id = task_add_collection_options.return_client_request_id
-    ocp_date = None
-    if task_add_collection_options is not None:
-        ocp_date = task_add_collection_options.ocp_date
-    task_collection = models.TaskAddCollectionParameter(value=value)
-
-    # Construct URL
-    url = self.original_add_collection.metadata['url']
-    path_format_arguments = {
-        'jobId': self._serialize.url("job_id", job_id, 'str')
-    }
-    url = self._client.format_url(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = {}
-    query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-    if timeout is not None:
-        query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
-
-    # Construct headers
-    header_parameters = {}
-    header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
-    if self.config.generate_client_request_id:
-        header_parameters['client-request-id'] = str(uuid.uuid1())
-    if custom_headers:
-        header_parameters.update(custom_headers)
-    if self.config.accept_language is not None:
-        header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-    if client_request_id is not None:
-        header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-    if return_client_request_id is not None:
-        header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
-    if ocp_date is not None:
-        header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
-
-    # Construct body
-    body_content = self._serialize.body(task_collection, 'TaskAddCollectionParameter')
-
-    # Construct and send request
-    request = self._client.post(url, query_parameters)
-    response = self._client.send(
-        request, header_parameters, body_content, stream=False, **operation_config)
-
-    if response.status_code not in [200]:
-        raise models.BatchErrorException(self._deserialize, response)
-
-    deserialized = None
-    header_dict = {}
-
-    if response.status_code == 200:
-        deserialized = self._deserialize('TaskAddCollectionResult', response)
-        header_dict = {
-            'client-request-id': 'str',
-            'request-id': 'str',
-        }
-
-    if raw:
-        client_raw_response = ClientRawResponse(deserialized, response)
-        client_raw_response.add_headers(header_dict)
-        return client_raw_response
-
-    return deserialized
-original_add_collection.metadata = {'url': '/jobs/{jobId}/addtaskcollection'}

@@ -878,6 +878,46 @@ class BatchTest(AzureMgmtTestCase):
         response = client.task.delete(batch_job.id, task_param.id)
         self.assertIsNone(response)
 
+        # Test Bulk Add Task Failure
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(10000):
+            resource_file = models.ResourceFile(
+                blob_source="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(str(i)),
+                file_path="resourceFile{}".format(str(i)))
+            resource_files.append(resource_file)
+        task = models.TaskAddParameter(
+            id=task_id,
+            command_line="sleep 1",
+            resource_files=resource_files)
+        tasks_to_add.append(task)
+        self.assertBatchError(
+            "RequestBodyTooLarge",
+            client.task.add_collection,
+            batch_job.id,
+            tasks_to_add)
+
+        # Test Bulk Add Task Success
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(100):
+            resource_file = models.ResourceFile(
+                blob_source="https://mystorageaccount.blob.core.windows.net/files/resourceFile" + str(i),
+                file_path="resourceFile"+str(i))
+            resource_files.append(resource_file)
+        for i in range(733):
+            task = models.TaskAddParameter(
+                id=task_id + str(i),
+                command_line="sleep 1",
+                resource_files=resource_files)
+            tasks_to_add.append(task)
+        result = client.task.add_collection(batch_job.id, tasks_to_add)
+        self.assertIsInstance(result, models.TaskAddCollectionResult)
+        self.assertEqual(len(result.value), 733)
+        self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
     def test_batch_jobs(self, **kwargs):
