@@ -34,6 +34,9 @@ class AzureDataLakeStoreDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
     :param folder_path: Required. Path to the folder in the Azure Data Lake
@@ -62,6 +65,7 @@ class AzureDataLakeStoreDataset(Dataset):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
@@ -69,8 +73,8 @@ class AzureDataLakeStoreDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, folder_path, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, file_name=None, format=None, compression=None, **kwargs) -> None:
-        super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, **kwargs)
+    def __init__(self, *, linked_service_name, folder_path, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, file_name=None, format=None, compression=None, **kwargs) -> None:
+        super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format

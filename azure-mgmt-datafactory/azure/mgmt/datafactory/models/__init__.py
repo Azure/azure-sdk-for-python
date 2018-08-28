@@ -33,11 +33,13 @@ try:
     from .parameter_specification_py3 import ParameterSpecification
     from .linked_service_py3 import LinkedService
     from .linked_service_resource_py3 import LinkedServiceResource
+    from .dataset_folder_py3 import DatasetFolder
     from .dataset_py3 import Dataset
     from .dataset_resource_py3 import DatasetResource
     from .activity_dependency_py3 import ActivityDependency
     from .user_property_py3 import UserProperty
     from .activity_py3 import Activity
+    from .pipeline_folder_py3 import PipelineFolder
     from .pipeline_resource_py3 import PipelineResource
     from .trigger_py3 import Trigger
     from .trigger_resource_py3 import TriggerResource
@@ -369,11 +371,13 @@ except (SyntaxError, ImportError):
     from .parameter_specification import ParameterSpecification
     from .linked_service import LinkedService
     from .linked_service_resource import LinkedServiceResource
+    from .dataset_folder import DatasetFolder
     from .dataset import Dataset
     from .dataset_resource import DatasetResource
     from .activity_dependency import ActivityDependency
     from .user_property import UserProperty
     from .activity import Activity
+    from .pipeline_folder import PipelineFolder
     from .pipeline_resource import PipelineResource
     from .trigger import Trigger
     from .trigger_resource import TriggerResource
@@ -773,11 +777,13 @@ __all__ = [
     'ParameterSpecification',
     'LinkedService',
     'LinkedServiceResource',
+    'DatasetFolder',
     'Dataset',
     'DatasetResource',
     'ActivityDependency',
     'UserProperty',
     'Activity',
+    'PipelineFolder',
     'PipelineResource',
     'Trigger',
     'TriggerResource',
