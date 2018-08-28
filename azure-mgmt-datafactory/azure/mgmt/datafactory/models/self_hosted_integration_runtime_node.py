@@ -53,7 +53,7 @@ class SelfHostedIntegrationRuntimeNode(Model):
     :ivar last_stop_time: The integration runtime node last stop time.
     :vartype last_stop_time: datetime
     :ivar last_update_result: The result of the last integration runtime node
-     update. Possible values include: 'Succeed', 'Fail'
+     update. Possible values include: 'None', 'Succeed', 'Fail'
     :vartype last_update_result: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeUpdateResult
     :ivar last_start_update_time: The last time for the integration runtime

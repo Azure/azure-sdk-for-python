@@ -22,11 +22,10 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
     :param reference_trigger: Required. Referenced trigger.
     :type reference_trigger: ~azure.mgmt.datafactory.models.TriggerReference
     :param offset: Timespan applied to the start time of a tumbling window
-     when evaluating dependency, .Net timespan format.
+     when evaluating dependency.
     :type offset: str
     :param size: The size of the window when evaluating the dependency. If
-     undefined the frequency of the tumbling window will be used, .Net timespan
-     format.
+     undefined the frequency of the tumbling window will be used.
     :type size: str
     """
 

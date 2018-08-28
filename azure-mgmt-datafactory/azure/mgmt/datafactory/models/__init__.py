@@ -29,12 +29,14 @@ try:
     from .update_integration_runtime_request_py3 import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request_py3 import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request_py3 import LinkedIntegrationRuntimeRequest
+    from .create_linked_integration_runtime_request_py3 import CreateLinkedIntegrationRuntimeRequest
     from .parameter_specification_py3 import ParameterSpecification
     from .linked_service_py3 import LinkedService
     from .linked_service_resource_py3 import LinkedServiceResource
     from .dataset_py3 import Dataset
     from .dataset_resource_py3 import DatasetResource
     from .activity_dependency_py3 import ActivityDependency
+    from .user_property_py3 import UserProperty
     from .activity_py3 import Activity
     from .pipeline_resource_py3 import PipelineResource
     from .trigger_py3 import Trigger
@@ -137,6 +139,8 @@ try:
     from .azure_sql_database_linked_service_py3 import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service_py3 import SqlServerLinkedService
     from .azure_sql_dw_linked_service_py3 import AzureSqlDWLinkedService
+    from .azure_table_storage_linked_service_py3 import AzureTableStorageLinkedService
+    from .azure_blob_storage_linked_service_py3 import AzureBlobStorageLinkedService
     from .azure_storage_linked_service_py3 import AzureStorageLinkedService
     from .responsys_object_dataset_py3 import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset_py3 import SalesforceMarketingCloudObjectDataset
@@ -366,12 +370,14 @@ except (SyntaxError, ImportError):
     from .update_integration_runtime_request import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request import LinkedIntegrationRuntimeRequest
+    from .create_linked_integration_runtime_request import CreateLinkedIntegrationRuntimeRequest
     from .parameter_specification import ParameterSpecification
     from .linked_service import LinkedService
     from .linked_service_resource import LinkedServiceResource
     from .dataset import Dataset
     from .dataset_resource import DatasetResource
     from .activity_dependency import ActivityDependency
+    from .user_property import UserProperty
     from .activity import Activity
     from .pipeline_resource import PipelineResource
     from .trigger import Trigger
@@ -474,6 +480,8 @@ except (SyntaxError, ImportError):
     from .azure_sql_database_linked_service import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service import SqlServerLinkedService
     from .azure_sql_dw_linked_service import AzureSqlDWLinkedService
+    from .azure_table_storage_linked_service import AzureTableStorageLinkedService
+    from .azure_blob_storage_linked_service import AzureBlobStorageLinkedService
     from .azure_storage_linked_service import AzureStorageLinkedService
     from .responsys_object_dataset import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
@@ -771,12 +779,14 @@ __all__ = [
     'UpdateIntegrationRuntimeRequest',
     'UpdateIntegrationRuntimeNodeRequest',
     'LinkedIntegrationRuntimeRequest',
+    'CreateLinkedIntegrationRuntimeRequest',
     'ParameterSpecification',
     'LinkedService',
     'LinkedServiceResource',
     'Dataset',
     'DatasetResource',
     'ActivityDependency',
+    'UserProperty',
     'Activity',
     'PipelineResource',
     'Trigger',
@@ -879,6 +889,8 @@ __all__ = [
     'AzureSqlDatabaseLinkedService',
     'SqlServerLinkedService',
     'AzureSqlDWLinkedService',
+    'AzureTableStorageLinkedService',
+    'AzureBlobStorageLinkedService',
     'AzureStorageLinkedService',
     'ResponsysObjectDataset',
     'SalesforceMarketingCloudObjectDataset',

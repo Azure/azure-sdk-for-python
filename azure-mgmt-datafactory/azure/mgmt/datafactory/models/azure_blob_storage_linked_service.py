@@ -12,8 +12,8 @@
 from .linked_service import LinkedService
 
 
-class AzureStorageLinkedService(LinkedService):
-    """The storage account linked service.
+class AzureBlobStorageLinkedService(LinkedService):
+    """The azure blob storage linked service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -34,12 +34,25 @@ class AzureStorageLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: The connection string. It is mutually exclusive
-     with sasUri property. Type: string, SecureString or
+     with sasUri, serviceEndpoint property. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
-     exclusive with connectionString property.
+    :param sas_uri: SAS URI of the Azure Blob Storage resource. It is mutually
+     exclusive with connectionString, serviceEndpoint property.
     :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_endpoint: Blob service endpoint of the Azure Blob Storage
+     resource. It is mutually exclusive with connectionString, sasUri property.
+    :type service_endpoint: str
+    :param service_principal_id: The ID of the service principal used to
+     authenticate against Azure SQL Data Warehouse. Type: string (or Expression
+     with resultType string).
+    :type service_principal_id: object
+    :param service_principal_key: The key of the service principal used to
+     authenticate against Azure SQL Data Warehouse.
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param tenant: The name or ID of the tenant to which the service principal
+     belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -59,12 +72,20 @@ class AzureStorageLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
+        'service_endpoint': {'key': 'typeProperties.serviceEndpoint', 'type': 'str'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
+        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(AzureStorageLinkedService, self).__init__(**kwargs)
+        super(AzureBlobStorageLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.sas_uri = kwargs.get('sas_uri', None)
+        self.service_endpoint = kwargs.get('service_endpoint', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
-        self.type = 'AzureStorage'
+        self.type = 'AzureBlobStorage'

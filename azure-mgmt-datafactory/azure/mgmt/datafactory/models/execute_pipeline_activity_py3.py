@@ -27,7 +27,7 @@ class ExecutePipelineActivity(ControlActivity):
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
-    :type user_properties: dict[str, str]
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipeline: Required. Pipeline reference.
@@ -50,7 +50,7 @@ class ExecutePipelineActivity(ControlActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
-        'user_properties': {'key': 'userProperties', 'type': '{str}'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
         'pipeline': {'key': 'typeProperties.pipeline', 'type': 'PipelineReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
