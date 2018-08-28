@@ -877,7 +877,7 @@ class RedisOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def export_data(
+    def export(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """Export data from the redis cache to blobs in a container.
 
