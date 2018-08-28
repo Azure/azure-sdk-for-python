@@ -15,45 +15,47 @@ from msrest.serialization import Model
 class ResourceStatistics(Model):
     """Statistics related to resource consumption by compute nodes in a pool.
 
-    :param start_time: The start time of the time range covered by the
-     statistics.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The start time of the time range covered by
+     the statistics.
     :type start_time: datetime
-    :param last_update_time: The time at which the statistics were last
-     updated. All statistics are limited to the range between startTime and
-     lastUpdateTime.
+    :param last_update_time: Required. The time at which the statistics were
+     last updated. All statistics are limited to the range between startTime
+     and lastUpdateTime.
     :type last_update_time: datetime
-    :param avg_cpu_percentage: The average CPU usage across all nodes in the
-     pool (percentage per node).
+    :param avg_cpu_percentage: Required. The average CPU usage across all
+     nodes in the pool (percentage per node).
     :type avg_cpu_percentage: float
-    :param avg_memory_gi_b: The average memory usage in GiB across all nodes
-     in the pool.
-    :type avg_memory_gi_b: float
-    :param peak_memory_gi_b: The peak memory usage in GiB across all nodes in
-     the pool.
-    :type peak_memory_gi_b: float
-    :param avg_disk_gi_b: The average used disk space in GiB across all nodes
-     in the pool.
-    :type avg_disk_gi_b: float
-    :param peak_disk_gi_b: The peak used disk space in GiB across all nodes in
-     the pool.
-    :type peak_disk_gi_b: float
-    :param disk_read_iops: The total number of disk read operations across all
-     nodes in the pool.
-    :type disk_read_iops: long
-    :param disk_write_iops: The total number of disk write operations across
+    :param avg_memory_gi_b: Required. The average memory usage in GiB across
      all nodes in the pool.
+    :type avg_memory_gi_b: float
+    :param peak_memory_gi_b: Required. The peak memory usage in GiB across all
+     nodes in the pool.
+    :type peak_memory_gi_b: float
+    :param avg_disk_gi_b: Required. The average used disk space in GiB across
+     all nodes in the pool.
+    :type avg_disk_gi_b: float
+    :param peak_disk_gi_b: Required. The peak used disk space in GiB across
+     all nodes in the pool.
+    :type peak_disk_gi_b: float
+    :param disk_read_iops: Required. The total number of disk read operations
+     across all nodes in the pool.
+    :type disk_read_iops: long
+    :param disk_write_iops: Required. The total number of disk write
+     operations across all nodes in the pool.
     :type disk_write_iops: long
-    :param disk_read_gi_b: The total amount of data in GiB of disk reads
-     across all nodes in the pool.
+    :param disk_read_gi_b: Required. The total amount of data in GiB of disk
+     reads across all nodes in the pool.
     :type disk_read_gi_b: float
-    :param disk_write_gi_b: The total amount of data in GiB of disk writes
-     across all nodes in the pool.
-    :type disk_write_gi_b: float
-    :param network_read_gi_b: The total amount of data in GiB of network reads
-     across all nodes in the pool.
-    :type network_read_gi_b: float
-    :param network_write_gi_b: The total amount of data in GiB of network
+    :param disk_write_gi_b: Required. The total amount of data in GiB of disk
      writes across all nodes in the pool.
+    :type disk_write_gi_b: float
+    :param network_read_gi_b: Required. The total amount of data in GiB of
+     network reads across all nodes in the pool.
+    :type network_read_gi_b: float
+    :param network_write_gi_b: Required. The total amount of data in GiB of
+     network writes across all nodes in the pool.
     :type network_write_gi_b: float
     """
 
@@ -89,18 +91,18 @@ class ResourceStatistics(Model):
         'network_write_gi_b': {'key': 'networkWriteGiB', 'type': 'float'},
     }
 
-    def __init__(self, start_time, last_update_time, avg_cpu_percentage, avg_memory_gi_b, peak_memory_gi_b, avg_disk_gi_b, peak_disk_gi_b, disk_read_iops, disk_write_iops, disk_read_gi_b, disk_write_gi_b, network_read_gi_b, network_write_gi_b):
-        super(ResourceStatistics, self).__init__()
-        self.start_time = start_time
-        self.last_update_time = last_update_time
-        self.avg_cpu_percentage = avg_cpu_percentage
-        self.avg_memory_gi_b = avg_memory_gi_b
-        self.peak_memory_gi_b = peak_memory_gi_b
-        self.avg_disk_gi_b = avg_disk_gi_b
-        self.peak_disk_gi_b = peak_disk_gi_b
-        self.disk_read_iops = disk_read_iops
-        self.disk_write_iops = disk_write_iops
-        self.disk_read_gi_b = disk_read_gi_b
-        self.disk_write_gi_b = disk_write_gi_b
-        self.network_read_gi_b = network_read_gi_b
-        self.network_write_gi_b = network_write_gi_b
+    def __init__(self, **kwargs):
+        super(ResourceStatistics, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.last_update_time = kwargs.get('last_update_time', None)
+        self.avg_cpu_percentage = kwargs.get('avg_cpu_percentage', None)
+        self.avg_memory_gi_b = kwargs.get('avg_memory_gi_b', None)
+        self.peak_memory_gi_b = kwargs.get('peak_memory_gi_b', None)
+        self.avg_disk_gi_b = kwargs.get('avg_disk_gi_b', None)
+        self.peak_disk_gi_b = kwargs.get('peak_disk_gi_b', None)
+        self.disk_read_iops = kwargs.get('disk_read_iops', None)
+        self.disk_write_iops = kwargs.get('disk_write_iops', None)
+        self.disk_read_gi_b = kwargs.get('disk_read_gi_b', None)
+        self.disk_write_gi_b = kwargs.get('disk_write_gi_b', None)
+        self.network_read_gi_b = kwargs.get('network_read_gi_b', None)
+        self.network_write_gi_b = kwargs.get('network_write_gi_b', None)
