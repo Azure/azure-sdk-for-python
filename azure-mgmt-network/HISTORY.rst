@@ -3,6 +3,35 @@
 Release History
 ===============
 
+2.1.0 (2018-08-28)
+++++++++++++++++++
+
+Default API version is now 2018-07-01
+
+**Features**
+
+- Model ExpressRouteCircuit has a new parameter allow_global_reach
+- Model PublicIPAddress has a new parameter public_ip_prefix
+- Model BackendAddressPool has a new parameter outbound_rule (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter public_ip_prefix
+- Model LoadBalancingRule has a new parameter enable_tcp_reset
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter express_route_gateway_bypass
+- Model VirtualNetworkGatewayConnection has a new parameter express_route_gateway_bypass
+- Model Subnet has a new parameter service_endpoint_policies
+- Model InboundNatPool has a new parameter enable_tcp_reset
+- Model LoadBalancer has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model InboundNatRule has a new parameter enable_tcp_reset
+- Added operation group ServiceEndpointPolicyDefinitionsOperations
+- Added operation group ServiceEndpointPoliciesOperations
+- Added operation group PublicIPPrefixesOperations
+
+**Breaking changes**
+
+- Model BackendAddressPool no longer has parameter outbound_nat_rule (now outbound_rules)
+- Model FrontendIPConfiguration no longer has parameter outbound_nat_rules (now outbound_rules)
+- Model LoadBalancer no longer has parameter outbound_nat_rules (now outbound_rules)
+
 2.0.1 (2018-08-07)
 ++++++++++++++++++
 
