@@ -33,6 +33,7 @@ try:
     from .identifier_py3 import Identifier
     from .hybrid_connection_key_py3 import HybridConnectionKey
     from .hybrid_connection_py3 import HybridConnection
+    from .deleted_site_py3 import DeletedSite
     from .proxy_only_resource_py3 import ProxyOnlyResource
     from .managed_service_identity_py3 import ManagedServiceIdentity
     from .slot_swap_status_py3 import SlotSwapStatus
@@ -101,7 +102,6 @@ try:
     from .app_service_environment_py3 import AppServiceEnvironment
     from .localizable_string_py3 import LocalizableString
     from .csm_usage_quota_py3 import CsmUsageQuota
-    from .deleted_site_py3 import DeletedSite
     from .error_entity_py3 import ErrorEntity
     from .operation_py3 import Operation
     from .resource_metric_name_py3 import ResourceMetricName
@@ -229,6 +229,7 @@ try:
     from .worker_pool_resource_py3 import WorkerPoolResource
     from .app_service_plan_patch_resource_py3 import AppServicePlanPatchResource
     from .hybrid_connection_limits_py3 import HybridConnectionLimits
+    from .resource_health_metadata_py3 import ResourceHealthMetadata
 except (SyntaxError, ImportError):
     from .app_service_certificate import AppServiceCertificate
     from .app_service_certificate_resource import AppServiceCertificateResource
@@ -253,6 +254,7 @@ except (SyntaxError, ImportError):
     from .identifier import Identifier
     from .hybrid_connection_key import HybridConnectionKey
     from .hybrid_connection import HybridConnection
+    from .deleted_site import DeletedSite
     from .proxy_only_resource import ProxyOnlyResource
     from .managed_service_identity import ManagedServiceIdentity
     from .slot_swap_status import SlotSwapStatus
@@ -321,7 +323,6 @@ except (SyntaxError, ImportError):
     from .app_service_environment import AppServiceEnvironment
     from .localizable_string import LocalizableString
     from .csm_usage_quota import CsmUsageQuota
-    from .deleted_site import DeletedSite
     from .error_entity import ErrorEntity
     from .operation import Operation
     from .resource_metric_name import ResourceMetricName
@@ -449,6 +450,7 @@ except (SyntaxError, ImportError):
     from .worker_pool_resource import WorkerPoolResource
     from .app_service_plan_patch_resource import AppServicePlanPatchResource
     from .hybrid_connection_limits import HybridConnectionLimits
+    from .resource_health_metadata import ResourceHealthMetadata
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
 from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
 from .csm_operation_description_paged import CsmOperationDescriptionPaged
@@ -501,6 +503,7 @@ from .usage_paged import UsagePaged
 from .app_service_plan_paged import AppServicePlanPaged
 from .str_paged import StrPaged
 from .hybrid_connection_paged import HybridConnectionPaged
+from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .web_site_management_client_enums import (
     KeyVaultSecretStatus,
     CertificateProductType,
@@ -591,6 +594,7 @@ __all__ = [
     'Identifier',
     'HybridConnectionKey',
     'HybridConnection',
+    'DeletedSite',
     'ProxyOnlyResource',
     'ManagedServiceIdentity',
     'SlotSwapStatus',
@@ -659,7 +663,6 @@ __all__ = [
     'AppServiceEnvironment',
     'LocalizableString',
     'CsmUsageQuota',
-    'DeletedSite',
     'ErrorEntity',
     'Operation',
     'ResourceMetricName',
@@ -787,6 +790,7 @@ __all__ = [
     'WorkerPoolResource',
     'AppServicePlanPatchResource',
     'HybridConnectionLimits',
+    'ResourceHealthMetadata',
     'AppServiceCertificateOrderPaged',
     'AppServiceCertificateResourcePaged',
     'CsmOperationDescriptionPaged',
@@ -839,6 +843,7 @@ __all__ = [
     'AppServicePlanPaged',
     'StrPaged',
     'HybridConnectionPaged',
+    'ResourceHealthMetadataPaged',
     'KeyVaultSecretStatus',
     'CertificateProductType',
     'ProvisioningState',
