@@ -22,8 +22,8 @@ class OutboundRule(SubResource):
     :param allocated_outbound_ports: The number of outbound ports to be used
      for NAT.
     :type allocated_outbound_ports: int
-    :param frontend_ip_configurations: Required. The Frontend IP addresses of
-     the load balancer.
+    :param frontend_ip_configurations: The Frontend IP addresses of the load
+     balancer.
     :type frontend_ip_configurations:
      list[~azure.mgmt.network.v2018_07_01.models.SubResource]
     :param backend_address_pool: Required. A reference to a pool of DIPs.
@@ -33,8 +33,8 @@ class OutboundRule(SubResource):
     :param provisioning_state: Gets the provisioning state of the PublicIP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param protocol: Required. Protocol - TCP, UDP or All. Possible values
-     include: 'Tcp', 'Udp', 'All'
+    :param protocol: Protocol - TCP, UDP or All. Possible values include:
+     'Tcp', 'Udp', 'All'
     :type protocol: str or ~azure.mgmt.network.v2018_07_01.models.enum
     :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle
      timeout or unexpected connection termination. This element is only used
@@ -51,9 +51,7 @@ class OutboundRule(SubResource):
     """
 
     _validation = {
-        'frontend_ip_configurations': {'required': True},
         'backend_address_pool': {'required': True},
-        'protocol': {'required': True},
     }
 
     _attribute_map = {
