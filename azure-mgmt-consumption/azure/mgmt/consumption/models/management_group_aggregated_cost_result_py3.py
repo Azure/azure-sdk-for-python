@@ -26,6 +26,9 @@ class ManagementGroupAggregatedCostResult(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar billing_period_id: The id of the billing period resource that the
+     aggregated cost belongs to.
+    :vartype billing_period_id: str
     :ivar usage_start: The start of the date time range covered by aggregated
      cost.
     :vartype usage_start: datetime
@@ -51,6 +54,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
         'usage_end': {'readonly': True},
         'azure_charges': {'readonly': True},
@@ -64,6 +68,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
         'usage_end': {'key': 'properties.usageEnd', 'type': 'iso-8601'},
         'azure_charges': {'key': 'properties.azureCharges', 'type': 'decimal'},
@@ -75,6 +80,7 @@ class ManagementGroupAggregatedCostResult(Resource):
 
     def __init__(self, *, children=None, **kwargs) -> None:
         super(ManagementGroupAggregatedCostResult, self).__init__(**kwargs)
+        self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
         self.azure_charges = None
