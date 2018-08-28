@@ -11,17 +11,19 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class DeletedApplicationsOperations(object):
-    """DeletedApplicationsOperations operations.
+class OAuth2Operations(object):
+    """OAuth2Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     models = models
@@ -31,80 +33,26 @@ class DeletedApplicationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
-    def restore(
-            self, object_id, custom_headers=None, raw=False, **operation_config):
-        """Restores the deleted application in the directory.
-
-        :param object_id: Application object ID.
-        :type object_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Application or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.Application or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
-        """
-        # Construct URL
-        url = self.restore.metadata['url']
-        path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str'),
-            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.GraphErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Application', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    restore.metadata = {'url': '/{tenantID}/deletedApplications/{objectId}/restore'}
-
     def get(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of deleted applications in the directory.
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Queries OAuth2 permissions for the relevant SP ObjectId of an app.
 
+        :param filter: This is the Service Principal ObjectId associated with
+         the app
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.ApplicationListResult or
+        :return: Permissions or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Permissions or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -115,6 +63,9 @@ class DeletedApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -131,16 +82,84 @@ class DeletedApplicationsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.GraphErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationListResult', response)
+            deserialized = self._deserialize('Permissions', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{tenantID}/deletedApplications'}
+    get.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}
+
+    def post(
+            self, body=None, custom_headers=None, raw=False, **operation_config):
+        """Grants OAuth2 permissions for the relevant resource Ids of an app.
+
+        :param body: The relevant app Service Principal Object Id and the
+         Service Principal Objecit Id you want to grant.
+        :type body: ~azure.graphrbac.models.Permissions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Permissions or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Permissions or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.post.metadata['url']
+        path_format_arguments = {
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        if body is not None:
+            body_content = self._serialize.body(body, 'Permissions')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Permissions', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    post.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}

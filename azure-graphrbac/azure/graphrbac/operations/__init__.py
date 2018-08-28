@@ -16,6 +16,7 @@ from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
 from .users_operations import UsersOperations
 from .domains_operations import DomainsOperations
+from .oauth2_operations import OAuth2Operations
 
 __all__ = [
     'ObjectsOperations',
@@ -25,4 +26,5 @@ __all__ = [
     'ServicePrincipalsOperations',
     'UsersOperations',
     'DomainsOperations',
+    'OAuth2Operations',
 ]

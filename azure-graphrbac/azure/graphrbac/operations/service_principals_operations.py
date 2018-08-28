@@ -224,7 +224,8 @@ class ServicePrincipalsOperations(object):
 
     def get(
             self, object_id, custom_headers=None, raw=False, **operation_config):
-        """Gets service principal information from the directory.
+        """Gets service principal information from the directory. Query by
+        objectId or pass a filter to query by appId.
 
         :param object_id: The object ID of the service principal to get.
         :type object_id: str
