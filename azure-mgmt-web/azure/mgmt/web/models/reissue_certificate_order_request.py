@@ -55,9 +55,9 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
-        super(ReissueCertificateOrderRequest, self).__init__(kind=kind)
-        self.key_size = key_size
-        self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+    def __init__(self, **kwargs):
+        super(ReissueCertificateOrderRequest, self).__init__(**kwargs)
+        self.key_size = kwargs.get('key_size', None)
+        self.delay_existing_revoke_in_hours = kwargs.get('delay_existing_revoke_in_hours', None)
+        self.csr = kwargs.get('csr', None)
+        self.is_private_key_external = kwargs.get('is_private_key_external', None)
