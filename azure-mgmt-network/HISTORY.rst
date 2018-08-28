@@ -3,6 +3,54 @@
 Release History
 ===============
 
+2.0.1 (2018-08-07)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix packet_captures.get_status empty output
+
+2.0.0 (2018-07-27)
+++++++++++++++++++
+
+**Features**
+
+- Supports now 2018-06-01 and 2018-04-01. 2018-06-01 is the new default.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**Features starting 2018-04-01**
+
+- Model FlowLogInformation has a new parameter flow_analytics_configuration
+- Model ApplicationGateway has a new parameter enable_fips
+- Model ApplicationGateway has a new parameter autoscale_configuration
+- Model ApplicationGateway has a new parameter zones
+- Model ConnectionSharedKey has a new parameter id
+- Added operation group HubVirtualNetworkConnectionsOperations
+- Added operation group AzureFirewallsOperations
+- Added operation group VirtualHubsOperations
+- Added operation group VpnGatewaysOperations
+- Added operation group VpnSitesOperations
+- Added operation group VirtualWANsOperations
+- Added operation group VpnSitesConfigurationOperations
+- Added operation group VpnConnectionsOperations
+
+**Breaking changes starting 2018-04-01**
+
+- Operation VirtualNetworkGatewayConnectionsOperations.set_shared_key has a new parameter "id"
+- Operation DdosProtectionPlansOperations.create_or_update parameter "parameters" has been flatten to "tags/location"
+
+**Breaking changes starting 2018-06-01**
+
+- The new class VpnConnection introduced in 2018-04-01 renamed "connection_bandwidth" to "connection_bandwidth_in_mbps"
+
+2.0.0rc3 (2018-06-14)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- API version 2018-02-01 enum Probe now supports HTTPS (standard SKU load balancer)
+- API version 2015-06-15 adding missing "primary" in NetworkInterfaceIPConfiguration
+
 2.0.0rc2 (2018-04-03)
 +++++++++++++++++++++
 
@@ -37,7 +85,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -89,11 +137,11 @@ with regards to breaking changes and have their dependency system asking for `>=
 **Bug fixes**
 
 - Accept space in location for "usage" (i.e. "west us").
-- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups 
-  are mutually exclusive and one only is needed, meaning none of them is required 
+- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups
+  are mutually exclusive and one only is needed, meaning none of them is required
   by itself. Thus, sourceAddressPrefix is not required anymore.
-- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups 
-  are mutually exclusive and one only is needed, meaning none of them is required 
+- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups
+  are mutually exclusive and one only is needed, meaning none of them is required
   by itself. Thus, destinationAddressPrefix is not required anymore.
 - Client now accept unicode string as a valid subscription_id parameter
 - Restore missing azure.mgmt.network.__version__

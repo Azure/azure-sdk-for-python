@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -24,7 +24,7 @@ class AccountsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
 
@@ -78,7 +78,7 @@ class AccountsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeStore/accounts'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -135,6 +135,7 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeStore/accounts'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -177,7 +178,7 @@ class AccountsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -235,12 +236,13 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts'}
 
 
     def _create_initial(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -289,7 +291,7 @@ class AccountsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -301,13 +303,16 @@ class AccountsOperations(object):
         :type parameters:
          ~azure.mgmt.datalake.store.models.CreateDataLakeStoreAccountParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         DataLakeStoreAccount or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns DataLakeStoreAccount or
+         ClientRawResponse<DataLakeStoreAccount> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datalake.store.models.DataLakeStoreAccount]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datalake.store.models.DataLakeStoreAccount]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
@@ -318,30 +323,8 @@ class AccountsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 201]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('DataLakeStoreAccount', response)
 
             if raw:
@@ -350,12 +333,14 @@ class AccountsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'}
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
@@ -376,7 +361,7 @@ class AccountsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -417,12 +402,13 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'}
 
 
     def _update_initial(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -473,7 +459,7 @@ class AccountsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates the specified Data Lake Store account information.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -485,13 +471,16 @@ class AccountsOperations(object):
         :type parameters:
          ~azure.mgmt.datalake.store.models.UpdateDataLakeStoreAccountParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         DataLakeStoreAccount or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns DataLakeStoreAccount or
+         ClientRawResponse<DataLakeStoreAccount> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datalake.store.models.DataLakeStoreAccount]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datalake.store.models.DataLakeStoreAccount]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -502,30 +491,8 @@ class AccountsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('DataLakeStoreAccount', response)
 
             if raw:
@@ -534,18 +501,20 @@ class AccountsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'}
 
 
     def _delete_initial(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -581,7 +550,7 @@ class AccountsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -589,12 +558,14 @@ class AccountsOperations(object):
         :param account_name: The name of the Data Lake Store account.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -604,40 +575,20 @@ class AccountsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}'}
 
     def enable_key_vault(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
@@ -658,7 +609,7 @@ class AccountsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/enableKeyVault'
+        url = self.enable_key_vault.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -692,6 +643,7 @@ class AccountsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    enable_key_vault.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/enableKeyVault'}
 
     def check_name_availability(
             self, location, name, custom_headers=None, raw=False, **operation_config):
@@ -714,7 +666,7 @@ class AccountsOperations(object):
         parameters = models.CheckNameAvailabilityParameters(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeStore/locations/{location}/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -758,3 +710,4 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeStore/locations/{location}/checkNameAvailability'}

@@ -22,7 +22,7 @@ class UsagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API. Constant value: "2018-03-31-preview".
+    :ivar api_version: Version of the API. Constant value: "2018-04-19".
     """
 
     models = models
@@ -32,7 +32,7 @@ class UsagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31-preview"
+        self.api_version = "2018-04-19"
 
         self.config = config
 
@@ -41,7 +41,7 @@ class UsagesOperations(object):
         """Get resource quotas and usage information.
 
         This method returns region-specific quotas and resource usage
-        information for the Data Migration Service.
+        information for the Database Migration Service.
 
         :param location: The Azure region of the operation
         :type location: str

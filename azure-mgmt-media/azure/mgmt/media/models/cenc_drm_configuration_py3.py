@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CencDrmConfiguration(Model):
-    """Class to specify drm configurations of CommonEncryptionCenc scheme in
+    """Class to specify DRM configurations of CommonEncryptionCenc scheme in
     Streaming Policy.
 
     :param play_ready: PlayReady configurations

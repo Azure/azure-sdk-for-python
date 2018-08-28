@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_key_policy_play_ready_content_key_location import ContentKeyPolicyPlayReadyContentKeyLocation
+from .content_key_policy_play_ready_content_key_location_py3 import ContentKeyPolicyPlayReadyContentKeyLocation
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPlayReadyContentKeyLocation):

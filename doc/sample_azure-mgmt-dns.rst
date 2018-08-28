@@ -44,6 +44,7 @@ Create DNS zone
 		'MyResourceGroup',
 		'pydns.com',
 		{
+			'zone_type': 'Public', # or Private
 			'location': 'global'
 		}
 	)

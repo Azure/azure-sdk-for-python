@@ -24,7 +24,7 @@ class RestartNodeDescription(Model):
      value: "0" .
     :type node_instance_id: str
     :param create_fabric_dump: Specify True to create a dump of the fabric
-     node process. This is case sensitive. Possible values include: 'False',
+     node process. This is case-sensitive. Possible values include: 'False',
      'True'. Default value: "False" .
     :type create_fabric_dump: str or
      ~azure.servicefabric.models.CreateFabricDump

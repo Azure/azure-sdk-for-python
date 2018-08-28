@@ -46,8 +46,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type is_managed_virtual_machine: bool
     :param virtual_machine_size: Virtual Machine Size
     :type virtual_machine_size: str
-    :param original_storage_account_option: Original SA Option
+    :param original_storage_account_option: Original Storage Account Option
     :type original_storage_account_option: bool
+    :param os_type: OS type
+    :type os_type: str
     """
 
     _validation = {
@@ -67,6 +69,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'is_managed_virtual_machine': {'key': 'isManagedVirtualMachine', 'type': 'bool'},
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
+        'os_type': {'key': 'osType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -82,4 +85,5 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.is_managed_virtual_machine = kwargs.get('is_managed_virtual_machine', None)
         self.virtual_machine_size = kwargs.get('virtual_machine_size', None)
         self.original_storage_account_option = kwargs.get('original_storage_account_option', None)
+        self.os_type = kwargs.get('os_type', None)
         self.object_type = 'IaasVMRecoveryPoint'

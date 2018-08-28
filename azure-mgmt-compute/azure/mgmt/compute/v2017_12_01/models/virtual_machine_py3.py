@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class VirtualMachine(Resource):
@@ -74,7 +74,7 @@ class VirtualMachine(Resource):
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineInstanceView
+     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVMInstanceView
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system. <br><br> Possible values are:
@@ -124,7 +124,7 @@ class VirtualMachine(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},

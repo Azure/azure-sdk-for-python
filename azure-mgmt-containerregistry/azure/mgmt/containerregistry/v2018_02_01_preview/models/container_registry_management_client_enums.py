@@ -56,6 +56,17 @@ class RegistryUsageUnit(str, Enum):
     bytes = "Bytes"
 
 
+class PolicyStatus(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"
+
+
+class TrustPolicyType(str, Enum):
+
+    notary = "Notary"
+
+
 class WebhookStatus(str, Enum):
 
     enabled = "enabled"
@@ -66,6 +77,7 @@ class WebhookAction(str, Enum):
 
     push = "push"
     delete = "delete"
+    quarantine = "quarantine"
 
 
 class BuildStatus(str, Enum):
