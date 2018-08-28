@@ -29,6 +29,7 @@ try:
     from .update_integration_runtime_request_py3 import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request_py3 import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request_py3 import LinkedIntegrationRuntimeRequest
+    from .create_linked_integration_runtime_request_py3 import CreateLinkedIntegrationRuntimeRequest
     from .parameter_specification_py3 import ParameterSpecification
     from .linked_service_py3 import LinkedService
     from .linked_service_resource_py3 import LinkedServiceResource
@@ -366,6 +367,7 @@ except (SyntaxError, ImportError):
     from .update_integration_runtime_request import UpdateIntegrationRuntimeRequest
     from .update_integration_runtime_node_request import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request import LinkedIntegrationRuntimeRequest
+    from .create_linked_integration_runtime_request import CreateLinkedIntegrationRuntimeRequest
     from .parameter_specification import ParameterSpecification
     from .linked_service import LinkedService
     from .linked_service_resource import LinkedServiceResource
@@ -771,6 +773,7 @@ __all__ = [
     'UpdateIntegrationRuntimeRequest',
     'UpdateIntegrationRuntimeNodeRequest',
     'LinkedIntegrationRuntimeRequest',
+    'CreateLinkedIntegrationRuntimeRequest',
     'ParameterSpecification',
     'LinkedService',
     'LinkedServiceResource',

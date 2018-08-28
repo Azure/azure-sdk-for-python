@@ -77,6 +77,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype pushed_version: str
     :ivar latest_version: The latest version on download center.
     :vartype latest_version: str
+    :ivar auto_update_eta: The estimated time when the self-hosted integration
+     runtime will be updated.
+    :vartype auto_update_eta: datetime
     """
 
     _validation = {
@@ -96,6 +99,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'version_status': {'readonly': True},
         'pushed_version': {'readonly': True},
         'latest_version': {'readonly': True},
+        'auto_update_eta': {'readonly': True},
     }
 
     _attribute_map = {
@@ -118,6 +122,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
         'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
         'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
+        'auto_update_eta': {'key': 'typeProperties.autoUpdateETA', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
@@ -137,4 +142,5 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.links = kwargs.get('links', None)
         self.pushed_version = None
         self.latest_version = None
+        self.auto_update_eta = None
         self.type = 'SelfHosted'
