@@ -15,18 +15,21 @@ from msrest.serialization import Model
 class UploadBatchServiceLogsConfiguration(Model):
     """The Azure Batch service log files upload configuration for a compute node.
 
-    :param container_url: The URL of the container within Azure Blob Storage
-     to which to upload the Batch Service log file(s). The URL must include a
-     Shared Access Signature (SAS) granting write permissions to the container.
-     The SAS duration must allow enough time for the upload to finish. The
-     start time for SAS is optional and recommended to not be specified.
+    All required parameters must be populated in order to send to Azure.
+
+    :param container_url: Required. The URL of the container within Azure Blob
+     Storage to which to upload the Batch Service log file(s). The URL must
+     include a Shared Access Signature (SAS) granting write permissions to the
+     container. The SAS duration must allow enough time for the upload to
+     finish. The start time for SAS is optional and recommended to not be
+     specified.
     :type container_url: str
-    :param start_time: The start of the time range from which to upload Batch
-     Service log file(s). Any log file containing a log message in the time
-     range will be uploaded. This means that the operation might retrieve more
-     logs than have been requested since the entire log file is always
-     uploaded, but the operation should not retrieve fewer logs than have been
-     requested.
+    :param start_time: Required. The start of the time range from which to
+     upload Batch Service log file(s). Any log file containing a log message in
+     the time range will be uploaded. This means that the operation might
+     retrieve more logs than have been requested since the entire log file is
+     always uploaded, but the operation should not retrieve fewer logs than
+     have been requested.
     :type start_time: datetime
     :param end_time: The end of the time range from which to upload Batch
      Service log file(s). Any log file containing a log message in the time
@@ -49,8 +52,8 @@ class UploadBatchServiceLogsConfiguration(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, container_url, start_time, end_time=None):
-        super(UploadBatchServiceLogsConfiguration, self).__init__()
-        self.container_url = container_url
-        self.start_time = start_time
-        self.end_time = end_time
+    def __init__(self, **kwargs):
+        super(UploadBatchServiceLogsConfiguration, self).__init__(**kwargs)
+        self.container_url = kwargs.get('container_url', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
