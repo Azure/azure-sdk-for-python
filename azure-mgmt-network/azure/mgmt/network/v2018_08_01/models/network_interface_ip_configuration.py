@@ -17,6 +17,9 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
+    :param virtual_network_taps: The reference to Virtual Network Taps.
+    :type virtual_network_taps:
+     list[~azure.mgmt.network.v2018_08_01.models.VirtualNetworkTap]
     :param application_gateway_backend_address_pools: The reference of
      ApplicationGatewayBackendAddressPool resource.
     :type application_gateway_backend_address_pools:
@@ -68,6 +71,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'virtual_network_taps': {'key': 'properties.virtualNetworkTaps', 'type': '[VirtualNetworkTap]'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
         'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
@@ -85,6 +89,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     def __init__(self, **kwargs):
         super(NetworkInterfaceIPConfiguration, self).__init__(**kwargs)
+        self.virtual_network_taps = kwargs.get('virtual_network_taps', None)
         self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
         self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
         self.load_balancer_inbound_nat_rules = kwargs.get('load_balancer_inbound_nat_rules', None)
