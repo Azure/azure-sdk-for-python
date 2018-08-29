@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .sub_resource_py3 import SubResource
 
 
-class P2SVpnServerConfiguration(Resource):
+class P2SVpnServerConfiguration(SubResource):
     """P2SVpnServerConfiguration Resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,14 +20,6 @@ class P2SVpnServerConfiguration(Resource):
 
     :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param vpn_protocols: vpnProtocols for the P2SVpnServerConfiguration.
     :type vpn_protocols: list[str or
      ~azure.mgmt.network.v2018_08_01.models.VpnGatewayTunnelingProtocol]
@@ -61,24 +53,21 @@ class P2SVpnServerConfiguration(Resource):
     :ivar p2s_vpn_gateways:
     :vartype p2s_vpn_gateways:
      list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
+    :type name: str
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'p2s_vpn_gateways': {'readonly': True},
         'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vpn_protocols': {'key': 'properties.vpnProtocols', 'type': '[str]'},
         'p2s_vpn_server_config_vpn_client_root_certificates': {'key': 'properties.p2sVpnServerConfigVpnClientRootCertificates', 'type': '[P2SVpnServerConfigVpnClientRootCertificate]'},
         'p2s_vpn_server_config_vpn_client_revoked_certificates': {'key': 'properties.p2sVpnServerConfigVpnClientRevokedCertificates', 'type': '[P2SVpnServerConfigVpnClientRevokedCertificate]'},
@@ -88,11 +77,12 @@ class P2SVpnServerConfiguration(Resource):
         'radius_server_address': {'key': 'properties.radiusServerAddress', 'type': 'str'},
         'radius_server_secret': {'key': 'properties.radiusServerSecret', 'type': 'str'},
         'p2s_vpn_gateways': {'key': 'properties.p2sVpnGateways', 'type': '[SubResource]'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, vpn_protocols=None, p2s_vpn_server_config_vpn_client_root_certificates=None, p2s_vpn_server_config_vpn_client_revoked_certificates=None, p2s_vpn_server_config_radius_server_root_certificates=None, p2s_vpn_server_config_radius_client_root_certificates=None, vpn_client_ipsec_policies=None, radius_server_address: str=None, radius_server_secret: str=None, **kwargs) -> None:
-        super(P2SVpnServerConfiguration, self).__init__(id=id, location=location, tags=tags, **kwargs)
+    def __init__(self, *, id: str=None, vpn_protocols=None, p2s_vpn_server_config_vpn_client_root_certificates=None, p2s_vpn_server_config_vpn_client_revoked_certificates=None, p2s_vpn_server_config_radius_server_root_certificates=None, p2s_vpn_server_config_radius_client_root_certificates=None, vpn_client_ipsec_policies=None, radius_server_address: str=None, radius_server_secret: str=None, name: str=None, **kwargs) -> None:
+        super(P2SVpnServerConfiguration, self).__init__(id=id, **kwargs)
         self.vpn_protocols = vpn_protocols
         self.p2s_vpn_server_config_vpn_client_root_certificates = p2s_vpn_server_config_vpn_client_root_certificates
         self.p2s_vpn_server_config_vpn_client_revoked_certificates = p2s_vpn_server_config_vpn_client_revoked_certificates
@@ -102,4 +92,5 @@ class P2SVpnServerConfiguration(Resource):
         self.radius_server_address = radius_server_address
         self.radius_server_secret = radius_server_secret
         self.p2s_vpn_gateways = None
+        self.name = name
         self.etag = None

@@ -50,7 +50,7 @@ class VirtualWAN(Resource):
     :type office365_local_breakout_category: str or
      ~azure.mgmt.network.v2018_08_01.models.OfficeTrafficCategory
     :param p2s_vpn_server_configurations: list of all
-     P2SVpnServerConfigurationss to the virtual wan.
+     P2SVpnServerConfigurations associated with the virtual wan.
     :type p2s_vpn_server_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration]
     :param provisioning_state: The provisioning state of the resource.
