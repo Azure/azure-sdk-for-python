@@ -41,7 +41,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
 
         self.config = config
 
-    def list_by_server(
+    def list_by_instance(
             self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of managed instance encryption protectors.
 
@@ -66,7 +66,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_server.metadata['url']
+                url = self.list_by_instance.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
@@ -112,7 +112,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/encryptionProtector'}
+    list_by_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/encryptionProtector'}
 
     def get(
             self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
