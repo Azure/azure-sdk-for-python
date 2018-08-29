@@ -328,12 +328,6 @@ class IntervalInMins(str, Enum):
     sixty_mins = "SixtyMins"
 
 
-class ScaleTier(str, Enum):
-
-    s30 = "S30"
-    s100 = "S100"
-
-
 class AggregatedReplicationState(str, Enum):
 
     unknown = "Unknown"
