@@ -36,6 +36,23 @@ class VirtualWAN(Resource):
     :ivar vpn_sites:
     :vartype vpn_sites:
      list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :param security_provider_name: The Security Provider name.
+    :type security_provider_name: str
+    :param allow_branch_to_branch_traffic: True if branch to branch traffic is
+     allowed.
+    :type allow_branch_to_branch_traffic: bool
+    :param allow_vnet_to_vnet_traffic: True if Vnet to Vnet traffic is
+     allowed.
+    :type allow_vnet_to_vnet_traffic: bool
+    :param office365_local_breakout_category: The office local breakout
+     category. Possible values include: 'Optimize', 'OptimizeAndAllow', 'All',
+     'None'
+    :type office365_local_breakout_category: str or
+     ~azure.mgmt.network.v2018_08_01.models.OfficeTrafficCategory
+    :param p2s_vpn_server_configurations: list of all
+     P2SVpnServerConfigurationss to the virtual wan.
+    :type p2s_vpn_server_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration]
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
@@ -62,6 +79,11 @@ class VirtualWAN(Resource):
         'disable_vpn_encryption': {'key': 'properties.disableVpnEncryption', 'type': 'bool'},
         'virtual_hubs': {'key': 'properties.virtualHubs', 'type': '[SubResource]'},
         'vpn_sites': {'key': 'properties.vpnSites', 'type': '[SubResource]'},
+        'security_provider_name': {'key': 'properties.securityProviderName', 'type': 'str'},
+        'allow_branch_to_branch_traffic': {'key': 'properties.allowBranchToBranchTraffic', 'type': 'bool'},
+        'allow_vnet_to_vnet_traffic': {'key': 'properties.allowVnetToVnetTraffic', 'type': 'bool'},
+        'office365_local_breakout_category': {'key': 'properties.office365LocalBreakoutCategory', 'type': 'str'},
+        'p2s_vpn_server_configurations': {'key': 'properties.p2sVpnServerConfigurations', 'type': '[P2SVpnServerConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -71,5 +93,10 @@ class VirtualWAN(Resource):
         self.disable_vpn_encryption = kwargs.get('disable_vpn_encryption', None)
         self.virtual_hubs = None
         self.vpn_sites = None
+        self.security_provider_name = kwargs.get('security_provider_name', None)
+        self.allow_branch_to_branch_traffic = kwargs.get('allow_branch_to_branch_traffic', None)
+        self.allow_vnet_to_vnet_traffic = kwargs.get('allow_vnet_to_vnet_traffic', None)
+        self.office365_local_breakout_category = kwargs.get('office365_local_breakout_category', None)
+        self.p2s_vpn_server_configurations = kwargs.get('p2s_vpn_server_configurations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = None

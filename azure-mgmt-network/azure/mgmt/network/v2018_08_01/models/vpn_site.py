@@ -46,6 +46,8 @@ class VpnSite(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
+    :param is_security_site: IsSecuritySite flag
+    :type is_security_site: bool
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -63,13 +65,14 @@ class VpnSite(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'virtual_wan': {'key': 'properties.virtualWAN', 'type': 'SubResource'},
+        'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
         'device_properties': {'key': 'properties.deviceProperties', 'type': 'DeviceProperties'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'site_key': {'key': 'properties.siteKey', 'type': 'str'},
         'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
         'bgp_properties': {'key': 'properties.bgpProperties', 'type': 'BgpSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'is_security_site': {'key': 'properties.isSecuritySite', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -82,4 +85,5 @@ class VpnSite(Resource):
         self.address_space = kwargs.get('address_space', None)
         self.bgp_properties = kwargs.get('bgp_properties', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.is_security_site = kwargs.get('is_security_site', None)
         self.etag = None

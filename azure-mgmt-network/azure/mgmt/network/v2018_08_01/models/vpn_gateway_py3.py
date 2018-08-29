@@ -39,8 +39,8 @@ class VpnGateway(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param policies: The policies applied to this vpn gateway.
-    :type policies: ~azure.mgmt.network.v2018_08_01.models.Policies
+    :param vpn_gateway_scale_unit: The scale unit for this vpn gateway.
+    :type vpn_gateway_scale_unit: int
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -62,15 +62,15 @@ class VpnGateway(Resource):
         'connections': {'key': 'properties.connections', 'type': '[VpnConnection]'},
         'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, connections=None, bgp_settings=None, provisioning_state=None, policies=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, connections=None, bgp_settings=None, provisioning_state=None, vpn_gateway_scale_unit: int=None, **kwargs) -> None:
         super(VpnGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_hub = virtual_hub
         self.connections = connections
         self.bgp_settings = bgp_settings
         self.provisioning_state = provisioning_state
-        self.policies = policies
+        self.vpn_gateway_scale_unit = vpn_gateway_scale_unit
         self.etag = None

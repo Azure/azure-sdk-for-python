@@ -30,12 +30,15 @@ class VirtualHub(Resource):
     :type tags: dict[str, str]
     :param virtual_wan: The VirtualWAN to which the VirtualHub belongs
     :type virtual_wan: ~azure.mgmt.network.v2018_08_01.models.SubResource
-    :param hub_virtual_network_connections: list of all vnet connections with
-     this VirtualHub.
-    :type hub_virtual_network_connections:
+    :param virtual_network_connections: list of all vnet connections with this
+     VirtualHub.
+    :type virtual_network_connections:
      list[~azure.mgmt.network.v2018_08_01.models.HubVirtualNetworkConnection]
     :param address_prefix: Address-prefix for this VirtualHub.
     :type address_prefix: str
+    :param route_table: The routeTable associated with this virtual hub.
+    :type route_table:
+     ~azure.mgmt.network.v2018_08_01.models.VirtualHubRouteTable
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
@@ -58,8 +61,9 @@ class VirtualHub(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
-        'hub_virtual_network_connections': {'key': 'properties.hubVirtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
+        'virtual_network_connections': {'key': 'properties.virtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
+        'route_table': {'key': 'properties.routeTable', 'type': 'VirtualHubRouteTable'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -67,7 +71,8 @@ class VirtualHub(Resource):
     def __init__(self, **kwargs):
         super(VirtualHub, self).__init__(**kwargs)
         self.virtual_wan = kwargs.get('virtual_wan', None)
-        self.hub_virtual_network_connections = kwargs.get('hub_virtual_network_connections', None)
+        self.virtual_network_connections = kwargs.get('virtual_network_connections', None)
         self.address_prefix = kwargs.get('address_prefix', None)
+        self.route_table = kwargs.get('route_table', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = None
