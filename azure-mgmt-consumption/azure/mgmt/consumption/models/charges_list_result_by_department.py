@@ -12,17 +12,25 @@
 from msrest.serialization import Model
 
 
-class CostTagProperties(Model):
-    """The properties of the cost tag.
+class ChargesListResultByDepartment(Model):
+    """Result of listing charge summary by deparment.
 
-    :param key: Cost tag key.
-    :type key: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of charge summary by department.
+    :vartype value:
+     list[~azure.mgmt.consumption.models.ChargeSummaryByDepartment]
     """
 
+    _validation = {
+        'value': {'readonly': True},
+    }
+
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ChargeSummaryByDepartment]'},
     }
 
     def __init__(self, **kwargs):
-        super(CostTagProperties, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
+        super(ChargesListResultByDepartment, self).__init__(**kwargs)
+        self.value = None

@@ -21,11 +21,14 @@ from .operations.reservations_details_operations import ReservationsDetailsOpera
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.cost_tags_operations import CostTagsOperations
 from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from .operations.aggregated_cost_operations import AggregatedCostOperations
+from .operations.charges_by_enrollment_account_operations import ChargesByEnrollmentAccountOperations
+from .operations.charges_for_enrollment_account_operations import ChargesForEnrollmentAccountOperations
+from .operations.charges_by_department_operations import ChargesByDepartmentOperations
+from .operations.charges_for_department_operations import ChargesForDepartmentOperations
 from . import models
 
 
@@ -83,8 +86,6 @@ class ConsumptionManagementClient(SDKClient):
     :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
-    :ivar cost_tags: CostTags operations
-    :vartype cost_tags: azure.mgmt.consumption.operations.CostTagsOperations
     :ivar tags: Tags operations
     :vartype tags: azure.mgmt.consumption.operations.TagsOperations
     :ivar forecasts: Forecasts operations
@@ -93,6 +94,14 @@ class ConsumptionManagementClient(SDKClient):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
+    :ivar charges_by_enrollment_account: ChargesByEnrollmentAccount operations
+    :vartype charges_by_enrollment_account: azure.mgmt.consumption.operations.ChargesByEnrollmentAccountOperations
+    :ivar charges_for_enrollment_account: ChargesForEnrollmentAccount operations
+    :vartype charges_for_enrollment_account: azure.mgmt.consumption.operations.ChargesForEnrollmentAccountOperations
+    :ivar charges_by_department: ChargesByDepartment operations
+    :vartype charges_by_department: azure.mgmt.consumption.operations.ChargesByDepartmentOperations
+    :ivar charges_for_department: ChargesForDepartment operations
+    :vartype charges_for_department: azure.mgmt.consumption.operations.ChargesForDepartmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -109,7 +118,7 @@ class ConsumptionManagementClient(SDKClient):
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-30'
+        self.api_version = '2018-08-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -129,8 +138,6 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.cost_tags = CostTagsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.forecasts = ForecastsOperations(
@@ -138,4 +145,12 @@ class ConsumptionManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.charges_by_enrollment_account = ChargesByEnrollmentAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.charges_for_enrollment_account = ChargesForEnrollmentAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.charges_by_department = ChargesByDepartmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.charges_for_department = ChargesForDepartmentOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TagsOperations(object):
-    """TagsOperations operations.
+class ChargesByDepartmentOperations(object):
+    """ChargesByDepartmentOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,33 +36,45 @@ class TagsOperations(object):
 
         self.config = config
 
-    def get(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Get all available tag keys for a billing account.
+    def list(
+            self, billing_account_id, department_id, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the charges by departmentId.
 
         :param billing_account_id: BillingAccount ID
         :type billing_account_id: str
+        :param department_id: Department ID
+        :type department_id: str
+        :param filter: May be used to filter charges by properties/usageEnd
+         (Utc time), properties/usageStart (Utc time). The filter supports
+         'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not currently support
+         'ne', 'or', or 'not'. Tag filter is a key value pair string where key
+         and value is separated by a colon (:).
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TagsResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.TagsResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ChargesListResultByDepartment or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargesListResultByDepartment
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+            'departmentId': self._serialize.url("department_id", department_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -84,11 +96,11 @@ class TagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TagsResult', response)
+            deserialized = self._deserialize('ChargesListResultByDepartment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/tags'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}/providers/Microsoft.Consumption/charges'}
