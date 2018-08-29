@@ -10,6 +10,7 @@ import unittest
 from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
 from devtools_testutils import AzureMgmtTestCase
+import six
 
 
 class MgmtResourceGraphTest(AzureMgmtTestCase):
@@ -51,7 +52,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.data.rows)
         self.assertEqual(len(query_response.data.rows), 2)
         self.assertEqual(len(query_response.data.rows[0]), 3)
-        self.assertIsInstance(query_response.data.rows[0][0], str)
+        self.assertIsInstance(query_response.data.rows[0][0], six.string_types)
         self.assertIsInstance(query_response.data.rows[0][1], dict)
         self.assertIsInstance(query_response.data.rows[0][2], dict)
 
@@ -87,7 +88,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.data.rows)
         self.assertEqual(len(query_response.data.rows), 4)
         self.assertEqual(len(query_response.data.rows[0]), 1)
-        self.assertIsInstance(query_response.data.rows[0][0], str)
+        self.assertIsInstance(query_response.data.rows[0][0], six.string_types)
 
     def test_resources_facet_query(self):
         facet_expression0 = 'location'
@@ -143,8 +144,8 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.facets[0].data.rows)
         self.assertEqual(len(query_response.facets[0].data.rows), 4)
         self.assertEqual(len(query_response.facets[0].data.rows[0]), 2)
-        self.assertIsInstance(query_response.facets[0].data.rows[0][0], str)
-        self.assertIsInstance(query_response.facets[0].data.rows[0][1], int)
+        self.assertIsInstance(query_response.facets[0].data.rows[0][0], six.string_types)
+        self.assertIsInstance(query_response.facets[0].data.rows[0][1], six.integer_types)
 
         # Failed facet
         self.assertIsInstance(query_response.facets[1], FacetError)
