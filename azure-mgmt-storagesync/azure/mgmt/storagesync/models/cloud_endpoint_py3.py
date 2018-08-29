@@ -18,11 +18,13 @@ class CloudEndpoint(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The id of the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param storage_account_key: Storage Account access key.
     :type storage_account_key: str

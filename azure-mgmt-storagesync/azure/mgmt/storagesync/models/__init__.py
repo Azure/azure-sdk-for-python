@@ -12,7 +12,6 @@
 try:
     from .storage_sync_error_details_py3 import StorageSyncErrorDetails
     from .storage_sync_error_py3 import StorageSyncError, StorageSyncErrorException
-    from .resource_py3 import Resource
     from .subscription_state_py3 import SubscriptionState
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
@@ -34,11 +33,13 @@ try:
     from .post_backup_response_py3 import PostBackupResponse
     from .workflow_array_py3 import WorkflowArray
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
+    from .proxy_resource_py3 import ProxyResource
     from .tracked_resource_py3 import TrackedResource
+    from .azure_entity_resource_py3 import AzureEntityResource
+    from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
     from .storage_sync_error import StorageSyncError, StorageSyncErrorException
-    from .resource import Resource
     from .subscription_state import SubscriptionState
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
@@ -60,7 +61,10 @@ except (SyntaxError, ImportError):
     from .post_backup_response import PostBackupResponse
     from .workflow_array import WorkflowArray
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
+    from .proxy_resource import ProxyResource
     from .tracked_resource import TrackedResource
+    from .azure_entity_resource import AzureEntityResource
+    from .resource import Resource
 from .operation_entity_paged import OperationEntityPaged
 from .storage_sync_service_paged import StorageSyncServicePaged
 from .sync_group_paged import SyncGroupPaged
@@ -75,7 +79,6 @@ from .storage_sync_management_client_enums import (
 __all__ = [
     'StorageSyncErrorDetails',
     'StorageSyncError', 'StorageSyncErrorException',
-    'Resource',
     'SubscriptionState',
     'StorageSyncService',
     'SyncGroup',
@@ -97,7 +100,10 @@ __all__ = [
     'PostBackupResponse',
     'WorkflowArray',
     'StorageSyncServiceUpdateParameters',
+    'ProxyResource',
     'TrackedResource',
+    'AzureEntityResource',
+    'Resource',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
     'SyncGroupPaged',

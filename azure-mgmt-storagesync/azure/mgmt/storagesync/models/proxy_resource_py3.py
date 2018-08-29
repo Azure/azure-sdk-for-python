@@ -9,16 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource_py3 import Resource
 
 
-class StorageSyncService(TrackedResource):
-    """Storage Sync Service object.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
@@ -28,36 +27,19 @@ class StorageSyncService(TrackedResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
-    :type location: str
-    :ivar storage_sync_service_status: Storage Sync service status.
-    :vartype storage_sync_service_status: int
-    :ivar storage_sync_service_uid: Storage Sync service Uid
-    :vartype storage_sync_service_uid: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
-        'storage_sync_service_status': {'readonly': True},
-        'storage_sync_service_uid': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'storage_sync_service_status': {'key': 'properties.storageSyncServiceStatus', 'type': 'int'},
-        'storage_sync_service_uid': {'key': 'properties.storageSyncServiceUid', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(StorageSyncService, self).__init__(**kwargs)
-        self.storage_sync_service_status = None
-        self.storage_sync_service_uid = None
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
