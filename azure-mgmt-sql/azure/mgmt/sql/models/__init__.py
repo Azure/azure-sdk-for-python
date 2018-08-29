@@ -150,6 +150,8 @@ try:
     from .instance_failover_group_py3 import InstanceFailoverGroup
     from .backup_short_term_retention_policy_py3 import BackupShortTermRetentionPolicy
     from .tde_certificate_py3 import TdeCertificate
+    from .managed_instance_key_py3 import ManagedInstanceKey
+    from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -291,6 +293,8 @@ except (SyntaxError, ImportError):
     from .instance_failover_group import InstanceFailoverGroup
     from .backup_short_term_retention_policy import BackupShortTermRetentionPolicy
     from .tde_certificate import TdeCertificate
+    from .managed_instance_key import ManagedInstanceKey
+    from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -344,6 +348,8 @@ from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
 from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
+from .managed_instance_key_paged import ManagedInstanceKeyPaged
+from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -565,6 +571,8 @@ __all__ = [
     'InstanceFailoverGroup',
     'BackupShortTermRetentionPolicy',
     'TdeCertificate',
+    'ManagedInstanceKey',
+    'ManagedInstanceEncryptionProtector',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -618,6 +626,8 @@ __all__ = [
     'VulnerabilityAssessmentScanRecordPaged',
     'InstanceFailoverGroupPaged',
     'BackupShortTermRetentionPolicyPaged',
+    'ManagedInstanceKeyPaged',
+    'ManagedInstanceEncryptionProtectorPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
