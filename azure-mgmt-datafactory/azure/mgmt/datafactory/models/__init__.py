@@ -208,6 +208,11 @@ try:
     from .azure_table_dataset_py3 import AzureTableDataset
     from .azure_blob_dataset_py3 import AzureBlobDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
+    from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
+    from .trigger_reference_py3 import TriggerReference
+    from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
+    from .trigger_dependency_reference_py3 import TriggerDependencyReference
+    from .dependency_reference_py3 import DependencyReference
     from .retry_policy_py3 import RetryPolicy
     from .tumbling_window_trigger_py3 import TumblingWindowTrigger
     from .blob_events_trigger_py3 import BlobEventsTrigger
@@ -546,6 +551,11 @@ except (SyntaxError, ImportError):
     from .azure_table_dataset import AzureTableDataset
     from .azure_blob_dataset import AzureBlobDataset
     from .amazon_s3_dataset import AmazonS3Dataset
+    from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
+    from .trigger_reference import TriggerReference
+    from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
+    from .trigger_dependency_reference import TriggerDependencyReference
+    from .dependency_reference import DependencyReference
     from .retry_policy import RetryPolicy
     from .tumbling_window_trigger import TumblingWindowTrigger
     from .blob_events_trigger import BlobEventsTrigger
@@ -952,6 +962,11 @@ __all__ = [
     'AzureTableDataset',
     'AzureBlobDataset',
     'AmazonS3Dataset',
+    'SelfDependencyTumblingWindowTriggerReference',
+    'TriggerReference',
+    'TumblingWindowTriggerDependencyReference',
+    'TriggerDependencyReference',
+    'DependencyReference',
     'RetryPolicy',
     'TumblingWindowTrigger',
     'BlobEventsTrigger',
