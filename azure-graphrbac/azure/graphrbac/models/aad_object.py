@@ -97,20 +97,20 @@ class AADObject(Model):
         'homepage': {'key': 'homepage', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, object_id=None, object_type=None, display_name=None, user_principal_name=None, mail=None, mail_enabled=None, security_enabled=None, sign_in_name=None, service_principal_names=None, user_type=None):
-        super(AADObject, self).__init__()
-        self.additional_properties = additional_properties
-        self.object_id = object_id
-        self.object_type = object_type
-        self.display_name = display_name
-        self.user_principal_name = user_principal_name
-        self.mail = mail
-        self.mail_enabled = mail_enabled
+    def __init__(self, **kwargs):
+        super(AADObject, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.user_principal_name = kwargs.get('user_principal_name', None)
+        self.mail = kwargs.get('mail', None)
+        self.mail_enabled = kwargs.get('mail_enabled', None)
         self.mail_nickname = None
-        self.security_enabled = security_enabled
-        self.sign_in_name = sign_in_name
-        self.service_principal_names = service_principal_names
-        self.user_type = user_type
+        self.security_enabled = kwargs.get('security_enabled', None)
+        self.sign_in_name = kwargs.get('sign_in_name', None)
+        self.service_principal_names = kwargs.get('service_principal_names', None)
+        self.user_type = kwargs.get('user_type', None)
         self.usage_location = None
         self.app_id = None
         self.app_permissions = None

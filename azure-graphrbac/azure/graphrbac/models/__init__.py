@@ -9,43 +9,84 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .graph_error import GraphError, GraphErrorException
-from .directory_object import DirectoryObject
-from .key_credential import KeyCredential
-from .password_credential import PasswordCredential
-from .resource_access import ResourceAccess
-from .required_resource_access import RequiredResourceAccess
-from .application_create_parameters import ApplicationCreateParameters
-from .application_update_parameters import ApplicationUpdateParameters
-from .application import Application
-from .application_add_owner_parameters import ApplicationAddOwnerParameters
-from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
-from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
-from .aad_object import AADObject
-from .group_add_member_parameters import GroupAddMemberParameters
-from .group_create_parameters import GroupCreateParameters
-from .ad_group import ADGroup
-from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
-from .check_group_membership_parameters import CheckGroupMembershipParameters
-from .check_group_membership_result import CheckGroupMembershipResult
-from .service_principal_create_parameters import ServicePrincipalCreateParameters
-from .service_principal import ServicePrincipal
-from .password_profile import PasswordProfile
-from .user_base import UserBase
-from .user_create_parameters import UserCreateParameters
-from .user_update_parameters import UserUpdateParameters
-from .sign_in_name import SignInName
-from .user import User
-from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
-from .get_objects_parameters import GetObjectsParameters
-from .domain import Domain
-from .permissions import Permissions
-from .aad_object_paged import AADObjectPaged
+try:
+    from .graph_error_py3 import GraphError, GraphErrorException
+    from .directory_object_py3 import DirectoryObject
+    from .key_credential_py3 import KeyCredential
+    from .password_credential_py3 import PasswordCredential
+    from .resource_access_py3 import ResourceAccess
+    from .required_resource_access_py3 import RequiredResourceAccess
+    from .application_create_parameters_py3 import ApplicationCreateParameters
+    from .application_update_parameters_py3 import ApplicationUpdateParameters
+    from .app_role_py3 import AppRole
+    from .application_py3 import Application
+    from .application_list_result_py3 import ApplicationListResult
+    from .add_owner_parameters_py3 import AddOwnerParameters
+    from .application_add_owner_parameters_py3 import ApplicationAddOwnerParameters
+    from .directory_object_list_result_py3 import DirectoryObjectListResult
+    from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
+    from .password_credentials_update_parameters_py3 import PasswordCredentialsUpdateParameters
+    from .aad_object_py3 import AADObject
+    from .group_add_member_parameters_py3 import GroupAddMemberParameters
+    from .group_create_parameters_py3 import GroupCreateParameters
+    from .ad_group_py3 import ADGroup
+    from .group_get_member_groups_parameters_py3 import GroupGetMemberGroupsParameters
+    from .check_group_membership_parameters_py3 import CheckGroupMembershipParameters
+    from .check_group_membership_result_py3 import CheckGroupMembershipResult
+    from .service_principal_create_parameters_py3 import ServicePrincipalCreateParameters
+    from .service_principal_py3 import ServicePrincipal
+    from .password_profile_py3 import PasswordProfile
+    from .user_base_py3 import UserBase
+    from .user_create_parameters_py3 import UserCreateParameters
+    from .user_update_parameters_py3 import UserUpdateParameters
+    from .sign_in_name_py3 import SignInName
+    from .user_py3 import User
+    from .user_get_member_groups_parameters_py3 import UserGetMemberGroupsParameters
+    from .get_objects_parameters_py3 import GetObjectsParameters
+    from .domain_py3 import Domain
+    from .permissions_py3 import Permissions
+except (SyntaxError, ImportError):
+    from .graph_error import GraphError, GraphErrorException
+    from .directory_object import DirectoryObject
+    from .key_credential import KeyCredential
+    from .password_credential import PasswordCredential
+    from .resource_access import ResourceAccess
+    from .required_resource_access import RequiredResourceAccess
+    from .application_create_parameters import ApplicationCreateParameters
+    from .application_update_parameters import ApplicationUpdateParameters
+    from .app_role import AppRole
+    from .application import Application
+    from .application_list_result import ApplicationListResult
+    from .add_owner_parameters import AddOwnerParameters
+    from .application_add_owner_parameters import ApplicationAddOwnerParameters
+    from .directory_object_list_result import DirectoryObjectListResult
+    from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
+    from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
+    from .aad_object import AADObject
+    from .group_add_member_parameters import GroupAddMemberParameters
+    from .group_create_parameters import GroupCreateParameters
+    from .ad_group import ADGroup
+    from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
+    from .check_group_membership_parameters import CheckGroupMembershipParameters
+    from .check_group_membership_result import CheckGroupMembershipResult
+    from .service_principal_create_parameters import ServicePrincipalCreateParameters
+    from .service_principal import ServicePrincipal
+    from .password_profile import PasswordProfile
+    from .user_base import UserBase
+    from .user_create_parameters import UserCreateParameters
+    from .user_update_parameters import UserUpdateParameters
+    from .sign_in_name import SignInName
+    from .user import User
+    from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
+    from .get_objects_parameters import GetObjectsParameters
+    from .domain import Domain
+    from .permissions import Permissions
 from .application_paged import ApplicationPaged
 from .directory_object_paged import DirectoryObjectPaged
 from .key_credential_paged import KeyCredentialPaged
 from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
+from .aad_object_paged import AADObjectPaged
 from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
@@ -63,8 +104,12 @@ __all__ = [
     'RequiredResourceAccess',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
+    'AppRole',
     'Application',
+    'ApplicationListResult',
+    'AddOwnerParameters',
     'ApplicationAddOwnerParameters',
+    'DirectoryObjectListResult',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
     'AADObject',
@@ -86,12 +131,12 @@ __all__ = [
     'GetObjectsParameters',
     'Domain',
     'Permissions',
-    'AADObjectPaged',
     'ApplicationPaged',
     'DirectoryObjectPaged',
     'KeyCredentialPaged',
     'PasswordCredentialPaged',
     'ADGroupPaged',
+    'AADObjectPaged',
     'StrPaged',
     'ServicePrincipalPaged',
     'UserPaged',

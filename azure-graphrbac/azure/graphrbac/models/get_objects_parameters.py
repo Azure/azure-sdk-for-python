@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class GetObjectsParameters(Model):
     """Request parameters for the GetObjectsByObjectIds API.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -22,8 +24,8 @@ class GetObjectsParameters(Model):
     :type object_ids: list[str]
     :param types: The requested object types.
     :type types: list[str]
-    :param include_directory_object_references: If true, also searches for
-     object IDs in the partner tenant.
+    :param include_directory_object_references: Required. If true, also
+     searches for object IDs in the partner tenant.
     :type include_directory_object_references: bool
     """
 
@@ -38,9 +40,9 @@ class GetObjectsParameters(Model):
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, additional_properties=None, object_ids=None, types=None):
-        super(GetObjectsParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.object_ids = object_ids
-        self.types = types
-        self.include_directory_object_references = include_directory_object_references
+    def __init__(self, **kwargs):
+        super(GetObjectsParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.object_ids = kwargs.get('object_ids', None)
+        self.types = kwargs.get('types', None)
+        self.include_directory_object_references = kwargs.get('include_directory_object_references', None)
