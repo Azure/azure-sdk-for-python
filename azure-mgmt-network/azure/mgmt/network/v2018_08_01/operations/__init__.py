@@ -12,6 +12,7 @@
 from .application_gateways_operations import ApplicationGatewaysOperations
 from .application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .azure_firewalls_operations import AzureFirewallsOperations
+from .azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from .ddos_protection_plans_operations import DdosProtectionPlansOperations
 from .available_endpoint_services_operations import AvailableEndpointServicesOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
@@ -68,6 +69,7 @@ __all__ = [
     'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
     'AzureFirewallsOperations',
+    'AzureFirewallFqdnTagsOperations',
     'DdosProtectionPlansOperations',
     'AvailableEndpointServicesOperations',
     'ExpressRouteCircuitAuthorizationsOperations',

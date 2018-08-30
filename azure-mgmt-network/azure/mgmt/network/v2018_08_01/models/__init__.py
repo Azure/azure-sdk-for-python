@@ -77,6 +77,7 @@ try:
     from .azure_firewall_network_rule_py3 import AzureFirewallNetworkRule
     from .azure_firewall_network_rule_collection_py3 import AzureFirewallNetworkRuleCollection
     from .azure_firewall_py3 import AzureFirewall
+    from .azure_firewall_fqdn_tag_py3 import AzureFirewallFqdnTag
     from .dns_name_availability_result_py3 import DnsNameAvailabilityResult
     from .ddos_protection_plan_py3 import DdosProtectionPlan
     from .endpoint_service_result_py3 import EndpointServiceResult
@@ -308,6 +309,7 @@ except (SyntaxError, ImportError):
     from .azure_firewall_network_rule import AzureFirewallNetworkRule
     from .azure_firewall_network_rule_collection import AzureFirewallNetworkRuleCollection
     from .azure_firewall import AzureFirewall
+    from .azure_firewall_fqdn_tag import AzureFirewallFqdnTag
     from .dns_name_availability_result import DnsNameAvailabilityResult
     from .ddos_protection_plan import DdosProtectionPlan
     from .endpoint_service_result import EndpointServiceResult
@@ -475,6 +477,7 @@ from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
 from .azure_firewall_paged import AzureFirewallPaged
+from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
 from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
@@ -673,6 +676,7 @@ __all__ = [
     'AzureFirewallNetworkRule',
     'AzureFirewallNetworkRuleCollection',
     'AzureFirewall',
+    'AzureFirewallFqdnTag',
     'DnsNameAvailabilityResult',
     'DdosProtectionPlan',
     'EndpointServiceResult',
@@ -840,6 +844,7 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
     'AzureFirewallPaged',
+    'AzureFirewallFqdnTagPaged',
     'DdosProtectionPlanPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
