@@ -23,12 +23,8 @@ class AzureFirewallIPConfiguration(SubResource):
     :param subnet: Reference of the subnet resource. This resource must be
      named 'AzureFirewallSubnet'.
     :type subnet: ~azure.mgmt.network.v2018_08_01.models.SubResource
-    :param internal_public_ip_address: Reference of the PublicIP resource.
-     This field is a mandatory input.
-    :type internal_public_ip_address:
-     ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param public_ip_address: Reference of the PublicIP resource. This field
-     is populated in the output.
+     is a mandatory input if subnet is not null.
     :type public_ip_address:
      ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param provisioning_state: The provisioning state of the resource.
@@ -47,7 +43,6 @@ class AzureFirewallIPConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'internal_public_ip_address': {'key': 'properties.internalPublicIpAddress', 'type': 'SubResource'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -58,7 +53,6 @@ class AzureFirewallIPConfiguration(SubResource):
         super(AzureFirewallIPConfiguration, self).__init__(**kwargs)
         self.private_ip_address = kwargs.get('private_ip_address', None)
         self.subnet = kwargs.get('subnet', None)
-        self.internal_public_ip_address = kwargs.get('internal_public_ip_address', None)
         self.public_ip_address = kwargs.get('public_ip_address', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
