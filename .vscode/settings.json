@@ -1,5 +1,6 @@
 {
     "git.ignoreLimitWarning": true,
     "python.unitTest.pyTestArgs": [],
-    "python.unitTest.pyTestEnabled": true
+    "python.unitTest.pyTestEnabled": true,
+    "python.pythonPath": "${workspaceFolder}\\env\\Scripts\\python.exe"
 }
