@@ -18,6 +18,7 @@ from .required_resource_access import RequiredResourceAccess
 from .application_create_parameters import ApplicationCreateParameters
 from .application_update_parameters import ApplicationUpdateParameters
 from .application import Application
+from .application_list_result import ApplicationListResult
 from .application_add_owner_parameters import ApplicationAddOwnerParameters
 from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
 from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
@@ -64,6 +65,7 @@ __all__ = [
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
     'Application',
+    'ApplicationListResult',
     'ApplicationAddOwnerParameters',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
