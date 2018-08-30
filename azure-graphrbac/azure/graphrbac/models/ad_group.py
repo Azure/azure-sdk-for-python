@@ -18,6 +18,8 @@ class ADGroup(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +28,7 @@ class ADGroup(DirectoryObject):
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
-    :param object_type: Constant filled by server.
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param display_name: The display name of the group.
     :type display_name: str
@@ -52,9 +54,9 @@ class ADGroup(DirectoryObject):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, display_name=None, security_enabled=None, mail=None):
-        super(ADGroup, self).__init__(additional_properties=additional_properties)
-        self.display_name = display_name
-        self.security_enabled = security_enabled
-        self.mail = mail
+    def __init__(self, **kwargs):
+        super(ADGroup, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.security_enabled = kwargs.get('security_enabled', None)
+        self.mail = kwargs.get('mail', None)
         self.object_type = 'Group'
