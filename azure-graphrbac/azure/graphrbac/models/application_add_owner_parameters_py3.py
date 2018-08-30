@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .add_owner_parameters_py3 import AddOwnerParameters
 
 
-class ApplicationAddOwnerParameters(Model):
-    """Request parameters for adding a owner to an application.
+class ApplicationAddOwnerParameters(AddOwnerParameters):
+    """ApplicationAddOwnerParameters.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -38,6 +38,4 @@ class ApplicationAddOwnerParameters(Model):
     }
 
     def __init__(self, *, url: str, additional_properties=None, **kwargs) -> None:
-        super(ApplicationAddOwnerParameters, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.url = url
+        super(ApplicationAddOwnerParameters, self).__init__(additional_properties=additional_properties, url=url, **kwargs)

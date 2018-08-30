@@ -37,61 +37,6 @@ class ObjectsOperations(object):
 
         self.config = config
 
-    def get_current_user(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets the details for the currently logged-in user.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AADObject or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.AADObject or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
-        """
-        # Construct URL
-        url = self.get_current_user.metadata['url']
-        path_format_arguments = {
-            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.GraphErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AADObject', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_current_user.metadata = {'url': '/{tenantID}/me'}
-
     def get_objects_by_object_ids(
             self, parameters, custom_headers=None, raw=False, **operation_config):
         """Gets AD group membership for the specified AD object IDs.
@@ -167,3 +112,58 @@ class ObjectsOperations(object):
 
         return deserialized
     get_objects_by_object_ids.metadata = {'url': '/{tenantID}/getObjectsByObjectIds'}
+
+    def get_current_user(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets the details for the currently logged-in user.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AADObject or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.AADObject or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = self.get_current_user.metadata['url']
+        path_format_arguments = {
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AADObject', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_current_user.metadata = {'url': '/{tenantID}/me'}
