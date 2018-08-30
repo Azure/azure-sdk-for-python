@@ -10,9 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .network_interface_tap_configuration_py3 import NetworkInterfaceTapConfiguration
     from .sub_resource_py3 import SubResource
-    from .backend_address_pool_py3 import BackendAddressPool
-    from .inbound_nat_rule_py3 import InboundNatRule
     from .application_security_group_py3 import ApplicationSecurityGroup
     from .security_rule_py3 import SecurityRule
     from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
@@ -30,6 +29,10 @@ try:
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
     from .subnet_py3 import Subnet
+    from .frontend_ip_configuration_py3 import FrontendIPConfiguration
+    from .virtual_network_tap_py3 import VirtualNetworkTap
+    from .backend_address_pool_py3 import BackendAddressPool
+    from .inbound_nat_rule_py3 import InboundNatRule
     from .network_interface_ip_configuration_py3 import NetworkInterfaceIPConfiguration
     from .application_gateway_backend_address_py3 import ApplicationGatewayBackendAddress
     from .application_gateway_backend_address_pool_py3 import ApplicationGatewayBackendAddressPool
@@ -103,7 +106,6 @@ try:
     from .express_route_cross_connection_peering_py3 import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection_py3 import ExpressRouteCrossConnection
     from .load_balancer_sku_py3 import LoadBalancerSku
-    from .frontend_ip_configuration_py3 import FrontendIPConfiguration
     from .load_balancing_rule_py3 import LoadBalancingRule
     from .probe_py3 import Probe
     from .inbound_nat_pool_py3 import InboundNatPool
@@ -240,9 +242,8 @@ try:
     from .vpn_gateway_py3 import VpnGateway
     from .vpn_site_id_py3 import VpnSiteId
 except (SyntaxError, ImportError):
+    from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
     from .sub_resource import SubResource
-    from .backend_address_pool import BackendAddressPool
-    from .inbound_nat_rule import InboundNatRule
     from .application_security_group import ApplicationSecurityGroup
     from .security_rule import SecurityRule
     from .network_interface_dns_settings import NetworkInterfaceDnsSettings
@@ -260,6 +261,10 @@ except (SyntaxError, ImportError):
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
     from .subnet import Subnet
+    from .frontend_ip_configuration import FrontendIPConfiguration
+    from .virtual_network_tap import VirtualNetworkTap
+    from .backend_address_pool import BackendAddressPool
+    from .inbound_nat_rule import InboundNatRule
     from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
     from .application_gateway_backend_address import ApplicationGatewayBackendAddress
     from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
@@ -333,7 +338,6 @@ except (SyntaxError, ImportError):
     from .express_route_cross_connection_peering import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection import ExpressRouteCrossConnection
     from .load_balancer_sku import LoadBalancerSku
-    from .frontend_ip_configuration import FrontendIPConfiguration
     from .load_balancing_rule import LoadBalancingRule
     from .probe import Probe
     from .inbound_nat_pool import InboundNatPool
@@ -490,6 +494,7 @@ from .load_balancing_rule_paged import LoadBalancingRulePaged
 from .network_interface_paged import NetworkInterfacePaged
 from .probe_paged import ProbePaged
 from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
+from .network_interface_tap_configuration_paged import NetworkInterfaceTapConfigurationPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
@@ -510,6 +515,7 @@ from .virtual_network_paged import VirtualNetworkPaged
 from .virtual_network_usage_paged import VirtualNetworkUsagePaged
 from .subnet_paged import SubnetPaged
 from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
+from .virtual_network_tap_paged import VirtualNetworkTapPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_list_entity_paged import VirtualNetworkGatewayConnectionListEntityPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
@@ -521,14 +527,14 @@ from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPag
 from .vpn_gateway_paged import VpnGatewayPaged
 from .vpn_connection_paged import VpnConnectionPaged
 from .network_management_client_enums import (
-    TransportProtocol,
     IPAllocationMethod,
-    IPVersion,
     SecurityRuleProtocol,
     SecurityRuleAccess,
     SecurityRuleDirection,
     RouteNextHopType,
     PublicIPAddressSkuName,
+    IPVersion,
+    TransportProtocol,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
@@ -603,9 +609,8 @@ from .network_management_client_enums import (
 )
 
 __all__ = [
+    'NetworkInterfaceTapConfiguration',
     'SubResource',
-    'BackendAddressPool',
-    'InboundNatRule',
     'ApplicationSecurityGroup',
     'SecurityRule',
     'NetworkInterfaceDnsSettings',
@@ -623,6 +628,10 @@ __all__ = [
     'IPConfiguration',
     'ResourceNavigationLink',
     'Subnet',
+    'FrontendIPConfiguration',
+    'VirtualNetworkTap',
+    'BackendAddressPool',
+    'InboundNatRule',
     'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddress',
     'ApplicationGatewayBackendAddressPool',
@@ -696,7 +705,6 @@ __all__ = [
     'ExpressRouteCrossConnectionPeering',
     'ExpressRouteCrossConnection',
     'LoadBalancerSku',
-    'FrontendIPConfiguration',
     'LoadBalancingRule',
     'Probe',
     'InboundNatPool',
@@ -853,6 +861,7 @@ __all__ = [
     'NetworkInterfacePaged',
     'ProbePaged',
     'NetworkInterfaceIPConfigurationPaged',
+    'NetworkInterfaceTapConfigurationPaged',
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkWatcherPaged',
@@ -873,6 +882,7 @@ __all__ = [
     'VirtualNetworkUsagePaged',
     'SubnetPaged',
     'VirtualNetworkPeeringPaged',
+    'VirtualNetworkTapPaged',
     'VirtualNetworkGatewayPaged',
     'VirtualNetworkGatewayConnectionListEntityPaged',
     'VirtualNetworkGatewayConnectionPaged',
@@ -883,14 +893,14 @@ __all__ = [
     'HubVirtualNetworkConnectionPaged',
     'VpnGatewayPaged',
     'VpnConnectionPaged',
-    'TransportProtocol',
     'IPAllocationMethod',
-    'IPVersion',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
     'SecurityRuleDirection',
     'RouteNextHopType',
     'PublicIPAddressSkuName',
+    'IPVersion',
+    'TransportProtocol',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',

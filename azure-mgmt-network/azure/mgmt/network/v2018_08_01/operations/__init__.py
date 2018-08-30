@@ -32,6 +32,7 @@ from .load_balancer_probes_operations import LoadBalancerProbesOperations
 from .network_interfaces_operations import NetworkInterfacesOperations
 from .network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
+from .network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
 from .network_security_groups_operations import NetworkSecurityGroupsOperations
 from .security_rules_operations import SecurityRulesOperations
 from .default_security_rules_operations import DefaultSecurityRulesOperations
@@ -52,6 +53,7 @@ from .usages_operations import UsagesOperations
 from .virtual_networks_operations import VirtualNetworksOperations
 from .subnets_operations import SubnetsOperations
 from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
+from .virtual_network_taps_operations import VirtualNetworkTapsOperations
 from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .local_network_gateways_operations import LocalNetworkGatewaysOperations
@@ -87,6 +89,7 @@ __all__ = [
     'NetworkInterfacesOperations',
     'NetworkInterfaceIPConfigurationsOperations',
     'NetworkInterfaceLoadBalancersOperations',
+    'NetworkInterfaceTapConfigurationsOperations',
     'NetworkSecurityGroupsOperations',
     'SecurityRulesOperations',
     'DefaultSecurityRulesOperations',
@@ -107,6 +110,7 @@ __all__ = [
     'VirtualNetworksOperations',
     'SubnetsOperations',
     'VirtualNetworkPeeringsOperations',
+    'VirtualNetworkTapsOperations',
     'VirtualNetworkGatewaysOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
