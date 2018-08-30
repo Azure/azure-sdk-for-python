@@ -25,10 +25,7 @@ from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from .operations.aggregated_cost_operations import AggregatedCostOperations
-from .operations.charges_by_enrollment_account_operations import ChargesByEnrollmentAccountOperations
-from .operations.charges_for_enrollment_account_operations import ChargesForEnrollmentAccountOperations
-from .operations.charges_by_department_operations import ChargesByDepartmentOperations
-from .operations.charges_for_department_operations import ChargesForDepartmentOperations
+from .operations.charges_operations import ChargesOperations
 from . import models
 
 
@@ -94,14 +91,8 @@ class ConsumptionManagementClient(SDKClient):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
-    :ivar charges_by_enrollment_account: ChargesByEnrollmentAccount operations
-    :vartype charges_by_enrollment_account: azure.mgmt.consumption.operations.ChargesByEnrollmentAccountOperations
-    :ivar charges_for_enrollment_account: ChargesForEnrollmentAccount operations
-    :vartype charges_for_enrollment_account: azure.mgmt.consumption.operations.ChargesForEnrollmentAccountOperations
-    :ivar charges_by_department: ChargesByDepartment operations
-    :vartype charges_by_department: azure.mgmt.consumption.operations.ChargesByDepartmentOperations
-    :ivar charges_for_department: ChargesForDepartment operations
-    :vartype charges_for_department: azure.mgmt.consumption.operations.ChargesForDepartmentOperations
+    :ivar charges: Charges operations
+    :vartype charges: azure.mgmt.consumption.operations.ChargesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -146,11 +137,5 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.charges_by_enrollment_account = ChargesByEnrollmentAccountOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.charges_for_enrollment_account = ChargesForEnrollmentAccountOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.charges_by_department = ChargesByDepartmentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.charges_for_department = ChargesForDepartmentOperations(
+        self.charges = ChargesOperations(
             self._client, self.config, self._serialize, self._deserialize)

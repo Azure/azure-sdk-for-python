@@ -21,10 +21,7 @@ from .tags_operations import TagsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
 from .aggregated_cost_operations import AggregatedCostOperations
-from .charges_by_enrollment_account_operations import ChargesByEnrollmentAccountOperations
-from .charges_for_enrollment_account_operations import ChargesForEnrollmentAccountOperations
-from .charges_by_department_operations import ChargesByDepartmentOperations
-from .charges_for_department_operations import ChargesForDepartmentOperations
+from .charges_operations import ChargesOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -39,8 +36,5 @@ __all__ = [
     'ForecastsOperations',
     'Operations',
     'AggregatedCostOperations',
-    'ChargesByEnrollmentAccountOperations',
-    'ChargesForEnrollmentAccountOperations',
-    'ChargesByDepartmentOperations',
-    'ChargesForDepartmentOperations',
+    'ChargesOperations',
 ]
