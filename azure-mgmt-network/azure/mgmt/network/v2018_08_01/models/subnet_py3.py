@@ -44,6 +44,9 @@ class Subnet(SubResource):
      external resources using subnet.
     :type resource_navigation_links:
      list[~azure.mgmt.network.v2018_08_01.models.ResourceNavigationLink]
+    :param delegations: Gets an array of references to the delegations on the
+     subnet.
+    :type delegations: list[~azure.mgmt.network.v2018_08_01.models.Delegation]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -68,12 +71,13 @@ class Subnet(SubResource):
         'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
+        'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.address_prefixes = address_prefixes
@@ -83,6 +87,7 @@ class Subnet(SubResource):
         self.service_endpoint_policies = service_endpoint_policies
         self.ip_configurations = None
         self.resource_navigation_links = resource_navigation_links
+        self.delegations = delegations
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

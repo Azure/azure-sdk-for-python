@@ -29,6 +29,7 @@ try:
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .delegation_py3 import Delegation
     from .subnet_py3 import Subnet
     from .network_interface_ip_configuration_py3 import NetworkInterfaceIPConfiguration
     from .application_gateway_backend_address_py3 import ApplicationGatewayBackendAddress
@@ -258,6 +259,7 @@ except (SyntaxError, ImportError):
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
+    from .delegation import Delegation
     from .subnet import Subnet
     from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
     from .application_gateway_backend_address import ApplicationGatewayBackendAddress
@@ -619,6 +621,7 @@ __all__ = [
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
+    'Delegation',
     'Subnet',
     'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddress',

@@ -44,6 +44,9 @@ class Subnet(SubResource):
      external resources using subnet.
     :type resource_navigation_links:
      list[~azure.mgmt.network.v2018_08_01.models.ResourceNavigationLink]
+    :param delegations: Gets an array of references to the delegations on the
+     subnet.
+    :type delegations: list[~azure.mgmt.network.v2018_08_01.models.Delegation]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -68,6 +71,7 @@ class Subnet(SubResource):
         'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
+        'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -83,6 +87,7 @@ class Subnet(SubResource):
         self.service_endpoint_policies = kwargs.get('service_endpoint_policies', None)
         self.ip_configurations = None
         self.resource_navigation_links = kwargs.get('resource_navigation_links', None)
+        self.delegations = kwargs.get('delegations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
