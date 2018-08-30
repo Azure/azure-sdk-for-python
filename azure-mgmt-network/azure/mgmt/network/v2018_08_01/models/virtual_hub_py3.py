@@ -30,6 +30,12 @@ class VirtualHub(Resource):
     :type tags: dict[str, str]
     :param virtual_wan: The VirtualWAN to which the VirtualHub belongs
     :type virtual_wan: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :param vpn_gateway: The VpnGateway associated with this VirtualHub
+    :type vpn_gateway: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :param express_route_gateway: The expressRouteGateway associated with this
+     VirtualHub
+    :type express_route_gateway:
+     ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param virtual_network_connections: list of all vnet connections with this
      VirtualHub.
     :type virtual_network_connections:
@@ -61,6 +67,8 @@ class VirtualHub(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
+        'vpn_gateway': {'key': 'properties.vpnGateway', 'type': 'SubResource'},
+        'express_route_gateway': {'key': 'properties.expressRouteGateway', 'type': 'SubResource'},
         'virtual_network_connections': {'key': 'properties.virtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
         'route_table': {'key': 'properties.routeTable', 'type': 'VirtualHubRouteTable'},
@@ -68,9 +76,11 @@ class VirtualHub(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, virtual_network_connections=None, address_prefix: str=None, route_table=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, vpn_gateway=None, express_route_gateway=None, virtual_network_connections=None, address_prefix: str=None, route_table=None, provisioning_state=None, **kwargs) -> None:
         super(VirtualHub, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_wan = virtual_wan
+        self.vpn_gateway = vpn_gateway
+        self.express_route_gateway = express_route_gateway
         self.virtual_network_connections = virtual_network_connections
         self.address_prefix = address_prefix
         self.route_table = route_table
