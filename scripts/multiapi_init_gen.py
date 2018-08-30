@@ -84,7 +84,7 @@ def build_models_string(module_name, mod_to_api_version):
             from .{api_version_module} import models
             return models"""
     template_models_end_def = """        raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    """
+"""
 
     template_intro_doc= '        """Module depends on the API version:\n'
     template_inside_doc="           * {api_version}: :mod:`{api_version_module}.models<{module_name}.{api_version_module}.models>`"
