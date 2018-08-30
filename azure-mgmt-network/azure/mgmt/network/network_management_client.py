@@ -326,6 +326,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def available_delegations(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2018_08_01.operations.AvailableDelegationsOperations>`
+        """
+        api_version = self._get_api_version('available_delegations')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import AvailableDelegationsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def available_endpoint_services(self):
         """Instance depends on the API version:
 
@@ -364,6 +377,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_07_01.operations import AvailableEndpointServicesOperations as OperationClass
         elif api_version == '2018-08-01':
             from .v2018_08_01.operations import AvailableEndpointServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def available_resource_group_delegations(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2018_08_01.operations.AvailableResourceGroupDelegationsOperations>`
+        """
+        api_version = self._get_api_version('available_resource_group_delegations')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
