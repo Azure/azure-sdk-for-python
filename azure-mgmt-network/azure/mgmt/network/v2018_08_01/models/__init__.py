@@ -82,6 +82,7 @@ try:
     from .express_route_circuit_peering_config_py3 import ExpressRouteCircuitPeeringConfig
     from .route_filter_rule_py3 import RouteFilterRule
     from .express_route_circuit_stats_py3 import ExpressRouteCircuitStats
+    from .express_route_connection_id_py3 import ExpressRouteConnectionId
     from .express_route_circuit_connection_py3 import ExpressRouteCircuitConnection
     from .express_route_circuit_peering_py3 import ExpressRouteCircuitPeering
     from .route_filter_py3 import RouteFilter
@@ -102,6 +103,12 @@ try:
     from .express_route_circuit_reference_py3 import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering_py3 import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection_py3 import ExpressRouteCrossConnection
+    from .express_route_gateway_properties_auto_scale_configuration_bounds_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
+    from .express_route_gateway_properties_auto_scale_configuration_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
+    from .express_route_connection_py3 import ExpressRouteConnection
+    from .express_route_gateway_py3 import ExpressRouteGateway
+    from .express_route_gateway_list_py3 import ExpressRouteGatewayList
+    from .express_route_connection_list_py3 import ExpressRouteConnectionList
     from .load_balancer_sku_py3 import LoadBalancerSku
     from .frontend_ip_configuration_py3 import FrontendIPConfiguration
     from .load_balancing_rule_py3 import LoadBalancingRule
@@ -312,6 +319,7 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
     from .route_filter_rule import RouteFilterRule
     from .express_route_circuit_stats import ExpressRouteCircuitStats
+    from .express_route_connection_id import ExpressRouteConnectionId
     from .express_route_circuit_connection import ExpressRouteCircuitConnection
     from .express_route_circuit_peering import ExpressRouteCircuitPeering
     from .route_filter import RouteFilter
@@ -332,6 +340,12 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_reference import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection import ExpressRouteCrossConnection
+    from .express_route_gateway_properties_auto_scale_configuration_bounds import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
+    from .express_route_gateway_properties_auto_scale_configuration import ExpressRouteGatewayPropertiesAutoScaleConfiguration
+    from .express_route_connection import ExpressRouteConnection
+    from .express_route_gateway import ExpressRouteGateway
+    from .express_route_gateway_list import ExpressRouteGatewayList
+    from .express_route_connection_list import ExpressRouteConnectionList
     from .load_balancer_sku import LoadBalancerSku
     from .frontend_ip_configuration import FrontendIPConfiguration
     from .load_balancing_rule import LoadBalancingRule
@@ -675,6 +689,7 @@ __all__ = [
     'ExpressRouteCircuitPeeringConfig',
     'RouteFilterRule',
     'ExpressRouteCircuitStats',
+    'ExpressRouteConnectionId',
     'ExpressRouteCircuitConnection',
     'ExpressRouteCircuitPeering',
     'RouteFilter',
@@ -695,6 +710,12 @@ __all__ = [
     'ExpressRouteCircuitReference',
     'ExpressRouteCrossConnectionPeering',
     'ExpressRouteCrossConnection',
+    'ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds',
+    'ExpressRouteGatewayPropertiesAutoScaleConfiguration',
+    'ExpressRouteConnection',
+    'ExpressRouteGateway',
+    'ExpressRouteGatewayList',
+    'ExpressRouteConnectionList',
     'LoadBalancerSku',
     'FrontendIPConfiguration',
     'LoadBalancingRule',
