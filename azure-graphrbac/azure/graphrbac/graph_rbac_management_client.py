@@ -9,15 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.objects_operations import ObjectsOperations
+from .operations.signed_in_user_operations import SignedInUserOperations
 from .operations.applications_operations import ApplicationsOperations
+from .operations.deleted_applications_operations import DeletedApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
+from .operations.objects_operations import ObjectsOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.oauth2_operations import OAuth2Operations
 from . import models
@@ -55,22 +57,26 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
         self.tenant_id = tenant_id
 
 
-class GraphRbacManagementClient(object):
+class GraphRbacManagementClient(SDKClient):
     """The Graph RBAC Management Client
 
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
 
-    :ivar objects: Objects operations
-    :vartype objects: azure.graphrbac.operations.ObjectsOperations
+    :ivar signed_in_user: SignedInUser operations
+    :vartype signed_in_user: azure.graphrbac.operations.SignedInUserOperations
     :ivar applications: Applications operations
     :vartype applications: azure.graphrbac.operations.ApplicationsOperations
+    :ivar deleted_applications: DeletedApplications operations
+    :vartype deleted_applications: azure.graphrbac.operations.DeletedApplicationsOperations
     :ivar groups: Groups operations
     :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
     :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
     :ivar users: Users operations
     :vartype users: azure.graphrbac.operations.UsersOperations
+    :ivar objects: Objects operations
+    :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar domains: Domains operations
     :vartype domains: azure.graphrbac.operations.DomainsOperations
     :ivar oauth2: OAuth2 operations
@@ -88,22 +94,26 @@ class GraphRbacManagementClient(object):
             self, credentials, tenant_id, base_url=None):
 
         self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(GraphRbacManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.6'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.objects = ObjectsOperations(
+        self.signed_in_user = SignedInUserOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.deleted_applications = DeletedApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.groups = GroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_principals = ServicePrincipalsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)

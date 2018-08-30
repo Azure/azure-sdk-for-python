@@ -45,13 +45,13 @@ class Permissions(Model):
         'expiry_time': {'key': 'expiryTime', 'type': 'str'},
     }
 
-    def __init__(self, odatatype=None, client_id=None, consent_type=None, principal_id=None, resource_id=None, scope=None, start_time=None, expiry_time=None):
-        super(Permissions, self).__init__()
-        self.odatatype = odatatype
-        self.client_id = client_id
-        self.consent_type = consent_type
-        self.principal_id = principal_id
-        self.resource_id = resource_id
-        self.scope = scope
-        self.start_time = start_time
-        self.expiry_time = expiry_time
+    def __init__(self, **kwargs):
+        super(Permissions, self).__init__(**kwargs)
+        self.odatatype = kwargs.get('odatatype', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.consent_type = kwargs.get('consent_type', None)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.scope = kwargs.get('scope', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.expiry_time = kwargs.get('expiry_time', None)
