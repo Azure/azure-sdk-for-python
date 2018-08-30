@@ -17,14 +17,14 @@ class GetVpnSitesConfigurationRequest(Model):
 
     :param vpn_sites: List of resource-ids of the vpn-sites for which config
      is to be downloaded.
-    :type vpn_sites: list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :type vpn_sites: list[str]
     :param output_blob_sas_url: The sas-url to download the configurations for
      vpn-sites
     :type output_blob_sas_url: str
     """
 
     _attribute_map = {
-        'vpn_sites': {'key': 'vpnSites', 'type': '[SubResource]'},
+        'vpn_sites': {'key': 'vpnSites', 'type': '[str]'},
         'output_blob_sas_url': {'key': 'outputBlobSasUrl', 'type': 'str'},
     }
 

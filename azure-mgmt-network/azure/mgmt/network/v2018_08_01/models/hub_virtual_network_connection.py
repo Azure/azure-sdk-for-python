@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .sub_resource import SubResource
 
 
-class HubVirtualNetworkConnection(Resource):
+class HubVirtualNetworkConnection(SubResource):
     """HubVirtualNetworkConnection Resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,14 +20,6 @@ class HubVirtualNetworkConnection(Resource):
 
     :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param remote_virtual_network: Reference to the remote virtual network.
     :type remote_virtual_network:
      ~azure.mgmt.network.v2018_08_01.models.SubResource
@@ -37,31 +29,32 @@ class HubVirtualNetworkConnection(Resource):
     :param allow_remote_vnet_to_use_hub_vnet_gateways: Allow RemoteVnet to use
      Virtual Hub's gateways.
     :type allow_remote_vnet_to_use_hub_vnet_gateways: bool
+    :param enable_internet_security: Enable internet security
+    :type enable_internet_security: bool
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
+    :type name: str
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
         'allow_hub_to_remote_vnet_transit': {'key': 'properties.allowHubToRemoteVnetTransit', 'type': 'bool'},
         'allow_remote_vnet_to_use_hub_vnet_gateways': {'key': 'properties.allowRemoteVnetToUseHubVnetGateways', 'type': 'bool'},
+        'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -70,5 +63,7 @@ class HubVirtualNetworkConnection(Resource):
         self.remote_virtual_network = kwargs.get('remote_virtual_network', None)
         self.allow_hub_to_remote_vnet_transit = kwargs.get('allow_hub_to_remote_vnet_transit', None)
         self.allow_remote_vnet_to_use_hub_vnet_gateways = kwargs.get('allow_remote_vnet_to_use_hub_vnet_gateways', None)
+        self.enable_internet_security = kwargs.get('enable_internet_security', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
         self.etag = None

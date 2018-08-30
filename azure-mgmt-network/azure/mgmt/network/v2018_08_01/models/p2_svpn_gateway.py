@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class VpnGateway(Resource):
-    """VpnGateway Resource.
+class P2SVpnGateway(Resource):
+    """P2SVpnGateway Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,17 +30,24 @@ class VpnGateway(Resource):
     :type tags: dict[str, str]
     :param virtual_hub: The VirtualHub to which the gateway belongs
     :type virtual_hub: ~azure.mgmt.network.v2018_08_01.models.SubResource
-    :param connections: list of all vpn connections to the gateway.
-    :type connections:
-     list[~azure.mgmt.network.v2018_08_01.models.VpnConnection]
-    :param bgp_settings: Local network gateway's BGP speaker settings.
-    :type bgp_settings: ~azure.mgmt.network.v2018_08_01.models.BgpSettings
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param vpn_gateway_scale_unit: The scale unit for this vpn gateway.
+    :param vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :type vpn_gateway_scale_unit: int
+    :param p2s_vpn_server_configuration: The P2SVpnServerConfiguration to
+     which the p2sVpnGateway is attached to.
+    :type p2s_vpn_server_configuration:
+     ~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration
+    :param vpn_client_address_pool: The reference of the address space
+     resource which represents Address space for P2S VpnClient.
+    :type vpn_client_address_pool:
+     ~azure.mgmt.network.v2018_08_01.models.AddressSpace
+    :ivar vpn_client_connection_health: Collection of the all P2S vpnclients'
+     connection health status.
+    :vartype vpn_client_connection_health:
+     list[~azure.mgmt.network.v2018_08_01.models.VpnClientConnectionHealth]
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -49,6 +56,7 @@ class VpnGateway(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'vpn_client_connection_health': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -59,18 +67,20 @@ class VpnGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'connections': {'key': 'properties.connections', 'type': '[VpnConnection]'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
+        'p2s_vpn_server_configuration': {'key': 'properties.p2sVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
+        'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
+        'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': '[VpnClientConnectionHealth]'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(VpnGateway, self).__init__(**kwargs)
+        super(P2SVpnGateway, self).__init__(**kwargs)
         self.virtual_hub = kwargs.get('virtual_hub', None)
-        self.connections = kwargs.get('connections', None)
-        self.bgp_settings = kwargs.get('bgp_settings', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.vpn_gateway_scale_unit = kwargs.get('vpn_gateway_scale_unit', None)
+        self.p2s_vpn_server_configuration = kwargs.get('p2s_vpn_server_configuration', None)
+        self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
+        self.vpn_client_connection_health = None
         self.etag = None

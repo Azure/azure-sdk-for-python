@@ -62,6 +62,8 @@ from .virtual_hubs_operations import VirtualHubsOperations
 from .hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
 from .vpn_gateways_operations import VpnGatewaysOperations
 from .vpn_connections_operations import VpnConnectionsOperations
+from .p2_svpn_server_configurations_operations import P2SVpnServerConfigurationsOperations
+from .p2_svpn_gateways_operations import P2SVpnGatewaysOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
@@ -117,4 +119,6 @@ __all__ = [
     'HubVirtualNetworkConnectionsOperations',
     'VpnGatewaysOperations',
     'VpnConnectionsOperations',
+    'P2SVpnServerConfigurationsOperations',
+    'P2SVpnGatewaysOperations',
 ]

@@ -71,6 +71,8 @@ from .operations.virtual_hubs_operations import VirtualHubsOperations
 from .operations.hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
 from .operations.vpn_gateways_operations import VpnGatewaysOperations
 from .operations.vpn_connections_operations import VpnConnectionsOperations
+from .operations.p2_svpn_server_configurations_operations import P2SVpnServerConfigurationsOperations
+from .operations.p2_svpn_gateways_operations import P2SVpnGatewaysOperations
 from . import models
 
 
@@ -220,6 +222,10 @@ class NetworkManagementClient(SDKClient):
     :vartype vpn_gateways: azure.mgmt.network.v2018_08_01.operations.VpnGatewaysOperations
     :ivar vpn_connections: VpnConnections operations
     :vartype vpn_connections: azure.mgmt.network.v2018_08_01.operations.VpnConnectionsOperations
+    :ivar p2_svpn_server_configurations: P2SVpnServerConfigurations operations
+    :vartype p2_svpn_server_configurations: azure.mgmt.network.v2018_08_01.operations.P2SVpnServerConfigurationsOperations
+    :ivar p2_svpn_gateways: P2SVpnGateways operations
+    :vartype p2_svpn_gateways: azure.mgmt.network.v2018_08_01.operations.P2SVpnGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -347,6 +353,10 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.vpn_connections = VpnConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.p2_svpn_server_configurations = P2SVpnServerConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.p2_svpn_gateways = P2SVpnGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
             self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
@@ -415,3 +425,68 @@ class NetworkManagementClient(SDKClient):
 
         return deserialized
     check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}
+
+    def supported_security_providers(
+            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+        """Gives the supported security providers for the virtual wan.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param virtual_wan_name: The name of the VirtualWAN for which
+         supported security providers are needed.
+        :type virtual_wan_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VirtualWanSecurityProviders or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2018_08_01.models.VirtualWanSecurityProviders or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
+        """
+        api_version = "2018-08-01"
+
+        # Construct URL
+        url = self.supported_security_providers.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualWanSecurityProviders', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    supported_security_providers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/supportedSecurityProviders'}
