@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.objects_operations import ObjectsOperations
 from .operations.applications_operations import ApplicationsOperations
+from .operations.deleted_applications_operations import DeletedApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
@@ -65,6 +66,8 @@ class GraphRbacManagementClient(object):
     :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar applications: Applications operations
     :vartype applications: azure.graphrbac.operations.ApplicationsOperations
+    :ivar deleted_applications: DeletedApplications operations
+    :vartype deleted_applications: azure.graphrbac.operations.DeletedApplicationsOperations
     :ivar groups: Groups operations
     :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
@@ -98,6 +101,8 @@ class GraphRbacManagementClient(object):
         self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.deleted_applications = DeletedApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.groups = GroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
