@@ -17,7 +17,9 @@ class ServerPropertiesForCreate(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServerPropertiesForDefaultCreate,
-    ServerPropertiesForRestore
+    ServerPropertiesForRestore, ServerPropertiesForGeoRestore
+
+    All required parameters must be populated in order to send to Azure.
 
     :param version: Server version. Possible values include: '9.5', '9.6'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
@@ -27,7 +29,7 @@ class ServerPropertiesForCreate(Model):
      ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Constant filled by server.
+    :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
 
@@ -43,12 +45,12 @@ class ServerPropertiesForCreate(Model):
     }
 
     _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore'}
+        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
     }
 
-    def __init__(self, version=None, ssl_enforcement=None, storage_profile=None):
-        super(ServerPropertiesForCreate, self).__init__()
-        self.version = version
-        self.ssl_enforcement = ssl_enforcement
-        self.storage_profile = storage_profile
+    def __init__(self, **kwargs):
+        super(ServerPropertiesForCreate, self).__init__(**kwargs)
+        self.version = kwargs.get('version', None)
+        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.create_mode = None

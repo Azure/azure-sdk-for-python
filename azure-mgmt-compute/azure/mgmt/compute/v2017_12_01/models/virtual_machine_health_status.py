@@ -30,6 +30,6 @@ class VirtualMachineHealthStatus(Model):
         'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self):
-        super(VirtualMachineHealthStatus, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineHealthStatus, self).__init__(**kwargs)
         self.status = None

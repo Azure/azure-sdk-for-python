@@ -16,9 +16,12 @@ class OutputFileUploadOptions(Model):
     """Details about an output file upload operation, including under what
     conditions to perform the upload.
 
-    :param upload_condition: The conditions under which the task output file
-     or set of files should be uploaded. The default is taskCompletion.
-     Possible values include: 'taskSuccess', 'taskFailure', 'taskCompletion'
+    All required parameters must be populated in order to send to Azure.
+
+    :param upload_condition: Required. The conditions under which the task
+     output file or set of files should be uploaded. The default is
+     taskcompletion. Possible values include: 'taskSuccess', 'taskFailure',
+     'taskCompletion'
     :type upload_condition: str or
      ~azure.batch.models.OutputFileUploadCondition
     """
@@ -31,5 +34,6 @@ class OutputFileUploadOptions(Model):
         'upload_condition': {'key': 'uploadCondition', 'type': 'OutputFileUploadCondition'},
     }
 
-    def __init__(self, upload_condition):
-        self.upload_condition = upload_condition
+    def __init__(self, **kwargs):
+        super(OutputFileUploadOptions, self).__init__(**kwargs)
+        self.upload_condition = kwargs.get('upload_condition', None)

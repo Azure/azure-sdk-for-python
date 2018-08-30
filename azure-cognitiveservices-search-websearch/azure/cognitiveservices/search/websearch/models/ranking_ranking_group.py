@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class RankingRankingGroup(Model):
     """Defines a search results group, such as mainline.
 
-    :param items: A list of search result items to display in the group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param items: Required. A list of search result items to display in the
+     group.
     :type items:
      list[~azure.cognitiveservices.search.websearch.models.RankingRankingItem]
     """
@@ -28,6 +31,6 @@ class RankingRankingGroup(Model):
         'items': {'key': 'items', 'type': '[RankingRankingItem]'},
     }
 
-    def __init__(self, items):
-        super(RankingRankingGroup, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(RankingRankingGroup, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

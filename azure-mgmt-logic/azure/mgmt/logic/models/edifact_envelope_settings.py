@@ -15,19 +15,21 @@ from msrest.serialization import Model
 class EdifactEnvelopeSettings(Model):
     """The Edifact agreement envelope settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param group_association_assigned_code: The group association assigned
      code.
     :type group_association_assigned_code: str
     :param communication_agreement_id: The communication agreement id.
     :type communication_agreement_id: str
-    :param apply_delimiter_string_advice: The value indicating whether to
-     apply delimiter string advice.
+    :param apply_delimiter_string_advice: Required. The value indicating
+     whether to apply delimiter string advice.
     :type apply_delimiter_string_advice: bool
-    :param create_grouping_segments: The value indicating whether to create
-     grouping segments.
+    :param create_grouping_segments: Required. The value indicating whether to
+     create grouping segments.
     :type create_grouping_segments: bool
-    :param enable_default_group_headers: The value indicating whether to
-     enable default group headers.
+    :param enable_default_group_headers: Required. The value indicating
+     whether to enable default group headers.
     :type enable_default_group_headers: bool
     :param recipient_reference_password_value: The recipient reference
      password value.
@@ -39,14 +41,14 @@ class EdifactEnvelopeSettings(Model):
     :type application_reference_id: str
     :param processing_priority_code: The processing priority code.
     :type processing_priority_code: str
-    :param interchange_control_number_lower_bound: The interchange control
-     number lower bound.
+    :param interchange_control_number_lower_bound: Required. The interchange
+     control number lower bound.
     :type interchange_control_number_lower_bound: long
-    :param interchange_control_number_upper_bound: The interchange control
-     number upper bound.
+    :param interchange_control_number_upper_bound: Required. The interchange
+     control number upper bound.
     :type interchange_control_number_upper_bound: long
-    :param rollover_interchange_control_number: The value indicating whether
-     to rollover interchange control number.
+    :param rollover_interchange_control_number: Required. The value indicating
+     whether to rollover interchange control number.
     :type rollover_interchange_control_number: bool
     :param interchange_control_number_prefix: The interchange control number
      prefix.
@@ -67,14 +69,14 @@ class EdifactEnvelopeSettings(Model):
     :type group_message_version: str
     :param group_message_release: The group message release.
     :type group_message_release: str
-    :param group_control_number_lower_bound: The group control number lower
-     bound.
+    :param group_control_number_lower_bound: Required. The group control
+     number lower bound.
     :type group_control_number_lower_bound: long
-    :param group_control_number_upper_bound: The group control number upper
-     bound.
+    :param group_control_number_upper_bound: Required. The group control
+     number upper bound.
     :type group_control_number_upper_bound: long
-    :param rollover_group_control_number: The value indicating whether to
-     rollover group control number.
+    :param rollover_group_control_number: Required. The value indicating
+     whether to rollover group control number.
     :type rollover_group_control_number: bool
     :param group_control_number_prefix: The group control number prefix.
     :type group_control_number_prefix: str
@@ -92,8 +94,9 @@ class EdifactEnvelopeSettings(Model):
     :type group_application_sender_id: str
     :param group_application_password: The group application password.
     :type group_application_password: str
-    :param overwrite_existing_transaction_set_control_number: The value
-     indicating whether to overwrite existing transaction set control number.
+    :param overwrite_existing_transaction_set_control_number: Required. The
+     value indicating whether to overwrite existing transaction set control
+     number.
     :type overwrite_existing_transaction_set_control_number: bool
     :param transaction_set_control_number_prefix: The transaction set control
      number prefix.
@@ -101,17 +104,17 @@ class EdifactEnvelopeSettings(Model):
     :param transaction_set_control_number_suffix: The transaction set control
      number suffix.
     :type transaction_set_control_number_suffix: str
-    :param transaction_set_control_number_lower_bound: The transaction set
-     control number lower bound.
+    :param transaction_set_control_number_lower_bound: Required. The
+     transaction set control number lower bound.
     :type transaction_set_control_number_lower_bound: long
-    :param transaction_set_control_number_upper_bound: The transaction set
-     control number upper bound.
+    :param transaction_set_control_number_upper_bound: Required. The
+     transaction set control number upper bound.
     :type transaction_set_control_number_upper_bound: long
-    :param rollover_transaction_set_control_number: The value indicating
-     whether to rollover transaction set control number.
+    :param rollover_transaction_set_control_number: Required. The value
+     indicating whether to rollover transaction set control number.
     :type rollover_transaction_set_control_number: bool
-    :param is_test_interchange: The value indicating whether the message is a
-     test interchange.
+    :param is_test_interchange: Required. The value indicating whether the
+     message is a test interchange.
     :type is_test_interchange: bool
     :param sender_internal_identification: The sender internal identification.
     :type sender_internal_identification: str
@@ -187,45 +190,46 @@ class EdifactEnvelopeSettings(Model):
         'receiver_internal_sub_identification': {'key': 'receiverInternalSubIdentification', 'type': 'str'},
     }
 
-    def __init__(self, apply_delimiter_string_advice, create_grouping_segments, enable_default_group_headers, interchange_control_number_lower_bound, interchange_control_number_upper_bound, rollover_interchange_control_number, group_control_number_lower_bound, group_control_number_upper_bound, rollover_group_control_number, overwrite_existing_transaction_set_control_number, transaction_set_control_number_lower_bound, transaction_set_control_number_upper_bound, rollover_transaction_set_control_number, is_test_interchange, group_association_assigned_code=None, communication_agreement_id=None, recipient_reference_password_value=None, recipient_reference_password_qualifier=None, application_reference_id=None, processing_priority_code=None, interchange_control_number_prefix=None, interchange_control_number_suffix=None, sender_reverse_routing_address=None, receiver_reverse_routing_address=None, functional_group_id=None, group_controlling_agency_code=None, group_message_version=None, group_message_release=None, group_control_number_prefix=None, group_control_number_suffix=None, group_application_receiver_qualifier=None, group_application_receiver_id=None, group_application_sender_qualifier=None, group_application_sender_id=None, group_application_password=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None, sender_internal_identification=None, sender_internal_sub_identification=None, receiver_internal_identification=None, receiver_internal_sub_identification=None):
-        self.group_association_assigned_code = group_association_assigned_code
-        self.communication_agreement_id = communication_agreement_id
-        self.apply_delimiter_string_advice = apply_delimiter_string_advice
-        self.create_grouping_segments = create_grouping_segments
-        self.enable_default_group_headers = enable_default_group_headers
-        self.recipient_reference_password_value = recipient_reference_password_value
-        self.recipient_reference_password_qualifier = recipient_reference_password_qualifier
-        self.application_reference_id = application_reference_id
-        self.processing_priority_code = processing_priority_code
-        self.interchange_control_number_lower_bound = interchange_control_number_lower_bound
-        self.interchange_control_number_upper_bound = interchange_control_number_upper_bound
-        self.rollover_interchange_control_number = rollover_interchange_control_number
-        self.interchange_control_number_prefix = interchange_control_number_prefix
-        self.interchange_control_number_suffix = interchange_control_number_suffix
-        self.sender_reverse_routing_address = sender_reverse_routing_address
-        self.receiver_reverse_routing_address = receiver_reverse_routing_address
-        self.functional_group_id = functional_group_id
-        self.group_controlling_agency_code = group_controlling_agency_code
-        self.group_message_version = group_message_version
-        self.group_message_release = group_message_release
-        self.group_control_number_lower_bound = group_control_number_lower_bound
-        self.group_control_number_upper_bound = group_control_number_upper_bound
-        self.rollover_group_control_number = rollover_group_control_number
-        self.group_control_number_prefix = group_control_number_prefix
-        self.group_control_number_suffix = group_control_number_suffix
-        self.group_application_receiver_qualifier = group_application_receiver_qualifier
-        self.group_application_receiver_id = group_application_receiver_id
-        self.group_application_sender_qualifier = group_application_sender_qualifier
-        self.group_application_sender_id = group_application_sender_id
-        self.group_application_password = group_application_password
-        self.overwrite_existing_transaction_set_control_number = overwrite_existing_transaction_set_control_number
-        self.transaction_set_control_number_prefix = transaction_set_control_number_prefix
-        self.transaction_set_control_number_suffix = transaction_set_control_number_suffix
-        self.transaction_set_control_number_lower_bound = transaction_set_control_number_lower_bound
-        self.transaction_set_control_number_upper_bound = transaction_set_control_number_upper_bound
-        self.rollover_transaction_set_control_number = rollover_transaction_set_control_number
-        self.is_test_interchange = is_test_interchange
-        self.sender_internal_identification = sender_internal_identification
-        self.sender_internal_sub_identification = sender_internal_sub_identification
-        self.receiver_internal_identification = receiver_internal_identification
-        self.receiver_internal_sub_identification = receiver_internal_sub_identification
+    def __init__(self, **kwargs):
+        super(EdifactEnvelopeSettings, self).__init__(**kwargs)
+        self.group_association_assigned_code = kwargs.get('group_association_assigned_code', None)
+        self.communication_agreement_id = kwargs.get('communication_agreement_id', None)
+        self.apply_delimiter_string_advice = kwargs.get('apply_delimiter_string_advice', None)
+        self.create_grouping_segments = kwargs.get('create_grouping_segments', None)
+        self.enable_default_group_headers = kwargs.get('enable_default_group_headers', None)
+        self.recipient_reference_password_value = kwargs.get('recipient_reference_password_value', None)
+        self.recipient_reference_password_qualifier = kwargs.get('recipient_reference_password_qualifier', None)
+        self.application_reference_id = kwargs.get('application_reference_id', None)
+        self.processing_priority_code = kwargs.get('processing_priority_code', None)
+        self.interchange_control_number_lower_bound = kwargs.get('interchange_control_number_lower_bound', None)
+        self.interchange_control_number_upper_bound = kwargs.get('interchange_control_number_upper_bound', None)
+        self.rollover_interchange_control_number = kwargs.get('rollover_interchange_control_number', None)
+        self.interchange_control_number_prefix = kwargs.get('interchange_control_number_prefix', None)
+        self.interchange_control_number_suffix = kwargs.get('interchange_control_number_suffix', None)
+        self.sender_reverse_routing_address = kwargs.get('sender_reverse_routing_address', None)
+        self.receiver_reverse_routing_address = kwargs.get('receiver_reverse_routing_address', None)
+        self.functional_group_id = kwargs.get('functional_group_id', None)
+        self.group_controlling_agency_code = kwargs.get('group_controlling_agency_code', None)
+        self.group_message_version = kwargs.get('group_message_version', None)
+        self.group_message_release = kwargs.get('group_message_release', None)
+        self.group_control_number_lower_bound = kwargs.get('group_control_number_lower_bound', None)
+        self.group_control_number_upper_bound = kwargs.get('group_control_number_upper_bound', None)
+        self.rollover_group_control_number = kwargs.get('rollover_group_control_number', None)
+        self.group_control_number_prefix = kwargs.get('group_control_number_prefix', None)
+        self.group_control_number_suffix = kwargs.get('group_control_number_suffix', None)
+        self.group_application_receiver_qualifier = kwargs.get('group_application_receiver_qualifier', None)
+        self.group_application_receiver_id = kwargs.get('group_application_receiver_id', None)
+        self.group_application_sender_qualifier = kwargs.get('group_application_sender_qualifier', None)
+        self.group_application_sender_id = kwargs.get('group_application_sender_id', None)
+        self.group_application_password = kwargs.get('group_application_password', None)
+        self.overwrite_existing_transaction_set_control_number = kwargs.get('overwrite_existing_transaction_set_control_number', None)
+        self.transaction_set_control_number_prefix = kwargs.get('transaction_set_control_number_prefix', None)
+        self.transaction_set_control_number_suffix = kwargs.get('transaction_set_control_number_suffix', None)
+        self.transaction_set_control_number_lower_bound = kwargs.get('transaction_set_control_number_lower_bound', None)
+        self.transaction_set_control_number_upper_bound = kwargs.get('transaction_set_control_number_upper_bound', None)
+        self.rollover_transaction_set_control_number = kwargs.get('rollover_transaction_set_control_number', None)
+        self.is_test_interchange = kwargs.get('is_test_interchange', None)
+        self.sender_internal_identification = kwargs.get('sender_internal_identification', None)
+        self.sender_internal_sub_identification = kwargs.get('sender_internal_sub_identification', None)
+        self.receiver_internal_identification = kwargs.get('receiver_internal_identification', None)
+        self.receiver_internal_sub_identification = kwargs.get('receiver_internal_sub_identification', None)

@@ -63,9 +63,9 @@ class RouteFilter(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, rules=None):
-        super(RouteFilter, self).__init__(id=id, location=location, tags=tags)
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(RouteFilter, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
         self.peerings = None
         self.provisioning_state = None
         self.etag = None

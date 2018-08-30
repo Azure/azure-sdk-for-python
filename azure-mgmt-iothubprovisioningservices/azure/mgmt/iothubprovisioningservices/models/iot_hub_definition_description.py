@@ -18,6 +18,8 @@ class IotHubDefinitionDescription(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param apply_allocation_policy: flag for applying allocationPolicy or not
      for a given iot hub.
     :type apply_allocation_policy: bool
@@ -25,9 +27,9 @@ class IotHubDefinitionDescription(Model):
     :type allocation_weight: int
     :ivar name: Host name of the IoT hub.
     :vartype name: str
-    :param connection_string: Connection string og the IoT hub.
+    :param connection_string: Required. Connection string og the IoT hub.
     :type connection_string: str
-    :param location: ARM region of the IoT hub.
+    :param location: Required. ARM region of the IoT hub.
     :type location: str
     """
 
@@ -45,10 +47,10 @@ class IotHubDefinitionDescription(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, connection_string, location, apply_allocation_policy=None, allocation_weight=None):
-        super(IotHubDefinitionDescription, self).__init__()
-        self.apply_allocation_policy = apply_allocation_policy
-        self.allocation_weight = allocation_weight
+    def __init__(self, **kwargs):
+        super(IotHubDefinitionDescription, self).__init__(**kwargs)
+        self.apply_allocation_policy = kwargs.get('apply_allocation_policy', None)
+        self.allocation_weight = kwargs.get('allocation_weight', None)
         self.name = None
-        self.connection_string = connection_string
-        self.location = location
+        self.connection_string = kwargs.get('connection_string', None)
+        self.location = kwargs.get('location', None)

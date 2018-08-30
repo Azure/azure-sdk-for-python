@@ -29,6 +29,9 @@ class AmazonS3Dataset(Dataset):
     :param parameters: Parameters for dataset.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param bucket_name: The name of the Amazon S3 bucket. Type: string (or
@@ -62,6 +65,7 @@ class AmazonS3Dataset(Dataset):
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'bucket_name': {'key': 'typeProperties.bucketName', 'type': 'object'},
         'key': {'key': 'typeProperties.key', 'type': 'object'},
@@ -71,8 +75,8 @@ class AmazonS3Dataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, bucket_name, additional_properties=None, description=None, structure=None, parameters=None, key=None, prefix=None, version=None, format=None, compression=None):
-        super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, bucket_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, key=None, prefix=None, version=None, format=None, compression=None):
+        super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
         self.bucket_name = bucket_name
         self.key = key
         self.prefix = prefix

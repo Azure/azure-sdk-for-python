@@ -32,8 +32,9 @@ class NodeFile(Model):
         'properties': {'key': 'properties', 'type': 'FileProperties'},
     }
 
-    def __init__(self, name=None, url=None, is_directory=None, properties=None):
-        self.name = name
-        self.url = url
-        self.is_directory = is_directory
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(NodeFile, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.is_directory = kwargs.get('is_directory', None)
+        self.properties = kwargs.get('properties', None)

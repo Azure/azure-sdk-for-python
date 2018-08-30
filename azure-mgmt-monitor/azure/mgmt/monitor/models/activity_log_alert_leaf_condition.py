@@ -16,13 +16,15 @@ class ActivityLogAlertLeafCondition(Model):
     """An Activity Log alert condition that is met by comparing an activity log
     field and value.
 
-    :param field: The name of the field that this condition will examine. The
-     possible values for this field are (case-insensitive): 'resourceId',
-     'category', 'caller', 'level', 'operationName', 'resourceGroup',
-     'resourceProvider', 'status', 'subStatus', 'resourceType', or anything
-     beginning with 'properties.'.
+    All required parameters must be populated in order to send to Azure.
+
+    :param field: Required. The name of the field that this condition will
+     examine. The possible values for this field are (case-insensitive):
+     'resourceId', 'category', 'caller', 'level', 'operationName',
+     'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+     'resourceType', or anything beginning with 'properties.'.
     :type field: str
-    :param equals: The field value will be compared to this value
+    :param equals: Required. The field value will be compared to this value
      (case-insensitive) to determine if the condition is met.
     :type equals: str
     """
@@ -37,6 +39,7 @@ class ActivityLogAlertLeafCondition(Model):
         'equals': {'key': 'equals', 'type': 'str'},
     }
 
-    def __init__(self, field, equals):
-        self.field = field
-        self.equals = equals
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertLeafCondition, self).__init__(**kwargs)
+        self.field = kwargs.get('field', None)
+        self.equals = kwargs.get('equals', None)

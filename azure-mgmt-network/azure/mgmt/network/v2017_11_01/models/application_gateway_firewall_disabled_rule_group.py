@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ApplicationGatewayFirewallDisabledRuleGroup(Model):
     """Allows to disable rules within a rule group or an entire rule group.
 
-    :param rule_group_name: The name of the rule group that will be disabled.
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_group_name: Required. The name of the rule group that will be
+     disabled.
     :type rule_group_name: str
     :param rules: The list of rules that will be disabled. If null, all rules
      of the rule group will be disabled.
@@ -31,7 +34,7 @@ class ApplicationGatewayFirewallDisabledRuleGroup(Model):
         'rules': {'key': 'rules', 'type': '[int]'},
     }
 
-    def __init__(self, rule_group_name, rules=None):
-        super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__()
-        self.rule_group_name = rule_group_name
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__(**kwargs)
+        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.rules = kwargs.get('rules', None)

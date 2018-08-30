@@ -55,11 +55,11 @@ class Subscription(Model):
         'authorization_source': {'key': 'authorizationSource', 'type': 'str'},
     }
 
-    def __init__(self, subscription_policies=None, authorization_source=None):
-        super(Subscription, self).__init__()
+    def __init__(self, **kwargs):
+        super(Subscription, self).__init__(**kwargs)
         self.id = None
         self.subscription_id = None
         self.display_name = None
         self.state = None
-        self.subscription_policies = subscription_policies
-        self.authorization_source = authorization_source
+        self.subscription_policies = kwargs.get('subscription_policies', None)
+        self.authorization_source = kwargs.get('authorization_source', None)

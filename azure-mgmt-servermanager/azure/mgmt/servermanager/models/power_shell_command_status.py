@@ -27,12 +27,12 @@ class PowerShellCommandStatus(Resource):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     :param results:
-    :type results: list of :class:`PowerShellCommandResult
-     <azure.mgmt.servermanager.models.PowerShellCommandResult>`
+    :type results:
+     list[~azure.mgmt.servermanager.models.PowerShellCommandResult]
     :param pssession:
     :type pssession: str
     :param command:
@@ -61,9 +61,9 @@ class PowerShellCommandStatus(Resource):
         'completed': {'key': 'properties.completed', 'type': 'bool'},
     }
 
-    def __init__(self, tags=None, etag=None, results=None, pssession=None, command=None, completed=None):
-        super(PowerShellCommandStatus, self).__init__(tags=tags, etag=etag)
-        self.results = results
-        self.pssession = pssession
-        self.command = command
-        self.completed = completed
+    def __init__(self, **kwargs):
+        super(PowerShellCommandStatus, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)
+        self.pssession = kwargs.get('pssession', None)
+        self.command = kwargs.get('command', None)
+        self.completed = kwargs.get('completed', None)

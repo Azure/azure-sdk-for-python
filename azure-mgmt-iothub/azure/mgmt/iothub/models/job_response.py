@@ -28,11 +28,10 @@ class JobResponse(Model):
      'export', 'import', 'backup', 'readDeviceProperties',
      'writeDeviceProperties', 'updateDeviceConfiguration', 'rebootDevice',
      'factoryResetDevice', 'firmwareUpdate'
-    :vartype type: str or :class:`JobType <azure.mgmt.iothub.models.JobType>`
+    :vartype type: str or ~azure.mgmt.iothub.models.JobType
     :ivar status: The status of the job. Possible values include: 'unknown',
      'enqueued', 'running', 'completed', 'failed', 'cancelled'
-    :vartype status: str or :class:`JobStatus
-     <azure.mgmt.iothub.models.JobStatus>`
+    :vartype status: str or ~azure.mgmt.iothub.models.JobStatus
     :ivar failure_reason: If status == failed, this string containing the
      reason for the failure.
     :vartype failure_reason: str
@@ -64,7 +63,8 @@ class JobResponse(Model):
         'parent_job_id': {'key': 'parentJobId', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(JobResponse, self).__init__(**kwargs)
         self.job_id = None
         self.start_time_utc = None
         self.end_time_utc = None

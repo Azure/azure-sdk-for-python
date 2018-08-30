@@ -38,11 +38,11 @@ class ErrorEntity(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, extended_code=None, message_template=None, parameters=None, inner_errors=None, code=None, message=None):
-        super(ErrorEntity, self).__init__()
-        self.extended_code = extended_code
-        self.message_template = message_template
-        self.parameters = parameters
-        self.inner_errors = inner_errors
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorEntity, self).__init__(**kwargs)
+        self.extended_code = kwargs.get('extended_code', None)
+        self.message_template = kwargs.get('message_template', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.inner_errors = kwargs.get('inner_errors', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

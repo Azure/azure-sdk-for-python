@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class GatewayResourcePaged(Paged):
     """
-    A paging container for iterating over a list of GatewayResource object
+    A paging container for iterating over a list of :class:`GatewayResource <azure.mgmt.servermanager.models.GatewayResource>` object
     """
 
     _attribute_map = {

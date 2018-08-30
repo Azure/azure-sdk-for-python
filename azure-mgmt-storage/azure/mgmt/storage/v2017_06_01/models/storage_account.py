@@ -144,11 +144,11 @@ class StorageAccount(Resource):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, location=None, tags=None, identity=None, enable_https_traffic_only=False):
-        super(StorageAccount, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
         self.sku = None
         self.kind = None
-        self.identity = identity
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.primary_endpoints = None
         self.primary_location = None
@@ -161,5 +161,5 @@ class StorageAccount(Resource):
         self.secondary_endpoints = None
         self.encryption = None
         self.access_tier = None
-        self.enable_https_traffic_only = enable_https_traffic_only
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)
         self.network_rule_set = None

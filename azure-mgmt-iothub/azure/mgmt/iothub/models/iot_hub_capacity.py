@@ -26,8 +26,7 @@ class IotHubCapacity(Model):
     :vartype default: long
     :ivar scale_type: The type of the scaling enabled. Possible values
      include: 'Automatic', 'Manual', 'None'
-    :vartype scale_type: str or :class:`IotHubScaleType
-     <azure.mgmt.iothub.models.IotHubScaleType>`
+    :vartype scale_type: str or ~azure.mgmt.iothub.models.IotHubScaleType
     """
 
     _validation = {
@@ -44,7 +43,8 @@ class IotHubCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'IotHubScaleType'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(IotHubCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None

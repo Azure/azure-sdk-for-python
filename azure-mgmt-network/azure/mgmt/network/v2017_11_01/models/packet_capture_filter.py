@@ -51,10 +51,10 @@ class PacketCaptureFilter(Model):
         'remote_port': {'key': 'remotePort', 'type': 'str'},
     }
 
-    def __init__(self, protocol="Any", local_ip_address=None, remote_ip_address=None, local_port=None, remote_port=None):
-        super(PacketCaptureFilter, self).__init__()
-        self.protocol = protocol
-        self.local_ip_address = local_ip_address
-        self.remote_ip_address = remote_ip_address
-        self.local_port = local_port
-        self.remote_port = remote_port
+    def __init__(self, **kwargs):
+        super(PacketCaptureFilter, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', "Any")
+        self.local_ip_address = kwargs.get('local_ip_address', None)
+        self.remote_ip_address = kwargs.get('remote_ip_address', None)
+        self.local_port = kwargs.get('local_port', None)
+        self.remote_port = kwargs.get('remote_port', None)

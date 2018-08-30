@@ -31,7 +31,7 @@ class SqlServerPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             async_server_create = self.test_class_instance.client.servers.create_or_update(
-                kwargs['resource_group'],
+                kwargs['resource_group'].name,
                 name,
                 get_server_params(kwargs['location'])
             )
@@ -93,7 +93,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         self.assertEquals(firewall_rule.start_ip_address, "123.123.123.123")
         self.assertEquals(firewall_rule.end_ip_address, "123.123.123.124")
 
-        self.client.servers.delete(resource_group.name, server_name, raw=True)
+        self.client.servers.delete(resource_group.name, server_name, polling=False)
 
     @ResourceGroupPreparer()
     @SqlServerPreparer()
@@ -127,7 +127,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         usages = list(self.client.database_usages.list_by_database(resource_group.name, server.name, db_name))
         self.assertTrue(any(usage.name == 'database_size' for usage in usages))
 
-        self.client.databases.delete(resource_group.name, server.name, db_name)
+        self.client.databases.delete(resource_group.name, server.name, db_name).wait()
 
 
 #------------------------------------------------------------------------------

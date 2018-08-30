@@ -18,14 +18,16 @@ class GeoBackupPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: The state of the geo backup policy. Possible values include:
-     'Disabled', 'Enabled'
+    :param state: Required. The state of the geo backup policy. Possible
+     values include: 'Disabled', 'Enabled'
     :type state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
     :ivar storage_type: The storage type of the geo backup policy.
     :vartype storage_type: str
@@ -56,9 +58,9 @@ class GeoBackupPolicy(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, state):
-        super(GeoBackupPolicy, self).__init__()
-        self.state = state
+    def __init__(self, **kwargs):
+        super(GeoBackupPolicy, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
         self.storage_type = None
         self.kind = None
         self.location = None

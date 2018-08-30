@@ -15,9 +15,11 @@ from .sub_resource import SubResource
 class VirtualMachineScaleSetIPConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's IP configuration.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Id
     :type id: str
-    :param name: The IP configuration name.
+    :param name: Required. The IP configuration name.
     :type name: str
     :param subnet: Specifies the identifier of the subnet.
     :type subnet: ~azure.mgmt.compute.v2017_12_01.models.ApiEntityReference
@@ -69,13 +71,13 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, name, id=None, subnet=None, primary=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None):
-        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id)
-        self.name = name
-        self.subnet = subnet
-        self.primary = primary
-        self.public_ip_address_configuration = public_ip_address_configuration
-        self.private_ip_address_version = private_ip_address_version
-        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
-        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
-        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetIPConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.primary = kwargs.get('primary', None)
+        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
+        self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
+        self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
+        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
+        self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)

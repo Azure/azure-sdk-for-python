@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class FileProperties(Model):
     """The properties of a file on a compute node.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param creation_time: The file creation time. The creation time is not
      returned for files on Linux compute nodes.
     :type creation_time: datetime
-    :param last_modified: The time at which the file was last modified.
+    :param last_modified: Required. The time at which the file was last
+     modified.
     :type last_modified: datetime
-    :param content_length: The length of the file.
+    :param content_length: Required. The length of the file.
     :type content_length: long
     :param content_type: The content type of the file.
     :type content_type: str
@@ -42,9 +45,10 @@ class FileProperties(Model):
         'file_mode': {'key': 'fileMode', 'type': 'str'},
     }
 
-    def __init__(self, last_modified, content_length, creation_time=None, content_type=None, file_mode=None):
-        self.creation_time = creation_time
-        self.last_modified = last_modified
-        self.content_length = content_length
-        self.content_type = content_type
-        self.file_mode = file_mode
+    def __init__(self, **kwargs):
+        super(FileProperties, self).__init__(**kwargs)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.content_length = kwargs.get('content_length', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.file_mode = kwargs.get('file_mode', None)

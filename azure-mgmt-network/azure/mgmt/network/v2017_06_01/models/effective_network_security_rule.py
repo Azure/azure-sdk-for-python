@@ -82,20 +82,20 @@ class EffectiveNetworkSecurityRule(Model):
         'direction': {'key': 'direction', 'type': 'str'},
     }
 
-    def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_port_ranges=None, destination_port_ranges=None, source_address_prefix=None, destination_address_prefix=None, source_address_prefixes=None, destination_address_prefixes=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
-        super(EffectiveNetworkSecurityRule, self).__init__()
-        self.name = name
-        self.protocol = protocol
-        self.source_port_range = source_port_range
-        self.destination_port_range = destination_port_range
-        self.source_port_ranges = source_port_ranges
-        self.destination_port_ranges = destination_port_ranges
-        self.source_address_prefix = source_address_prefix
-        self.destination_address_prefix = destination_address_prefix
-        self.source_address_prefixes = source_address_prefixes
-        self.destination_address_prefixes = destination_address_prefixes
-        self.expanded_source_address_prefix = expanded_source_address_prefix
-        self.expanded_destination_address_prefix = expanded_destination_address_prefix
-        self.access = access
-        self.priority = priority
-        self.direction = direction
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityRule, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.source_port_range = kwargs.get('source_port_range', None)
+        self.destination_port_range = kwargs.get('destination_port_range', None)
+        self.source_port_ranges = kwargs.get('source_port_ranges', None)
+        self.destination_port_ranges = kwargs.get('destination_port_ranges', None)
+        self.source_address_prefix = kwargs.get('source_address_prefix', None)
+        self.destination_address_prefix = kwargs.get('destination_address_prefix', None)
+        self.source_address_prefixes = kwargs.get('source_address_prefixes', None)
+        self.destination_address_prefixes = kwargs.get('destination_address_prefixes', None)
+        self.expanded_source_address_prefix = kwargs.get('expanded_source_address_prefix', None)
+        self.expanded_destination_address_prefix = kwargs.get('expanded_destination_address_prefix', None)
+        self.access = kwargs.get('access', None)
+        self.priority = kwargs.get('priority', None)
+        self.direction = kwargs.get('direction', None)

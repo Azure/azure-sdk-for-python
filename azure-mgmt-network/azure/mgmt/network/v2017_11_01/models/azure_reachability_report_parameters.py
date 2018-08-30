@@ -15,16 +15,19 @@ from msrest.serialization import Model
 class AzureReachabilityReportParameters(Model):
     """Geographic and time constraints for Azure reachability report.
 
-    :param provider_location:
+    All required parameters must be populated in order to send to Azure.
+
+    :param provider_location: Required.
     :type provider_location:
      ~azure.mgmt.network.v2017_11_01.models.AzureReachabilityReportLocation
     :param providers: List of Internet service providers.
     :type providers: list[str]
     :param azure_locations: Optional Azure regions to scope the query to.
     :type azure_locations: list[str]
-    :param start_time: The start time for the Azure reachability report.
+    :param start_time: Required. The start time for the Azure reachability
+     report.
     :type start_time: datetime
-    :param end_time: The end time for the Azure reachability report.
+    :param end_time: Required. The end time for the Azure reachability report.
     :type end_time: datetime
     """
 
@@ -42,10 +45,10 @@ class AzureReachabilityReportParameters(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, provider_location, start_time, end_time, providers=None, azure_locations=None):
-        super(AzureReachabilityReportParameters, self).__init__()
-        self.provider_location = provider_location
-        self.providers = providers
-        self.azure_locations = azure_locations
-        self.start_time = start_time
-        self.end_time = end_time
+    def __init__(self, **kwargs):
+        super(AzureReachabilityReportParameters, self).__init__(**kwargs)
+        self.provider_location = kwargs.get('provider_location', None)
+        self.providers = kwargs.get('providers', None)
+        self.azure_locations = kwargs.get('azure_locations', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)

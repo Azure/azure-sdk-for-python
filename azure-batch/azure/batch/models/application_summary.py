@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class ApplicationSummary(Model):
     """Contains information about an application in an Azure Batch account.
 
-    :param id: A string that uniquely identifies the application within the
-     account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the application
+     within the account.
     :type id: str
-    :param display_name: The display name for the application.
+    :param display_name: Required. The display name for the application.
     :type display_name: str
-    :param versions: The list of available versions of the application.
+    :param versions: Required. The list of available versions of the
+     application.
     :type versions: list[str]
     """
 
@@ -36,7 +39,8 @@ class ApplicationSummary(Model):
         'versions': {'key': 'versions', 'type': '[str]'},
     }
 
-    def __init__(self, id, display_name, versions):
-        self.id = id
-        self.display_name = display_name
-        self.versions = versions
+    def __init__(self, **kwargs):
+        super(ApplicationSummary, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.versions = kwargs.get('versions', None)

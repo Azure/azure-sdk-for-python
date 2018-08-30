@@ -18,7 +18,9 @@ class NewsArticle(Article):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -104,8 +106,8 @@ class NewsArticle(Article):
         'clustered_articles': {'key': 'clusteredArticles', 'type': '[NewsArticle]'},
     }
 
-    def __init__(self):
-        super(NewsArticle, self).__init__()
+    def __init__(self, **kwargs):
+        super(NewsArticle, self).__init__(**kwargs)
         self.category = None
         self.headline = None
         self.clustered_articles = None

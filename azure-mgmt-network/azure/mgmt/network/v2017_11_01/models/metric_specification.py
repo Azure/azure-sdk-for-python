@@ -64,19 +64,19 @@ class MetricSpecification(Model):
         'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display_name=None, display_description=None, unit=None, aggregation_type=None, availabilities=None, enable_regional_mdm_account=None, fill_gap_with_zero=None, metric_filter_pattern=None, dimensions=None, is_internal=None, source_mdm_account=None, source_mdm_namespace=None, resource_id_dimension_name_override=None):
-        super(MetricSpecification, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.aggregation_type = aggregation_type
-        self.availabilities = availabilities
-        self.enable_regional_mdm_account = enable_regional_mdm_account
-        self.fill_gap_with_zero = fill_gap_with_zero
-        self.metric_filter_pattern = metric_filter_pattern
-        self.dimensions = dimensions
-        self.is_internal = is_internal
-        self.source_mdm_account = source_mdm_account
-        self.source_mdm_namespace = source_mdm_namespace
-        self.resource_id_dimension_name_override = resource_id_dimension_name_override
+    def __init__(self, **kwargs):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.availabilities = kwargs.get('availabilities', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.is_internal = kwargs.get('is_internal', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)

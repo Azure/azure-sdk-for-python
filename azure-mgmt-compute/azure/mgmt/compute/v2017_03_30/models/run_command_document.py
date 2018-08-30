@@ -15,19 +15,21 @@ from .run_command_document_base import RunCommandDocumentBase
 class RunCommandDocument(RunCommandDocumentBase):
     """Describes the properties of a Run Command.
 
-    :param schema: The VM run command schema.
+    All required parameters must be populated in order to send to Azure.
+
+    :param schema: Required. The VM run command schema.
     :type schema: str
-    :param id: The VM run command id.
+    :param id: Required. The VM run command id.
     :type id: str
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
+    :param os_type: Required. The Operating System type. Possible values
+     include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
-    :param label: The VM run command label.
+    :param label: Required. The VM run command label.
     :type label: str
-    :param description: The VM run command description.
+    :param description: Required. The VM run command description.
     :type description: str
-    :param script: The script to be executed.
+    :param script: Required. The script to be executed.
     :type script: list[str]
     :param parameters: The parameters used by the script.
     :type parameters:
@@ -53,7 +55,7 @@ class RunCommandDocument(RunCommandDocumentBase):
         'parameters': {'key': 'parameters', 'type': '[RunCommandParameterDefinition]'},
     }
 
-    def __init__(self, schema, id, os_type, label, description, script, parameters=None):
-        super(RunCommandDocument, self).__init__(schema=schema, id=id, os_type=os_type, label=label, description=description)
-        self.script = script
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(RunCommandDocument, self).__init__(**kwargs)
+        self.script = kwargs.get('script', None)
+        self.parameters = kwargs.get('parameters', None)

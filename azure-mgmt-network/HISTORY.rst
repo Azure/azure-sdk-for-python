@@ -3,13 +3,133 @@
 Release History
 ===============
 
-1.8.0a1 (2017-XX-XX)
-++++++++++++++++++++
+2.1.0 (2018-08-28)
+++++++++++++++++++
+
+Default API version is now 2018-07-01
 
 **Features**
 
+- Model ExpressRouteCircuit has a new parameter allow_global_reach
+- Model PublicIPAddress has a new parameter public_ip_prefix
+- Model BackendAddressPool has a new parameter outbound_rule (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter public_ip_prefix
+- Model LoadBalancingRule has a new parameter enable_tcp_reset
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter express_route_gateway_bypass
+- Model VirtualNetworkGatewayConnection has a new parameter express_route_gateway_bypass
+- Model Subnet has a new parameter service_endpoint_policies
+- Model InboundNatPool has a new parameter enable_tcp_reset
+- Model LoadBalancer has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model InboundNatRule has a new parameter enable_tcp_reset
+- Added operation group ServiceEndpointPolicyDefinitionsOperations
+- Added operation group ServiceEndpointPoliciesOperations
+- Added operation group PublicIPPrefixesOperations
+
+**Breaking changes**
+
+- Model BackendAddressPool no longer has parameter outbound_nat_rule (now outbound_rules)
+- Model FrontendIPConfiguration no longer has parameter outbound_nat_rules (now outbound_rules)
+- Model LoadBalancer no longer has parameter outbound_nat_rules (now outbound_rules)
+
+2.0.1 (2018-08-07)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix packet_captures.get_status empty output
+
+2.0.0 (2018-07-27)
+++++++++++++++++++
+
+**Features**
+
+- Supports now 2018-06-01 and 2018-04-01. 2018-06-01 is the new default.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**Features starting 2018-04-01**
+
+- Model FlowLogInformation has a new parameter flow_analytics_configuration
+- Model ApplicationGateway has a new parameter enable_fips
+- Model ApplicationGateway has a new parameter autoscale_configuration
+- Model ApplicationGateway has a new parameter zones
+- Model ConnectionSharedKey has a new parameter id
+- Added operation group HubVirtualNetworkConnectionsOperations
+- Added operation group AzureFirewallsOperations
+- Added operation group VirtualHubsOperations
+- Added operation group VpnGatewaysOperations
+- Added operation group VpnSitesOperations
+- Added operation group VirtualWANsOperations
+- Added operation group VpnSitesConfigurationOperations
+- Added operation group VpnConnectionsOperations
+
+**Breaking changes starting 2018-04-01**
+
+- Operation VirtualNetworkGatewayConnectionsOperations.set_shared_key has a new parameter "id"
+- Operation DdosProtectionPlansOperations.create_or_update parameter "parameters" has been flatten to "tags/location"
+
+**Breaking changes starting 2018-06-01**
+
+- The new class VpnConnection introduced in 2018-04-01 renamed "connection_bandwidth" to "connection_bandwidth_in_mbps"
+
+2.0.0rc3 (2018-06-14)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- API version 2018-02-01 enum Probe now supports HTTPS (standard SKU load balancer)
+- API version 2015-06-15 adding missing "primary" in NetworkInterfaceIPConfiguration
+
+2.0.0rc2 (2018-04-03)
++++++++++++++++++++++
+
+**Features**
+
+- All clients now support Azure profiles.
+- API version 2018-02-01 is now the default
+- Express Route Circuit Connection (considered preview)
+- Express Route Provider APIs
+- GetTopologyOperation supports query parameter
+- Feature work for setting Custom IPsec/IKE policy for Virtual Network Gateway point-to-site clients
+- DDoS Protection Plans
+
+2.0.0rc1 (2018-03-07)
++++++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**Network Breaking changes**
+
+- Operation network_watcher.get_topology changed method signature
+
+**Features**
+
+- Add API Version 2018-01-01. Not default yet in this version.
 - Add ConnectionMonitor operation group (2017-10/11-01)
-- Add target_virtual_network / target_subet to topology_parameter (2017-10/11-01)
+- Add target_virtual_network / target_subnet to topology_parameter (2017-10/11-01)
 - Add idle_timeout_in_minutes / enable_floating_ip to inbound_nat_pool (2017-11-01)
 
 **Bugfixes**
@@ -46,11 +166,11 @@ with regards to breaking changes and have their dependency system asking for `>=
 **Bug fixes**
 
 - Accept space in location for "usage" (i.e. "west us").
-- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups 
-  are mutually exclusive and one only is needed, meaning none of them is required 
+- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups
+  are mutually exclusive and one only is needed, meaning none of them is required
   by itself. Thus, sourceAddressPrefix is not required anymore.
-- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups 
-  are mutually exclusive and one only is needed, meaning none of them is required 
+- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups
+  are mutually exclusive and one only is needed, meaning none of them is required
   by itself. Thus, destinationAddressPrefix is not required anymore.
 - Client now accept unicode string as a valid subscription_id parameter
 - Restore missing azure.mgmt.network.__version__

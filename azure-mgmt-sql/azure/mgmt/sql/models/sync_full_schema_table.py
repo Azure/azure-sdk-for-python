@@ -46,8 +46,8 @@ class SyncFullSchemaTable(Model):
         'quoted_name': {'key': 'quotedName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SyncFullSchemaTable, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncFullSchemaTable, self).__init__(**kwargs)
         self.columns = None
         self.error_id = None
         self.has_error = None

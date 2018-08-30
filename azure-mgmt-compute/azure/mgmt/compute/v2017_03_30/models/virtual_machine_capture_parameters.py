@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class VirtualMachineCaptureParameters(Model):
     """Capture Virtual Machine parameters.
 
-    :param vhd_prefix: The captured virtual hard disk's name prefix.
+    All required parameters must be populated in order to send to Azure.
+
+    :param vhd_prefix: Required. The captured virtual hard disk's name prefix.
     :type vhd_prefix: str
-    :param destination_container_name: The destination container name.
+    :param destination_container_name: Required. The destination container
+     name.
     :type destination_container_name: str
-    :param overwrite_vhds: Specifies whether to overwrite the destination
-     virtual hard disk, in case of conflict.
+    :param overwrite_vhds: Required. Specifies whether to overwrite the
+     destination virtual hard disk, in case of conflict.
     :type overwrite_vhds: bool
     """
 
@@ -36,8 +39,8 @@ class VirtualMachineCaptureParameters(Model):
         'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
     }
 
-    def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds):
-        super(VirtualMachineCaptureParameters, self).__init__()
-        self.vhd_prefix = vhd_prefix
-        self.destination_container_name = destination_container_name
-        self.overwrite_vhds = overwrite_vhds
+    def __init__(self, **kwargs):
+        super(VirtualMachineCaptureParameters, self).__init__(**kwargs)
+        self.vhd_prefix = kwargs.get('vhd_prefix', None)
+        self.destination_container_name = kwargs.get('destination_container_name', None)
+        self.overwrite_vhds = kwargs.get('overwrite_vhds', None)

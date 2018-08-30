@@ -15,7 +15,12 @@ from msrest.serialization import Model
 class RetentionPolicy(Model):
     """Base class for retention policy.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LongTermRetentionPolicy, SimpleRetentionPolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param retention_policy_type: Required. Constant filled by server.
     :type retention_policy_type: str
     """
 
@@ -31,5 +36,6 @@ class RetentionPolicy(Model):
         'retention_policy_type': {'LongTermRetentionPolicy': 'LongTermRetentionPolicy', 'SimpleRetentionPolicy': 'SimpleRetentionPolicy'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(RetentionPolicy, self).__init__(**kwargs)
         self.retention_policy_type = None

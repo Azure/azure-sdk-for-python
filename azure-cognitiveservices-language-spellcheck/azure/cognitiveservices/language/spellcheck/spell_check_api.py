@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -42,7 +42,7 @@ class SpellCheckAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class SpellCheckAPI(object):
+class SpellCheckAPI(SDKClient):
     """The Spell Check API - V7 lets you check a text string for spelling and grammar errors.
 
     :ivar config: Configuration for client.
@@ -58,7 +58,7 @@ class SpellCheckAPI(object):
             self, credentials, base_url=None):
 
         self.config = SpellCheckAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SpellCheckAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
@@ -265,7 +265,7 @@ class SpellCheckAPI(object):
          The default is Proof. 1) Proof—Finds most spelling and grammar
          mistakes. 2) Spell—Finds most spelling mistakes but does not find some
          of the grammar errors that Proof catches (for example, capitalization
-         and repeated words). Possible values include: 'Proof', 'Spell'
+         and repeated words). Possible values include: 'proof', 'spell'
         :type mode: str
         :param pre_context_text: A string that gives context to the text
          string. For example, the text string petal is valid. However, if you
@@ -301,7 +301,7 @@ class SpellCheckAPI(object):
         x_bing_apis_sdk = "true"
 
         # Construct URL
-        url = '/spellcheck'
+        url = self.spell_checker.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -369,3 +369,4 @@ class SpellCheckAPI(object):
             return client_raw_response
 
         return deserialized
+    spell_checker.metadata = {'url': '/spellcheck'}

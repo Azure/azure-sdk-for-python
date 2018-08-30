@@ -33,7 +33,8 @@ class TaskContainerExecutionInformation(Model):
         'error': {'key': 'error', 'type': 'str'},
     }
 
-    def __init__(self, container_id=None, state=None, error=None):
-        self.container_id = container_id
-        self.state = state
-        self.error = error
+    def __init__(self, **kwargs):
+        super(TaskContainerExecutionInformation, self).__init__(**kwargs)
+        self.container_id = kwargs.get('container_id', None)
+        self.state = kwargs.get('state', None)
+        self.error = kwargs.get('error', None)

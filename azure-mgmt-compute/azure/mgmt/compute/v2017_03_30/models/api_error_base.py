@@ -29,8 +29,8 @@ class ApiErrorBase(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, target=None, message=None):
-        super(ApiErrorBase, self).__init__()
-        self.code = code
-        self.target = target
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ApiErrorBase, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.target = kwargs.get('target', None)
+        self.message = kwargs.get('message', None)

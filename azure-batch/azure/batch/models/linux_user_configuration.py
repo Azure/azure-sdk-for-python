@@ -40,7 +40,8 @@ class LinuxUserConfiguration(Model):
         'ssh_private_key': {'key': 'sshPrivateKey', 'type': 'str'},
     }
 
-    def __init__(self, uid=None, gid=None, ssh_private_key=None):
-        self.uid = uid
-        self.gid = gid
-        self.ssh_private_key = ssh_private_key
+    def __init__(self, **kwargs):
+        super(LinuxUserConfiguration, self).__init__(**kwargs)
+        self.uid = kwargs.get('uid', None)
+        self.gid = kwargs.get('gid', None)
+        self.ssh_private_key = kwargs.get('ssh_private_key', None)

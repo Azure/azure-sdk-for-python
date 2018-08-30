@@ -37,10 +37,10 @@ class ExpressRouteCircuitRoutesTableSummary(Model):
         'state_pfx_rcd': {'key': 'statePfxRcd', 'type': 'str'},
     }
 
-    def __init__(self, neighbor=None, v=None, as_property=None, up_down=None, state_pfx_rcd=None):
-        super(ExpressRouteCircuitRoutesTableSummary, self).__init__()
-        self.neighbor = neighbor
-        self.v = v
-        self.as_property = as_property
-        self.up_down = up_down
-        self.state_pfx_rcd = state_pfx_rcd
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitRoutesTableSummary, self).__init__(**kwargs)
+        self.neighbor = kwargs.get('neighbor', None)
+        self.v = kwargs.get('v', None)
+        self.as_property = kwargs.get('as_property', None)
+        self.up_down = kwargs.get('up_down', None)
+        self.state_pfx_rcd = kwargs.get('state_pfx_rcd', None)

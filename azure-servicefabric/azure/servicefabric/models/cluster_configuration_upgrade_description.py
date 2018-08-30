@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ClusterConfigurationUpgradeDescription(Model):
     """Describes the parameters for a standalone cluster configuration upgrade.
 
-    :param cluster_config: The cluster configuration.
+    All required parameters must be populated in order to send to Azure.
+
+    :param cluster_config: Required. The cluster configuration.
     :type cluster_config: str
     :param health_check_retry_timeout: The length of time between attempts to
      perform a health checks if the application or cluster is not healthy.
@@ -52,6 +54,11 @@ class ClusterConfigurationUpgradeDescription(Model):
      upgrade. Allowed values are integer values from zero to 100. Default
      value: 0 .
     :type max_percent_upgrade_domain_delta_unhealthy_nodes: int
+    :param application_health_policies: Defines the application health policy
+     map used to evaluate the health of an application or one of its children
+     entities.
+    :type application_health_policies:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
     """
 
     _validation = {
@@ -69,17 +76,19 @@ class ClusterConfigurationUpgradeDescription(Model):
         'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
         'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
         'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'MaxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
+        'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
     }
 
-    def __init__(self, cluster_config, health_check_retry_timeout="PT0H0M0S", health_check_wait_duration_in_seconds="PT0H0M0S", health_check_stable_duration_in_seconds="PT0H0M0S", upgrade_domain_timeout_in_seconds="PT0H0M0S", upgrade_timeout_in_seconds="PT0H0M0S", max_percent_unhealthy_applications=0, max_percent_unhealthy_nodes=0, max_percent_delta_unhealthy_nodes=0, max_percent_upgrade_domain_delta_unhealthy_nodes=0):
-        super(ClusterConfigurationUpgradeDescription, self).__init__()
-        self.cluster_config = cluster_config
-        self.health_check_retry_timeout = health_check_retry_timeout
-        self.health_check_wait_duration_in_seconds = health_check_wait_duration_in_seconds
-        self.health_check_stable_duration_in_seconds = health_check_stable_duration_in_seconds
-        self.upgrade_domain_timeout_in_seconds = upgrade_domain_timeout_in_seconds
-        self.upgrade_timeout_in_seconds = upgrade_timeout_in_seconds
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
-        self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
-        self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
+    def __init__(self, **kwargs):
+        super(ClusterConfigurationUpgradeDescription, self).__init__(**kwargs)
+        self.cluster_config = kwargs.get('cluster_config', None)
+        self.health_check_retry_timeout = kwargs.get('health_check_retry_timeout', "PT0H0M0S")
+        self.health_check_wait_duration_in_seconds = kwargs.get('health_check_wait_duration_in_seconds', "PT0H0M0S")
+        self.health_check_stable_duration_in_seconds = kwargs.get('health_check_stable_duration_in_seconds', "PT0H0M0S")
+        self.upgrade_domain_timeout_in_seconds = kwargs.get('upgrade_domain_timeout_in_seconds', "PT0H0M0S")
+        self.upgrade_timeout_in_seconds = kwargs.get('upgrade_timeout_in_seconds', "PT0H0M0S")
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', 0)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', 0)
+        self.max_percent_delta_unhealthy_nodes = kwargs.get('max_percent_delta_unhealthy_nodes', 0)
+        self.max_percent_upgrade_domain_delta_unhealthy_nodes = kwargs.get('max_percent_upgrade_domain_delta_unhealthy_nodes', 0)
+        self.application_health_policies = kwargs.get('application_health_policies', None)

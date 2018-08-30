@@ -57,8 +57,8 @@ class ConnectivityInformation(Model):
         'probes_failed': {'key': 'probesFailed', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(ConnectivityInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConnectivityInformation, self).__init__(**kwargs)
         self.hops = None
         self.connection_status = None
         self.avg_latency_in_ms = None

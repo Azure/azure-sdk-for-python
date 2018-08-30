@@ -28,5 +28,6 @@ class AuthenticationTokenSettings(Model):
         'access': {'key': 'access', 'type': '[AccessScope]'},
     }
 
-    def __init__(self, access=None):
-        self.access = access
+    def __init__(self, **kwargs):
+        super(AuthenticationTokenSettings, self).__init__(**kwargs)
+        self.access = kwargs.get('access', None)

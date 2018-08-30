@@ -1,31 +1,31 @@
 interactions:
 - request:
-    body: '{"id": "batch_task1_98da0af6", "commandLine": "cmd /c \"echo hello world\"",
-      "exitConditions": {"exitCodes": [{"code": 1, "exitOptions": {"jobAction": "terminate"}}],
-      "exitCodeRanges": [{"start": 2, "end": 4, "exitOptions": {"jobAction": "disable"}}],
-      "default": {"jobAction": "none"}}}'
+    body: '{"id": "batch_task1_98da0af6", "exitConditions": {"exitCodes": [{"exitOptions":
+      {"jobAction": "terminate"}, "code": 1}], "default": {"jobAction": "none"}, "exitCodeRanges":
+      [{"exitOptions": {"jobAction": "disable"}, "start": 2, "end": 4}]}, "commandLine":
+      "cmd /c \"echo hello world\""}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['286']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:54 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:10 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:54 GMT']
-      etag: ['0x8D526DC9343897D']
-      last-modified: ['Wed, 08 Nov 2017 19:11:54 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6']
-      request-id: [8217d935-984d-47f7-98ac-15d85e15f3af]
+      date: ['Fri, 24 Aug 2018 19:05:11 GMT']
+      etag: ['0x8D609F4845DC881']
+      last-modified: ['Fri, 24 Aug 2018 19:05:11 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6']
+      request-id: [b9126cc2-219f-440f-bce9-03fd511ffbf4]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -37,71 +37,64 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:55 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:11 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task1_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9343897D\",\"creationTime\":\"2017-11-08T19:11:54.8130685Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:54.8130685Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:54.8130685Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\
-        \n      \"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"exitConditions\"\
-        :{\r\n    \"exitCodes\":[\r\n      {\r\n        \"code\":1,\"exitOptions\"\
-        :{\r\n          \"jobAction\":\"terminate\"\r\n        }\r\n      }\r\n  \
-        \  ],\"exitCodeRanges\":[\r\n      {\r\n        \"start\":2,\"end\":4,\"exitOptions\"\
-        :{\r\n          \"jobAction\":\"disable\"\r\n        }\r\n      }\r\n    ],\"\
-        default\":{\r\n      \"jobAction\":\"none\"\r\n    }\r\n  },\"constraints\"\
-        :{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n  },\"executionInfo\"\
-        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task1_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6\",\"eTag\":\"0x8D609F4845DC881\",\"creationTime\":\"2018-08-24T19:05:11.6912769Z\",\"lastModified\":\"2018-08-24T19:05:11.6912769Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:11.6912769Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\n
+        \     \"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"exitConditions\":{\r\n
+        \   \"exitCodes\":[\r\n      {\r\n        \"code\":1,\"exitOptions\":{\r\n
+        \         \"jobAction\":\"terminate\"\r\n        }\r\n      }\r\n    ],\"exitCodeRanges\":[\r\n
+        \     {\r\n        \"start\":2,\"end\":4,\"exitOptions\":{\r\n          \"jobAction\":\"disable\"\r\n
+        \       }\r\n      }\r\n    ],\"default\":{\r\n      \"jobAction\":\"none\"\r\n
+        \   }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:55 GMT']
-      etag: ['0x8D526DC9343897D']
-      last-modified: ['Wed, 08 Nov 2017 19:11:54 GMT']
-      request-id: [ff861d7a-2109-435a-9767-7f199ca96e1c]
+      date: ['Fri, 24 Aug 2018 19:05:11 GMT']
+      etag: ['0x8D609F4845DC881']
+      last-modified: ['Fri, 24 Aug 2018 19:05:11 GMT']
+      request-id: [1a0d5b95-78e1-49ed-9e74-26afd9462fe0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_task2_98da0af6", "commandLine": "cmd /c \"echo hello world\"",
-      "outputFiles": [{"filePattern": "../stdout.txt", "destination": {"container":
-      {"path": "taskLogs/output.txt", "containerUrl": "https://test.blob.core.windows.net:443/test-container"}},
-      "uploadOptions": {"uploadCondition": "taskCompletion"}}, {"filePattern": "../stderr.txt",
-      "destination": {"container": {"path": "taskLogs/error.txt", "containerUrl":
-      "https://test.blob.core.windows.net:443/test-container"}}, "uploadOptions":
-      {"uploadCondition": "taskFailure"}}]}'
+    body: '{"outputFiles": [{"uploadOptions": {"uploadCondition": "taskcompletion"},
+      "filePattern": "../stdout.txt", "destination": {"container": {"containerUrl":
+      "https://test.blob.core.windows.net:443/test-container", "path": "taskLogs/output.txt"}}},
+      {"uploadOptions": {"uploadCondition": "taskfailure"}, "filePattern": "../stderr.txt",
+      "destination": {"container": {"containerUrl": "https://test.blob.core.windows.net:443/test-container",
+      "path": "taskLogs/error.txt"}}}], "id": "batch_task2_98da0af6", "commandLine":
+      "cmd /c \"echo hello world\""}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['541']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:55 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:12 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:56 GMT']
-      etag: ['0x8D526DC9408573D']
-      last-modified: ['Wed, 08 Nov 2017 19:11:56 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6']
-      request-id: [f0067585-29fd-4b18-ac59-efd336433c4b]
+      date: ['Fri, 24 Aug 2018 19:05:13 GMT']
+      etag: ['0x8D609F4857AAFDF']
+      last-modified: ['Fri, 24 Aug 2018 19:05:13 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6']
+      request-id: [c22396f4-6181-47f2-b41b-fd10ce0c3f0e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -113,70 +106,60 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:56 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:13 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task2_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9408573D\",\"creationTime\":\"2017-11-08T19:11:56.1028413Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:56.1028413Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:56.1028413Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"outputFiles\":[\r\n    {\r\n      \"filePattern\"\
-        :\"../stdout.txt\",\"destination\":{\r\n        \"container\":{\r\n      \
-        \    \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\"\
-        ,\"path\":\"taskLogs/output.txt\"\r\n        }\r\n      },\"uploadOptions\"\
-        :{\r\n        \"uploadCondition\":\"TaskCompletion\"\r\n      }\r\n    },{\r\
-        \n      \"filePattern\":\"../stderr.txt\",\"destination\":{\r\n        \"\
-        container\":{\r\n          \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\"\
-        ,\"path\":\"taskLogs/error.txt\"\r\n        }\r\n      },\"uploadOptions\"\
-        :{\r\n        \"uploadCondition\":\"TaskFailure\"\r\n      }\r\n    }\r\n\
-        \  ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\"\
-        :\"nonadmin\"\r\n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
-        :0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task2_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6\",\"eTag\":\"0x8D609F4857AAFDF\",\"creationTime\":\"2018-08-24T19:05:13.5584223Z\",\"lastModified\":\"2018-08-24T19:05:13.5584223Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:13.5584223Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"outputFiles\":[\r\n    {\r\n      \"filePattern\":\"../stdout.txt\",\"destination\":{\r\n
+        \       \"container\":{\r\n          \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\",\"path\":\"taskLogs/output.txt\"\r\n
+        \       }\r\n      },\"uploadOptions\":{\r\n        \"uploadCondition\":\"TaskCompletion\"\r\n
+        \     }\r\n    },{\r\n      \"filePattern\":\"../stderr.txt\",\"destination\":{\r\n
+        \       \"container\":{\r\n          \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\",\"path\":\"taskLogs/error.txt\"\r\n
+        \       }\r\n      },\"uploadOptions\":{\r\n        \"uploadCondition\":\"TaskFailure\"\r\n
+        \     }\r\n    }\r\n  ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\":\"nonadmin\"\r\n
+        \   }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:56 GMT']
-      etag: ['0x8D526DC9408573D']
-      last-modified: ['Wed, 08 Nov 2017 19:11:56 GMT']
-      request-id: [c60c5a65-f2dd-4682-b865-ac7d73456e2e]
+      date: ['Fri, 24 Aug 2018 19:05:14 GMT']
+      etag: ['0x8D609F4857AAFDF']
+      last-modified: ['Fri, 24 Aug 2018 19:05:13 GMT']
+      request-id: [4a090c55-2cd3-41b7-9fa3-c2addca8dcd7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_task3_98da0af6", "commandLine": "cmd /c \"echo hello world\"",
-      "userIdentity": {"autoUser": {"scope": "task", "elevationLevel": "admin"}}}'
+    body: '{"userIdentity": {"autoUser": {"elevationLevel": "admin", "scope": "task"}},
+      "id": "batch_task3_98da0af6", "commandLine": "cmd /c \"echo hello world\""}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['152']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:56 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:14 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:56 GMT']
-      etag: ['0x8D526DC94DB2E37']
-      last-modified: ['Wed, 08 Nov 2017 19:11:57 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6']
-      request-id: [2d3b984c-57b8-4fa7-a9d9-561f799f32da]
+      date: ['Fri, 24 Aug 2018 19:05:14 GMT']
+      etag: ['0x8D609F4867C422C']
+      last-modified: ['Fri, 24 Aug 2018 19:05:15 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6']
+      request-id: [6d474cf6-d113-41c2-b1d6-353ca295d642]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -188,32 +171,25 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:57 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:15 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task3_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC94DB2E37\",\"creationTime\":\"2017-11-08T19:11:57.4846007Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:57.4846007Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:57.4846007Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\
-        \n      \"scope\":\"task\",\"elevationLevel\":\"admin\"\r\n    }\r\n  },\"\
-        constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n  },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n \
-        \ }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task3_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6\",\"eTag\":\"0x8D609F4867C422C\",\"creationTime\":\"2018-08-24T19:05:15.2464428Z\",\"lastModified\":\"2018-08-24T19:05:15.2464428Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:15.2464428Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\n
+        \     \"scope\":\"task\",\"elevationLevel\":\"admin\"\r\n    }\r\n  },\"constraints\":{\r\n
+        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:58 GMT']
-      etag: ['0x8D526DC94DB2E37']
-      last-modified: ['Wed, 08 Nov 2017 19:11:57 GMT']
-      request-id: [45552e86-f52d-4188-a46b-719d3d45e0f6]
+      date: ['Fri, 24 Aug 2018 19:05:15 GMT']
+      etag: ['0x8D609F4867C422C']
+      last-modified: ['Fri, 24 Aug 2018 19:05:15 GMT']
+      request-id: [18732242-b5de-45d6-a3b1-5370633b8cea]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -228,22 +204,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['128']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:58 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:16 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:58 GMT']
-      etag: ['0x8D526DC9583CB01']
-      last-modified: ['Wed, 08 Nov 2017 19:11:58 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6']
-      request-id: [278b153a-0b74-4491-940c-fa72655ac06c]
+      date: ['Fri, 24 Aug 2018 19:05:16 GMT']
+      etag: ['0x8D609F4876B4136']
+      last-modified: ['Fri, 24 Aug 2018 19:05:16 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6']
+      request-id: [87822724-0237-4e9d-90bb-0747485a3b96]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -255,63 +231,56 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:58 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:17 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task4_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9583CB01\",\"creationTime\":\"2017-11-08T19:11:58.5896193Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:58.5896193Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:58.5896193Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\
-        \n      \"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"authenticationTokenSettings\"\
-        :{\r\n    \"access\":[\r\n      \"job\"\r\n    ]\r\n  },\"constraints\":{\r\
-        \n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n  },\"executionInfo\"\
-        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task4_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6\",\"eTag\":\"0x8D609F4876B4136\",\"creationTime\":\"2018-08-24T19:05:16.8127286Z\",\"lastModified\":\"2018-08-24T19:05:16.8127286Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:16.8127286Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\n
+        \     \"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"authenticationTokenSettings\":{\r\n
+        \   \"access\":[\r\n      \"job\"\r\n    ]\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:58 GMT']
-      etag: ['0x8D526DC9583CB01']
-      last-modified: ['Wed, 08 Nov 2017 19:11:58 GMT']
-      request-id: [9feb773a-ea2b-43e0-9cf9-b908bd272bba]
+      date: ['Fri, 24 Aug 2018 19:05:16 GMT']
+      etag: ['0x8D609F4876B4136']
+      last-modified: ['Fri, 24 Aug 2018 19:05:16 GMT']
+      request-id: [828b9ee4-85d6-429a-b062-0c0453136891]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_task5_98da0af6", "commandLine": "cmd /c \"echo hello world\"",
-      "containerSettings": {"imageName": "windows_container:latest", "registry": {"username":
-      "username", "password": "password"}}}'
+    body: '{"containerSettings": {"imageName": "windows_container:latest", "registry":
+      {"password": "password", "username": "username"}}, "id": "batch_task5_98da0af6",
+      "commandLine": "cmd /c \"echo hello world\""}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['202']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:59 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:17 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:11:59 GMT']
-      etag: ['0x8D526DC963614FF']
-      last-modified: ['Wed, 08 Nov 2017 19:11:59 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6']
-      request-id: [b02a005d-4eba-4124-affe-f0c37b3b12b1]
+      date: ['Fri, 24 Aug 2018 19:05:18 GMT']
+      etag: ['0x8D609F488533EEE']
+      last-modified: ['Fri, 24 Aug 2018 19:05:18 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6']
+      request-id: [649731c8-44e5-40c9-bbcf-263720d091c3]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -323,63 +292,56 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:11:59 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:18 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task5_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC963614FF\",\"creationTime\":\"2017-11-08T19:11:59.7580543Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:59.7580543Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:59.7580543Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"containerSettings\":{\r\n    \"imageName\"\
-        :\"windows_container:latest\",\"registry\":{\r\n      \"username\":\"username\"\
-        \r\n    }\r\n  },\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\"\
-        :\"nonadmin\"\r\n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
-        :0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task5_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6\",\"eTag\":\"0x8D609F488533EEE\",\"creationTime\":\"2018-08-24T19:05:18.3331054Z\",\"lastModified\":\"2018-08-24T19:05:18.3331054Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:18.3331054Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"containerSettings\":{\r\n    \"imageName\":\"windows_container:latest\",\"registry\":{\r\n
+        \     \"username\":\"username\"\r\n    }\r\n  },\"userIdentity\":{\r\n    \"autoUser\":{\r\n
+        \     \"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"constraints\":{\r\n
+        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:00 GMT']
-      etag: ['0x8D526DC963614FF']
-      last-modified: ['Wed, 08 Nov 2017 19:11:59 GMT']
-      request-id: [7fb7d4bc-0a80-41f2-87c1-efa4337b69f9]
+      date: ['Fri, 24 Aug 2018 19:05:19 GMT']
+      etag: ['0x8D609F488533EEE']
+      last-modified: ['Fri, 24 Aug 2018 19:05:18 GMT']
+      request-id: [4a316047-0898-43ef-839c-969fd10470fa]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_task6_98da0af6", "commandLine": "cmd /c \"echo hello world\"",
-      "userIdentity": {"username": "task-user"}}'
+    body: '{"userIdentity": {"username": "task-user"}, "id": "batch_task6_98da0af6",
+      "commandLine": "cmd /c \"echo hello world\""}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['119']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:00 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:19 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:01 GMT']
-      etag: ['0x8D526DC9701540B']
-      last-modified: ['Wed, 08 Nov 2017 19:12:01 GMT']
-      location: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
-      request-id: [f1db524c-d498-4ed4-8e29-5164b7c47755]
+      date: ['Fri, 24 Aug 2018 19:05:19 GMT']
+      etag: ['0x8D609F4895089E4']
+      last-modified: ['Fri, 24 Aug 2018 19:05:19 GMT']
+      location: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
+      request-id: [2fd6d331-25d9-44e3-bbbd-1bee85271ae0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -391,31 +353,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:01 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:20 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9701540B\",\"creationTime\":\"2017-11-08T19:12:01.0900491Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:01.0900491Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:01.0900491Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"username\":\"\
-        task-user\"\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n  },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n \
-        \ }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\",\"eTag\":\"0x8D609F4895089E4\",\"creationTime\":\"2018-08-24T19:05:19.9930852Z\",\"lastModified\":\"2018-08-24T19:05:19.9930852Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:19.9930852Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"username\":\"task-user\"\r\n
+        \ },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:01 GMT']
-      etag: ['0x8D526DC9701540B']
-      last-modified: ['Wed, 08 Nov 2017 19:12:01 GMT']
-      request-id: [82f15565-c227-480e-a488-cc4b218a3d38]
+      date: ['Fri, 24 Aug 2018 19:05:20 GMT']
+      etag: ['0x8D609F4895089E4']
+      last-modified: ['Fri, 24 Aug 2018 19:05:19 GMT']
+      request-id: [92a86774-6598-4c21-9c5a-b165068f30e3]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -432,29 +387,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['245']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:01 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:20 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/addtaskcollection?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/addtaskcollection?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#taskaddresult\"\
-        ,\"value\":[\r\n    {\r\n      \"status\":\"Success\",\"taskId\":\"batch_task7_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97BFC8E1\",\"lastModified\":\"2017-11-08T19:12:02.3382241Z\"\
-        ,\"location\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task7_98da0af6\"\
-        \r\n    },{\r\n      \"status\":\"Success\",\"taskId\":\"batch_task9_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97C6A44C\",\"lastModified\":\"2017-11-08T19:12:02.3831628Z\"\
-        ,\"location\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task9_98da0af6\"\
-        \r\n    },{\r\n      \"status\":\"Success\",\"taskId\":\"batch_task8_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97C6F267\",\"lastModified\":\"2017-11-08T19:12:02.3851623Z\"\
-        ,\"location\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task8_98da0af6\"\
-        \r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#taskaddresult\",\"value\":[\r\n
+        \   {\r\n      \"status\":\"Success\",\"taskId\":\"batch_task7_98da0af6\",\"eTag\":\"0x8D609F48A3DFD27\",\"lastModified\":\"2018-08-24T19:05:21.5492391Z\",\"location\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task7_98da0af6\"\r\n
+        \   },{\r\n      \"status\":\"Success\",\"taskId\":\"batch_task8_98da0af6\",\"eTag\":\"0x8D609F48A3FFA0D\",\"lastModified\":\"2018-08-24T19:05:21.5622669Z\",\"location\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task8_98da0af6\"\r\n
+        \   },{\r\n      \"status\":\"Success\",\"taskId\":\"batch_task9_98da0af6\",\"eTag\":\"0x8D609F48A40473F\",\"lastModified\":\"2018-08-24T19:05:21.5642431Z\",\"location\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task9_98da0af6\"\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:02 GMT']
-      request-id: [b6cf9b9b-1b47-462e-8c95-15f3eefe7604]
+      date: ['Fri, 24 Aug 2018 19:05:20 GMT']
+      request-id: [7c88fba9-94d8-4e04-a2f4-fe7c4edb5121]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -466,127 +415,77 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:02 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:21 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_task1_98da0af6\",\"url\":\"\
-        https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9343897D\",\"creationTime\":\"2017-11-08T19:11:54.8130685Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:54.8130685Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:54.8130685Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        exitConditions\":{\r\n        \"exitCodes\":[\r\n          {\r\n         \
-        \   \"code\":1,\"exitOptions\":{\r\n              \"jobAction\":\"terminate\"\
-        \r\n            }\r\n          }\r\n        ],\"exitCodeRanges\":[\r\n   \
-        \       {\r\n            \"start\":2,\"end\":4,\"exitOptions\":{\r\n     \
-        \         \"jobAction\":\"disable\"\r\n            }\r\n          }\r\n  \
-        \      ],\"default\":{\r\n          \"jobAction\":\"none\"\r\n        }\r\n\
-        \      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task2_98da0af6\",\"url\"\
-        :\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9408573D\",\"creationTime\":\"2017-11-08T19:11:56.1028413Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:56.1028413Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:56.1028413Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"outputFiles\":[\r\n        {\r\n     \
-        \     \"filePattern\":\"../stdout.txt\",\"destination\":{\r\n            \"\
-        container\":{\r\n              \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\"\
-        ,\"path\":\"taskLogs/output.txt\"\r\n            }\r\n          },\"uploadOptions\"\
-        :{\r\n            \"uploadCondition\":\"TaskCompletion\"\r\n          }\r\n\
-        \        },{\r\n          \"filePattern\":\"../stderr.txt\",\"destination\"\
-        :{\r\n            \"container\":{\r\n              \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\"\
-        ,\"path\":\"taskLogs/error.txt\"\r\n            }\r\n          },\"uploadOptions\"\
-        :{\r\n            \"uploadCondition\":\"TaskFailure\"\r\n          }\r\n \
-        \       }\r\n      ],\"userIdentity\":{\r\n        \"autoUser\":{\r\n    \
-        \      \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"constraints\"\
-        :{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    },{\r\n\
-        \      \"id\":\"batch_task3_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC94DB2E37\",\"creationTime\":\"2017-11-08T19:11:57.4846007Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:57.4846007Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:57.4846007Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"scope\":\"task\",\"elevationLevel\":\"admin\"\r\n      \
-        \  }\r\n      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task4_98da0af6\",\"url\"\
-        :\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9583CB01\",\"creationTime\":\"2017-11-08T19:11:58.5896193Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:58.5896193Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:58.5896193Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        authenticationTokenSettings\":{\r\n        \"access\":[\r\n          \"job\"\
-        \r\n        ]\r\n      },\"constraints\":{\r\n        \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n      },\"executionInfo\":{\r\n        \"retryCount\"\
-        :0,\"requeueCount\":0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task5_98da0af6\"\
-        ,\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC963614FF\",\"creationTime\":\"2017-11-08T19:11:59.7580543Z\"\
-        ,\"lastModified\":\"2017-11-08T19:11:59.7580543Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:11:59.7580543Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"containerSettings\":{\r\n        \"imageName\"\
-        :\"windows_container:latest\",\"registry\":{\r\n          \"username\":\"\
-        username\"\r\n        }\r\n      },\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task6_98da0af6\",\"url\"\
-        :\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC9701540B\",\"creationTime\":\"2017-11-08T19:12:01.0900491Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:01.0900491Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:01.0900491Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"username\"\
-        :\"task-user\"\r\n      },\"constraints\":{\r\n        \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n      },\"executionInfo\":{\r\n        \"retryCount\"\
-        :0,\"requeueCount\":0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task7_98da0af6\"\
-        ,\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task7_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97BFC8E1\",\"creationTime\":\"2017-11-08T19:12:02.3382241Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:02.3382241Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:02.3382241Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task8_98da0af6\",\"url\"\
-        :\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task8_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97C6F267\",\"creationTime\":\"2017-11-08T19:12:02.3851623Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:02.3851623Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:02.3851623Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    },{\r\n      \"id\":\"batch_task9_98da0af6\",\"url\"\
-        :\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task9_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC97C6A44C\",\"creationTime\":\"2017-11-08T19:12:02.3831628Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:02.3831628Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:02.3831628Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\"\
-        :{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"\
-        constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
-        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
-        :0\r\n      }\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_task1_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task1_98da0af6\",\"eTag\":\"0x8D609F4845DC881\",\"creationTime\":\"2018-08-24T19:05:11.6912769Z\",\"lastModified\":\"2018-08-24T19:05:11.6912769Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:11.6912769Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"exitConditions\":{\r\n
+        \       \"exitCodes\":[\r\n          {\r\n            \"code\":1,\"exitOptions\":{\r\n
+        \             \"jobAction\":\"terminate\"\r\n            }\r\n          }\r\n
+        \       ],\"exitCodeRanges\":[\r\n          {\r\n            \"start\":2,\"end\":4,\"exitOptions\":{\r\n
+        \             \"jobAction\":\"disable\"\r\n            }\r\n          }\r\n
+        \       ],\"default\":{\r\n          \"jobAction\":\"none\"\r\n        }\r\n
+        \     },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task2_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task2_98da0af6\",\"eTag\":\"0x8D609F4857AAFDF\",\"creationTime\":\"2018-08-24T19:05:13.5584223Z\",\"lastModified\":\"2018-08-24T19:05:13.5584223Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:13.5584223Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"outputFiles\":[\r\n        {\r\n          \"filePattern\":\"../stdout.txt\",\"destination\":{\r\n
+        \           \"container\":{\r\n              \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\",\"path\":\"taskLogs/output.txt\"\r\n
+        \           }\r\n          },\"uploadOptions\":{\r\n            \"uploadCondition\":\"TaskCompletion\"\r\n
+        \         }\r\n        },{\r\n          \"filePattern\":\"../stderr.txt\",\"destination\":{\r\n
+        \           \"container\":{\r\n              \"containerUrl\":\"https://test.blob.core.windows.net:443/test-container\",\"path\":\"taskLogs/error.txt\"\r\n
+        \           }\r\n          },\"uploadOptions\":{\r\n            \"uploadCondition\":\"TaskFailure\"\r\n
+        \         }\r\n        }\r\n      ],\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task3_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task3_98da0af6\",\"eTag\":\"0x8D609F4867C422C\",\"creationTime\":\"2018-08-24T19:05:15.2464428Z\",\"lastModified\":\"2018-08-24T19:05:15.2464428Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:15.2464428Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"scope\":\"task\",\"elevationLevel\":\"admin\"\r\n        }\r\n
+        \     },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task4_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task4_98da0af6\",\"eTag\":\"0x8D609F4876B4136\",\"creationTime\":\"2018-08-24T19:05:16.8127286Z\",\"lastModified\":\"2018-08-24T19:05:16.8127286Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:16.8127286Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"authenticationTokenSettings\":{\r\n
+        \       \"access\":[\r\n          \"job\"\r\n        ]\r\n      },\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task5_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task5_98da0af6\",\"eTag\":\"0x8D609F488533EEE\",\"creationTime\":\"2018-08-24T19:05:18.3331054Z\",\"lastModified\":\"2018-08-24T19:05:18.3331054Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:18.3331054Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"containerSettings\":{\r\n        \"imageName\":\"windows_container:latest\",\"registry\":{\r\n
+        \         \"username\":\"username\"\r\n        }\r\n      },\"userIdentity\":{\r\n
+        \       \"autoUser\":{\r\n          \"elevationLevel\":\"nonadmin\"\r\n        }\r\n
+        \     },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\",\"eTag\":\"0x8D609F4895089E4\",\"creationTime\":\"2018-08-24T19:05:19.9930852Z\",\"lastModified\":\"2018-08-24T19:05:19.9930852Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:19.9930852Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"username\":\"task-user\"\r\n
+        \     },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task7_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task7_98da0af6\",\"eTag\":\"0x8D609F48A3DFD27\",\"creationTime\":\"2018-08-24T19:05:21.5492391Z\",\"lastModified\":\"2018-08-24T19:05:21.5492391Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:21.5492391Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task8_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task8_98da0af6\",\"eTag\":\"0x8D609F48A3FFA0D\",\"creationTime\":\"2018-08-24T19:05:21.5622669Z\",\"lastModified\":\"2018-08-24T19:05:21.5622669Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:21.5622669Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    },{\r\n      \"id\":\"batch_task9_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task9_98da0af6\",\"eTag\":\"0x8D609F48A40473F\",\"creationTime\":\"2018-08-24T19:05:21.5642431Z\",\"lastModified\":\"2018-08-24T19:05:21.5642431Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:21.5642431Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n
+        \         \"elevationLevel\":\"nonadmin\"\r\n        }\r\n      },\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n
+        \     }\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:02 GMT']
-      request-id: [08fc86d3-a0d7-4bde-8939-f9a1e02cdbb7]
+      date: ['Fri, 24 Aug 2018 19:05:22 GMT']
+      request-id: [4022aa80-b7f6-4dde-811f-c906754ae108]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -598,22 +497,19 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:03 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:22 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/taskcounts?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/taskcounts?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#taskcounts/@Element\"\
-        ,\"active\":5,\"running\":0,\"completed\":0,\"succeeded\":0,\"failed\":0,\"\
-        validationStatus\":\"Validated\"\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#taskcounts/@Element\",\"active\":6,\"running\":0,\"completed\":0,\"succeeded\":0,\"failed\":0\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:03 GMT']
-      request-id: [90c075c8-a3d2-4de3-babf-0547dbab4f66]
+      date: ['Fri, 24 Aug 2018 19:05:23 GMT']
+      request-id: [d6b1a454-e039-4920-b951-f28802329b5b]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -626,23 +522,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:03 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:23 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/terminate?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/terminate?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
       content-length: ['0']
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/terminate']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/terminate']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:03 GMT']
-      etag: ['0x8D526DC98E5D477']
-      last-modified: ['Wed, 08 Nov 2017 19:12:04 GMT']
-      request-id: [5ab262f4-7566-4b4e-8bef-1f1adebebabb]
+      date: ['Fri, 24 Aug 2018 19:05:24 GMT']
+      etag: ['0x8D609F48BCA6916']
+      last-modified: ['Fri, 24 Aug 2018 19:05:24 GMT']
+      request-id: [9bf8bdaa-543d-437e-a726-682c679aa258]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
@@ -653,35 +548,27 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:04 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:24 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC98E5D477\",\"creationTime\":\"2017-11-08T19:12:01.0900491Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:04.2652791Z\",\"state\":\"completed\"\
-        ,\"stateTransitionTime\":\"2017-11-08T19:12:04.2652791Z\",\"previousState\"\
-        :\"active\",\"previousStateTransitionTime\":\"2017-11-08T19:12:01.0900491Z\"\
-        ,\"commandLine\":\"cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n\
-        \    \"username\":\"task-user\"\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"executionInfo\":{\r\n    \"endTime\":\"\
-        2017-11-08T19:12:04.2652791Z\",\"failureInfo\":{\r\n      \"category\":\"\
-        UserError\",\"code\":\"TaskEnded\",\"message\":\"Task Was Ended by User Request\"\
-        \r\n    },\"result\":\"Failure\",\"retryCount\":0,\"requeueCount\":0\r\n \
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\",\"eTag\":\"0x8D609F48BCA6916\",\"creationTime\":\"2018-08-24T19:05:19.9930852Z\",\"lastModified\":\"2018-08-24T19:05:24.1472278Z\",\"state\":\"completed\",\"stateTransitionTime\":\"2018-08-24T19:05:24.1472278Z\",\"previousState\":\"active\",\"previousStateTransitionTime\":\"2018-08-24T19:05:19.9930852Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"username\":\"task-user\"\r\n
+        \ },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"endTime\":\"2018-08-24T19:05:24.1472278Z\",\"failureInfo\":{\r\n
+        \     \"category\":\"UserError\",\"code\":\"TaskEnded\",\"message\":\"Task
+        Was Ended by User Request\"\r\n    },\"result\":\"Failure\",\"retryCount\":0,\"requeueCount\":0\r\n
         \ },\"nodeInfo\":{\r\n    \r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:04 GMT']
-      etag: ['0x8D526DC98E5D477']
-      last-modified: ['Wed, 08 Nov 2017 19:12:04 GMT']
-      request-id: [cf9fd03f-8e56-4e01-9780-764d2ae0eb7f]
+      date: ['Fri, 24 Aug 2018 19:05:24 GMT']
+      etag: ['0x8D609F48BCA6916']
+      last-modified: ['Fri, 24 Aug 2018 19:05:24 GMT']
+      request-id: [2ee2a963-6c38-4772-a880-df1ade25acd7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -694,22 +581,21 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:05 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:25 GMT']
     method: POST
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/reactivate?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/reactivate?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
       content-length: ['0']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:05 GMT']
-      etag: ['0x8D526DC99D88677']
-      last-modified: ['Wed, 08 Nov 2017 19:12:05 GMT']
-      request-id: [f756cfd3-9e24-45a9-8a24-2e9df175e4c0]
+      date: ['Fri, 24 Aug 2018 19:05:25 GMT']
+      etag: ['0x8D609F48CD2BCDA']
+      last-modified: ['Fri, 24 Aug 2018 19:05:25 GMT']
+      request-id: [856bc631-c1af-46bb-bd52-dda713f7c096]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
@@ -720,32 +606,24 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:05 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:26 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\"\
-        ,\"eTag\":\"0x8D526DC99D88677\",\"creationTime\":\"2017-11-08T19:12:01.0900491Z\"\
-        ,\"lastModified\":\"2017-11-08T19:12:05.8558071Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-08T19:12:05.8558071Z\",\"previousState\":\"\
-        completed\",\"previousStateTransitionTime\":\"2017-11-08T19:12:04.2652791Z\"\
-        ,\"commandLine\":\"cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n\
-        \    \"username\":\"task-user\"\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
-        :0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"batch_task6_98da0af6\",\"url\":\"https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6\",\"eTag\":\"0x8D609F48CD2BCDA\",\"creationTime\":\"2018-08-24T19:05:19.9930852Z\",\"lastModified\":\"2018-08-24T19:05:25.8795226Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T19:05:25.8795226Z\",\"previousState\":\"completed\",\"previousStateTransitionTime\":\"2018-08-24T19:05:24.1472278Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"username\":\"task-user\"\r\n
+        \ },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:06 GMT']
-      etag: ['0x8D526DC99D88677']
-      last-modified: ['Wed, 08 Nov 2017 19:12:05 GMT']
-      request-id: [d2fa0750-b8dd-4d84-85d1-58ce20ebe829]
+      date: ['Fri, 24 Aug 2018 19:05:26 GMT']
+      etag: ['0x8D609F48CD2BCDA']
+      last-modified: ['Fri, 24 Aug 2018 19:05:25 GMT']
+      request-id: [068cbb41-f282-4b28-b6f4-9b23754811df]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -759,21 +637,21 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['41']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:06 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:27 GMT']
     method: PUT
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
+      dataserviceid: ['https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6']
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:06 GMT']
-      etag: ['0x8D526DC9A564AB3']
-      last-modified: ['Wed, 08 Nov 2017 19:12:06 GMT']
-      request-id: [6d6ce33f-e87a-47b6-82a4-0d40ac9c80b6]
+      date: ['Fri, 24 Aug 2018 19:05:27 GMT']
+      etag: ['0x8D609F48DF0FE35']
+      last-modified: ['Fri, 24 Aug 2018 19:05:27 GMT']
+      request-id: [8ed8f53e-641b-4527-91c1-b6ec98e041b5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -785,21 +663,20 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:06 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:27 GMT']
     method: GET
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/subtasksinfo?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6/subtasksinfo?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.japanwest.batch.azure.com/$metadata#subtaskinfo\"\
-        ,\"value\":[\r\n    \r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batch98da0af6.eastus.batch.azure.com/$metadata#subtaskinfo\",\"value\":[\r\n
+        \   \r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:07 GMT']
-      request-id: [d65aec9e-d465-44b1-9e6a-f5bf9761527d]
+      date: ['Fri, 24 Aug 2018 19:05:28 GMT']
+      request-id: [bce94654-6b70-45f8-be8c-c4a3192d00af]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -812,19 +689,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Wed, 08 Nov 2017 19:12:07 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 19:05:28 GMT']
     method: DELETE
-    uri: https://batch98da0af6.japanwest.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2017-09-01.6.0
+    uri: https://batch98da0af6.eastus.batch.azure.com/jobs/batch98da0af6/tasks/batch_task6_98da0af6?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
       dataserviceversion: ['3.0']
-      date: ['Wed, 08 Nov 2017 19:12:07 GMT']
-      request-id: [ebe94a3a-e417-48fe-9dd8-20cfd0c302b3]
+      date: ['Fri, 24 Aug 2018 19:05:29 GMT']
+      request-id: [1a5ef46b-6b9f-4f84-9ea4-890213c525d2]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

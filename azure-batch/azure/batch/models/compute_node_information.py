@@ -42,10 +42,11 @@ class ComputeNodeInformation(Model):
         'task_root_directory_url': {'key': 'taskRootDirectoryUrl', 'type': 'str'},
     }
 
-    def __init__(self, affinity_id=None, node_url=None, pool_id=None, node_id=None, task_root_directory=None, task_root_directory_url=None):
-        self.affinity_id = affinity_id
-        self.node_url = node_url
-        self.pool_id = pool_id
-        self.node_id = node_id
-        self.task_root_directory = task_root_directory
-        self.task_root_directory_url = task_root_directory_url
+    def __init__(self, **kwargs):
+        super(ComputeNodeInformation, self).__init__(**kwargs)
+        self.affinity_id = kwargs.get('affinity_id', None)
+        self.node_url = kwargs.get('node_url', None)
+        self.pool_id = kwargs.get('pool_id', None)
+        self.node_id = kwargs.get('node_id', None)
+        self.task_root_directory = kwargs.get('task_root_directory', None)
+        self.task_root_directory_url = kwargs.get('task_root_directory_url', None)

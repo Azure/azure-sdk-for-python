@@ -49,11 +49,11 @@ class ServerUpdate(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, administrator_login=None, administrator_login_password=None, version=None, tags=None):
-        super(ServerUpdate, self).__init__()
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ServerUpdate, self).__init__(**kwargs)
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.version = kwargs.get('version', None)
         self.state = None
         self.fully_qualified_domain_name = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)

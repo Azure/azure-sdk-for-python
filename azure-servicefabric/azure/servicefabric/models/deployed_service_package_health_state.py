@@ -48,9 +48,9 @@ class DeployedServicePackageHealthState(EntityHealthState):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, node_name=None, application_name=None, service_manifest_name=None, service_package_activation_id=None):
-        super(DeployedServicePackageHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.node_name = node_name
-        self.application_name = application_name
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageHealthState, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.application_name = kwargs.get('application_name', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

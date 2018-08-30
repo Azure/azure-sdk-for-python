@@ -18,6 +18,8 @@ class PolicySetDefinition(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param policy_type: The type of policy definition. Possible values are
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
@@ -32,7 +34,8 @@ class PolicySetDefinition(Model):
     :param parameters: The policy set definition parameters that can be used
      in policy definition references.
     :type parameters: object
-    :param policy_definitions: An array of policy definition references.
+    :param policy_definitions: Required. An array of policy definition
+     references.
     :type policy_definitions:
      list[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinitionReference]
     :ivar id: The ID of the policy set definition.
@@ -63,14 +66,14 @@ class PolicySetDefinition(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, policy_definitions, policy_type=None, display_name=None, description=None, metadata=None, parameters=None):
-        super(PolicySetDefinition, self).__init__()
-        self.policy_type = policy_type
-        self.display_name = display_name
-        self.description = description
-        self.metadata = metadata
-        self.parameters = parameters
-        self.policy_definitions = policy_definitions
+    def __init__(self, **kwargs):
+        super(PolicySetDefinition, self).__init__(**kwargs)
+        self.policy_type = kwargs.get('policy_type', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.policy_definitions = kwargs.get('policy_definitions', None)
         self.id = None
         self.name = None
         self.type = None

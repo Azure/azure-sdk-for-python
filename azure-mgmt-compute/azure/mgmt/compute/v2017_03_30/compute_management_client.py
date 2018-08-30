@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.availability_sets_operations import AvailabilitySetsOperations
 from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
+from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_images_operations import VirtualMachineImagesOperations
 from .operations.usage_operations import UsageOperations
 from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .operations.images_operations import ImagesOperations
 from .operations.resource_skus_operations import ResourceSkusOperations
-from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
@@ -66,7 +66,7 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ComputeManagementClient(object):
+class ComputeManagementClient(SDKClient):
     """Compute Client
 
     :ivar config: Configuration for client.
@@ -78,6 +78,8 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_extension_images: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
     :vartype virtual_machine_extensions: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionsOperations
+    :ivar virtual_machines: VirtualMachines operations
+    :vartype virtual_machines: azure.mgmt.compute.v2017_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_images: VirtualMachineImages operations
     :vartype virtual_machine_images: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
@@ -88,8 +90,6 @@ class ComputeManagementClient(object):
     :vartype images: azure.mgmt.compute.v2017_03_30.operations.ImagesOperations
     :ivar resource_skus: ResourceSkus operations
     :vartype resource_skus: azure.mgmt.compute.v2017_03_30.operations.ResourceSkusOperations
-    :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: azure.mgmt.compute.v2017_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
     :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensions operations
@@ -119,7 +119,7 @@ class ComputeManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ComputeManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-03-30'
@@ -132,6 +132,8 @@ class ComputeManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_images = VirtualMachineImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(
@@ -141,8 +143,6 @@ class ComputeManagementClient(object):
         self.images = ImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_skus = ResourceSkusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)

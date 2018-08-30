@@ -30,8 +30,8 @@ class AzureReachabilityReportItem(Model):
         'latencies': {'key': 'latencies', 'type': '[AzureReachabilityReportLatencyInfo]'},
     }
 
-    def __init__(self, provider=None, azure_location=None, latencies=None):
-        super(AzureReachabilityReportItem, self).__init__()
-        self.provider = provider
-        self.azure_location = azure_location
-        self.latencies = latencies
+    def __init__(self, **kwargs):
+        super(AzureReachabilityReportItem, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.azure_location = kwargs.get('azure_location', None)
+        self.latencies = kwargs.get('latencies', None)

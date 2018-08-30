@@ -22,8 +22,8 @@ class ContainerGroupUsageOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-02-01-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "2018-06-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class ContainerGroupUsageOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01-preview"
+        self.api_version = "2018-06-01"
 
         self.config = config
 
@@ -54,7 +54,7 @@ class ContainerGroupUsageOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/usages'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -94,3 +94,4 @@ class ContainerGroupUsageOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/usages'}

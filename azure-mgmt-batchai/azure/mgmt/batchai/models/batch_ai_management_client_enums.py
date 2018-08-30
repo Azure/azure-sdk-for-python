@@ -12,26 +12,25 @@
 from enum import Enum
 
 
-class CachingType(Enum):
+class UsageUnit(str, Enum):
+
+    count = "Count"
+
+
+class CachingType(str, Enum):
 
     none = "none"
     readonly = "readonly"
     readwrite = "readwrite"
 
 
-class StorageAccountType(Enum):
+class StorageAccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
 
 
-class FileServerType(Enum):
-
-    nfs = "nfs"
-    glusterfs = "glusterfs"
-
-
-class FileServerProvisioningState(Enum):
+class FileServerProvisioningState(str, Enum):
 
     creating = "creating"
     updating = "updating"
@@ -40,21 +39,20 @@ class FileServerProvisioningState(Enum):
     failed = "failed"
 
 
-class VmPriority(Enum):
+class VmPriority(str, Enum):
 
     dedicated = "dedicated"
     lowpriority = "lowpriority"
 
 
-class DeallocationOption(Enum):
+class DeallocationOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
     waitforjobcompletion = "waitforjobcompletion"
-    unknown = "unknown"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "creating"
     succeeded = "succeeded"
@@ -62,34 +60,41 @@ class ProvisioningState(Enum):
     deleting = "deleting"
 
 
-class AllocationState(Enum):
+class AllocationState(str, Enum):
 
     steady = "steady"
     resizing = "resizing"
 
 
-class OutputType(Enum):
+class JobPriority(str, Enum):
 
-    model = "model"
-    logs = "logs"
-    summary = "summary"
-    custom = "custom"
+    low = "low"
+    normal = "normal"
+    high = "high"
 
 
-class ToolType(Enum):
+class ToolType(str, Enum):
 
     cntk = "cntk"
     tensorflow = "tensorflow"
     caffe = "caffe"
     caffe2 = "caffe2"
     chainer = "chainer"
+    horovod = "horovod"
+    mpi = "mpi"
     custom = "custom"
 
 
-class ExecutionState(Enum):
+class ExecutionState(str, Enum):
 
     queued = "queued"
     running = "running"
     terminating = "terminating"
     succeeded = "succeeded"
     failed = "failed"
+
+
+class FileType(str, Enum):
+
+    file = "file"
+    directory = "directory"

@@ -16,8 +16,8 @@ class ControlActivity(Activity):
     """Base class for all control activities like IfCondition, ForEach , Until.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UntilActivity, WaitActivity, ForEachActivity,
-    IfConditionActivity, ExecutePipelineActivity
+    sub-classes are: FilterActivity, UntilActivity, WaitActivity,
+    ForEachActivity, IfConditionActivity, ExecutePipelineActivity
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -38,7 +38,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, name, additional_properties=None, description=None, depends_on=None):

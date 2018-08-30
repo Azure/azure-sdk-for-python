@@ -49,10 +49,10 @@ class SnapshotUpdate(ResourceUpdate):
         'encryption_settings': {'key': 'properties.encryptionSettings', 'type': 'EncryptionSettings'},
     }
 
-    def __init__(self, tags=None, account_type=None, os_type=None, creation_data=None, disk_size_gb=None, encryption_settings=None):
-        super(SnapshotUpdate, self).__init__(tags=tags)
-        self.account_type = account_type
-        self.os_type = os_type
-        self.creation_data = creation_data
-        self.disk_size_gb = disk_size_gb
-        self.encryption_settings = encryption_settings
+    def __init__(self, **kwargs):
+        super(SnapshotUpdate, self).__init__(**kwargs)
+        self.account_type = kwargs.get('account_type', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.creation_data = kwargs.get('creation_data', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.encryption_settings = kwargs.get('encryption_settings', None)

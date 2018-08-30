@@ -15,13 +15,14 @@ from msrest.serialization import Model
 class ImageSourceRegistry(Model):
     """Details of the container image such as name, URL and credentials.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param server_url: URL for image repository.
     :type server_url: str
-    :param image: The name of the image in image repository.
+    :param image: Required. The name of the image in image repository.
     :type image: str
     :param credentials: Information to access the private Docker repository.
-    :type credentials: :class:`PrivateRegistryCredentials
-     <azure.mgmt.batchai.models.PrivateRegistryCredentials>`
+    :type credentials: ~azure.mgmt.batchai.models.PrivateRegistryCredentials
     """
 
     _validation = {
@@ -34,7 +35,8 @@ class ImageSourceRegistry(Model):
         'credentials': {'key': 'credentials', 'type': 'PrivateRegistryCredentials'},
     }
 
-    def __init__(self, image, server_url=None, credentials=None):
-        self.server_url = server_url
-        self.image = image
-        self.credentials = credentials
+    def __init__(self, **kwargs):
+        super(ImageSourceRegistry, self).__init__(**kwargs)
+        self.server_url = kwargs.get('server_url', None)
+        self.image = kwargs.get('image', None)
+        self.credentials = kwargs.get('credentials', None)

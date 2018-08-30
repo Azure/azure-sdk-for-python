@@ -21,16 +21,18 @@ class CertificateOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-09-01.6.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01.6.0"
+        self.api_version = "2018-08-01.7.0"
 
         self.config = config
 
@@ -68,7 +70,7 @@ class CertificateOperations(object):
             ocp_date = certificate_add_options.ocp_date
 
         # Construct URL
-        url = '/certificates'
+        url = self.add.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -96,9 +98,8 @@ class CertificateOperations(object):
         body_content = self._serialize.body(certificate, 'CertificateAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -113,6 +114,7 @@ class CertificateOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/certificates'}
 
     def list(
             self, certificate_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -160,7 +162,7 @@ class CertificateOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -180,7 +182,7 @@ class CertificateOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -195,9 +197,8 @@ class CertificateOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -213,6 +214,7 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/certificates'}
 
     def cancel_deletion(
             self, thumbprint_algorithm, thumbprint, certificate_cancel_deletion_options=None, custom_headers=None, raw=False, **operation_config):
@@ -260,7 +262,7 @@ class CertificateOperations(object):
             ocp_date = certificate_cancel_deletion_options.ocp_date
 
         # Construct URL
-        url = '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete'
+        url = self.cancel_deletion.metadata['url']
         path_format_arguments = {
             'thumbprintAlgorithm': self._serialize.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
             'thumbprint': self._serialize.url("thumbprint", thumbprint, 'str')
@@ -275,7 +277,6 @@ class CertificateOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -290,8 +291,8 @@ class CertificateOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -306,6 +307,7 @@ class CertificateOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    cancel_deletion.metadata = {'url': '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete'}
 
     def delete(
             self, thumbprint_algorithm, thumbprint, certificate_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -356,7 +358,7 @@ class CertificateOperations(object):
             ocp_date = certificate_delete_options.ocp_date
 
         # Construct URL
-        url = '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'thumbprintAlgorithm': self._serialize.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
             'thumbprint': self._serialize.url("thumbprint", thumbprint, 'str')
@@ -371,7 +373,6 @@ class CertificateOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -386,8 +387,8 @@ class CertificateOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -401,6 +402,7 @@ class CertificateOperations(object):
                 'Last-Modified': 'rfc-1123',
             })
             return client_raw_response
+    delete.metadata = {'url': '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})'}
 
     def get(
             self, thumbprint_algorithm, thumbprint, certificate_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -443,7 +445,7 @@ class CertificateOperations(object):
             ocp_date = certificate_get_options.ocp_date
 
         # Construct URL
-        url = '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'thumbprintAlgorithm': self._serialize.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
             'thumbprint': self._serialize.url("thumbprint", thumbprint, 'str')
@@ -460,7 +462,7 @@ class CertificateOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -475,8 +477,8 @@ class CertificateOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -499,3 +501,4 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})'}

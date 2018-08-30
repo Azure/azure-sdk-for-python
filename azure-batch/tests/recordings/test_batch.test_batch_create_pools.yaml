@@ -5,221 +5,224 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:50 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:42 GMT']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/nodeagentskus?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/nodeagentskus?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#nodeagentskus\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch.node.centos 7\",\"verifiedImageReferences\"\
-        :[\r\n        {\r\n          \"publisher\":\"OpenLogic\",\"offer\":\"CentOS\"\
-        ,\"sku\":\"7.3\",\"version\":\"latest\"\r\n        },{\r\n          \"publisher\"\
-        :\"OpenLogic\",\"offer\":\"CentOS-HPC\",\"sku\":\"7.3\",\"version\":\"latest\"\
-        \r\n        },{\r\n          \"publisher\":\"Oracle\",\"offer\":\"Oracle-Linux\"\
-        ,\"sku\":\"7.3\",\"version\":\"latest\"\r\n        },{\r\n          \"publisher\"\
-        :\"microsoft-ads\",\"offer\":\"linux-data-science-vm\",\"sku\":\"linuxdsvm\"\
-        ,\"version\":\"latest\"\r\n        },{\r\n          \"publisher\":\"batch\"\
-        ,\"offer\":\"rendering-centos73\",\"sku\":\"rendering\",\"version\":\"latest\"\
-        \r\n        }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"\
-        batch.node.debian 8\",\"verifiedImageReferences\":[\r\n        {\r\n     \
-        \     \"publisher\":\"Credativ\",\"offer\":\"Debian\",\"sku\":\"8\",\"version\"\
-        :\"latest\"\r\n        },{\r\n          \"publisher\":\"Credativ\",\"offer\"\
-        :\"Debian\",\"sku\":\"8-backports\",\"version\":\"latest\"\r\n        }\r\n\
-        \      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.opensuse\
-        \ 13.2\",\"verifiedImageReferences\":[\r\n        \r\n      ],\"osType\":\"\
-        linux\"\r\n    },{\r\n      \"id\":\"batch.node.opensuse 42.1\",\"verifiedImageReferences\"\
-        :[\r\n        {\r\n          \"publisher\":\"SUSE\",\"offer\":\"SLES\",\"\
-        sku\":\"12-SP2\",\"version\":\"latest\"\r\n        },{\r\n          \"publisher\"\
-        :\"SUSE\",\"offer\":\"SLES-HPC\",\"sku\":\"12-SP1\",\"version\":\"latest\"\
-        \r\n        }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"\
-        batch.node.ubuntu 14.04\",\"verifiedImageReferences\":[\r\n        {\r\n \
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"\
-        14.04.5-LTS\",\"version\":\"latest\"\r\n        }\r\n      ],\"osType\":\"\
-        linux\"\r\n    },{\r\n      \"id\":\"batch.node.ubuntu 16.04\",\"verifiedImageReferences\"\
-        :[\r\n        {\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\"\
-        ,\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n        },{\r\n         \
-        \ \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"17.04\"\
-        ,\"version\":\"latest\"\r\n        }\r\n      ],\"osType\":\"linux\"\r\n \
-        \   },{\r\n      \"id\":\"batch.node.windows amd64\",\"verifiedImageReferences\"\
-        :[\r\n        {\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2012-R2-Datacenter\",\"version\":\"latest\"\r\
-        \n        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2012-Datacenter\",\"version\":\"latest\"\r\n\
-        \        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2008-R2-SP1\",\"version\":\"latest\"\r\n    \
-        \    },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"\
-        WindowsServer\",\"sku\":\"2016-Datacenter\",\"version\":\"latest\"\r\n   \
-        \     },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2008-R2-SP1-smalldisk\",\"version\":\"latest\"\
-        \r\n        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2012-Datacenter-smalldisk\",\"version\":\"latest\"\
-        \r\n        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\"\
-        :\"WindowsServer\",\"sku\":\"2012-R2-Datacenter-smalldisk\",\"version\":\"\
-        latest\"\r\n        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\"\
-        ,\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\"\
-        :\"latest\"\r\n        },{\r\n          \"publisher\":\"MicrosoftWindowsServer\"\
-        ,\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-with-Containers\",\"\
-        version\":\"latest\"\r\n        },{\r\n          \"publisher\":\"microsoft-ads\"\
-        ,\"offer\":\"standard-data-science-vm\",\"sku\":\"standard-data-science-vm\"\
-        ,\"version\":\"latest\"\r\n        },{\r\n          \"publisher\":\"batch\"\
-        ,\"offer\":\"rendering-windows2016\",\"sku\":\"rendering\",\"version\":\"\
-        latest\"\r\n        }\r\n      ],\"osType\":\"windows\"\r\n    }\r\n  ]\r\n\
-        }"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#nodeagentskus\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch.node.centos 7\",\"verifiedImageReferences\":[\r\n
+        \       {\r\n          \"publisher\":\"OpenLogic\",\"offer\":\"CentOS\",\"sku\":\"7.5\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"OpenLogic\",\"offer\":\"CentOS-HPC\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"OpenLogic\",\"offer\":\"CentOS-HPC\",\"sku\":\"7.3\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"OpenLogic\",\"offer\":\"CentOS-HPC\",\"sku\":\"7.1\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"Oracle\",\"offer\":\"Oracle-Linux\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-ads\",\"offer\":\"linux-data-science-vm\",\"sku\":\"linuxdsvm\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"batch\",\"offer\":\"rendering-centos73\",\"sku\":\"rendering\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\",\"sku\":\"7-5\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"7-4\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.debian
+        8\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"Credativ\",\"offer\":\"Debian\",\"sku\":\"8\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.debian
+        9\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"Credativ\",\"offer\":\"Debian\",\"sku\":\"9\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.ubuntu
+        14.04\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"14.04.5-LTS\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.ubuntu
+        16.04\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-azure-batch\",\"offer\":\"ubuntu-server-container\",\"sku\":\"16-04-lts\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-azure-batch\",\"offer\":\"ubuntu-server-container-rdma\",\"sku\":\"16-04-lts\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.ubuntu
+        18.04\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"id\":\"batch.node.windows
+        amd64\",\"verifiedImageReferences\":[\r\n        {\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2008-R2-SP1\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2008-R2-SP1-smalldisk\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2012-Datacenter\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2012-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2012-R2-Datacenter\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2012-R2-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-with-Containers\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"microsoft-dsvm\",\"offer\":\"dsvm-windows\",\"sku\":\"server-2016\",\"version\":\"latest\"\r\n
+        \       },{\r\n          \"publisher\":\"batch\",\"offer\":\"rendering-windows2016\",\"sku\":\"rendering\",\"version\":\"latest\"\r\n
+        \       }\r\n      ],\"osType\":\"windows\"\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:51 GMT']
-      request-id: [e8b68903-7e9f-4edd-8fcf-2db587da6fa6]
+      date: ['Fri, 24 Aug 2018 06:58:43 GMT']
+      request-id: [8dbeae8a-9a0c-464d-b66b-9a89342f1ca2]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_iaas_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"publisher": "MicrosoftWindowsServer", "offer": "WindowsServer",
-      "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSKUId": "batch.node.windows amd64",
-      "windowsConfiguration": {"enableAutomaticUpdates": true}}, "taskSchedulingPolicy":
-      {"nodeFillType": "pack"}, "userAccounts": [{"name": "test-user-1", "password":
-      "kt#_gahr!@aGERDXA"}, {"name": "test-user-2", "password": "kt#_gahr!@aGERDXA",
-      "elevationLevel": "admin"}]}'
+    body: '{"virtualMachineConfiguration": {"windowsConfiguration": {"enableAutomaticUpdates":
+      true}, "nodeAgentSKUId": "batch.node.windows amd64", "imageReference": {"publisher":
+      "MicrosoftWindowsServer", "sku": "2016-Datacenter-smalldisk", "offer": "WindowsServer"}},
+      "id": "batch_iaas_f0260dd0", "vmSize": "Standard_A1", "userAccounts": [{"password":
+      "kt#_gahr!@aGERDXA", "name": "test-user-1"}, {"elevationLevel": "admin", "password":
+      "kt#_gahr!@aGERDXA", "name": "test-user-2"}], "taskSchedulingPolicy": {"nodeFillType":
+      "pack"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['523']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:51 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:43 GMT']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_iaas_f0260dd0']
+      dataserviceid: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_iaas_f0260dd0']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:52 GMT']
-      etag: ['0x8D526073FCBAD6C']
-      last-modified: ['Tue, 07 Nov 2017 17:44:51 GMT']
-      location: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_iaas_f0260dd0']
-      request-id: [b86638e4-1ed7-45bb-a269-8bd7fb434be8]
+      date: ['Fri, 24 Aug 2018 06:58:44 GMT']
+      etag: ['0x8D6098F0876C250']
+      last-modified: ['Fri, 24 Aug 2018 06:58:44 GMT']
+      location: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_iaas_f0260dd0']
+      request-id: [d9d38088-6fd9-4ffd-a0fc-a4ab141c5e29]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 201, message: Created}
 - request:
-    body: '{"id": "batch_network_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04"}, "networkConfiguration":
-      {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"}}'
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      ocp-date: ['Fri, 24 Aug 2018 06:58:44 GMT']
+    method: GET
+    uri: https://batchf0260dd0.eastus.batch.azure.com/nodecounts?api-version=2018-08-01.7.0
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#poolnodecounts\",\"value\":[\r\n
+        \   {\r\n      \"poolId\":\"batch_iaas_f0260dd0\",\"dedicated\":{\r\n        \"creating\":0,\"idle\":0,\"leavingPool\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
+        \     },\"lowPriority\":{\r\n        \"creating\":0,\"idle\":0,\"leavingPool\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
+        \     }\r\n    }\r\n  ]\r\n}"}
+    headers:
+      content-type: [application/json;odata=minimalmetadata]
+      dataserviceversion: ['3.0']
+      date: ['Fri, 24 Aug 2018 06:58:45 GMT']
+      request-id: [6a7acf41-f197-4819-867c-ef280ccf6a7b]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: 'b''b\''b\\\''{"virtualMachineConfiguration": {"nodeAgentSKUId": "batch.node.ubuntu
+      16.04", "imageReference": {"publisher": "Canonical", "sku": "16.04-LTS", "offer":
+      "UbuntuServer"}}, "id": "batch_network_f0260dd0", "networkConfiguration": {"subnetId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"},
+      "vmSize": "Standard_A1"}\\\''\'''''
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['405']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:51 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:45 GMT']
       return-client-request-id: ['false']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0&timeout=45
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0&timeout=45
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The value provided for one of the properties in the request body\
-        \ is invalid.\\nRequestId:a8a3204d-c5a5-426e-82d8-35a6ec89b9e3\\nTime:2017-11-07T17:44:52.7092561Z\"\
-        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
-        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
-        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
-        \ is in a different subscription and cannot be used with the current Batch\
-        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
-        \n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
+        in the request body is invalid.\\nRequestId:77328016-7531-42ad-8238-f4d3f1ca7a58\\nTime:2018-08-24T06:58:46.5432738Z\"\r\n
+        \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"subnetId\"\r\n
+        \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\r\n
+        \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId is
+        in a different subscription and cannot be used with the current Batch account
+        in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-length: ['848']
+      content-length: ['845']
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:52 GMT']
-      request-id: [a8a3204d-c5a5-426e-82d8-35a6ec89b9e3]
+      date: ['Fri, 24 Aug 2018 06:58:45 GMT']
+      request-id: [77328016-7531-42ad-8238-f4d3f1ca7a58]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
     status: {code: 400, message: The value provided for one of the properties in the
         request body is invalid.}
 - request:
-    body: '{"id": "batch_image_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"virtualMachineImageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage"},
-      "nodeAgentSKUId": "batch.node.ubuntu 16.04"}}'
+    body: 'b''b\''b\\\''{"virtualMachineConfiguration": {"nodeAgentSKUId": "batch.node.ubuntu
+      16.04", "imageReference": {"virtualMachineImageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage"}},
+      "id": "batch_image_f0260dd0", "vmSize": "Standard_A1"}\\\''\'''''
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['298']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:52 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:46 GMT']
       return-client-request-id: ['false']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0&timeout=45
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0&timeout=45
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The value provided for one of the properties in the request body\
-        \ is invalid.\\nRequestId:4c3c7487-dafe-4033-b50d-09669347c5a3\\nTime:2017-11-07T17:44:53.4475580Z\"\
-        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
-        :\"virtualMachineImageId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"\
-        value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage\"\
-        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified virtualMachineImageId\
-        \ is in a different subscription and cannot be used with the current Batch\
-        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
-        \n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
+        in the request body is invalid.\\nRequestId:21fdc10c-a9ba-4b36-a2f5-774096edd858\\nTime:2018-08-24T06:58:47.4802887Z\"\r\n
+        \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"virtualMachineImageId\"\r\n
+        \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage\"\r\n
+        \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified virtualMachineImageId
+        is in a different subscription and cannot be used with the current Batch account
+        in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-length: ['853']
+      content-length: ['850']
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:53 GMT']
-      request-id: [4c3c7487-dafe-4033-b50d-09669347c5a3]
+      date: ['Fri, 24 Aug 2018 06:58:47 GMT']
+      request-id: [21fdc10c-a9ba-4b36-a2f5-774096edd858]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
     status: {code: 400, message: The value provided for one of the properties in the
         request body is invalid.}
 - request:
-    body: '{"id": "batch_osdisk_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "osDisk": {"caching": "readWrite"}, "nodeAgentSKUId": "batch.node.ubuntu
-      16.04"}}'
+    body: '{"virtualMachineConfiguration": {"nodeAgentSKUId": "batch.node.ubuntu 16.04",
+      "osDisk": {"caching": "readwrite"}, "imageReference": {"publisher": "Canonical",
+      "sku": "16.04-LTS", "offer": "UbuntuServer"}}, "id": "batch_osdisk_f0260dd0",
+      "vmSize": "Standard_A1"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['261']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:53 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:47 GMT']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_osdisk_f0260dd0']
+      dataserviceid: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_osdisk_f0260dd0']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:53 GMT']
-      etag: ['0x8D52607410E9C42']
-      last-modified: ['Tue, 07 Nov 2017 17:44:54 GMT']
-      location: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_osdisk_f0260dd0']
-      request-id: [a0d9e88a-3db7-4d54-8d2b-6873eaae6101]
+      date: ['Fri, 24 Aug 2018 06:58:48 GMT']
+      etag: ['0x8D6098F0AB48090']
+      last-modified: ['Fri, 24 Aug 2018 06:58:48 GMT']
+      location: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_osdisk_f0260dd0']
+      request-id: [34a7e8ea-4ce0-4640-a9ae-4cae78fa2348]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -231,67 +234,57 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:54 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:48 GMT']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_osdisk_f0260dd0?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools/batch_osdisk_f0260dd0?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_osdisk_f0260dd0\",\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_osdisk_f0260dd0\"\
-        ,\"eTag\":\"0x8D52607410E9C42\",\"lastModified\":\"2017-11-07T17:44:54.0896322Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:54.0896322Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:54.0896322Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:54.0896322Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"osDisk\":{\r\n      \"caching\":\"ReadWrite\"\r\n \
-        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_osdisk_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_osdisk_f0260dd0\",\"eTag\":\"0x8D6098F0AB48090\",\"lastModified\":\"2018-08-24T06:58:48.4078736Z\",\"creationTime\":\"2018-08-24T06:58:48.4078736Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:48.4078736Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:48.8058971Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"osDisk\":{\r\n      \"caching\":\"ReadWrite\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu
+        16.04\"\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:54 GMT']
-      etag: ['0x8D52607410E9C42']
-      last-modified: ['Tue, 07 Nov 2017 17:44:54 GMT']
-      request-id: [6fb23ceb-e868-4d60-955c-51a95e8b7878]
+      date: ['Fri, 24 Aug 2018 06:58:49 GMT']
+      etag: ['0x8D6098F0AB48090']
+      last-modified: ['Fri, 24 Aug 2018 06:58:48 GMT']
+      request-id: [2240ec32-4502-4d42-b5a3-a4ff36320ea7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_disk_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04", "dataDisks": [{"lun":
-      1, "diskSizeGB": 50}]}}'
+    body: '{"virtualMachineConfiguration": {"nodeAgentSKUId": "batch.node.ubuntu 16.04",
+      "dataDisks": [{"lun": 1, "diskSizeGB": 50}], "imageReference": {"publisher":
+      "Canonical", "sku": "16.04-LTS", "offer": "UbuntuServer"}}, "id": "batch_disk_f0260dd0",
+      "vmSize": "Standard_A1"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['268']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:54 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:49 GMT']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_disk_f0260dd0']
+      dataserviceid: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_disk_f0260dd0']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:55 GMT']
-      etag: ['0x8D5260741CC334B']
-      last-modified: ['Tue, 07 Nov 2017 17:44:55 GMT']
-      location: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_disk_f0260dd0']
-      request-id: [780ac576-3f16-4fe9-8012-315f730e6883]
+      date: ['Fri, 24 Aug 2018 06:58:50 GMT']
+      etag: ['0x8D6098F0BCD43C3']
+      last-modified: ['Fri, 24 Aug 2018 06:58:50 GMT']
+      location: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_disk_f0260dd0']
+      request-id: [8205d82b-ba94-45d7-83e0-079db095264c]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -303,68 +296,58 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:55 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:50 GMT']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_disk_f0260dd0\"\
-        ,\"eTag\":\"0x8D5260741CC334B\",\"lastModified\":\"2017-11-07T17:44:55.3321291Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:55.3321291Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:55.3321291Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:55.780148Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\"\
-        :[\r\n      {\r\n        \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"\
-        storageAccountType\":\"standard_lrs\"\r\n      }\r\n    ]\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D6098F0BCD43C3\",\"lastModified\":\"2018-08-24T06:58:50.2478787Z\",\"creationTime\":\"2018-08-24T06:58:50.2478787Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:50.2478787Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:50.6939495Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n      {\r\n
+        \       \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \     }\r\n    ]\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:55 GMT']
-      etag: ['0x8D5260741CC334B']
-      last-modified: ['Tue, 07 Nov 2017 17:44:55 GMT']
-      request-id: [18a19d09-3c8c-4ee9-9166-caf0ce8c8bd3]
+      date: ['Fri, 24 Aug 2018 06:58:50 GMT']
+      etag: ['0x8D6098F0BCD43C3']
+      last-modified: ['Fri, 24 Aug 2018 06:58:50 GMT']
+      request-id: [98d8cc5c-3340-430a-b395-694321f47bbb]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "batch_app_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
-      {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04", "dataDisks": [{"lun":
-      1, "diskSizeGB": 50}]}, "applicationLicenses": ["maya"]}'
+    body: '{"virtualMachineConfiguration": {"nodeAgentSKUId": "batch.node.ubuntu 16.04",
+      "dataDisks": [{"lun": 1, "diskSizeGB": 50}], "imageReference": {"publisher":
+      "Canonical", "sku": "16.04-LTS", "offer": "UbuntuServer"}}, "id": "batch_app_f0260dd0",
+      "applicationLicenses": ["maya"], "vmSize": "Standard_A1"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['300']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:55 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:51 GMT']
     method: POST
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0']
+      dataserviceid: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:56 GMT']
-      etag: ['0x8D5260742838DBC']
-      last-modified: ['Tue, 07 Nov 2017 17:44:56 GMT']
-      location: ['https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0']
-      request-id: [c13fdfdb-8214-4ce3-9719-95e295667303]
+      date: ['Fri, 24 Aug 2018 06:58:51 GMT']
+      etag: ['0x8D6098F0D03B6F1']
+      last-modified: ['Fri, 24 Aug 2018 06:58:52 GMT']
+      location: ['https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0']
+      request-id: [1a29f859-87e6-4f37-8a4d-df59d2e9e129]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -376,37 +359,26 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:56 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:52 GMT']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0\"\
-        ,\"eTag\":\"0x8D5260742838DBC\",\"lastModified\":\"2017-11-07T17:44:56.5337532Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:56.5337532Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:56.5337532Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:57.0987665Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\"\
-        :[\r\n      {\r\n        \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"\
-        storageAccountType\":\"standard_lrs\"\r\n      }\r\n    ]\r\n  },\"applicationLicenses\"\
-        :[\r\n    \"maya\"\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6098F0D03B6F1\",\"lastModified\":\"2018-08-24T06:58:52.2824433Z\",\"creationTime\":\"2018-08-24T06:58:52.2824433Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:52.2824433Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:52.6834553Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n      {\r\n
+        \       \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \     }\r\n    ]\r\n  },\"applicationLicenses\":[\r\n    \"maya\"\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:56 GMT']
-      etag: ['0x8D5260742838DBC']
-      last-modified: ['Tue, 07 Nov 2017 17:44:56 GMT']
-      request-id: [f29e25f4-27f2-40bf-8fe9-d0c89a9eb7e7]
+      date: ['Fri, 24 Aug 2018 06:58:53 GMT']
+      etag: ['0x8D6098F0D03B6F1']
+      last-modified: ['Fri, 24 Aug 2018 06:58:52 GMT']
+      request-id: [1890971c-ba0a-4710-8cf6-d3ea05e3ec7a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -418,82 +390,43 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:57 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:53 GMT']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?api-version=2018-08-01.7.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0\"\
-        ,\"eTag\":\"0x8D5260742838DBC\",\"lastModified\":\"2017-11-07T17:44:56.5337532Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:56.5337532Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:56.5337532Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:57.0987665Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"dataDisks\":[\r\n          {\r\n            \"lun\":1,\"caching\"\
-        :\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n  \
-        \        }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"\
-        maya\"\r\n      ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\"\
-        :\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_disk_f0260dd0\"\
-        ,\"eTag\":\"0x8D5260741CC334B\",\"lastModified\":\"2017-11-07T17:44:55.3321291Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:55.3321291Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:55.3321291Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:55.780148Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"dataDisks\":[\r\n          {\r\n            \"lun\":1,\"caching\"\
-        :\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n  \
-        \        }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\"\
-        ,\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_iaas_f0260dd0\"\
-        ,\"eTag\":\"0x8D526073FCBAD6C\",\"lastModified\":\"2017-11-07T17:44:51.9732588Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:51.9732588Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:51.9732588Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:52.0820508Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\"\
-        :[\r\n        {\r\n          \"name\":\"test-user-1\",\"elevationLevel\":\"\
-        nonadmin\"\r\n        },{\r\n          \"name\":\"test-user-2\",\"elevationLevel\"\
-        :\"admin\"\r\n        }\r\n      ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\"\
-        :{\r\n        \"nodeFillType\":\"Pack\"\r\n      },\"virtualMachineConfiguration\"\
-        :{\r\n        \"imageReference\":{\r\n          \"publisher\":\"MicrosoftWindowsServer\"\
-        ,\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\"\
-        :\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"\
-        windowsConfiguration\":{\r\n          \"enableAutomaticUpdates\":true\r\n\
-        \        }\r\n      }\r\n    },{\r\n      \"id\":\"batch_osdisk_f0260dd0\"\
-        ,\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_osdisk_f0260dd0\"\
-        ,\"eTag\":\"0x8D52607410E9C42\",\"lastModified\":\"2017-11-07T17:44:54.0896322Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:54.0896322Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:54.0896322Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:54.9786819Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"osDisk\":{\r\n      \
-        \    \"caching\":\"ReadWrite\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\"\r\n      }\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6098F0D03B6F1\",\"lastModified\":\"2018-08-24T06:58:52.2824433Z\",\"creationTime\":\"2018-08-24T06:58:52.2824433Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:52.2824433Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:52.6834553Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
+        \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \         }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"maya\"\r\n
+        \     ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D6098F0BCD43C3\",\"lastModified\":\"2018-08-24T06:58:50.2478787Z\",\"creationTime\":\"2018-08-24T06:58:50.2478787Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:50.2478787Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:50.6939495Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
+        \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \         }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_iaas_f0260dd0\",\"eTag\":\"0x8D6098F0876C250\",\"lastModified\":\"2018-08-24T06:58:44.6477904Z\",\"creationTime\":\"2018-08-24T06:58:44.6477904Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:44.6477904Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:44.7587826Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \       {\r\n          \"name\":\"test-user-1\",\"elevationLevel\":\"nonadmin\"\r\n
+        \       },{\r\n          \"name\":\"test-user-2\",\"elevationLevel\":\"admin\"\r\n
+        \       }\r\n      ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Pack\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
+        \         \"enableAutomaticUpdates\":true\r\n        }\r\n      }\r\n    },{\r\n
+        \     \"id\":\"batch_osdisk_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_osdisk_f0260dd0\",\"eTag\":\"0x8D6098F0AB48090\",\"lastModified\":\"2018-08-24T06:58:48.4078736Z\",\"creationTime\":\"2018-08-24T06:58:48.4078736Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:48.4078736Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:48.8058971Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"osDisk\":{\r\n          \"caching\":\"ReadWrite\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu
+        16.04\"\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:57 GMT']
-      request-id: [1001eb92-92ae-4f7c-913c-26f3ba3aafd7]
+      date: ['Fri, 24 Aug 2018 06:58:54 GMT']
+      request-id: [a5834dff-a415-4bb1-a1f9-644fb6e7ea8f]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -505,38 +438,27 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:57 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:54 GMT']
       return-client-request-id: ['false']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0&maxresults=1&timeout=30
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?maxresults=1&api-version=2018-08-01.7.0&timeout=30
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools/batch_app_f0260dd0\"\
-        ,\"eTag\":\"0x8D5260742838DBC\",\"lastModified\":\"2017-11-07T17:44:56.5337532Z\"\
-        ,\"creationTime\":\"2017-11-07T17:44:56.5337532Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T17:44:56.5337532Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T17:44:57.0987665Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"dataDisks\":[\r\n          {\r\n            \"lun\":1,\"caching\"\
-        :\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n  \
-        \        }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"\
-        maya\"\r\n      ]\r\n    }\r\n  ],\"odata.nextLink\":\"https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0&maxresults=1&timeout=30&$skiptoken=WATV2:zv9W0mMKHfG/4Fryqq6n%5EOImu%5E0qsSHVOBgMWsaAln9yHiwDTce1kYrivhxy8hxAX%5EJOroNWVQoCTpMaN8u8Y4RYOHcoqZiePZt38BJXcFn86bRcSDKa0z6bzFm3y2X06baGHWxsVTg7NB4kLg7e4F2xTDeYvvwMF0ZbtLAxe78VTh0JwoH/V6Jh5VJQB04gBG9jFd2/%5EhfShvtL/f5r0bMVT/DkWUZ%5EAPlzKjBOwHScmpvNTkXsKrpqe5cbENqigScjJhtG11AfNBGY5QaDzU1Jy%5Elv7XGADqlH1N7HcfQ=:1$1\"\
-        \r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.eastus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6098F0D03B6F1\",\"lastModified\":\"2018-08-24T06:58:52.2824433Z\",\"creationTime\":\"2018-08-24T06:58:52.2824433Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-08-24T06:58:52.2824433Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-08-24T06:58:52.6834553Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
+        \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \         }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"maya\"\r\n
+        \     ]\r\n    }\r\n  ],\"odata.nextLink\":\"https://batchf0260dd0.eastus.batch.azure.com/pools?maxresults=1&api-version=2018-08-01.7.0&timeout=30&$skiptoken=WATV2:svCGInRCHD/N5oVI5QOwgJPSTYKuoVdoFHTJ0nEWfEyFnaGb/Pep5FFGL5MUo8DO0GijdR2/xIiD6YIOXXsDrD8zJRuUyES%5EOryeegmcqWPPnDsc9M1MxXZxlvBL4mSuOYpmxNA62Sd42uLCG13POSjGobXLnXMTT32sDlJUwT8mshFZTySmHQQ7Tt3Kp2B0f%5E0WcGJpWBe%5E2txfV44BtDOMjQRH0zMoulAx4MpL2vQauUhIKZFnBzvdR8S2s6orKN6N4RNrQXMoVsfD0q%5EvChY8rgsv3yod/jrH3ewN22E=:1$1\"\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:58 GMT']
-      request-id: [1c44ba64-d9c3-4096-ae75-51062d3e0aab]
+      date: ['Fri, 24 Aug 2018 06:58:55 GMT']
+      request-id: [512032ae-4bc5-4026-8d04-c411e4daec62]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -548,23 +470,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.4 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.19.1
+          msrest/0.5.4 msrest_azure/0.4.34 azure-batch/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:44:58 GMT']
+      ocp-date: ['Fri, 24 Aug 2018 06:58:55 GMT']
       return-client-request-id: ['false']
     method: GET
-    uri: https://batchf0260dd0.japanwest.batch.azure.com/pools?api-version=2017-09-01.6.0&$filter=startswith%28id%2C%27batch_app_%27%29&$select=id%2Cstate&$expand=stats&maxresults=1000&timeout=30
+    uri: https://batchf0260dd0.eastus.batch.azure.com/pools?maxresults=1000&$select=id%2Cstate&$filter=startswith%28id%2C%27batch_app_%27%29&$expand=stats&api-version=2018-08-01.7.0&timeout=30
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.japanwest.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_app_f0260dd0\",\"state\":\"\
-        active\"\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.eastus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"state\":\"active\"\r\n    }\r\n
+        \ ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:44:59 GMT']
-      request-id: [f814c466-6ce1-4054-98b2-b19fb2c1b291]
+      date: ['Fri, 24 Aug 2018 06:58:55 GMT']
+      request-id: [cef74f28-4fb2-4082-b769-0f4646b41d3a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

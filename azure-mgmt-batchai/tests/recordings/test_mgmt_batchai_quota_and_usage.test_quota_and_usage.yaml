@@ -1,0 +1,63 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/usages?api-version=2018-05-01
+  response:
+    body: {string: '{"value":[{"unit":"Count","currentValue":1,"limit":20,"name":{"value":"Clusters","localizedValue":"Clusters"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Total
+        Cluster Dedicated Regional vCPUs","localizedValue":"Total Cluster Dedicated
+        Regional vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        D Family Cluster Dedicated vCPUs","localizedValue":"Standard D Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        Dv2 Family Cluster Dedicated vCPUs","localizedValue":"Standard Dv2 Family
+        Cluster Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NC Family Cluster Dedicated vCPUs","localizedValue":"Standard NC Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        NCv2 Family Cluster Dedicated vCPUs","localizedValue":"Standard NCv2 Family
+        Cluster Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        NCv3 Family Cluster Dedicated vCPUs","localizedValue":"Standard NCv3 Family
+        Cluster Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        ND Family Cluster Dedicated vCPUs","localizedValue":"Standard ND Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NV Family Cluster Dedicated vCPUs","localizedValue":"Standard NV Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":1,"limit":24,"name":{"value":"Total
+        Cluster LowPriority Regional vCPUs","localizedValue":"Total Cluster Low Priority
+        Regional vCPUs"}},{"unit":"Count","currentValue":1,"limit":24,"name":{"value":"Standard
+        D Family Cluster LowPriority vCPUs","localizedValue":"Standard D Family Cluster
+        Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        Dv2 Family Cluster LowPriority vCPUs","localizedValue":"Standard Dv2 Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NC Family Cluster LowPriority vCPUs","localizedValue":"Standard NC Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        NCv2 Family Cluster LowPriority vCPUs","localizedValue":"Standard NCv2 Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        NCv3 Family Cluster LowPriority vCPUs","localizedValue":"Standard NCv3 Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":0,"name":{"value":"Standard
+        ND Family Cluster LowPriority vCPUs","localizedValue":"Standard ND Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NV Family Cluster LowPriority vCPUs","localizedValue":"Standard NV Family
+        Cluster Low Priority vCPUs"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['2850']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 18:07:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [cb3a7933-61a7-4fcc-8e6d-34e2f54c19df]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

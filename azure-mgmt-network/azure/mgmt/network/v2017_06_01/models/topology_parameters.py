@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class TopologyParameters(Model):
     """Parameters that define the representation of topology.
 
-    :param target_resource_group_name: The name of the target resource group
-     to perform topology on.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_group_name: Required. The name of the target
+     resource group to perform topology on.
     :type target_resource_group_name: str
     """
 
@@ -28,6 +30,6 @@ class TopologyParameters(Model):
         'target_resource_group_name': {'key': 'targetResourceGroupName', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_group_name):
-        super(TopologyParameters, self).__init__()
-        self.target_resource_group_name = target_resource_group_name
+    def __init__(self, **kwargs):
+        super(TopologyParameters, self).__init__(**kwargs)
+        self.target_resource_group_name = kwargs.get('target_resource_group_name', None)

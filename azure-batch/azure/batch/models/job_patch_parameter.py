@@ -22,7 +22,7 @@ class JobPatchParameter(Model):
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. If omitted, the
      completion behavior is left unchanged. You may not change the value from
-     terminateJob to noAction - that is, once you have engaged automatic job
+     terminatejob to noaction - that is, once you have engaged automatic job
      termination, you cannot turn it off again. If you try to do this, the
      request fails with an 'invalid property value' error response; if you are
      calling the REST API directly, the HTTP status code is 400 (Bad Request).
@@ -52,9 +52,10 @@ class JobPatchParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, priority=None, on_all_tasks_complete=None, constraints=None, pool_info=None, metadata=None):
-        self.priority = priority
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.constraints = constraints
-        self.pool_info = pool_info
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(JobPatchParameter, self).__init__(**kwargs)
+        self.priority = kwargs.get('priority', None)
+        self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.pool_info = kwargs.get('pool_info', None)
+        self.metadata = kwargs.get('metadata', None)

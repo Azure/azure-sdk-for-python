@@ -32,7 +32,7 @@ class WebActivity(ExecutionActivity):
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param method: Rest API method for target endpoint. Possible values
-     include: 'GET', 'POST', 'PUT'
+     include: 'GET', 'POST', 'PUT', 'DELETE'
     :type method: str or ~azure.mgmt.datafactory.models.WebActivityMethod
     :param url: Web activity target endpoint and path. Type: string (or
      Expression with resultType string).

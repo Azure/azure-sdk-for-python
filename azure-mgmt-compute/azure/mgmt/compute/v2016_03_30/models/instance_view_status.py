@@ -38,10 +38,10 @@ class InstanceViewStatus(Model):
         'time': {'key': 'time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, code=None, level=None, display_status=None, message=None, time=None):
-        super(InstanceViewStatus, self).__init__()
-        self.code = code
-        self.level = level
-        self.display_status = display_status
-        self.message = message
-        self.time = time
+    def __init__(self, **kwargs):
+        super(InstanceViewStatus, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.level = kwargs.get('level', None)
+        self.display_status = kwargs.get('display_status', None)
+        self.message = kwargs.get('message', None)
+        self.time = kwargs.get('time', None)

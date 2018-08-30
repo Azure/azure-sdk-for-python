@@ -22,7 +22,7 @@ class TagsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
     """
 
@@ -55,7 +55,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
+        url = self.delete_value.metadata['url']
         path_format_arguments = {
             'tagName': self._serialize.url("tag_name", tag_name, 'str'),
             'tagValue': self._serialize.url("tag_value", tag_value, 'str'),
@@ -89,6 +89,7 @@ class TagsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_value.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'}
 
     def create_or_update_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
@@ -109,7 +110,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
+        url = self.create_or_update_value.metadata['url']
         path_format_arguments = {
             'tagName': self._serialize.url("tag_name", tag_name, 'str'),
             'tagValue': self._serialize.url("tag_value", tag_value, 'str'),
@@ -152,6 +153,7 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_value.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'}
 
     def create_or_update(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
@@ -174,7 +176,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'tagName': self._serialize.url("tag_name", tag_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -216,6 +218,7 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}'}
 
     def delete(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
@@ -236,7 +239,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'tagName': self._serialize.url("tag_name", tag_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -269,6 +272,7 @@ class TagsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -289,7 +293,7 @@ class TagsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/tagNames'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -334,3 +338,4 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}

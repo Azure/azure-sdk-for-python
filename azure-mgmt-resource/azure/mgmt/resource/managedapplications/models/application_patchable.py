@@ -89,13 +89,13 @@ class ApplicationPatchable(GenericResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None, managed_resource_group_id=None, application_definition_id=None, parameters=None, ui_definition_uri=None, plan=None, kind=None):
-        super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
-        self.managed_resource_group_id = managed_resource_group_id
-        self.application_definition_id = application_definition_id
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(ApplicationPatchable, self).__init__(**kwargs)
+        self.managed_resource_group_id = kwargs.get('managed_resource_group_id', None)
+        self.application_definition_id = kwargs.get('application_definition_id', None)
+        self.parameters = kwargs.get('parameters', None)
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = ui_definition_uri
-        self.plan = plan
-        self.kind = kind
+        self.ui_definition_uri = kwargs.get('ui_definition_uri', None)
+        self.plan = kwargs.get('plan', None)
+        self.kind = kwargs.get('kind', None)

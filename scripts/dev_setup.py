@@ -41,25 +41,13 @@ content_packages = [p for p in packages if p not in nspkg_packages+meta_packages
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
 
-# install general requirements
-pip_command('install -r requirements.txt')
-
 # install packages
 for package_list in [nspkg_packages, content_packages]:
     for package_name in package_list:
         pip_command('install -e {}'.format(package_name))
 
-# install test requirements
-pip_command('install -r azure-sdk-testutils/test-requirements.txt')
-
-# install packaging requirements
-pip_command('install -r scripts/packaging_requirements.txt')
-
-# install storage for tests
-pip_command('install azure-storage')
-
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package
-pip_command('install --force-reinstall azure-nspkg==1.0.0')
 pip_command('install --force-reinstall azure-mgmt-nspkg==1.0.0')
+pip_command('install --force-reinstall azure-nspkg==1.0.0')
 print('Finished dev setup.')

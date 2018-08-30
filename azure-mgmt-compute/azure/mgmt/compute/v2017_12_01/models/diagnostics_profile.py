@@ -29,6 +29,6 @@ class DiagnosticsProfile(Model):
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
     }
 
-    def __init__(self, boot_diagnostics=None):
-        super(DiagnosticsProfile, self).__init__()
-        self.boot_diagnostics = boot_diagnostics
+    def __init__(self, **kwargs):
+        super(DiagnosticsProfile, self).__init__(**kwargs)
+        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)

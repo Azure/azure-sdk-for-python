@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class NextHopParameters(Model):
     """Parameters that define the source and destination endpoint.
 
-    :param target_resource_id: The resource identifier of the target resource
-     against which the action is to be performed.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The resource identifier of the target
+     resource against which the action is to be performed.
     :type target_resource_id: str
-    :param source_ip_address: The source IP address.
+    :param source_ip_address: Required. The source IP address.
     :type source_ip_address: str
-    :param destination_ip_address: The destination IP address.
+    :param destination_ip_address: Required. The destination IP address.
     :type destination_ip_address: str
     :param target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP
      forwarding is enabled on any of the nics, then this parameter must be
@@ -41,9 +43,9 @@ class NextHopParameters(Model):
         'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id, source_ip_address, destination_ip_address, target_nic_resource_id=None):
-        super(NextHopParameters, self).__init__()
-        self.target_resource_id = target_resource_id
-        self.source_ip_address = source_ip_address
-        self.destination_ip_address = destination_ip_address
-        self.target_nic_resource_id = target_nic_resource_id
+    def __init__(self, **kwargs):
+        super(NextHopParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.source_ip_address = kwargs.get('source_ip_address', None)
+        self.destination_ip_address = kwargs.get('destination_ip_address', None)
+        self.target_nic_resource_id = kwargs.get('target_nic_resource_id', None)

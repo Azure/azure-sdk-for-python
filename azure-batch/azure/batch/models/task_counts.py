@@ -15,26 +15,21 @@ from msrest.serialization import Model
 class TaskCounts(Model):
     """The task counts for a job.
 
-    :param active: The number of tasks in the active state.
+    All required parameters must be populated in order to send to Azure.
+
+    :param active: Required. The number of tasks in the active state.
     :type active: int
-    :param running: The number of tasks in the running or preparing state.
+    :param running: Required. The number of tasks in the running or preparing
+     state.
     :type running: int
-    :param completed: The number of tasks in the completed state.
+    :param completed: Required. The number of tasks in the completed state.
     :type completed: int
-    :param succeeded: The number of tasks which succeeded. A task succeeds if
-     its result (found in the executionInfo property) is 'success'.
+    :param succeeded: Required. The number of tasks which succeeded. A task
+     succeeds if its result (found in the executionInfo property) is 'success'.
     :type succeeded: int
-    :param failed: The number of tasks which failed. A task fails if its
-     result (found in the executionInfo property) is 'failure'.
+    :param failed: Required. The number of tasks which failed. A task fails if
+     its result (found in the executionInfo property) is 'failure'.
     :type failed: int
-    :param validation_status: Whether the task counts have been validated. If
-     the validationStatus is unvalidated, then the Batch service has not been
-     able to check state counts against the task states as reported in the List
-     Tasks API. The validationStatus may be unvalidated if the job contains
-     more than 200,000 tasks. Possible values include: 'validated',
-     'unvalidated'
-    :type validation_status: str or
-     ~azure.batch.models.TaskCountValidationStatus
     """
 
     _validation = {
@@ -43,7 +38,6 @@ class TaskCounts(Model):
         'completed': {'required': True},
         'succeeded': {'required': True},
         'failed': {'required': True},
-        'validation_status': {'required': True},
     }
 
     _attribute_map = {
@@ -52,13 +46,12 @@ class TaskCounts(Model):
         'completed': {'key': 'completed', 'type': 'int'},
         'succeeded': {'key': 'succeeded', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
-        'validation_status': {'key': 'validationStatus', 'type': 'TaskCountValidationStatus'},
     }
 
-    def __init__(self, active, running, completed, succeeded, failed, validation_status):
-        self.active = active
-        self.running = running
-        self.completed = completed
-        self.succeeded = succeeded
-        self.failed = failed
-        self.validation_status = validation_status
+    def __init__(self, **kwargs):
+        super(TaskCounts, self).__init__(**kwargs)
+        self.active = kwargs.get('active', None)
+        self.running = kwargs.get('running', None)
+        self.completed = kwargs.get('completed', None)
+        self.succeeded = kwargs.get('succeeded', None)
+        self.failed = kwargs.get('failed', None)

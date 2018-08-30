@@ -12,20 +12,20 @@
 from enum import Enum
 
 
-class ResourceSkuCapacityScaleType(Enum):
+class ResourceSkuCapacityScaleType(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     none = "None"
 
 
-class ResourceSkuRestrictionsType(Enum):
+class ResourceSkuRestrictionsType(str, Enum):
 
     location = "Location"
     zone = "Zone"
 
 
-class ResourceSkuRestrictionsReasonCode(Enum):
+class ResourceSkuRestrictionsReasonCode(str, Enum):
 
     quota_id = "QuotaId"
     not_available_for_subscription = "NotAvailableForSubscription"

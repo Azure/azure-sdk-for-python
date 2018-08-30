@@ -37,7 +37,7 @@ class ClusterHealthPolicies(Model):
         'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
     }
 
-    def __init__(self, application_health_policy_map=None, cluster_health_policy=None):
-        super(ClusterHealthPolicies, self).__init__()
-        self.application_health_policy_map = application_health_policy_map
-        self.cluster_health_policy = cluster_health_policy
+    def __init__(self, **kwargs):
+        super(ClusterHealthPolicies, self).__init__(**kwargs)
+        self.application_health_policy_map = kwargs.get('application_health_policy_map', None)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)

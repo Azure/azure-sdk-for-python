@@ -47,6 +47,6 @@ class HardwareProfile(Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
     }
 
-    def __init__(self, vm_size=None):
-        super(HardwareProfile, self).__init__()
-        self.vm_size = vm_size
+    def __init__(self, **kwargs):
+        super(HardwareProfile, self).__init__(**kwargs)
+        self.vm_size = kwargs.get('vm_size', None)

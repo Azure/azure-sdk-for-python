@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class SecurityGroupViewParameters(Model):
     """Parameters that define the VM to check security groups for.
 
-    :param target_resource_id: ID of the target VM.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. ID of the target VM.
     :type target_resource_id: str
     """
 
@@ -27,6 +29,6 @@ class SecurityGroupViewParameters(Model):
         'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id):
-        super(SecurityGroupViewParameters, self).__init__()
-        self.target_resource_id = target_resource_id
+    def __init__(self, **kwargs):
+        super(SecurityGroupViewParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)

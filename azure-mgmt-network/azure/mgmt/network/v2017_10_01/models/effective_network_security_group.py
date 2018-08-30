@@ -37,9 +37,9 @@ class EffectiveNetworkSecurityGroup(Model):
         'tag_map': {'key': 'tagMap', 'type': '{[str]}'},
     }
 
-    def __init__(self, network_security_group=None, association=None, effective_security_rules=None, tag_map=None):
-        super(EffectiveNetworkSecurityGroup, self).__init__()
-        self.network_security_group = network_security_group
-        self.association = association
-        self.effective_security_rules = effective_security_rules
-        self.tag_map = tag_map
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityGroup, self).__init__(**kwargs)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.association = kwargs.get('association', None)
+        self.effective_security_rules = kwargs.get('effective_security_rules', None)
+        self.tag_map = kwargs.get('tag_map', None)

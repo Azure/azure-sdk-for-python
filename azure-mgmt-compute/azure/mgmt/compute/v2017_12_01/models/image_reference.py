@@ -46,9 +46,9 @@ class ImageReference(SubResource):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, id=None, publisher=None, offer=None, sku=None, version=None):
-        super(ImageReference, self).__init__(id=id)
-        self.publisher = publisher
-        self.offer = offer
-        self.sku = sku
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ImageReference, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.offer = kwargs.get('offer', None)
+        self.sku = kwargs.get('sku', None)
+        self.version = kwargs.get('version', None)

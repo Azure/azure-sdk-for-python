@@ -50,12 +50,12 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
-        super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags)
-        self.sku = sku
-        self.plan = plan
-        self.upgrade_policy = upgrade_policy
-        self.virtual_machine_profile = virtual_machine_profile
-        self.overprovision = overprovision
-        self.single_placement_group = single_placement_group
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdate, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.plan = kwargs.get('plan', None)
+        self.upgrade_policy = kwargs.get('upgrade_policy', None)
+        self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
+        self.overprovision = kwargs.get('overprovision', None)
+        self.single_placement_group = kwargs.get('single_placement_group', None)
+        self.identity = kwargs.get('identity', None)

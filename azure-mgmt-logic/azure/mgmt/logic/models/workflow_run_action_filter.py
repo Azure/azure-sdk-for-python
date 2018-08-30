@@ -19,13 +19,13 @@ class WorkflowRunActionFilter(Model):
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
      'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted',
      'Ignored'
-    :type status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'WorkflowStatus'},
     }
 
-    def __init__(self, status=None):
-        self.status = status
+    def __init__(self, **kwargs):
+        super(WorkflowRunActionFilter, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)

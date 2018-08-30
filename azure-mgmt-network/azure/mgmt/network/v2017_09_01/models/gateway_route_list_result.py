@@ -23,6 +23,6 @@ class GatewayRouteListResult(Model):
         'value': {'key': 'value', 'type': '[GatewayRoute]'},
     }
 
-    def __init__(self, value=None):
-        super(GatewayRouteListResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(GatewayRouteListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

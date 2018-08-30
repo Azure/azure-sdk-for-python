@@ -26,9 +26,8 @@ class SlotDifference(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar slot_difference_type: Type of the difference: Information, Warning
-     or Error.
-    :vartype slot_difference_type: str
+    :ivar level: Level of the difference: Information, Warning or Error.
+    :vartype level: str
     :ivar setting_type: The type of the setting: General, AppSetting or
      ConnectionString.
     :vartype setting_type: str
@@ -49,7 +48,7 @@ class SlotDifference(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'slot_difference_type': {'readonly': True},
+        'level': {'readonly': True},
         'setting_type': {'readonly': True},
         'diff_rule': {'readonly': True},
         'setting_name': {'readonly': True},
@@ -63,7 +62,7 @@ class SlotDifference(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'slot_difference_type': {'key': 'properties.type', 'type': 'str'},
+        'level': {'key': 'properties.level', 'type': 'str'},
         'setting_type': {'key': 'properties.settingType', 'type': 'str'},
         'diff_rule': {'key': 'properties.diffRule', 'type': 'str'},
         'setting_name': {'key': 'properties.settingName', 'type': 'str'},
@@ -72,9 +71,9 @@ class SlotDifference(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(SlotDifference, self).__init__(kind=kind)
-        self.slot_difference_type = None
+    def __init__(self, **kwargs):
+        super(SlotDifference, self).__init__(**kwargs)
+        self.level = None
         self.setting_type = None
         self.diff_rule = None
         self.setting_name = None

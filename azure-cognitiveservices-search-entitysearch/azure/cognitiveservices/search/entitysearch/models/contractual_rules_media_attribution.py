@@ -18,10 +18,12 @@ class ContractualRulesMediaAttribution(ContractualRulesAttribution):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field
@@ -49,7 +51,7 @@ class ContractualRulesMediaAttribution(ContractualRulesAttribution):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ContractualRulesMediaAttribution, self).__init__()
+    def __init__(self, **kwargs):
+        super(ContractualRulesMediaAttribution, self).__init__(**kwargs)
         self.url = None
         self._type = 'ContractualRules/MediaAttribution'

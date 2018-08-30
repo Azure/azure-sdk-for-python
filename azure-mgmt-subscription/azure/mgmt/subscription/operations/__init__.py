@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_definitions_operation_metadata_operations import SubscriptionDefinitionsOperationMetadataOperations
-from .subscription_definitions_operations import SubscriptionDefinitionsOperations
+from .operations import Operations
+from .subscription_operations import SubscriptionOperations
+from .subscription_factory_operations import SubscriptionFactoryOperations
 from .subscriptions_operations import SubscriptionsOperations
 from .tenants_operations import TenantsOperations
 
 __all__ = [
-    'SubscriptionDefinitionsOperationMetadataOperations',
-    'SubscriptionDefinitionsOperations',
+    'Operations',
+    'SubscriptionOperations',
+    'SubscriptionFactoryOperations',
     'SubscriptionsOperations',
     'TenantsOperations',
 ]

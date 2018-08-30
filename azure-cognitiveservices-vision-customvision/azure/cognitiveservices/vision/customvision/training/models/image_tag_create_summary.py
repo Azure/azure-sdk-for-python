@@ -27,13 +27,13 @@ class ImageTagCreateSummary(Model):
     """
 
     _attribute_map = {
-        'created': {'key': 'Created', 'type': '[ImageTagCreateEntry]'},
-        'duplicated': {'key': 'Duplicated', 'type': '[ImageTagCreateEntry]'},
-        'exceeded': {'key': 'Exceeded', 'type': '[ImageTagCreateEntry]'},
+        'created': {'key': 'created', 'type': '[ImageTagCreateEntry]'},
+        'duplicated': {'key': 'duplicated', 'type': '[ImageTagCreateEntry]'},
+        'exceeded': {'key': 'exceeded', 'type': '[ImageTagCreateEntry]'},
     }
 
-    def __init__(self, created=None, duplicated=None, exceeded=None):
-        super(ImageTagCreateSummary, self).__init__()
-        self.created = created
-        self.duplicated = duplicated
-        self.exceeded = exceeded
+    def __init__(self, **kwargs):
+        super(ImageTagCreateSummary, self).__init__(**kwargs)
+        self.created = kwargs.get('created', None)
+        self.duplicated = kwargs.get('duplicated', None)
+        self.exceeded = kwargs.get('exceeded', None)

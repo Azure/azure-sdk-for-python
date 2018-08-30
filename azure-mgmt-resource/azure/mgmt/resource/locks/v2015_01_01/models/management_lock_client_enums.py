@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class LockLevel(Enum):
+class LockLevel(str, Enum):
 
     not_specified = "NotSpecified"
     can_not_delete = "CanNotDelete"

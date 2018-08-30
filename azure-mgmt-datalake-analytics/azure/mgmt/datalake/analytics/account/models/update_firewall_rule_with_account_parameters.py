@@ -16,7 +16,9 @@ class UpdateFirewallRuleWithAccountParameters(Model):
     """The parameters used to update a firewall rule while updating a Data Lake
     Analytics account.
 
-    :param name: The unique name of the firewall rule to update.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the firewall rule to update.
     :type name: str
     :param start_ip_address: The start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.
@@ -36,8 +38,8 @@ class UpdateFirewallRuleWithAccountParameters(Model):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, name, start_ip_address=None, end_ip_address=None):
-        super(UpdateFirewallRuleWithAccountParameters, self).__init__()
-        self.name = name
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, **kwargs):
+        super(UpdateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.start_ip_address = kwargs.get('start_ip_address', None)
+        self.end_ip_address = kwargs.get('end_ip_address', None)

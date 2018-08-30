@@ -43,11 +43,11 @@ class VirtualMachineSize(Model):
         'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'int'},
     }
 
-    def __init__(self, name=None, number_of_cores=None, os_disk_size_in_mb=None, resource_disk_size_in_mb=None, memory_in_mb=None, max_data_disk_count=None):
-        super(VirtualMachineSize, self).__init__()
-        self.name = name
-        self.number_of_cores = number_of_cores
-        self.os_disk_size_in_mb = os_disk_size_in_mb
-        self.resource_disk_size_in_mb = resource_disk_size_in_mb
-        self.memory_in_mb = memory_in_mb
-        self.max_data_disk_count = max_data_disk_count
+    def __init__(self, **kwargs):
+        super(VirtualMachineSize, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.number_of_cores = kwargs.get('number_of_cores', None)
+        self.os_disk_size_in_mb = kwargs.get('os_disk_size_in_mb', None)
+        self.resource_disk_size_in_mb = kwargs.get('resource_disk_size_in_mb', None)
+        self.memory_in_mb = kwargs.get('memory_in_mb', None)
+        self.max_data_disk_count = kwargs.get('max_data_disk_count', None)

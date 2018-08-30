@@ -40,10 +40,20 @@ class FileGetPropertiesFromTaskOptions(Model):
     :type if_unmodified_since: datetime
     """
 
-    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None, if_modified_since=None, if_unmodified_since=None):
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-        self.if_modified_since = if_modified_since
-        self.if_unmodified_since = if_unmodified_since
+    _attribute_map = {
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+        'if_modified_since': {'key': '', 'type': 'rfc-1123'},
+        'if_unmodified_since': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileGetPropertiesFromTaskOptions, self).__init__(**kwargs)
+        self.timeout = kwargs.get('timeout', 30)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.return_client_request_id = kwargs.get('return_client_request_id', False)
+        self.ocp_date = kwargs.get('ocp_date', None)
+        self.if_modified_since = kwargs.get('if_modified_since', None)
+        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)

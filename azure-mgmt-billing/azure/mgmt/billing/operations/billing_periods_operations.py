@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,23 +21,28 @@ class BillingPeriodsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-04-24-preview. Constant value: "2017-04-24-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-01-preview. Constant value: "2018-03-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-24-preview"
+        self.api_version = "2018-03-01-preview"
 
         self.config = config
 
     def list(
             self, filter=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Lists the available billing periods for a subscription in reverse
-        chronological order.
+        chronological order. This is only supported for Azure Web-Direct
+        subscriptions. Other subscription types which were not purchased
+        directly through the Azure web portal are not supported through this
+        preview API.
 
         :param filter: May be used to filter billing periods by
          billingPeriodEndDate. The filter supports 'eq', 'lt', 'gt', 'le',
@@ -56,8 +61,9 @@ class BillingPeriodsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BillingPeriodPaged
-         <azure.mgmt.billing.models.BillingPeriodPaged>`
+        :return: An iterator like instance of BillingPeriod
+        :rtype:
+         ~azure.mgmt.billing.models.BillingPeriodPaged[~azure.mgmt.billing.models.BillingPeriod]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -65,7 +71,7 @@ class BillingPeriodsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -98,7 +104,7 @@ class BillingPeriodsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -114,10 +120,14 @@ class BillingPeriodsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods'}
 
     def get(
             self, billing_period_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a named billing period.
+        """Gets a named billing period.  This is only supported for Azure
+        Web-Direct subscriptions. Other subscription types which were not
+        purchased directly through the Azure web portal are not supported
+        through this preview API.
 
         :param billing_period_name: The name of a BillingPeriod resource.
         :type billing_period_name: str
@@ -126,15 +136,14 @@ class BillingPeriodsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BillingPeriod
-         <azure.mgmt.billing.models.BillingPeriod>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: BillingPeriod or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingPeriod or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
@@ -157,7 +166,7 @@ class BillingPeriodsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -172,3 +181,4 @@ class BillingPeriodsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'}

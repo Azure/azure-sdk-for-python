@@ -23,8 +23,8 @@ class IotHubNameAvailabilityInfo(Model):
     :vartype name_available: bool
     :ivar reason: The reason for unavailability. Possible values include:
      'Invalid', 'AlreadyExists'
-    :vartype reason: str or :class:`IotHubNameUnavailabilityReason
-     <azure.mgmt.iothub.models.IotHubNameUnavailabilityReason>`
+    :vartype reason: str or
+     ~azure.mgmt.iothub.models.IotHubNameUnavailabilityReason
     :param message: The detailed reason message.
     :type message: str
     """
@@ -40,7 +40,8 @@ class IotHubNameAvailabilityInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, message=None):
+    def __init__(self, **kwargs):
+        super(IotHubNameAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
-        self.message = message
+        self.message = kwargs.get('message', None)

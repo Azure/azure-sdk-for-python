@@ -18,7 +18,9 @@ class WebWebAnswer(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -36,7 +38,7 @@ class WebWebAnswer(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param value: A list of webpages that are relevant to the query.
+    :param value: Required. A list of webpages that are relevant to the query.
     :type value:
      list[~azure.cognitiveservices.search.websearch.models.WebPage]
     :ivar some_results_removed: A Boolean value that indicates whether the
@@ -69,8 +71,8 @@ class WebWebAnswer(SearchResultsAnswer):
         'some_results_removed': {'key': 'someResultsRemoved', 'type': 'bool'},
     }
 
-    def __init__(self, value):
-        super(WebWebAnswer, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(WebWebAnswer, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.some_results_removed = None
         self._type = 'Web/WebAnswer'

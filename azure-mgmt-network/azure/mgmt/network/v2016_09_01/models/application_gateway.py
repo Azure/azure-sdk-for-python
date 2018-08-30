@@ -126,23 +126,23 @@ class ApplicationGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
-        self.sku = sku
-        self.ssl_policy = ssl_policy
+    def __init__(self, **kwargs):
+        super(ApplicationGateway, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.ssl_policy = kwargs.get('ssl_policy', None)
         self.operational_state = None
-        self.gateway_ip_configurations = gateway_ip_configurations
-        self.authentication_certificates = authentication_certificates
-        self.ssl_certificates = ssl_certificates
-        self.frontend_ip_configurations = frontend_ip_configurations
-        self.frontend_ports = frontend_ports
-        self.probes = probes
-        self.backend_address_pools = backend_address_pools
-        self.backend_http_settings_collection = backend_http_settings_collection
-        self.http_listeners = http_listeners
-        self.url_path_maps = url_path_maps
-        self.request_routing_rules = request_routing_rules
-        self.web_application_firewall_configuration = web_application_firewall_configuration
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+        self.gateway_ip_configurations = kwargs.get('gateway_ip_configurations', None)
+        self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.ssl_certificates = kwargs.get('ssl_certificates', None)
+        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
+        self.frontend_ports = kwargs.get('frontend_ports', None)
+        self.probes = kwargs.get('probes', None)
+        self.backend_address_pools = kwargs.get('backend_address_pools', None)
+        self.backend_http_settings_collection = kwargs.get('backend_http_settings_collection', None)
+        self.http_listeners = kwargs.get('http_listeners', None)
+        self.url_path_maps = kwargs.get('url_path_maps', None)
+        self.request_routing_rules = kwargs.get('request_routing_rules', None)
+        self.web_application_firewall_configuration = kwargs.get('web_application_firewall_configuration', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

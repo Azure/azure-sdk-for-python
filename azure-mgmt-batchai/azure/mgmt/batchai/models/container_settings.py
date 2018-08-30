@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class ContainerSettings(Model):
     """Settings for the container to be downloaded.
 
-    :param image_source_registry: Registry to download the container from.
-    :type image_source_registry: :class:`ImageSourceRegistry
-     <azure.mgmt.batchai.models.ImageSourceRegistry>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param image_source_registry: Required. Registry to download the container
+     from.
+    :type image_source_registry:
+     ~azure.mgmt.batchai.models.ImageSourceRegistry
+    :param shm_size: Size of /dev/shm. Please refer to docker documentation
+     for supported argument formats.
+    :type shm_size: str
     """
 
     _validation = {
@@ -26,7 +32,10 @@ class ContainerSettings(Model):
 
     _attribute_map = {
         'image_source_registry': {'key': 'imageSourceRegistry', 'type': 'ImageSourceRegistry'},
+        'shm_size': {'key': 'shmSize', 'type': 'str'},
     }
 
-    def __init__(self, image_source_registry):
-        self.image_source_registry = image_source_registry
+    def __init__(self, **kwargs):
+        super(ContainerSettings, self).__init__(**kwargs)
+        self.image_source_registry = kwargs.get('image_source_registry', None)
+        self.shm_size = kwargs.get('shm_size', None)

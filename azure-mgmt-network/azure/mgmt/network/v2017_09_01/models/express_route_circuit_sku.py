@@ -33,8 +33,8 @@ class ExpressRouteCircuitSku(Model):
         'family': {'key': 'family', 'type': 'str'},
     }
 
-    def __init__(self, name=None, tier=None, family=None):
-        super(ExpressRouteCircuitSku, self).__init__()
-        self.name = name
-        self.tier = tier
-        self.family = family
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.family = kwargs.get('family', None)

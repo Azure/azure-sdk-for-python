@@ -72,15 +72,15 @@ class VirtualNetworkPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, allow_virtual_network_access=None, allow_forwarded_traffic=None, allow_gateway_transit=None, use_remote_gateways=None, remote_virtual_network=None, remote_address_space=None, peering_state=None, provisioning_state=None, name=None, etag=None):
-        super(VirtualNetworkPeering, self).__init__(id=id)
-        self.allow_virtual_network_access = allow_virtual_network_access
-        self.allow_forwarded_traffic = allow_forwarded_traffic
-        self.allow_gateway_transit = allow_gateway_transit
-        self.use_remote_gateways = use_remote_gateways
-        self.remote_virtual_network = remote_virtual_network
-        self.remote_address_space = remote_address_space
-        self.peering_state = peering_state
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VirtualNetworkPeering, self).__init__(**kwargs)
+        self.allow_virtual_network_access = kwargs.get('allow_virtual_network_access', None)
+        self.allow_forwarded_traffic = kwargs.get('allow_forwarded_traffic', None)
+        self.allow_gateway_transit = kwargs.get('allow_gateway_transit', None)
+        self.use_remote_gateways = kwargs.get('use_remote_gateways', None)
+        self.remote_virtual_network = kwargs.get('remote_virtual_network', None)
+        self.remote_address_space = kwargs.get('remote_address_space', None)
+        self.peering_state = kwargs.get('peering_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

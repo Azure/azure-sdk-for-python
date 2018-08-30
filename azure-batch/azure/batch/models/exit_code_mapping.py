@@ -16,10 +16,12 @@ class ExitCodeMapping(Model):
     """How the Batch service should respond if a task exits with a particular exit
     code.
 
-    :param code: A process exit code.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. A process exit code.
     :type code: int
-    :param exit_options: How the Batch service should respond if the task
-     exits with this exit code.
+    :param exit_options: Required. How the Batch service should respond if the
+     task exits with this exit code.
     :type exit_options: ~azure.batch.models.ExitOptions
     """
 
@@ -33,6 +35,7 @@ class ExitCodeMapping(Model):
         'exit_options': {'key': 'exitOptions', 'type': 'ExitOptions'},
     }
 
-    def __init__(self, code, exit_options):
-        self.code = code
-        self.exit_options = exit_options
+    def __init__(self, **kwargs):
+        super(ExitCodeMapping, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.exit_options = kwargs.get('exit_options', None)

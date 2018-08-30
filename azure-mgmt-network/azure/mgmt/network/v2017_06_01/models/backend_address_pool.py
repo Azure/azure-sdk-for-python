@@ -59,11 +59,11 @@ class BackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, provisioning_state=None, name=None, etag=None):
-        super(BackendAddressPool, self).__init__(id=id)
+    def __init__(self, **kwargs):
+        super(BackendAddressPool, self).__init__(**kwargs)
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_nat_rule = None
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

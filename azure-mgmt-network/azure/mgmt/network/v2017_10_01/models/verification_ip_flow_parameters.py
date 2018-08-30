@@ -15,28 +15,30 @@ from msrest.serialization import Model
 class VerificationIPFlowParameters(Model):
     """Parameters that define the IP flow to be verified.
 
-    :param target_resource_id: The ID of the target resource to perform
-     next-hop on.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The ID of the target resource to
+     perform next-hop on.
     :type target_resource_id: str
-    :param direction: The direction of the packet represented as a 5-tuple.
-     Possible values include: 'Inbound', 'Outbound'
+    :param direction: Required. The direction of the packet represented as a
+     5-tuple. Possible values include: 'Inbound', 'Outbound'
     :type direction: str or ~azure.mgmt.network.v2017_10_01.models.Direction
-    :param protocol: Protocol to be verified on. Possible values include:
-     'TCP', 'UDP'
+    :param protocol: Required. Protocol to be verified on. Possible values
+     include: 'TCP', 'UDP'
     :type protocol: str or ~azure.mgmt.network.v2017_10_01.models.Protocol
-    :param local_port: The local port. Acceptable values are a single integer
-     in the range (0-65535). Support for * for the source port, which depends
-     on the direction.
+    :param local_port: Required. The local port. Acceptable values are a
+     single integer in the range (0-65535). Support for * for the source port,
+     which depends on the direction.
     :type local_port: str
-    :param remote_port: The remote port. Acceptable values are a single
-     integer in the range (0-65535). Support for * for the source port, which
-     depends on the direction.
+    :param remote_port: Required. The remote port. Acceptable values are a
+     single integer in the range (0-65535). Support for * for the source port,
+     which depends on the direction.
     :type remote_port: str
-    :param local_ip_address: The local IP address. Acceptable values are valid
-     IPv4 addresses.
+    :param local_ip_address: Required. The local IP address. Acceptable values
+     are valid IPv4 addresses.
     :type local_ip_address: str
-    :param remote_ip_address: The remote IP address. Acceptable values are
-     valid IPv4 addresses.
+    :param remote_ip_address: Required. The remote IP address. Acceptable
+     values are valid IPv4 addresses.
     :type remote_ip_address: str
     :param target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP
      forwarding is enabled on any of them, then this parameter must be
@@ -65,13 +67,13 @@ class VerificationIPFlowParameters(Model):
         'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id, direction, protocol, local_port, remote_port, local_ip_address, remote_ip_address, target_nic_resource_id=None):
-        super(VerificationIPFlowParameters, self).__init__()
-        self.target_resource_id = target_resource_id
-        self.direction = direction
-        self.protocol = protocol
-        self.local_port = local_port
-        self.remote_port = remote_port
-        self.local_ip_address = local_ip_address
-        self.remote_ip_address = remote_ip_address
-        self.target_nic_resource_id = target_nic_resource_id
+    def __init__(self, **kwargs):
+        super(VerificationIPFlowParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.direction = kwargs.get('direction', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.local_port = kwargs.get('local_port', None)
+        self.remote_port = kwargs.get('remote_port', None)
+        self.local_ip_address = kwargs.get('local_ip_address', None)
+        self.remote_ip_address = kwargs.get('remote_ip_address', None)
+        self.target_nic_resource_id = kwargs.get('target_nic_resource_id', None)

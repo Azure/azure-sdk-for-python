@@ -27,12 +27,11 @@ class IntegrationAccount(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties: The integration account properties.
     :type properties: object
     :param sku: The sku.
-    :type sku: :class:`IntegrationAccountSku
-     <azure.mgmt.logic.models.IntegrationAccountSku>`
+    :type sku: ~azure.mgmt.logic.models.IntegrationAccountSku
     """
 
     _validation = {
@@ -51,7 +50,7 @@ class IntegrationAccount(Resource):
         'sku': {'key': 'sku', 'type': 'IntegrationAccountSku'},
     }
 
-    def __init__(self, location=None, tags=None, properties=None, sku=None):
-        super(IntegrationAccount, self).__init__(location=location, tags=tags)
-        self.properties = properties
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(IntegrationAccount, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)

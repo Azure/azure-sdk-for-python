@@ -24,5 +24,6 @@ class OutputFileDestination(Model):
         'container': {'key': 'container', 'type': 'OutputFileBlobContainerDestination'},
     }
 
-    def __init__(self, container=None):
-        self.container = container
+    def __init__(self, **kwargs):
+        super(OutputFileDestination, self).__init__(**kwargs)
+        self.container = kwargs.get('container', None)

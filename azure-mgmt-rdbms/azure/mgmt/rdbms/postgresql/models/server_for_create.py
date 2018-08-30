@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ServerForCreate(Model):
     """Represents a server to be created.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param properties: Properties of the server.
+    :param properties: Required. Properties of the server.
     :type properties:
      ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
-    :param location: The location the resource resides in.
+    :param location: Required. The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
@@ -38,9 +40,9 @@ class ServerForCreate(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, properties, location, sku=None, tags=None):
-        super(ServerForCreate, self).__init__()
-        self.sku = sku
-        self.properties = properties
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ServerForCreate, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.properties = kwargs.get('properties', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

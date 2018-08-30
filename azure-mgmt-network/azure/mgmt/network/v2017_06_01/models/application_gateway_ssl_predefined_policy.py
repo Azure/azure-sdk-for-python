@@ -37,8 +37,8 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
         'min_protocol_version': {'key': 'properties.minProtocolVersion', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, cipher_suites=None, min_protocol_version=None):
-        super(ApplicationGatewaySslPredefinedPolicy, self).__init__(id=id)
-        self.name = name
-        self.cipher_suites = cipher_suites
-        self.min_protocol_version = min_protocol_version
+    def __init__(self, **kwargs):
+        super(ApplicationGatewaySslPredefinedPolicy, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.cipher_suites = kwargs.get('cipher_suites', None)
+        self.min_protocol_version = kwargs.get('min_protocol_version', None)

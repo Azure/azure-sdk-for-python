@@ -18,9 +18,11 @@ class MetadataItem(Model):
     The Batch service does not assign any meaning to this metadata; it is
     solely for the use of user code.
 
-    :param name: The name of the metadata item.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the metadata item.
     :type name: str
-    :param value: The value of the metadata item.
+    :param value: Required. The value of the metadata item.
     :type value: str
     """
 
@@ -34,6 +36,7 @@ class MetadataItem(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(MetadataItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

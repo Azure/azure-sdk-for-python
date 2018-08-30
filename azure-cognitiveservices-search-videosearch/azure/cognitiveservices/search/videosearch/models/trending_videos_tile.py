@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class TrendingVideosTile(Model):
     """TrendingVideosTile.
 
-    :param query:
+    All required parameters must be populated in order to send to Azure.
+
+    :param query: Required.
     :type query: ~azure.cognitiveservices.search.videosearch.models.Query
-    :param image:
+    :param image: Required.
     :type image:
      ~azure.cognitiveservices.search.videosearch.models.ImageObject
     """
@@ -32,7 +34,7 @@ class TrendingVideosTile(Model):
         'image': {'key': 'image', 'type': 'ImageObject'},
     }
 
-    def __init__(self, query, image):
-        super(TrendingVideosTile, self).__init__()
-        self.query = query
-        self.image = image
+    def __init__(self, **kwargs):
+        super(TrendingVideosTile, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.image = kwargs.get('image', None)

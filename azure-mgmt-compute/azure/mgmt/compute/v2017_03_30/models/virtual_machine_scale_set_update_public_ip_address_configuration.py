@@ -32,8 +32,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(Model):
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
     }
 
-    def __init__(self, name=None, idle_timeout_in_minutes=None, dns_settings=None):
-        super(VirtualMachineScaleSetUpdatePublicIPAddressConfiguration, self).__init__()
-        self.name = name
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.dns_settings = dns_settings
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdatePublicIPAddressConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.dns_settings = kwargs.get('dns_settings', None)

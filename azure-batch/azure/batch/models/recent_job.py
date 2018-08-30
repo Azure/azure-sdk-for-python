@@ -26,6 +26,7 @@ class RecentJob(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, id=None, url=None):
-        self.id = id
-        self.url = url
+    def __init__(self, **kwargs):
+        super(RecentJob, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.url = kwargs.get('url', None)

@@ -86,8 +86,8 @@ class ResourceSku(Model):
         'restrictions': {'key': 'restrictions', 'type': '[ResourceSkuRestrictions]'},
     }
 
-    def __init__(self):
-        super(ResourceSku, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSku, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
         self.tier = None

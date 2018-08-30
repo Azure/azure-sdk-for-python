@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ComputeNodeGetRemoteLoginSettingsResult(Model):
     """The remote login settings for a compute node.
 
-    :param remote_login_ip_address: The IP address used for remote login to
-     the compute node.
+    All required parameters must be populated in order to send to Azure.
+
+    :param remote_login_ip_address: Required. The IP address used for remote
+     login to the compute node.
     :type remote_login_ip_address: str
-    :param remote_login_port: The port used for remote login to the compute
-     node.
+    :param remote_login_port: Required. The port used for remote login to the
+     compute node.
     :type remote_login_port: int
     """
 
@@ -33,6 +35,7 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
         'remote_login_port': {'key': 'remoteLoginPort', 'type': 'int'},
     }
 
-    def __init__(self, remote_login_ip_address, remote_login_port):
-        self.remote_login_ip_address = remote_login_ip_address
-        self.remote_login_port = remote_login_port
+    def __init__(self, **kwargs):
+        super(ComputeNodeGetRemoteLoginSettingsResult, self).__init__(**kwargs)
+        self.remote_login_ip_address = kwargs.get('remote_login_ip_address', None)
+        self.remote_login_port = kwargs.get('remote_login_port', None)

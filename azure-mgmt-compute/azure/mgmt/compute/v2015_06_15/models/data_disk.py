@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class DataDisk(Model):
     """Describes a data disk.
 
-    :param lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
+    All required parameters must be populated in order to send to Azure.
+
+    :param lun: Required. Specifies the logical unit number of the data disk.
+     This value is used to identify data disks within the VM and therefore must
+     be unique for each data disk attached to a VM.
     :type lun: int
-    :param name: The disk name.
+    :param name: Required. The disk name.
     :type name: str
-    :param vhd: The virtual hard disk.
+    :param vhd: Required. The virtual hard disk.
     :type vhd: ~azure.mgmt.compute.v2015_06_15.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard
      disk will be copied before being attached to the virtual machine. If
@@ -33,8 +35,8 @@ class DataDisk(Model):
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2015_06_15.models.CachingTypes
-    :param create_option: Specifies how the virtual machine should be
-     created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
+    :param create_option: Required. Specifies how the virtual machine should
+     be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
      machine.<br><br> **FromImage** \\u2013 This value is used when you are
      using an image to create the virtual machine. If you are using a platform
@@ -66,12 +68,12 @@ class DataDisk(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None):
-        super(DataDisk, self).__init__()
-        self.lun = lun
-        self.name = name
-        self.vhd = vhd
-        self.image = image
-        self.caching = caching
-        self.create_option = create_option
-        self.disk_size_gb = disk_size_gb
+    def __init__(self, **kwargs):
+        super(DataDisk, self).__init__(**kwargs)
+        self.lun = kwargs.get('lun', None)
+        self.name = kwargs.get('name', None)
+        self.vhd = kwargs.get('vhd', None)
+        self.image = kwargs.get('image', None)
+        self.caching = kwargs.get('caching', None)
+        self.create_option = kwargs.get('create_option', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)

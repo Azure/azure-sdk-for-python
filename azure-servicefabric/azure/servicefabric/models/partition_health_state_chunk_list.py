@@ -17,7 +17,6 @@ class PartitionHealthStateChunkList(Model):
     the chunk query description.
     Returned by get cluster health state chunks query as part of the parent
     application hierarchy.
-    .
 
     :param items: The list of partition health state chunks that respect the
      input filters in the chunk query.
@@ -28,6 +27,6 @@ class PartitionHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[PartitionHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(PartitionHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

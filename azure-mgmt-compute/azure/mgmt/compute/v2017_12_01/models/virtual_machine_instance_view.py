@@ -21,6 +21,13 @@ class VirtualMachineInstanceView(Model):
     :param platform_fault_domain: Specifies the fault domain of the virtual
      machine.
     :type platform_fault_domain: int
+    :param computer_name: The computer name assigned to the virtual machine.
+    :type computer_name: str
+    :param os_name: The Operating System running on the virtual machine.
+    :type os_name: str
+    :param os_version: The version of Operating System running on the virtual
+     machine.
+    :type os_version: str
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
@@ -50,6 +57,9 @@ class VirtualMachineInstanceView(Model):
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
+        'computer_name': {'key': 'computerName', 'type': 'str'},
+        'os_name': {'key': 'osName', 'type': 'str'},
+        'os_version': {'key': 'osVersion', 'type': 'str'},
         'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
         'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
         'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
@@ -59,14 +69,17 @@ class VirtualMachineInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
-        super(VirtualMachineInstanceView, self).__init__()
-        self.platform_update_domain = platform_update_domain
-        self.platform_fault_domain = platform_fault_domain
-        self.rdp_thumb_print = rdp_thumb_print
-        self.vm_agent = vm_agent
-        self.maintenance_redeploy_status = maintenance_redeploy_status
-        self.disks = disks
-        self.extensions = extensions
-        self.boot_diagnostics = boot_diagnostics
-        self.statuses = statuses
+    def __init__(self, **kwargs):
+        super(VirtualMachineInstanceView, self).__init__(**kwargs)
+        self.platform_update_domain = kwargs.get('platform_update_domain', None)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
+        self.computer_name = kwargs.get('computer_name', None)
+        self.os_name = kwargs.get('os_name', None)
+        self.os_version = kwargs.get('os_version', None)
+        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
+        self.vm_agent = kwargs.get('vm_agent', None)
+        self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
+        self.disks = kwargs.get('disks', None)
+        self.extensions = kwargs.get('extensions', None)
+        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
+        self.statuses = kwargs.get('statuses', None)

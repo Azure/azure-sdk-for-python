@@ -61,14 +61,14 @@ class ApplicationGatewayProbe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayProbe, self).__init__(id=id)
-        self.protocol = protocol
-        self.host = host
-        self.path = path
-        self.interval = interval
-        self.timeout = timeout
-        self.unhealthy_threshold = unhealthy_threshold
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayProbe, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.host = kwargs.get('host', None)
+        self.path = kwargs.get('path', None)
+        self.interval = kwargs.get('interval', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.unhealthy_threshold = kwargs.get('unhealthy_threshold', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

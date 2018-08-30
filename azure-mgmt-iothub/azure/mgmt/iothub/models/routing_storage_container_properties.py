@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class RoutingStorageContainerProperties(Model):
     """The properties related to a storage container endpoint.
 
-    :param connection_string: The connection string of the storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_string: Required. The connection string of the storage
+     account.
     :type connection_string: str
-    :param name: The name that identifies this endpoint. The name can only
-     include alphanumeric characters, periods, underscores, hyphens and has a
-     maximum length of 64 characters. The following names are reserved:
-     events, operationsMonitoringEvents, fileNotifications, $default. Endpoint
-     names must be unique across endpoint types.
+    :param name: Required. The name that identifies this endpoint. The name
+     can only include alphanumeric characters, periods, underscores, hyphens
+     and has a maximum length of 64 characters. The following names are
+     reserved:  events, operationsMonitoringEvents, fileNotifications,
+     $default. Endpoint names must be unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the storage
      account.
@@ -29,8 +32,8 @@ class RoutingStorageContainerProperties(Model):
     :param resource_group: The name of the resource group of the storage
      account.
     :type resource_group: str
-    :param container_name: The name of storage container in the storage
-     account.
+    :param container_name: Required. The name of storage container in the
+     storage account.
     :type container_name: str
     :param file_name_format: File name format for the blob. Default format is
      {iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}. All parameters are
@@ -69,13 +72,14 @@ class RoutingStorageContainerProperties(Model):
         'encoding': {'key': 'encoding', 'type': 'str'},
     }
 
-    def __init__(self, connection_string, name, container_name, subscription_id=None, resource_group=None, file_name_format=None, batch_frequency_in_seconds=None, max_chunk_size_in_bytes=None, encoding=None):
-        self.connection_string = connection_string
-        self.name = name
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
-        self.container_name = container_name
-        self.file_name_format = file_name_format
-        self.batch_frequency_in_seconds = batch_frequency_in_seconds
-        self.max_chunk_size_in_bytes = max_chunk_size_in_bytes
-        self.encoding = encoding
+    def __init__(self, **kwargs):
+        super(RoutingStorageContainerProperties, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.name = kwargs.get('name', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group = kwargs.get('resource_group', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.file_name_format = kwargs.get('file_name_format', None)
+        self.batch_frequency_in_seconds = kwargs.get('batch_frequency_in_seconds', None)
+        self.max_chunk_size_in_bytes = kwargs.get('max_chunk_size_in_bytes', None)
+        self.encoding = kwargs.get('encoding', None)

@@ -42,9 +42,9 @@ class VpnClientParameters(Model):
         'client_root_certificates': {'key': 'clientRootCertificates', 'type': '[str]'},
     }
 
-    def __init__(self, processor_architecture=None, authentication_method=None, radius_server_auth_certificate=None, client_root_certificates=None):
-        super(VpnClientParameters, self).__init__()
-        self.processor_architecture = processor_architecture
-        self.authentication_method = authentication_method
-        self.radius_server_auth_certificate = radius_server_auth_certificate
-        self.client_root_certificates = client_root_certificates
+    def __init__(self, **kwargs):
+        super(VpnClientParameters, self).__init__(**kwargs)
+        self.processor_architecture = kwargs.get('processor_architecture', None)
+        self.authentication_method = kwargs.get('authentication_method', None)
+        self.radius_server_auth_certificate = kwargs.get('radius_server_auth_certificate', None)
+        self.client_root_certificates = kwargs.get('client_root_certificates', None)

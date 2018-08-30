@@ -22,40 +22,15 @@ class ComputeNode(Model):
     :type id: str
     :param url: The URL of the compute node.
     :type url: str
-    :param state: The current state of the compute node. Values are:
-     idle - The node is not currently running a task.
-     rebooting - The node is rebooting.
-     reimaging - The node is reimaging.
-     running - The node is running one or more tasks (other than a start task).
-     unusable - The node cannot be used for task execution due to errors.
-     creating - The Batch service has obtained the underlying virtual machine
-     from Azure Compute, but it has not yet started to join the pool.
-     starting - the Batch service is starting on the underlying virtual
-     machine.
-     waitingforstarttask - The start task has started running on the compute
-     node, but waitForSuccess is set and the start task has not yet completed.
-     starttaskfailed - The start task has failed on the compute node (and
-     exhausted all retries), and waitForSuccess is set. The node is not usable
-     for running tasks.
-     unknown - The Batch service has lost contact with the node, and does not
-     know its true state.
-     leavingpool - The node is leaving the pool, either because the user
-     explicitly removed it or because the pool is resizing or autoscaling down.
-     offline - The node is not currently running a task, and scheduling of new
-     tasks to the node is disabled.
-     preempted - The low-priority node has been preempted. Tasks which were
-     running on the node when it was pre-empted will be rescheduled when
-     another node becomes available. Possible values include: 'idle',
-     'rebooting', 'reimaging', 'running', 'unusable', 'creating', 'starting',
-     'waitingForStartTask', 'startTaskFailed', 'unknown', 'leavingPool',
-     'offline', 'preempted'
+    :param state: The current state of the compute node. The low-priority node
+     has been preempted. Tasks which were running on the node when it was
+     pre-empted will be rescheduled when another node becomes available.
+     Possible values include: 'idle', 'rebooting', 'reimaging', 'running',
+     'unusable', 'creating', 'starting', 'waitingForStartTask',
+     'startTaskFailed', 'unknown', 'leavingPool', 'offline', 'preempted'
     :type state: str or ~azure.batch.models.ComputeNodeState
     :param scheduling_state: Whether the compute node is available for task
-     scheduling. Values are:
-     enabled - Tasks can be scheduled on the node.
-     disabled - No new tasks will be scheduled on the node. Tasks already
-     running on the node may still run to completion. All nodes start with
-     scheduling enabled. Possible values include: 'enabled', 'disabled'
+     scheduling. Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or ~azure.batch.models.SchedulingState
     :param state_transition_time: The time at which the compute node entered
      its current state.
@@ -78,19 +53,9 @@ class ComputeNode(Model):
      task is scheduled, then the task will be scheduled elsewhere.
     :type affinity_id: str
     :param vm_size: The size of the virtual machine hosting the compute node.
-     For information about available sizes of virtual machines for Cloud
-     Services pools (pools created with cloudServiceConfiguration), see Sizes
-     for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
-     A2V2. For information about available VM sizes for pools using images from
-     the Virtual Machines Marketplace (pools created with
-     virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
-     or Sizes for Virtual Machines (Windows)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/).
-     Batch supports all Azure VM sizes except STANDARD_A0 and those with
-     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
+     For information about available sizes of virtual machines in pools, see
+     Choose a VM size for compute nodes in an Azure Batch pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param total_tasks_run: The total number of job tasks completed on the
      compute node. This includes Job Manager tasks and normal tasks, but not
@@ -136,6 +101,9 @@ class ComputeNode(Model):
      node.
     :type endpoint_configuration:
      ~azure.batch.models.ComputeNodeEndpointConfiguration
+    :param node_agent_info: Information about the node agent version and the
+     time the node upgraded to a new version.
+    :type node_agent_info: ~azure.batch.models.NodeAgentInformation
     """
 
     _attribute_map = {
@@ -159,26 +127,29 @@ class ComputeNode(Model):
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
         'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
+        'node_agent_info': {'key': 'nodeAgentInfo', 'type': 'NodeAgentInformation'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None, endpoint_configuration=None):
-        self.id = id
-        self.url = url
-        self.state = state
-        self.scheduling_state = scheduling_state
-        self.state_transition_time = state_transition_time
-        self.last_boot_time = last_boot_time
-        self.allocation_time = allocation_time
-        self.ip_address = ip_address
-        self.affinity_id = affinity_id
-        self.vm_size = vm_size
-        self.total_tasks_run = total_tasks_run
-        self.running_tasks_count = running_tasks_count
-        self.total_tasks_succeeded = total_tasks_succeeded
-        self.recent_tasks = recent_tasks
-        self.start_task = start_task
-        self.start_task_info = start_task_info
-        self.certificate_references = certificate_references
-        self.errors = errors
-        self.is_dedicated = is_dedicated
-        self.endpoint_configuration = endpoint_configuration
+    def __init__(self, **kwargs):
+        super(ComputeNode, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.url = kwargs.get('url', None)
+        self.state = kwargs.get('state', None)
+        self.scheduling_state = kwargs.get('scheduling_state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.last_boot_time = kwargs.get('last_boot_time', None)
+        self.allocation_time = kwargs.get('allocation_time', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.affinity_id = kwargs.get('affinity_id', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.total_tasks_run = kwargs.get('total_tasks_run', None)
+        self.running_tasks_count = kwargs.get('running_tasks_count', None)
+        self.total_tasks_succeeded = kwargs.get('total_tasks_succeeded', None)
+        self.recent_tasks = kwargs.get('recent_tasks', None)
+        self.start_task = kwargs.get('start_task', None)
+        self.start_task_info = kwargs.get('start_task_info', None)
+        self.certificate_references = kwargs.get('certificate_references', None)
+        self.errors = kwargs.get('errors', None)
+        self.is_dedicated = kwargs.get('is_dedicated', None)
+        self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
+        self.node_agent_info = kwargs.get('node_agent_info', None)

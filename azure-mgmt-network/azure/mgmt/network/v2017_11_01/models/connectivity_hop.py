@@ -51,8 +51,8 @@ class ConnectivityHop(Model):
         'issues': {'key': 'issues', 'type': '[ConnectivityIssue]'},
     }
 
-    def __init__(self):
-        super(ConnectivityHop, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConnectivityHop, self).__init__(**kwargs)
         self.type = None
         self.id = None
         self.address = None

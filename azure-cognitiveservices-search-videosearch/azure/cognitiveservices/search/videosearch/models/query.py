@@ -18,8 +18,10 @@ class Query(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param text: The query string. Use this string as the query term in a new
-     search request.
+    All required parameters must be populated in order to send to Azure.
+
+    :param text: Required. The query string. Use this string as the query term
+     in a new search request.
     :type text: str
     :ivar display_text: The display version of the query term. This version of
      the query term may contain special characters that highlight the search
@@ -52,9 +54,9 @@ class Query(Model):
         'thumbnail': {'key': 'thumbnail', 'type': 'ImageObject'},
     }
 
-    def __init__(self, text):
-        super(Query, self).__init__()
-        self.text = text
+    def __init__(self, **kwargs):
+        super(Query, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
         self.display_text = None
         self.web_search_url = None
         self.search_link = None

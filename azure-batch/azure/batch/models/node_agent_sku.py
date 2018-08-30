@@ -38,7 +38,8 @@ class NodeAgentSku(Model):
         'os_type': {'key': 'osType', 'type': 'OSType'},
     }
 
-    def __init__(self, id=None, verified_image_references=None, os_type=None):
-        self.id = id
-        self.verified_image_references = verified_image_references
-        self.os_type = os_type
+    def __init__(self, **kwargs):
+        super(NodeAgentSku, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.verified_image_references = kwargs.get('verified_image_references', None)
+        self.os_type = kwargs.get('os_type', None)

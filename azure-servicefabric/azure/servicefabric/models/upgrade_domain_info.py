@@ -27,7 +27,7 @@ class UpgradeDomainInfo(Model):
         'state': {'key': 'State', 'type': 'str'},
     }
 
-    def __init__(self, name=None, state=None):
-        super(UpgradeDomainInfo, self).__init__()
-        self.name = name
-        self.state = state
+    def __init__(self, **kwargs):
+        super(UpgradeDomainInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.state = kwargs.get('state', None)

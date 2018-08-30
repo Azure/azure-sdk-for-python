@@ -16,7 +16,10 @@ class UserAccountSettings(Model):
     """Settings for user account that gets created on each on the nodes of a
     cluster.
 
-    :param admin_user_name: Specifies the name of the administrator account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param admin_user_name: Required. Specifies the name of the administrator
+     account.
     :type admin_user_name: str
     :param admin_user_ssh_public_key: SSH public keys used to authenticate
      with linux based VMs. This does not get returned in a GET response body.
@@ -36,7 +39,8 @@ class UserAccountSettings(Model):
         'admin_user_password': {'key': 'adminUserPassword', 'type': 'str'},
     }
 
-    def __init__(self, admin_user_name, admin_user_ssh_public_key=None, admin_user_password=None):
-        self.admin_user_name = admin_user_name
-        self.admin_user_ssh_public_key = admin_user_ssh_public_key
-        self.admin_user_password = admin_user_password
+    def __init__(self, **kwargs):
+        super(UserAccountSettings, self).__init__(**kwargs)
+        self.admin_user_name = kwargs.get('admin_user_name', None)
+        self.admin_user_ssh_public_key = kwargs.get('admin_user_ssh_public_key', None)
+        self.admin_user_password = kwargs.get('admin_user_password', None)

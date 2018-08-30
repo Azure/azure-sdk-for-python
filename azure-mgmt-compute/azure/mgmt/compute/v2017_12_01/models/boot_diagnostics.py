@@ -32,7 +32,7 @@ class BootDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None, storage_uri=None):
-        super(BootDiagnostics, self).__init__()
-        self.enabled = enabled
-        self.storage_uri = storage_uri
+    def __init__(self, **kwargs):
+        super(BootDiagnostics, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.storage_uri = kwargs.get('storage_uri', None)

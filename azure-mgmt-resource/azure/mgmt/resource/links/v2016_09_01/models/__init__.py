@@ -9,9 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_link_filter import ResourceLinkFilter
-from .resource_link_properties import ResourceLinkProperties
-from .resource_link import ResourceLink
+try:
+    from .resource_link_filter_py3 import ResourceLinkFilter
+    from .resource_link_properties_py3 import ResourceLinkProperties
+    from .resource_link_py3 import ResourceLink
+except (SyntaxError, ImportError):
+    from .resource_link_filter import ResourceLinkFilter
+    from .resource_link_properties import ResourceLinkProperties
+    from .resource_link import ResourceLink
 from .resource_link_paged import ResourceLinkPaged
 from .management_link_client_enums import (
     Filter,

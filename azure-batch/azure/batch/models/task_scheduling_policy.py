@@ -15,13 +15,10 @@ from msrest.serialization import Model
 class TaskSchedulingPolicy(Model):
     """Specifies how tasks should be distributed across compute nodes.
 
-    :param node_fill_type: How tasks are distributed across compute nodes in a
-     pool. Values are:
-     pack - As many tasks as possible (maxTasksPerNode) should be assigned to
-     each node in the pool before any tasks are assigned to the next node in
-     the pool.
-     spread - Tasks should be assigned evenly across all nodes in the pool.
-     Possible values include: 'spread', 'pack'
+    All required parameters must be populated in order to send to Azure.
+
+    :param node_fill_type: Required. How tasks are distributed across compute
+     nodes in a pool. Possible values include: 'spread', 'pack'
     :type node_fill_type: str or ~azure.batch.models.ComputeNodeFillType
     """
 
@@ -33,5 +30,6 @@ class TaskSchedulingPolicy(Model):
         'node_fill_type': {'key': 'nodeFillType', 'type': 'ComputeNodeFillType'},
     }
 
-    def __init__(self, node_fill_type):
-        self.node_fill_type = node_fill_type
+    def __init__(self, **kwargs):
+        super(TaskSchedulingPolicy, self).__init__(**kwargs)
+        self.node_fill_type = kwargs.get('node_fill_type', None)

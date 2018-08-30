@@ -18,7 +18,9 @@ class PartnerInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource identifier of the partner server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource identifier of the partner server.
     :type id: str
     :ivar location: Geo location of the partner server.
     :vartype location: str
@@ -40,8 +42,8 @@ class PartnerInfo(Model):
         'replication_role': {'key': 'replicationRole', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(PartnerInfo, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(PartnerInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.location = None
         self.replication_role = None
