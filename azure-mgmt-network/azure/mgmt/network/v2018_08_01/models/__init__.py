@@ -67,6 +67,8 @@ try:
     from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
     from .resource_py3 import Resource
     from .tags_object_py3 import TagsObject
+    from .available_delegation_py3 import AvailableDelegation
+    from .available_delegations_result_py3 import AvailableDelegationsResult
     from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
@@ -297,6 +299,8 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
     from .resource import Resource
     from .tags_object import TagsObject
+    from .available_delegation import AvailableDelegation
+    from .available_delegations_result import AvailableDelegationsResult
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
@@ -659,6 +663,8 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
     'TagsObject',
+    'AvailableDelegation',
+    'AvailableDelegationsResult',
     'AzureFirewallIPConfiguration',
     'AzureFirewallRCAction',
     'AzureFirewallApplicationRuleProtocol',

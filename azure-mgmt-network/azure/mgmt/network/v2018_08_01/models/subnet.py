@@ -47,6 +47,9 @@ class Subnet(SubResource):
     :param delegations: Gets an array of references to the delegations on the
      subnet.
     :type delegations: list[~azure.mgmt.network.v2018_08_01.models.Delegation]
+    :ivar purpose: A read-only string identifying the intention of use for
+     this subnet based on delegations and other user-defined properties.
+    :vartype purpose: str
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -59,6 +62,7 @@ class Subnet(SubResource):
 
     _validation = {
         'ip_configurations': {'readonly': True},
+        'purpose': {'readonly': True},
     }
 
     _attribute_map = {
@@ -72,6 +76,7 @@ class Subnet(SubResource):
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
         'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
+        'purpose': {'key': 'properties.purpose', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -88,6 +93,7 @@ class Subnet(SubResource):
         self.ip_configurations = None
         self.resource_navigation_links = kwargs.get('resource_navigation_links', None)
         self.delegations = kwargs.get('delegations', None)
+        self.purpose = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
