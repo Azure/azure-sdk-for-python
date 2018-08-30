@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class AvailableDelegationsResult(Model):
     """AvailableDelegationsResult.
 
-    :param delegations: An array of available delegations.
-    :type delegations:
+    :param value: An array of available delegations.
+    :type value:
      list[~azure.mgmt.network.v2018_08_01.models.AvailableDelegation]
     """
 
     _attribute_map = {
-        'delegations': {'key': 'delegations', 'type': '[AvailableDelegation]'},
+        'value': {'key': 'value', 'type': '[AvailableDelegation]'},
     }
 
     def __init__(self, **kwargs):
         super(AvailableDelegationsResult, self).__init__(**kwargs)
-        self.delegations = kwargs.get('delegations', None)
+        self.value = kwargs.get('value', None)
