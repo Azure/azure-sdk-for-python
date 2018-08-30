@@ -42,7 +42,7 @@ class TrackingEvent(Model):
     }
 
     _attribute_map = {
-        'event_level': {'key': 'eventLevel', 'type': 'str'},
+        'event_level': {'key': 'eventLevel', 'type': 'EventLevel'},
         'event_time': {'key': 'eventTime', 'type': 'iso-8601'},
         'record_type': {'key': 'recordType', 'type': 'str'},
         'error': {'key': 'error', 'type': 'TrackingEventErrorInfo'},

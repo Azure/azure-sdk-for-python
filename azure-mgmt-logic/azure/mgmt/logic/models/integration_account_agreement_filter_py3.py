@@ -19,7 +19,7 @@ class IntegrationAccountAgreementFilter(Model):
 
     :param agreement_type: Required. The agreement type of integration account
      agreement. Possible values include: 'NotSpecified', 'AS2', 'X12',
-     'Edifact'
+     'EDIFACT'
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     """
 

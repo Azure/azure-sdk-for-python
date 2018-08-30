@@ -37,7 +37,7 @@ class IntegrationAccountAgreement(Resource):
     :param metadata: The metadata.
     :type metadata: object
     :param agreement_type: Required. The agreement type. Possible values
-     include: 'NotSpecified', 'AS2', 'X12', 'Edifact'
+     include: 'NotSpecified', 'AS2', 'X12', 'EDIFACT'
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     :param host_partner: Required. The integration account partner that is set
      as host partner for this agreement.

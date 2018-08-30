@@ -181,7 +181,7 @@ class AgreementType(str, Enum):
     not_specified = "NotSpecified"
     as2 = "AS2"
     x12 = "X12"
-    edifact = "Edifact"
+    edifact = "EDIFACT"
 
 
 class HashingAlgorithm(str, Enum):
@@ -332,10 +332,3 @@ class TrackingRecordType(str, Enum):
     edifact_interchange_acknowledgment = "EdifactInterchangeAcknowledgment"
     edifact_functional_group_acknowledgment = "EdifactFunctionalGroupAcknowledgment"
     edifact_transaction_set_acknowledgment = "EdifactTransactionSetAcknowledgment"
-
-
-class AccessKeyType(str, Enum):
-
-    not_specified = "NotSpecified"
-    primary = "Primary"
-    secondary = "Secondary"
