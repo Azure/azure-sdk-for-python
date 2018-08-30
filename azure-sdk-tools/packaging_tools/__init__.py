@@ -58,7 +58,23 @@ def build_packaging(package_name: str, output_folder: str, build_conf: bool = Fa
         template = env.get_template(template_name)
         result = template.render(**conf)
 
-        with open(Path(output_folder) / package_name / template_name, "w") as fd:
+        # __init__.py is a weird one
+        if template_name == "__init__.py":
+            split_package_name = package_name.split("-")
+            for i in range(len(split_package_name)):
+                init_path = Path(output_folder).joinpath(
+                    package_name,
+                    *split_package_name[:i+1],
+                    template_name
+                )
+                if init_path.exists():
+                    break
+                with open(init_path, "w") as fd:
+                    fd.write(result)
+
+            continue
+
+        with open(future_filepath, "w") as fd:
             fd.write(result)
 
     _LOGGER.info("Template done %s", package_name)
