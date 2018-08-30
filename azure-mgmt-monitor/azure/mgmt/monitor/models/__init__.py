@@ -62,6 +62,7 @@ try:
     from .voice_receiver_py3 import VoiceReceiver
     from .logic_app_receiver_py3 import LogicAppReceiver
     from .azure_function_receiver_py3 import AzureFunctionReceiver
+    from .arm_role_receiver_py3 import ArmRoleReceiver
     from .action_group_resource_py3 import ActionGroupResource
     from .enable_request_py3 import EnableRequest
     from .action_group_patch_body_py3 import ActionGroupPatchBody
@@ -159,6 +160,7 @@ except (SyntaxError, ImportError):
     from .voice_receiver import VoiceReceiver
     from .logic_app_receiver import LogicAppReceiver
     from .azure_function_receiver import AzureFunctionReceiver
+    from .arm_role_receiver import ArmRoleReceiver
     from .action_group_resource import ActionGroupResource
     from .enable_request import EnableRequest
     from .action_group_patch_body import ActionGroupPatchBody
@@ -291,6 +293,7 @@ __all__ = [
     'VoiceReceiver',
     'LogicAppReceiver',
     'AzureFunctionReceiver',
+    'ArmRoleReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
