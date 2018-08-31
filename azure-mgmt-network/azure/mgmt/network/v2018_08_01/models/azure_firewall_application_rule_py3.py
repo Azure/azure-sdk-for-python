@@ -26,6 +26,8 @@ class AzureFirewallApplicationRule(Model):
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallApplicationRuleProtocol]
     :param target_urls: List of URLs for this rule.
     :type target_urls: list[str]
+    :param fqdn_tags: List of FQDN Tags for this rule.
+    :type fqdn_tags: list[str]
     """
 
     _attribute_map = {
@@ -34,12 +36,14 @@ class AzureFirewallApplicationRule(Model):
         'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
         'protocols': {'key': 'protocols', 'type': '[AzureFirewallApplicationRuleProtocol]'},
         'target_urls': {'key': 'targetUrls', 'type': '[str]'},
+        'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, source_addresses=None, protocols=None, target_urls=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, description: str=None, source_addresses=None, protocols=None, target_urls=None, fqdn_tags=None, **kwargs) -> None:
         super(AzureFirewallApplicationRule, self).__init__(**kwargs)
         self.name = name
         self.description = description
         self.source_addresses = source_addresses
         self.protocols = protocols
         self.target_urls = target_urls
+        self.fqdn_tags = fqdn_tags

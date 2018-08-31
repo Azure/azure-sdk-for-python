@@ -17,6 +17,9 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
+    :param virtual_network_taps: The reference to Virtual Network Taps.
+    :type virtual_network_taps:
+     list[~azure.mgmt.network.v2018_08_01.models.VirtualNetworkTap]
     :param application_gateway_backend_address_pools: The reference of
      ApplicationGatewayBackendAddressPool resource.
     :type application_gateway_backend_address_pools:
@@ -68,6 +71,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'virtual_network_taps': {'key': 'properties.virtualNetworkTaps', 'type': '[VirtualNetworkTap]'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
         'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
@@ -83,8 +87,9 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address: str=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, primary: bool=None, public_ip_address=None, application_security_groups=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, virtual_network_taps=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address: str=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, primary: bool=None, public_ip_address=None, application_security_groups=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
+        self.virtual_network_taps = virtual_network_taps
         self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
