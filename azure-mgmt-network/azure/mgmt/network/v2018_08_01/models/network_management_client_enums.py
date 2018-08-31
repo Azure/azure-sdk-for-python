@@ -202,6 +202,12 @@ class AzureFirewallApplicationRuleProtocolType(str, Enum):
     https = "Https"
 
 
+class AzureFirewallNatRCActionType(str, Enum):
+
+    snat = "Snat"
+    dnat = "Dnat"
+
+
 class AzureFirewallNetworkRuleProtocol(str, Enum):
 
     tcp = "TCP"
