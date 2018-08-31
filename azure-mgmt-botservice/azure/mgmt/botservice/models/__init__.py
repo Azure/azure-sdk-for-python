@@ -53,8 +53,8 @@ try:
     from .operation_entity_py3 import OperationEntity
     from .check_name_availability_request_body_py3 import CheckNameAvailabilityRequestBody
     from .check_name_availability_response_body_py3 import CheckNameAvailabilityResponseBody
-    from .enterprise_channel_check_name_availability_request_body_py3 import EnterpriseChannelCheckNameAvailabilityRequestBody
-    from .enterprise_channel_check_name_availability_response_body_py3 import EnterpriseChannelCheckNameAvailabilityResponseBody
+    from .enterprise_channel_check_name_availability_request_py3 import EnterpriseChannelCheckNameAvailabilityRequest
+    from .enterprise_channel_check_name_availability_response_py3 import EnterpriseChannelCheckNameAvailabilityResponse
     from .enterprise_channel_node_py3 import EnterpriseChannelNode
     from .enterprise_channel_properties_py3 import EnterpriseChannelProperties
     from .enterprise_channel_py3 import EnterpriseChannel
@@ -102,8 +102,8 @@ except (SyntaxError, ImportError):
     from .operation_entity import OperationEntity
     from .check_name_availability_request_body import CheckNameAvailabilityRequestBody
     from .check_name_availability_response_body import CheckNameAvailabilityResponseBody
-    from .enterprise_channel_check_name_availability_request_body import EnterpriseChannelCheckNameAvailabilityRequestBody
-    from .enterprise_channel_check_name_availability_response_body import EnterpriseChannelCheckNameAvailabilityResponseBody
+    from .enterprise_channel_check_name_availability_request import EnterpriseChannelCheckNameAvailabilityRequest
+    from .enterprise_channel_check_name_availability_response import EnterpriseChannelCheckNameAvailabilityResponse
     from .enterprise_channel_node import EnterpriseChannelNode
     from .enterprise_channel_properties import EnterpriseChannelProperties
     from .enterprise_channel import EnterpriseChannel
@@ -164,8 +164,8 @@ __all__ = [
     'OperationEntity',
     'CheckNameAvailabilityRequestBody',
     'CheckNameAvailabilityResponseBody',
-    'EnterpriseChannelCheckNameAvailabilityRequestBody',
-    'EnterpriseChannelCheckNameAvailabilityResponseBody',
+    'EnterpriseChannelCheckNameAvailabilityRequest',
+    'EnterpriseChannelCheckNameAvailabilityResponse',
     'EnterpriseChannelNode',
     'EnterpriseChannelProperties',
     'EnterpriseChannel',

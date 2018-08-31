@@ -42,7 +42,7 @@ class EnterpriseChannelsOperations(object):
             self, name=None, custom_headers=None, raw=False, **operation_config):
         """Check whether an Enterprise Channel name is available.
 
-        :param name: the name of the Enterprise Channel for which availability
+        :param name: The name of the Enterprise Channel for which availability
          needs to be checked.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
@@ -50,15 +50,15 @@ class EnterpriseChannelsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EnterpriseChannelCheckNameAvailabilityResponseBody or
+        :return: EnterpriseChannelCheckNameAvailabilityResponse or
          ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.botservice.models.EnterpriseChannelCheckNameAvailabilityResponseBody
+         ~azure.mgmt.botservice.models.EnterpriseChannelCheckNameAvailabilityResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
-        parameters = models.EnterpriseChannelCheckNameAvailabilityRequestBody(name=name)
+        parameters = models.EnterpriseChannelCheckNameAvailabilityRequest(name=name)
 
         # Construct URL
         url = self.get_check_name_availability.metadata['url']
@@ -79,7 +79,7 @@ class EnterpriseChannelsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'EnterpriseChannelCheckNameAvailabilityRequestBody')
+        body_content = self._serialize.body(parameters, 'EnterpriseChannelCheckNameAvailabilityRequest')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters, body_content)
@@ -91,7 +91,7 @@ class EnterpriseChannelsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EnterpriseChannelCheckNameAvailabilityResponseBody', response)
+            deserialized = self._deserialize('EnterpriseChannelCheckNameAvailabilityResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -344,7 +344,7 @@ class EnterpriseChannelsOperations(object):
         :param etag: Entity Tag
         :type etag: str
         :param properties: The set of properties specific to an Enterprise
-         Channel resource
+         Channel resource.
         :type properties:
          ~azure.mgmt.botservice.models.EnterpriseChannelProperties
         :param dict custom_headers: headers that will be added to the request

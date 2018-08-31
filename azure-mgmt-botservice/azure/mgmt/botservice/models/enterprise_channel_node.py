@@ -28,12 +28,12 @@ class EnterpriseChannelNode(Model):
      'StartFailed', 'Stopped', 'Stopping', 'StopFailed', 'Deleting',
      'DeleteFailed'
     :type state: str or ~azure.mgmt.botservice.models.State
-    :param name: Required. The name of the Enterprise Channel Node
+    :param name: Required. The name of the Enterprise Channel Node.
     :type name: str
-    :param azure_sku: Required. The sku of the Enterprise Channel Node
+    :param azure_sku: Required. The sku of the Enterprise Channel Node.
     :type azure_sku: str
     :param azure_location: Required. The location of the Enterprise Channel
-     Node
+     Node.
     :type azure_location: str
     """
 

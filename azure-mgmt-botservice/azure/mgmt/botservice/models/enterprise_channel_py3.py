@@ -36,7 +36,7 @@ class EnterpriseChannel(Resource):
     :param etag: Entity Tag
     :type etag: str
     :param properties: The set of properties specific to an Enterprise Channel
-     resource
+     resource.
     :type properties:
      ~azure.mgmt.botservice.models.EnterpriseChannelProperties
     """

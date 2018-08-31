@@ -12,11 +12,11 @@
 from msrest.serialization import Model
 
 
-class EnterpriseChannelCheckNameAvailabilityRequestBody(Model):
-    """The request body for a request to Bot Service Management to check
-    availability of an Enterprise Channel name.
+class EnterpriseChannelCheckNameAvailabilityRequest(Model):
+    """A request to Bot Service Management to check availability of an Enterprise
+    Channel name.
 
-    :param name: the name of the Enterprise Channel for which availability
+    :param name: The name of the Enterprise Channel for which availability
      needs to be checked.
     :type name: str
     """
@@ -25,6 +25,6 @@ class EnterpriseChannelCheckNameAvailabilityRequestBody(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
-        super(EnterpriseChannelCheckNameAvailabilityRequestBody, self).__init__(**kwargs)
-        self.name = name
+    def __init__(self, **kwargs):
+        super(EnterpriseChannelCheckNameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

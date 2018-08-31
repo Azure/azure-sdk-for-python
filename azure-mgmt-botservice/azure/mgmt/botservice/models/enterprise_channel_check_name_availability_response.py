@@ -12,14 +12,14 @@
 from msrest.serialization import Model
 
 
-class EnterpriseChannelCheckNameAvailabilityResponseBody(Model):
-    """The response body returned for a request to Bot Service Management to check
-    availability of an Enterprise Channel name.
+class EnterpriseChannelCheckNameAvailabilityResponse(Model):
+    """A request to Bot Service Management to check availability of an Enterprise
+    Channel name.
 
-    :param valid: indicates if the Enterprise Channel name is valid.
+    :param valid: Indicates if the Enterprise Channel name is valid.
     :type valid: bool
-    :param message: additional message from the bot management api showing why
-     a bot name is not available
+    :param message: Additional information about why a bot name is not
+     available.
     :type message: str
     """
 
@@ -29,6 +29,6 @@ class EnterpriseChannelCheckNameAvailabilityResponseBody(Model):
     }
 
     def __init__(self, **kwargs):
-        super(EnterpriseChannelCheckNameAvailabilityResponseBody, self).__init__(**kwargs)
+        super(EnterpriseChannelCheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.valid = kwargs.get('valid', None)
         self.message = kwargs.get('message', None)
