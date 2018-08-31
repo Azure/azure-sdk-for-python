@@ -20,7 +20,6 @@ try:
     from .application_update_parameters_py3 import ApplicationUpdateParameters
     from .app_role_py3 import AppRole
     from .application_py3 import Application
-    from .application_list_result_py3 import ApplicationListResult
     from .add_owner_parameters_py3 import AddOwnerParameters
     from .application_add_owner_parameters_py3 import ApplicationAddOwnerParameters
     from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
@@ -55,7 +54,6 @@ except (SyntaxError, ImportError):
     from .application_update_parameters import ApplicationUpdateParameters
     from .app_role import AppRole
     from .application import Application
-    from .application_list_result import ApplicationListResult
     from .add_owner_parameters import AddOwnerParameters
     from .application_add_owner_parameters import ApplicationAddOwnerParameters
     from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
@@ -104,7 +102,6 @@ __all__ = [
     'ApplicationUpdateParameters',
     'AppRole',
     'Application',
-    'ApplicationListResult',
     'AddOwnerParameters',
     'ApplicationAddOwnerParameters',
     'KeyCredentialsUpdateParameters',
