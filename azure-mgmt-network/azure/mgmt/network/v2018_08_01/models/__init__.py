@@ -488,7 +488,6 @@ from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewayS
 from .application_security_group_paged import ApplicationSecurityGroupPaged
 from .azure_firewall_paged import AzureFirewallPaged
 from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
-from .interface_endpoint_paged import InterfaceEndpointPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
 from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
@@ -497,6 +496,7 @@ from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
 from .express_route_cross_connection_peering_paged import ExpressRouteCrossConnectionPeeringPaged
+from .interface_endpoint_paged import InterfaceEndpointPaged
 from .load_balancer_paged import LoadBalancerPaged
 from .backend_address_pool_paged import BackendAddressPoolPaged
 from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
@@ -862,7 +862,6 @@ __all__ = [
     'ApplicationSecurityGroupPaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
-    'InterfaceEndpointPaged',
     'DdosProtectionPlanPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
@@ -871,6 +870,7 @@ __all__ = [
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
     'ExpressRouteCrossConnectionPeeringPaged',
+    'InterfaceEndpointPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',
