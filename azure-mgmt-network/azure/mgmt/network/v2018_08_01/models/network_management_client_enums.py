@@ -12,23 +12,10 @@
 from enum import Enum
 
 
-class TransportProtocol(str, Enum):
-
-    udp = "Udp"
-    tcp = "Tcp"
-    all = "All"
-
-
 class IPAllocationMethod(str, Enum):
 
     static = "Static"
     dynamic = "Dynamic"
-
-
-class IPVersion(str, Enum):
-
-    ipv4 = "IPv4"
-    ipv6 = "IPv6"
 
 
 class SecurityRuleProtocol(str, Enum):
@@ -63,6 +50,19 @@ class PublicIPAddressSkuName(str, Enum):
 
     basic = "Basic"
     standard = "Standard"
+
+
+class IPVersion(str, Enum):
+
+    ipv4 = "IPv4"
+    ipv6 = "IPv6"
+
+
+class TransportProtocol(str, Enum):
+
+    udp = "Udp"
+    tcp = "Tcp"
+    all = "All"
 
 
 class ApplicationGatewayProtocol(str, Enum):
@@ -200,6 +200,12 @@ class AzureFirewallApplicationRuleProtocolType(str, Enum):
 
     http = "Http"
     https = "Https"
+
+
+class AzureFirewallNatRCActionType(str, Enum):
+
+    snat = "Snat"
+    dnat = "Dnat"
 
 
 class AzureFirewallNetworkRuleProtocol(str, Enum):
