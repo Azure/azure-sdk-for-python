@@ -116,8 +116,8 @@ from .azure_bot_service_enums import (
     SkuName,
     SkuTier,
     Kind,
-    ChannelState,
-    NodeState,
+    EnterpriseChannelState,
+    EnterpriseChannelNodeState,
     ChannelName,
 )
 
@@ -178,7 +178,7 @@ __all__ = [
     'SkuName',
     'SkuTier',
     'Kind',
-    'ChannelState',
-    'NodeState',
+    'EnterpriseChannelState',
+    'EnterpriseChannelNodeState',
     'ChannelName',
 ]
