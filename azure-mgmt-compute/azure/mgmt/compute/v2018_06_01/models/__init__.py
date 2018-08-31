@@ -153,6 +153,7 @@ try:
     from .regional_replication_status_py3 import RegionalReplicationStatus
     from .replication_status_py3 import ReplicationStatus
     from .gallery_image_version_py3 import GalleryImageVersion
+    from .target_region_py3 import TargetRegion
     from .managed_artifact_py3 import ManagedArtifact
     from .gallery_artifact_source_py3 import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base_py3 import GalleryArtifactPublishingProfileBase
@@ -301,6 +302,7 @@ except (SyntaxError, ImportError):
     from .regional_replication_status import RegionalReplicationStatus
     from .replication_status import ReplicationStatus
     from .gallery_image_version import GalleryImageVersion
+    from .target_region import TargetRegion
     from .managed_artifact import ManagedArtifact
     from .gallery_artifact_source import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base import GalleryArtifactPublishingProfileBase
@@ -344,7 +346,6 @@ from .compute_management_client_enums import (
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
     IntervalInMins,
-    ScaleTier,
     AggregatedReplicationState,
     ReplicationState,
     HostCaching,
@@ -496,6 +497,7 @@ __all__ = [
     'RegionalReplicationStatus',
     'ReplicationStatus',
     'GalleryImageVersion',
+    'TargetRegion',
     'ManagedArtifact',
     'GalleryArtifactSource',
     'GalleryArtifactPublishingProfileBase',
@@ -538,7 +540,6 @@ __all__ = [
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
     'IntervalInMins',
-    'ScaleTier',
     'AggregatedReplicationState',
     'ReplicationState',
     'HostCaching',
