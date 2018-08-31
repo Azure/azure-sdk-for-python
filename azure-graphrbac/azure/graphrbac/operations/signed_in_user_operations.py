@@ -121,8 +121,14 @@ class SignedInUserOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
-                url = next_link
+                url = '/{tenantID}/{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             # Construct headers
             header_parameters = {}
