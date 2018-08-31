@@ -32,7 +32,21 @@ class Kind(str, Enum):
     function = "function"
 
 
-class State(str, Enum):
+class ChannelState(str, Enum):
+
+    creating = "Creating"
+    create_failed = "CreateFailed"
+    started = "Started"
+    starting = "Starting"
+    start_failed = "StartFailed"
+    stopped = "Stopped"
+    stopping = "Stopping"
+    stop_failed = "StopFailed"
+    deleting = "Deleting"
+    delete_failed = "DeleteFailed"
+
+
+class NodeState(str, Enum):
 
     creating = "Creating"
     create_failed = "CreateFailed"
