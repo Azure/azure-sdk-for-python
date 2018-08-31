@@ -94,7 +94,7 @@ class DeletedApplicationsOperations(object):
         return deserialized
     restore.metadata = {'url': '/{tenantID}/deletedApplications/{objectId}/restore'}
 
-    def list_all(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets a list of deleted applications in the directory.
 
@@ -113,7 +113,7 @@ class DeletedApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_all.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -124,8 +124,14 @@ class DeletedApplicationsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
-                url = next_link
+                url = '/{tenantID}/{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             # Construct headers
             header_parameters = {}
@@ -155,7 +161,7 @@ class DeletedApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_all.metadata = {'url': '/{tenantID}/deletedApplications'}
+    list.metadata = {'url': '/{tenantID}/deletedApplications'}
 
     def hard_delete(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
