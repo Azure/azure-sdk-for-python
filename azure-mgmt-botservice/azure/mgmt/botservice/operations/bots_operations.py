@@ -484,7 +484,7 @@ class BotsOperations(object):
         body_content = self._serialize.body(parameters, 'CheckNameAvailabilityRequestBody')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
