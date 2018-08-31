@@ -38,7 +38,7 @@ class EnterpriseChannelsOperations(object):
 
         self.config = config
 
-    def get_check_name_availability(
+    def check_name_availability(
             self, name=None, custom_headers=None, raw=False, **operation_config):
         """Check whether an Enterprise Channel name is available.
 
@@ -61,7 +61,7 @@ class EnterpriseChannelsOperations(object):
         parameters = models.EnterpriseChannelCheckNameAvailabilityRequest(name=name)
 
         # Construct URL
-        url = self.get_check_name_availability.metadata['url']
+        url = self.check_name_availability.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -82,7 +82,7 @@ class EnterpriseChannelsOperations(object):
         body_content = self._serialize.body(parameters, 'EnterpriseChannelCheckNameAvailabilityRequest')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -98,7 +98,7 @@ class EnterpriseChannelsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_check_name_availability.metadata = {'url': '/providers/Microsoft.BotService/checkEnterpriseChannelNameAvailability'}
+    check_name_availability.metadata = {'url': '/providers/Microsoft.BotService/checkEnterpriseChannelNameAvailability'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
