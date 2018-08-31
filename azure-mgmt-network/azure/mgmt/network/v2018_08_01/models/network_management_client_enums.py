@@ -213,7 +213,6 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     tcp = "TCP"
     udp = "UDP"
     any = "Any"
-    icmp = "ICMP"
 
 
 class AuthorizationUseStatus(str, Enum):
