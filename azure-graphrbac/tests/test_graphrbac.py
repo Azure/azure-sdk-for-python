@@ -58,6 +58,40 @@ class GraphRbacTest(AzureMgmtTestCase):
             if group:
                 self.graphrbac_client.groups.delete(group.object_id)
 
+    def test_deleted_applications(self):
+
+        existing_deleted_applications = list(self.graphrbac_client.deleted_applications.list())
+
+        # Delete the app if already exists
+        for app in self.graphrbac_client.applications.list(filter="displayName eq 'pytest_deleted_app'"):
+            self.graphrbac_client.applications.delete(app.object_id)
+
+        # Create an app
+        app = self.graphrbac_client.applications.create({
+            'available_to_other_tenants': False,
+            'display_name': 'pytest_deleted_app',
+            'identifier_uris': ['http://pytest_deleted_app.org']
+        })
+        # Delete the app
+        self.graphrbac_client.applications.delete(app.object_id)
+
+        # I should see it now in deletedApplications
+        existing_deleted_applications = list(self.graphrbac_client.deleted_applications.list(
+            filter="displayName eq 'pytest_deleted_app'"
+        ))
+        # At least one, but if you executed this test a lot, you might see several app deleted with this name
+        assert len(existing_deleted_applications) >= 1
+        assert all(app.display_name == 'pytest_deleted_app' for app in existing_deleted_applications)
+
+        # Ho my god, most important app ever
+        restored_app = self.graphrbac_client.deleted_applications.restore(app.object_id)
+        assert restored_app.object_id == app.object_id
+
+        # You know what, no I don't care
+        self.graphrbac_client.applications.delete(app.object_id)
+
+        self.graphrbac_client.deleted_applications.hard_delete(app.object_id)
+
     def test_graphrbac_users(self):
 
         user = self.graphrbac_client.users.create(
