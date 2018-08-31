@@ -145,11 +145,30 @@ class GraphRbacTest(AzureMgmtTestCase):
         self.graphrbac_client.groups.delete(group.object_id)
 
     def test_apps_and_sp(self):
+
+        # Delete the app if already exists
+        for app in self.graphrbac_client.applications.list(filter="displayName eq 'pytest_app'"):
+            self.graphrbac_client.applications.delete(app.object_id)
+
         app = self.graphrbac_client.applications.create({
             'available_to_other_tenants': False,
             'display_name': 'pytest_app',
-            'identifier_uris': ['http://pytest_app.org']
+            'identifier_uris': ['http://pytest_app.org'],
+            'app_roles': [{
+                "allowed_member_types": ["User"],
+                "description": "Creators can create Surveys",
+                "display_name": "SurveyCreator",
+                "id": "1b4f816e-5eaf-48b9-8613-7923830595ad",  # Random, but fixed for tests
+                "is_enabled": True,
+                "value": "SurveyCreator"
+            }]
         })
+
+        apps = list(self.graphrbac_client.applications.list(
+            filter="displayName eq 'pytest_app'"
+        ))
+        assert len(apps) == 1
+        assert apps[0].app_roles[0].display_name == "SurveyCreator"
 
         sp = self.graphrbac_client.service_principals.create({
             'app_id': app.app_id, # Do NOT use app.object_id
