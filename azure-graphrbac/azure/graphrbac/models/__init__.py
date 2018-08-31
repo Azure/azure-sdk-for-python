@@ -23,7 +23,6 @@ try:
     from .application_list_result_py3 import ApplicationListResult
     from .add_owner_parameters_py3 import AddOwnerParameters
     from .application_add_owner_parameters_py3 import ApplicationAddOwnerParameters
-    from .directory_object_list_result_py3 import DirectoryObjectListResult
     from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters_py3 import PasswordCredentialsUpdateParameters
     from .aad_object_py3 import AADObject
@@ -59,7 +58,6 @@ except (SyntaxError, ImportError):
     from .application_list_result import ApplicationListResult
     from .add_owner_parameters import AddOwnerParameters
     from .application_add_owner_parameters import ApplicationAddOwnerParameters
-    from .directory_object_list_result import DirectoryObjectListResult
     from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
     from .aad_object import AADObject
@@ -81,8 +79,8 @@ except (SyntaxError, ImportError):
     from .get_objects_parameters import GetObjectsParameters
     from .domain import Domain
     from .permissions import Permissions
-from .application_paged import ApplicationPaged
 from .directory_object_paged import DirectoryObjectPaged
+from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
 from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
@@ -109,7 +107,6 @@ __all__ = [
     'ApplicationListResult',
     'AddOwnerParameters',
     'ApplicationAddOwnerParameters',
-    'DirectoryObjectListResult',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
     'AADObject',
@@ -131,8 +128,8 @@ __all__ = [
     'GetObjectsParameters',
     'Domain',
     'Permissions',
-    'ApplicationPaged',
     'DirectoryObjectPaged',
+    'ApplicationPaged',
     'KeyCredentialPaged',
     'PasswordCredentialPaged',
     'ADGroupPaged',
