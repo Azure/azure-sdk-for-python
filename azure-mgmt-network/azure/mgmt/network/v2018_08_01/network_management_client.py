@@ -31,6 +31,7 @@ from .operations.express_route_circuits_operations import ExpressRouteCircuitsOp
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
 from .operations.express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
+from .operations.interface_endpoints_operations import InterfaceEndpointsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -142,6 +143,8 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_cross_connections: azure.mgmt.network.v2018_08_01.operations.ExpressRouteCrossConnectionsOperations
     :ivar express_route_cross_connection_peerings: ExpressRouteCrossConnectionPeerings operations
     :vartype express_route_cross_connection_peerings: azure.mgmt.network.v2018_08_01.operations.ExpressRouteCrossConnectionPeeringsOperations
+    :ivar interface_endpoints: InterfaceEndpoints operations
+    :vartype interface_endpoints: azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2018_08_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -272,6 +275,8 @@ class NetworkManagementClient(SDKClient):
         self.express_route_cross_connections = ExpressRouteCrossConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_cross_connection_peerings = ExpressRouteCrossConnectionPeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.interface_endpoints = InterfaceEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
