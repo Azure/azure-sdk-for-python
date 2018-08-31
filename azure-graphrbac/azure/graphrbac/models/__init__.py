@@ -16,9 +16,9 @@ try:
     from .password_credential_py3 import PasswordCredential
     from .resource_access_py3 import ResourceAccess
     from .required_resource_access_py3 import RequiredResourceAccess
+    from .app_role_py3 import AppRole
     from .application_create_parameters_py3 import ApplicationCreateParameters
     from .application_update_parameters_py3 import ApplicationUpdateParameters
-    from .app_role_py3 import AppRole
     from .application_py3 import Application
     from .add_owner_parameters_py3 import AddOwnerParameters
     from .application_add_owner_parameters_py3 import ApplicationAddOwnerParameters
@@ -50,9 +50,9 @@ except (SyntaxError, ImportError):
     from .password_credential import PasswordCredential
     from .resource_access import ResourceAccess
     from .required_resource_access import RequiredResourceAccess
+    from .app_role import AppRole
     from .application_create_parameters import ApplicationCreateParameters
     from .application_update_parameters import ApplicationUpdateParameters
-    from .app_role import AppRole
     from .application import Application
     from .add_owner_parameters import AddOwnerParameters
     from .application_add_owner_parameters import ApplicationAddOwnerParameters
@@ -98,9 +98,9 @@ __all__ = [
     'PasswordCredential',
     'ResourceAccess',
     'RequiredResourceAccess',
+    'AppRole',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
-    'AppRole',
     'Application',
     'AddOwnerParameters',
     'ApplicationAddOwnerParameters',
