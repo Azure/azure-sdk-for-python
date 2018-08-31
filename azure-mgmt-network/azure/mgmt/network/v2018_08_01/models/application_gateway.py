@@ -46,6 +46,10 @@ class ApplicationGateway(Resource):
      application gateway resource.
     :type authentication_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayAuthenticationCertificate]
+    :param trusted_root_certificates: Trusted Root certificates of the
+     application gateway resource.
+    :type trusted_root_certificates:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayTrustedRootCertificate]
     :param ssl_certificates: SSL certificates of the application gateway
      resource.
     :type ssl_certificates:
@@ -126,6 +130,7 @@ class ApplicationGateway(Resource):
         'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
         'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[ApplicationGatewayAuthenticationCertificate]'},
+        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[ApplicationGatewayTrustedRootCertificate]'},
         'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
         'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
         'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
@@ -153,6 +158,7 @@ class ApplicationGateway(Resource):
         self.operational_state = None
         self.gateway_ip_configurations = kwargs.get('gateway_ip_configurations', None)
         self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.trusted_root_certificates = kwargs.get('trusted_root_certificates', None)
         self.ssl_certificates = kwargs.get('ssl_certificates', None)
         self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
         self.frontend_ports = kwargs.get('frontend_ports', None)

@@ -34,6 +34,10 @@ class NetworkInterface(Resource):
      resource.
     :type network_security_group:
      ~azure.mgmt.network.v2018_08_01.models.NetworkSecurityGroup
+    :param interface_endpoint: A reference to the interface endpoint to which
+     the network interface is linked.
+    :type interface_endpoint:
+     ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
     :type ip_configurations:
@@ -52,6 +56,11 @@ class NetworkInterface(Resource):
     :param enable_ip_forwarding: Indicates whether IP forwarding is enabled on
      this network interface.
     :type enable_ip_forwarding: bool
+    :ivar hosted_workloads: A list of references to linked BareMetal resources
+    :vartype hosted_workloads: list[str]
+    :param linked_resource_type: The type of resource to be linked to this
+     network interface
+    :type linked_resource_type: str
     :param resource_guid: The resource GUID property of the network interface
      resource.
     :type resource_guid: str
@@ -66,6 +75,7 @@ class NetworkInterface(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'hosted_workloads': {'readonly': True},
     }
 
     _attribute_map = {
@@ -76,12 +86,15 @@ class NetworkInterface(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
+        'interface_endpoint': {'key': 'properties.interfaceEndpoint', 'type': 'InterfaceEndpoint'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
         'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
         'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
+        'hosted_workloads': {'key': 'properties.hostedWorkloads', 'type': '[str]'},
+        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -91,12 +104,15 @@ class NetworkInterface(Resource):
         super(NetworkInterface, self).__init__(**kwargs)
         self.virtual_machine = kwargs.get('virtual_machine', None)
         self.network_security_group = kwargs.get('network_security_group', None)
+        self.interface_endpoint = kwargs.get('interface_endpoint', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.dns_settings = kwargs.get('dns_settings', None)
         self.mac_address = kwargs.get('mac_address', None)
         self.primary = kwargs.get('primary', None)
         self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
         self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
+        self.hosted_workloads = None
+        self.linked_resource_type = kwargs.get('linked_resource_type', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)

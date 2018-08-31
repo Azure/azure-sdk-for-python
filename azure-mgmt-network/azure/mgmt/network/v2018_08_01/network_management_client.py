@@ -33,6 +33,7 @@ from .operations.express_route_cross_connections_operations import ExpressRouteC
 from .operations.express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
 from .operations.express_route_gateways_operations import ExpressRouteGatewaysOperations
 from .operations.express_route_connections_operations import ExpressRouteConnectionsOperations
+from .operations.interface_endpoints_operations import InterfaceEndpointsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -43,6 +44,7 @@ from .operations.load_balancer_probes_operations import LoadBalancerProbesOperat
 from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .operations.network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
+from .operations.network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
 from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.default_security_rules_operations import DefaultSecurityRulesOperations
@@ -63,6 +65,7 @@ from .operations.usages_operations import UsagesOperations
 from .operations.virtual_networks_operations import VirtualNetworksOperations
 from .operations.subnets_operations import SubnetsOperations
 from .operations.virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
+from .operations.virtual_network_taps_operations import VirtualNetworkTapsOperations
 from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
@@ -146,6 +149,8 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_gateways: azure.mgmt.network.v2018_08_01.operations.ExpressRouteGatewaysOperations
     :ivar express_route_connections: ExpressRouteConnections operations
     :vartype express_route_connections: azure.mgmt.network.v2018_08_01.operations.ExpressRouteConnectionsOperations
+    :ivar interface_endpoints: InterfaceEndpoints operations
+    :vartype interface_endpoints: azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2018_08_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -166,6 +171,8 @@ class NetworkManagementClient(SDKClient):
     :vartype network_interface_ip_configurations: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceIPConfigurationsOperations
     :ivar network_interface_load_balancers: NetworkInterfaceLoadBalancers operations
     :vartype network_interface_load_balancers: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceLoadBalancersOperations
+    :ivar network_interface_tap_configurations: NetworkInterfaceTapConfigurations operations
+    :vartype network_interface_tap_configurations: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceTapConfigurationsOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
     :vartype network_security_groups: azure.mgmt.network.v2018_08_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
@@ -206,6 +213,8 @@ class NetworkManagementClient(SDKClient):
     :vartype subnets: azure.mgmt.network.v2018_08_01.operations.SubnetsOperations
     :ivar virtual_network_peerings: VirtualNetworkPeerings operations
     :vartype virtual_network_peerings: azure.mgmt.network.v2018_08_01.operations.VirtualNetworkPeeringsOperations
+    :ivar virtual_network_taps: VirtualNetworkTaps operations
+    :vartype virtual_network_taps: azure.mgmt.network.v2018_08_01.operations.VirtualNetworkTapsOperations
     :ivar virtual_network_gateways: VirtualNetworkGateways operations
     :vartype virtual_network_gateways: azure.mgmt.network.v2018_08_01.operations.VirtualNetworkGatewaysOperations
     :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
@@ -277,6 +286,8 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_connections = ExpressRouteConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.interface_endpoints = InterfaceEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_backend_address_pools = LoadBalancerBackendAddressPoolsOperations(
@@ -296,6 +307,8 @@ class NetworkManagementClient(SDKClient):
         self.network_interface_ip_configurations = NetworkInterfaceIPConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_interface_tap_configurations = NetworkInterfaceTapConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -336,6 +349,8 @@ class NetworkManagementClient(SDKClient):
         self.subnets = SubnetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_taps = VirtualNetworkTapsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)

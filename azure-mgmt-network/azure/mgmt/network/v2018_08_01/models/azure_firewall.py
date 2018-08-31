@@ -29,11 +29,15 @@ class AzureFirewall(Resource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param application_rule_collections: Collection of application rule
-     collections used by a Azure Firewall.
+     collections used by Azure Firewall.
     :type application_rule_collections:
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallApplicationRuleCollection]
+    :param nat_rule_collections: Collection of NAT rule collections used by
+     Azure Firewall.
+    :type nat_rule_collections:
+     list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallNatRuleCollection]
     :param network_rule_collections: Collection of network rule collections
-     used by a Azure Firewall.
+     used by Azure Firewall.
     :type network_rule_collections:
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallNetworkRuleCollection]
     :param ip_configurations: IP configuration of the Azure Firewall resource.
@@ -61,6 +65,7 @@ class AzureFirewall(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'application_rule_collections': {'key': 'properties.applicationRuleCollections', 'type': '[AzureFirewallApplicationRuleCollection]'},
+        'nat_rule_collections': {'key': 'properties.natRuleCollections', 'type': '[AzureFirewallNatRuleCollection]'},
         'network_rule_collections': {'key': 'properties.networkRuleCollections', 'type': '[AzureFirewallNetworkRuleCollection]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[AzureFirewallIPConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -70,6 +75,7 @@ class AzureFirewall(Resource):
     def __init__(self, **kwargs):
         super(AzureFirewall, self).__init__(**kwargs)
         self.application_rule_collections = kwargs.get('application_rule_collections', None)
+        self.nat_rule_collections = kwargs.get('nat_rule_collections', None)
         self.network_rule_collections = kwargs.get('network_rule_collections', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)

@@ -38,6 +38,10 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      gateway authentication certificates.
     :type authentication_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :param trusted_root_certificates: Array of references to application
+     gateway trusted root certificates.
+    :type trusted_root_certificates:
+     list[~azure.mgmt.network.v2018_08_01.models.SubResource]
     :param connection_draining: Connection draining of the backend http
      settings resource.
     :type connection_draining:
@@ -77,6 +81,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
+        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[SubResource]'},
         'connection_draining': {'key': 'properties.connectionDraining', 'type': 'ApplicationGatewayConnectionDraining'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'pick_host_name_from_backend_address': {'key': 'properties.pickHostNameFromBackendAddress', 'type': 'bool'},
@@ -89,7 +94,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, port: int=None, protocol=None, cookie_based_affinity=None, request_timeout: int=None, probe=None, authentication_certificates=None, connection_draining=None, host_name: str=None, pick_host_name_from_backend_address: bool=None, affinity_cookie_name: str=None, probe_enabled: bool=None, path: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, port: int=None, protocol=None, cookie_based_affinity=None, request_timeout: int=None, probe=None, authentication_certificates=None, trusted_root_certificates=None, connection_draining=None, host_name: str=None, pick_host_name_from_backend_address: bool=None, affinity_cookie_name: str=None, probe_enabled: bool=None, path: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
         super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id, **kwargs)
         self.port = port
         self.protocol = protocol
@@ -97,6 +102,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         self.request_timeout = request_timeout
         self.probe = probe
         self.authentication_certificates = authentication_certificates
+        self.trusted_root_certificates = trusted_root_certificates
         self.connection_draining = connection_draining
         self.host_name = host_name
         self.pick_host_name_from_backend_address = pick_host_name_from_backend_address
