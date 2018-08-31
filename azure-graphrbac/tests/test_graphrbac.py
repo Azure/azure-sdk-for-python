@@ -54,7 +54,8 @@ class GraphRbacTest(AzureMgmtTestCase):
     def test_groups(self):
 
         group_create_parameters = azure.graphrbac.models.GroupCreateParameters(
-            "pytestgroup_display", "pytestgroup_nickname"
+            display_name="pytestgroup_display",
+            mail_nickname="pytestgroup_nickname"
         )
         group = self.graphrbac_client.groups.create(group_create_parameters)
         self.assertEqual(group.display_name, "pytestgroup_display")
