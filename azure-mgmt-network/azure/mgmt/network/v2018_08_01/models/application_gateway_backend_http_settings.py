@@ -38,6 +38,10 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      gateway authentication certificates.
     :type authentication_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :param trusted_root_certificates: Array of references to application
+     gateway trusted root certificates.
+    :type trusted_root_certificates:
+     list[~azure.mgmt.network.v2018_08_01.models.SubResource]
     :param connection_draining: Connection draining of the backend http
      settings resource.
     :type connection_draining:
@@ -77,6 +81,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
+        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[SubResource]'},
         'connection_draining': {'key': 'properties.connectionDraining', 'type': 'ApplicationGatewayConnectionDraining'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'pick_host_name_from_backend_address': {'key': 'properties.pickHostNameFromBackendAddress', 'type': 'bool'},
@@ -97,6 +102,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         self.request_timeout = kwargs.get('request_timeout', None)
         self.probe = kwargs.get('probe', None)
         self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.trusted_root_certificates = kwargs.get('trusted_root_certificates', None)
         self.connection_draining = kwargs.get('connection_draining', None)
         self.host_name = kwargs.get('host_name', None)
         self.pick_host_name_from_backend_address = kwargs.get('pick_host_name_from_backend_address', None)

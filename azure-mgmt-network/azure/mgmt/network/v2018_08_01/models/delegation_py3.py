@@ -23,6 +23,8 @@ class Delegation(SubResource):
     :param actions: Describes the actions permitted to the service upon
      delegation
     :type actions: list[str]
+    :param provisioning_state: The provisioning state of the resource.
+    :type provisioning_state: str
     :param name: The name of the resource that is unique within a subnet. This
      name can be used to access the resource.
     :type name: str
@@ -35,13 +37,15 @@ class Delegation(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'service_name': {'key': 'properties.serviceName', 'type': 'str'},
         'actions': {'key': 'properties.actions', 'type': '[str]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, service_name: str=None, actions=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, service_name: str=None, actions=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Delegation, self).__init__(id=id, **kwargs)
         self.service_name = service_name
         self.actions = actions
+        self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
