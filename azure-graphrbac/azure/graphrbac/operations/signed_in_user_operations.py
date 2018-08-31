@@ -92,9 +92,11 @@ class SignedInUserOperations(object):
     get.metadata = {'url': '/{tenantID}/me'}
 
     def list_owned_objects(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get the list of directory objects that are owned by the user.
 
+        :param filter: The filters to apply to the operation.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -118,6 +120,8 @@ class SignedInUserOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
