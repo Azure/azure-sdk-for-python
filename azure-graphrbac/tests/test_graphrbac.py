@@ -10,6 +10,7 @@ import unittest
 import azure.graphrbac
 from devtools_testutils import AzureMgmtTestCase
 
+import pytest
 
 class GraphRbacTest(AzureMgmtTestCase):
 
@@ -19,6 +20,43 @@ class GraphRbacTest(AzureMgmtTestCase):
             azure.graphrbac.GraphRbacManagementClient,
             tenant_id=self.settings.AD_DOMAIN
         )
+
+    def _build_object_url(self, object_id):
+        return "https://graph.windows.net/{}/directoryObjects/{}".format(
+            self.settings.AD_DOMAIN,
+            object_id
+        )
+
+    def test_signed_in_user(self):
+
+        user = self.graphrbac_client.signed_in_user.get()
+        assert user.mail_nickname.startswith("admin")  # Assuming we do the test with adminXXX account
+
+        # Create a group, and check I own it
+        group_create_parameters = azure.graphrbac.models.GroupCreateParameters(
+            display_name="pytestgroup_display",
+            mail_nickname="pytestgroup_nickname"
+        )
+
+        group = None
+        try:
+            group = self.graphrbac_client.groups.create(group_create_parameters)
+            self.graphrbac_client.groups.add_owner(
+                group.object_id,
+                self._build_object_url(user.object_id)
+            )
+
+            owned_objects = list(self.graphrbac_client.signed_in_user.list_owned_objects())
+
+            for obj in owned_objects:
+                if obj.display_name == "pytestgroup_display":
+                    break
+            else:
+                pytest.fail("Didn't found the group I just created in my owned objects")
+
+        finally:
+            if group:
+                self.graphrbac_client.groups.delete(group.object_id)
 
     def test_graphrbac_users(self):
 
