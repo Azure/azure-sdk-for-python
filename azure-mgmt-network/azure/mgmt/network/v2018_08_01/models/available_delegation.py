@@ -13,8 +13,15 @@ from msrest.serialization import Model
 
 
 class AvailableDelegation(Model):
-    """AvailableDelegation.
+    """The serviceName of an AvailableDelegation indicates a possible delegation
+    for a subnet.
 
+    :param name: The name of the AvailableDelegation resource.
+    :type name: str
+    :param id: A unique identifier of the AvailableDelegation resource.
+    :type id: str
+    :param type: Resource type.
+    :type type: str
     :param service_name: The name of the service and resource
     :type service_name: str
     :param actions: Describes the actions permitted to the service upon
@@ -23,11 +30,17 @@ class AvailableDelegation(Model):
     """
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'service_name': {'key': 'serviceName', 'type': 'str'},
         'actions': {'key': 'actions', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(AvailableDelegation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
         self.service_name = kwargs.get('service_name', None)
         self.actions = kwargs.get('actions', None)

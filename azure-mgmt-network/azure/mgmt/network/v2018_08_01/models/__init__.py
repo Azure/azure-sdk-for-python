@@ -14,6 +14,8 @@ try:
     from .sub_resource_py3 import SubResource
     from .application_security_group_py3 import ApplicationSecurityGroup
     from .security_rule_py3 import SecurityRule
+    from .endpoint_service_py3 import EndpointService
+    from .interface_endpoint_py3 import InterfaceEndpoint
     from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
     from .network_interface_py3 import NetworkInterface
     from .network_security_group_py3 import NetworkSecurityGroup
@@ -71,7 +73,6 @@ try:
     from .resource_py3 import Resource
     from .tags_object_py3 import TagsObject
     from .available_delegation_py3 import AvailableDelegation
-    from .available_delegations_result_py3 import AvailableDelegationsResult
     from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
@@ -252,6 +253,8 @@ except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .application_security_group import ApplicationSecurityGroup
     from .security_rule import SecurityRule
+    from .endpoint_service import EndpointService
+    from .interface_endpoint import InterfaceEndpoint
     from .network_interface_dns_settings import NetworkInterfaceDnsSettings
     from .network_interface import NetworkInterface
     from .network_security_group import NetworkSecurityGroup
@@ -309,7 +312,6 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .tags_object import TagsObject
     from .available_delegation import AvailableDelegation
-    from .available_delegations_result import AvailableDelegationsResult
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
@@ -488,6 +490,7 @@ except (SyntaxError, ImportError):
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
+from .available_delegation_paged import AvailableDelegationPaged
 from .azure_firewall_paged import AzureFirewallPaged
 from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
@@ -498,6 +501,7 @@ from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
 from .express_route_cross_connection_peering_paged import ExpressRouteCrossConnectionPeeringPaged
+from .interface_endpoint_paged import InterfaceEndpointPaged
 from .load_balancer_paged import LoadBalancerPaged
 from .backend_address_pool_paged import BackendAddressPoolPaged
 from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
@@ -626,6 +630,8 @@ __all__ = [
     'SubResource',
     'ApplicationSecurityGroup',
     'SecurityRule',
+    'EndpointService',
+    'InterfaceEndpoint',
     'NetworkInterfaceDnsSettings',
     'NetworkInterface',
     'NetworkSecurityGroup',
@@ -683,7 +689,6 @@ __all__ = [
     'Resource',
     'TagsObject',
     'AvailableDelegation',
-    'AvailableDelegationsResult',
     'AzureFirewallIPConfiguration',
     'AzureFirewallRCAction',
     'AzureFirewallApplicationRuleProtocol',
@@ -862,6 +867,7 @@ __all__ = [
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
+    'AvailableDelegationPaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
     'DdosProtectionPlanPaged',
@@ -872,6 +878,7 @@ __all__ = [
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
     'ExpressRouteCrossConnectionPeeringPaged',
+    'InterfaceEndpointPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',

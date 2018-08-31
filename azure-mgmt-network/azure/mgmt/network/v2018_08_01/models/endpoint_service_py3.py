@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class AvailableDelegationsResult(Model):
-    """AvailableDelegationsResult.
+class EndpointService(Model):
+    """Identifies the service being brought into the virtual network.
 
-    :param value: An array of available delegations.
-    :type value:
-     list[~azure.mgmt.network.v2018_08_01.models.AvailableDelegation]
+    :param id: A unique identifier of the service being referenced by the
+     interface endpoint.
+    :type id: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailableDelegation]'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(AvailableDelegationsResult, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(EndpointService, self).__init__(**kwargs)
+        self.id = id

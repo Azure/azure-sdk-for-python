@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AvailableDelegationsResult(Model):
-    """AvailableDelegationsResult.
-
-    :param value: An array of available delegations.
-    :type value:
-     list[~azure.mgmt.network.v2018_08_01.models.AvailableDelegation]
+class InterfaceEndpointPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`InterfaceEndpoint <azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailableDelegation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[InterfaceEndpoint]'}
     }
 
-    def __init__(self, **kwargs):
-        super(AvailableDelegationsResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(InterfaceEndpointPaged, self).__init__(*args, **kwargs)
