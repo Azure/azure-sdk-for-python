@@ -74,6 +74,9 @@ try:
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
     from .azure_firewall_application_rule_py3 import AzureFirewallApplicationRule
     from .azure_firewall_application_rule_collection_py3 import AzureFirewallApplicationRuleCollection
+    from .azure_firewall_nat_rc_action_py3 import AzureFirewallNatRCAction
+    from .azure_firewall_nat_rule_py3 import AzureFirewallNatRule
+    from .azure_firewall_nat_rule_collection_py3 import AzureFirewallNatRuleCollection
     from .azure_firewall_network_rule_py3 import AzureFirewallNetworkRule
     from .azure_firewall_network_rule_collection_py3 import AzureFirewallNetworkRuleCollection
     from .azure_firewall_py3 import AzureFirewall
@@ -306,6 +309,9 @@ except (SyntaxError, ImportError):
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
     from .azure_firewall_application_rule import AzureFirewallApplicationRule
     from .azure_firewall_application_rule_collection import AzureFirewallApplicationRuleCollection
+    from .azure_firewall_nat_rc_action import AzureFirewallNatRCAction
+    from .azure_firewall_nat_rule import AzureFirewallNatRule
+    from .azure_firewall_nat_rule_collection import AzureFirewallNatRuleCollection
     from .azure_firewall_network_rule import AzureFirewallNetworkRule
     from .azure_firewall_network_rule_collection import AzureFirewallNetworkRuleCollection
     from .azure_firewall import AzureFirewall
@@ -551,6 +557,7 @@ from .network_management_client_enums import (
     ProvisioningState,
     AzureFirewallRCActionType,
     AzureFirewallApplicationRuleProtocolType,
+    AzureFirewallNatRCActionType,
     AzureFirewallNetworkRuleProtocol,
     AuthorizationUseStatus,
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
@@ -673,6 +680,9 @@ __all__ = [
     'AzureFirewallApplicationRuleProtocol',
     'AzureFirewallApplicationRule',
     'AzureFirewallApplicationRuleCollection',
+    'AzureFirewallNatRCAction',
+    'AzureFirewallNatRule',
+    'AzureFirewallNatRuleCollection',
     'AzureFirewallNetworkRule',
     'AzureFirewallNetworkRuleCollection',
     'AzureFirewall',
@@ -917,6 +927,7 @@ __all__ = [
     'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
+    'AzureFirewallNatRCActionType',
     'AzureFirewallNetworkRuleProtocol',
     'AuthorizationUseStatus',
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
