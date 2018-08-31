@@ -14,6 +14,8 @@ try:
     from .sub_resource_py3 import SubResource
     from .application_security_group_py3 import ApplicationSecurityGroup
     from .security_rule_py3 import SecurityRule
+    from .endpoint_service_py3 import EndpointService
+    from .interface_endpoint_py3 import InterfaceEndpoint
     from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
     from .network_interface_py3 import NetworkInterface
     from .network_security_group_py3 import NetworkSecurityGroup
@@ -249,6 +251,8 @@ except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .application_security_group import ApplicationSecurityGroup
     from .security_rule import SecurityRule
+    from .endpoint_service import EndpointService
+    from .interface_endpoint import InterfaceEndpoint
     from .network_interface_dns_settings import NetworkInterfaceDnsSettings
     from .network_interface import NetworkInterface
     from .network_security_group import NetworkSecurityGroup
@@ -484,6 +488,7 @@ from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewayS
 from .application_security_group_paged import ApplicationSecurityGroupPaged
 from .azure_firewall_paged import AzureFirewallPaged
 from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
+from .interface_endpoint_paged import InterfaceEndpointPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
 from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
@@ -620,6 +625,8 @@ __all__ = [
     'SubResource',
     'ApplicationSecurityGroup',
     'SecurityRule',
+    'EndpointService',
+    'InterfaceEndpoint',
     'NetworkInterfaceDnsSettings',
     'NetworkInterface',
     'NetworkSecurityGroup',
@@ -855,6 +862,7 @@ __all__ = [
     'ApplicationSecurityGroupPaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
+    'InterfaceEndpointPaged',
     'DdosProtectionPlanPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',

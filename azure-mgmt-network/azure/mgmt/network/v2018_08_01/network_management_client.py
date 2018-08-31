@@ -31,6 +31,7 @@ from .operations.express_route_circuits_operations import ExpressRouteCircuitsOp
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
 from .operations.express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
+from .operations.interface_endpoints_operations import InterfaceEndpointsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -142,6 +143,8 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_cross_connections: azure.mgmt.network.v2018_08_01.operations.ExpressRouteCrossConnectionsOperations
     :ivar express_route_cross_connection_peerings: ExpressRouteCrossConnectionPeerings operations
     :vartype express_route_cross_connection_peerings: azure.mgmt.network.v2018_08_01.operations.ExpressRouteCrossConnectionPeeringsOperations
+    :ivar interface_endpoints: InterfaceEndpoints operations
+    :vartype interface_endpoints: azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2018_08_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -272,6 +275,8 @@ class NetworkManagementClient(SDKClient):
         self.express_route_cross_connections = ExpressRouteCrossConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_cross_connection_peerings = ExpressRouteCrossConnectionPeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.interface_endpoints = InterfaceEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -425,3 +430,72 @@ class NetworkManagementClient(SDKClient):
 
         return deserialized
     check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}
+
+    def interface_endpoints_method(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all interface endpoints in a resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of InterfaceEndpoint
+        :rtype:
+         ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpointPaged[~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2018-08-01"
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.interface_endpoints_method.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.InterfaceEndpointPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.InterfaceEndpointPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    interface_endpoints_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/interfaceEndpoints'}

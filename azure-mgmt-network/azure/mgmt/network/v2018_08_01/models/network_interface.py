@@ -34,6 +34,10 @@ class NetworkInterface(Resource):
      resource.
     :type network_security_group:
      ~azure.mgmt.network.v2018_08_01.models.NetworkSecurityGroup
+    :param interface_endpoint: A reference to the interface endpoint to which
+     the network interface is linked.
+    :type interface_endpoint:
+     ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
     :type ip_configurations:
@@ -76,6 +80,7 @@ class NetworkInterface(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
+        'interface_endpoint': {'key': 'properties.interfaceEndpoint', 'type': 'InterfaceEndpoint'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
         'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
@@ -91,6 +96,7 @@ class NetworkInterface(Resource):
         super(NetworkInterface, self).__init__(**kwargs)
         self.virtual_machine = kwargs.get('virtual_machine', None)
         self.network_security_group = kwargs.get('network_security_group', None)
+        self.interface_endpoint = kwargs.get('interface_endpoint', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.dns_settings = kwargs.get('dns_settings', None)
         self.mac_address = kwargs.get('mac_address', None)
