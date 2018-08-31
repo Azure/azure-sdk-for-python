@@ -17,12 +17,13 @@ class ErrorDetails(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param code: Required. Error code identifying the specific error.
     :type code: str
     :param message: Required. A human readable error message.
     :type message: str
-    :param additional_properties: Additional custom properties.
-    :type additional_properties: object
     """
 
     _validation = {
@@ -31,13 +32,13 @@ class ErrorDetails(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorDetails, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
-        self.additional_properties = kwargs.get('additional_properties', None)
