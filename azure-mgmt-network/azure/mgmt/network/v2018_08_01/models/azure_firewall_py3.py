@@ -29,11 +29,15 @@ class AzureFirewall(Resource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param application_rule_collections: Collection of application rule
-     collections used by a Azure Firewall.
+     collections used by Azure Firewall.
     :type application_rule_collections:
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallApplicationRuleCollection]
+    :param nat_rule_collections: Collection of NAT rule collections used by
+     Azure Firewall.
+    :type nat_rule_collections:
+     list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallNatRuleCollection]
     :param network_rule_collections: Collection of network rule collections
-     used by a Azure Firewall.
+     used by Azure Firewall.
     :type network_rule_collections:
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallNetworkRuleCollection]
     :param ip_configurations: IP configuration of the Azure Firewall resource.
@@ -61,15 +65,17 @@ class AzureFirewall(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'application_rule_collections': {'key': 'properties.applicationRuleCollections', 'type': '[AzureFirewallApplicationRuleCollection]'},
+        'nat_rule_collections': {'key': 'properties.natRuleCollections', 'type': '[AzureFirewallNatRuleCollection]'},
         'network_rule_collections': {'key': 'properties.networkRuleCollections', 'type': '[AzureFirewallNetworkRuleCollection]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[AzureFirewallIPConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, application_rule_collections=None, network_rule_collections=None, ip_configurations=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, application_rule_collections=None, nat_rule_collections=None, network_rule_collections=None, ip_configurations=None, provisioning_state=None, **kwargs) -> None:
         super(AzureFirewall, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.application_rule_collections = application_rule_collections
+        self.nat_rule_collections = nat_rule_collections
         self.network_rule_collections = network_rule_collections
         self.ip_configurations = ip_configurations
         self.provisioning_state = provisioning_state

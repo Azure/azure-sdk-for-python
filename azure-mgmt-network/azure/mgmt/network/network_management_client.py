@@ -369,6 +369,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def azure_firewall_fqdn_tags(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2018_08_01.operations.AzureFirewallFqdnTagsOperations>`
+        """
+        api_version = self._get_api_version('azure_firewall_fqdn_tags')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import AzureFirewallFqdnTagsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def azure_firewalls(self):
         """Instance depends on the API version:
 
@@ -902,6 +915,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def interface_endpoints(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`InterfaceEndpointsOperations<azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations>`
+        """
+        api_version = self._get_api_version('interface_endpoints')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import InterfaceEndpointsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def load_balancer_backend_address_pools(self):
         """Instance depends on the API version:
 
@@ -1308,6 +1334,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_07_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         elif api_version == '2018-08-01':
             from .v2018_08_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def network_interface_tap_configurations(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceTapConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('network_interface_tap_configurations')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -2219,6 +2258,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_07_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         elif api_version == '2018-08-01':
             from .v2018_08_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def virtual_network_taps(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2018_08_01.operations.VirtualNetworkTapsOperations>`
+        """
+        api_version = self._get_api_version('virtual_network_taps')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import VirtualNetworkTapsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

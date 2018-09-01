@@ -23,21 +23,21 @@ class P2SVpnServerConfiguration(SubResource):
     :param vpn_protocols: vpnProtocols for the P2SVpnServerConfiguration.
     :type vpn_protocols: list[str or
      ~azure.mgmt.network.v2018_08_01.models.VpnGatewayTunnelingProtocol]
-    :param p2s_vpn_server_config_vpn_client_root_certificates: VPN client root
+    :param p2_svpn_server_config_vpn_client_root_certificates: VPN client root
      certificate of P2SVpnServerConfiguration.
-    :type p2s_vpn_server_config_vpn_client_root_certificates:
+    :type p2_svpn_server_config_vpn_client_root_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfigVpnClientRootCertificate]
-    :param p2s_vpn_server_config_vpn_client_revoked_certificates: VPN client
+    :param p2_svpn_server_config_vpn_client_revoked_certificates: VPN client
      revoked certificate of P2SVpnServerConfiguration.
-    :type p2s_vpn_server_config_vpn_client_revoked_certificates:
+    :type p2_svpn_server_config_vpn_client_revoked_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfigVpnClientRevokedCertificate]
-    :param p2s_vpn_server_config_radius_server_root_certificates: Radius
+    :param p2_svpn_server_config_radius_server_root_certificates: Radius
      Server root certificate of P2SVpnServerConfiguration.
-    :type p2s_vpn_server_config_radius_server_root_certificates:
+    :type p2_svpn_server_config_radius_server_root_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfigRadiusServerRootCertificate]
-    :param p2s_vpn_server_config_radius_client_root_certificates: Radius
+    :param p2_svpn_server_config_radius_client_root_certificates: Radius
      client root certificate of P2SVpnServerConfiguration.
-    :type p2s_vpn_server_config_radius_client_root_certificates:
+    :type p2_svpn_server_config_radius_client_root_certificates:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfigRadiusClientRootCertificate]
     :param vpn_client_ipsec_policies: VpnClientIpsecPolicies for
      P2SVpnServerConfiguration.
@@ -50,8 +50,8 @@ class P2SVpnServerConfiguration(SubResource):
      P2SVpnServerConfiguration resource for for point to site client
      connection.
     :type radius_server_secret: str
-    :ivar p2s_vpn_gateways:
-    :vartype p2s_vpn_gateways:
+    :ivar p2_svpn_gateways:
+    :vartype p2_svpn_gateways:
      list[~azure.mgmt.network.v2018_08_01.models.SubResource]
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
@@ -62,35 +62,35 @@ class P2SVpnServerConfiguration(SubResource):
     """
 
     _validation = {
-        'p2s_vpn_gateways': {'readonly': True},
+        'p2_svpn_gateways': {'readonly': True},
         'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'vpn_protocols': {'key': 'properties.vpnProtocols', 'type': '[str]'},
-        'p2s_vpn_server_config_vpn_client_root_certificates': {'key': 'properties.p2sVpnServerConfigVpnClientRootCertificates', 'type': '[P2SVpnServerConfigVpnClientRootCertificate]'},
-        'p2s_vpn_server_config_vpn_client_revoked_certificates': {'key': 'properties.p2sVpnServerConfigVpnClientRevokedCertificates', 'type': '[P2SVpnServerConfigVpnClientRevokedCertificate]'},
-        'p2s_vpn_server_config_radius_server_root_certificates': {'key': 'properties.p2sVpnServerConfigRadiusServerRootCertificates', 'type': '[P2SVpnServerConfigRadiusServerRootCertificate]'},
-        'p2s_vpn_server_config_radius_client_root_certificates': {'key': 'properties.p2sVpnServerConfigRadiusClientRootCertificates', 'type': '[P2SVpnServerConfigRadiusClientRootCertificate]'},
+        'p2_svpn_server_config_vpn_client_root_certificates': {'key': 'properties.p2SVpnServerConfigVpnClientRootCertificates', 'type': '[P2SVpnServerConfigVpnClientRootCertificate]'},
+        'p2_svpn_server_config_vpn_client_revoked_certificates': {'key': 'properties.p2SVpnServerConfigVpnClientRevokedCertificates', 'type': '[P2SVpnServerConfigVpnClientRevokedCertificate]'},
+        'p2_svpn_server_config_radius_server_root_certificates': {'key': 'properties.p2SVpnServerConfigRadiusServerRootCertificates', 'type': '[P2SVpnServerConfigRadiusServerRootCertificate]'},
+        'p2_svpn_server_config_radius_client_root_certificates': {'key': 'properties.p2SVpnServerConfigRadiusClientRootCertificates', 'type': '[P2SVpnServerConfigRadiusClientRootCertificate]'},
         'vpn_client_ipsec_policies': {'key': 'properties.vpnClientIpsecPolicies', 'type': '[IpsecPolicy]'},
         'radius_server_address': {'key': 'properties.radiusServerAddress', 'type': 'str'},
         'radius_server_secret': {'key': 'properties.radiusServerSecret', 'type': 'str'},
-        'p2s_vpn_gateways': {'key': 'properties.p2sVpnGateways', 'type': '[SubResource]'},
+        'p2_svpn_gateways': {'key': 'properties.p2SVpnGateways', 'type': '[SubResource]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, vpn_protocols=None, p2s_vpn_server_config_vpn_client_root_certificates=None, p2s_vpn_server_config_vpn_client_revoked_certificates=None, p2s_vpn_server_config_radius_server_root_certificates=None, p2s_vpn_server_config_radius_client_root_certificates=None, vpn_client_ipsec_policies=None, radius_server_address: str=None, radius_server_secret: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, vpn_protocols=None, p2_svpn_server_config_vpn_client_root_certificates=None, p2_svpn_server_config_vpn_client_revoked_certificates=None, p2_svpn_server_config_radius_server_root_certificates=None, p2_svpn_server_config_radius_client_root_certificates=None, vpn_client_ipsec_policies=None, radius_server_address: str=None, radius_server_secret: str=None, name: str=None, **kwargs) -> None:
         super(P2SVpnServerConfiguration, self).__init__(id=id, **kwargs)
         self.vpn_protocols = vpn_protocols
-        self.p2s_vpn_server_config_vpn_client_root_certificates = p2s_vpn_server_config_vpn_client_root_certificates
-        self.p2s_vpn_server_config_vpn_client_revoked_certificates = p2s_vpn_server_config_vpn_client_revoked_certificates
-        self.p2s_vpn_server_config_radius_server_root_certificates = p2s_vpn_server_config_radius_server_root_certificates
-        self.p2s_vpn_server_config_radius_client_root_certificates = p2s_vpn_server_config_radius_client_root_certificates
+        self.p2_svpn_server_config_vpn_client_root_certificates = p2_svpn_server_config_vpn_client_root_certificates
+        self.p2_svpn_server_config_vpn_client_revoked_certificates = p2_svpn_server_config_vpn_client_revoked_certificates
+        self.p2_svpn_server_config_radius_server_root_certificates = p2_svpn_server_config_radius_server_root_certificates
+        self.p2_svpn_server_config_radius_client_root_certificates = p2_svpn_server_config_radius_client_root_certificates
         self.vpn_client_ipsec_policies = vpn_client_ipsec_policies
         self.radius_server_address = radius_server_address
         self.radius_server_secret = radius_server_secret
-        self.p2s_vpn_gateways = None
+        self.p2_svpn_gateways = None
         self.name = name
         self.etag = None
