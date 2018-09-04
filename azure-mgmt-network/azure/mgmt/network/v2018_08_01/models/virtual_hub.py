@@ -32,6 +32,8 @@ class VirtualHub(Resource):
     :type virtual_wan: ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param vpn_gateway: The VpnGateway associated with this VirtualHub
     :type vpn_gateway: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :param p2_svpn_gateway: The P2SVpnGateway associated with this VirtualHub
+    :type p2_svpn_gateway: ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param express_route_gateway: The expressRouteGateway associated with this
      VirtualHub
     :type express_route_gateway:
@@ -68,6 +70,7 @@ class VirtualHub(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
         'vpn_gateway': {'key': 'properties.vpnGateway', 'type': 'SubResource'},
+        'p2_svpn_gateway': {'key': 'properties.p2SVpnGateway', 'type': 'SubResource'},
         'express_route_gateway': {'key': 'properties.expressRouteGateway', 'type': 'SubResource'},
         'virtual_network_connections': {'key': 'properties.virtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
@@ -80,6 +83,7 @@ class VirtualHub(Resource):
         super(VirtualHub, self).__init__(**kwargs)
         self.virtual_wan = kwargs.get('virtual_wan', None)
         self.vpn_gateway = kwargs.get('vpn_gateway', None)
+        self.p2_svpn_gateway = kwargs.get('p2_svpn_gateway', None)
         self.express_route_gateway = kwargs.get('express_route_gateway', None)
         self.virtual_network_connections = kwargs.get('virtual_network_connections', None)
         self.address_prefix = kwargs.get('address_prefix', None)

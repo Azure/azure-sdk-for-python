@@ -32,6 +32,8 @@ class VirtualHub(Resource):
     :type virtual_wan: ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param vpn_gateway: The VpnGateway associated with this VirtualHub
     :type vpn_gateway: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :param p2_svpn_gateway: The P2SVpnGateway associated with this VirtualHub
+    :type p2_svpn_gateway: ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param express_route_gateway: The expressRouteGateway associated with this
      VirtualHub
     :type express_route_gateway:
@@ -68,6 +70,7 @@ class VirtualHub(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
         'vpn_gateway': {'key': 'properties.vpnGateway', 'type': 'SubResource'},
+        'p2_svpn_gateway': {'key': 'properties.p2SVpnGateway', 'type': 'SubResource'},
         'express_route_gateway': {'key': 'properties.expressRouteGateway', 'type': 'SubResource'},
         'virtual_network_connections': {'key': 'properties.virtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
@@ -76,10 +79,11 @@ class VirtualHub(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, vpn_gateway=None, express_route_gateway=None, virtual_network_connections=None, address_prefix: str=None, route_table=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, vpn_gateway=None, p2_svpn_gateway=None, express_route_gateway=None, virtual_network_connections=None, address_prefix: str=None, route_table=None, provisioning_state=None, **kwargs) -> None:
         super(VirtualHub, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_wan = virtual_wan
         self.vpn_gateway = vpn_gateway
+        self.p2_svpn_gateway = p2_svpn_gateway
         self.express_route_gateway = express_route_gateway
         self.virtual_network_connections = virtual_network_connections
         self.address_prefix = address_prefix
