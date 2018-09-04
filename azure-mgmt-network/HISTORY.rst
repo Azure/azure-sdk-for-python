@@ -3,6 +3,75 @@
 Release History
 ===============
 
+2.1.0 (2018-08-28)
+++++++++++++++++++
+
+Default API version is now 2018-07-01
+
+**Features**
+
+- Model ExpressRouteCircuit has a new parameter allow_global_reach
+- Model PublicIPAddress has a new parameter public_ip_prefix
+- Model BackendAddressPool has a new parameter outbound_rule (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter public_ip_prefix
+- Model LoadBalancingRule has a new parameter enable_tcp_reset
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter express_route_gateway_bypass
+- Model VirtualNetworkGatewayConnection has a new parameter express_route_gateway_bypass
+- Model Subnet has a new parameter service_endpoint_policies
+- Model InboundNatPool has a new parameter enable_tcp_reset
+- Model LoadBalancer has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model InboundNatRule has a new parameter enable_tcp_reset
+- Added operation group ServiceEndpointPolicyDefinitionsOperations
+- Added operation group ServiceEndpointPoliciesOperations
+- Added operation group PublicIPPrefixesOperations
+
+**Breaking changes**
+
+- Model BackendAddressPool no longer has parameter outbound_nat_rule (now outbound_rules)
+- Model FrontendIPConfiguration no longer has parameter outbound_nat_rules (now outbound_rules)
+- Model LoadBalancer no longer has parameter outbound_nat_rules (now outbound_rules)
+
+2.0.1 (2018-08-07)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix packet_captures.get_status empty output
+
+2.0.0 (2018-07-27)
+++++++++++++++++++
+
+**Features**
+
+- Supports now 2018-06-01 and 2018-04-01. 2018-06-01 is the new default.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**Features starting 2018-04-01**
+
+- Model FlowLogInformation has a new parameter flow_analytics_configuration
+- Model ApplicationGateway has a new parameter enable_fips
+- Model ApplicationGateway has a new parameter autoscale_configuration
+- Model ApplicationGateway has a new parameter zones
+- Model ConnectionSharedKey has a new parameter id
+- Added operation group HubVirtualNetworkConnectionsOperations
+- Added operation group AzureFirewallsOperations
+- Added operation group VirtualHubsOperations
+- Added operation group VpnGatewaysOperations
+- Added operation group VpnSitesOperations
+- Added operation group VirtualWANsOperations
+- Added operation group VpnSitesConfigurationOperations
+- Added operation group VpnConnectionsOperations
+
+**Breaking changes starting 2018-04-01**
+
+- Operation VirtualNetworkGatewayConnectionsOperations.set_shared_key has a new parameter "id"
+- Operation DdosProtectionPlansOperations.create_or_update parameter "parameters" has been flatten to "tags/location"
+
+**Breaking changes starting 2018-06-01**
+
+- The new class VpnConnection introduced in 2018-04-01 renamed "connection_bandwidth" to "connection_bandwidth_in_mbps"
+
 2.0.0rc3 (2018-06-14)
 +++++++++++++++++++++
 

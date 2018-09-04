@@ -1,4 +1,11 @@
 {
+  "azure-applicationinsights": {
+		"service_name": "Application Insights",
+		"category ": "Client",
+    "namespaces": [
+      "azure.applicationinsights"
+    ]
+	},
   "azure-batch": {
     "category ": "Client",
     "namespaces": [
@@ -122,6 +129,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-loganalytics": {
+		"service_name": "Log Analytics",
+		"category ": "Client",
+    "namespaces": [
+      "azure.loganalytics"
+    ]
+	},
   "azure-mgmt-advisor": {
     "category ": "Management",
     "namespaces": [

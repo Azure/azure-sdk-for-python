@@ -30,6 +30,6 @@ class IpAddress(Model):
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(IpAddress, self).__init__()
+    def __init__(self, **kwargs):
+        super(IpAddress, self).__init__(**kwargs)
         self.ip_address = None

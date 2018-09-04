@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .video import Video
+from .video_py3 import Video
 
 
 class Image(Video):

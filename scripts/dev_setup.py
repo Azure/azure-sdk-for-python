@@ -41,19 +41,16 @@ content_packages = [p for p in packages if p not in nspkg_packages+meta_packages
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
 
-# install general requirements
-pip_command('install -r requirements.txt')
+# install private whls if there are any
+privates_dir = os.path.join(root_dir, 'privates')
+if os.path.isdir(privates_dir) and os.listdir(privates_dir):
+    whl_list = ' '.join([os.path.join(privates_dir, f) for f in os.listdir(privates_dir)])
+    pip_command('install {}'.format(whl_list))
 
 # install packages
 for package_list in [nspkg_packages, content_packages]:
     for package_name in package_list:
         pip_command('install -e {}'.format(package_name))
-
-# install test requirements
-pip_command('install -r azure-sdk-tools/test-requirements.txt')
-
-# install packaging requirements
-pip_command('install -r azure-sdk-tools/packaging_requirements.txt')
 
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package

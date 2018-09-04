@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .audio_analyzer_preset import AudioAnalyzerPreset
+from .audio_analyzer_preset_py3 import AudioAnalyzerPreset
 
 
 class VideoAnalyzerPreset(AudioAnalyzerPreset):

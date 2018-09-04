@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ApplicationPackageReference(Model):
     """A reference to an application package to be deployed to compute nodes.
 
-    :param application_id: The ID of the application to deploy.
+    All required parameters must be populated in order to send to Azure.
+
+    :param application_id: Required. The ID of the application to deploy.
     :type application_id: str
     :param version: The version of the application to deploy. If omitted, the
      default version is deployed. If this is omitted on a pool, and no default
@@ -35,7 +37,7 @@ class ApplicationPackageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, application_id, version=None):
-        super(ApplicationPackageReference, self).__init__()
-        self.application_id = application_id
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ApplicationPackageReference, self).__init__(**kwargs)
+        self.application_id = kwargs.get('application_id', None)
+        self.version = kwargs.get('version', None)

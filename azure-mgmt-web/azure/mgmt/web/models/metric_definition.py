@@ -26,8 +26,6 @@ class MetricDefinition(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar metric_definition_name: Name of the metric.
-    :vartype metric_definition_name: str
     :ivar unit: Unit of the metric.
     :vartype unit: str
     :ivar primary_aggregation_type: Primary aggregation type.
@@ -44,7 +42,6 @@ class MetricDefinition(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'metric_definition_name': {'readonly': True},
         'unit': {'readonly': True},
         'primary_aggregation_type': {'readonly': True},
         'metric_availabilities': {'readonly': True},
@@ -56,16 +53,14 @@ class MetricDefinition(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'metric_definition_name': {'key': 'properties.name', 'type': 'str'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
         'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[MetricAvailabilily]'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(MetricDefinition, self).__init__(kind=kind)
-        self.metric_definition_name = None
+    def __init__(self, **kwargs):
+        super(MetricDefinition, self).__init__(**kwargs)
         self.unit = None
         self.primary_aggregation_type = None
         self.metric_availabilities = None

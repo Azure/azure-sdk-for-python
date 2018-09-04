@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 __author__ = 'Microsoft Corp. <azpysdkhelp@microsoft.com>'
-__version__ = '1.1.12'
+__version__ = '1.1.14'
 
 
 class AzureException(Exception):

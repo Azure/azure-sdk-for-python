@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class JobDisableParameter(Model):
     """Options when disabling a job.
 
-    :param disable_tasks: What to do with active tasks associated with the
-     job. Possible values include: 'requeue', 'terminate', 'wait'
+    All required parameters must be populated in order to send to Azure.
+
+    :param disable_tasks: Required. What to do with active tasks associated
+     with the job. Possible values include: 'requeue', 'terminate', 'wait'
     :type disable_tasks: str or ~azure.batch.models.DisableJobOption
     """
 
@@ -28,6 +30,6 @@ class JobDisableParameter(Model):
         'disable_tasks': {'key': 'disableTasks', 'type': 'DisableJobOption'},
     }
 
-    def __init__(self, disable_tasks):
-        super(JobDisableParameter, self).__init__()
-        self.disable_tasks = disable_tasks
+    def __init__(self, **kwargs):
+        super(JobDisableParameter, self).__init__(**kwargs)
+        self.disable_tasks = kwargs.get('disable_tasks', None)
