@@ -11,6 +11,8 @@
 
 from .application_gateways_operations import ApplicationGatewaysOperations
 from .application_security_groups_operations import ApplicationSecurityGroupsOperations
+from .available_delegations_operations import AvailableDelegationsOperations
+from .available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .azure_firewalls_operations import AzureFirewallsOperations
 from .azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from .ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -71,6 +73,8 @@ from .vpn_connections_operations import VpnConnectionsOperations
 __all__ = [
     'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
+    'AvailableDelegationsOperations',
+    'AvailableResourceGroupDelegationsOperations',
     'AzureFirewallsOperations',
     'AzureFirewallFqdnTagsOperations',
     'DdosProtectionPlansOperations',
