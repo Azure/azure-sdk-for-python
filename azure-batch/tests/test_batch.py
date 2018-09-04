@@ -10,7 +10,6 @@ import io
 import logging
 import time
 import unittest
-
 import requests
 
 import azure.batch
@@ -74,6 +73,20 @@ class BatchTest(AzureMgmtTestCase):
             self.assertEqual(err.error.code, code)
         except Exception as err:
             self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+
+    def assertCreateTasksError(self, code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            self.fail("CreateTasksError expected but not raised")
+        except models.CreateTasksErrorException as err:
+            try:
+                batch_error = err.errors.pop()
+                if code:
+                    self.assertEqual(batch_error.error.code, code)
+            except IndexError:
+                self.fail("Inner BatchErrorException expected but not exist")
+        except Exception as err:
+            self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
@@ -892,7 +905,7 @@ class BatchTest(AzureMgmtTestCase):
             command_line="sleep 1",
             resource_files=resource_files)
         tasks_to_add.append(task)
-        self.assertBatchError(
+        self.assertCreateTasksError(
             "RequestBodyTooLarge",
             client.task.add_collection,
             batch_job.id,
@@ -917,6 +930,8 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(result, models.TaskAddCollectionResult)
         self.assertEqual(len(result.value), 733)
         self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+        self.assertTrue(
+            all(t.status == models.TaskAddStatus.success for t in result.value))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
