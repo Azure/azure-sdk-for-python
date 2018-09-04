@@ -172,7 +172,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(error.details[0].code)
         self.assertIsNotNone(error.details[0].message)
         self.assertIsNotNone(error.details[0].additional_properties)
-        self.assertGreater(len(error.details[0].additional_properties), 0)
+        self.assertEqual(len(error.details[0].additional_properties), 4)
 
 
 #------------------------------------------------------------------------------
