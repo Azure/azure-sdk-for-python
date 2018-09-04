@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class MetricAlertStatusCollection(Model):
-    """Represents a collection of alert rule resources.
+class MetricNamespaceName(Model):
+    """The fully qualified metric namespace name.
 
-    :param value: the values for the alert rule resources.
-    :type value: list[~azure.mgmt.monitor.models.MetricAlertStatus]
+    :param metric_namespace_name: the metric namespace name.
+    :type metric_namespace_name: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricAlertStatus]'},
+        'metric_namespace_name': {'key': 'metricNamespaceName', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(MetricAlertStatusCollection, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(MetricNamespaceName, self).__init__(**kwargs)
+        self.metric_namespace_name = kwargs.get('metric_namespace_name', None)

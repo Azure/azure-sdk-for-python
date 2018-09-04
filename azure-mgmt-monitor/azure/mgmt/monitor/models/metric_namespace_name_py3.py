@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class MetricAlertResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`MetricAlertResource <azure.mgmt.monitor.models.MetricAlertResource>` object
+class MetricNamespaceName(Model):
+    """The fully qualified metric namespace name.
+
+    :param metric_namespace_name: the metric namespace name.
+    :type metric_namespace_name: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[MetricAlertResource]'}
+        'metric_namespace_name': {'key': 'metricNamespaceName', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(MetricAlertResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, *, metric_namespace_name: str=None, **kwargs) -> None:
+        super(MetricNamespaceName, self).__init__(**kwargs)
+        self.metric_namespace_name = metric_namespace_name

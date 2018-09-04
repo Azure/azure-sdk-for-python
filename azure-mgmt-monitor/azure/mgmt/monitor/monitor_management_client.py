@@ -28,9 +28,7 @@ from .operations.tenant_activity_logs_operations import TenantActivityLogsOperat
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
 from .operations.metric_baseline_operations import MetricBaselineOperations
-from .operations.metric_alerts_operations import MetricAlertsOperations
-from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
-from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
+from .operations.metric_namespaces_operations import MetricNamespacesOperations
 from . import models
 
 
@@ -102,12 +100,8 @@ class MonitorManagementClient(SDKClient):
     :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
     :ivar metric_baseline: MetricBaseline operations
     :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
-    :ivar metric_alerts: MetricAlerts operations
-    :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
-    :ivar metric_alerts_status: MetricAlertsStatus operations
-    :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
-    :ivar scheduled_query_rules: ScheduledQueryRules operations
-    :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
+    :ivar metric_namespaces: MetricNamespaces operations
+    :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -157,9 +151,5 @@ class MonitorManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_baseline = MetricBaselineOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.metric_alerts = MetricAlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.metric_alerts_status = MetricAlertsStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.scheduled_query_rules = ScheduledQueryRulesOperations(
+        self.metric_namespaces = MetricNamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)

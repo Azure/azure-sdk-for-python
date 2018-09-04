@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class MetricAlertStatus(Model):
-    """An alert status.
+class MetricNamespace(Model):
+    """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param name: The status name.
-    :type name: str
-    :param id: The alert rule arm id.
+    :param id: the id of the metricNamespace.
     :type id: str
-    :param type: The extended resource type name.
+    :param type: the type of the namespace.
     :type type: str
-    :param properties: The alert status properties of the metric alert status.
-    :type properties: ~azure.mgmt.monitor.models.MetricAlertStatusProperties
+    :param name: the name of the namespace.
+    :type name: str
+    :param properties: Properties which include the fully qualified namespace
+     name.
+    :type properties: ~azure.mgmt.monitor.models.MetricNamespaceName
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricAlertStatusProperties'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
     }
 
-    def __init__(self, *, name: str=None, id: str=None, type: str=None, properties=None, **kwargs) -> None:
-        super(MetricAlertStatus, self).__init__(**kwargs)
-        self.name = name
+    def __init__(self, *, id: str=None, type: str=None, name: str=None, properties=None, **kwargs) -> None:
+        super(MetricNamespace, self).__init__(**kwargs)
         self.id = id
         self.type = type
+        self.name = name
         self.properties = properties

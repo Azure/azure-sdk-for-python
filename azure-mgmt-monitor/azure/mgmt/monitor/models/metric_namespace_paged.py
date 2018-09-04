@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MetricAlertStatusCollection(Model):
-    """Represents a collection of alert rule resources.
-
-    :param value: the values for the alert rule resources.
-    :type value: list[~azure.mgmt.monitor.models.MetricAlertStatus]
+class MetricNamespacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MetricNamespace <azure.mgmt.monitor.models.MetricNamespace>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricAlertStatus]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MetricNamespace]'}
     }
 
-    def __init__(self, **kwargs):
-        super(MetricAlertStatusCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(MetricNamespacePaged, self).__init__(*args, **kwargs)

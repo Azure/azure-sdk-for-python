@@ -59,9 +59,6 @@ try:
     from .itsm_receiver_py3 import ItsmReceiver
     from .azure_app_push_receiver_py3 import AzureAppPushReceiver
     from .automation_runbook_receiver_py3 import AutomationRunbookReceiver
-    from .voice_receiver_py3 import VoiceReceiver
-    from .logic_app_receiver_py3 import LogicAppReceiver
-    from .azure_function_receiver_py3 import AzureFunctionReceiver
     from .action_group_resource_py3 import ActionGroupResource
     from .enable_request_py3 import EnableRequest
     from .action_group_patch_body_py3 import ActionGroupPatchBody
@@ -87,25 +84,8 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
-    from .metric_alert_action_py3 import MetricAlertAction
-    from .metric_alert_criteria_py3 import MetricAlertCriteria
-    from .metric_alert_resource_py3 import MetricAlertResource
-    from .metric_alert_resource_patch_py3 import MetricAlertResourcePatch
-    from .metric_alert_status_properties_py3 import MetricAlertStatusProperties
-    from .metric_alert_status_py3 import MetricAlertStatus
-    from .metric_alert_status_collection_py3 import MetricAlertStatusCollection
-    from .metric_dimension_py3 import MetricDimension
-    from .metric_criteria_py3 import MetricCriteria
-    from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
-    from .source_py3 import Source
-    from .schedule_py3 import Schedule
-    from .action_py3 import Action
-    from .log_search_rule_resource_py3 import LogSearchRuleResource
-    from .log_search_rule_resource_patch_py3 import LogSearchRuleResourcePatch
-    from .log_metric_trigger_py3 import LogMetricTrigger
-    from .trigger_condition_py3 import TriggerCondition
-    from .az_ns_action_group_py3 import AzNsActionGroup
-    from .alerting_action_py3 import AlertingAction
+    from .metric_namespace_name_py3 import MetricNamespaceName
+    from .metric_namespace_py3 import MetricNamespace
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -156,9 +136,6 @@ except (SyntaxError, ImportError):
     from .itsm_receiver import ItsmReceiver
     from .azure_app_push_receiver import AzureAppPushReceiver
     from .automation_runbook_receiver import AutomationRunbookReceiver
-    from .voice_receiver import VoiceReceiver
-    from .logic_app_receiver import LogicAppReceiver
-    from .azure_function_receiver import AzureFunctionReceiver
     from .action_group_resource import ActionGroupResource
     from .enable_request import EnableRequest
     from .action_group_patch_body import ActionGroupPatchBody
@@ -184,25 +161,8 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
-    from .metric_alert_action import MetricAlertAction
-    from .metric_alert_criteria import MetricAlertCriteria
-    from .metric_alert_resource import MetricAlertResource
-    from .metric_alert_resource_patch import MetricAlertResourcePatch
-    from .metric_alert_status_properties import MetricAlertStatusProperties
-    from .metric_alert_status import MetricAlertStatus
-    from .metric_alert_status_collection import MetricAlertStatusCollection
-    from .metric_dimension import MetricDimension
-    from .metric_criteria import MetricCriteria
-    from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
-    from .source import Source
-    from .schedule import Schedule
-    from .action import Action
-    from .log_search_rule_resource import LogSearchRuleResource
-    from .log_search_rule_resource_patch import LogSearchRuleResourcePatch
-    from .log_metric_trigger import LogMetricTrigger
-    from .trigger_condition import TriggerCondition
-    from .az_ns_action_group import AzNsActionGroup
-    from .alerting_action import AlertingAction
+    from .metric_namespace_name import MetricNamespaceName
+    from .metric_namespace import MetricNamespace
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -212,8 +172,7 @@ from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
 from .event_data_paged import EventDataPaged
 from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
-from .metric_alert_resource_paged import MetricAlertResourcePaged
-from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
+from .metric_namespace_paged import MetricNamespacePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
@@ -229,12 +188,6 @@ from .monitor_management_client_enums import (
     Unit,
     AggregationType,
     Sensitivity,
-    Enabled,
-    ProvisioningState,
-    QueryType,
-    ConditionalOperator,
-    MetricTriggerType,
-    AlertSeverity,
     ResultType,
 )
 
@@ -288,9 +241,6 @@ __all__ = [
     'ItsmReceiver',
     'AzureAppPushReceiver',
     'AutomationRunbookReceiver',
-    'VoiceReceiver',
-    'LogicAppReceiver',
-    'AzureFunctionReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
@@ -316,25 +266,8 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
-    'MetricAlertAction',
-    'MetricAlertCriteria',
-    'MetricAlertResource',
-    'MetricAlertResourcePatch',
-    'MetricAlertStatusProperties',
-    'MetricAlertStatus',
-    'MetricAlertStatusCollection',
-    'MetricDimension',
-    'MetricCriteria',
-    'MetricAlertSingleResourceMultipleMetricCriteria',
-    'Source',
-    'Schedule',
-    'Action',
-    'LogSearchRuleResource',
-    'LogSearchRuleResourcePatch',
-    'LogMetricTrigger',
-    'TriggerCondition',
-    'AzNsActionGroup',
-    'AlertingAction',
+    'MetricNamespaceName',
+    'MetricNamespace',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -344,8 +277,7 @@ __all__ = [
     'EventDataPaged',
     'LocalizableStringPaged',
     'MetricDefinitionPaged',
-    'MetricAlertResourcePaged',
-    'LogSearchRuleResourcePaged',
+    'MetricNamespacePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
@@ -360,11 +292,5 @@ __all__ = [
     'Unit',
     'AggregationType',
     'Sensitivity',
-    'Enabled',
-    'ProvisioningState',
-    'QueryType',
-    'ConditionalOperator',
-    'MetricTriggerType',
-    'AlertSeverity',
     'ResultType',
 ]
