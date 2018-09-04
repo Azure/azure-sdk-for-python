@@ -49,9 +49,9 @@ class VirtualWAN(Resource):
      'None'
     :type office365_local_breakout_category: str or
      ~azure.mgmt.network.v2018_08_01.models.OfficeTrafficCategory
-    :param p2s_vpn_server_configurations: list of all
+    :param p2_svpn_server_configurations: list of all
      P2SVpnServerConfigurations associated with the virtual wan.
-    :type p2s_vpn_server_configurations:
+    :type p2_svpn_server_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration]
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
@@ -83,7 +83,7 @@ class VirtualWAN(Resource):
         'allow_branch_to_branch_traffic': {'key': 'properties.allowBranchToBranchTraffic', 'type': 'bool'},
         'allow_vnet_to_vnet_traffic': {'key': 'properties.allowVnetToVnetTraffic', 'type': 'bool'},
         'office365_local_breakout_category': {'key': 'properties.office365LocalBreakoutCategory', 'type': 'str'},
-        'p2s_vpn_server_configurations': {'key': 'properties.p2sVpnServerConfigurations', 'type': '[P2SVpnServerConfiguration]'},
+        'p2_svpn_server_configurations': {'key': 'properties.p2SVpnServerConfigurations', 'type': '[P2SVpnServerConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -97,6 +97,6 @@ class VirtualWAN(Resource):
         self.allow_branch_to_branch_traffic = kwargs.get('allow_branch_to_branch_traffic', None)
         self.allow_vnet_to_vnet_traffic = kwargs.get('allow_vnet_to_vnet_traffic', None)
         self.office365_local_breakout_category = kwargs.get('office365_local_breakout_category', None)
-        self.p2s_vpn_server_configurations = kwargs.get('p2s_vpn_server_configurations', None)
+        self.p2_svpn_server_configurations = kwargs.get('p2_svpn_server_configurations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = None

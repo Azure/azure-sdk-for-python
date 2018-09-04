@@ -63,6 +63,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param ipv6_peering_config: The IPv6 peering configuration.
     :type ipv6_peering_config:
      ~azure.mgmt.network.v2018_08_01.models.Ipv6ExpressRouteCircuitPeeringConfig
+    :param express_route_connection: The ExpressRoute connection.
+    :type express_route_connection:
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteConnectionId
     :param connections: The list of circuit connections associated with Azure
      Private Peering for this circuit.
     :type connections:
@@ -99,6 +102,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'route_filter': {'key': 'properties.routeFilter', 'type': 'RouteFilter'},
         'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
+        'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteConnectionId'},
         'connections': {'key': 'properties.connections', 'type': '[ExpressRouteCircuitConnection]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -123,6 +127,7 @@ class ExpressRouteCircuitPeering(SubResource):
         self.last_modified_by = kwargs.get('last_modified_by', None)
         self.route_filter = kwargs.get('route_filter', None)
         self.ipv6_peering_config = kwargs.get('ipv6_peering_config', None)
+        self.express_route_connection = kwargs.get('express_route_connection', None)
         self.connections = kwargs.get('connections', None)
         self.name = kwargs.get('name', None)
         self.etag = None

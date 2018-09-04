@@ -49,9 +49,9 @@ class VirtualWAN(Resource):
      'None'
     :type office365_local_breakout_category: str or
      ~azure.mgmt.network.v2018_08_01.models.OfficeTrafficCategory
-    :param p2s_vpn_server_configurations: list of all
+    :param p2_svpn_server_configurations: list of all
      P2SVpnServerConfigurations associated with the virtual wan.
-    :type p2s_vpn_server_configurations:
+    :type p2_svpn_server_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration]
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
@@ -83,12 +83,12 @@ class VirtualWAN(Resource):
         'allow_branch_to_branch_traffic': {'key': 'properties.allowBranchToBranchTraffic', 'type': 'bool'},
         'allow_vnet_to_vnet_traffic': {'key': 'properties.allowVnetToVnetTraffic', 'type': 'bool'},
         'office365_local_breakout_category': {'key': 'properties.office365LocalBreakoutCategory', 'type': 'str'},
-        'p2s_vpn_server_configurations': {'key': 'properties.p2sVpnServerConfigurations', 'type': '[P2SVpnServerConfiguration]'},
+        'p2_svpn_server_configurations': {'key': 'properties.p2SVpnServerConfigurations', 'type': '[P2SVpnServerConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, disable_vpn_encryption: bool=None, security_provider_name: str=None, allow_branch_to_branch_traffic: bool=None, allow_vnet_to_vnet_traffic: bool=None, office365_local_breakout_category=None, p2s_vpn_server_configurations=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, disable_vpn_encryption: bool=None, security_provider_name: str=None, allow_branch_to_branch_traffic: bool=None, allow_vnet_to_vnet_traffic: bool=None, office365_local_breakout_category=None, p2_svpn_server_configurations=None, provisioning_state=None, **kwargs) -> None:
         super(VirtualWAN, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.disable_vpn_encryption = disable_vpn_encryption
         self.virtual_hubs = None
@@ -97,6 +97,6 @@ class VirtualWAN(Resource):
         self.allow_branch_to_branch_traffic = allow_branch_to_branch_traffic
         self.allow_vnet_to_vnet_traffic = allow_vnet_to_vnet_traffic
         self.office365_local_breakout_category = office365_local_breakout_category
-        self.p2s_vpn_server_configurations = p2s_vpn_server_configurations
+        self.p2_svpn_server_configurations = p2_svpn_server_configurations
         self.provisioning_state = provisioning_state
         self.etag = None

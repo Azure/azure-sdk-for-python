@@ -22,6 +22,8 @@ from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
 from .express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
+from .express_route_gateways_operations import ExpressRouteGatewaysOperations
+from .express_route_connections_operations import ExpressRouteConnectionsOperations
 from .interface_endpoints_operations import InterfaceEndpointsOperations
 from .load_balancers_operations import LoadBalancersOperations
 from .load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
@@ -82,6 +84,8 @@ __all__ = [
     'ExpressRouteServiceProvidersOperations',
     'ExpressRouteCrossConnectionsOperations',
     'ExpressRouteCrossConnectionPeeringsOperations',
+    'ExpressRouteGatewaysOperations',
+    'ExpressRouteConnectionsOperations',
     'InterfaceEndpointsOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',

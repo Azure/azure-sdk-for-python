@@ -36,9 +36,9 @@ class P2SVpnGateway(Resource):
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
     :param vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :type vpn_gateway_scale_unit: int
-    :param p2s_vpn_server_configuration: The P2SVpnServerConfiguration to
+    :param p2_svpn_server_configuration: The P2SVpnServerConfiguration to
      which the p2sVpnGateway is attached to.
-    :type p2s_vpn_server_configuration:
+    :type p2_svpn_server_configuration:
      ~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration
     :param vpn_client_address_pool: The reference of the address space
      resource which represents Address space for P2S VpnClient.
@@ -69,7 +69,7 @@ class P2SVpnGateway(Resource):
         'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
-        'p2s_vpn_server_configuration': {'key': 'properties.p2sVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
+        'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': '[VpnClientConnectionHealth]'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -80,7 +80,7 @@ class P2SVpnGateway(Resource):
         self.virtual_hub = kwargs.get('virtual_hub', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.vpn_gateway_scale_unit = kwargs.get('vpn_gateway_scale_unit', None)
-        self.p2s_vpn_server_configuration = kwargs.get('p2s_vpn_server_configuration', None)
+        self.p2_svpn_server_configuration = kwargs.get('p2_svpn_server_configuration', None)
         self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
         self.vpn_client_connection_health = None
         self.etag = None

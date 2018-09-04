@@ -36,9 +36,9 @@ class P2SVpnGateway(Resource):
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
     :param vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :type vpn_gateway_scale_unit: int
-    :param p2s_vpn_server_configuration: The P2SVpnServerConfiguration to
+    :param p2_svpn_server_configuration: The P2SVpnServerConfiguration to
      which the p2sVpnGateway is attached to.
-    :type p2s_vpn_server_configuration:
+    :type p2_svpn_server_configuration:
      ~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration
     :param vpn_client_address_pool: The reference of the address space
      resource which represents Address space for P2S VpnClient.
@@ -69,18 +69,18 @@ class P2SVpnGateway(Resource):
         'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
-        'p2s_vpn_server_configuration': {'key': 'properties.p2sVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
+        'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': '[VpnClientConnectionHealth]'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, provisioning_state=None, vpn_gateway_scale_unit: int=None, p2s_vpn_server_configuration=None, vpn_client_address_pool=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, provisioning_state=None, vpn_gateway_scale_unit: int=None, p2_svpn_server_configuration=None, vpn_client_address_pool=None, **kwargs) -> None:
         super(P2SVpnGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_hub = virtual_hub
         self.provisioning_state = provisioning_state
         self.vpn_gateway_scale_unit = vpn_gateway_scale_unit
-        self.p2s_vpn_server_configuration = p2s_vpn_server_configuration
+        self.p2_svpn_server_configuration = p2_svpn_server_configuration
         self.vpn_client_address_pool = vpn_client_address_pool
         self.vpn_client_connection_health = None
         self.etag = None
