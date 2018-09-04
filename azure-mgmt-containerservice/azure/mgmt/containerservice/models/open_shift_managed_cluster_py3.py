@@ -36,25 +36,30 @@ class OpenShiftManagedCluster(Resource):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
-    :param open_shift_version: Version of OpenShift specified when creating
-     the cluster.
+    :param open_shift_version: Required. Version of OpenShift specified when
+     creating the cluster.
     :type open_shift_version: str
-    :param public_hostname: Public Hostname of the openshift managed cluster.
+    :param public_hostname: Optional user-specified FQDN for OpenShift API
+     server.
     :type public_hostname: str
-    :ivar fqdn: Auto-allocated FQDN for OpenShift API server.
-    :vartype fqdn: str
+    :param fqdn: User-specified FQDN for OpenShift API server loadbalancer
+     internal hostname.
+    :type fqdn: str
     :param router_profiles: Configuration for OpenShift router(s).
     :type router_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftRouterProfile]
-    :param master_pool_profile: Configuration for OpenShift master VMs.
-    :type master_pool_profile:
-     ~azure.mgmt.containerservice.models.OpenShiftManagedClusterMasterPoolProfile
     :param agent_pool_profiles: Configuration of OpenShift cluster VMs.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterAgentPoolProfile]
+    :param auth_profile: Configures OpenShift authentication.
+    :type auth_profile:
+     list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProvider]
     :param service_principal_profile: Service principal for OpenShift cluster.
     :type service_principal_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterServicePrincipalProfile
+    :param az_profile: Azure context for where the cluster resides.
+    :type az_profile:
+     ~azure.mgmt.containerservice.models.OpenShiftManagedClusterAzProfile
     """
 
     _validation = {
@@ -63,7 +68,7 @@ class OpenShiftManagedCluster(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'fqdn': {'readonly': True},
+        'open_shift_version': {'required': True},
     }
 
     _attribute_map = {
@@ -78,19 +83,21 @@ class OpenShiftManagedCluster(Resource):
         'public_hostname': {'key': 'properties.publicHostname', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'router_profiles': {'key': 'properties.routerProfiles', 'type': '[OpenShiftRouterProfile]'},
-        'master_pool_profile': {'key': 'properties.masterPoolProfile', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[OpenShiftManagedClusterAgentPoolProfile]'},
+        'auth_profile': {'key': 'properties.authProfile', 'type': '[OpenShiftManagedClusterIdentityProvider]'},
         'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ManagedClusterServicePrincipalProfile'},
+        'az_profile': {'key': 'properties.azProfile', 'type': 'OpenShiftManagedClusterAzProfile'},
     }
 
-    def __init__(self, *, location: str, tags=None, plan=None, open_shift_version: str=None, public_hostname: str=None, router_profiles=None, master_pool_profile=None, agent_pool_profiles=None, service_principal_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, open_shift_version: str, tags=None, plan=None, public_hostname: str=None, fqdn: str=None, router_profiles=None, agent_pool_profiles=None, auth_profile=None, service_principal_profile=None, az_profile=None, **kwargs) -> None:
         super(OpenShiftManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.provisioning_state = None
         self.open_shift_version = open_shift_version
         self.public_hostname = public_hostname
-        self.fqdn = None
+        self.fqdn = fqdn
         self.router_profiles = router_profiles
-        self.master_pool_profile = master_pool_profile
         self.agent_pool_profiles = agent_pool_profiles
+        self.auth_profile = auth_profile
         self.service_principal_profile = service_principal_profile
+        self.az_profile = az_profile

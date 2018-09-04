@@ -200,6 +200,7 @@ class OpenShiftAgentPoolProfileRole(str, Enum):
 
     compute = "compute"
     infra = "infra"
+    master = "master"
 
 
 class ContainerServiceStorageProfileTypes(str, Enum):

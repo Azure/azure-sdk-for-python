@@ -21,8 +21,8 @@ class PurchasePlan(Model):
     :param product: Specifies the product of the image from the marketplace.
      This is the same value as Offer under the imageReference element.
     :type product: str
-    :param promtion_code: The promotion code.
-    :type promtion_code: str
+    :param promotion_code: The promotion code.
+    :type promotion_code: str
     :param publisher: The plan ID.
     :type publisher: str
     """
@@ -30,7 +30,7 @@ class PurchasePlan(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'product': {'key': 'product', 'type': 'str'},
-        'promtion_code': {'key': 'promtionCode', 'type': 'str'},
+        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
         'publisher': {'key': 'publisher', 'type': 'str'},
     }
 
@@ -38,5 +38,5 @@ class PurchasePlan(Model):
         super(PurchasePlan, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.product = kwargs.get('product', None)
-        self.promtion_code = kwargs.get('promtion_code', None)
+        self.promotion_code = kwargs.get('promotion_code', None)
         self.publisher = kwargs.get('publisher', None)

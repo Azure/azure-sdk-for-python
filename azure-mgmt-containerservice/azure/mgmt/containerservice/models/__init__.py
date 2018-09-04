@@ -12,14 +12,15 @@
 try:
     from .operation_value_py3 import OperationValue
     from .resource_py3 import Resource
-    from .tags_object_py3 import TagsObject
-    from .managed_cluster_service_principal_profile_py3 import ManagedClusterServicePrincipalProfile
     from .purchase_plan_py3 import PurchasePlan
     from .open_shift_router_profile_py3 import OpenShiftRouterProfile
-    from .open_shift_managed_cluster_master_pool_profile_py3 import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile_py3 import OpenShiftManagedClusterAgentPoolProfile
+    from .open_shift_managed_cluster_identity_provider_py3 import OpenShiftManagedClusterIdentityProvider
+    from .managed_cluster_service_principal_profile_py3 import ManagedClusterServicePrincipalProfile
+    from .open_shift_managed_cluster_az_profile_py3 import OpenShiftManagedClusterAzProfile
     from .open_shift_managed_cluster_py3 import OpenShiftManagedCluster
-    from .open_shift_managed_cluster_profile_spec_py3 import OpenShiftManagedClusterProfileSpec
+    from .open_shift_managed_cluster_service_aad_identity_provider_py3 import OpenShiftManagedClusterServiceAADIdentityProvider
+    from .tags_object_py3 import TagsObject
     from .container_service_custom_profile_py3 import ContainerServiceCustomProfile
     from .key_vault_secret_ref_py3 import KeyVaultSecretRef
     from .container_service_service_principal_profile_py3 import ContainerServiceServicePrincipalProfile
@@ -49,14 +50,15 @@ try:
 except (SyntaxError, ImportError):
     from .operation_value import OperationValue
     from .resource import Resource
-    from .tags_object import TagsObject
-    from .managed_cluster_service_principal_profile import ManagedClusterServicePrincipalProfile
     from .purchase_plan import PurchasePlan
     from .open_shift_router_profile import OpenShiftRouterProfile
-    from .open_shift_managed_cluster_master_pool_profile import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile import OpenShiftManagedClusterAgentPoolProfile
+    from .open_shift_managed_cluster_identity_provider import OpenShiftManagedClusterIdentityProvider
+    from .managed_cluster_service_principal_profile import ManagedClusterServicePrincipalProfile
+    from .open_shift_managed_cluster_az_profile import OpenShiftManagedClusterAzProfile
     from .open_shift_managed_cluster import OpenShiftManagedCluster
-    from .open_shift_managed_cluster_profile_spec import OpenShiftManagedClusterProfileSpec
+    from .open_shift_managed_cluster_service_aad_identity_provider import OpenShiftManagedClusterServiceAADIdentityProvider
+    from .tags_object import TagsObject
     from .container_service_custom_profile import ContainerServiceCustomProfile
     from .key_vault_secret_ref import KeyVaultSecretRef
     from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
@@ -100,14 +102,15 @@ from .container_service_client_enums import (
 __all__ = [
     'OperationValue',
     'Resource',
-    'TagsObject',
-    'ManagedClusterServicePrincipalProfile',
     'PurchasePlan',
     'OpenShiftRouterProfile',
-    'OpenShiftManagedClusterMasterPoolProfile',
     'OpenShiftManagedClusterAgentPoolProfile',
+    'OpenShiftManagedClusterIdentityProvider',
+    'ManagedClusterServicePrincipalProfile',
+    'OpenShiftManagedClusterAzProfile',
     'OpenShiftManagedCluster',
-    'OpenShiftManagedClusterProfileSpec',
+    'OpenShiftManagedClusterServiceAADIdentityProvider',
+    'TagsObject',
     'ContainerServiceCustomProfile',
     'KeyVaultSecretRef',
     'ContainerServiceServicePrincipalProfile',

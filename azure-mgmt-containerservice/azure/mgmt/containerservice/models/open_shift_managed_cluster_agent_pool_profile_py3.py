@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .open_shift_managed_cluster_profile_spec_py3 import OpenShiftManagedClusterProfileSpec
+from msrest.serialization import Model
 
 
-class OpenShiftManagedClusterAgentPoolProfile(OpenShiftManagedClusterProfileSpec):
-    """OpenShift's configuration of the AgentPoolProfile.
+class OpenShiftManagedClusterAgentPoolProfile(Model):
+    """OpenShiftManagedClusterAgentPoolProfile represents configuration of
+    OpenShift cluster VMs.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -85,7 +86,7 @@ class OpenShiftManagedClusterAgentPoolProfile(OpenShiftManagedClusterProfileSpec
      'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
     :param role: Define the role of the AgentPoolProfile. Possible values
-     include: 'compute', 'infra'
+     include: 'compute', 'infra', 'master'
     :type role: str or
      ~azure.mgmt.containerservice.models.OpenShiftAgentPoolProfileRole
     """
@@ -106,5 +107,10 @@ class OpenShiftManagedClusterAgentPoolProfile(OpenShiftManagedClusterProfileSpec
     }
 
     def __init__(self, *, name: str, vm_size, count: int=1, vnet_subnet_id: str=None, os_type="Linux", role=None, **kwargs) -> None:
-        super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(name=name, count=count, vm_size=vm_size, vnet_subnet_id=vnet_subnet_id, os_type=os_type, **kwargs)
+        super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
+        self.name = name
+        self.count = count
+        self.vm_size = vm_size
+        self.vnet_subnet_id = vnet_subnet_id
+        self.os_type = os_type
         self.role = role
