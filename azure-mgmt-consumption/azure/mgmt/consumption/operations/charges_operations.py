@@ -55,10 +55,8 @@ class ChargesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChargesListResultByEnrollmentAccount or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.consumption.models.ChargesListResultByEnrollmentAccount or
+        :return: ChargesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargesListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -97,7 +95,7 @@ class ChargesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChargesListResultByEnrollmentAccount', response)
+            deserialized = self._deserialize('ChargesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -127,10 +125,8 @@ class ChargesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChargeSummaryByEnrollmentAccount or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.consumption.models.ChargeSummaryByEnrollmentAccount or
+        :return: ChargeSummary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargeSummary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -170,7 +166,7 @@ class ChargesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChargeSummaryByEnrollmentAccount', response)
+            deserialized = self._deserialize('ChargeSummary', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -198,10 +194,9 @@ class ChargesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChargesListResultByDepartment or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.consumption.models.ChargesListResultByDepartment
-         or ~msrest.pipeline.ClientRawResponse
+        :return: ChargesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargesListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -239,7 +234,7 @@ class ChargesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChargesListResultByDepartment', response)
+            deserialized = self._deserialize('ChargesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -269,8 +264,8 @@ class ChargesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChargeSummaryByDepartment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.ChargeSummaryByDepartment or
+        :return: ChargeSummary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargeSummary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -310,7 +305,7 @@ class ChargesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChargeSummaryByDepartment', response)
+            deserialized = self._deserialize('ChargeSummary', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -31,11 +31,8 @@ try:
     from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
     from .forecast_py3 import Forecast
     from .management_group_aggregated_cost_result_py3 import ManagementGroupAggregatedCostResult
-    from .charge_summary_by_enrollment_account_py3 import ChargeSummaryByEnrollmentAccount
-    from .charges_list_result_by_enrollment_account_py3 import ChargesListResultByEnrollmentAccount
-    from .charge_summary_by_department_py3 import ChargeSummaryByDepartment
-    from .charges_list_result_by_department_py3 import ChargesListResultByDepartment
-    from .charge_summary_properties_py3 import ChargeSummaryProperties
+    from .charge_summary_py3 import ChargeSummary
+    from .charges_list_result_py3 import ChargesListResult
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .operation_display_py3 import OperationDisplay
@@ -66,11 +63,8 @@ except (SyntaxError, ImportError):
     from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
     from .forecast import Forecast
     from .management_group_aggregated_cost_result import ManagementGroupAggregatedCostResult
-    from .charge_summary_by_enrollment_account import ChargeSummaryByEnrollmentAccount
-    from .charges_list_result_by_enrollment_account import ChargesListResultByEnrollmentAccount
-    from .charge_summary_by_department import ChargeSummaryByDepartment
-    from .charges_list_result_by_department import ChargesListResultByDepartment
-    from .charge_summary_properties import ChargeSummaryProperties
+    from .charge_summary import ChargeSummary
+    from .charges_list_result import ChargesListResult
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
     from .operation_display import OperationDisplay
@@ -120,11 +114,8 @@ __all__ = [
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
     'ManagementGroupAggregatedCostResult',
-    'ChargeSummaryByEnrollmentAccount',
-    'ChargesListResultByEnrollmentAccount',
-    'ChargeSummaryByDepartment',
-    'ChargesListResultByDepartment',
-    'ChargeSummaryProperties',
+    'ChargeSummary',
+    'ChargesListResult',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',

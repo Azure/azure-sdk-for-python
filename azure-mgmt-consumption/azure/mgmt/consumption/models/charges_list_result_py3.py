@@ -12,15 +12,14 @@
 from msrest.serialization import Model
 
 
-class ChargesListResultByEnrollmentAccount(Model):
-    """Result of listing charge summary by enrollment account.
+class ChargesListResult(Model):
+    """Result of listing charge summary.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of charge summary by enrollment account.
-    :vartype value:
-     list[~azure.mgmt.consumption.models.ChargeSummaryByEnrollmentAccount]
+    :ivar value: The list of charge summary
+    :vartype value: list[~azure.mgmt.consumption.models.ChargeSummary]
     """
 
     _validation = {
@@ -28,9 +27,9 @@ class ChargesListResultByEnrollmentAccount(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChargeSummaryByEnrollmentAccount]'},
+        'value': {'key': 'value', 'type': '[ChargeSummary]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ChargesListResultByEnrollmentAccount, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ChargesListResult, self).__init__(**kwargs)
         self.value = None

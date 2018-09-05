@@ -9,15 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class ChargeSummaryProperties(Model):
-    """The properties of the charge summary.
+class ChargeSummary(Resource):
+    """A charge summary resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the
      charge belongs to.
     :vartype billing_period_id: str
@@ -36,6 +44,10 @@ class ChargeSummaryProperties(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
         'usage_end': {'readonly': True},
@@ -46,17 +58,21 @@ class ChargeSummaryProperties(Model):
     }
 
     _attribute_map = {
-        'billing_period_id': {'key': 'billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'usageStart', 'type': 'str'},
-        'usage_end': {'key': 'usageEnd', 'type': 'str'},
-        'azure_charges': {'key': 'azureCharges', 'type': 'decimal'},
-        'charges_billed_separately': {'key': 'chargesBilledSeparately', 'type': 'decimal'},
-        'marketplace_charges': {'key': 'marketplaceCharges', 'type': 'decimal'},
-        'currency': {'key': 'currency', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
+        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
+        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
+        'azure_charges': {'key': 'properties.azureCharges', 'type': 'decimal'},
+        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'decimal'},
+        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'decimal'},
+        'currency': {'key': 'properties.currency', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ChargeSummaryProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ChargeSummary, self).__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
