@@ -20,6 +20,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.application_security_groups_operations import ApplicationSecurityGroupsOperations
+from .operations.available_delegations_operations import AvailableDelegationsOperations
+from .operations.available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .operations.azure_firewalls_operations import AzureFirewallsOperations
 from .operations.azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from .operations.ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -123,6 +125,10 @@ class NetworkManagementClient(SDKClient):
     :vartype application_gateways: azure.mgmt.network.v2018_08_01.operations.ApplicationGatewaysOperations
     :ivar application_security_groups: ApplicationSecurityGroups operations
     :vartype application_security_groups: azure.mgmt.network.v2018_08_01.operations.ApplicationSecurityGroupsOperations
+    :ivar available_delegations: AvailableDelegations operations
+    :vartype available_delegations: azure.mgmt.network.v2018_08_01.operations.AvailableDelegationsOperations
+    :ivar available_resource_group_delegations: AvailableResourceGroupDelegations operations
+    :vartype available_resource_group_delegations: azure.mgmt.network.v2018_08_01.operations.AvailableResourceGroupDelegationsOperations
     :ivar azure_firewalls: AzureFirewalls operations
     :vartype azure_firewalls: azure.mgmt.network.v2018_08_01.operations.AzureFirewallsOperations
     :ivar azure_firewall_fqdn_tags: AzureFirewallFqdnTags operations
@@ -259,6 +265,10 @@ class NetworkManagementClient(SDKClient):
         self.application_gateways = ApplicationGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application_security_groups = ApplicationSecurityGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_delegations = AvailableDelegationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewalls = AzureFirewallsOperations(
             self._client, self.config, self._serialize, self._deserialize)
