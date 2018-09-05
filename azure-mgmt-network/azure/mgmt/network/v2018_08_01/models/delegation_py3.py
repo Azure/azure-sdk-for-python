@@ -15,6 +15,9 @@ from .sub_resource_py3 import SubResource
 class Delegation(SubResource):
     """Details the service to which the subnet is delegated.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource ID.
     :type id: str
     :param service_name: The name of the service to whom the subnet should be
@@ -23,8 +26,8 @@ class Delegation(SubResource):
     :param actions: Describes the actions permitted to the service upon
      delegation
     :type actions: list[str]
-    :param provisioning_state: The provisioning state of the resource.
-    :type provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource.
+    :vartype provisioning_state: str
     :param name: The name of the resource that is unique within a subnet. This
      name can be used to access the resource.
     :type name: str
@@ -32,6 +35,10 @@ class Delegation(SubResource):
      is updated.
     :type etag: str
     """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -42,10 +49,10 @@ class Delegation(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, service_name: str=None, actions=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, service_name: str=None, actions=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Delegation, self).__init__(id=id, **kwargs)
         self.service_name = service_name
         self.actions = actions
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.name = name
         self.etag = etag
