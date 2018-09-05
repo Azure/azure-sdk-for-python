@@ -175,6 +175,13 @@ class GraphRbacTest(AzureMgmtTestCase):
             'account_enabled': False
         })
 
+        self.graphrbac_client.service_principals.update(
+            sp.object_id,
+            {
+                'account_enabled': False
+            }
+        )
+
         self.graphrbac_client.service_principals.delete(sp.object_id)
 
         self.graphrbac_client.applications.delete(app.object_id)
