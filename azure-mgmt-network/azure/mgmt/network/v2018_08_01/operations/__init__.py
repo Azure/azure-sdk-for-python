@@ -36,6 +36,7 @@ from .network_interfaces_operations import NetworkInterfacesOperations
 from .network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
 from .network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
+from .network_profiles_operations import NetworkProfilesOperations
 from .network_security_groups_operations import NetworkSecurityGroupsOperations
 from .security_rules_operations import SecurityRulesOperations
 from .default_security_rules_operations import DefaultSecurityRulesOperations
@@ -96,6 +97,7 @@ __all__ = [
     'NetworkInterfaceIPConfigurationsOperations',
     'NetworkInterfaceLoadBalancersOperations',
     'NetworkInterfaceTapConfigurationsOperations',
+    'NetworkProfilesOperations',
     'NetworkSecurityGroupsOperations',
     'SecurityRulesOperations',
     'DefaultSecurityRulesOperations',

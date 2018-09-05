@@ -133,6 +133,16 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
+    from .ip_configuration_profile_properties_format_py3 import IPConfigurationProfilePropertiesFormat
+    from .ip_configuration_profile_py3 import IPConfigurationProfile
+    from .container_network_interface_configuration_properties_format_py3 import ContainerNetworkInterfaceConfigurationPropertiesFormat
+    from .container_network_interface_configuration_py3 import ContainerNetworkInterfaceConfiguration
+    from .container_properties_format_py3 import ContainerPropertiesFormat
+    from .container_py3 import Container
+    from .container_network_interface_properties_format_py3 import ContainerNetworkInterfacePropertiesFormat
+    from .container_network_interface_py3 import ContainerNetworkInterface
+    from .network_profile_properties_format_py3 import NetworkProfilePropertiesFormat
+    from .network_profile_py3 import NetworkProfile
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .network_watcher_py3 import NetworkWatcher
     from .topology_parameters_py3 import TopologyParameters
@@ -378,6 +388,16 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
+    from .ip_configuration_profile_properties_format import IPConfigurationProfilePropertiesFormat
+    from .ip_configuration_profile import IPConfigurationProfile
+    from .container_network_interface_configuration_properties_format import ContainerNetworkInterfaceConfigurationPropertiesFormat
+    from .container_network_interface_configuration import ContainerNetworkInterfaceConfiguration
+    from .container_properties_format import ContainerPropertiesFormat
+    from .container import Container
+    from .container_network_interface_properties_format import ContainerNetworkInterfacePropertiesFormat
+    from .container_network_interface import ContainerNetworkInterface
+    from .network_profile_properties_format import NetworkProfilePropertiesFormat
+    from .network_profile import NetworkProfile
     from .error_response import ErrorResponse, ErrorResponseException
     from .network_watcher import NetworkWatcher
     from .topology_parameters import TopologyParameters
@@ -522,6 +542,7 @@ from .network_interface_paged import NetworkInterfacePaged
 from .probe_paged import ProbePaged
 from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
 from .network_interface_tap_configuration_paged import NetworkInterfaceTapConfigurationPaged
+from .network_profile_paged import NetworkProfilePaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
@@ -760,6 +781,16 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
+    'IPConfigurationProfilePropertiesFormat',
+    'IPConfigurationProfile',
+    'ContainerNetworkInterfaceConfigurationPropertiesFormat',
+    'ContainerNetworkInterfaceConfiguration',
+    'ContainerPropertiesFormat',
+    'Container',
+    'ContainerNetworkInterfacePropertiesFormat',
+    'ContainerNetworkInterface',
+    'NetworkProfilePropertiesFormat',
+    'NetworkProfile',
     'ErrorResponse', 'ErrorResponseException',
     'NetworkWatcher',
     'TopologyParameters',
@@ -904,6 +935,7 @@ __all__ = [
     'ProbePaged',
     'NetworkInterfaceIPConfigurationPaged',
     'NetworkInterfaceTapConfigurationPaged',
+    'NetworkProfilePaged',
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkWatcherPaged',
