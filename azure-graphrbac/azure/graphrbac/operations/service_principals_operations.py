@@ -185,9 +185,8 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ServicePrincipal or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.ServicePrincipal or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -205,7 +204,6 @@ class ServicePrincipalsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -221,19 +219,12 @@ class ServicePrincipalsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('ServicePrincipal', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     update.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}'}
 
     def delete(
