@@ -41,7 +41,7 @@ except (SyntaxError, ImportError):
     from .thing import Thing
     from .creative_work import CreativeWork
     from .response_base import ResponseBase
-from .custom_search_api_enums import (
+from .custom_search_client_enums import (
     ErrorCode,
     ErrorSubCode,
     SafeSearch,
