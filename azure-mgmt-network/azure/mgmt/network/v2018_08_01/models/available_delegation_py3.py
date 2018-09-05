@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource_py3 import SubResource
+from msrest.serialization import Model
 
 
-class AvailableDelegation(SubResource):
+class AvailableDelegation(Model):
     """The serviceName of an AvailableDelegation indicates a possible delegation
     for a subnet.
 
-    :param id: Resource ID.
-    :type id: str
     :param name: The name of the AvailableDelegation resource.
     :type name: str
+    :param id: A unique identifier of the AvailableDelegation resource.
+    :type id: str
     :param type: Resource type.
     :type type: str
     :param service_name: The name of the service and resource
@@ -30,16 +30,17 @@ class AvailableDelegation(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'service_name': {'key': 'serviceName', 'type': 'str'},
         'actions': {'key': 'actions', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type: str=None, service_name: str=None, actions=None, **kwargs) -> None:
-        super(AvailableDelegation, self).__init__(id=id, **kwargs)
+    def __init__(self, *, name: str=None, id: str=None, type: str=None, service_name: str=None, actions=None, **kwargs) -> None:
+        super(AvailableDelegation, self).__init__(**kwargs)
         self.name = name
+        self.id = id
         self.type = type
         self.service_name = service_name
         self.actions = actions
