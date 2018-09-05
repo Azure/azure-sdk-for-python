@@ -15,7 +15,7 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2018-09-01-preview
   response:
     body: {string: "{\"error\":{\"code\":\"InvalidQuery\",\"message\":\"Query validation
-        error\",\"details\":[{\"code\":\"ParserFailure\",\"message\":\"Parser failure\",\"additionalProperties\":{\"line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\":\"\u0178\"}}]}}"}
+        error\",\"details\":[{\"code\":\"ParserFailure\",\"message\":\"Parser failure\",\"line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\":\"\u0178\"}]}}"}
     headers:
       cache-control: [no-cache]
       content-length: ['232']
