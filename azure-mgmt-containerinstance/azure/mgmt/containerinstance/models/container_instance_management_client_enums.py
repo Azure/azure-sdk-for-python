@@ -37,6 +37,12 @@ class OperatingSystemTypes(str, Enum):
     linux = "Linux"
 
 
+class LogAnalyticsLogType(str, Enum):
+
+    container_insights = "ContainerInsights"
+    container_instance_logs = "ContainerInstanceLogs"
+
+
 class ContainerInstanceOperationsOrigin(str, Enum):
 
     user = "User"
