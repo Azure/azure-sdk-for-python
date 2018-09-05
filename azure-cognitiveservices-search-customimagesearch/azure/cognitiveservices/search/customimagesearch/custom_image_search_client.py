@@ -16,8 +16,8 @@ from .operations.custom_instance_operations import CustomInstanceOperations
 from . import models
 
 
-class CustomImageSearchAPIConfiguration(Configuration):
-    """Configuration for CustomImageSearchAPI
+class CustomImageSearchClientConfiguration(Configuration):
+    """Configuration for CustomImageSearchClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,18 +35,18 @@ class CustomImageSearchAPIConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.cognitive.microsoft.com/bingcustomsearch/v7.0'
 
-        super(CustomImageSearchAPIConfiguration, self).__init__(base_url)
+        super(CustomImageSearchClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-search-customimagesearch/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class CustomImageSearchAPI(SDKClient):
+class CustomImageSearchClient(SDKClient):
     """The Bing Custom Image Search API lets you send an image search query to Bing and get back image search results customized to meet your custom search definition.
 
     :ivar config: Configuration for client.
-    :vartype config: CustomImageSearchAPIConfiguration
+    :vartype config: CustomImageSearchClientConfiguration
 
     :ivar custom_instance: CustomInstance operations
     :vartype custom_instance: azure.cognitiveservices.search.customimagesearch.operations.CustomInstanceOperations
@@ -60,8 +60,8 @@ class CustomImageSearchAPI(SDKClient):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = CustomImageSearchAPIConfiguration(credentials, base_url)
-        super(CustomImageSearchAPI, self).__init__(self.config.credentials, self.config)
+        self.config = CustomImageSearchClientConfiguration(credentials, base_url)
+        super(CustomImageSearchClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

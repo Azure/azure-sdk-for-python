@@ -39,7 +39,7 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .web_page import WebPage
     from .response_base import ResponseBase
-from .custom_image_search_api_enums import (
+from .custom_image_search_client_enums import (
     ErrorCode,
     ErrorSubCode,
     ImageAspect,
