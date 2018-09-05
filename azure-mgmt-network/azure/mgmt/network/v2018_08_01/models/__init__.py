@@ -30,6 +30,7 @@ try:
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .delegation_py3 import Delegation
     from .subnet_py3 import Subnet
     from .frontend_ip_configuration_py3 import FrontendIPConfiguration
     from .virtual_network_tap_py3 import VirtualNetworkTap
@@ -72,6 +73,7 @@ try:
     from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
     from .resource_py3 import Resource
     from .tags_object_py3 import TagsObject
+    from .available_delegation_py3 import AvailableDelegation
     from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
@@ -133,15 +135,10 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
-    from .ip_configuration_profile_properties_format_py3 import IPConfigurationProfilePropertiesFormat
     from .ip_configuration_profile_py3 import IPConfigurationProfile
-    from .container_network_interface_configuration_properties_format_py3 import ContainerNetworkInterfaceConfigurationPropertiesFormat
     from .container_network_interface_configuration_py3 import ContainerNetworkInterfaceConfiguration
-    from .container_properties_format_py3 import ContainerPropertiesFormat
     from .container_py3 import Container
-    from .container_network_interface_properties_format_py3 import ContainerNetworkInterfacePropertiesFormat
     from .container_network_interface_py3 import ContainerNetworkInterface
-    from .network_profile_properties_format_py3 import NetworkProfilePropertiesFormat
     from .network_profile_py3 import NetworkProfile
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .network_watcher_py3 import NetworkWatcher
@@ -285,6 +282,7 @@ except (SyntaxError, ImportError):
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
+    from .delegation import Delegation
     from .subnet import Subnet
     from .frontend_ip_configuration import FrontendIPConfiguration
     from .virtual_network_tap import VirtualNetworkTap
@@ -327,6 +325,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
     from .resource import Resource
     from .tags_object import TagsObject
+    from .available_delegation import AvailableDelegation
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
@@ -388,15 +387,10 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
-    from .ip_configuration_profile_properties_format import IPConfigurationProfilePropertiesFormat
     from .ip_configuration_profile import IPConfigurationProfile
-    from .container_network_interface_configuration_properties_format import ContainerNetworkInterfaceConfigurationPropertiesFormat
     from .container_network_interface_configuration import ContainerNetworkInterfaceConfiguration
-    from .container_properties_format import ContainerPropertiesFormat
     from .container import Container
-    from .container_network_interface_properties_format import ContainerNetworkInterfacePropertiesFormat
     from .container_network_interface import ContainerNetworkInterface
-    from .network_profile_properties_format import NetworkProfilePropertiesFormat
     from .network_profile import NetworkProfile
     from .error_response import ErrorResponse, ErrorResponseException
     from .network_watcher import NetworkWatcher
@@ -522,6 +516,7 @@ except (SyntaxError, ImportError):
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
+from .available_delegation_paged import AvailableDelegationPaged
 from .azure_firewall_paged import AzureFirewallPaged
 from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
@@ -678,6 +673,7 @@ __all__ = [
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
+    'Delegation',
     'Subnet',
     'FrontendIPConfiguration',
     'VirtualNetworkTap',
@@ -720,6 +716,7 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
     'TagsObject',
+    'AvailableDelegation',
     'AzureFirewallIPConfiguration',
     'AzureFirewallRCAction',
     'AzureFirewallApplicationRuleProtocol',
@@ -781,15 +778,10 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
-    'IPConfigurationProfilePropertiesFormat',
     'IPConfigurationProfile',
-    'ContainerNetworkInterfaceConfigurationPropertiesFormat',
     'ContainerNetworkInterfaceConfiguration',
-    'ContainerPropertiesFormat',
     'Container',
-    'ContainerNetworkInterfacePropertiesFormat',
     'ContainerNetworkInterface',
-    'NetworkProfilePropertiesFormat',
     'NetworkProfile',
     'ErrorResponse', 'ErrorResponseException',
     'NetworkWatcher',
@@ -915,6 +907,7 @@ __all__ = [
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
+    'AvailableDelegationPaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
     'DdosProtectionPlanPaged',

@@ -17,9 +17,9 @@ class IPConfigurationProfile(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param properties: Properties of the IP configuration profile.
-    :type properties:
-     ~azure.mgmt.network.v2018_08_01.models.IPConfigurationProfilePropertiesFormat
+    :param subnet: The reference of the subnet resource to create a
+     contatainer network interface ip configruation.
+    :type subnet: ~azure.mgmt.network.v2018_08_01.models.Subnet
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -27,11 +27,11 @@ class IPConfigurationProfile(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'IPConfigurationProfilePropertiesFormat'},
+        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IPConfigurationProfile, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.subnet = kwargs.get('subnet', None)
         self.etag = kwargs.get('etag', None)

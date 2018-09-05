@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ContainerPropertiesFormat(Model):
-    """Container resource properties.
-
-    :param container_uri: ARM Uri for the container.
-    :type container_uri: str
+class AvailableDelegationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AvailableDelegation <azure.mgmt.network.v2018_08_01.models.AvailableDelegation>` object
     """
 
     _attribute_map = {
-        'container_uri': {'key': 'containerUri', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AvailableDelegation]'}
     }
 
-    def __init__(self, *, container_uri: str=None, **kwargs) -> None:
-        super(ContainerPropertiesFormat, self).__init__(**kwargs)
-        self.container_uri = container_uri
+    def __init__(self, *args, **kwargs):
+
+        super(AvailableDelegationPaged, self).__init__(*args, **kwargs)

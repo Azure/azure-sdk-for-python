@@ -28,9 +28,14 @@ class NetworkProfile(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param properties: Network profile properties.
-    :type properties:
-     ~azure.mgmt.network.v2018_08_01.models.NetworkProfilePropertiesFormat
+    :param container_network_interfaces: List of child container network
+     interfaces.
+    :type container_network_interfaces:
+     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterface]
+    :param container_network_interface_configurations: List of chid container
+     network interface configurations.
+    :type container_network_interface_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterfaceConfiguration]
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -47,11 +52,13 @@ class NetworkProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'NetworkProfilePropertiesFormat'},
+        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
+        'container_network_interface_configurations': {'key': 'properties.containerNetworkInterfaceConfigurations', 'type': '[ContainerNetworkInterfaceConfiguration]'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, properties=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, container_network_interfaces=None, container_network_interface_configurations=None, etag: str=None, **kwargs) -> None:
         super(NetworkProfile, self).__init__(id=id, location=location, tags=tags, **kwargs)
-        self.properties = properties
+        self.container_network_interfaces = container_network_interfaces
+        self.container_network_interface_configurations = container_network_interface_configurations
         self.etag = etag

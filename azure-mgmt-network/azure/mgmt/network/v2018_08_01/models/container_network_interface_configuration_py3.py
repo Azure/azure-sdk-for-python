@@ -17,9 +17,14 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param properties: Container network interface configuration properties.
-    :type properties:
-     ~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterfaceConfigurationPropertiesFormat
+    :param ip_configurations: A list of ip configurations of the container
+     network interface configuration.
+    :type ip_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.IPConfigurationProfile]
+    :param container_network_interfaces: A list of container network
+     interfaces created from this container network interface configuration.
+    :type container_network_interfaces:
+     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterface]
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -27,11 +32,13 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ContainerNetworkInterfaceConfigurationPropertiesFormat'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfigurationProfile]'},
+        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, properties=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, ip_configurations=None, container_network_interfaces=None, etag: str=None, **kwargs) -> None:
         super(ContainerNetworkInterfaceConfiguration, self).__init__(id=id, **kwargs)
-        self.properties = properties
+        self.ip_configurations = ip_configurations
+        self.container_network_interfaces = container_network_interfaces
         self.etag = etag

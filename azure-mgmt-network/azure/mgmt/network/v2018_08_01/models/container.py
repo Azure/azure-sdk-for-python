@@ -15,20 +15,19 @@ from msrest.serialization import Model
 class Container(Model):
     """Reference to container resource in remote resource provider.
 
-    :param properties: Properties of the container.
-    :type properties:
-     ~azure.mgmt.network.v2018_08_01.models.ContainerPropertiesFormat
+    :param container_uri: ARM Uri for the container.
+    :type container_uri: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ContainerPropertiesFormat'},
+        'container_uri': {'key': 'properties.containerUri', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Container, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.container_uri = kwargs.get('container_uri', None)
         self.etag = kwargs.get('etag', None)

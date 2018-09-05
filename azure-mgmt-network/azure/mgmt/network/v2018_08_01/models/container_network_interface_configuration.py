@@ -17,9 +17,14 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param properties: Container network interface configuration properties.
-    :type properties:
-     ~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterfaceConfigurationPropertiesFormat
+    :param ip_configurations: A list of ip configurations of the container
+     network interface configuration.
+    :type ip_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.IPConfigurationProfile]
+    :param container_network_interfaces: A list of container network
+     interfaces created from this container network interface configuration.
+    :type container_network_interfaces:
+     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterface]
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -27,11 +32,13 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ContainerNetworkInterfaceConfigurationPropertiesFormat'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfigurationProfile]'},
+        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ContainerNetworkInterfaceConfiguration, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.container_network_interfaces = kwargs.get('container_network_interfaces', None)
         self.etag = kwargs.get('etag', None)
