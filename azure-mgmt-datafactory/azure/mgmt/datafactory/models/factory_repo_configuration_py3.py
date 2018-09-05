@@ -52,7 +52,7 @@ class FactoryRepoConfiguration(Model):
     }
 
     _subtype_map = {
-        'type': {'FactoryVSTSConfiguration': 'FactoryVSTSConfiguration', 'FactoryGithubConfiguration': 'FactoryGitHubConfiguration'}
+        'type': {'FactoryVSTSConfiguration': 'FactoryVSTSConfiguration', 'FactoryGitHubConfiguration': 'FactoryGitHubConfiguration'}
     }
 
     def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, last_commit_id: str=None, **kwargs) -> None:
