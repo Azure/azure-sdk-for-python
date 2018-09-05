@@ -26,13 +26,13 @@ try:
     from .current_spend_py3 import CurrentSpend
     from .notification_py3 import Notification
     from .budget_py3 import Budget
-    from .cost_tag_properties_py3 import CostTagProperties
-    from .cost_tag_py3 import CostTag
     from .price_sheet_properties_py3 import PriceSheetProperties
     from .price_sheet_result_py3 import PriceSheetResult
     from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
     from .forecast_py3 import Forecast
     from .management_group_aggregated_cost_result_py3 import ManagementGroupAggregatedCostResult
+    from .charge_summary_py3 import ChargeSummary
+    from .charges_list_result_py3 import ChargesListResult
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .operation_display_py3 import OperationDisplay
@@ -58,13 +58,13 @@ except (SyntaxError, ImportError):
     from .current_spend import CurrentSpend
     from .notification import Notification
     from .budget import Budget
-    from .cost_tag_properties import CostTagProperties
-    from .cost_tag import CostTag
     from .price_sheet_properties import PriceSheetProperties
     from .price_sheet_result import PriceSheetResult
     from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
     from .forecast import Forecast
     from .management_group_aggregated_cost_result import ManagementGroupAggregatedCostResult
+    from .charge_summary import ChargeSummary
+    from .charges_list_result import ChargesListResult
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
     from .operation_display import OperationDisplay
@@ -109,13 +109,13 @@ __all__ = [
     'CurrentSpend',
     'Notification',
     'Budget',
-    'CostTagProperties',
-    'CostTag',
     'PriceSheetProperties',
     'PriceSheetResult',
     'ForecastPropertiesConfidenceLevelsItem',
     'Forecast',
     'ManagementGroupAggregatedCostResult',
+    'ChargeSummary',
+    'ChargesListResult',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',

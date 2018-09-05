@@ -22,7 +22,7 @@ class AggregatedCostOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-06-30. Constant value: "2018-06-30".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-08-31. Constant value: "2018-08-31".
     """
 
     models = models
@@ -32,17 +32,23 @@ class AggregatedCostOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-30"
+        self.api_version = "2018-08-31"
 
         self.config = config
 
     def get_by_management_group(
-            self, management_group_id, custom_headers=None, raw=False, **operation_config):
+            self, management_group_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Provides the aggregate cost of a management group and all child
         management groups by current billing period.
 
         :param management_group_id: Azure Management Group ID.
         :type management_group_id: str
+        :param filter: May be used to filter aggregated cost by
+         properties/usageStart (Utc time), properties/usageEnd (Utc time). The
+         filter supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
+         string where key and value is separated by a colon (:).
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,6 +72,8 @@ class AggregatedCostOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}

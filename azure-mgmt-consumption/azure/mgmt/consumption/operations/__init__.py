@@ -17,11 +17,11 @@ from .reservations_details_operations import ReservationsDetailsOperations
 from .reservation_recommendations_operations import ReservationRecommendationsOperations
 from .budgets_operations import BudgetsOperations
 from .price_sheet_operations import PriceSheetOperations
-from .cost_tags_operations import CostTagsOperations
 from .tags_operations import TagsOperations
 from .forecasts_operations import ForecastsOperations
 from .operations import Operations
 from .aggregated_cost_operations import AggregatedCostOperations
+from .charges_operations import ChargesOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -32,9 +32,9 @@ __all__ = [
     'ReservationRecommendationsOperations',
     'BudgetsOperations',
     'PriceSheetOperations',
-    'CostTagsOperations',
     'TagsOperations',
     'ForecastsOperations',
     'Operations',
     'AggregatedCostOperations',
+    'ChargesOperations',
 ]
