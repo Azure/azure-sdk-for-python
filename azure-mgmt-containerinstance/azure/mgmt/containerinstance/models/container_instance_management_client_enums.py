@@ -31,10 +31,22 @@ class ContainerGroupNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class ContainerGroupIpAddressType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+
+class LogAnalyticsLogType(str, Enum):
+
+    container_insights = "ContainerInsights"
+    container_instance_logs = "ContainerInstanceLogs"
 
 
 class ContainerInstanceOperationsOrigin(str, Enum):
