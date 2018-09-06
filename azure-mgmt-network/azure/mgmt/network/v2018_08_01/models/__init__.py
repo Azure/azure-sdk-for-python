@@ -114,6 +114,8 @@ try:
     from .express_route_circuit_reference_py3 import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering_py3 import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection_py3 import ExpressRouteCrossConnection
+    from .virtual_hub_id_py3 import VirtualHubId
+    from .express_route_circuit_peering_id_py3 import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection_py3 import ExpressRouteConnection
@@ -361,6 +363,8 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_reference import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection import ExpressRouteCrossConnection
+    from .virtual_hub_id import VirtualHubId
+    from .express_route_circuit_peering_id import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection import ExpressRouteConnection
@@ -746,6 +750,8 @@ __all__ = [
     'ExpressRouteCircuitReference',
     'ExpressRouteCrossConnectionPeering',
     'ExpressRouteCrossConnection',
+    'VirtualHubId',
+    'ExpressRouteCircuitPeeringId',
     'ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds',
     'ExpressRouteGatewayPropertiesAutoScaleConfiguration',
     'ExpressRouteConnection',
