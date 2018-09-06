@@ -18,6 +18,8 @@ class ExpressRouteGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :ivar name: Resource name.
@@ -39,11 +41,9 @@ class ExpressRouteGateway(Resource):
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param express_route_gateway_id: The resource URI for the Virtual Hub
-     where the ExpressRoute gateway is or will be deployed. The Virtual Hub
-     resource and the ExpressRoute gateway resource reside in the same
-     subscription.
-    :type express_route_gateway_id: str
+    :param virtual_hub: Required. The Virtual Hub where the ExpressRoute
+     gateway is or will be deployed.
+    :type virtual_hub: ~azure.mgmt.network.v2018_08_01.models.VirtualHubId
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -54,6 +54,7 @@ class ExpressRouteGateway(Resource):
         'type': {'readonly': True},
         'express_route_connections': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'virtual_hub': {'required': True},
         'etag': {'readonly': True},
     }
 
@@ -66,7 +67,7 @@ class ExpressRouteGateway(Resource):
         'auto_scale_configuration': {'key': 'properties.autoScaleConfiguration', 'type': 'ExpressRouteGatewayPropertiesAutoScaleConfiguration'},
         'express_route_connections': {'key': 'properties.expressRouteConnections', 'type': '[ExpressRouteConnection]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_gateway_id': {'key': 'properties.virtualHub.id', 'type': 'str'},
+        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'VirtualHubId'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -75,5 +76,5 @@ class ExpressRouteGateway(Resource):
         self.auto_scale_configuration = kwargs.get('auto_scale_configuration', None)
         self.express_route_connections = None
         self.provisioning_state = None
-        self.express_route_gateway_id = kwargs.get('express_route_gateway_id', None)
+        self.virtual_hub = kwargs.get('virtual_hub', None)
         self.etag = None

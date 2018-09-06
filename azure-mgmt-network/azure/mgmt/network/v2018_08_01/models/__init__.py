@@ -30,6 +30,7 @@ try:
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .delegation_py3 import Delegation
     from .subnet_py3 import Subnet
     from .frontend_ip_configuration_py3 import FrontendIPConfiguration
     from .virtual_network_tap_py3 import VirtualNetworkTap
@@ -72,6 +73,7 @@ try:
     from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
     from .resource_py3 import Resource
     from .tags_object_py3 import TagsObject
+    from .available_delegation_py3 import AvailableDelegation
     from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
@@ -112,6 +114,8 @@ try:
     from .express_route_circuit_reference_py3 import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering_py3 import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection_py3 import ExpressRouteCrossConnection
+    from .virtual_hub_id_py3 import VirtualHubId
+    from .express_route_circuit_peering_id_py3 import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection_py3 import ExpressRouteConnection
@@ -287,6 +291,7 @@ except (SyntaxError, ImportError):
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
+    from .delegation import Delegation
     from .subnet import Subnet
     from .frontend_ip_configuration import FrontendIPConfiguration
     from .virtual_network_tap import VirtualNetworkTap
@@ -329,6 +334,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
     from .resource import Resource
     from .tags_object import TagsObject
+    from .available_delegation import AvailableDelegation
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
@@ -369,6 +375,8 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_reference import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection import ExpressRouteCrossConnection
+    from .virtual_hub_id import VirtualHubId
+    from .express_route_circuit_peering_id import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection import ExpressRouteConnection
@@ -526,6 +534,7 @@ except (SyntaxError, ImportError):
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
+from .available_delegation_paged import AvailableDelegationPaged
 from .azure_firewall_paged import AzureFirewallPaged
 from .azure_firewall_fqdn_tag_paged import AzureFirewallFqdnTagPaged
 from .ddos_protection_plan_paged import DdosProtectionPlanPaged
@@ -687,6 +696,7 @@ __all__ = [
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
+    'Delegation',
     'Subnet',
     'FrontendIPConfiguration',
     'VirtualNetworkTap',
@@ -729,6 +739,7 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
     'TagsObject',
+    'AvailableDelegation',
     'AzureFirewallIPConfiguration',
     'AzureFirewallRCAction',
     'AzureFirewallApplicationRuleProtocol',
@@ -769,6 +780,8 @@ __all__ = [
     'ExpressRouteCircuitReference',
     'ExpressRouteCrossConnectionPeering',
     'ExpressRouteCrossConnection',
+    'VirtualHubId',
+    'ExpressRouteCircuitPeeringId',
     'ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds',
     'ExpressRouteGatewayPropertiesAutoScaleConfiguration',
     'ExpressRouteConnection',
@@ -926,6 +939,7 @@ __all__ = [
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
+    'AvailableDelegationPaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
     'DdosProtectionPlanPaged',
