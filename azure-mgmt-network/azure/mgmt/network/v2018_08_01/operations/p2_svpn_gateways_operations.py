@@ -103,7 +103,7 @@ class P2SVpnGatewaysOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gateway_name, p2s_vpn_gateway_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -129,7 +129,7 @@ class P2SVpnGatewaysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(p2s_vpn_gateway_parameters, 'P2SVpnGateway')
+        body_content = self._serialize.body(p2_svpn_gateway_parameters, 'P2SVpnGateway')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -152,7 +152,7 @@ class P2SVpnGatewaysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gateway_name, p2s_vpn_gateway_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates
         the existing gateway.
 
@@ -161,9 +161,9 @@ class P2SVpnGatewaysOperations(object):
         :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
-        :param p2s_vpn_gateway_parameters: Parameters supplied to create or
+        :param p2_svpn_gateway_parameters: Parameters supplied to create or
          Update a virtual wan p2s vpn gateway.
-        :type p2s_vpn_gateway_parameters:
+        :type p2_svpn_gateway_parameters:
          ~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -182,7 +182,7 @@ class P2SVpnGatewaysOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             gateway_name=gateway_name,
-            p2s_vpn_gateway_parameters=p2s_vpn_gateway_parameters,
+            p2_svpn_gateway_parameters=p2_svpn_gateway_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

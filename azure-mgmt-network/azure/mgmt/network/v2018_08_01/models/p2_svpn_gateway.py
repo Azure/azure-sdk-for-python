@@ -44,10 +44,10 @@ class P2SVpnGateway(Resource):
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool:
      ~azure.mgmt.network.v2018_08_01.models.AddressSpace
-    :ivar vpn_client_connection_health: Collection of the all P2S vpnclients'
-     connection health status.
+    :ivar vpn_client_connection_health: All P2S vpnclients' connection health
+     status.
     :vartype vpn_client_connection_health:
-     list[~azure.mgmt.network.v2018_08_01.models.VpnClientConnectionHealth]
+     ~azure.mgmt.network.v2018_08_01.models.VpnClientConnectionHealth
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -71,7 +71,7 @@ class P2SVpnGateway(Resource):
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
         'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
-        'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': '[VpnClientConnectionHealth]'},
+        'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
