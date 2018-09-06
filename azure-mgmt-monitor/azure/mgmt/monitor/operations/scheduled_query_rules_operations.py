@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AutoscaleSettingsOperations(object):
-    """AutoscaleSettingsOperations operations.
+class ScheduledQueryRulesOperations(object):
+    """ScheduledQueryRulesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-04-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-04-16".
     """
 
     models = models
@@ -32,93 +32,27 @@ class AutoscaleSettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-04-01"
+        self.api_version = "2018-04-16"
 
         self.config = config
 
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the autoscale settings for a resource group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AutoscaleSettingResource
-        :rtype:
-         ~azure.mgmt.monitor.models.AutoscaleSettingResourcePaged[~azure.mgmt.monitor.models.AutoscaleSettingResource]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings'}
-
     def create_or_update(
-            self, resource_group_name, autoscale_setting_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an autoscale setting.
+            self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an log search rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
-        :param parameters: Parameters supplied to the operation.
-        :type parameters: ~azure.mgmt.monitor.models.AutoscaleSettingResource
+        :param rule_name: The name of the rule.
+        :type rule_name: str
+        :param parameters: The parameters of the rule to create or update.
+        :type parameters: ~azure.mgmt.monitor.models.LogSearchRuleResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
@@ -126,9 +60,9 @@ class AutoscaleSettingsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -148,7 +82,7 @@ class AutoscaleSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AutoscaleSettingResource')
+        body_content = self._serialize.body(parameters, 'LogSearchRuleResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -160,84 +94,32 @@ class AutoscaleSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'}
-
-    def delete(
-            self, resource_group_name, autoscale_setting_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes and autoscale setting.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
     def get(
-            self, resource_group_name, autoscale_setting_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an autoscale setting.
+            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an Log Search rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
@@ -246,7 +128,7 @@ class AutoscaleSettingsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -275,45 +157,48 @@ class AutoscaleSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
     def update(
-            self, resource_group_name, autoscale_setting_name, autoscale_setting_resource, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing AutoscaleSettingsResource. To update other fields
-        use the CreateOrUpdate method.
+            self, resource_group_name, rule_name, tags=None, enabled=None, custom_headers=None, raw=False, **operation_config):
+        """Update log search Rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
-        :param autoscale_setting_resource: Parameters supplied to the
-         operation.
-        :type autoscale_setting_resource:
-         ~azure.mgmt.monitor.models.AutoscaleSettingResourcePatch
+        :param rule_name: The name of the rule.
+        :type rule_name: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param enabled: The flag which indicates whether the Log Search rule
+         is enabled. Value should be true or false. Possible values include:
+         'true', 'false'
+        :type enabled: str or ~azure.mgmt.monitor.models.Enabled
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
+        parameters = models.LogSearchRuleResourcePatch(tags=tags, enabled=enabled)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str')
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -333,7 +218,7 @@ class AutoscaleSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(autoscale_setting_resource, 'AutoscaleSettingResourcePatch')
+        body_content = self._serialize.body(parameters, 'LogSearchRuleResourcePatch')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -345,27 +230,83 @@ class AutoscaleSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
-    def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists the autoscale settings for a subscription.
+    def delete(
+            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Log Search rule.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AutoscaleSettingResource
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
+
+    def list_by_subscription(
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List the Log Search rules within a subscription group.
+
+        :param filter: The filter to apply on the operation. For more
+         information please see
+         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of LogSearchRuleResource
         :rtype:
-         ~azure.mgmt.monitor.models.AutoscaleSettingResourcePaged[~azure.mgmt.monitor.models.AutoscaleSettingResource]
+         ~azure.mgmt.monitor.models.LogSearchRuleResourcePaged[~azure.mgmt.monitor.models.LogSearchRuleResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -382,6 +323,8 @@ class AutoscaleSettingsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -407,12 +350,84 @@ class AutoscaleSettingsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/autoscalesettings'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/scheduledQueryRules'}
+
+    def list_by_resource_group(
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List the Log Search rules within a resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param filter: The filter to apply on the operation. For more
+         information please see
+         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of LogSearchRuleResource
+        :rtype:
+         ~azure.mgmt.monitor.models.LogSearchRuleResourcePaged[~azure.mgmt.monitor.models.LogSearchRuleResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules'}
