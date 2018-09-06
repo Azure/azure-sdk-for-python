@@ -113,7 +113,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_09_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def build_steps(self):
         """Instance depends on the API version:
