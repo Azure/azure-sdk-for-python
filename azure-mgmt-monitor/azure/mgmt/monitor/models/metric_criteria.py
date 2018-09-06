@@ -23,10 +23,14 @@ class MetricCriteria(Model):
     :type metric_name: str
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
-    :param operator: Required. the criteria operator.
-    :type operator: object
+    :param operator: Required. the criteria operator. Possible values include:
+     'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
+     'LessThanOrEqual'
+    :type operator: str or ~azure.mgmt.monitor.models.MetricAlertRuleCondition
     :param time_aggregation: Required. the criteria time aggregation types.
-    :type time_aggregation: object
+     Possible values include: 'Average', 'Minimum', 'Maximum', 'Total'
+    :type time_aggregation: str or
+     ~azure.mgmt.monitor.models.MetricAlertRuleTimeAggregation
     :param threshold: Required. the criteria threshold value that activates
      the alert.
     :type threshold: float
@@ -46,8 +50,8 @@ class MetricCriteria(Model):
         'name': {'key': 'name', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'object'},
-        'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
     }
