@@ -42,8 +42,8 @@ class DirectLineSite(Model):
     :param is_secure_site_enabled: Whether this site is enabled for
      authentication with Bot Framework.
     :type is_secure_site_enabled: bool
-    :param trusted_origins: List of Trusted Origin url's for this site.Empty
-     if isSecureSiteEnabled is False.
+    :param trusted_origins: List of Trusted Origin url's for this site.This
+     field is applicable only if isSecureSiteEnabled is True.
     :type trusted_origins: list[str]
     """
 
