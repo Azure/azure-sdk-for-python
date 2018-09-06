@@ -12,17 +12,24 @@
 from msrest.serialization import Model
 
 
-class ExpressRouteCircuitPeeringId(Model):
-    """ExpressRoute circuit peering identifier.
+class ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection(Model):
+    """The ExpressRoute connection.
 
-    :param id: The ID of the ExpressRoute circuit peering.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the ExpressRouteConnection.
+    :vartype id: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
-        super(ExpressRouteCircuitPeeringId, self).__init__(**kwargs)
-        self.id = id
+    def __init__(self, **kwargs) -> None:
+        super(ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection, self).__init__(**kwargs)
+        self.id = None

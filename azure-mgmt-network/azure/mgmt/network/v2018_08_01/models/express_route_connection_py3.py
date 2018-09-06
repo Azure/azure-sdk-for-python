@@ -29,7 +29,7 @@ class ExpressRouteConnection(SubResource):
     :param express_route_circuit_peering: Required. The ExpressRoute circuit
      peering.
     :type express_route_circuit_peering:
-     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitPeeringId
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteConnectionPropertiesExpressRouteCircuitPeering
     :param authorization_key: Authorization key to establish the connection.
     :type authorization_key: str
     :param routing_weight: The routing weight associated to the connection.
@@ -47,7 +47,7 @@ class ExpressRouteConnection(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'ExpressRouteCircuitPeeringId'},
+        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'ExpressRouteConnectionPropertiesExpressRouteCircuitPeering'},
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},

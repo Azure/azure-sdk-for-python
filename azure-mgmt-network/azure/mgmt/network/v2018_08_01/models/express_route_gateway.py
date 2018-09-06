@@ -43,7 +43,8 @@ class ExpressRouteGateway(Resource):
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
     :param virtual_hub: Required. The Virtual Hub where the ExpressRoute
      gateway is or will be deployed.
-    :type virtual_hub: ~azure.mgmt.network.v2018_08_01.models.VirtualHubId
+    :type virtual_hub:
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteGatewayPropertiesVirtualHub
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -67,7 +68,7 @@ class ExpressRouteGateway(Resource):
         'auto_scale_configuration': {'key': 'properties.autoScaleConfiguration', 'type': 'ExpressRouteGatewayPropertiesAutoScaleConfiguration'},
         'express_route_connections': {'key': 'properties.expressRouteConnections', 'type': '[ExpressRouteConnection]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'VirtualHubId'},
+        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'ExpressRouteGatewayPropertiesVirtualHub'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
