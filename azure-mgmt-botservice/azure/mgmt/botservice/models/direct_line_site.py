@@ -31,14 +31,20 @@ class DirectLineSite(Model):
      Channel List API, otherwise empty.
     :vartype key2: str
     :param is_enabled: Required. Whether this site is enabled for DirectLine
-     channel
+     channel.
     :type is_enabled: bool
     :param is_v1_enabled: Required. Whether this site is enabled for Bot
-     Framework V1 protocol
+     Framework V1 protocol.
     :type is_v1_enabled: bool
     :param is_v3_enabled: Required. Whether this site is enabled for Bot
-     Framework V1 protocol
+     Framework V1 protocol.
     :type is_v3_enabled: bool
+    :param is_secure_site_enabled: Whether this site is enabled for
+     authentication with Bot Framework.
+    :type is_secure_site_enabled: bool
+    :param trusted_origins: List of Trusted Origin URLs for this site. This
+     field is applicable only if isSecureSiteEnabled is True.
+    :type trusted_origins: list[str]
     """
 
     _validation = {
@@ -59,6 +65,8 @@ class DirectLineSite(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'is_v1_enabled': {'key': 'isV1Enabled', 'type': 'bool'},
         'is_v3_enabled': {'key': 'isV3Enabled', 'type': 'bool'},
+        'is_secure_site_enabled': {'key': 'isSecureSiteEnabled', 'type': 'bool'},
+        'trusted_origins': {'key': 'trustedOrigins', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -70,3 +78,5 @@ class DirectLineSite(Model):
         self.is_enabled = kwargs.get('is_enabled', None)
         self.is_v1_enabled = kwargs.get('is_v1_enabled', None)
         self.is_v3_enabled = kwargs.get('is_v3_enabled', None)
+        self.is_secure_site_enabled = kwargs.get('is_secure_site_enabled', None)
+        self.trusted_origins = kwargs.get('trusted_origins', None)
