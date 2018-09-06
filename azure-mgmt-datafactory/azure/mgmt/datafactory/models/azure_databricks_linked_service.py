@@ -56,10 +56,10 @@ class AzureDatabricksLinkedService(LinkedService):
     :param new_cluster_node_type: The node types of new cluster. Type: string
      (or Expression with resultType string).
     :type new_cluster_node_type: object
-    :param new_cluster_spark_conf: a set of optional, user-specified Spark
+    :param new_cluster_spark_conf: A set of optional, user-specified Spark
      configuration key-value pairs.
     :type new_cluster_spark_conf: dict[str, object]
-    :param new_cluster_spark_env_vars: a set of optional, user-specified Spark
+    :param new_cluster_spark_env_vars: A set of optional, user-specified Spark
      environment variables key-value pairs.
     :type new_cluster_spark_env_vars: dict[str, object]
     :param new_cluster_custom_tags: Additional tags for cluster resources.
