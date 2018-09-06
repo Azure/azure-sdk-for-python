@@ -81,17 +81,17 @@ class SubtaskInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, container_info=None, failure_info=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, result=None):
-        super(SubtaskInformation, self).__init__()
-        self.id = id
-        self.node_info = node_info
-        self.start_time = start_time
-        self.end_time = end_time
-        self.exit_code = exit_code
-        self.container_info = container_info
-        self.failure_info = failure_info
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.result = result
+    def __init__(self, **kwargs):
+        super(SubtaskInformation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.node_info = kwargs.get('node_info', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.container_info = kwargs.get('container_info', None)
+        self.failure_info = kwargs.get('failure_info', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.previous_state = kwargs.get('previous_state', None)
+        self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
+        self.result = kwargs.get('result', None)

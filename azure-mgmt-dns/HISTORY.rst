@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.0.0 (2018-07-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix ARM compliance (correct settings of location, tags, etc.)
+
 2.0.0rc2 (2018-07-05)
 +++++++++++++++++++++
 

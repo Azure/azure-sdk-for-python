@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class TldLegalAgreement(Model):
     """Legal agreement for a top level domain.
 
-    :param agreement_key: Unique identifier for the agreement.
+    All required parameters must be populated in order to send to Azure.
+
+    :param agreement_key: Required. Unique identifier for the agreement.
     :type agreement_key: str
-    :param title: Agreement title.
+    :param title: Required. Agreement title.
     :type title: str
-    :param content: Agreement details.
+    :param content: Required. Agreement details.
     :type content: str
     :param url: URL where a copy of the agreement details is hosted.
     :type url: str
@@ -38,9 +40,9 @@ class TldLegalAgreement(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, agreement_key, title, content, url=None):
-        super(TldLegalAgreement, self).__init__()
-        self.agreement_key = agreement_key
-        self.title = title
-        self.content = content
-        self.url = url
+    def __init__(self, **kwargs):
+        super(TldLegalAgreement, self).__init__(**kwargs)
+        self.agreement_key = kwargs.get('agreement_key', None)
+        self.title = kwargs.get('title', None)
+        self.content = kwargs.get('content', None)
+        self.url = kwargs.get('url', None)
