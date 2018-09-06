@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class MetricNamespace(Model):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param id: the id of the metricNamespace.
+    :param id: The ID of the metricNamespace.
     :type id: str
-    :param type: the type of the namespace.
+    :param type: The type of the namespace.
     :type type: str
-    :param name: the name of the namespace.
+    :param name: The name of the namespace.
     :type name: str
     :param properties: Properties which include the fully qualified namespace
      name.

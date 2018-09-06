@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class MetricNamespaceName(Model):
     """The fully qualified metric namespace name.
 
-    :param metric_namespace_name: the metric namespace name.
+    :param metric_namespace_name: The metric namespace name.
     :type metric_namespace_name: str
     """
 
