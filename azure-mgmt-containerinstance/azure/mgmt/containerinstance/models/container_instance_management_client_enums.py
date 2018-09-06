@@ -31,6 +31,12 @@ class ContainerGroupNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class ContainerGroupIpAddressType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
