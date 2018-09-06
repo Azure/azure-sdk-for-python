@@ -24,8 +24,8 @@ class AzureFirewallApplicationRule(Model):
     :param protocols: Array of ApplicationRuleProtocols.
     :type protocols:
      list[~azure.mgmt.network.v2018_08_01.models.AzureFirewallApplicationRuleProtocol]
-    :param target_urls: List of URLs for this rule.
-    :type target_urls: list[str]
+    :param target_fqdns: List of FQDNs for this rule.
+    :type target_fqdns: list[str]
     :param fqdn_tags: List of FQDN Tags for this rule.
     :type fqdn_tags: list[str]
     """
@@ -35,7 +35,7 @@ class AzureFirewallApplicationRule(Model):
         'description': {'key': 'description', 'type': 'str'},
         'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
         'protocols': {'key': 'protocols', 'type': '[AzureFirewallApplicationRuleProtocol]'},
-        'target_urls': {'key': 'targetUrls', 'type': '[str]'},
+        'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
         'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
     }
 
@@ -45,5 +45,5 @@ class AzureFirewallApplicationRule(Model):
         self.description = kwargs.get('description', None)
         self.source_addresses = kwargs.get('source_addresses', None)
         self.protocols = kwargs.get('protocols', None)
-        self.target_urls = kwargs.get('target_urls', None)
+        self.target_fqdns = kwargs.get('target_fqdns', None)
         self.fqdn_tags = kwargs.get('fqdn_tags', None)
