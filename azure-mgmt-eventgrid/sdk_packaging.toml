@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-eventgrid"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
