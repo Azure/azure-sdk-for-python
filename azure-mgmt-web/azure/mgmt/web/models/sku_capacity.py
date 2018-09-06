@@ -32,9 +32,9 @@ class SkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'str'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None):
-        super(SkuCapacity, self).__init__()
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
-        self.scale_type = scale_type
+    def __init__(self, **kwargs):
+        super(SkuCapacity, self).__init__(**kwargs)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.default = kwargs.get('default', None)
+        self.scale_type = kwargs.get('scale_type', None)

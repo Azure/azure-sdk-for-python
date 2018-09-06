@@ -1,6 +1,7 @@
 import logging
+import os
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional, List
 
 from jinja2 import Template, PackageLoader, Environment
 from .conf import read_conf, build_default_conf, CONF_NAME
@@ -29,7 +30,28 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
     # Return result
     return result
 
-def build_packaging(package_name: str, output_folder: str, build_conf: bool = False) -> None:
+
+def build_packaging(output_folder: str, gh_token: Optional[str]=None, jenkins: bool = False, packages: List[str]=None, build_conf: bool = False) -> None:
+    package_names = set(packages) or set()
+    if jenkins:
+        sdk_id = os.environ["ghprbGhRepository"]
+        pr_number = int(os.environ["ghprbPullId"])
+
+        from github import Github
+        con = Github(gh_token)
+        repo = con.get_repo(sdk_id)
+        sdk_pr = repo.get_pull(pr_number)
+        # "get_files" of Github only download the first 300 files. Might not be enough.
+        package_names |= {f.filename.split('/')[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+
+    if not package_names:
+        raise ValueError("Was unable to find out the package names.")
+
+    for package_name in package_names:
+        build_packaging_by_package_name(package_name, output_folder, build_conf)
+
+
+def build_packaging_by_package_name(package_name: str, output_folder: str, build_conf: bool = False) -> None:
     _LOGGER.info("Building template %s", package_name)
     package_folder = Path(output_folder) / Path(package_name)
 
@@ -58,7 +80,23 @@ def build_packaging(package_name: str, output_folder: str, build_conf: bool = Fa
         template = env.get_template(template_name)
         result = template.render(**conf)
 
-        with open(Path(output_folder) / package_name / template_name, "w") as fd:
+        # __init__.py is a weird one
+        if template_name == "__init__.py":
+            split_package_name = package_name.split("-")
+            for i in range(len(split_package_name)):
+                init_path = Path(output_folder).joinpath(
+                    package_name,
+                    *split_package_name[:i+1],
+                    template_name
+                )
+                if init_path.exists():
+                    break
+                with open(init_path, "w") as fd:
+                    fd.write(result)
+
+            continue
+
+        with open(future_filepath, "w") as fd:
             fd.write(result)
 
     _LOGGER.info("Template done %s", package_name)
