@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class HeatMapModel(ProxyResource):
-    """Class representing a Traffic Manager HeatMap.
+    """Super-class representing a Traffic Manager HeatMap.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

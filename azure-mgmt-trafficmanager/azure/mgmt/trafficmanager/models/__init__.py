@@ -13,17 +13,16 @@ try:
     from .delete_operation_result_py3 import DeleteOperationResult
     from .endpoint_properties_subnets_item_py3 import EndpointPropertiesSubnetsItem
     from .endpoint_properties_custom_headers_item_py3 import EndpointPropertiesCustomHeadersItem
-    from .heat_map_property_base_py3 import HeatMapPropertyBase
     from .heat_map_model_py3 import HeatMapModel
     from .user_metrics_model_py3 import UserMetricsModel
     from .query_experience_py3 import QueryExperience
     from .traffic_flow_py3 import TrafficFlow
     from .heat_map_endpoint_py3 import HeatMapEndpoint
-    from .heat_map_properties_py3 import HeatMapProperties
+    from .heat_map_model_default_py3 import HeatMapModelDefault
     from .traffic_location_py3 import TrafficLocation
-    from .heat_map_property_asn_py3 import HeatMapPropertyAsn
-    from .heat_map_property_country_py3 import HeatMapPropertyCountry
-    from .heat_map_property_state_py3 import HeatMapPropertyState
+    from .heat_map_model_asn_py3 import HeatMapModelAsn
+    from .heat_map_model_country_py3 import HeatMapModelCountry
+    from .heat_map_model_state_py3 import HeatMapModelState
     from .endpoint_py3 import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config_py3 import DnsConfig
@@ -41,17 +40,16 @@ except (SyntaxError, ImportError):
     from .delete_operation_result import DeleteOperationResult
     from .endpoint_properties_subnets_item import EndpointPropertiesSubnetsItem
     from .endpoint_properties_custom_headers_item import EndpointPropertiesCustomHeadersItem
-    from .heat_map_property_base import HeatMapPropertyBase
     from .heat_map_model import HeatMapModel
     from .user_metrics_model import UserMetricsModel
     from .query_experience import QueryExperience
     from .traffic_flow import TrafficFlow
     from .heat_map_endpoint import HeatMapEndpoint
-    from .heat_map_properties import HeatMapProperties
+    from .heat_map_model_default import HeatMapModelDefault
     from .traffic_location import TrafficLocation
-    from .heat_map_property_asn import HeatMapPropertyAsn
-    from .heat_map_property_country import HeatMapPropertyCountry
-    from .heat_map_property_state import HeatMapPropertyState
+    from .heat_map_model_asn import HeatMapModelAsn
+    from .heat_map_model_country import HeatMapModelCountry
+    from .heat_map_model_state import HeatMapModelState
     from .endpoint import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config import DnsConfig
@@ -80,17 +78,16 @@ __all__ = [
     'DeleteOperationResult',
     'EndpointPropertiesSubnetsItem',
     'EndpointPropertiesCustomHeadersItem',
-    'HeatMapPropertyBase',
     'HeatMapModel',
     'UserMetricsModel',
     'QueryExperience',
     'TrafficFlow',
     'HeatMapEndpoint',
-    'HeatMapProperties',
+    'HeatMapModelDefault',
     'TrafficLocation',
-    'HeatMapPropertyAsn',
-    'HeatMapPropertyCountry',
-    'HeatMapPropertyState',
+    'HeatMapModelAsn',
+    'HeatMapModelCountry',
+    'HeatMapModelState',
     'Endpoint',
     'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
     'DnsConfig',
