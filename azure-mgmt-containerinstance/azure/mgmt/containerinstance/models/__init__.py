@@ -32,6 +32,7 @@ try:
     from .container_group_properties_instance_view_py3 import ContainerGroupPropertiesInstanceView
     from .log_analytics_py3 import LogAnalytics
     from .container_group_diagnostics_py3 import ContainerGroupDiagnostics
+    from .container_group_network_profile_py3 import ContainerGroupNetworkProfile
     from .container_group_py3 import ContainerGroup
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -67,6 +68,7 @@ except (SyntaxError, ImportError):
     from .container_group_properties_instance_view import ContainerGroupPropertiesInstanceView
     from .log_analytics import LogAnalytics
     from .container_group_diagnostics import ContainerGroupDiagnostics
+    from .container_group_network_profile import ContainerGroupNetworkProfile
     from .container_group import ContainerGroup
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -84,7 +86,9 @@ from .container_instance_management_client_enums import (
     ContainerNetworkProtocol,
     ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
+    ContainerGroupIpAddressType,
     OperatingSystemTypes,
+    LogAnalyticsLogType,
     ContainerInstanceOperationsOrigin,
 )
 
@@ -111,6 +115,7 @@ __all__ = [
     'ContainerGroupPropertiesInstanceView',
     'LogAnalytics',
     'ContainerGroupDiagnostics',
+    'ContainerGroupNetworkProfile',
     'ContainerGroup',
     'OperationDisplay',
     'Operation',
@@ -127,6 +132,8 @@ __all__ = [
     'ContainerNetworkProtocol',
     'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',
+    'ContainerGroupIpAddressType',
     'OperatingSystemTypes',
+    'LogAnalyticsLogType',
     'ContainerInstanceOperationsOrigin',
 ]
