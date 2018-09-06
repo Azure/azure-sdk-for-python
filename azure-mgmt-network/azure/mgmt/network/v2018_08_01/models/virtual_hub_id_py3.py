@@ -9,13 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class Container(SubResource):
-    """Reference to container resource in remote resource provider.
+class VirtualHubId(Model):
+    """Virtual Hub identifier.
 
-    :param id: Resource ID.
+    :param id: The resource URI for the Virtual Hub where the ExpressRoute
+     gateway is or will be deployed. The Virtual Hub resource and the
+     ExpressRoute gateway resource reside in the same subscription.
     :type id: str
     """
 
@@ -23,5 +25,6 @@ class Container(SubResource):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Container, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(VirtualHubId, self).__init__(**kwargs)
+        self.id = id

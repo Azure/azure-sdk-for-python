@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class Container(SubResource):
-    """Reference to container resource in remote resource provider.
+class ExpressRouteCircuitPeeringId(Model):
+    """ExpressRoute circuit peering identifier.
 
-    :param id: Resource ID.
+    :param id: The ID of the ExpressRoute circuit peering.
     :type id: str
     """
 
@@ -24,4 +24,5 @@ class Container(SubResource):
     }
 
     def __init__(self, **kwargs):
-        super(Container, self).__init__(**kwargs)
+        super(ExpressRouteCircuitPeeringId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

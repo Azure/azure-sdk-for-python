@@ -9,25 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource_py3 import SubResource
 
 
-class Container(Model):
+class Container(SubResource):
     """Reference to container resource in remote resource provider.
 
-    :param container_uri: ARM Uri for the container.
-    :type container_uri: str
-    :param etag: A unique read-only string that changes whenever the resource
-     is updated.
-    :type etag: str
+    :param id: Resource ID.
+    :type id: str
     """
 
     _attribute_map = {
-        'container_uri': {'key': 'properties.containerUri', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, container_uri: str=None, etag: str=None, **kwargs) -> None:
-        super(Container, self).__init__(**kwargs)
-        self.container_uri = container_uri
-        self.etag = etag
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(Container, self).__init__(id=id, **kwargs)

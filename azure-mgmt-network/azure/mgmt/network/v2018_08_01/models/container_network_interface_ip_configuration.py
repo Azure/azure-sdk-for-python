@@ -9,25 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class ContainerNetworkInterfaceConfiguration(SubResource):
-    """Container network interface configruation child resource.
+class ContainerNetworkInterfaceIpConfiguration(Model):
+    """The ip configuration for a container network interface.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
-    :param ip_configurations: A list of ip configurations of the container
-     network interface configuration.
-    :type ip_configurations:
-     list[~azure.mgmt.network.v2018_08_01.models.IPConfigurationProfile]
-    :param container_network_interfaces: A list of container network
-     interfaces created from this container network interface configuration.
-    :type container_network_interfaces:
-     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterface]
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     :param name: The name of the resource. This name can be used to access the
@@ -46,9 +36,6 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfigurationProfile]'},
-        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -56,9 +43,7 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
     }
 
     def __init__(self, **kwargs):
-        super(ContainerNetworkInterfaceConfiguration, self).__init__(**kwargs)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.container_network_interfaces = kwargs.get('container_network_interfaces', None)
+        super(ContainerNetworkInterfaceIpConfiguration, self).__init__(**kwargs)
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.type = None

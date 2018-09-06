@@ -36,6 +36,11 @@ class NetworkProfile(Resource):
      network interface configurations.
     :type container_network_interface_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterfaceConfiguration]
+    :ivar resource_guid: The resource GUID property of the network interface
+     resource.
+    :vartype resource_guid: str
+    :ivar provisioning_state: The provisioning state of the resource.
+    :vartype provisioning_state: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -44,6 +49,8 @@ class NetworkProfile(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'resource_guid': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -54,6 +61,8 @@ class NetworkProfile(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
         'container_network_interface_configurations': {'key': 'properties.containerNetworkInterfaceConfigurations', 'type': '[ContainerNetworkInterfaceConfiguration]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -61,4 +70,6 @@ class NetworkProfile(Resource):
         super(NetworkProfile, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.container_network_interfaces = container_network_interfaces
         self.container_network_interface_configurations = container_network_interface_configurations
+        self.resource_guid = None
+        self.provisioning_state = None
         self.etag = etag

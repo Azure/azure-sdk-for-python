@@ -114,6 +114,8 @@ try:
     from .express_route_circuit_reference_py3 import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering_py3 import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection_py3 import ExpressRouteCrossConnection
+    from .virtual_hub_id_py3 import VirtualHubId
+    from .express_route_circuit_peering_id_py3 import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection_py3 import ExpressRouteConnection
@@ -138,6 +140,7 @@ try:
     from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .container_network_interface_configuration_py3 import ContainerNetworkInterfaceConfiguration
     from .container_py3 import Container
+    from .container_network_interface_ip_configuration_py3 import ContainerNetworkInterfaceIpConfiguration
     from .container_network_interface_py3 import ContainerNetworkInterface
     from .network_profile_py3 import NetworkProfile
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -366,6 +369,8 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_reference import ExpressRouteCircuitReference
     from .express_route_cross_connection_peering import ExpressRouteCrossConnectionPeering
     from .express_route_cross_connection import ExpressRouteCrossConnection
+    from .virtual_hub_id import VirtualHubId
+    from .express_route_circuit_peering_id import ExpressRouteCircuitPeeringId
     from .express_route_gateway_properties_auto_scale_configuration_bounds import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
     from .express_route_gateway_properties_auto_scale_configuration import ExpressRouteGatewayPropertiesAutoScaleConfiguration
     from .express_route_connection import ExpressRouteConnection
@@ -390,6 +395,7 @@ except (SyntaxError, ImportError):
     from .ip_configuration_profile import IPConfigurationProfile
     from .container_network_interface_configuration import ContainerNetworkInterfaceConfiguration
     from .container import Container
+    from .container_network_interface_ip_configuration import ContainerNetworkInterfaceIpConfiguration
     from .container_network_interface import ContainerNetworkInterface
     from .network_profile import NetworkProfile
     from .error_response import ErrorResponse, ErrorResponseException
@@ -757,6 +763,8 @@ __all__ = [
     'ExpressRouteCircuitReference',
     'ExpressRouteCrossConnectionPeering',
     'ExpressRouteCrossConnection',
+    'VirtualHubId',
+    'ExpressRouteCircuitPeeringId',
     'ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds',
     'ExpressRouteGatewayPropertiesAutoScaleConfiguration',
     'ExpressRouteConnection',
@@ -781,6 +789,7 @@ __all__ = [
     'IPConfigurationProfile',
     'ContainerNetworkInterfaceConfiguration',
     'Container',
+    'ContainerNetworkInterfaceIpConfiguration',
     'ContainerNetworkInterface',
     'NetworkProfile',
     'ErrorResponse', 'ErrorResponseException',
