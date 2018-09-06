@@ -26,7 +26,8 @@ class ExpressRouteConnection(SubResource):
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param express_route_circuit_peering: Required.
+    :param express_route_circuit_peering: Required. The ExpressRoute circuit
+     peering.
     :type express_route_circuit_peering:
      ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitPeeringId
     :param authorization_key: Authorization key to establish the connection.

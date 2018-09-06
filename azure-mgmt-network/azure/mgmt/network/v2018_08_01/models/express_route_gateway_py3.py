@@ -41,7 +41,8 @@ class ExpressRouteGateway(Resource):
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param virtual_hub: Required.
+    :param virtual_hub: Required. The Virtual Hub where the ExpressRoute
+     gateway is or will be deployed.
     :type virtual_hub: ~azure.mgmt.network.v2018_08_01.models.VirtualHubId
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
