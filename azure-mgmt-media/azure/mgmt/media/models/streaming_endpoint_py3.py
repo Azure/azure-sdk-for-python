@@ -32,9 +32,12 @@ class StreamingEndpoint(TrackedResource):
     :type location: str
     :param description: The StreamingEndpoint description.
     :type description: str
-    :param scale_units: Required. The number of scale units.
+    :param scale_units: Required. The number of scale units.  Use the Scale
+     operation to adjust this value.
     :type scale_units: int
-    :param availability_set_name: AvailabilitySet name
+    :param availability_set_name: The name of the AvailabilitySet used with
+     this StreamingEndpoint for high availability streaming.  This value can
+     only be set at creation time.
     :type availability_set_name: str
     :param access_control: The access control definition of the
      StreamingEndpoint.

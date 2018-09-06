@@ -710,8 +710,7 @@ class StreamingEndpointsOperations(object):
         :type account_name: str
         :param streaming_endpoint_name: The name of the StreamingEndpoint.
         :type streaming_endpoint_name: str
-        :param scale_unit: ScaleUnit The scale unit number of the
-         StreamingEndpoint.
+        :param scale_unit: The scale unit number of the StreamingEndpoint.
         :type scale_unit: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

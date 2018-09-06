@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class StreamingEntityScaleUnit(Model):
-    """scale units definition.
+class LiveEventInputAccessControl(Model):
+    """The IP access control for Live Event Input.
 
-    :param scale_unit: The scale unit number of the StreamingEndpoint.
-    :type scale_unit: int
+    :param ip: The IP access control properties.
+    :type ip: ~azure.mgmt.media.models.IPAccessControl
     """
 
     _attribute_map = {
-        'scale_unit': {'key': 'scaleUnit', 'type': 'int'},
+        'ip': {'key': 'ip', 'type': 'IPAccessControl'},
     }
 
     def __init__(self, **kwargs):
-        super(StreamingEntityScaleUnit, self).__init__(**kwargs)
-        self.scale_unit = kwargs.get('scale_unit', None)
+        super(LiveEventInputAccessControl, self).__init__(**kwargs)
+        self.ip = kwargs.get('ip', None)

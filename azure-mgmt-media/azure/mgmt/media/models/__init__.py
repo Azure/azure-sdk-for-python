@@ -136,9 +136,10 @@ try:
     from .hls_py3 import Hls
     from .live_output_py3 import LiveOutput
     from .live_event_endpoint_py3 import LiveEventEndpoint
-    from .live_event_input_py3 import LiveEventInput
     from .ip_range_py3 import IPRange
     from .ip_access_control_py3 import IPAccessControl
+    from .live_event_input_access_control_py3 import LiveEventInputAccessControl
+    from .live_event_input_py3 import LiveEventInput
     from .live_event_preview_access_control_py3 import LiveEventPreviewAccessControl
     from .live_event_preview_py3 import LiveEventPreview
     from .live_event_encoding_py3 import LiveEventEncoding
@@ -277,9 +278,10 @@ except (SyntaxError, ImportError):
     from .hls import Hls
     from .live_output import LiveOutput
     from .live_event_endpoint import LiveEventEndpoint
-    from .live_event_input import LiveEventInput
     from .ip_range import IPRange
     from .ip_access_control import IPAccessControl
+    from .live_event_input_access_control import LiveEventInputAccessControl
+    from .live_event_input import LiveEventInput
     from .live_event_preview_access_control import LiveEventPreviewAccessControl
     from .live_event_preview import LiveEventPreview
     from .live_event_encoding import LiveEventEncoding
@@ -474,9 +476,10 @@ __all__ = [
     'Hls',
     'LiveOutput',
     'LiveEventEndpoint',
-    'LiveEventInput',
     'IPRange',
     'IPAccessControl',
+    'LiveEventInputAccessControl',
+    'LiveEventInput',
     'LiveEventPreviewAccessControl',
     'LiveEventPreview',
     'LiveEventEncoding',
