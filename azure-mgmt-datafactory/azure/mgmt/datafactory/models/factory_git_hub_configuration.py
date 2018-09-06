@@ -55,4 +55,4 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     def __init__(self, **kwargs):
         super(FactoryGitHubConfiguration, self).__init__(**kwargs)
         self.host_name = kwargs.get('host_name', None)
-        self.type = 'FactoryGithubConfiguration'
+        self.type = 'FactoryGitHubConfiguration'

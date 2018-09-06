@@ -55,4 +55,4 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     def __init__(self, *, account_name: str, repository_name: str, collaboration_branch: str, root_folder: str, last_commit_id: str=None, host_name: str=None, **kwargs) -> None:
         super(FactoryGitHubConfiguration, self).__init__(account_name=account_name, repository_name=repository_name, collaboration_branch=collaboration_branch, root_folder=root_folder, last_commit_id=last_commit_id, **kwargs)
         self.host_name = host_name
-        self.type = 'FactoryGithubConfiguration'
+        self.type = 'FactoryGitHubConfiguration'
