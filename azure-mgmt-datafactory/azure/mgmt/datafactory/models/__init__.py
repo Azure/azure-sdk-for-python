@@ -47,6 +47,8 @@ try:
     from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
     from .factory_git_hub_configuration_py3 import FactoryGitHubConfiguration
     from .factory_repo_update_py3 import FactoryRepoUpdate
+    from .git_hub_access_token_request_py3 import GitHubAccessTokenRequest
+    from .git_hub_access_token_response_py3 import GitHubAccessTokenResponse
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
@@ -390,6 +392,8 @@ except (SyntaxError, ImportError):
     from .factory_vsts_configuration import FactoryVSTSConfiguration
     from .factory_git_hub_configuration import FactoryGitHubConfiguration
     from .factory_repo_update import FactoryRepoUpdate
+    from .git_hub_access_token_request import GitHubAccessTokenRequest
+    from .git_hub_access_token_response import GitHubAccessTokenResponse
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
@@ -801,6 +805,8 @@ __all__ = [
     'FactoryVSTSConfiguration',
     'FactoryGitHubConfiguration',
     'FactoryRepoUpdate',
+    'GitHubAccessTokenRequest',
+    'GitHubAccessTokenResponse',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',
