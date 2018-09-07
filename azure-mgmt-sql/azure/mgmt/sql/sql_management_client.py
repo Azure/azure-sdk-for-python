@@ -78,8 +78,7 @@ from .operations.instance_failover_groups_operations import InstanceFailoverGrou
 from .operations.backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from .operations.tde_certificates_operations import TdeCertificatesOperations
 from .operations.managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
-from .operations.managed_instance_keys_operations import ManagedInstanceKeysOperations
-from .operations.managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .operations.interface_endpoint_profiles_operations import InterfaceEndpointProfilesOperations
 from . import models
 
 
@@ -252,10 +251,8 @@ class SqlManagementClient(SDKClient):
     :vartype tde_certificates: azure.mgmt.sql.operations.TdeCertificatesOperations
     :ivar managed_instance_tde_certificates: ManagedInstanceTdeCertificates operations
     :vartype managed_instance_tde_certificates: azure.mgmt.sql.operations.ManagedInstanceTdeCertificatesOperations
-    :ivar managed_instance_keys: ManagedInstanceKeys operations
-    :vartype managed_instance_keys: azure.mgmt.sql.operations.ManagedInstanceKeysOperations
-    :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectors operations
-    :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
+    :ivar interface_endpoint_profiles: InterfaceEndpointProfiles operations
+    :vartype interface_endpoint_profiles: azure.mgmt.sql.operations.InterfaceEndpointProfilesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -406,7 +403,5 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instance_keys = ManagedInstanceKeysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(
+        self.interface_endpoint_profiles = InterfaceEndpointProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)

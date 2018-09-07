@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ManagedInstanceEncryptionProtectorPaged(Paged):
+class InterfaceEndpointProfilePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ManagedInstanceEncryptionProtector <azure.mgmt.sql.models.ManagedInstanceEncryptionProtector>` object
+    A paging container for iterating over a list of :class:`InterfaceEndpointProfile <azure.mgmt.sql.models.InterfaceEndpointProfile>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedInstanceEncryptionProtector]'}
+        'current_page': {'key': 'value', 'type': '[InterfaceEndpointProfile]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ManagedInstanceEncryptionProtectorPaged, self).__init__(*args, **kwargs)
+        super(InterfaceEndpointProfilePaged, self).__init__(*args, **kwargs)
