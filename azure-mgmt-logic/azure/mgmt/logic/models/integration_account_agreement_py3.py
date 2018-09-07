@@ -37,7 +37,7 @@ class IntegrationAccountAgreement(Resource):
     :param metadata: The metadata.
     :type metadata: object
     :param agreement_type: Required. The agreement type. Possible values
-     include: 'NotSpecified', 'AS2', 'X12', 'EDIFACT'
+     include: 'NotSpecified', 'AS2', 'X12', 'Edifact'
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     :param host_partner: Required. The integration account partner that is set
      as host partner for this agreement.
@@ -77,7 +77,7 @@ class IntegrationAccountAgreement(Resource):
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
-        'agreement_type': {'key': 'properties.agreementType', 'type': 'str'},
+        'agreement_type': {'key': 'properties.agreementType', 'type': 'AgreementType'},
         'host_partner': {'key': 'properties.hostPartner', 'type': 'str'},
         'guest_partner': {'key': 'properties.guestPartner', 'type': 'str'},
         'host_identity': {'key': 'properties.hostIdentity', 'type': 'BusinessIdentity'},

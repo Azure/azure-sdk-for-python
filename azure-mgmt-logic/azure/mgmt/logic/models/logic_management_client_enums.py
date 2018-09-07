@@ -181,7 +181,7 @@ class AgreementType(str, Enum):
     not_specified = "NotSpecified"
     as2 = "AS2"
     x12 = "X12"
-    edifact = "EDIFACT"
+    edifact = "Edifact"
 
 
 class HashingAlgorithm(str, Enum):

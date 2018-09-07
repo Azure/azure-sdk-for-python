@@ -19,7 +19,7 @@ class IntegrationAccountAgreementFilter(Model):
 
     :param agreement_type: Required. The agreement type of integration account
      agreement. Possible values include: 'NotSpecified', 'AS2', 'X12',
-     'EDIFACT'
+     'Edifact'
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     """
 
@@ -28,7 +28,7 @@ class IntegrationAccountAgreementFilter(Model):
     }
 
     _attribute_map = {
-        'agreement_type': {'key': 'agreementType', 'type': 'str'},
+        'agreement_type': {'key': 'agreementType', 'type': 'AgreementType'},
     }
 
     def __init__(self, *, agreement_type, **kwargs) -> None:
