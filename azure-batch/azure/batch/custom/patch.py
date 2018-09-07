@@ -13,9 +13,8 @@ class _TaskWorkflowManager(object):
     """Worker class for one add_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this
-    :param job_id: The ID of the job to which the task collection is to be
+    :param str job_id: The ID of the job to which the task collection is to be
         added.
-    :type job_id: str
     :param tasks_to_add: The collection of tasks to add.
     :type tasks_to_add: list of :class:`TaskAddParameter
         <azure.batch.models.TaskAddParameter>`
