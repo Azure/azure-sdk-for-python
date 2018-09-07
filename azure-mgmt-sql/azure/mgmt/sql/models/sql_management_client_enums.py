@@ -663,12 +663,6 @@ class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
     default = "default"
 
 
-class SensitivityLabelSource(str, Enum):
-
-    current = "current"
-    recommended = "recommended"
-
-
 class CapabilityGroup(str, Enum):
 
     supported_editions = "supportedEditions"
