@@ -17,19 +17,19 @@ class ApplicationGatewayAutoscaleConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param bounds: Required. Autoscale bounds
-    :type bounds:
-     ~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayAutoscaleBounds
+    :param min_capacity: Required. Lower bound on number of Application
+     Gateway instances
+    :type min_capacity: int
     """
 
     _validation = {
-        'bounds': {'required': True},
+        'min_capacity': {'required': True, 'minimum': 2},
     }
 
     _attribute_map = {
-        'bounds': {'key': 'bounds', 'type': 'ApplicationGatewayAutoscaleBounds'},
+        'min_capacity': {'key': 'minCapacity', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationGatewayAutoscaleConfiguration, self).__init__(**kwargs)
-        self.bounds = kwargs.get('bounds', None)
+        self.min_capacity = kwargs.get('min_capacity', None)
