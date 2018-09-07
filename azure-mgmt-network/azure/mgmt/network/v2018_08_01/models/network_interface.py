@@ -42,6 +42,10 @@ class NetworkInterface(Resource):
      interface.
     :type ip_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceIPConfiguration]
+    :param tap_configurations: A list of TapConfigurations of the network
+     interface.
+    :type tap_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceTapConfiguration]
     :param dns_settings: The DNS settings in network interface.
     :type dns_settings:
      ~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceDnsSettings
@@ -88,6 +92,7 @@ class NetworkInterface(Resource):
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'interface_endpoint': {'key': 'properties.interfaceEndpoint', 'type': 'InterfaceEndpoint'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
+        'tap_configurations': {'key': 'properties.tapConfigurations', 'type': '[NetworkInterfaceTapConfiguration]'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
         'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
@@ -106,6 +111,7 @@ class NetworkInterface(Resource):
         self.network_security_group = kwargs.get('network_security_group', None)
         self.interface_endpoint = kwargs.get('interface_endpoint', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.tap_configurations = kwargs.get('tap_configurations', None)
         self.dns_settings = kwargs.get('dns_settings', None)
         self.mac_address = kwargs.get('mac_address', None)
         self.primary = kwargs.get('primary', None)
