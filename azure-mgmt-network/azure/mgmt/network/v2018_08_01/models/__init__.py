@@ -30,6 +30,7 @@ try:
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .service_association_link_py3 import ServiceAssociationLink
     from .delegation_py3 import Delegation
     from .subnet_py3 import Subnet
     from .frontend_ip_configuration_py3 import FrontendIPConfiguration
@@ -285,6 +286,7 @@ except (SyntaxError, ImportError):
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
+    from .service_association_link import ServiceAssociationLink
     from .delegation import Delegation
     from .subnet import Subnet
     from .frontend_ip_configuration import FrontendIPConfiguration
@@ -679,6 +681,7 @@ __all__ = [
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
+    'ServiceAssociationLink',
     'Delegation',
     'Subnet',
     'FrontendIPConfiguration',

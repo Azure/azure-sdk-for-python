@@ -47,6 +47,10 @@ class Subnet(SubResource):
      external resources using subnet.
     :type resource_navigation_links:
      list[~azure.mgmt.network.v2018_08_01.models.ResourceNavigationLink]
+    :param service_association_links: Gets an array of references to services
+     injecting into this subnet.
+    :type service_association_links:
+     list[~azure.mgmt.network.v2018_08_01.models.ServiceAssociationLink]
     :param delegations: Gets an array of references to the delegations on the
      subnet.
     :type delegations: list[~azure.mgmt.network.v2018_08_01.models.Delegation]
@@ -79,6 +83,7 @@ class Subnet(SubResource):
         'interface_endpoints': {'key': 'properties.interfaceEndpoints', 'type': '[SubResource]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
+        'service_association_links': {'key': 'properties.serviceAssociationLinks', 'type': '[ServiceAssociationLink]'},
         'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'purpose': {'key': 'properties.purpose', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -97,6 +102,7 @@ class Subnet(SubResource):
         self.interface_endpoints = kwargs.get('interface_endpoints', None)
         self.ip_configurations = None
         self.resource_navigation_links = kwargs.get('resource_navigation_links', None)
+        self.service_association_links = kwargs.get('service_association_links', None)
         self.delegations = kwargs.get('delegations', None)
         self.purpose = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
