@@ -47,6 +47,7 @@ from .operations.network_interfaces_operations import NetworkInterfacesOperation
 from .operations.network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .operations.network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
 from .operations.network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
+from .operations.network_profiles_operations import NetworkProfilesOperations
 from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.default_security_rules_operations import DefaultSecurityRulesOperations
@@ -181,6 +182,8 @@ class NetworkManagementClient(SDKClient):
     :vartype network_interface_load_balancers: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceLoadBalancersOperations
     :ivar network_interface_tap_configurations: NetworkInterfaceTapConfigurations operations
     :vartype network_interface_tap_configurations: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceTapConfigurationsOperations
+    :ivar network_profiles: NetworkProfiles operations
+    :vartype network_profiles: azure.mgmt.network.v2018_08_01.operations.NetworkProfilesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
     :vartype network_security_groups: azure.mgmt.network.v2018_08_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
@@ -325,6 +328,8 @@ class NetworkManagementClient(SDKClient):
         self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_interface_tap_configurations = NetworkInterfaceTapConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_profiles = NetworkProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

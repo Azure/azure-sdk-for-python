@@ -39,7 +39,7 @@ class P2SVpnGateway(Resource):
     :param p2_svpn_server_configuration: The P2SVpnServerConfiguration to
      which the p2sVpnGateway is attached to.
     :type p2_svpn_server_configuration:
-     ~azure.mgmt.network.v2018_08_01.models.P2SVpnServerConfiguration
+     ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param vpn_client_address_pool: The reference of the address space
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool:
@@ -69,7 +69,7 @@ class P2SVpnGateway(Resource):
         'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
-        'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'P2SVpnServerConfiguration'},
+        'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'SubResource'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
         'etag': {'key': 'etag', 'type': 'str'},
