@@ -172,7 +172,7 @@ class PipelineRunsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}'}
 
     def cancel(
-            self, resource_group_name, factory_name, run_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, run_id, is_recursive=None, custom_headers=None, raw=False, **operation_config):
         """Cancel a pipeline run by its run ID.
 
         :param resource_group_name: The resource group name.
@@ -181,6 +181,9 @@ class PipelineRunsOperations(object):
         :type factory_name: str
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :param is_recursive: If true, cancel all the Child pipelines that are
+         triggered by the current pipeline.
+        :type is_recursive: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -202,6 +205,8 @@ class PipelineRunsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if is_recursive is not None:
+            query_parameters['isRecursive'] = self._serialize.query("is_recursive", is_recursive, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .control_activity import ControlActivity
 
 
-class ControlActivity(Activity):
-    """Base class for all control activities like IfCondition, ForEach , Until.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVaraibleActivity, SetVaraibleActivity,
-    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
-    IfConditionActivity, ExecutePipelineActivity
+class SetVaraibleActivity(ControlActivity):
+    """Set value for a Variable.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,11 +30,19 @@ class ControlActivity(Activity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
+    :param set_varaible_activity_name: Required. Name of the variable whose
+     value needs to be set.
+    :type set_varaible_activity_name: str
+    :param value: Required. Value to be set. Could be a static value or
+     Expression
+    :type value: object
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'set_varaible_activity_name': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
@@ -49,12 +52,12 @@ class ControlActivity(Activity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'AppendVaraible': 'AppendVaraibleActivity', 'SetVaraible': 'SetVaraibleActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'set_varaible_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
+        'value': {'key': 'typeProperties.value', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(ControlActivity, self).__init__(**kwargs)
-        self.type = 'Container'
+        super(SetVaraibleActivity, self).__init__(**kwargs)
+        self.set_varaible_activity_name = kwargs.get('set_varaible_activity_name', None)
+        self.value = kwargs.get('value', None)
+        self.type = 'SetVaraible'

@@ -28,6 +28,9 @@ class ActivityPolicy(Model):
     :param retry_interval_in_seconds: Interval between each retry attempt (in
      seconds). The default is 30 sec.
     :type retry_interval_in_seconds: int
+    :param secure_input: When set to true, input from activity is considered
+     as secure and will not be logged to monitoring.
+    :type secure_input: bool
     :param secure_output: When set to true, Output from activity is considered
      as secure and will not be logged to monitoring.
     :type secure_output: bool
@@ -42,13 +45,15 @@ class ActivityPolicy(Model):
         'timeout': {'key': 'timeout', 'type': 'object'},
         'retry': {'key': 'retry', 'type': 'object'},
         'retry_interval_in_seconds': {'key': 'retryIntervalInSeconds', 'type': 'int'},
+        'secure_input': {'key': 'secureInput', 'type': 'bool'},
         'secure_output': {'key': 'secureOutput', 'type': 'bool'},
     }
 
-    def __init__(self, *, additional_properties=None, timeout=None, retry=None, retry_interval_in_seconds: int=None, secure_output: bool=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, timeout=None, retry=None, retry_interval_in_seconds: int=None, secure_input: bool=None, secure_output: bool=None, **kwargs) -> None:
         super(ActivityPolicy, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.timeout = timeout
         self.retry = retry
         self.retry_interval_in_seconds = retry_interval_in_seconds
+        self.secure_input = secure_input
         self.secure_output = secure_output
