@@ -59,7 +59,7 @@ class MariaDBManagementClientConfiguration(AzureConfiguration):
 
 
 class MariaDBManagementClient(SDKClient):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MariaDB resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
+    """MariaDB Client
 
     :ivar config: Configuration for client.
     :vartype config: MariaDBManagementClientConfiguration

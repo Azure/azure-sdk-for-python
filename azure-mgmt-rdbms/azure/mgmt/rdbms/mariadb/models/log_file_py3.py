@@ -32,8 +32,8 @@ class LogFile(ProxyResource):
     :vartype last_modified_time: datetime
     :param log_file_type: Type of the log file.
     :type log_file_type: str
-    :param url: The url to download the log file from.
-    :type url: str
+    :ivar url: The url to download the log file from.
+    :vartype url: str
     """
 
     _validation = {
@@ -42,6 +42,7 @@ class LogFile(ProxyResource):
         'type': {'readonly': True},
         'created_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
+        'url': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,10 +56,10 @@ class LogFile(ProxyResource):
         'url': {'key': 'properties.url', 'type': 'str'},
     }
 
-    def __init__(self, *, size_in_kb: int=None, log_file_type: str=None, url: str=None, **kwargs) -> None:
+    def __init__(self, *, size_in_kb: int=None, log_file_type: str=None, **kwargs) -> None:
         super(LogFile, self).__init__(**kwargs)
         self.size_in_kb = size_in_kb
         self.created_time = None
         self.last_modified_time = None
         self.log_file_type = log_file_type
-        self.url = url
+        self.url = None
