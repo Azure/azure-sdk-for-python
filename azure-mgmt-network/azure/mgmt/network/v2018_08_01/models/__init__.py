@@ -29,6 +29,7 @@ try:
     from .ip_tag_py3 import IpTag
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
+    from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .resource_navigation_link_py3 import ResourceNavigationLink
     from .service_association_link_py3 import ServiceAssociationLink
     from .delegation_py3 import Delegation
@@ -138,7 +139,6 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
-    from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .container_network_interface_configuration_py3 import ContainerNetworkInterfaceConfiguration
     from .container_py3 import Container
     from .container_network_interface_ip_configuration_py3 import ContainerNetworkInterfaceIpConfiguration
@@ -285,6 +285,7 @@ except (SyntaxError, ImportError):
     from .ip_tag import IpTag
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
+    from .ip_configuration_profile import IPConfigurationProfile
     from .resource_navigation_link import ResourceNavigationLink
     from .service_association_link import ServiceAssociationLink
     from .delegation import Delegation
@@ -394,7 +395,6 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
-    from .ip_configuration_profile import IPConfigurationProfile
     from .container_network_interface_configuration import ContainerNetworkInterfaceConfiguration
     from .container import Container
     from .container_network_interface_ip_configuration import ContainerNetworkInterfaceIpConfiguration
@@ -680,6 +680,7 @@ __all__ = [
     'IpTag',
     'PublicIPAddress',
     'IPConfiguration',
+    'IPConfigurationProfile',
     'ResourceNavigationLink',
     'ServiceAssociationLink',
     'Delegation',
@@ -789,7 +790,6 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
-    'IPConfigurationProfile',
     'ContainerNetworkInterfaceConfiguration',
     'Container',
     'ContainerNetworkInterfaceIpConfiguration',
