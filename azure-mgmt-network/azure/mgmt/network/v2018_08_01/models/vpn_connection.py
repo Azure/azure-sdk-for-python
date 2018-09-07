@@ -28,9 +28,9 @@ class VpnConnection(SubResource):
      'Unknown', 'Connecting', 'Connected', 'NotConnected'
     :type connection_status: str or
      ~azure.mgmt.network.v2018_08_01.models.VpnConnectionStatus
-    :param connection_protocol: Connection protocol used for this connection.
-     Possible values include: 'IKEv2', 'IKEv1'
-    :type connection_protocol: str or
+    :param vpn_connection_protocol_type: Connection protocol used for this
+     connection. Possible values include: 'IKEv2', 'IKEv1'
+    :type vpn_connection_protocol_type: str or
      ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionProtocol
     :ivar ingress_bytes_transferred: Ingress bytes transferred.
     :vartype ingress_bytes_transferred: long
@@ -73,7 +73,7 @@ class VpnConnection(SubResource):
         'remote_vpn_site': {'key': 'properties.remoteVpnSite', 'type': 'SubResource'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
+        'vpn_connection_protocol_type': {'key': 'properties.vpnConnectionProtocolType', 'type': 'str'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
         'connection_bandwidth': {'key': 'properties.connectionBandwidth', 'type': 'int'},
@@ -92,7 +92,7 @@ class VpnConnection(SubResource):
         self.remote_vpn_site = kwargs.get('remote_vpn_site', None)
         self.routing_weight = kwargs.get('routing_weight', None)
         self.connection_status = kwargs.get('connection_status', None)
-        self.connection_protocol = kwargs.get('connection_protocol', None)
+        self.vpn_connection_protocol_type = kwargs.get('vpn_connection_protocol_type', None)
         self.ingress_bytes_transferred = None
         self.egress_bytes_transferred = None
         self.connection_bandwidth = kwargs.get('connection_bandwidth', None)

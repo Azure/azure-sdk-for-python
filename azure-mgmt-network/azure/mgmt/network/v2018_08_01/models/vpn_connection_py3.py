@@ -28,9 +28,9 @@ class VpnConnection(SubResource):
      'Unknown', 'Connecting', 'Connected', 'NotConnected'
     :type connection_status: str or
      ~azure.mgmt.network.v2018_08_01.models.VpnConnectionStatus
-    :param connection_protocol: Connection protocol used for this connection.
-     Possible values include: 'IKEv2', 'IKEv1'
-    :type connection_protocol: str or
+    :param vpn_connection_protocol_type: Connection protocol used for this
+     connection. Possible values include: 'IKEv2', 'IKEv1'
+    :type vpn_connection_protocol_type: str or
      ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionProtocol
     :ivar ingress_bytes_transferred: Ingress bytes transferred.
     :vartype ingress_bytes_transferred: long
@@ -73,7 +73,7 @@ class VpnConnection(SubResource):
         'remote_vpn_site': {'key': 'properties.remoteVpnSite', 'type': 'SubResource'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
+        'vpn_connection_protocol_type': {'key': 'properties.vpnConnectionProtocolType', 'type': 'str'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
         'connection_bandwidth': {'key': 'properties.connectionBandwidth', 'type': 'int'},
@@ -87,12 +87,12 @@ class VpnConnection(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, connection_protocol=None, connection_bandwidth: int=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, enable_rate_limiting: bool=None, enable_internet_security: bool=None, provisioning_state=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, vpn_connection_protocol_type=None, connection_bandwidth: int=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, enable_rate_limiting: bool=None, enable_internet_security: bool=None, provisioning_state=None, name: str=None, **kwargs) -> None:
         super(VpnConnection, self).__init__(id=id, **kwargs)
         self.remote_vpn_site = remote_vpn_site
         self.routing_weight = routing_weight
         self.connection_status = connection_status
-        self.connection_protocol = connection_protocol
+        self.vpn_connection_protocol_type = vpn_connection_protocol_type
         self.ingress_bytes_transferred = None
         self.egress_bytes_transferred = None
         self.connection_bandwidth = connection_bandwidth
