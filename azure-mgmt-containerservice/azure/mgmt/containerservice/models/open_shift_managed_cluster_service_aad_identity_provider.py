@@ -21,12 +21,15 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
     :type client_id: str
     :param secret: The secret password associated with the provider.
     :type secret: str
+    :param tenant_id: The tenantId associated with the provider.
+    :type tenant_id: str
     """
 
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
         'secret': {'key': 'secret', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -34,3 +37,4 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
         self.kind = kwargs.get('kind', None)
         self.client_id = kwargs.get('client_id', None)
         self.secret = kwargs.get('secret', None)
+        self.tenant_id = kwargs.get('tenant_id', None)

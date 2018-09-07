@@ -48,18 +48,15 @@ class OpenShiftManagedCluster(Resource):
     :param router_profiles: Configuration for OpenShift router(s).
     :type router_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftRouterProfile]
+    :param master_pool_profiles: Configuration for OpenShift master VMs.
+    :type master_pool_profiles:
+     ~azure.mgmt.containerservice.models.OpenShiftManagedClusterMasterPoolProfile
     :param agent_pool_profiles: Configuration of OpenShift cluster VMs.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterAgentPoolProfile]
     :param auth_profile: Configures OpenShift authentication.
     :type auth_profile:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProvider]
-    :param service_principal_profile: Service principal for OpenShift cluster.
-    :type service_principal_profile:
-     ~azure.mgmt.containerservice.models.ManagedClusterServicePrincipalProfile
-    :param az_profile: Azure context for where the cluster resides.
-    :type az_profile:
-     ~azure.mgmt.containerservice.models.OpenShiftManagedClusterAzProfile
     """
 
     _validation = {
@@ -83,10 +80,9 @@ class OpenShiftManagedCluster(Resource):
         'public_hostname': {'key': 'properties.publicHostname', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'router_profiles': {'key': 'properties.routerProfiles', 'type': '[OpenShiftRouterProfile]'},
+        'master_pool_profiles': {'key': 'properties.masterPoolProfiles', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[OpenShiftManagedClusterAgentPoolProfile]'},
         'auth_profile': {'key': 'properties.authProfile', 'type': '[OpenShiftManagedClusterIdentityProvider]'},
-        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ManagedClusterServicePrincipalProfile'},
-        'az_profile': {'key': 'properties.azProfile', 'type': 'OpenShiftManagedClusterAzProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -97,7 +93,6 @@ class OpenShiftManagedCluster(Resource):
         self.public_hostname = kwargs.get('public_hostname', None)
         self.fqdn = kwargs.get('fqdn', None)
         self.router_profiles = kwargs.get('router_profiles', None)
+        self.master_pool_profiles = kwargs.get('master_pool_profiles', None)
         self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
         self.auth_profile = kwargs.get('auth_profile', None)
-        self.service_principal_profile = kwargs.get('service_principal_profile', None)
-        self.az_profile = kwargs.get('az_profile', None)
