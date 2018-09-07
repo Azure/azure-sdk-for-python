@@ -16,13 +16,16 @@ class UploadBatchServiceLogsResult(Model):
     """The result of uploading Batch service log files from a specific compute
     node.
 
-    :param virtual_directory_name: The virtual directory within Azure Blob
-     Storage container to which the Batch Service log file(s) will be uploaded.
-     The virtual directory name is part of the blob name for each log file
-     uploaded, and it is built based poolId, nodeId and a unique identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :param virtual_directory_name: Required. The virtual directory within
+     Azure Blob Storage container to which the Batch Service log file(s) will
+     be uploaded. The virtual directory name is part of the blob name for each
+     log file uploaded, and it is built based poolId, nodeId and a unique
+     identifier.
     :type virtual_directory_name: str
-    :param number_of_files_uploaded: The number of log files which will be
-     uploaded.
+    :param number_of_files_uploaded: Required. The number of log files which
+     will be uploaded.
     :type number_of_files_uploaded: int
     """
 
@@ -36,7 +39,7 @@ class UploadBatchServiceLogsResult(Model):
         'number_of_files_uploaded': {'key': 'numberOfFilesUploaded', 'type': 'int'},
     }
 
-    def __init__(self, virtual_directory_name, number_of_files_uploaded):
-        super(UploadBatchServiceLogsResult, self).__init__()
-        self.virtual_directory_name = virtual_directory_name
-        self.number_of_files_uploaded = number_of_files_uploaded
+    def __init__(self, **kwargs):
+        super(UploadBatchServiceLogsResult, self).__init__(**kwargs)
+        self.virtual_directory_name = kwargs.get('virtual_directory_name', None)
+        self.number_of_files_uploaded = kwargs.get('number_of_files_uploaded', None)
