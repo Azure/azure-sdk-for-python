@@ -12,7 +12,7 @@
 from .control_activity_py3 import ControlActivity
 
 
-class SetVaraibleActivity(ControlActivity):
+class SetVariableActivity(ControlActivity):
     """Set value for a Variable.
 
     All required parameters must be populated in order to send to Azure.
@@ -30,9 +30,9 @@ class SetVaraibleActivity(ControlActivity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param set_varaible_activity_name: Required. Name of the variable whose
+    :param set_variable_activity_name: Required. Name of the variable whose
      value needs to be set.
-    :type set_varaible_activity_name: str
+    :type set_variable_activity_name: str
     :param value: Required. Value to be set. Could be a static value or
      Expression
     :type value: object
@@ -41,7 +41,7 @@ class SetVaraibleActivity(ControlActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'set_varaible_activity_name': {'required': True},
+        'set_variable_activity_name': {'required': True},
         'value': {'required': True},
     }
 
@@ -52,12 +52,12 @@ class SetVaraibleActivity(ControlActivity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
-        'set_varaible_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
+        'set_variable_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
         'value': {'key': 'typeProperties.value', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, set_varaible_activity_name: str, value, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
-        super(SetVaraibleActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.set_varaible_activity_name = set_varaible_activity_name
+    def __init__(self, *, name: str, set_variable_activity_name: str, value, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(SetVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.set_variable_activity_name = set_variable_activity_name
         self.value = value
-        self.type = 'SetVaraible'
+        self.type = 'SetVariable'

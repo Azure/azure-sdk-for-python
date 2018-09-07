@@ -16,7 +16,7 @@ class ControlActivity(Activity):
     """Base class for all control activities like IfCondition, ForEach , Until.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVaraibleActivity, SetVaraibleActivity,
+    sub-classes are: AppendVariableActivity, SetVariableActivity,
     FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
     IfConditionActivity, ExecutePipelineActivity
 
@@ -52,7 +52,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AppendVaraible': 'AppendVaraibleActivity', 'SetVaraible': 'SetVaraibleActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, **kwargs):

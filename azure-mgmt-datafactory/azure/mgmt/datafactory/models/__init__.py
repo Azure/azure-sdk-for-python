@@ -48,6 +48,8 @@ try:
     from .factory_vsts_configuration_py3 import FactoryVSTSConfiguration
     from .factory_git_hub_configuration_py3 import FactoryGitHubConfiguration
     from .factory_repo_update_py3 import FactoryRepoUpdate
+    from .git_hub_access_token_request_py3 import GitHubAccessTokenRequest
+    from .git_hub_access_token_response_py3 import GitHubAccessTokenResponse
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
@@ -323,8 +325,8 @@ try:
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
     from .execution_activity_py3 import ExecutionActivity
-    from .append_varaible_activity_py3 import AppendVaraibleActivity
-    from .set_varaible_activity_py3 import SetVaraibleActivity
+    from .append_variable_activity_py3 import AppendVariableActivity
+    from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
@@ -394,6 +396,8 @@ except (SyntaxError, ImportError):
     from .factory_vsts_configuration import FactoryVSTSConfiguration
     from .factory_git_hub_configuration import FactoryGitHubConfiguration
     from .factory_repo_update import FactoryRepoUpdate
+    from .git_hub_access_token_request import GitHubAccessTokenRequest
+    from .git_hub_access_token_response import GitHubAccessTokenResponse
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
@@ -669,8 +673,8 @@ except (SyntaxError, ImportError):
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
     from .execution_activity import ExecutionActivity
-    from .append_varaible_activity import AppendVaraibleActivity
-    from .set_varaible_activity import SetVaraibleActivity
+    from .append_variable_activity import AppendVariableActivity
+    from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
@@ -809,6 +813,8 @@ __all__ = [
     'FactoryVSTSConfiguration',
     'FactoryGitHubConfiguration',
     'FactoryRepoUpdate',
+    'GitHubAccessTokenRequest',
+    'GitHubAccessTokenResponse',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',
@@ -1084,8 +1090,8 @@ __all__ = [
     'CopySink',
     'CopyActivity',
     'ExecutionActivity',
-    'AppendVaraibleActivity',
-    'SetVaraibleActivity',
+    'AppendVariableActivity',
+    'SetVariableActivity',
     'FilterActivity',
     'UntilActivity',
     'WaitActivity',

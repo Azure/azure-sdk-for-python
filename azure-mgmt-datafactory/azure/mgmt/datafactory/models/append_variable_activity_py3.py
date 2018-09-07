@@ -12,7 +12,7 @@
 from .control_activity_py3 import ControlActivity
 
 
-class AppendVaraibleActivity(ControlActivity):
+class AppendVariableActivity(ControlActivity):
     """Append value to a array Variable.
 
     All required parameters must be populated in order to send to Azure.
@@ -30,9 +30,9 @@ class AppendVaraibleActivity(ControlActivity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param append_varaible_activity_name: Required. Name of the variable to
+    :param append_variable_activity_name: Required. Name of the variable to
      which value needs to be appended.
-    :type append_varaible_activity_name: str
+    :type append_variable_activity_name: str
     :param value: Required. Value to be appended. Could be a static value or
      Expression
     :type value: object
@@ -41,7 +41,7 @@ class AppendVaraibleActivity(ControlActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'append_varaible_activity_name': {'required': True},
+        'append_variable_activity_name': {'required': True},
         'value': {'required': True},
     }
 
@@ -52,12 +52,12 @@ class AppendVaraibleActivity(ControlActivity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
-        'append_varaible_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
+        'append_variable_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
         'value': {'key': 'typeProperties.value', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, append_varaible_activity_name: str, value, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
-        super(AppendVaraibleActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.append_varaible_activity_name = append_varaible_activity_name
+    def __init__(self, *, name: str, append_variable_activity_name: str, value, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(AppendVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.append_variable_activity_name = append_variable_activity_name
         self.value = value
-        self.type = 'AppendVaraible'
+        self.type = 'AppendVariable'
