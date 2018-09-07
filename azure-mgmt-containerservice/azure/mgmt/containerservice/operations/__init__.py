@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .open_shift_managed_clusters_operations import OpenShiftManagedClustersOperations
 from .container_services_operations import ContainerServicesOperations
 from .operations import Operations
 from .managed_clusters_operations import ManagedClustersOperations
 
 __all__ = [
+    'OpenShiftManagedClustersOperations',
     'ContainerServicesOperations',
     'Operations',
     'ManagedClustersOperations',
