@@ -16,7 +16,7 @@ try:
     from .open_shift_router_profile_py3 import OpenShiftRouterProfile
     from .open_shift_managed_cluster_master_pool_profile_py3 import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile_py3 import OpenShiftManagedClusterAgentPoolProfile
-    from .open_shift_managed_cluster_identity_provider_py3 import OpenShiftManagedClusterIdentityProvider
+    from .open_shift_managed_cluster_identity_providers_py3 import OpenShiftManagedClusterIdentityProviders
     from .open_shift_managed_cluster_py3 import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider_py3 import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object_py3 import TagsObject
@@ -54,7 +54,7 @@ except (SyntaxError, ImportError):
     from .open_shift_router_profile import OpenShiftRouterProfile
     from .open_shift_managed_cluster_master_pool_profile import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile import OpenShiftManagedClusterAgentPoolProfile
-    from .open_shift_managed_cluster_identity_provider import OpenShiftManagedClusterIdentityProvider
+    from .open_shift_managed_cluster_identity_providers import OpenShiftManagedClusterIdentityProviders
     from .open_shift_managed_cluster import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object import TagsObject
@@ -107,7 +107,7 @@ __all__ = [
     'OpenShiftRouterProfile',
     'OpenShiftManagedClusterMasterPoolProfile',
     'OpenShiftManagedClusterAgentPoolProfile',
-    'OpenShiftManagedClusterIdentityProvider',
+    'OpenShiftManagedClusterIdentityProviders',
     'OpenShiftManagedCluster',
     'OpenShiftManagedClusterServiceAADIdentityProvider',
     'TagsObject',

@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class OpenShiftManagedClusterIdentityProvider(Model):
+class OpenShiftManagedClusterIdentityProviders(Model):
     """OpenShiftManagedClusterIdentityProvider is heavily cut down equivalent to
     IdentityProvider in the upstream.
 
@@ -28,6 +28,6 @@ class OpenShiftManagedClusterIdentityProvider(Model):
     }
 
     def __init__(self, **kwargs):
-        super(OpenShiftManagedClusterIdentityProvider, self).__init__(**kwargs)
+        super(OpenShiftManagedClusterIdentityProviders, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.provider = kwargs.get('provider', None)

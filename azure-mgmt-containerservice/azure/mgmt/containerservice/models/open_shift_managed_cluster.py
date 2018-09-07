@@ -48,15 +48,15 @@ class OpenShiftManagedCluster(Resource):
     :param router_profiles: Configuration for OpenShift router(s).
     :type router_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftRouterProfile]
-    :param master_pool_profiles: Configuration for OpenShift master VMs.
-    :type master_pool_profiles:
+    :param master_pool_profile: Configuration for OpenShift master VMs.
+    :type master_pool_profile:
      ~azure.mgmt.containerservice.models.OpenShiftManagedClusterMasterPoolProfile
     :param agent_pool_profiles: Configuration of OpenShift cluster VMs.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterAgentPoolProfile]
     :param auth_profile: Configures OpenShift authentication.
     :type auth_profile:
-     list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProvider]
+     list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProviders]
     """
 
     _validation = {
@@ -80,9 +80,9 @@ class OpenShiftManagedCluster(Resource):
         'public_hostname': {'key': 'properties.publicHostname', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'router_profiles': {'key': 'properties.routerProfiles', 'type': '[OpenShiftRouterProfile]'},
-        'master_pool_profiles': {'key': 'properties.masterPoolProfiles', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
+        'master_pool_profile': {'key': 'properties.masterPoolProfile', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[OpenShiftManagedClusterAgentPoolProfile]'},
-        'auth_profile': {'key': 'properties.authProfile', 'type': '[OpenShiftManagedClusterIdentityProvider]'},
+        'auth_profile': {'key': 'properties.authProfile', 'type': '[OpenShiftManagedClusterIdentityProviders]'},
     }
 
     def __init__(self, **kwargs):
@@ -93,6 +93,6 @@ class OpenShiftManagedCluster(Resource):
         self.public_hostname = kwargs.get('public_hostname', None)
         self.fqdn = kwargs.get('fqdn', None)
         self.router_profiles = kwargs.get('router_profiles', None)
-        self.master_pool_profiles = kwargs.get('master_pool_profiles', None)
+        self.master_pool_profile = kwargs.get('master_pool_profile', None)
         self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
         self.auth_profile = kwargs.get('auth_profile', None)
