@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class ManagedInstanceKeysOperations(object):
-    """ManagedInstanceKeysOperations operations.
+class InterfaceEndpointProfilesOperations(object):
+    """InterfaceEndpointProfilesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,102 +39,26 @@ class ManagedInstanceKeysOperations(object):
 
         self.config = config
 
-    def list_by_instance(
-            self, resource_group_name, managed_instance_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of managed instance keys.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param filter: An OData filter expression that filters elements in the
-         collection.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ManagedInstanceKey
-        :rtype:
-         ~azure.mgmt.sql.models.ManagedInstanceKeyPaged[~azure.mgmt.sql.models.ManagedInstanceKey]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_instance.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.ManagedInstanceKeyPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.ManagedInstanceKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/keys'}
-
     def get(
-            self, resource_group_name, managed_instance_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a managed instance key.
+            self, resource_group_name, server_name, interface_endpoint_profile_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a interface endpoint profile.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param key_name: The name of the managed instance key to be retrieved.
-        :type key_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param interface_endpoint_profile_name: The name of the interface
+         endpoint profile.
+        :type interface_endpoint_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ManagedInstanceKey or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.ManagedInstanceKey or
+        :return: InterfaceEndpointProfile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.InterfaceEndpointProfile or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -142,8 +66,8 @@ class ManagedInstanceKeysOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'interfaceEndpointProfileName': self._serialize.url("interface_endpoint_profile_name", interface_endpoint_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -174,26 +98,26 @@ class ManagedInstanceKeysOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ManagedInstanceKey', response)
+            deserialized = self._deserialize('InterfaceEndpointProfile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/keys/{keyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/interfaceEndpointProfiles/{interfaceEndpointProfileName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, managed_instance_name, key_name, server_key_type, uri=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ManagedInstanceKey(server_key_type=server_key_type, uri=uri)
+            self, resource_group_name, server_name, interface_endpoint_profile_name, virtual_network_subnet_id, custom_headers=None, raw=False, **operation_config):
+        parameters = models.InterfaceEndpointProfile(virtual_network_subnet_id=virtual_network_subnet_id)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'interfaceEndpointProfileName': self._serialize.url("interface_endpoint_profile_name", interface_endpoint_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -214,7 +138,7 @@ class ManagedInstanceKeysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ManagedInstanceKey')
+        body_content = self._serialize.body(parameters, 'InterfaceEndpointProfile')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -228,9 +152,9 @@ class ManagedInstanceKeysOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ManagedInstanceKey', response)
+            deserialized = self._deserialize('InterfaceEndpointProfile', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('ManagedInstanceKey', response)
+            deserialized = self._deserialize('InterfaceEndpointProfile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -239,51 +163,46 @@ class ManagedInstanceKeysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, managed_instance_name, key_name, server_key_type, uri=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a managed instance key.
+            self, resource_group_name, server_name, interface_endpoint_profile_name, virtual_network_subnet_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a interface endpoint profile.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param key_name: The name of the managed instance key to be operated
-         on (updated or created).
-        :type key_name: str
-        :param server_key_type: The key type like 'ServiceManaged',
-         'AzureKeyVault'. Possible values include: 'ServiceManaged',
-         'AzureKeyVault'
-        :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
-        :param uri: The URI of the key. If the ServerKeyType is AzureKeyVault,
-         then the URI is required.
-        :type uri: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param interface_endpoint_profile_name:
+        :type interface_endpoint_profile_name: str
+        :param virtual_network_subnet_id: The ARM resource id of the virtual
+         network subnet.
+        :type virtual_network_subnet_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns ManagedInstanceKey or
-         ClientRawResponse<ManagedInstanceKey> if raw==True
+        :return: An instance of LROPoller that returns
+         InterfaceEndpointProfile or
+         ClientRawResponse<InterfaceEndpointProfile> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ManagedInstanceKey]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.InterfaceEndpointProfile]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ManagedInstanceKey]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.InterfaceEndpointProfile]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            managed_instance_name=managed_instance_name,
-            key_name=key_name,
-            server_key_type=server_key_type,
-            uri=uri,
+            server_name=server_name,
+            interface_endpoint_profile_name=interface_endpoint_profile_name,
+            virtual_network_subnet_id=virtual_network_subnet_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ManagedInstanceKey', response)
+            deserialized = self._deserialize('InterfaceEndpointProfile', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -298,17 +217,17 @@ class ManagedInstanceKeysOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/keys/{keyName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/interfaceEndpointProfiles/{interfaceEndpointProfileName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, managed_instance_name, key_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, interface_endpoint_profile_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'interfaceEndpointProfileName': self._serialize.url("interface_endpoint_profile_name", interface_endpoint_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -340,17 +259,17 @@ class ManagedInstanceKeysOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, managed_instance_name, key_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the managed instance key with the given name.
+            self, resource_group_name, server_name, interface_endpoint_profile_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the interface endpoint profile with the given name.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param key_name: The name of the managed instance key to be deleted.
-        :type key_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param interface_endpoint_profile_name:
+        :type interface_endpoint_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -364,8 +283,8 @@ class ManagedInstanceKeysOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            managed_instance_name=managed_instance_name,
-            key_name=key_name,
+            server_name=server_name,
+            interface_endpoint_profile_name=interface_endpoint_profile_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -383,4 +302,76 @@ class ManagedInstanceKeysOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/keys/{keyName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/interfaceEndpointProfiles/{interfaceEndpointProfileName}'}
+
+    def list_by_server(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of interface endpoint profiles attached to a server.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of InterfaceEndpointProfile
+        :rtype:
+         ~azure.mgmt.sql.models.InterfaceEndpointProfilePaged[~azure.mgmt.sql.models.InterfaceEndpointProfile]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_server.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.InterfaceEndpointProfilePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.InterfaceEndpointProfilePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/interfaceEndpointProfiles'}
