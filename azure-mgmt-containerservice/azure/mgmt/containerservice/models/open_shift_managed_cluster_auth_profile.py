@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class OpenShiftManagedClusterAuthProfile(Model):
     """OpenShiftManagedClusterAuthProfile.
 
-    :param value: OpenShiftManagedClusterAuthProfile defines all possible
-     authentication profiles for the OpenShift cluster.
-    :type value:
+    :param identity_providers: OpenShiftManagedClusterAuthProfile defines all
+     possible authentication profiles for the OpenShift cluster.
+    :type identity_providers:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProviders]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OpenShiftManagedClusterIdentityProviders]'},
+        'identity_providers': {'key': 'identityProviders', 'type': '[OpenShiftManagedClusterIdentityProviders]'},
     }
 
     def __init__(self, **kwargs):
         super(OpenShiftManagedClusterAuthProfile, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.identity_providers = kwargs.get('identity_providers', None)
