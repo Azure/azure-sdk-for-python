@@ -42,11 +42,12 @@ class RuPerMinTests(unittest.TestCase):
     
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'sample database'
     
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -67,7 +68,7 @@ class RuPerMinTests(unittest.TestCase):
             
         RuPerMinTests.cleanUpTestDatabase()
         
-        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })
         
     @classmethod

@@ -63,10 +63,6 @@ def GetHeaders(document_client,
     headers = dict(default_headers)
     options = options or {}
 
-    if options.get('continuation'):
-        headers[http_constants.HttpHeaders.Continuation] = (
-            options['continuation'])
-
     pre_trigger_include = options.get('preTriggerInclude')
     if pre_trigger_include:
         headers[http_constants.HttpHeaders.PreTriggerInclude] = (
@@ -113,7 +109,7 @@ def GetHeaders(document_client,
     is_session_consistency = (consistency_level == documents.ConsistencyLevel.Session)
 
     # set session token if required
-    if is_session_consistency is True:
+    if is_session_consistency is True and not IsMasterResource(resource_type):
         # if there is a token set via option, then use it to override default
         if options.get('sessionToken'):
             headers[http_constants.HttpHeaders.SessionToken] = options['sessionToken']
@@ -162,6 +158,7 @@ def GetHeaders(document_client,
                                         verb,
                                         path,
                                         resource_id,
+                                        IsNameBased(resource_id),
                                         resource_type,
                                         headers)
         # urllib.quote throws when the input parameter is None
@@ -188,6 +185,26 @@ def GetHeaders(document_client,
 
     if options.get('disableRUPerMinuteUsage'):
         headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options['disableRUPerMinuteUsage']
+
+    if options.get('changeFeed') is True:
+        # On REST level, change feed is using IfNoneMatch/ETag instead of continuation.
+        if_none_match_value = None
+        if options.get('continuation'):
+            if_none_match_value = options['continuation']
+        elif options.get('isStartFromBeginning') and options['isStartFromBeginning'] == False:
+            if_none_match_value = '*'
+        if if_none_match_value:
+            headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
+        headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
+    else:
+        if options.get('continuation'):
+            headers[http_constants.HttpHeaders.Continuation] = (options['continuation'])
+
+    if options.get('populatePartitionKeyRangeStatistics'):
+            headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options['populatePartitionKeyRangeStatistics']
+
+    if options.get('populateQuotaInfo'):
+            headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options['populateQuotaInfo']
 
     return headers
 
@@ -226,9 +243,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     if len(path_parts) % 2 == 0:
         # request in form
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
-        # Lower casing of ResourceID, to be used in AuthorizationToken generation logic, where rest of the fields are lower cased
-        # It's not being done there since the field might contain the "ID" in case of named based, which shouldn't be cased and used as is
-        return str(path_parts[-2]).lower()
+        return str(path_parts[-2])
     return None
 
 
@@ -242,6 +257,8 @@ def GetAttachmentIdFromMediaId(media_id):
     :rtype: str
     """
     altchars = '+-'
+    if not six.PY2:
+        altchars = altchars.encode('utf-8')
     # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
     buffer = base64.b64decode(str(media_id), altchars)
     resoure_id_length = 20
@@ -331,9 +348,22 @@ def IsNameBased(link):
     
     # Length of decoded buffer(in case of ResourceID) is always 4
     if len(buffer) != 4:
-      	return True
+        return True
 
     return False;
+
+def IsMasterResource(resourceType):
+    if (resourceType == http_constants.ResourceType.Offer or
+        resourceType == http_constants.ResourceType.Database or
+        resourceType == http_constants.ResourceType.User or
+        resourceType == http_constants.ResourceType.Permission or
+        resourceType == http_constants.ResourceType.Topology  or
+        resourceType == http_constants.ResourceType.DatabaseAccount or
+        resourceType == http_constants.ResourceType.PartitionKeyRange or
+        resourceType == http_constants.ResourceType.Collection):
+            return True
+    else:
+            return False
 
 def IsDatabaseLink(link):
     """Finds whether the link is a database Self Link or a database ID based link

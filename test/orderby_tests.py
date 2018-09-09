@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 import unittest
+import uuid
 import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 from pydocumentdb import query_iterable
@@ -41,11 +42,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'sample database'
     
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -67,7 +69,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             
         CrossPartitionTopOrderByTest.cleanUpTestDatabase();
         
-        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })        
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
@@ -556,7 +558,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     def create_collection(self, client, created_db):
 
         collection_definition = {  
-           'id':'sample collection',
+           'id': 'sample collection ' + str(uuid.uuid4()),
            'indexingPolicy':{  
               'includedPaths':[  
                  {  

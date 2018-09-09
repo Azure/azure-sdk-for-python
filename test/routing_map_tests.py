@@ -40,11 +40,12 @@ class RoutingMapEndToEndTests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'sample database'
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -68,7 +69,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     def setUp(self):
         RoutingMapEndToEndTests.cleanUpTestDatabase();
         
-        self.client = document_client.DocumentClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey})
+        self.client = document_client.DocumentClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)

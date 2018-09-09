@@ -133,6 +133,13 @@ class DocumentClient(object):
         # creating a requests session used for connection pooling and re-used by all requests
         self._requests_session = requests.Session()
 
+        if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
+            host = connection_policy.ProxyConfiguration.Host
+            url = six.moves.urllib.parse.urlparse(host)
+            proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
+            proxyDict = {url.scheme : proxy}
+            self._requests_session.proxies.update(proxyDict)
+
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
@@ -860,6 +867,70 @@ class DocumentClient(object):
                                         options), self.last_response_headers
             return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_collection_link)
 
+    def QueryDocumentsChangeFeed(self, collection_link, options=None):
+        """Queries documents change feed in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+            options may also specify partition key range id.
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+
+        partition_key_range_id = None
+        if options is not None and 'partitionKeyRangeId' in options:
+            partition_key_range_id = options['partitionKeyRangeId']
+
+        return self._QueryChangeFeed(collection_link, "Documents" , options, partition_key_range_id)
+        
+    def _QueryChangeFeed(self, collection_link, resource_type, options=None, partition_key_range_id=None):
+        """Queries change feed of a resource in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param str resource_type:
+            The type of the resource.
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Specifies partition key range id.
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+        options['changeFeed'] = True
+
+        resource_key_map = {'Documents' : 'docs'}
+
+        # For now, change feed only supports Documents and Partition Key Range resouce type
+        if resource_type not in resource_key_map:
+            raise NotImplementedError(resource_type + " change feed query is not supported.")
+
+        resource_key = resource_key_map[resource_type]
+        path = base.GetPathFromLink(collection_link, resource_key)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        def fetch_fn(options):
+            return self.__QueryFeed(path,
+                                    resource_key,
+                                    collection_id,
+                                    lambda r: r[resource_type],
+                                    lambda _, b: b,
+                                    None,
+                                    options,
+                                    partition_key_range_id), self.last_response_headers
+        return query_iterable.QueryIterable(self, None, options, fetch_fn, collection_link)
+
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
         """Reads Partition Key Ranges.
 
@@ -927,7 +998,7 @@ class DocumentClient(object):
             dict
 
         """
-        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
         # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
         # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
         # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
@@ -965,7 +1036,7 @@ class DocumentClient(object):
             dict
 
         """
-        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
         # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
         # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
         # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
@@ -1560,7 +1631,7 @@ class DocumentClient(object):
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         
-        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
         # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
         # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the function so that it remains local
         # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
@@ -2679,7 +2750,12 @@ class DocumentClient(object):
             __GetBodiesFromQueryResult = result_fn
         else:
             def __GetBodiesFromQueryResult(result):
-                return [create_fn(self, body) for body in result_fn(result)]
+                if result is not None:
+                    return [create_fn(self, body) for body in result_fn(result)]
+                else:
+                    # If there is no change feed, the result data is empty and result is None.
+                    # This case should be interpreted as an empty array.
+                    return []
 
         # Query operations will use ReadEndpoint even though it uses GET(for feed requests) and POST(for regular query operations)
         url_connection = self._global_endpoint_manager.ReadEndpoint

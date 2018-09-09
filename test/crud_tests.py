@@ -31,7 +31,11 @@ from six.moves import xrange
 from struct import *
 from six.moves.builtins import *
 import six
-
+if six.PY2:
+    import urllib as urllib
+else:
+    import urllib.parse as urllib
+import uuid
 import pydocumentdb.base as base
 import pydocumentdb.consistent_hash_ring as consistent_hash_ring
 import pydocumentdb.documents as documents
@@ -61,6 +65,7 @@ class CRUDTests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'sample database'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -79,7 +84,7 @@ class CRUDTests(unittest.TestCase):
     @classmethod
     def cleanUpTestDatabase(cls):
         client = document_client.DocumentClient(cls.host, 
-                                                {'masterKey': cls.masterKey})
+                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -111,7 +116,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_database_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # read databases.
         databases = list(client.ReadDatabases())
         # create a database.
@@ -145,7 +150,7 @@ class CRUDTests(unittest.TestCase):
                                            self.GetDatabaseLink(created_db, is_name_based))
 
     def test_sql_query_crud(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create two databases.
         db1 = client.CreateDatabase({ 'id': 'database 1' })
         db2 = client.CreateDatabase({ 'id': 'database 2' })
@@ -179,13 +184,13 @@ class CRUDTests(unittest.TestCase):
 
     def _test_collection_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, is_name_based)))
         # create a collection
         before_create_collections_count = len(collections)
-        collection_definition = { 'id': 'sample collection', 'indexingPolicy': {'indexingMode': 'consistent'} }
+        collection_definition = { 'id': 'sample collection ' + str(uuid.uuid4()), 'indexingPolicy': {'indexingMode': 'consistent'} }
         created_collection = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
                                                      collection_definition)
         self.assertEqual(collection_definition['id'], created_collection['id'])
@@ -228,11 +233,11 @@ class CRUDTests(unittest.TestCase):
 
     
     def test_partitioned_collection(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],
@@ -258,12 +263,40 @@ class CRUDTests(unittest.TestCase):
 
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
 
+
+    def test_partitioned_collection_quota(self):
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+
+        created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
+
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()),
+                                    'partitionKey':
+                                    {
+                                        'paths': ['/id'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        options = { 'offerThroughput': 20000 }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition,
+                                options)
+
+
+        read_options = { 'populatePartitionKeyRangeStatistics': True, 'populateQuotaInfo': True}
+
+        retrieved_collection = client.ReadCollection(created_collection.get('_self'), read_options)
+
+        self.assertTrue(retrieved_collection.get("statistics") != None)
+        self.assertTrue(client.last_response_headers.get("x-ms-resource-usage") != None)
+
     def test_partitioned_collection_partition_key_extraction(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/address/state'],
@@ -301,7 +334,7 @@ class CRUDTests(unittest.TestCase):
             document_definition,
             options)
 
-        collection_definition1 = {   'id': 'sample collection1', 
+        collection_definition1 = {   'id': 'sample collection1 ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/address'],
@@ -320,7 +353,7 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(options['partitionKey'], documents.Undefined)
 
-        collection_definition2 = {   'id': 'sample collection2', 
+        collection_definition2 = {   'id': 'sample collection2 ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/address/state/city'],
@@ -344,11 +377,11 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection2))
 
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition1 = {   'id': 'sample collection1', 
+        collection_definition1 = {   'id': 'sample collection1 ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/\"level\' 1*()\"/\"le/vel2\"'],
@@ -370,7 +403,7 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(options['partitionKey'], 'val1')
 
-        collection_definition2 = {   'id': 'sample collection2', 
+        collection_definition2 = {   'id': 'sample collection2 ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/\'level\" 1*()\'/\'le/vel2\''],
@@ -414,11 +447,11 @@ class CRUDTests(unittest.TestCase):
         
 
     def test_partitioned_collection_document_crud_and_query(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, None, documents.ConsistencyLevel.Session)
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy, documents.ConsistencyLevel.Session)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],
@@ -535,11 +568,11 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
 
     def test_partitioned_collection_permissions(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/key'],
@@ -583,7 +616,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[read_collection['_rid']] = (read_permission['_token'])
         
         restricted_client = document_client.DocumentClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens})
+            CRUDTests.host, {'resourceTokens': resource_tokens}, CRUDTests.connectionPolicy)
 
         document_definition = {'id': 'document1',
                                'key': 1
@@ -637,11 +670,11 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, read_collection))
 
     def test_partitioned_collection_execute_stored_procedure(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/pk'],
@@ -720,11 +753,11 @@ class CRUDTests(unittest.TestCase):
                 return sum([len(chunk) for chunk in self._chunks])
 
 
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],
@@ -915,11 +948,11 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(db, collection))
 
     def test_partitioned_collection_partition_key_value_types(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
-        collection_definition = {   'id': 'sample collection1', 
+        collection_definition = {   'id': 'sample collection1 ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/key'],
@@ -986,11 +1019,11 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
 
     def test_partitioned_collection_conflit_crud_and_query(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],
@@ -1079,16 +1112,17 @@ class CRUDTests(unittest.TestCase):
         
     def _test_document_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         created_collection = client.CreateCollection(
             self.GetDatabaseLink(created_db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         # read documents
         documents = list(client.ReadDocuments(
             self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+
         # create a document
         before_create_documents_count = len(documents)
         document_definition = {'name': 'sample document',
@@ -1180,7 +1214,7 @@ class CRUDTests(unittest.TestCase):
     
     def test_partitioning(self):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create test database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -1315,17 +1349,17 @@ class CRUDTests(unittest.TestCase):
     # Partitioning test(with paging)
     def test_partition_paging(self):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create test database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
         # Create bunch of collections participating in partitioning
         collection0 = client.CreateCollection(
             self.GetDatabaseLink(created_db, True),
-            { 'id': 'coll_0' })
+            { 'id': 'coll_0 ' + str(uuid.uuid4()) })
         collection1 = client.CreateCollection(
             self.GetDatabaseLink(created_db, True),
-            { 'id': 'coll_1' })
+            { 'id': 'coll_1 ' + str(uuid.uuid4()) })
         
         # Register the collection links for partitioning through partition resolver
         collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True)]
@@ -1405,8 +1439,8 @@ class CRUDTests(unittest.TestCase):
         created_db = { 'id': CRUDTests.testDbName }
         
         # Create bunch of collections participating in partitioning
-        collection0 = { 'id': 'coll_0' }
-        collection1 = { 'id': 'coll_1' }
+        collection0 = { 'id': 'coll_0 ' + str(uuid.uuid4()) }
+        collection1 = { 'id': 'coll_1 ' + str(uuid.uuid4()) }
 
         collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True)]
 
@@ -1611,7 +1645,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_document_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -1619,7 +1653,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         created_collection = client.CreateCollection(
             self.GetDatabaseLink(created_db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
 
         # read documents and check count
         documents = list(client.ReadDocuments(
@@ -1719,13 +1753,13 @@ class CRUDTests(unittest.TestCase):
         self._test_spatial_index(True);
         
     def _test_spatial_index(self, is_name_based):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # partial policy specified
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
             {
-                'id': 'collection with spatial index',
+                'id': 'collection with spatial index ' + str(uuid.uuid4()),
                 'indexingPolicy': {
                     'includedPaths': [
                         {
@@ -1810,14 +1844,16 @@ class CRUDTests(unittest.TestCase):
 
 
         # Should do attachment CRUD operations successfully
+        connection_policy = CRUDTests.connectionPolicy
+        connection_policy.MediaReadMode = documents.MediaReadMode.Buffered
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, connection_policy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         # create document
         document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                          { 'id': 'sample document',
@@ -1979,7 +2015,7 @@ class CRUDTests(unittest.TestCase):
                 return sum([len(chunk) for chunk in self._chunks])
 
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -1987,7 +2023,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         
         # create document
         document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
@@ -2115,7 +2151,7 @@ class CRUDTests(unittest.TestCase):
     def _test_user_crud(self, is_name_based):
         # Should do User CRUD operations successfully.
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # list users
@@ -2169,7 +2205,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_user_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2230,7 +2266,7 @@ class CRUDTests(unittest.TestCase):
     def _test_permission_crud(self, is_name_based):
         # Should do Permission CRUD operations successfully
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create user
@@ -2293,7 +2329,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_permission_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2388,7 +2424,7 @@ class CRUDTests(unittest.TestCase):
             db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
             # create collection1
             collection1 = client.CreateCollection(
-                db['_self'], { 'id': 'sample collection' })
+                db['_self'], { 'id': 'sample collection ' + str(uuid.uuid4()) })
             # create document1
             document1 = client.CreateDocument(collection1['_self'],
                                               { 'id': 'coll1doc1',
@@ -2412,7 +2448,7 @@ class CRUDTests(unittest.TestCase):
             # create collection 2
             collection2 = client.CreateCollection(
                 db['_self'],
-                { 'id': 'sample collection2' })
+                { 'id': 'sample collection2 ' + str(uuid.uuid4()) })
             # create user1
             user1 = client.CreateUser(db['_self'], { 'id': 'user1' })
             permission = {
@@ -2461,13 +2497,13 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = document_client.DocumentClient(CRUDTests.host, {})
+        client = document_client.DocumentClient(CRUDTests.host, {}, CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
                                            client.ReadDatabases())
         # Client with master key.
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {}
@@ -2476,7 +2512,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[entities['doc1']['_rid']] = (
             entities['permissionOnColl1']['_token'])
         col1_client = document_client.DocumentClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens})
+            CRUDTests.host, {'resourceTokens': resource_tokens}, CRUDTests.connectionPolicy)
         # 1. Success-- Use Col1 Permission to Read
         success_coll1 = col1_client.ReadCollection(
             entities['coll1']['_self'])
@@ -2501,7 +2537,7 @@ class CRUDTests(unittest.TestCase):
             'Expected to read children using parent permissions')
         col2_client = document_client.DocumentClient(
             CRUDTests.host,
-            { 'permissionFeed': [ entities['permissionOnColl2'] ] })
+            { 'permissionFeed': [ entities['permissionOnColl2'] ] }, CRUDTests.connectionPolicy)
         doc = {
             'id': 'new doc',
             'CustomProperty1': 'BBBBBB',
@@ -2523,13 +2559,13 @@ class CRUDTests(unittest.TestCase):
         
     def _test_trigger_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         # read triggers
         triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a trigger
@@ -2602,7 +2638,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_trigger_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2610,7 +2646,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         
         # read triggers and check count
         triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
@@ -2693,13 +2729,13 @@ class CRUDTests(unittest.TestCase):
         
     def _test_udf_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         # read udfs
         udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a udf
@@ -2761,7 +2797,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_udf_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2769,7 +2805,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         
         # read udfs and check count
         udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
@@ -2849,13 +2885,13 @@ class CRUDTests(unittest.TestCase):
         
     def _test_sproc_crud(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         # read sprocs
         sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a sproc
@@ -2924,7 +2960,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_sproc_upsert(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2932,7 +2968,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': 'sample collection' })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         
         # read sprocs and check count
         sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
@@ -3007,11 +3043,11 @@ class CRUDTests(unittest.TestCase):
                          'delete should keep the number of sprocs same')
 
     def test_scipt_logging_execute_stored_procedure(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
-        collection_definition = {   'id': 'sample collection' }
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()) }
 
         created_collection = client.CreateCollection(self.GetDatabaseLink(created_db), collection_definition)
         
@@ -3042,7 +3078,7 @@ class CRUDTests(unittest.TestCase):
         result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
 
         self.assertEqual(result, 'Success!')
-        self.assertEqual('The value of x is 1.', client.last_response_headers.get(HttpHeaders.ScriptLogResults))
+        self.assertEqual(urllib.quote('The value of x is 1.'), client.last_response_headers.get(HttpHeaders.ScriptLogResults))
 
         options = { 'enableScriptLogging': False }
         result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
@@ -3061,18 +3097,18 @@ class CRUDTests(unittest.TestCase):
 
     def _test_collection_indexing_policy(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
-            { 'id': "sample collection" })
+            { 'id': 'sample collection ' + str(uuid.uuid4()) })
         self.assertEqual(collection['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'default indexing mode should be consistent')
         lazy_collection_definition = {
-            'id': 'lazy collection',
+            'id': 'lazy collection ' + str(uuid.uuid4()),
             'indexingPolicy': {
                 'indexingMode': documents.IndexingMode.Lazy
             }
@@ -3086,7 +3122,7 @@ class CRUDTests(unittest.TestCase):
                          'indexing mode should be lazy')
 
         consistent_collection_definition = {
-            'id': 'lazy collection',
+            'id': 'lazy collection ' + str(uuid.uuid4()),
             'indexingPolicy': {
                 'indexingMode': documents.IndexingMode.Consistent
             }
@@ -3137,7 +3173,7 @@ class CRUDTests(unittest.TestCase):
         self._test_create_default_indexing_policy(True);
         
     def _test_create_default_indexing_policy(self, is_name_based):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -3256,7 +3292,7 @@ class CRUDTests(unittest.TestCase):
             db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
             collection = client.CreateCollection(
                 db['_self'],
-                { 'id': 'sample collection' })
+                { 'id': 'sample collection ' + str(uuid.uuid4()) })
             doc1 = client.CreateDocument(
                 collection['_self'],
                 { 'id': 'doc1', 'prop1': 'value1'})
@@ -3276,7 +3312,7 @@ class CRUDTests(unittest.TestCase):
 
         # Validate QueryIterable by converting it to a list.
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         resources = __CreateResources(client)
         results = client.ReadDocuments(resources['coll']['_self'],
                                        {'maxItemCount':2})
@@ -3416,16 +3452,16 @@ class CRUDTests(unittest.TestCase):
                         'property {property} should match'.format(property=property))
 
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collections
         collection1 = client.CreateCollection(
-            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 1' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 1 ' + str(uuid.uuid4()) })
         collection2 = client.CreateCollection(
-            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 2' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 2 ' + str(uuid.uuid4()) })
         collection3 = client.CreateCollection(
-            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 3' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 3 ' + str(uuid.uuid4()) })
         # create triggers
         __CreateTriggers(client, db, collection1, triggers_in_collection1, is_name_based)
         __CreateTriggers(client, db, collection2, triggers_in_collection2, is_name_based)
@@ -3481,12 +3517,12 @@ class CRUDTests(unittest.TestCase):
         
     def _test_stored_procedure_functionality(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                { 'masterKey': CRUDTests.masterKey })
+                                                { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # create collection
         collection = client.CreateCollection(
-            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection ' + str(uuid.uuid4()) })
         sproc1 = {
             'id': 'storedProcedure1',
             'body': (
@@ -3544,7 +3580,7 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(expected_offer_type, offer.get('offerType'))
 
     def test_offer_read_and_query(self):
-        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
+        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # Create database.
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -3552,7 +3588,7 @@ class CRUDTests(unittest.TestCase):
         initial_count = len(offers)
 
         # Create collection.
-        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
+        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection ' + str(uuid.uuid4()) })
         offers = list(client.ReadOffers())
         self.assertEqual(initial_count+1, len(offers))
 
@@ -3598,11 +3634,11 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(initial_count, len(offers))
 
     def test_offer_replace(self):
-        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
+        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # Create database.
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # Create collection.
-        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
+        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection ' + str(uuid.uuid4()) })
         offers = self.GetCollectionOffers(client, collection['_rid'])
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
@@ -3637,7 +3673,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_collection_with_offer_type(self):
         client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
+                                                {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         collections = list(client.ReadCollections(created_db['_self']))
@@ -3647,7 +3683,7 @@ class CRUDTests(unittest.TestCase):
         offers = list(client.ReadOffers())
         before_offers_count = len(offers)
         
-        collection_definition = { 'id': 'sample collection' }
+        collection_definition = { 'id': 'sample collection ' + str(uuid.uuid4()) }
         collection = client.CreateCollection(created_db['_self'],
                                              collection_definition,
                                              {
@@ -3668,7 +3704,7 @@ class CRUDTests(unittest.TestCase):
         # Validate database account functionality.
         client = document_client.DocumentClient(CRUDTests.host,
                                                 { 'masterKey':
-                                                  CRUDTests.masterKey })
+                                                  CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         database_account = client.GetDatabaseAccount()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
@@ -3696,15 +3732,15 @@ class CRUDTests(unittest.TestCase):
         self._test_index_progress_headers(True);
         
     def _test_index_progress_headers(self, is_name_based):
-        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
+        client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
-        consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll' })
+        consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll ' + str(uuid.uuid4()) })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
         self.assertFalse(HttpHeaders.LazyIndexingProgress in client.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in client.last_response_headers)
         lazy_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
-                'id': 'lazy_coll',
+                'id': 'lazy_coll ' + str(uuid.uuid4()),
                 'indexingPolicy': { 'indexingMode' : documents.IndexingMode.Lazy }
             })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, lazy_coll, is_name_based))
@@ -3712,7 +3748,7 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(HttpHeaders.IndexTransformationProgress in client.last_response_headers)
         none_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
-                'id': 'none_coll',
+                'id': 'none_coll ' + str(uuid.uuid4()),
                 'indexingPolicy': { 'indexingMode': documents.IndexingMode.NoIndex, 'automatic': False }
             })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, none_coll, is_name_based))
@@ -3730,20 +3766,8 @@ class CRUDTests(unittest.TestCase):
     #     # Read databases after creation.
     #     databases = list(client.ReadDatabases())
 
-
-    # To run this test, please specify your own proxy server.
-    #
-    # def test_proxy_connection(self):
-    #     connection_policy = documents.ConnectionPolicy()
-    #     connection_policy.ProxyConfiguration = documents.ProxyConfiguration()
-    #     connection_policy.ProxyConfiguration.Host = '127.0.0.1'
-    #     connection_policy.ProxyConfiguration.Port = 8088
-    #     client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, connection_policy)
-    #     # Read databases after creation.
-    #     databases = list(client.ReadDatabases())
-
     def test_id_validation(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # Id shouldn't end with space.
         database_definition = { 'id': 'id_with_space ' }
@@ -3789,16 +3813,17 @@ class CRUDTests(unittest.TestCase):
         client.DeleteDatabase(db['_self'])
 
     def test_id_case_validation(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
+        uuid_string = str(uuid.uuid4())
         # pascalCase
-        collection_definition1 = { 'id': 'sampleCollection' }
+        collection_definition1 = { 'id': 'sampleCollection ' + uuid_string }
 
         # CamelCase
-        collection_definition2 = { 'id': 'SampleCollection' }
+        collection_definition2 = { 'id': 'SampleCollection ' + uuid_string }
 
         # Verify that no collections exist
         collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, True)))
@@ -3821,7 +3846,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition2['id'], created_collection2['id'])
 
     def test_id_unicode_validation(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })

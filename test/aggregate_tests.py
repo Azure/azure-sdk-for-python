@@ -22,6 +22,7 @@
 from __future__ import print_function
 
 import unittest
+import uuid
 
 from six import with_metaclass
 from six.moves import xrange
@@ -35,6 +36,7 @@ from pydocumentdb.errors import HTTPFailure
 class _config:
     host = test_config._test_config.host
     master_key = test_config._test_config.masterKey
+    connection_policy = test_config._test_config.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
@@ -49,7 +51,7 @@ class _helper:
     @classmethod
     def clean_up_database(cls):
         client = document_client.DocumentClient(_config.host,
-                                                {'masterKey': _config.master_key})
+                                                {'masterKey': _config.master_key}, _config.connection_policy)
         query_iterable = client.QueryDatabases(
             'SELECT * FROM root r WHERE r.id=\'{}\''.format(_config.TEST_DATABASE_NAME))
         it = iter(query_iterable)
@@ -77,7 +79,7 @@ class AggregateQueryTestSequenceMeta(type):
             _helper.clean_up_database()
 
             mcs.client = document_client.DocumentClient(_config.host,
-                                                        {'masterKey': _config.master_key})
+                                                        {'masterKey': _config.master_key}, _config.connection_policy)
             created_db = mcs.client.CreateDatabase({'id': _config.TEST_DATABASE_NAME})
             created_collection = _create_collection(mcs.client, created_db)
             mcs.collection_link = _get_collection_link(created_db, created_collection)
@@ -159,7 +161,7 @@ class AggregateQueryTestSequenceMeta(type):
 
         def _create_collection(client, created_db):
             collection_definition = {
-                'id': 'sample collection',
+                'id': 'sample collection ' + str(uuid.uuid4()),
                 'indexingPolicy': {
                     'includedPaths': [
                         {

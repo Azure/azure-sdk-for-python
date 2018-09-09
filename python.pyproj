@@ -60,6 +60,7 @@
     <Compile Include="test\aggregate_tests.py" />
     <Compile Include="test\globaldb_tests.py" />
     <Compile Include="test\globaldb_mock_tests.py" />
+    <Compile Include="test\proxy_tests.py" />
     <Compile Include="test\retry_policy_tests.py" />
     <Compile Include="test\routing_map_tests.py" />
     <Compile Include="test\routing\collection_routing_map_test.py" />
@@ -67,6 +68,7 @@
     <Compile Include="test\query_execution_context_tests.py" />
     <Compile Include="test\routing\__init__.py" />
     <Compile Include="test\session_container_tests.py" />
+    <Compile Include="test\session_tests.py" />
     <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
     <Compile Include="test\ru_per_min_tests.py" />
