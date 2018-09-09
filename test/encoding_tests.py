@@ -10,14 +10,15 @@ class EncodingTest(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'testDatabase'
-    testCollectionName = 'testCollection'
+    testCollectionName = 'encodingTestCollection'
 
     @classmethod
     def cleanUpTestDatabase(cls):
         global client
         client = document_client.DocumentClient(cls.host,
-                                                {'masterKey': cls.masterKey})
+                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
 

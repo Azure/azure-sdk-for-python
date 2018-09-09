@@ -32,6 +32,7 @@ def GetAuthorizationHeader(document_client,
                            verb,
                            path,
                            resource_id_or_fullname,
+                           is_name_based,
                            resource_type,
                            headers):
     """Gets the authorization header.
@@ -47,6 +48,11 @@ def GetAuthorizationHeader(document_client,
         The authorization headers.
     :rtype: dict
     """
+    # In the AuthorizationToken generation logic, lower casing of ResourceID is required as rest of the fields are lower cased
+    # Lower casing should not be done for named based "ID", which should be used as is
+    if resource_id_or_fullname is not None and not is_name_based:
+        resource_id_or_fullname = resource_id_or_fullname.lower()
+
     if document_client.master_key:
         return __GetAuthorizationTokenUsingMasterKey(verb,
                                                     resource_id_or_fullname,

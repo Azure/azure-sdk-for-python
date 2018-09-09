@@ -25,6 +25,7 @@
 import pydocumentdb.base as base
 from pydocumentdb.routing.collection_routing_map import _CollectionRoutingMap
 import pydocumentdb.routing.routing_range as routing_range
+from pydocumentdb.routing.routing_range import _PartitionKeyRange
 
 class _PartitionKeyRangeCache(object):
     '''
@@ -62,10 +63,23 @@ class _PartitionKeyRangeCache(object):
         
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
-            partitionKeyRanges = list(cl._ReadPartitionKeyRanges(collection_link))
-            collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap([(r, True) for r in partitionKeyRanges], collection_id)
+            collection_pk_ranges = list(cl._ReadPartitionKeyRanges(collection_link))
+            # for large collections, a split may complete between the read partition key ranges query page responses, 
+            # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need 
+            # to discard the parent ranges to have a valid routing map.
+            collection_pk_ranges = _PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
+            collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap([(r, True) for r in collection_pk_ranges], collection_id)
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
         return collection_routing_map.get_overlapping_ranges(partition_key_ranges)
+
+    @staticmethod
+    def _discard_parent_ranges(partitionKeyRanges):
+        parentIds = set()
+        for r in partitionKeyRanges:
+            if isinstance(r, dict) and _PartitionKeyRange.Parents in r:
+                for parentId in r[_PartitionKeyRange.Parents]:
+                    parentIds.add(parentId)
+        return (r for r in partitionKeyRanges if r[_PartitionKeyRange.Id] not in parentIds)
 
 class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
     """

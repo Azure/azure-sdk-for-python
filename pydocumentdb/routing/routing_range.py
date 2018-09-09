@@ -27,6 +27,7 @@ class _PartitionKeyRange(object):
     MinInclusive = 'minInclusive'
     MaxExclusive = 'maxExclusive'
     Id = 'id'
+    Parents = 'parents'
 
 class _Range(object):
     """description of class"""

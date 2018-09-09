@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 import os
+import pydocumentdb.documents as documents
 try:
     import urllib3
     urllib3.disable_warnings()
@@ -30,6 +31,8 @@ class _test_config(object):
 
     host = os.getenv('ACCOUNT_HOST', 'https://localhost:443')
     masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
+    connectionPolicy = documents.ConnectionPolicy()
+    connectionPolicy.DisableSSLVerification = True
 
     global_host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
     write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'

@@ -1,3 +1,12 @@
+## Changes in 2.3.3 : ##
+
+- Added support for proxy
+- Added support for reading change feed
+- Added support for collection quota headers
+- Bugfix for large session tokens issue
+- Bugfix for ReadMedia API
+- Bugfix in partition key range cache
+
 ## Changes in 2.3.2 : ##
 
 - Added support for default retries on connection issues.
@@ -12,9 +21,9 @@
 
 ## Changes in 2.2.1 : ##
 
-- bugfix for aggregate dict
-- bugfix for trimming slashes in the resource link
-- tests for unicode encoding
+- Bugfix for aggregate dict
+- Bugfix for trimming slashes in the resource link
+- Added tests for unicode encoding
 
 ## Changes in 2.2.0 : ##
 

@@ -42,7 +42,10 @@ class _QueryExecutionContextBase(object):
         """
         self._client = client
         self._options = options
+        self._is_change_feed = 'changeFeed' in options and options['changeFeed'] is True
         self._continuation = None
+        if 'continuation' in options and self._is_change_feed:
+            self._continuation = options['continuation']
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
@@ -119,8 +122,16 @@ class _QueryExecutionContextBase(object):
             self._options['continuation'] = self._continuation
             (fetched_items, response_headers) = fetch_function(self._options)
             fetched_items
-            self._continuation = response_headers.get(
-                http_constants.HttpHeaders.Continuation)
+            continuation_key = http_constants.HttpHeaders.Continuation 
+            # Use Etag as continuation token for change feed queries.
+            if self._is_change_feed:
+                continuation_key = http_constants.HttpHeaders.ETag
+            # In change feed queries, the continuation token is always populated. The hasNext() test is whether
+            # there is any items in the response or not.
+            if not self._is_change_feed or len(fetched_items) > 0:
+                self._continuation = response_headers.get(continuation_key)
+            else:
+                self._continuation = None
             if fetched_items:
                 break
         return fetched_items   

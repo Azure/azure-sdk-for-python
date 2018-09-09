@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 import unittest
+import uuid
 from six.moves import xrange
 import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
@@ -41,11 +42,12 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     testDbName = 'sample database'
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey})
+        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -69,7 +71,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
     def setUp(self):
         QueryExecutionContextEndToEndTests.cleanUpTestDatabase();
         
-        self.client = document_client.DocumentClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey})
+        self.client = document_client.DocumentClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
@@ -210,7 +212,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         
     def create_collection(self, client, created_db):
 
-        collection_definition = {   'id': 'sample collection', 
+        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],

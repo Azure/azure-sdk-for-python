@@ -121,6 +121,10 @@ class HttpHeaders:
     CollectionCurrentUsageInMb = 'x-ms-collection-usage-mb'
     MaxMediaStorageUsageInMB = 'x-ms-max-media-storage-usage-mb'
 
+    # Collection quota
+    PopulateQuotaInfo  = 'x-ms-documentdb-populatequotainfo';
+    PopulatePartitionKeyRangeStatistics = 'x-ms-documentdb-populatepartitionstatistics';
+
     # Usage Info
     CurrentMediaStorageUsageInMB = 'x-ms-media-storage-usage-mb'
     RequestCharge = 'x-ms-request-charge'
@@ -182,6 +186,10 @@ class HttpHeaders:
     # StoredProcedure related headers
     EnableScriptLogging = 'x-ms-documentdb-script-enable-logging'
     ScriptLogResults = 'x-ms-documentdb-script-log-results'
+
+    # Change feed
+    AIM = 'A-IM'
+    IncrementalFeedHeaderValue = 'Incremental feed'
 
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
@@ -246,7 +254,7 @@ class Versions:
     """
     CurrentVersion = '2017-11-15'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.3.2'
+    SDKVersion = '2.3.3'
 
 
 class Delimiters:
@@ -359,3 +367,21 @@ class SubStatusCodes:
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
+class ResourceType:
+    """Types of resources in Azure Cosmos DB
+    """
+    Database = "dbs"
+    Collection = "colls"
+    User = "users"
+    Document = "docs"
+    Permission = "permissions"
+    StoredProcedure = "sprocs"
+    Trigger = "triggers"
+    UserDefinedFunction = "udfs"
+    Conflict = "conflicts"
+    Attachment = "attachments"
+    PartitionKeyRange = "pkranges"
+    Schema = "schemas"
+    Offer = "offers"
+    Topology = "topology"
+    DatabaseAccount = "databaseaccount"

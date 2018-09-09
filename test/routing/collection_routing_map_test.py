@@ -22,6 +22,7 @@
 import unittest
 from pydocumentdb.routing.collection_routing_map import _CollectionRoutingMap
 import pydocumentdb.routing.routing_range as routing_range
+from pydocumentdb.routing.routing_map_provider import _PartitionKeyRangeCache
 
 class CollectionRoutingMapTests(unittest.TestCase):
 
@@ -35,6 +36,62 @@ class CollectionRoutingMapTests(unittest.TestCase):
         
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
+
+    def test_partition_key_ranges_parent_filter(self):
+        # for large collection with thousands of partitions, a split may complete between the read partition key ranges query pages,
+        # causing the return map to have both the new children ranges and their ranges. This test is to verify the fix for that.
+
+        Id = 'id'
+        MinInclusive = 'minInclusive'
+        MaxExclusive = 'maxExclusive'
+        Parents = 'parents'
+
+        # create a complete set of partition key ranges
+        # some have parents as empty array while some don't have the parents 
+        partitionKeyRanges = \
+                    [
+                        {Id : "2", 
+                        MinInclusive : "0000000050",
+                        MaxExclusive : "0000000070",
+                        Parents : []},
+                        {Id : "0",
+                        MinInclusive : "",
+                        MaxExclusive : "0000000030"},
+                        {Id : "1",
+                        MinInclusive : "0000000030",
+                        MaxExclusive : "0000000050"},
+                        {Id : "3",
+                        MinInclusive : "0000000070",
+                        MaxExclusive : "FF",
+                        Parents : []}
+                    ]
+
+        def get_range_id(r):
+            return r[Id]
+
+        # verify no thing is filtered out since there is no children ranges
+        filteredRanges = _PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
+        self.assertEqual(['2', '0', '1', '3'], list(map(get_range_id, filteredRanges)))
+
+        # add some children partition key ranges with parents Ids
+        # e.g., range 0 was split in to range 4 and 5, and then range 4 was split into range 6 and 7
+        partitionKeyRanges.append({Id : "6", 
+                        MinInclusive : "",
+                        MaxExclusive : "0000000010",
+                        Parents : ["0", "4"]})
+        partitionKeyRanges.append({Id : "7", 
+                        MinInclusive : "0000000010",
+                        MaxExclusive : "0000000020",
+                        Parents : ["0", "4"]})
+        partitionKeyRanges.append({Id : "5", 
+                        MinInclusive : "0000000020",
+                        MaxExclusive : "0000000030",
+                        Parents : ["0"]})
+
+        # verify the filtered range list has children ranges and the parent Ids are discarded
+        filteredRanges = _PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
+        expectedRanges = ['2', '1', '3', '6', '7', '5']
+        self.assertEqual(expectedRanges, list(map(get_range_id, filteredRanges)))
 
     def test_collection_routing_map(self):
         

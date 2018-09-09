@@ -20,7 +20,7 @@
 #SOFTWARE.
 
 import unittest
-
+import uuid
 import pydocumentdb.document_client as document_client
 import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
@@ -42,8 +42,9 @@ class Test_retry_policy_tests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
     test_db_name = 'sample database' 
-    test_coll_name = 'sample collection'
+    test_coll_name = 'sample collection ' + str(uuid.uuid4())
     counter = 0;
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -71,7 +72,7 @@ class Test_retry_policy_tests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         client = document_client.DocumentClient(cls.host, 
-                                                {'masterKey': cls.masterKey})
+                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
         it = iter(query_iterable)
         
@@ -80,7 +81,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             client.DeleteDatabase(test_db['_self'])
 
     def setUp(self):
-        self.client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey})
+        self.client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, Test_retry_policy_tests.connectionPolicy)
 
         # Create the test database only when it's not already present
         query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_db_name + '\'')
@@ -101,7 +102,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         self.retry_after_in_milliseconds = 1000
 
     def test_resource_throttle_retry_policy_default_retry_after(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
@@ -123,7 +124,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_fixed_retry_after(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
@@ -146,7 +147,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_max_wait_time(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
@@ -168,7 +169,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_query(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
@@ -199,7 +200,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_default_retry_policy_for_query(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
 
@@ -230,7 +231,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         client.DeleteDocument(result_docs[1]['_self'])
 
     def test_default_retry_policy_for_read(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
         
@@ -253,7 +254,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         client.DeleteDocument(doc['_self'])
     
     def test_default_retry_policy_for_create(self):
-        connection_policy = documents.ConnectionPolicy()
+        connection_policy = Test_retry_policy_tests.connectionPolicy
 
         client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
         
