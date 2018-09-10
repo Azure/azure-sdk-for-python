@@ -18,6 +18,8 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -38,8 +40,9 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :type validity_in_years: int
     :param key_size: Certificate key size. Default value: 2048 .
     :type key_size: int
-    :param product_type: Certificate product type. Possible values include:
-     'StandardDomainValidatedSsl', 'StandardDomainValidatedWildCardSsl'
+    :param product_type: Required. Certificate product type. Possible values
+     include: 'StandardDomainValidatedSsl',
+     'StandardDomainValidatedWildCardSsl'
     :type product_type: str or ~azure.mgmt.web.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
@@ -124,19 +127,19 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, product_type, kind=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, auto_renew=True, csr=None):
-        super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateOrderPatchResource, self).__init__(**kwargs)
+        self.certificates = kwargs.get('certificates', None)
+        self.distinguished_name = kwargs.get('distinguished_name', None)
         self.domain_verification_token = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
+        self.validity_in_years = kwargs.get('validity_in_years', 1)
+        self.key_size = kwargs.get('key_size', 2048)
+        self.product_type = kwargs.get('product_type', None)
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.provisioning_state = None
         self.status = None
         self.signed_certificate = None
-        self.csr = csr
+        self.csr = kwargs.get('csr', None)
         self.intermediate = None
         self.root = None
         self.serial_number = None

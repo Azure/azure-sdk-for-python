@@ -55,7 +55,7 @@ class ConnectToSourceSqlServerTaskOutputLoginLevel(ConnectToSourceSqlServerTaskO
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'login_type': {'key': 'loginType', 'type': 'LoginType'},
+        'login_type': {'key': 'loginType', 'type': 'str'},
         'default_database': {'key': 'defaultDatabase', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'migration_eligibility': {'key': 'migrationEligibility', 'type': 'MigrationEligibilityInfo'},

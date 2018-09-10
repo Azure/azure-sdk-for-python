@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class UsageStatistics(Model):
     """Statistics related to pool usage information.
 
-    :param start_time: The start time of the time range covered by the
-     statistics.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The start time of the time range covered by
+     the statistics.
     :type start_time: datetime
-    :param last_update_time: The time at which the statistics were last
-     updated. All statistics are limited to the range between startTime and
-     lastUpdateTime.
+    :param last_update_time: Required. The time at which the statistics were
+     last updated. All statistics are limited to the range between startTime
+     and lastUpdateTime.
     :type last_update_time: datetime
-    :param dedicated_core_time: The aggregated wall-clock time of the
-     dedicated compute node cores being part of the pool.
+    :param dedicated_core_time: Required. The aggregated wall-clock time of
+     the dedicated compute node cores being part of the pool.
     :type dedicated_core_time: timedelta
     """
 
@@ -39,8 +41,8 @@ class UsageStatistics(Model):
         'dedicated_core_time': {'key': 'dedicatedCoreTime', 'type': 'duration'},
     }
 
-    def __init__(self, start_time, last_update_time, dedicated_core_time):
-        super(UsageStatistics, self).__init__()
-        self.start_time = start_time
-        self.last_update_time = last_update_time
-        self.dedicated_core_time = dedicated_core_time
+    def __init__(self, **kwargs):
+        super(UsageStatistics, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.last_update_time = kwargs.get('last_update_time', None)
+        self.dedicated_core_time = kwargs.get('dedicated_core_time', None)

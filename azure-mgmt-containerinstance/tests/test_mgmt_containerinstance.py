@@ -127,6 +127,9 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         # Testing Container_List_Logs
         containerLogResponse = self.client.container.list_logs(resource_group.name, container_group.name, container_group.containers[0].name)
 
+        # Testing Restart Container Group
+        poller = self.client.container_groups.restart(resource_group.name, container_group_name)
+        poller.result()
 
 
 

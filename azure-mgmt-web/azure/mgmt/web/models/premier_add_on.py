@@ -18,13 +18,15 @@ class PremierAddOn(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
     :ivar type: Resource type.
     :vartype type: str
@@ -36,12 +38,6 @@ class PremierAddOn(Resource):
     :type product: str
     :param vendor: Premier add on Vendor.
     :type vendor: str
-    :param premier_add_on_name: Premier add on Name.
-    :type premier_add_on_name: str
-    :param premier_add_on_location: Premier add on Location.
-    :type premier_add_on_location: str
-    :param premier_add_on_tags: Premier add on Tags.
-    :type premier_add_on_tags: dict[str, str]
     :param marketplace_publisher: Premier add on Marketplace publisher.
     :type marketplace_publisher: str
     :param marketplace_offer: Premier add on Marketplace offer.
@@ -65,20 +61,14 @@ class PremierAddOn(Resource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_name': {'key': 'properties.name', 'type': 'str'},
-        'premier_add_on_location': {'key': 'properties.location', 'type': 'str'},
-        'premier_add_on_tags': {'key': 'properties.tags', 'type': '{str}'},
         'marketplace_publisher': {'key': 'properties.marketplacePublisher', 'type': 'str'},
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_name=None, premier_add_on_location=None, premier_add_on_tags=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.premier_add_on_name = premier_add_on_name
-        self.premier_add_on_location = premier_add_on_location
-        self.premier_add_on_tags = premier_add_on_tags
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOn, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)

@@ -13,20 +13,19 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['542']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-09-01
   response:
     body: {string: '{"properties":{"provisioningState":"Pending","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"state":"Pending"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/West
-          US/operations/38a57cb2-77ab-4dc6-bc1d-c9267e266050?api-version=2018-02-01-preview']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/westus/operations/0358f7db-0bd3-4096-91f1-8576ea65d12e?api-version=2018-06-01']
       cache-control: [no-cache]
       content-length: ['864']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:01 GMT']
+      date: ['Thu, 06 Sep 2018 18:02:53 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -41,21 +40,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/West%20US/operations/38a57cb2-77ab-4dc6-bc1d-c9267e266050?api-version=2018-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/westus/operations/0358f7db-0bd3-4096-91f1-8576ea65d12e?api-version=2018-06-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","status":"Succeeded","startTime":"2018-06-20T17:04:01.7830474Z","properties":{"events":[{"count":1,"firstTimestamp":"2018-06-20T17:04:06Z","lastTimestamp":"2018-06-20T17:04:06Z","name":"Pulling","message":"pulling
-        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Pulled","message":"Successfully
-        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Created","message":"Created
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:09Z","lastTimestamp":"2018-06-20T17:04:09Z","name":"Started","message":"Started
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"}]}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","status":"Succeeded","startTime":"2018-09-06T18:02:53.7066979Z","properties":{"events":[{"count":1,"firstTimestamp":"2018-09-06T18:03:11Z","lastTimestamp":"2018-09-06T18:03:11Z","name":"Pulling","message":"pulling
+        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Pulled","message":"Successfully
+        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Created","message":"Created
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Started","message":"Started
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"}]}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1100']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:32 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:24 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -69,21 +68,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-09-01
   response:
-    body: {string: '{"properties":{"provisioningState":"Succeeded","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","startTime":"2018-06-20T17:04:09Z","exitCode":0,"finishTime":"2018-06-20T17:04:09Z","detailStatus":"Completed"},"events":[{"count":1,"firstTimestamp":"2018-06-20T17:04:06Z","lastTimestamp":"2018-06-20T17:04:06Z","name":"Pulling","message":"pulling
-        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Pulled","message":"Successfully
-        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Created","message":"Created
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:09Z","lastTimestamp":"2018-06-20T17:04:09Z","name":"Started","message":"Started
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Succeeded"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
+    body: {string: '{"properties":{"provisioningState":"Succeeded","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","startTime":"2018-09-06T18:03:13Z","exitCode":0,"finishTime":"2018-09-06T18:03:13Z","detailStatus":"Completed"},"events":[{"count":1,"firstTimestamp":"2018-09-06T18:03:11Z","lastTimestamp":"2018-09-06T18:03:11Z","name":"Pulling","message":"pulling
+        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Pulled","message":"Successfully
+        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Created","message":"Created
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Started","message":"Started
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Succeeded"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1875']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:33 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:25 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -97,23 +96,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2018-09-01
   response:
-    body: {string: '{"properties":{"provisioningState":"Succeeded","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","startTime":"2018-06-20T17:04:09Z","exitCode":0,"finishTime":"2018-06-20T17:04:09Z","detailStatus":"Completed"},"events":[{"count":1,"firstTimestamp":"2018-06-20T17:04:06Z","lastTimestamp":"2018-06-20T17:04:06Z","name":"Pulling","message":"pulling
-        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Pulled","message":"Successfully
-        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:08Z","lastTimestamp":"2018-06-20T17:04:08Z","name":"Created","message":"Created
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"},{"count":1,"firstTimestamp":"2018-06-20T17:04:09Z","lastTimestamp":"2018-06-20T17:04:09Z","name":"Started","message":"Started
-        container with id d4c98fbf2fac00198db4b3c803f6a959fc9e3dac9b470f67ffe58ffa29f75f5f","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Succeeded"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
+    body: {string: '{"properties":{"provisioningState":"Succeeded","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","startTime":"2018-09-06T18:03:13Z","exitCode":0,"finishTime":"2018-09-06T18:03:13Z","detailStatus":"Completed"},"events":[{"count":1,"firstTimestamp":"2018-09-06T18:03:11Z","lastTimestamp":"2018-09-06T18:03:11Z","name":"Pulling","message":"pulling
+        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Pulled","message":"Successfully
+        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Created","message":"Created
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Started","message":"Started
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Succeeded"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1875']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:34 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:33 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -127,19 +125,18 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups?api-version=2018-09-01
   response:
     body: {string: '{"value":[{"properties":{"provisioningState":"Succeeded","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}],"livenessProbe":{"exec":{"command":["cat/tmp/healthy"]},"periodSeconds":5}}}],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"diagnostics":{"logAnalytics":{"workspaceId":"workspaceId"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['843']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:34 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:34 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -155,18 +152,18 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['66']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510/containers/pycontainer26441510/exec?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510/containers/pycontainer26441510/exec?api-version=2018-09-01
   response:
-    body: {string: '{"webSocketUri":"wss://bridge-linux-17.westus.management.azurecontainer.io/exec/caas-b366c4d398d2446186000db440d682dd/bridge-9658fa886f0ac586?rows=24&cols=80&api-version=2018-02-01-preview","password":"ACurGmg7CGUu_utlaXMzgOBUkdalQU_3shgrdGzsV5A[[EOM]]"}'}
+    body: {string: '{"webSocketUri":"wss://bridge-linux-06.westus.management.azurecontainer.io/exec/caas-1a7f1ac282c843118cc3881a7b0603dd/bridge-9658fa886f0ac586?rows=24&cols=80&api-version=2018-02-01-preview","password":"6eru_Q14EzljWA3MP2ANPkDmQ-JXnAE8LtFPJ03Lxew[[EOM]]"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['254']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:35 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:37 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -181,19 +178,74 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510/containers/pycontainer26441510/logs?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510/containers/pycontainer26441510/logs?api-version=2018-09-01
   response:
     body: {string: '{"content":""}'}
     headers:
       cache-control: [no-cache]
       content-length: ['14']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 20 Jun 2018 17:04:35 GMT']
+      date: ['Thu, 06 Sep 2018 18:03:38 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510/restart?api-version=2018-09-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/westus/operations/efbaa5a1-81a3-460e-b750-26909e01ce03?api-version=2018-06-01']
+      cache-control: [no-cache]
+      date: ['Thu, 06 Sep 2018 18:03:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-containerinstance/1.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/westus/operations/efbaa5a1-81a3-460e-b750-26909e01ce03?api-version=2018-06-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","status":"Succeeded","startTime":"2018-09-06T18:03:41.2568351Z","properties":{"events":[{"count":1,"firstTimestamp":"2018-09-06T18:03:11Z","lastTimestamp":"2018-09-06T18:03:11Z","name":"Pulling","message":"pulling
+        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Pulled","message":"Successfully
+        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Created","message":"Created
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:13Z","lastTimestamp":"2018-09-06T18:03:13Z","name":"Started","message":"Started
+        container with id 41b7e27558992017cd679361313de8157a2b35a3dc76ac79a6d4235dc9835e67","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:42Z","lastTimestamp":"2018-09-06T18:03:42Z","name":"Pulling","message":"pulling
+        image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:44Z","lastTimestamp":"2018-09-06T18:03:44Z","name":"Pulled","message":"Successfully
+        pulled image \"alpine:latest\"","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:44Z","lastTimestamp":"2018-09-06T18:03:44Z","name":"Created","message":"Created
+        container with id c907e51308f23452c10ecd041e7fcb59fff8d96527ce687315320c125dbfba73","type":"Normal"},{"count":1,"firstTimestamp":"2018-09-06T18:03:44Z","lastTimestamp":"2018-09-06T18:03:44Z","name":"Started","message":"Started
+        container with id c907e51308f23452c10ecd041e7fcb59fff8d96527ce687315320c125dbfba73","type":"Normal"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1901']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 06 Sep 2018 18:04:10 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]

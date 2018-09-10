@@ -26,7 +26,7 @@ class ErrorMessage(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, lang=None, value=None):
-        super(ErrorMessage, self).__init__()
-        self.lang = lang
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ErrorMessage, self).__init__(**kwargs)
+        self.lang = kwargs.get('lang', None)
+        self.value = kwargs.get('value', None)

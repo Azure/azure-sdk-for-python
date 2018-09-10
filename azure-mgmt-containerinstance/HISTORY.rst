@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.1.0 (2018-09-06)
+++++++++++++++++++
+
+**Features**
+
+- Model LogAnalytics has a new parameter log_type
+- Model LogAnalytics has a new parameter metadata
+- Model ContainerGroup has a new parameter network_profile
+- Added operation ContainerGroupsOperations.stop
+- Added operation ContainerGroupsOperations.restart
+
 1.0.0 (2018-06-13)
 ++++++++++++++++++
 
