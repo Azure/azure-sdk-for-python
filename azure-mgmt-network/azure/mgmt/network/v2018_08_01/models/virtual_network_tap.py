@@ -28,10 +28,9 @@ class VirtualNetworkTap(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param network_interface_tap_configurations: Specifies the list of
-     resource IDs for the network interface IP configuration that needs to be
-     tapped.
-    :type network_interface_tap_configurations:
+    :ivar network_interface_tap_configurations: Specifies the list of resource
+     IDs for the network interface IP configuration that needs to be tapped.
+    :vartype network_interface_tap_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceTapConfiguration]
     :param destination_network_interface_ip_configuration: The reference to
      the private IP Address of the collector nic that will receive the tap
@@ -53,6 +52,7 @@ class VirtualNetworkTap(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'network_interface_tap_configurations': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,7 +70,7 @@ class VirtualNetworkTap(Resource):
 
     def __init__(self, **kwargs):
         super(VirtualNetworkTap, self).__init__(**kwargs)
-        self.network_interface_tap_configurations = kwargs.get('network_interface_tap_configurations', None)
+        self.network_interface_tap_configurations = None
         self.destination_network_interface_ip_configuration = kwargs.get('destination_network_interface_ip_configuration', None)
         self.destination_load_balancer_front_end_ip_configuration = kwargs.get('destination_load_balancer_front_end_ip_configuration', None)
         self.destination_port = kwargs.get('destination_port', None)
