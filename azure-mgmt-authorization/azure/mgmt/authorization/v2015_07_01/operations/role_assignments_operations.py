@@ -262,7 +262,7 @@ class RoleAssignmentsOperations(object):
     delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}
 
     def create(
-            self, scope, role_assignment_name, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, role_assignment_name, properties, custom_headers=None, raw=False, **operation_config):
         """Creates a role assignment.
 
         :param scope: The scope of the role assignment to create. The scope
@@ -463,7 +463,7 @@ class RoleAssignmentsOperations(object):
     delete_by_id.metadata = {'url': '/{roleAssignmentId}'}
 
     def create_by_id(
-            self, role_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, role_assignment_id, properties, custom_headers=None, raw=False, **operation_config):
         """Creates a role assignment by ID.
 
         :param role_assignment_id: The fully qualified ID of the role
