@@ -23,7 +23,7 @@ class RecurrenceScheduleOccurrence(Model):
     """
 
     _attribute_map = {
-        'day': {'key': 'day', 'type': 'str'},
+        'day': {'key': 'day', 'type': 'DayOfWeek'},
         'occurrence': {'key': 'occurrence', 'type': 'int'},
     }
 

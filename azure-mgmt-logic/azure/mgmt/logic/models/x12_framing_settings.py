@@ -54,7 +54,7 @@ class X12FramingSettings(Model):
         'replace_character': {'key': 'replaceCharacter', 'type': 'int'},
         'segment_terminator': {'key': 'segmentTerminator', 'type': 'int'},
         'character_set': {'key': 'characterSet', 'type': 'str'},
-        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'str'},
+        'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
     }
 
     def __init__(self, **kwargs):
