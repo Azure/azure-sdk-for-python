@@ -107,7 +107,6 @@ try:
     from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
     from .managed_database_py3 import ManagedDatabase
     from .managed_database_update_py3 import ManagedDatabaseUpdate
-    from .sensitivity_label_py3 import SensitivityLabel
     from .automatic_tuning_server_options_py3 import AutomaticTuningServerOptions
     from .server_automatic_tuning_py3 import ServerAutomaticTuning
     from .server_dns_alias_py3 import ServerDnsAlias
@@ -251,7 +250,6 @@ except (SyntaxError, ImportError):
     from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
     from .managed_database import ManagedDatabase
     from .managed_database_update import ManagedDatabaseUpdate
-    from .sensitivity_label import SensitivityLabel
     from .automatic_tuning_server_options import AutomaticTuningServerOptions
     from .server_automatic_tuning import ServerAutomaticTuning
     from .server_dns_alias import ServerDnsAlias
@@ -342,7 +340,6 @@ from .job_target_group_paged import JobTargetGroupPaged
 from .job_version_paged import JobVersionPaged
 from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_database_paged import ManagedDatabasePaged
-from .sensitivity_label_paged import SensitivityLabelPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
@@ -430,7 +427,6 @@ from .sql_management_client_enums import (
     InterfaceEndpointProfileStateType,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
-    SensitivityLabelSource,
     CapabilityGroup,
 )
 
@@ -532,7 +528,6 @@ __all__ = [
     'CompleteDatabaseRestoreDefinition',
     'ManagedDatabase',
     'ManagedDatabaseUpdate',
-    'SensitivityLabel',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
     'ServerDnsAlias',
@@ -623,7 +618,6 @@ __all__ = [
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedDatabasePaged',
-    'SensitivityLabelPaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
     'DatabaseOperationPaged',
@@ -710,6 +704,5 @@ __all__ = [
     'InterfaceEndpointProfileStateType',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
-    'SensitivityLabelSource',
     'CapabilityGroup',
 ]
