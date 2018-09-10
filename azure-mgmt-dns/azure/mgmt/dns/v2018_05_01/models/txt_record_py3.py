@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.1.0"
+from msrest.serialization import Model
 
+
+class TxtRecord(Model):
+    """A TXT record.
+
+    :param value: The text value of this TXT record.
+    :type value: list[str]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[str]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(TxtRecord, self).__init__(**kwargs)
+        self.value = value
