@@ -43,10 +43,18 @@ class Subnet(SubResource):
      interface IP configurations using subnet.
     :vartype ip_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.IPConfiguration]
+    :ivar ip_configuration_profiles: Array of IP configuration profiles which
+     reference this subnet.
+    :vartype ip_configuration_profiles:
+     list[~azure.mgmt.network.v2018_08_01.models.IPConfigurationProfile]
     :param resource_navigation_links: Gets an array of references to the
      external resources using subnet.
     :type resource_navigation_links:
      list[~azure.mgmt.network.v2018_08_01.models.ResourceNavigationLink]
+    :param service_association_links: Gets an array of references to services
+     injecting into this subnet.
+    :type service_association_links:
+     list[~azure.mgmt.network.v2018_08_01.models.ServiceAssociationLink]
     :param delegations: Gets an array of references to the delegations on the
      subnet.
     :type delegations: list[~azure.mgmt.network.v2018_08_01.models.Delegation]
@@ -65,6 +73,7 @@ class Subnet(SubResource):
 
     _validation = {
         'ip_configurations': {'readonly': True},
+        'ip_configuration_profiles': {'readonly': True},
         'purpose': {'readonly': True},
     }
 
@@ -78,7 +87,9 @@ class Subnet(SubResource):
         'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'interface_endpoints': {'key': 'properties.interfaceEndpoints', 'type': '[SubResource]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
+        'ip_configuration_profiles': {'key': 'properties.ipConfigurationProfiles', 'type': '[IPConfigurationProfile]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
+        'service_association_links': {'key': 'properties.serviceAssociationLinks', 'type': '[ServiceAssociationLink]'},
         'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'purpose': {'key': 'properties.purpose', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -86,7 +97,7 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, service_endpoint_policies=None, interface_endpoints=None, resource_navigation_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, service_endpoint_policies=None, interface_endpoints=None, resource_navigation_links=None, service_association_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.address_prefixes = address_prefixes
@@ -96,7 +107,9 @@ class Subnet(SubResource):
         self.service_endpoint_policies = service_endpoint_policies
         self.interface_endpoints = interface_endpoints
         self.ip_configurations = None
+        self.ip_configuration_profiles = None
         self.resource_navigation_links = resource_navigation_links
+        self.service_association_links = service_association_links
         self.delegations = delegations
         self.purpose = None
         self.provisioning_state = provisioning_state
