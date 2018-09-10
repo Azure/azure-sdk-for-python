@@ -25,7 +25,7 @@ class P2SVpnGatewaysOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-08-01".
+    :ivar api_version: Client API version. Constant value: "2018-07-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class P2SVpnGatewaysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01"
+        self.api_version = "2018-07-01"
 
         self.config = config
 
@@ -209,7 +209,7 @@ class P2SVpnGatewaysOperations(object):
 
     def _update_tags_initial(
             self, resource_group_name, gateway_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        p2s_vpn_gateway_parameters = models.TagsObject(tags=tags)
+        p2_svpn_gateway_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
@@ -236,7 +236,7 @@ class P2SVpnGatewaysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(p2s_vpn_gateway_parameters, 'TagsObject')
+        body_content = self._serialize.body(p2_svpn_gateway_parameters, 'TagsObject')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
