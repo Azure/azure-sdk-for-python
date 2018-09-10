@@ -76,7 +76,7 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-03-01-preview'
+    DEFAULT_API_VERSION = '2018-05-01'
     _PROFILE_TAG = "azure.mgmt.dns.DnsManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -118,7 +118,7 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_05_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def dns_resource_reference(self):
         """Instance depends on the API version:
