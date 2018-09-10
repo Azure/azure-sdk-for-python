@@ -45,6 +45,6 @@ class MSDeployLog(ProxyOnlyResource):
         'entries': {'key': 'properties.entries', 'type': '[MSDeployLogEntry]'},
     }
 
-    def __init__(self, kind=None):
-        super(MSDeployLog, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(MSDeployLog, self).__init__(**kwargs)
         self.entries = None

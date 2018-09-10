@@ -517,6 +517,30 @@ class MgmtComputeTest(AzureMgmtTestCase):
         virtual_machine_sizes = list(self.compute_client.virtual_machine_sizes.list(location))
         self.assertGreater(len(virtual_machine_sizes), 0)
 
+    def test_run_command(self):
+        # FIXME, test unfinished
+        run_commands_models = self.compute_client.virtual_machines.models
+
+        run_command_parameters = run_commands_models.RunCommandInput(
+            command_id="RunShellScript",
+            script=[
+                'echo $1 $2'
+            ],
+            parameters=[
+                run_commands_models.RunCommandInputParameter(name="arg1", value="hello"),
+                run_commands_models.RunCommandInputParameter(name="arg2", value="world"),
+            ]
+        )
+
+        run_command_parameters = {
+            'command_id': 'RunShellScript',
+            'script': [
+                'echo $arg1'
+            ],
+            'parameters': [
+                {'name':"arg1", 'value':"hello world"}
+            ]
+        }
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

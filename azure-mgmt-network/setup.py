@@ -72,12 +72,14 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure>=0.4.20,<2.0.0',
+        'msrest>=0.5.0',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1,>=1.1.9',
     ],
     cmdclass=cmdclass

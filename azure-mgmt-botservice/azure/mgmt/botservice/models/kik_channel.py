@@ -15,7 +15,9 @@ from .channel import Channel
 class KikChannel(Channel):
     """Kik channel definition.
 
-    :param channel_name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param channel_name: Required. Constant filled by server.
     :type channel_name: str
     :param properties: The set of properties specific to Kik channel resource
     :type properties: ~azure.mgmt.botservice.models.KikChannelProperties
@@ -30,7 +32,7 @@ class KikChannel(Channel):
         'properties': {'key': 'properties', 'type': 'KikChannelProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(KikChannel, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(KikChannel, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.channel_name = 'KikChannel'

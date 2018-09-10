@@ -33,7 +33,7 @@ class MgmtDataMigrationTest(AzureMgmtTestCase):
         vnet_name = self.get_resource_name('pysdkdmstestvnet')
         vsubnet_id = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/subnet1'
         service_name = self.get_resource_name('pysdkdmstestservice')
-        sku_name = 'Basic_2vCores'
+        sku_name = 'GeneralPurpose_2vCores'
         project_name = self.get_resource_name('pysdkdmstestproject')
         task_name = self.get_resource_name('pysdkdmstesttask')
 
@@ -45,23 +45,24 @@ class MgmtDataMigrationTest(AzureMgmtTestCase):
         self.assertTrue(name_availability.name_available)
 
         # DMS requires a real vnet plus subnet
-        vnet_creation_async = self.network_sdk_client.virtual_networks.create_or_update(
-            resource_group.name,
-            vnet_name,
-            {
-                'location': self.location_name,
-                'address_space': {
-                    'address_prefixes': ['10.0.0.0/16']
+        if self.is_live:
+            vnet_creation_async = self.network_sdk_client.virtual_networks.create_or_update(
+                resource_group.name,
+                vnet_name,
+                {
+                    'location': self.location_name,
+                    'address_space': {
+                        'address_prefixes': ['10.0.0.0/16']
+                    }
                 }
-            }
-        )
-        vnet_creation_async.wait()
-        self.network_sdk_client.subnets.create_or_update(
-            resource_group.name,
-            vnet_name,
-            'subnet1',
-            {'address_prefix': '10.0.0.0/24'}
-        ).wait()
+            )
+            vnet_creation_async.wait()
+            self.network_sdk_client.subnets.create_or_update(
+                resource_group.name,
+                vnet_name,
+                'subnet1',
+                {'address_prefix': '10.0.0.0/24'}
+            ).wait()
 
         # create the service
         params_create_service = DataMigrationService(

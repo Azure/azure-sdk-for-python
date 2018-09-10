@@ -40,7 +40,8 @@ class ManagedCluster(Resource):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the master pool.
     :vartype fqdn: str
-    :param agent_pool_profiles: Properties of the agent pool.
+    :param agent_pool_profiles: Properties of the agent pool. Currently only
+     one agent pool can exist.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.ManagedClusterAgentPoolProfile]
     :param linux_profile: Profile for Linux VMs in the container service
@@ -48,10 +49,9 @@ class ManagedCluster(Resource):
     :type linux_profile:
      ~azure.mgmt.containerservice.models.ContainerServiceLinuxProfile
     :param service_principal_profile: Information about a service principal
-     identity for the cluster to use for manipulating Azure APIs. Either secret
-     or keyVaultSecretRef must be specified.
+     identity for the cluster to use for manipulating Azure APIs.
     :type service_principal_profile:
-     ~azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile
+     ~azure.mgmt.containerservice.models.ManagedClusterServicePrincipalProfile
     :param addon_profiles: Profile of managed cluster add-on.
     :type addon_profiles: dict[str,
      ~azure.mgmt.containerservice.models.ManagedClusterAddonProfile]
@@ -91,7 +91,7 @@ class ManagedCluster(Resource):
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterAgentPoolProfile]'},
         'linux_profile': {'key': 'properties.linuxProfile', 'type': 'ContainerServiceLinuxProfile'},
-        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
+        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ManagedClusterServicePrincipalProfile'},
         'addon_profiles': {'key': 'properties.addonProfiles', 'type': '{ManagedClusterAddonProfile}'},
         'node_resource_group': {'key': 'properties.nodeResourceGroup', 'type': 'str'},
         'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},

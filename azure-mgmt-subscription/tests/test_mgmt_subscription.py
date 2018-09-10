@@ -9,7 +9,6 @@ import unittest
 
 import azure.mgmt.billing
 import azure.mgmt.subscription
-from testutils.common_recordingtestcase import record
 from devtools_testutils import AzureMgmtTestCase
 
 class MgmtSubscriptionTest(AzureMgmtTestCase):
