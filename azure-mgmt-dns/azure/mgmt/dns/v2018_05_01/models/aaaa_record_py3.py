@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.1.0"
+from msrest.serialization import Model
 
+
+class AaaaRecord(Model):
+    """An AAAA record.
+
+    :param ipv6_address: The IPv6 address of this AAAA record.
+    :type ipv6_address: str
+    """
+
+    _attribute_map = {
+        'ipv6_address': {'key': 'ipv6Address', 'type': 'str'},
+    }
+
+    def __init__(self, *, ipv6_address: str=None, **kwargs) -> None:
+        super(AaaaRecord, self).__init__(**kwargs)
+        self.ipv6_address = ipv6_address

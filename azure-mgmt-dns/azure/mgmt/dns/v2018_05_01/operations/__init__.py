@@ -9,5 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.1.0"
+from .record_sets_operations import RecordSetsOperations
+from .zones_operations import ZonesOperations
+from .dns_resource_reference_operations import DnsResourceReferenceOperations
 
+__all__ = [
+    'RecordSetsOperations',
+    'ZonesOperations',
+    'DnsResourceReferenceOperations',
+]

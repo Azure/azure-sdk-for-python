@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.1.0"
+from msrest.serialization import Model
 
+
+class NsRecord(Model):
+    """An NS record.
+
+    :param nsdname: The name server name for this NS record.
+    :type nsdname: str
+    """
+
+    _attribute_map = {
+        'nsdname': {'key': 'nsdname', 'type': 'str'},
+    }
+
+    def __init__(self, *, nsdname: str=None, **kwargs) -> None:
+        super(NsRecord, self).__init__(**kwargs)
+        self.nsdname = nsdname
