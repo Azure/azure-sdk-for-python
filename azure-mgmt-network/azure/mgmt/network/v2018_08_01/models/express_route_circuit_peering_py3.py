@@ -63,6 +63,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param ipv6_peering_config: The IPv6 peering configuration.
     :type ipv6_peering_config:
      ~azure.mgmt.network.v2018_08_01.models.Ipv6ExpressRouteCircuitPeeringConfig
+    :param express_route_connection: The ExpressRoute connection.
+    :type express_route_connection:
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteConnectionId
     :param connections: The list of circuit connections associated with Azure
      Private Peering for this circuit.
     :type connections:
@@ -99,12 +102,13 @@ class ExpressRouteCircuitPeering(SubResource):
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'route_filter': {'key': 'properties.routeFilter', 'type': 'RouteFilter'},
         'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
+        'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteConnectionId'},
         'connections': {'key': 'properties.connections', 'type': '[ExpressRouteCircuitConnection]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, peering_type=None, state=None, azure_asn: int=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, primary_azure_port: str=None, secondary_azure_port: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, stats=None, provisioning_state: str=None, gateway_manager_etag: str=None, last_modified_by: str=None, route_filter=None, ipv6_peering_config=None, connections=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, peering_type=None, state=None, azure_asn: int=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, primary_azure_port: str=None, secondary_azure_port: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, stats=None, provisioning_state: str=None, gateway_manager_etag: str=None, last_modified_by: str=None, route_filter=None, ipv6_peering_config=None, express_route_connection=None, connections=None, name: str=None, **kwargs) -> None:
         super(ExpressRouteCircuitPeering, self).__init__(id=id, **kwargs)
         self.peering_type = peering_type
         self.state = state
@@ -123,6 +127,7 @@ class ExpressRouteCircuitPeering(SubResource):
         self.last_modified_by = last_modified_by
         self.route_filter = route_filter
         self.ipv6_peering_config = ipv6_peering_config
+        self.express_route_connection = express_route_connection
         self.connections = connections
         self.name = name
         self.etag = None

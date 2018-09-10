@@ -771,6 +771,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def express_route_connections(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2018_08_01.operations.ExpressRouteConnectionsOperations>`
+        """
+        api_version = self._get_api_version('express_route_connections')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import ExpressRouteConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def express_route_cross_connection_peerings(self):
         """Instance depends on the API version:
 
@@ -816,6 +829,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_07_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         elif api_version == '2018-08-01':
             from .v2018_08_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def express_route_gateways(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2018_08_01.operations.ExpressRouteGatewaysOperations>`
+        """
+        api_version = self._get_api_version('express_route_gateways')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import ExpressRouteGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
