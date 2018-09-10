@@ -20,6 +20,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.application_security_groups_operations import ApplicationSecurityGroupsOperations
+from .operations.available_delegations_operations import AvailableDelegationsOperations
+from .operations.available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .operations.azure_firewalls_operations import AzureFirewallsOperations
 from .operations.azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from .operations.ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -45,6 +47,7 @@ from .operations.network_interfaces_operations import NetworkInterfacesOperation
 from .operations.network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .operations.network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
 from .operations.network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
+from .operations.network_profiles_operations import NetworkProfilesOperations
 from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.default_security_rules_operations import DefaultSecurityRulesOperations
@@ -123,6 +126,10 @@ class NetworkManagementClient(SDKClient):
     :vartype application_gateways: azure.mgmt.network.v2018_08_01.operations.ApplicationGatewaysOperations
     :ivar application_security_groups: ApplicationSecurityGroups operations
     :vartype application_security_groups: azure.mgmt.network.v2018_08_01.operations.ApplicationSecurityGroupsOperations
+    :ivar available_delegations: AvailableDelegations operations
+    :vartype available_delegations: azure.mgmt.network.v2018_08_01.operations.AvailableDelegationsOperations
+    :ivar available_resource_group_delegations: AvailableResourceGroupDelegations operations
+    :vartype available_resource_group_delegations: azure.mgmt.network.v2018_08_01.operations.AvailableResourceGroupDelegationsOperations
     :ivar azure_firewalls: AzureFirewalls operations
     :vartype azure_firewalls: azure.mgmt.network.v2018_08_01.operations.AzureFirewallsOperations
     :ivar azure_firewall_fqdn_tags: AzureFirewallFqdnTags operations
@@ -173,6 +180,8 @@ class NetworkManagementClient(SDKClient):
     :vartype network_interface_load_balancers: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceLoadBalancersOperations
     :ivar network_interface_tap_configurations: NetworkInterfaceTapConfigurations operations
     :vartype network_interface_tap_configurations: azure.mgmt.network.v2018_08_01.operations.NetworkInterfaceTapConfigurationsOperations
+    :ivar network_profiles: NetworkProfiles operations
+    :vartype network_profiles: azure.mgmt.network.v2018_08_01.operations.NetworkProfilesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
     :vartype network_security_groups: azure.mgmt.network.v2018_08_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
@@ -260,6 +269,10 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.application_security_groups = ApplicationSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.available_delegations = AvailableDelegationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewalls = AzureFirewallsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
@@ -309,6 +322,8 @@ class NetworkManagementClient(SDKClient):
         self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_interface_tap_configurations = NetworkInterfaceTapConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_profiles = NetworkProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

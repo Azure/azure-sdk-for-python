@@ -28,10 +28,9 @@ class VirtualNetworkTap(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param network_interface_tap_configurations: Specifies the list of
-     resource IDs for the network interface IP configuration that needs to be
-     tapped.
-    :type network_interface_tap_configurations:
+    :ivar network_interface_tap_configurations: Specifies the list of resource
+     IDs for the network interface IP configuration that needs to be tapped.
+    :vartype network_interface_tap_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceTapConfiguration]
     :param destination_network_interface_ip_configuration: The reference to
      the private IP Address of the collector nic that will receive the tap
@@ -53,6 +52,7 @@ class VirtualNetworkTap(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'network_interface_tap_configurations': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,9 +68,9 @@ class VirtualNetworkTap(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, network_interface_tap_configurations=None, destination_network_interface_ip_configuration=None, destination_load_balancer_front_end_ip_configuration=None, destination_port: int=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, destination_network_interface_ip_configuration=None, destination_load_balancer_front_end_ip_configuration=None, destination_port: int=None, etag: str=None, **kwargs) -> None:
         super(VirtualNetworkTap, self).__init__(id=id, location=location, tags=tags, **kwargs)
-        self.network_interface_tap_configurations = network_interface_tap_configurations
+        self.network_interface_tap_configurations = None
         self.destination_network_interface_ip_configuration = destination_network_interface_ip_configuration
         self.destination_load_balancer_front_end_ip_configuration = destination_load_balancer_front_end_ip_configuration
         self.destination_port = destination_port

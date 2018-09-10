@@ -11,6 +11,8 @@
 
 from .application_gateways_operations import ApplicationGatewaysOperations
 from .application_security_groups_operations import ApplicationSecurityGroupsOperations
+from .available_delegations_operations import AvailableDelegationsOperations
+from .available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .azure_firewalls_operations import AzureFirewallsOperations
 from .azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from .ddos_protection_plans_operations import DdosProtectionPlansOperations
@@ -36,6 +38,7 @@ from .network_interfaces_operations import NetworkInterfacesOperations
 from .network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
 from .network_interface_tap_configurations_operations import NetworkInterfaceTapConfigurationsOperations
+from .network_profiles_operations import NetworkProfilesOperations
 from .network_security_groups_operations import NetworkSecurityGroupsOperations
 from .security_rules_operations import SecurityRulesOperations
 from .default_security_rules_operations import DefaultSecurityRulesOperations
@@ -71,6 +74,8 @@ from .vpn_connections_operations import VpnConnectionsOperations
 __all__ = [
     'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
+    'AvailableDelegationsOperations',
+    'AvailableResourceGroupDelegationsOperations',
     'AzureFirewallsOperations',
     'AzureFirewallFqdnTagsOperations',
     'DdosProtectionPlansOperations',
@@ -96,6 +101,7 @@ __all__ = [
     'NetworkInterfaceIPConfigurationsOperations',
     'NetworkInterfaceLoadBalancersOperations',
     'NetworkInterfaceTapConfigurationsOperations',
+    'NetworkProfilesOperations',
     'NetworkSecurityGroupsOperations',
     'SecurityRulesOperations',
     'DefaultSecurityRulesOperations',

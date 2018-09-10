@@ -26,9 +26,10 @@ class ExpressRouteConnection(SubResource):
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param express_route_connection_id: The ID of the ExpressRoute circuit
+    :param express_route_circuit_peering: Required. The ExpressRoute circuit
      peering.
-    :type express_route_connection_id: str
+    :type express_route_circuit_peering:
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitPeeringId
     :param authorization_key: Authorization key to establish the connection.
     :type authorization_key: str
     :param routing_weight: The routing weight associated to the connection.
@@ -39,22 +40,23 @@ class ExpressRouteConnection(SubResource):
 
     _validation = {
         'provisioning_state': {'readonly': True},
+        'express_route_circuit_peering': {'required': True},
         'name': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_connection_id': {'key': 'properties.expressRouteCircuitPeering.id', 'type': 'str'},
+        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'ExpressRouteCircuitPeeringId'},
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, id: str=None, express_route_connection_id: str=None, authorization_key: str=None, routing_weight: int=None, **kwargs) -> None:
+    def __init__(self, *, express_route_circuit_peering, name: str, id: str=None, authorization_key: str=None, routing_weight: int=None, **kwargs) -> None:
         super(ExpressRouteConnection, self).__init__(id=id, **kwargs)
         self.provisioning_state = None
-        self.express_route_connection_id = express_route_connection_id
+        self.express_route_circuit_peering = express_route_circuit_peering
         self.authorization_key = authorization_key
         self.routing_weight = routing_weight
         self.name = name
