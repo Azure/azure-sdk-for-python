@@ -29,7 +29,9 @@ try:
     from .ip_tag_py3 import IpTag
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
+    from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .service_association_link_py3 import ServiceAssociationLink
     from .delegation_py3 import Delegation
     from .subnet_py3 import Subnet
     from .frontend_ip_configuration_py3 import FrontendIPConfiguration
@@ -62,7 +64,6 @@ try:
     from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_bounds_py3 import ApplicationGatewayAutoscaleBounds
     from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway_py3 import ApplicationGateway
     from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
@@ -137,7 +138,6 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
-    from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .container_network_interface_configuration_py3 import ContainerNetworkInterfaceConfiguration
     from .container_py3 import Container
     from .container_network_interface_ip_configuration_py3 import ContainerNetworkInterfaceIpConfiguration
@@ -296,7 +296,9 @@ except (SyntaxError, ImportError):
     from .ip_tag import IpTag
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
+    from .ip_configuration_profile import IPConfigurationProfile
     from .resource_navigation_link import ResourceNavigationLink
+    from .service_association_link import ServiceAssociationLink
     from .delegation import Delegation
     from .subnet import Subnet
     from .frontend_ip_configuration import FrontendIPConfiguration
@@ -329,7 +331,6 @@ except (SyntaxError, ImportError):
     from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
     from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_bounds import ApplicationGatewayAutoscaleBounds
     from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway import ApplicationGateway
     from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
@@ -404,7 +405,6 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
-    from .ip_configuration_profile import IPConfigurationProfile
     from .container_network_interface_configuration import ContainerNetworkInterfaceConfiguration
     from .container import Container
     from .container_network_interface_ip_configuration import ContainerNetworkInterfaceIpConfiguration
@@ -708,7 +708,9 @@ __all__ = [
     'IpTag',
     'PublicIPAddress',
     'IPConfiguration',
+    'IPConfigurationProfile',
     'ResourceNavigationLink',
+    'ServiceAssociationLink',
     'Delegation',
     'Subnet',
     'FrontendIPConfiguration',
@@ -741,7 +743,6 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
-    'ApplicationGatewayAutoscaleBounds',
     'ApplicationGatewayAutoscaleConfiguration',
     'ApplicationGateway',
     'ApplicationGatewayFirewallRule',
@@ -816,7 +817,6 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
-    'IPConfigurationProfile',
     'ContainerNetworkInterfaceConfiguration',
     'Container',
     'ContainerNetworkInterfaceIpConfiguration',
