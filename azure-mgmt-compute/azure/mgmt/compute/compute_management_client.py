@@ -184,6 +184,7 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
            * 2016-04-30-preview: :class:`DisksOperations<azure.mgmt.compute.v2016_04_30_preview.operations.DisksOperations>`
            * 2017-03-30: :class:`DisksOperations<azure.mgmt.compute.v2017_03_30.operations.DisksOperations>`
            * 2018-04-01: :class:`DisksOperations<azure.mgmt.compute.v2018_04_01.operations.DisksOperations>`
+           * 2018-06-01: :class:`DisksOperations<azure.mgmt.compute.v2018_06_01.operations.DisksOperations>`
         """
         api_version = self._get_api_version('disks')
         if api_version == '2016-04-30-preview':
@@ -192,6 +193,8 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2017_03_30.operations import DisksOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import DisksOperations as OperationClass
+        elif api_version == '2018-06-01':
+            from .v2018_06_01.operations import DisksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -321,6 +324,7 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
            * 2016-04-30-preview: :class:`SnapshotsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.SnapshotsOperations>`
            * 2017-03-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2017_03_30.operations.SnapshotsOperations>`
            * 2018-04-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_04_01.operations.SnapshotsOperations>`
+           * 2018-06-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_06_01.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
         if api_version == '2016-04-30-preview':
@@ -329,6 +333,8 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2017_03_30.operations import SnapshotsOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2018-06-01':
+            from .v2018_06_01.operations import SnapshotsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

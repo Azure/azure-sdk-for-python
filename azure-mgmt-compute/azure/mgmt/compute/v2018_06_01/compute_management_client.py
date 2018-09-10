@@ -31,6 +31,8 @@ from .operations.virtual_machine_run_commands_operations import VirtualMachineRu
 from .operations.galleries_operations import GalleriesOperations
 from .operations.gallery_images_operations import GalleryImagesOperations
 from .operations.gallery_image_versions_operations import GalleryImageVersionsOperations
+from .operations.disks_operations import DisksOperations
+from .operations.snapshots_operations import SnapshotsOperations
 from . import models
 
 
@@ -110,6 +112,10 @@ class ComputeManagementClient(SDKClient):
     :vartype gallery_images: azure.mgmt.compute.v2018_06_01.operations.GalleryImagesOperations
     :ivar gallery_image_versions: GalleryImageVersions operations
     :vartype gallery_image_versions: azure.mgmt.compute.v2018_06_01.operations.GalleryImageVersionsOperations
+    :ivar disks: Disks operations
+    :vartype disks: azure.mgmt.compute.v2018_06_01.operations.DisksOperations
+    :ivar snapshots: Snapshots operations
+    :vartype snapshots: azure.mgmt.compute.v2018_06_01.operations.SnapshotsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -167,4 +173,8 @@ class ComputeManagementClient(SDKClient):
         self.gallery_images = GalleryImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.disks = DisksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
             self._client, self.config, self._serialize, self._deserialize)
