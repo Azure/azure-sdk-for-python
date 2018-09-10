@@ -76,6 +76,7 @@ from .tde_certificates_operations import TdeCertificatesOperations
 from .managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .interface_endpoint_profiles_operations import InterfaceEndpointProfilesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -145,4 +146,5 @@ __all__ = [
     'ManagedInstanceTdeCertificatesOperations',
     'ManagedInstanceKeysOperations',
     'ManagedInstanceEncryptionProtectorsOperations',
+    'InterfaceEndpointProfilesOperations',
 ]

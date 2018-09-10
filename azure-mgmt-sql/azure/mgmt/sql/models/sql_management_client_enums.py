@@ -650,6 +650,16 @@ class InstanceFailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
+class InterfaceEndpointProfileStateType(str, Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    failed = "Failed"
+    deleting = "Deleting"
+    unknown = "Unknown"
+
+
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"

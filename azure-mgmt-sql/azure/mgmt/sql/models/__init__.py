@@ -152,6 +152,7 @@ try:
     from .tde_certificate_py3 import TdeCertificate
     from .managed_instance_key_py3 import ManagedInstanceKey
     from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
+    from .interface_endpoint_profile_py3 import InterfaceEndpointProfile
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -295,6 +296,7 @@ except (SyntaxError, ImportError):
     from .tde_certificate import TdeCertificate
     from .managed_instance_key import ManagedInstanceKey
     from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
+    from .interface_endpoint_profile import InterfaceEndpointProfile
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -350,6 +352,7 @@ from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
 from .managed_instance_key_paged import ManagedInstanceKeyPaged
 from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
+from .interface_endpoint_profile_paged import InterfaceEndpointProfilePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -424,6 +427,7 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanTriggerType,
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
+    InterfaceEndpointProfileStateType,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -573,6 +577,7 @@ __all__ = [
     'TdeCertificate',
     'ManagedInstanceKey',
     'ManagedInstanceEncryptionProtector',
+    'InterfaceEndpointProfile',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -628,6 +633,7 @@ __all__ = [
     'BackupShortTermRetentionPolicyPaged',
     'ManagedInstanceKeyPaged',
     'ManagedInstanceEncryptionProtectorPaged',
+    'InterfaceEndpointProfilePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -701,6 +707,7 @@ __all__ = [
     'VulnerabilityAssessmentScanTriggerType',
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
+    'InterfaceEndpointProfileStateType',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
