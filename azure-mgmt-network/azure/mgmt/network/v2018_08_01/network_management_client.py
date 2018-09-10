@@ -487,7 +487,7 @@ class NetworkManagementClient(SDKClient):
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
         """
-        api_version = "2018-07-01"
+        api_version = "2018-08-01"
 
         # Construct URL
         url = self.supported_security_providers.metadata['url']
