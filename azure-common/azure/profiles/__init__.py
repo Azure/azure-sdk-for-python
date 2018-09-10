@@ -145,12 +145,6 @@ class KnownProfiles(Enum):
             },
             "azure.mgmt.dns": {
                 None: "2016-04-01"
-            },
-            "azure.multiapi.storage": {
-                None: "2017-04-17"
-            },
-            "azure.multiapi.cosmosdb": {
-                None: "2017-04-17"
             }
         },
         "2018-03-01-hybrid"
