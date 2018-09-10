@@ -15,6 +15,9 @@ from .sub_resource import SubResource
 class ServiceEndpointPolicyDefinition(SubResource):
     """Service Endpoint policy definitions.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource ID.
     :type id: str
     :param description: A description for this rule. Restricted to 140 chars.
@@ -23,10 +26,10 @@ class ServiceEndpointPolicyDefinition(SubResource):
     :type service: str
     :param service_resources: A list of service resources.
     :type service_resources: list[str]
-    :param provisioning_state: The provisioning state of the service end point
+    :ivar provisioning_state: The provisioning state of the service end point
      policy definition. Possible values are: 'Updating', 'Deleting', and
      'Failed'.
-    :type provisioning_state: str
+    :vartype provisioning_state: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -34,6 +37,10 @@ class ServiceEndpointPolicyDefinition(SubResource):
      is updated.
     :type etag: str
     """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -50,6 +57,6 @@ class ServiceEndpointPolicyDefinition(SubResource):
         self.description = kwargs.get('description', None)
         self.service = kwargs.get('service', None)
         self.service_resources = kwargs.get('service_resources', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)

@@ -621,12 +621,38 @@ class VirtualNetworkGatewayConnectionType(str, Enum):
     vpn_client = "VPNClient"
 
 
+class VirtualNetworkGatewayConnectionProtocol(str, Enum):
+
+    ik_ev2 = "IKEv2"
+    ik_ev1 = "IKEv1"
+
+
+class OfficeTrafficCategory(str, Enum):
+
+    optimize = "Optimize"
+    optimize_and_allow = "OptimizeAndAllow"
+    all = "All"
+    none = "None"
+
+
+class VpnGatewayTunnelingProtocol(str, Enum):
+
+    ike_v2 = "IkeV2"
+    open_vpn = "OpenVPN"
+
+
 class VpnConnectionStatus(str, Enum):
 
     unknown = "Unknown"
     connecting = "Connecting"
     connected = "Connected"
     not_connected = "NotConnected"
+
+
+class VirtualWanSecurityProviderType(str, Enum):
+
+    external = "External"
+    native = "Native"
 
 
 class TunnelConnectionStatus(str, Enum):

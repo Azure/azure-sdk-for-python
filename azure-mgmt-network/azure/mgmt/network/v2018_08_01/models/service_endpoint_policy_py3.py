@@ -32,6 +32,8 @@ class ServiceEndpointPolicy(Resource):
      endpoint policy definitions of the service endpoint policy.
     :type service_endpoint_policy_definitions:
      list[~azure.mgmt.network.v2018_08_01.models.ServiceEndpointPolicyDefinition]
+    :ivar subnets: A collection of references to subnets.
+    :vartype subnets: list[~azure.mgmt.network.v2018_08_01.models.Subnet]
     :param resource_guid: The resource GUID property of the service endpoint
      policy resource.
     :type resource_guid: str
@@ -46,6 +48,7 @@ class ServiceEndpointPolicy(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'subnets': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,6 +58,7 @@ class ServiceEndpointPolicy(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'service_endpoint_policy_definitions': {'key': 'properties.serviceEndpointPolicyDefinitions', 'type': '[ServiceEndpointPolicyDefinition]'},
+        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -63,6 +67,7 @@ class ServiceEndpointPolicy(Resource):
     def __init__(self, *, id: str=None, location: str=None, tags=None, service_endpoint_policy_definitions=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(ServiceEndpointPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.service_endpoint_policy_definitions = service_endpoint_policy_definitions
+        self.subnets = None
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

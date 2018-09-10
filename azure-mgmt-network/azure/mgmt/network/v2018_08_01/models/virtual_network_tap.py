@@ -32,6 +32,13 @@ class VirtualNetworkTap(Resource):
      IDs for the network interface IP configuration that needs to be tapped.
     :vartype network_interface_tap_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceTapConfiguration]
+    :ivar resource_guid: The resourceGuid property of the Virtual Network
+     resource.
+    :vartype resource_guid: str
+    :ivar provisioning_state: The provisioning state of the network interface
+     IP configuration. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
+    :vartype provisioning_state: str
     :param destination_network_interface_ip_configuration: The reference to
      the private IP Address of the collector nic that will receive the tap
     :type destination_network_interface_ip_configuration:
@@ -53,6 +60,8 @@ class VirtualNetworkTap(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'network_interface_tap_configurations': {'readonly': True},
+        'resource_guid': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -62,6 +71,8 @@ class VirtualNetworkTap(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'network_interface_tap_configurations': {'key': 'properties.networkInterfaceTapConfigurations', 'type': '[NetworkInterfaceTapConfiguration]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'destination_network_interface_ip_configuration': {'key': 'properties.destinationNetworkInterfaceIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
         'destination_load_balancer_front_end_ip_configuration': {'key': 'properties.destinationLoadBalancerFrontEndIPConfiguration', 'type': 'FrontendIPConfiguration'},
         'destination_port': {'key': 'properties.destinationPort', 'type': 'int'},
@@ -71,6 +82,8 @@ class VirtualNetworkTap(Resource):
     def __init__(self, **kwargs):
         super(VirtualNetworkTap, self).__init__(**kwargs)
         self.network_interface_tap_configurations = None
+        self.resource_guid = None
+        self.provisioning_state = None
         self.destination_network_interface_ip_configuration = kwargs.get('destination_network_interface_ip_configuration', None)
         self.destination_load_balancer_front_end_ip_configuration = kwargs.get('destination_load_balancer_front_end_ip_configuration', None)
         self.destination_port = kwargs.get('destination_port', None)

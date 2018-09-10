@@ -32,10 +32,15 @@ class NetworkInterfaceTapConfiguration(SubResource):
     :type etag: str
     :ivar type: Sub Resource type.
     :vartype type: str
+    :ivar provisioning_state: The provisioning state of the network interface
+     IP configuration. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,6 +49,7 @@ class NetworkInterfaceTapConfiguration(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, id: str=None, virtual_network_tap=None, name: str=None, etag: str=None, **kwargs) -> None:
@@ -52,3 +58,4 @@ class NetworkInterfaceTapConfiguration(SubResource):
         self.name = name
         self.etag = etag
         self.type = None
+        self.provisioning_state = None

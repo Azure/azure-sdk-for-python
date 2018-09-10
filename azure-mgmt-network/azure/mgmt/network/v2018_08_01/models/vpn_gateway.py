@@ -39,8 +39,8 @@ class VpnGateway(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
-    :param policies: The policies applied to this vpn gateway.
-    :type policies: ~azure.mgmt.network.v2018_08_01.models.Policies
+    :param vpn_gateway_scale_unit: The scale unit for this vpn gateway.
+    :type vpn_gateway_scale_unit: int
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -62,7 +62,7 @@ class VpnGateway(Resource):
         'connections': {'key': 'properties.connections', 'type': '[VpnConnection]'},
         'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -72,5 +72,5 @@ class VpnGateway(Resource):
         self.connections = kwargs.get('connections', None)
         self.bgp_settings = kwargs.get('bgp_settings', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.policies = kwargs.get('policies', None)
+        self.vpn_gateway_scale_unit = kwargs.get('vpn_gateway_scale_unit', None)
         self.etag = None
