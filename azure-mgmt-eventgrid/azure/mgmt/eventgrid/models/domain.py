@@ -30,13 +30,13 @@ class Domain(TrackedResource):
     :type location: str
     :param tags: Tags of the resource
     :type tags: dict[str, str]
-    :param provisioning_state: Provisioning state of the domain. Possible
+    :ivar provisioning_state: Provisioning state of the domain. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.DomainProvisioningState
-    :param endpoint: Endpoint for the domain.
-    :type endpoint: str
+    :ivar endpoint: Endpoint for the domain.
+    :vartype endpoint: str
     :param input_schema: This determines the format that Event Grid should
      expect for incoming events published to the domain. Possible values
      include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventV01Schema'
@@ -52,6 +52,8 @@ class Domain(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'endpoint': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,7 +70,7 @@ class Domain(TrackedResource):
 
     def __init__(self, **kwargs):
         super(Domain, self).__init__(**kwargs)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.endpoint = kwargs.get('endpoint', None)
+        self.provisioning_state = None
+        self.endpoint = None
         self.input_schema = kwargs.get('input_schema', None)
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)

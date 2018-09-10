@@ -17,11 +17,13 @@ class AdvancedFilter(Model):
     various event envelope/data fields.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: NumberInAdvancedFilter, NumberLessThanAdvancedFilter,
-    NumberGreaterThanAdvancedFilter, NumberLessThanOrEqualsAdvancedFilter,
+    sub-classes are: NumberInAdvancedFilter, NumberNotInAdvancedFilter,
+    NumberLessThanAdvancedFilter, NumberGreaterThanAdvancedFilter,
+    NumberLessThanOrEqualsAdvancedFilter,
     NumberGreaterThanOrEqualsAdvancedFilter, BoolEqualsAdvancedFilter,
     StringInAdvancedFilter, StringNotInAdvancedFilter,
-    StringBeginsWithAdvancedFilter, StringEndsWithAdvancedFilter
+    StringBeginsWithAdvancedFilter, StringEndsWithAdvancedFilter,
+    StringContainsAdvancedFilter
 
     All required parameters must be populated in order to send to Azure.
 
@@ -42,7 +44,7 @@ class AdvancedFilter(Model):
     }
 
     _subtype_map = {
-        'operator_type': {'NumberIn': 'NumberInAdvancedFilter', 'NumberLessThan': 'NumberLessThanAdvancedFilter', 'NumberGreaterThan': 'NumberGreaterThanAdvancedFilter', 'NumberLessThanOrEquals': 'NumberLessThanOrEqualsAdvancedFilter', 'NumberGreaterThanOrEquals': 'NumberGreaterThanOrEqualsAdvancedFilter', 'BoolEquals': 'BoolEqualsAdvancedFilter', 'StringIn': 'StringInAdvancedFilter', 'StringNotIn': 'StringNotInAdvancedFilter', 'StringBeginsWith': 'StringBeginsWithAdvancedFilter', 'StringEndsWith': 'StringEndsWithAdvancedFilter'}
+        'operator_type': {'NumberIn': 'NumberInAdvancedFilter', 'NumberNotIn': 'NumberNotInAdvancedFilter', 'NumberLessThan': 'NumberLessThanAdvancedFilter', 'NumberGreaterThan': 'NumberGreaterThanAdvancedFilter', 'NumberLessThanOrEquals': 'NumberLessThanOrEqualsAdvancedFilter', 'NumberGreaterThanOrEquals': 'NumberGreaterThanOrEqualsAdvancedFilter', 'BoolEquals': 'BoolEqualsAdvancedFilter', 'StringIn': 'StringInAdvancedFilter', 'StringNotIn': 'StringNotInAdvancedFilter', 'StringBeginsWith': 'StringBeginsWithAdvancedFilter', 'StringEndsWith': 'StringEndsWithAdvancedFilter', 'StringContains': 'StringContainsAdvancedFilter'}
     }
 
     def __init__(self, **kwargs):

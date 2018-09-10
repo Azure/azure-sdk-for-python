@@ -24,6 +24,7 @@ try:
     from .resource_py3 import Resource
     from .number_in_advanced_filter_py3 import NumberInAdvancedFilter
     from .storage_blob_dead_letter_destination_py3 import StorageBlobDeadLetterDestination
+    from .number_not_in_advanced_filter_py3 import NumberNotInAdvancedFilter
     from .number_less_than_advanced_filter_py3 import NumberLessThanAdvancedFilter
     from .number_greater_than_advanced_filter_py3 import NumberGreaterThanAdvancedFilter
     from .number_less_than_or_equals_advanced_filter_py3 import NumberLessThanOrEqualsAdvancedFilter
@@ -33,6 +34,7 @@ try:
     from .string_not_in_advanced_filter_py3 import StringNotInAdvancedFilter
     from .string_begins_with_advanced_filter_py3 import StringBeginsWithAdvancedFilter
     from .string_ends_with_advanced_filter_py3 import StringEndsWithAdvancedFilter
+    from .string_contains_advanced_filter_py3 import StringContainsAdvancedFilter
     from .web_hook_event_subscription_destination_py3 import WebHookEventSubscriptionDestination
     from .event_hub_event_subscription_destination_py3 import EventHubEventSubscriptionDestination
     from .storage_queue_event_subscription_destination_py3 import StorageQueueEventSubscriptionDestination
@@ -67,6 +69,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .number_in_advanced_filter import NumberInAdvancedFilter
     from .storage_blob_dead_letter_destination import StorageBlobDeadLetterDestination
+    from .number_not_in_advanced_filter import NumberNotInAdvancedFilter
     from .number_less_than_advanced_filter import NumberLessThanAdvancedFilter
     from .number_greater_than_advanced_filter import NumberGreaterThanAdvancedFilter
     from .number_less_than_or_equals_advanced_filter import NumberLessThanOrEqualsAdvancedFilter
@@ -76,6 +79,7 @@ except (SyntaxError, ImportError):
     from .string_not_in_advanced_filter import StringNotInAdvancedFilter
     from .string_begins_with_advanced_filter import StringBeginsWithAdvancedFilter
     from .string_ends_with_advanced_filter import StringEndsWithAdvancedFilter
+    from .string_contains_advanced_filter import StringContainsAdvancedFilter
     from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
     from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
     from .storage_queue_event_subscription_destination import StorageQueueEventSubscriptionDestination
@@ -127,6 +131,7 @@ __all__ = [
     'Resource',
     'NumberInAdvancedFilter',
     'StorageBlobDeadLetterDestination',
+    'NumberNotInAdvancedFilter',
     'NumberLessThanAdvancedFilter',
     'NumberGreaterThanAdvancedFilter',
     'NumberLessThanOrEqualsAdvancedFilter',
@@ -136,6 +141,7 @@ __all__ = [
     'StringNotInAdvancedFilter',
     'StringBeginsWithAdvancedFilter',
     'StringEndsWithAdvancedFilter',
+    'StringContainsAdvancedFilter',
     'WebHookEventSubscriptionDestination',
     'EventHubEventSubscriptionDestination',
     'StorageQueueEventSubscriptionDestination',
