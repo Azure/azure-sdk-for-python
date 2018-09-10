@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ExpressRouteCircuitPeeringId(Model):
-    """ExpressRoute circuit peering identifier.
+class ExpressRouteConnectionPropertiesExpressRouteCircuitPeering(Model):
+    """The ExpressRoute circuit peering.
 
     :param id: The ID of the ExpressRoute circuit peering.
     :type id: str
@@ -23,6 +23,6 @@ class ExpressRouteCircuitPeeringId(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ExpressRouteCircuitPeeringId, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(ExpressRouteConnectionPropertiesExpressRouteCircuitPeering, self).__init__(**kwargs)
+        self.id = id

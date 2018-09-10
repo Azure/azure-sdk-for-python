@@ -12,19 +12,24 @@
 from msrest.serialization import Model
 
 
-class VirtualHubId(Model):
-    """Virtual Hub identifier.
+class ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection(Model):
+    """The ExpressRoute connection.
 
-    :param id: The resource URI for the Virtual Hub where the ExpressRoute
-     gateway is or will be deployed. The Virtual Hub resource and the
-     ExpressRoute gateway resource reside in the same subscription.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the ExpressRouteConnection.
+    :vartype id: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(VirtualHubId, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        super(ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection, self).__init__(**kwargs)
+        self.id = None

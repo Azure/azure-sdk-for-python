@@ -65,7 +65,7 @@ class ExpressRouteCircuitPeering(SubResource):
      ~azure.mgmt.network.v2018_08_01.models.Ipv6ExpressRouteCircuitPeeringConfig
     :param express_route_connection: The ExpressRoute connection.
     :type express_route_connection:
-     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteConnectionId
+     ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection
     :param connections: The list of circuit connections associated with Azure
      Private Peering for this circuit.
     :type connections:
@@ -102,7 +102,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'route_filter': {'key': 'properties.routeFilter', 'type': 'RouteFilter'},
         'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
-        'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteConnectionId'},
+        'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteCircuitPeeringPropertiesFormatExpressRouteConnection'},
         'connections': {'key': 'properties.connections', 'type': '[ExpressRouteCircuitConnection]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
