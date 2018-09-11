@@ -39,7 +39,9 @@ class ObjectsOperations(object):
 
     def get_objects_by_object_ids(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Gets AD group membership for the specified AD object IDs.
+        """Gets the directory objects specified in a list of object IDs. You can
+        also specify which resource collections (users, groups, etc.) should be
+        searched by specifying the optional types parameter.
 
         :param parameters: Objects filtering parameters.
         :type parameters: ~azure.graphrbac.models.GetObjectsParameters
