@@ -34,9 +34,9 @@ class NetworkInterface(Resource):
      resource.
     :type network_security_group:
      ~azure.mgmt.network.v2018_08_01.models.NetworkSecurityGroup
-    :param interface_endpoint: A reference to the interface endpoint to which
+    :ivar interface_endpoint: A reference to the interface endpoint to which
      the network interface is linked.
-    :type interface_endpoint:
+    :vartype interface_endpoint:
      ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
@@ -79,6 +79,7 @@ class NetworkInterface(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'interface_endpoint': {'readonly': True},
         'hosted_workloads': {'readonly': True},
     }
 
@@ -105,11 +106,11 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_machine=None, network_security_group=None, interface_endpoint=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, linked_resource_type: str=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, linked_resource_type: str=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(NetworkInterface, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
-        self.interface_endpoint = interface_endpoint
+        self.interface_endpoint = None
         self.ip_configurations = ip_configurations
         self.tap_configurations = tap_configurations
         self.dns_settings = dns_settings

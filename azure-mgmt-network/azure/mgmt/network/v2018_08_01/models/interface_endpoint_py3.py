@@ -45,6 +45,9 @@ class InterfaceEndpoint(Resource):
     :ivar owner: A read-only property that identifies who created this
      interface endpoint.
     :vartype owner: str
+    :ivar provisioning_state: The provisioning state of the interface
+     endpoint. Possible values are: 'Updating', 'Deleting', and 'Failed'.
+    :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
@@ -54,6 +57,7 @@ class InterfaceEndpoint(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'owner': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,6 +71,7 @@ class InterfaceEndpoint(Resource):
         'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[SubResource]'},
         'owner': {'key': 'properties.owner', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -77,4 +82,5 @@ class InterfaceEndpoint(Resource):
         self.subnet = subnet
         self.network_interfaces = network_interfaces
         self.owner = None
+        self.provisioning_state = None
         self.etag = etag

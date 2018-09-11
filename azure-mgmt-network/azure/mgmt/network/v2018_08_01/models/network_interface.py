@@ -34,9 +34,9 @@ class NetworkInterface(Resource):
      resource.
     :type network_security_group:
      ~azure.mgmt.network.v2018_08_01.models.NetworkSecurityGroup
-    :param interface_endpoint: A reference to the interface endpoint to which
+    :ivar interface_endpoint: A reference to the interface endpoint to which
      the network interface is linked.
-    :type interface_endpoint:
+    :vartype interface_endpoint:
      ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
@@ -79,6 +79,7 @@ class NetworkInterface(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'interface_endpoint': {'readonly': True},
         'hosted_workloads': {'readonly': True},
     }
 
@@ -109,7 +110,7 @@ class NetworkInterface(Resource):
         super(NetworkInterface, self).__init__(**kwargs)
         self.virtual_machine = kwargs.get('virtual_machine', None)
         self.network_security_group = kwargs.get('network_security_group', None)
-        self.interface_endpoint = kwargs.get('interface_endpoint', None)
+        self.interface_endpoint = None
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.tap_configurations = kwargs.get('tap_configurations', None)
         self.dns_settings = kwargs.get('dns_settings', None)

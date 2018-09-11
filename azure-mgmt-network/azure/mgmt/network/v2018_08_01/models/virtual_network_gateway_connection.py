@@ -49,6 +49,10 @@ class VirtualNetworkGatewayConnection(Resource):
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionType
+    :param connection_protocol: Connection protocol used for this connection.
+     Possible values include: 'IKEv2', 'IKEv1'
+    :type connection_protocol: str or
+     ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionProtocol
     :param routing_weight: The routing weight.
     :type routing_weight: int
     :param shared_key: The IPSec shared key.
@@ -118,6 +122,7 @@ class VirtualNetworkGatewayConnection(Resource):
         'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
         'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
+        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
@@ -141,6 +146,7 @@ class VirtualNetworkGatewayConnection(Resource):
         self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
         self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
         self.connection_type = kwargs.get('connection_type', None)
+        self.connection_protocol = kwargs.get('connection_protocol', None)
         self.routing_weight = kwargs.get('routing_weight', None)
         self.shared_key = kwargs.get('shared_key', None)
         self.connection_status = None
