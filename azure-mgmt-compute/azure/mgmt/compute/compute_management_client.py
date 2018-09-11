@@ -84,9 +84,7 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
-            'disks': '2018-04-01',
             'resource_skus': '2017-09-01',
-            'snapshots': '2018-04-01',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
@@ -145,7 +143,7 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def availability_sets(self):
         """Instance depends on the API version:
