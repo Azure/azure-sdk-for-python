@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .create_job_properties import CreateJobProperties
+from .create_job_properties_py3 import CreateJobProperties
 
 
 class CreateScopeJobProperties(CreateJobProperties):

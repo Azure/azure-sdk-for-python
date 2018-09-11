@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .catalog_item import CatalogItem
+from .catalog_item_py3 import CatalogItem
 
 
 class USqlTable(CatalogItem):

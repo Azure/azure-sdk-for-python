@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .base_job_parameters import BaseJobParameters
+from .base_job_parameters_py3 import BaseJobParameters
 
 
 class CreateJobParameters(BaseJobParameters):
