@@ -67,7 +67,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     :param profile: A dict using operation group name to API version.
     :type profile: dict[str, str]    """
 
-    DEFAULT_API_VERSION = '2017-10-01'
+    DEFAULT_API_VERSION = '2018-09-01'
     _PROFILE_TAG = "azure.mgmt.containerregistry.ContainerRegistryManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
