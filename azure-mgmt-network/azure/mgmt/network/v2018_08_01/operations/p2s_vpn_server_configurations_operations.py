@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class P2SVpnServerConfigurationsOperations(object):
-    """P2SVpnServerConfigurationsOperations operations.
+class P2sVpnServerConfigurationsOperations(object):
+    """P2sVpnServerConfigurationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
