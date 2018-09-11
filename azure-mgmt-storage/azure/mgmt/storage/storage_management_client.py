@@ -138,7 +138,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_03_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def blob_containers(self):
         """Instance depends on the API version:
