@@ -1,4 +1,5 @@
 import importlib
+import logging
 import os
 import pkgutil
 import re
@@ -25,6 +26,9 @@ pkg_resources.declare_namespace('azure')
 
 _GENERATE_MARKER = "############ Generated from here ############\n"
 
+_LOGGER = logging.getLogger(__name__)
+
+
 def parse_input(input_parameter):
     """From a syntax like package_name#submodule, build a package name
     and complete module name.
@@ -48,26 +52,53 @@ def get_versionned_modules(package_name, module_name, sdk_root=None):
             for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
             if label.startswith("v20") and ispkg]
 
+def extract_api_version_from_code(function):
+    """Will extract from __code__ the API version. Should be use if you use this is an operation group with no constant api_version.
+    """
+    try:
+        if "api_version" in function.__code__.co_varnames:
+            return function.__code__.co_consts[1]
+    except Exception:
+        pass
+
 def build_operation_meta(versionned_modules):
     version_dict = {}
     mod_to_api_version = {}
     for versionned_label, versionned_mod in versionned_modules:
-        extracted_api_version = None
+        extracted_api_versions = set()
         client_doc = versionned_mod.__dict__[versionned_mod.__all__[0]].__doc__
         operations = list(re.finditer(r':ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n', client_doc))
         for operation in operations:
             attr, clsname = operation.groups()
             version_dict.setdefault(attr, []).append((versionned_label, clsname))
-            if not extracted_api_version:
-                # Create a fake operation group to extract easily the real api version
-                try:
-                    extracted_api_version = versionned_mod.operations.__dict__[clsname](None, None, None, None).api_version
-                except Exception:
-                    # Should not happen. I guess it mixed operation groups like VMSS Network...
-                    pass
-        if not extracted_api_version:
-            sys.exit("Was not able to extract api_version of %s" % versionned_label)
-        mod_to_api_version[versionned_label] = extracted_api_version
+
+            # Create a fake operation group to extract easily the real api version
+            extracted_api_version = None
+            try:
+                extracted_api_version = versionned_mod.operations.__dict__[clsname](None, None, None, None).api_version
+            except Exception:
+                # Should not happen. I guess it mixed operation groups like VMSS Network...
+                for func_name, function in versionned_mod.operations.__dict__[clsname].__dict__.items():
+                    if not func_name.startswith("__"):
+                        extracted_api_version = extract_api_version_from_code(function)
+            if extracted_api_version:
+                extracted_api_versions.add(extracted_api_version)
+
+        if not extracted_api_versions:
+            sys.exit("Was not able to extract api_version of {}".format(versionned_label))
+        if len(extracted_api_versions) >= 2:
+            # Mixed operation group, try to figure out what we want to use
+            final_api_version = None
+            _LOGGER.warning("Found too much API version: {} in label {}".format(extracted_api_versions, versionned_label))
+            for candidate_api_version in extracted_api_versions:
+                if "v{}".format(candidate_api_version.replace("-", "_")) == versionned_label:
+                    final_api_version = candidate_api_version
+                    _LOGGER.warning("Guessing you want {} based on label {}".format(final_api_version, versionned_label))
+                    break
+            else:
+                sys.exit("Unble to match {} to label {}".format(extracted_api_versions, versionned_label))
+            extracted_api_versions = {final_api_version}
+        mod_to_api_version[versionned_label] = extracted_api_versions.pop()
 
     # latest: api_version=mod_to_api_version[versions[-1][0]]
 
@@ -160,6 +191,8 @@ _CODE_PREFIX = """
 """
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     package_name, module_name = parse_input(sys.argv[1])
     versionned_modules = get_versionned_modules(package_name, module_name)
     version_dict, mod_to_api_version = build_operation_meta(versionned_modules)

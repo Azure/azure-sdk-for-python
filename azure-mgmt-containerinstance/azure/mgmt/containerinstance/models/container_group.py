@@ -64,6 +64,10 @@ class ContainerGroup(Resource):
     :param diagnostics: The diagnostic information for a container group.
     :type diagnostics:
      ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :param network_profile: The network profile information for a container
+     group.
+    :type network_profile:
+     ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
     """
 
     _validation = {
@@ -91,6 +95,7 @@ class ContainerGroup(Resource):
         'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -104,3 +109,4 @@ class ContainerGroup(Resource):
         self.volumes = kwargs.get('volumes', None)
         self.instance_view = None
         self.diagnostics = kwargs.get('diagnostics', None)
+        self.network_profile = kwargs.get('network_profile', None)
