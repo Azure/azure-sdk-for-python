@@ -108,7 +108,7 @@ class SyncGroupsOperations(object):
     list_by_storage_sync_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups'}
 
     def create(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, unique_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a new SyncGroup.
 
         :param resource_group_name: The name of the resource group. The name
@@ -119,8 +119,9 @@ class SyncGroupsOperations(object):
         :type storage_sync_service_name: str
         :param sync_group_name: Name of Sync Group resource.
         :type sync_group_name: str
-        :param unique_id: Unique Id
-        :type unique_id: str
+        :param parameters: Sync Group Body
+        :type parameters:
+         ~azure.mgmt.storagesync.models.SyncGroupCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -132,8 +133,6 @@ class SyncGroupsOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        parameters = models.SyncGroup(unique_id=unique_id)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -160,7 +159,7 @@ class SyncGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SyncGroup')
+        body_content = self._serialize.body(parameters, 'SyncGroupCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
