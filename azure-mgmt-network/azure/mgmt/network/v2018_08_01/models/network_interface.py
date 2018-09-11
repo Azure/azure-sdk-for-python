@@ -62,9 +62,6 @@ class NetworkInterface(Resource):
     :type enable_ip_forwarding: bool
     :ivar hosted_workloads: A list of references to linked BareMetal resources
     :vartype hosted_workloads: list[str]
-    :param linked_resource_type: The type of resource to be linked to this
-     network interface
-    :type linked_resource_type: str
     :param resource_guid: The resource GUID property of the network interface
      resource.
     :type resource_guid: str
@@ -100,7 +97,6 @@ class NetworkInterface(Resource):
         'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
         'hosted_workloads': {'key': 'properties.hostedWorkloads', 'type': '[str]'},
-        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -119,7 +115,6 @@ class NetworkInterface(Resource):
         self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
         self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
         self.hosted_workloads = None
-        self.linked_resource_type = kwargs.get('linked_resource_type', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)

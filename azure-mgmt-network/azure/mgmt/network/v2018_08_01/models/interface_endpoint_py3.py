@@ -37,11 +37,11 @@ class InterfaceEndpoint(Resource):
      ~azure.mgmt.network.v2018_08_01.models.EndpointService
     :param subnet: The ID of the subnet from which the private IP will be
      allocated.
-    :type subnet: ~azure.mgmt.network.v2018_08_01.models.SubResource
-    :param network_interfaces: Gets an array of references to the network
+    :type subnet: ~azure.mgmt.network.v2018_08_01.models.Subnet
+    :ivar network_interfaces: Gets an array of references to the network
      interfaces created for this interface endpoint.
-    :type network_interfaces:
-     list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :vartype network_interfaces:
+     list[~azure.mgmt.network.v2018_08_01.models.NetworkInterface]
     :ivar owner: A read-only property that identifies who created this
      interface endpoint.
     :vartype owner: str
@@ -56,6 +56,7 @@ class InterfaceEndpoint(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'network_interfaces': {'readonly': True},
         'owner': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -68,19 +69,19 @@ class InterfaceEndpoint(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'endpoint_service': {'key': 'properties.endpointService', 'type': 'EndpointService'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[SubResource]'},
+        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'owner': {'key': 'properties.owner', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, fqdn: str=None, endpoint_service=None, subnet=None, network_interfaces=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, fqdn: str=None, endpoint_service=None, subnet=None, etag: str=None, **kwargs) -> None:
         super(InterfaceEndpoint, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.fqdn = fqdn
         self.endpoint_service = endpoint_service
         self.subnet = subnet
-        self.network_interfaces = network_interfaces
+        self.network_interfaces = None
         self.owner = None
         self.provisioning_state = None
         self.etag = etag

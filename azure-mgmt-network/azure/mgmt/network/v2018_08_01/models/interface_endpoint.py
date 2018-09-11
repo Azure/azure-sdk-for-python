@@ -37,11 +37,11 @@ class InterfaceEndpoint(Resource):
      ~azure.mgmt.network.v2018_08_01.models.EndpointService
     :param subnet: The ID of the subnet from which the private IP will be
      allocated.
-    :type subnet: ~azure.mgmt.network.v2018_08_01.models.SubResource
-    :param network_interfaces: Gets an array of references to the network
+    :type subnet: ~azure.mgmt.network.v2018_08_01.models.Subnet
+    :ivar network_interfaces: Gets an array of references to the network
      interfaces created for this interface endpoint.
-    :type network_interfaces:
-     list[~azure.mgmt.network.v2018_08_01.models.SubResource]
+    :vartype network_interfaces:
+     list[~azure.mgmt.network.v2018_08_01.models.NetworkInterface]
     :ivar owner: A read-only property that identifies who created this
      interface endpoint.
     :vartype owner: str
@@ -56,6 +56,7 @@ class InterfaceEndpoint(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'network_interfaces': {'readonly': True},
         'owner': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -68,8 +69,8 @@ class InterfaceEndpoint(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'endpoint_service': {'key': 'properties.endpointService', 'type': 'EndpointService'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[SubResource]'},
+        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'owner': {'key': 'properties.owner', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -80,7 +81,7 @@ class InterfaceEndpoint(Resource):
         self.fqdn = kwargs.get('fqdn', None)
         self.endpoint_service = kwargs.get('endpoint_service', None)
         self.subnet = kwargs.get('subnet', None)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = None
         self.owner = None
         self.provisioning_state = None
         self.etag = kwargs.get('etag', None)

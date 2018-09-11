@@ -62,9 +62,6 @@ class NetworkInterface(Resource):
     :type enable_ip_forwarding: bool
     :ivar hosted_workloads: A list of references to linked BareMetal resources
     :vartype hosted_workloads: list[str]
-    :param linked_resource_type: The type of resource to be linked to this
-     network interface
-    :type linked_resource_type: str
     :param resource_guid: The resource GUID property of the network interface
      resource.
     :type resource_guid: str
@@ -100,13 +97,12 @@ class NetworkInterface(Resource):
         'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
         'hosted_workloads': {'key': 'properties.hostedWorkloads', 'type': '[str]'},
-        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, linked_resource_type: str=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(NetworkInterface, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
@@ -119,7 +115,6 @@ class NetworkInterface(Resource):
         self.enable_accelerated_networking = enable_accelerated_networking
         self.enable_ip_forwarding = enable_ip_forwarding
         self.hosted_workloads = None
-        self.linked_resource_type = linked_resource_type
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
