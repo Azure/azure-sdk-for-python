@@ -24,6 +24,10 @@ class NetworkInterfaceTapConfiguration(SubResource):
      resource.
     :type virtual_network_tap:
      ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkTap
+    :ivar provisioning_state: The provisioning state of the network interface
+     tap configuration. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
+    :vartype provisioning_state: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -32,30 +36,26 @@ class NetworkInterfaceTapConfiguration(SubResource):
     :type etag: str
     :ivar type: Sub Resource type.
     :vartype type: str
-    :ivar provisioning_state: The provisioning state of the network interface
-     IP configuration. Possible values are: 'Updating', 'Deleting', and
-     'Failed'.
-    :vartype provisioning_state: str
     """
 
     _validation = {
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'virtual_network_tap': {'key': 'properties.virtualNetworkTap', 'type': 'VirtualNetworkTap'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkInterfaceTapConfiguration, self).__init__(**kwargs)
         self.virtual_network_tap = kwargs.get('virtual_network_tap', None)
+        self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
         self.type = None
-        self.provisioning_state = None

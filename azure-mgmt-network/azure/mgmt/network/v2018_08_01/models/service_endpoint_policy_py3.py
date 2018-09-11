@@ -34,12 +34,12 @@ class ServiceEndpointPolicy(Resource):
      list[~azure.mgmt.network.v2018_08_01.models.ServiceEndpointPolicyDefinition]
     :ivar subnets: A collection of references to subnets.
     :vartype subnets: list[~azure.mgmt.network.v2018_08_01.models.Subnet]
-    :param resource_guid: The resource GUID property of the service endpoint
+    :ivar resource_guid: The resource GUID property of the service endpoint
      policy resource.
-    :type resource_guid: str
-    :param provisioning_state: The provisioning state of the service endpoint
+    :vartype resource_guid: str
+    :ivar provisioning_state: The provisioning state of the service endpoint
      policy. Possible values are: 'Updating', 'Deleting', and 'Failed'.
-    :type provisioning_state: str
+    :vartype provisioning_state: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -49,6 +49,8 @@ class ServiceEndpointPolicy(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'subnets': {'readonly': True},
+        'resource_guid': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -64,10 +66,10 @@ class ServiceEndpointPolicy(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, service_endpoint_policy_definitions=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, service_endpoint_policy_definitions=None, etag: str=None, **kwargs) -> None:
         super(ServiceEndpointPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.service_endpoint_policy_definitions = service_endpoint_policy_definitions
         self.subnets = None
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
+        self.resource_guid = None
+        self.provisioning_state = None
         self.etag = etag

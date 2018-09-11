@@ -45,9 +45,8 @@ class InterfaceEndpoint(Resource):
     :ivar owner: A read-only property that identifies who created this
      interface endpoint.
     :vartype owner: str
-    :ivar provisioning_state: The provisioning state of the network interface
-     IP configuration. Possible values are: 'Updating', 'Deleting', and
-     'Failed'.
+    :ivar provisioning_state: The provisioning state of the interface
+     endpoint. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.

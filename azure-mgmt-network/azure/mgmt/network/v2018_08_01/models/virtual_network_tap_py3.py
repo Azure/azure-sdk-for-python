@@ -32,12 +32,10 @@ class VirtualNetworkTap(Resource):
      IDs for the network interface IP configuration that needs to be tapped.
     :vartype network_interface_tap_configurations:
      list[~azure.mgmt.network.v2018_08_01.models.NetworkInterfaceTapConfiguration]
-    :ivar resource_guid: The resourceGuid property of the Virtual Network
-     resource.
+    :ivar resource_guid: The resourceGuid property of the virtual network tap.
     :vartype resource_guid: str
-    :ivar provisioning_state: The provisioning state of the network interface
-     IP configuration. Possible values are: 'Updating', 'Deleting', and
-     'Failed'.
+    :ivar provisioning_state: The provisioning state of the virtual network
+     tap. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
     :param destination_network_interface_ip_configuration: The reference to
      the private IP Address of the collector nic that will receive the tap
