@@ -363,9 +363,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AADObject
+        :return: An iterator like instance of DirectoryObject
         :rtype:
-         ~azure.graphrbac.models.AADObjectPaged[~azure.graphrbac.models.AADObject]
+         ~azure.graphrbac.models.DirectoryObjectPaged[~azure.graphrbac.models.DirectoryObject]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -414,11 +414,11 @@ class GroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AADObjectPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AADObjectPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

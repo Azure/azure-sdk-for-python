@@ -21,10 +21,8 @@ try:
     from .application_update_parameters_py3 import ApplicationUpdateParameters
     from .application_py3 import Application
     from .add_owner_parameters_py3 import AddOwnerParameters
-    from .application_add_owner_parameters_py3 import ApplicationAddOwnerParameters
     from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters_py3 import PasswordCredentialsUpdateParameters
-    from .aad_object_py3 import AADObject
     from .group_add_member_parameters_py3 import GroupAddMemberParameters
     from .group_create_parameters_py3 import GroupCreateParameters
     from .ad_group_py3 import ADGroup
@@ -56,10 +54,8 @@ except (SyntaxError, ImportError):
     from .application_update_parameters import ApplicationUpdateParameters
     from .application import Application
     from .add_owner_parameters import AddOwnerParameters
-    from .application_add_owner_parameters import ApplicationAddOwnerParameters
     from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
-    from .aad_object import AADObject
     from .group_add_member_parameters import GroupAddMemberParameters
     from .group_create_parameters import GroupCreateParameters
     from .ad_group import ADGroup
@@ -84,7 +80,6 @@ from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
 from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
-from .aad_object_paged import AADObjectPaged
 from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
@@ -105,10 +100,8 @@ __all__ = [
     'ApplicationUpdateParameters',
     'Application',
     'AddOwnerParameters',
-    'ApplicationAddOwnerParameters',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
-    'AADObject',
     'GroupAddMemberParameters',
     'GroupCreateParameters',
     'ADGroup',
@@ -133,7 +126,6 @@ __all__ = [
     'KeyCredentialPaged',
     'PasswordCredentialPaged',
     'ADGroupPaged',
-    'AADObjectPaged',
     'StrPaged',
     'ServicePrincipalPaged',
     'UserPaged',
