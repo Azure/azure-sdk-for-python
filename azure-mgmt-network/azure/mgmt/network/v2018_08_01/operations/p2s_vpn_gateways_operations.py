@@ -11,14 +11,15 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class VirtualWANsOperations(object):
-    """VirtualWANsOperations operations.
+class P2sVpnGatewaysOperations(object):
+    """P2sVpnGatewaysOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,20 +40,21 @@ class VirtualWANsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the details of a VirtualWAN.
+            self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the details of a virtual wan p2s vpn gateway.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
+        :param resource_group_name: The resource group name of the
+         P2SVpnGateway.
         :type resource_group_name: str
-        :param virtual_wan_name: The name of the VirtualWAN being retrieved.
-        :type virtual_wan_name: str
+        :param gateway_name: The name of the gateway.
+        :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VirtualWAN or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2018_08_01.models.VirtualWAN or
+        :return: P2SVpnGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
@@ -60,9 +62,9 @@ class VirtualWANsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -90,24 +92,24 @@ class VirtualWANsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -127,7 +129,7 @@ class VirtualWANsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(wan_parameters, 'VirtualWAN')
+        body_content = self._serialize.body(p2_svpn_gateway_parameters, 'P2SVpnGateway')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -139,9 +141,9 @@ class VirtualWANsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -150,44 +152,44 @@ class VirtualWANsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a VirtualWAN resource if it doesn't exist else updates the
-        existing VirtualWAN.
+            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates
+        the existing gateway.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
+        :param resource_group_name: The resource group name of the
+         P2SVpnGateway.
         :type resource_group_name: str
-        :param virtual_wan_name: The name of the VirtualWAN being created or
-         updated.
-        :type virtual_wan_name: str
-        :param wan_parameters: Parameters supplied to create or update
-         VirtualWAN.
-        :type wan_parameters:
-         ~azure.mgmt.network.v2018_08_01.models.VirtualWAN
+        :param gateway_name: The name of the gateway.
+        :type gateway_name: str
+        :param p2_svpn_gateway_parameters: Parameters supplied to create or
+         Update a virtual wan p2s vpn gateway.
+        :type p2_svpn_gateway_parameters:
+         ~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns VirtualWAN or
-         ClientRawResponse<VirtualWAN> if raw==True
+        :return: An instance of LROPoller that returns P2SVpnGateway or
+         ClientRawResponse<P2SVpnGateway> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]]
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            virtual_wan_name=virtual_wan_name,
-            wan_parameters=wan_parameters,
+            gateway_name=gateway_name,
+            p2_svpn_gateway_parameters=p2_svpn_gateway_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -202,19 +204,19 @@ class VirtualWANsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}
 
 
     def _update_tags_initial(
-            self, resource_group_name, virtual_wan_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        wan_parameters = models.TagsObject(tags=tags)
+            self, resource_group_name, gateway_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        p2_svpn_gateway_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -234,7 +236,7 @@ class VirtualWANsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(wan_parameters, 'TagsObject')
+        body_content = self._serialize.body(p2_svpn_gateway_parameters, 'TagsObject')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -246,9 +248,9 @@ class VirtualWANsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -257,13 +259,14 @@ class VirtualWANsOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, virtual_wan_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates a VirtualWAN tags.
+            self, resource_group_name, gateway_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates virtual wan p2s vpn gateway tags.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
+        :param resource_group_name: The resource group name of the
+         P2SVpnGateway.
         :type resource_group_name: str
-        :param virtual_wan_name: The name of the VirtualWAN being updated.
-        :type virtual_wan_name: str
+        :param gateway_name: The name of the gateway.
+        :type gateway_name: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -271,18 +274,18 @@ class VirtualWANsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns VirtualWAN or
-         ClientRawResponse<VirtualWAN> if raw==True
+        :return: An instance of LROPoller that returns P2SVpnGateway or
+         ClientRawResponse<P2SVpnGateway> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]]
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
             resource_group_name=resource_group_name,
-            virtual_wan_name=virtual_wan_name,
+            gateway_name=gateway_name,
             tags=tags,
             custom_headers=custom_headers,
             raw=True,
@@ -290,7 +293,7 @@ class VirtualWANsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VirtualWAN', response)
+            deserialized = self._deserialize('P2SVpnGateway', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -305,17 +308,17 @@ class VirtualWANsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
+    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -344,13 +347,14 @@ class VirtualWANsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes a VirtualWAN.
+            self, resource_group_name, gateway_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a virtual wan p2s vpn gateway.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
+        :param resource_group_name: The resource group name of the
+         P2SVpnGateway.
         :type resource_group_name: str
-        :param virtual_wan_name: The name of the VirtualWAN being deleted.
-        :type virtual_wan_name: str
+        :param gateway_name: The name of the gateway.
+        :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -365,7 +369,7 @@ class VirtualWANsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            virtual_wan_name=virtual_wan_name,
+            gateway_name=gateway_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -383,22 +387,23 @@ class VirtualWANsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the VirtualWANs in a resource group.
+        """Lists all the P2SVpnGateways in a resource group.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
+        :param resource_group_name: The resource group name of the
+         P2SVpnGateway.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VirtualWAN
+        :return: An iterator like instance of P2SVpnGateway
         :rtype:
-         ~azure.mgmt.network.v2018_08_01.models.VirtualWANPaged[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]
+         ~azure.mgmt.network.v2018_08_01.models.P2SVpnGatewayPaged[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
         """
@@ -441,28 +446,28 @@ class VirtualWANsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualWANPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.P2SVpnGatewayPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualWANPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.P2SVpnGatewayPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the VirtualWANs in a subscription.
+        """Lists all the P2SVpnGateways in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VirtualWAN
+        :return: An iterator like instance of P2SVpnGateway
         :rtype:
-         ~azure.mgmt.network.v2018_08_01.models.VirtualWANPaged[~azure.mgmt.network.v2018_08_01.models.VirtualWAN]
+         ~azure.mgmt.network.v2018_08_01.models.P2SVpnGatewayPaged[~azure.mgmt.network.v2018_08_01.models.P2SVpnGateway]
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_08_01.models.ErrorException>`
         """
@@ -504,12 +509,118 @@ class VirtualWANsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualWANPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.P2SVpnGatewayPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualWANPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.P2SVpnGatewayPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/virtualWans'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/p2svpnGateways'}
+
+
+    def _generate_vpn_profile_initial(
+            self, resource_group_name, gateway_name, authentication_method=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.P2SVpnProfileParameters(authentication_method=authentication_method)
+
+        # Construct URL
+        url = self.generate_vpn_profile.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'P2SVpnProfileParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VpnProfileResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def generate_vpn_profile(
+            self, resource_group_name, gateway_name, authentication_method=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Generates VPN profile for P2S client of the P2SVpnGateway in the
+        specified resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param gateway_name: The name of the P2SVpnGateway.
+        :type gateway_name: str
+        :param authentication_method: VPN client Authentication Method.
+         Possible values are: 'EAPTLS' and 'EAPMSCHAPv2'. Possible values
+         include: 'EAPTLS', 'EAPMSCHAPv2'
+        :type authentication_method: str or
+         ~azure.mgmt.network.v2018_08_01.models.AuthenticationMethod
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns VpnProfileResponse or
+         ClientRawResponse<VpnProfileResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_08_01.models.VpnProfileResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_08_01.models.VpnProfileResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._generate_vpn_profile_initial(
+            resource_group_name=resource_group_name,
+            gateway_name=gateway_name,
+            authentication_method=authentication_method,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('VpnProfileResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    generate_vpn_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/generatevpnprofile'}

@@ -2402,7 +2402,6 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
            * 2018-04-01: :class:`VirtualWANsOperations<azure.mgmt.network.v2018_04_01.operations.VirtualWANsOperations>`
            * 2018-06-01: :class:`VirtualWANsOperations<azure.mgmt.network.v2018_06_01.operations.VirtualWANsOperations>`
            * 2018-07-01: :class:`VirtualWANsOperations<azure.mgmt.network.v2018_07_01.operations.VirtualWANsOperations>`
-           * 2018-08-01: :class:`VirtualWANsOperations<azure.mgmt.network.v2018_08_01.operations.VirtualWANsOperations>`
         """
         api_version = self._get_api_version('virtual_wa_ns')
         if api_version == '2018-04-01':
@@ -2411,8 +2410,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_06_01.operations import VirtualWANsOperations as OperationClass
         elif api_version == '2018-07-01':
             from .v2018_07_01.operations import VirtualWANsOperations as OperationClass
-        elif api_version == '2018-08-01':
-            from .v2018_08_01.operations import VirtualWANsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def virtual_wans(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`VirtualWansOperations<azure.mgmt.network.v2018_08_01.operations.VirtualWansOperations>`
+        """
+        api_version = self._get_api_version('virtual_wans')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import VirtualWansOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

@@ -72,15 +72,15 @@ from .operations.virtual_network_taps_operations import VirtualNetworkTapsOperat
 from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
-from .operations.virtual_wa_ns_operations import VirtualWANsOperations
+from .operations.virtual_wans_operations import VirtualWansOperations
 from .operations.vpn_sites_operations import VpnSitesOperations
 from .operations.vpn_sites_configuration_operations import VpnSitesConfigurationOperations
 from .operations.virtual_hubs_operations import VirtualHubsOperations
 from .operations.hub_virtual_network_connections_operations import HubVirtualNetworkConnectionsOperations
 from .operations.vpn_gateways_operations import VpnGatewaysOperations
 from .operations.vpn_connections_operations import VpnConnectionsOperations
-from .operations.p2_svpn_server_configurations_operations import P2SVpnServerConfigurationsOperations
-from .operations.p2_svpn_gateways_operations import P2SVpnGatewaysOperations
+from .operations.p2s_vpn_server_configurations_operations import P2sVpnServerConfigurationsOperations
+from .operations.p2s_vpn_gateways_operations import P2sVpnGatewaysOperations
 from . import models
 
 
@@ -232,8 +232,8 @@ class NetworkManagementClient(SDKClient):
     :vartype virtual_network_gateway_connections: azure.mgmt.network.v2018_08_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
     :vartype local_network_gateways: azure.mgmt.network.v2018_08_01.operations.LocalNetworkGatewaysOperations
-    :ivar virtual_wa_ns: VirtualWANs operations
-    :vartype virtual_wa_ns: azure.mgmt.network.v2018_08_01.operations.VirtualWANsOperations
+    :ivar virtual_wans: VirtualWans operations
+    :vartype virtual_wans: azure.mgmt.network.v2018_08_01.operations.VirtualWansOperations
     :ivar vpn_sites: VpnSites operations
     :vartype vpn_sites: azure.mgmt.network.v2018_08_01.operations.VpnSitesOperations
     :ivar vpn_sites_configuration: VpnSitesConfiguration operations
@@ -246,10 +246,10 @@ class NetworkManagementClient(SDKClient):
     :vartype vpn_gateways: azure.mgmt.network.v2018_08_01.operations.VpnGatewaysOperations
     :ivar vpn_connections: VpnConnections operations
     :vartype vpn_connections: azure.mgmt.network.v2018_08_01.operations.VpnConnectionsOperations
-    :ivar p2_svpn_server_configurations: P2SVpnServerConfigurations operations
-    :vartype p2_svpn_server_configurations: azure.mgmt.network.v2018_08_01.operations.P2SVpnServerConfigurationsOperations
-    :ivar p2_svpn_gateways: P2SVpnGateways operations
-    :vartype p2_svpn_gateways: azure.mgmt.network.v2018_08_01.operations.P2SVpnGatewaysOperations
+    :ivar p2s_vpn_server_configurations: P2sVpnServerConfigurations operations
+    :vartype p2s_vpn_server_configurations: azure.mgmt.network.v2018_08_01.operations.P2sVpnServerConfigurationsOperations
+    :ivar p2s_vpn_gateways: P2sVpnGateways operations
+    :vartype p2s_vpn_gateways: azure.mgmt.network.v2018_08_01.operations.P2sVpnGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -379,7 +379,7 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.local_network_gateways = LocalNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_wa_ns = VirtualWANsOperations(
+        self.virtual_wans = VirtualWansOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.vpn_sites = VpnSitesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -393,9 +393,9 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.vpn_connections = VpnConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.p2_svpn_server_configurations = P2SVpnServerConfigurationsOperations(
+        self.p2s_vpn_server_configurations = P2sVpnServerConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.p2_svpn_gateways = P2SVpnGatewaysOperations(
+        self.p2s_vpn_gateways = P2sVpnGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
