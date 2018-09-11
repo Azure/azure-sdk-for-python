@@ -52,7 +52,6 @@ try:
     from .application_gateway_ssl_policy_py3 import ApplicationGatewaySslPolicy
     from .application_gateway_ip_configuration_py3 import ApplicationGatewayIPConfiguration
     from .application_gateway_authentication_certificate_py3 import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_trusted_root_certificate_py3 import ApplicationGatewayTrustedRootCertificate
     from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
@@ -282,7 +281,6 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
     from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
     from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_trusted_root_certificate import ApplicationGatewayTrustedRootCertificate
     from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
@@ -644,7 +642,6 @@ __all__ = [
     'ApplicationGatewaySslPolicy',
     'ApplicationGatewayIPConfiguration',
     'ApplicationGatewayAuthenticationCertificate',
-    'ApplicationGatewayTrustedRootCertificate',
     'ApplicationGatewaySslCertificate',
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
