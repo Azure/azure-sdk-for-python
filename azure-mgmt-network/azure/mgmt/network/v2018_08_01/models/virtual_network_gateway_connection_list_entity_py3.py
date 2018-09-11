@@ -49,6 +49,10 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionType
+    :param connection_protocol: Connection protocol used for this connection.
+     Possible values include: 'IKEv2', 'IKEv1'
+    :type connection_protocol: str or
+     ~azure.mgmt.network.v2018_08_01.models.VirtualNetworkGatewayConnectionProtocol
     :param routing_weight: The routing weight.
     :type routing_weight: int
     :param shared_key: The IPSec shared key.
@@ -118,6 +122,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
         'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
+        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
@@ -134,13 +139,14 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_network_gateway1, connection_type, id: str=None, location: str=None, tags=None, authorization_key: str=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight: int=None, shared_key: str=None, peer=None, enable_bgp: bool=None, use_policy_based_traffic_selectors: bool=None, ipsec_policies=None, resource_guid: str=None, express_route_gateway_bypass: bool=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, virtual_network_gateway1, connection_type, id: str=None, location: str=None, tags=None, authorization_key: str=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_protocol=None, routing_weight: int=None, shared_key: str=None, peer=None, enable_bgp: bool=None, use_policy_based_traffic_selectors: bool=None, ipsec_policies=None, resource_guid: str=None, express_route_gateway_bypass: bool=None, etag: str=None, **kwargs) -> None:
         super(VirtualNetworkGatewayConnectionListEntity, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
         self.virtual_network_gateway2 = virtual_network_gateway2
         self.local_network_gateway2 = local_network_gateway2
         self.connection_type = connection_type
+        self.connection_protocol = connection_protocol
         self.routing_weight = routing_weight
         self.shared_key = shared_key
         self.connection_status = None

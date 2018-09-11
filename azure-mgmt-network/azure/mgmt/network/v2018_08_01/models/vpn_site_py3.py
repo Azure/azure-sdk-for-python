@@ -46,6 +46,8 @@ class VpnSite(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_08_01.models.ProvisioningState
+    :param is_security_site: IsSecuritySite flag
+    :type is_security_site: bool
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -63,17 +65,18 @@ class VpnSite(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'virtual_wan': {'key': 'properties.virtualWAN', 'type': 'SubResource'},
+        'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
         'device_properties': {'key': 'properties.deviceProperties', 'type': 'DeviceProperties'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'site_key': {'key': 'properties.siteKey', 'type': 'str'},
         'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
         'bgp_properties': {'key': 'properties.bgpProperties', 'type': 'BgpSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'is_security_site': {'key': 'properties.isSecuritySite', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, device_properties=None, ip_address: str=None, site_key: str=None, address_space=None, bgp_properties=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_wan=None, device_properties=None, ip_address: str=None, site_key: str=None, address_space=None, bgp_properties=None, provisioning_state=None, is_security_site: bool=None, **kwargs) -> None:
         super(VpnSite, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_wan = virtual_wan
         self.device_properties = device_properties
@@ -82,4 +85,5 @@ class VpnSite(Resource):
         self.address_space = address_space
         self.bgp_properties = bgp_properties
         self.provisioning_state = provisioning_state
+        self.is_security_site = is_security_site
         self.etag = None

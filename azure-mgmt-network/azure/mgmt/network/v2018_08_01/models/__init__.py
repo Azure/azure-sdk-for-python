@@ -254,16 +254,28 @@ try:
     from .virtual_network_connection_gateway_reference_py3 import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity_py3 import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters_py3 import VpnDeviceScriptParameters
+    from .p2_svpn_server_config_vpn_client_root_certificate_py3 import P2SVpnServerConfigVpnClientRootCertificate
+    from .p2_svpn_server_config_vpn_client_revoked_certificate_py3 import P2SVpnServerConfigVpnClientRevokedCertificate
+    from .p2_svpn_server_config_radius_server_root_certificate_py3 import P2SVpnServerConfigRadiusServerRootCertificate
+    from .p2_svpn_server_config_radius_client_root_certificate_py3 import P2SVpnServerConfigRadiusClientRootCertificate
+    from .p2_svpn_server_configuration_py3 import P2SVpnServerConfiguration
     from .virtual_wan_py3 import VirtualWAN
     from .device_properties_py3 import DeviceProperties
     from .vpn_site_py3 import VpnSite
     from .get_vpn_sites_configuration_request_py3 import GetVpnSitesConfigurationRequest
     from .hub_virtual_network_connection_py3 import HubVirtualNetworkConnection
+    from .virtual_hub_route_py3 import VirtualHubRoute
+    from .virtual_hub_route_table_py3 import VirtualHubRouteTable
     from .virtual_hub_py3 import VirtualHub
     from .vpn_connection_py3 import VpnConnection
-    from .policies_py3 import Policies
     from .vpn_gateway_py3 import VpnGateway
     from .vpn_site_id_py3 import VpnSiteId
+    from .virtual_wan_security_provider_py3 import VirtualWanSecurityProvider
+    from .virtual_wan_security_providers_py3 import VirtualWanSecurityProviders
+    from .vpn_client_connection_health_py3 import VpnClientConnectionHealth
+    from .p2_svpn_gateway_py3 import P2SVpnGateway
+    from .p2_svpn_profile_parameters_py3 import P2SVpnProfileParameters
+    from .vpn_profile_response_py3 import VpnProfileResponse
 except (SyntaxError, ImportError):
     from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
     from .sub_resource import SubResource
@@ -509,16 +521,28 @@ except (SyntaxError, ImportError):
     from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters import VpnDeviceScriptParameters
+    from .p2_svpn_server_config_vpn_client_root_certificate import P2SVpnServerConfigVpnClientRootCertificate
+    from .p2_svpn_server_config_vpn_client_revoked_certificate import P2SVpnServerConfigVpnClientRevokedCertificate
+    from .p2_svpn_server_config_radius_server_root_certificate import P2SVpnServerConfigRadiusServerRootCertificate
+    from .p2_svpn_server_config_radius_client_root_certificate import P2SVpnServerConfigRadiusClientRootCertificate
+    from .p2_svpn_server_configuration import P2SVpnServerConfiguration
     from .virtual_wan import VirtualWAN
     from .device_properties import DeviceProperties
     from .vpn_site import VpnSite
     from .get_vpn_sites_configuration_request import GetVpnSitesConfigurationRequest
     from .hub_virtual_network_connection import HubVirtualNetworkConnection
+    from .virtual_hub_route import VirtualHubRoute
+    from .virtual_hub_route_table import VirtualHubRouteTable
     from .virtual_hub import VirtualHub
     from .vpn_connection import VpnConnection
-    from .policies import Policies
     from .vpn_gateway import VpnGateway
     from .vpn_site_id import VpnSiteId
+    from .virtual_wan_security_provider import VirtualWanSecurityProvider
+    from .virtual_wan_security_providers import VirtualWanSecurityProviders
+    from .vpn_client_connection_health import VpnClientConnectionHealth
+    from .p2_svpn_gateway import P2SVpnGateway
+    from .p2_svpn_profile_parameters import P2SVpnProfileParameters
+    from .vpn_profile_response import VpnProfileResponse
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
@@ -575,6 +599,8 @@ from .virtual_hub_paged import VirtualHubPaged
 from .hub_virtual_network_connection_paged import HubVirtualNetworkConnectionPaged
 from .vpn_gateway_paged import VpnGatewayPaged
 from .vpn_connection_paged import VpnConnectionPaged
+from .p2_svpn_server_configuration_paged import P2SVpnServerConfigurationPaged
+from .p2_svpn_gateway_paged import P2SVpnGatewayPaged
 from .network_management_client_enums import (
     IPAllocationMethod,
     SecurityRuleProtocol,
@@ -653,7 +679,11 @@ from .network_management_client_enums import (
     AuthenticationMethod,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
+    VirtualNetworkGatewayConnectionProtocol,
+    OfficeTrafficCategory,
+    VpnGatewayTunnelingProtocol,
     VpnConnectionStatus,
+    VirtualWanSecurityProviderType,
     TunnelConnectionStatus,
     HubVirtualNetworkConnectionStatus,
 )
@@ -903,16 +933,28 @@ __all__ = [
     'VirtualNetworkConnectionGatewayReference',
     'VirtualNetworkGatewayConnectionListEntity',
     'VpnDeviceScriptParameters',
+    'P2SVpnServerConfigVpnClientRootCertificate',
+    'P2SVpnServerConfigVpnClientRevokedCertificate',
+    'P2SVpnServerConfigRadiusServerRootCertificate',
+    'P2SVpnServerConfigRadiusClientRootCertificate',
+    'P2SVpnServerConfiguration',
     'VirtualWAN',
     'DeviceProperties',
     'VpnSite',
     'GetVpnSitesConfigurationRequest',
     'HubVirtualNetworkConnection',
+    'VirtualHubRoute',
+    'VirtualHubRouteTable',
     'VirtualHub',
     'VpnConnection',
-    'Policies',
     'VpnGateway',
     'VpnSiteId',
+    'VirtualWanSecurityProvider',
+    'VirtualWanSecurityProviders',
+    'VpnClientConnectionHealth',
+    'P2SVpnGateway',
+    'P2SVpnProfileParameters',
+    'VpnProfileResponse',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
@@ -969,6 +1011,8 @@ __all__ = [
     'HubVirtualNetworkConnectionPaged',
     'VpnGatewayPaged',
     'VpnConnectionPaged',
+    'P2SVpnServerConfigurationPaged',
+    'P2SVpnGatewayPaged',
     'IPAllocationMethod',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
@@ -1046,7 +1090,11 @@ __all__ = [
     'AuthenticationMethod',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
+    'VirtualNetworkGatewayConnectionProtocol',
+    'OfficeTrafficCategory',
+    'VpnGatewayTunnelingProtocol',
     'VpnConnectionStatus',
+    'VirtualWanSecurityProviderType',
     'TunnelConnectionStatus',
     'HubVirtualNetworkConnectionStatus',
 ]
