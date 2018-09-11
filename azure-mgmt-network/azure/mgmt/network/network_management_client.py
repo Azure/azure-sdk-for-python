@@ -79,7 +79,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-07-01'
+    DEFAULT_API_VERSION = '2018-08-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -114,17 +114,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_02_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2018_08_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_02_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2018_08_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2018-07-01':
-            from .v2018_06_01 import NetworkManagementClient as ClientClass
+        if api_version == '2018-08-01':
+            from .v2018_08_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-07-01':
+            from .v2018_07_01 import NetworkManagementClient as ClientClass
         elif api_version == '2018-06-01':
             from .v2018_06_01 import NetworkManagementClient as ClientClass
         elif api_version == '2018-04-01':
@@ -232,7 +234,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_08_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def application_gateways(self):
         """Instance depends on the API version:
