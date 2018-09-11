@@ -15,8 +15,6 @@ from msrest.serialization import Model
 class GetObjectsParameters(Model):
     """Request parameters for the GetObjectsByObjectIds API.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -24,14 +22,10 @@ class GetObjectsParameters(Model):
     :type object_ids: list[str]
     :param types: The requested object types.
     :type types: list[str]
-    :param include_directory_object_references: Required. If true, also
-     searches for object IDs in the partner tenant.
+    :param include_directory_object_references: If true, also searches for
+     object IDs in the partner tenant.
     :type include_directory_object_references: bool
     """
-
-    _validation = {
-        'include_directory_object_references': {'required': True},
-    }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
