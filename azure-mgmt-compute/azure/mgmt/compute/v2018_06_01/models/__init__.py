@@ -42,6 +42,7 @@ try:
     from .os_disk_py3 import OSDisk
     from .data_disk_py3 import DataDisk
     from .storage_profile_py3 import StorageProfile
+    from .additional_capabilities_py3 import AdditionalCapabilities
     from .additional_unattend_content_py3 import AdditionalUnattendContent
     from .win_rm_listener_py3 import WinRMListener
     from .win_rm_configuration_py3 import WinRMConfiguration
@@ -205,6 +206,7 @@ except (SyntaxError, ImportError):
     from .os_disk import OSDisk
     from .data_disk import DataDisk
     from .storage_profile import StorageProfile
+    from .additional_capabilities import AdditionalCapabilities
     from .additional_unattend_content import AdditionalUnattendContent
     from .win_rm_listener import WinRMListener
     from .win_rm_configuration import WinRMConfiguration
@@ -420,6 +422,7 @@ __all__ = [
     'OSDisk',
     'DataDisk',
     'StorageProfile',
+    'AdditionalCapabilities',
     'AdditionalUnattendContent',
     'WinRMListener',
     'WinRMConfiguration',

@@ -50,6 +50,12 @@ class VirtualMachineScaleSetVM(Resource):
      machine disks.
     :type storage_profile:
      ~azure.mgmt.compute.v2018_06_01.models.StorageProfile
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the virtual machine in the scale set. For instance: whether
+     the virtual machine has the capability to support attaching managed data
+     disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2018_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual
      machine.
     :type os_profile: ~azure.mgmt.compute.v2018_06_01.models.OSProfile
@@ -129,6 +135,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
@@ -149,6 +156,7 @@ class VirtualMachineScaleSetVM(Resource):
         self.instance_view = None
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
+        self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.os_profile = kwargs.get('os_profile', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)

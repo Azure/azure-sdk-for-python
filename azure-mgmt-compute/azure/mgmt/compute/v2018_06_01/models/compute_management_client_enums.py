@@ -214,6 +214,7 @@ class StorageAccountTypes(str, Enum):
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
     standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
 
 
 class PassNames(str, Enum):
