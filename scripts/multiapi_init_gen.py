@@ -1,4 +1,5 @@
 import importlib
+import logging
 import os
 import pkgutil
 import re
@@ -24,6 +25,9 @@ import pkg_resources
 pkg_resources.declare_namespace('azure')
 
 _GENERATE_MARKER = "############ Generated from here ############\n"
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def parse_input(input_parameter):
     """From a syntax like package_name#submodule, build a package name
@@ -83,7 +87,17 @@ def build_operation_meta(versionned_modules):
         if not extracted_api_versions:
             sys.exit("Was not able to extract api_version of {}".format(versionned_label))
         if len(extracted_api_versions) >= 2:
-            sys.exit("Found too much API version: {} in label {}".format(extracted_api_versions, versionned_label))
+            # Mixed operation group, try to figure out what we want to use
+            final_api_version = None
+            _LOGGER.warning("Found too much API version: {} in label {}".format(extracted_api_versions, versionned_label))
+            for candidate_api_version in extracted_api_versions:
+                if "v{}".format(candidate_api_version.replace("-", "_")) == versionned_label:
+                    final_api_version = candidate_api_version
+                    _LOGGER.warning("Guessing you want {} based on label {}".format(final_api_version, versionned_label))
+                    break
+            else:
+                sys.exit("Unble to match {} to label {}".format(extracted_api_versions, versionned_label))
+            extracted_api_versions = {final_api_version}
         mod_to_api_version[versionned_label] = extracted_api_versions.pop()
 
     # latest: api_version=mod_to_api_version[versions[-1][0]]
@@ -177,6 +191,8 @@ _CODE_PREFIX = """
 """
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     package_name, module_name = parse_input(sys.argv[1])
     versionned_modules = get_versionned_modules(package_name, module_name)
     version_dict, mod_to_api_version = build_operation_meta(versionned_modules)
