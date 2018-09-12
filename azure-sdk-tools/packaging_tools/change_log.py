@@ -43,8 +43,19 @@ class ChangeLog:
                 self.features.append(_ADD_OPERATION_GROUP.format(operation_name))
             return
 
+        _, *remaining_path = remaining_path
+        if not remaining_path:
+            # Not common, but this means this has changed a lot. Compute the list manually
+            old_ops_name = list(self._old_report["operations"][operation_name]["functions"])
+            new_ops_name = list(self._new_report["operations"][operation_name]["functions"])
+            for removed_function in set(old_ops_name) - set(new_ops_name):
+                self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, removed_function))
+            for added_function in set(new_ops_name) - set(old_ops_name):
+                self.features.append(_ADD_OPERATION.format(operation_name, added_function))
+            return
+
         # Is this a new operation, inside a known operation group?
-        _, function_name, *remaining_path = remaining_path
+        function_name, *remaining_path = remaining_path
         if not remaining_path:
             if is_deletion:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, function_name))
@@ -64,7 +75,11 @@ class ChangeLog:
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new model?
-        _, mtype, model_name, *remaining_path = path
+        _, mtype, *remaining_path = path
+        if not remaining_path:
+            # Seen once in Network, because exceptions were added. Bypass
+            return
+        model_name, *remaining_path = remaining_path
         if not remaining_path:
             # A new model or a model deletion is not very interesting by itself
             # since it usually means that there is a new operation

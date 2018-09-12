@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.container_services_operations import ContainerServicesOperations
+from .operations.operations import Operations
 from .operations.managed_clusters_operations import ManagedClustersOperations
 from . import models
 
@@ -52,7 +53,7 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ContainerServiceClient(object):
+class ContainerServiceClient(SDKClient):
     """The Container Service Client.
 
     :ivar config: Configuration for client.
@@ -60,6 +61,8 @@ class ContainerServiceClient(object):
 
     :ivar container_services: ContainerServices operations
     :vartype container_services: azure.mgmt.containerservice.operations.ContainerServicesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.containerservice.operations.Operations
     :ivar managed_clusters: ManagedClusters operations
     :vartype managed_clusters: azure.mgmt.containerservice.operations.ManagedClustersOperations
 
@@ -77,13 +80,15 @@ class ContainerServiceClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ContainerServiceClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ContainerServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.container_services = ContainerServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_clusters = ManagedClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

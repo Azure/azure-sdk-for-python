@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-cognitiveservices-vision-customvision"
+package_pprint_name = "Custom Vision"
+package_doc_id = "cognitive-services"
+is_stable = false
+is_arm = false

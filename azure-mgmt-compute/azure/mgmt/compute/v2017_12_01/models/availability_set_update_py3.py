@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .update_resource import UpdateResource
+from .update_resource_py3 import UpdateResource
 
 
 class AvailabilitySetUpdate(UpdateResource):

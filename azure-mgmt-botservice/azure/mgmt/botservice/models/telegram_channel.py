@@ -15,7 +15,9 @@ from .channel import Channel
 class TelegramChannel(Channel):
     """Telegram channel definition.
 
-    :param channel_name: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param channel_name: Required. Constant filled by server.
     :type channel_name: str
     :param properties: The set of properties specific to Telegram channel
      resource
@@ -31,7 +33,7 @@ class TelegramChannel(Channel):
         'properties': {'key': 'properties', 'type': 'TelegramChannelProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(TelegramChannel, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(TelegramChannel, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.channel_name = 'TelegramChannel'

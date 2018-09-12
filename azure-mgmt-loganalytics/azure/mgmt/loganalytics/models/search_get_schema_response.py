@@ -16,18 +16,17 @@ class SearchGetSchemaResponse(Model):
     """The get schema operation response.
 
     :param metadata: The metadata from search results.
-    :type metadata: :class:`SearchMetadata
-     <azure.mgmt.loganalytics.models.SearchMetadata>`
+    :type metadata: ~azure.mgmt.loganalytics.models.SearchMetadata
     :param value: The array of result values.
-    :type value: list of :class:`SearchSchemaValue
-     <azure.mgmt.loganalytics.models.SearchSchemaValue>`
+    :type value: list[~azure.mgmt.loganalytics.models.SearchSchemaValue]
     """
 
     _attribute_map = {
-        'metadata': {'key': '__metadata', 'type': 'SearchMetadata'},
+        'metadata': {'key': 'metadata', 'type': 'SearchMetadata'},
         'value': {'key': 'value', 'type': '[SearchSchemaValue]'},
     }
 
-    def __init__(self, metadata=None, value=None):
-        self.metadata = metadata
-        self.value = value
+    def __init__(self, **kwargs):
+        super(SearchGetSchemaResponse, self).__init__(**kwargs)
+        self.metadata = kwargs.get('metadata', None)
+        self.value = kwargs.get('value', None)

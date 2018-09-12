@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
+from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
 
 
 class ConnectToSourceSqlServerTaskOutputLoginLevel(ConnectToSourceSqlServerTaskOutput):
@@ -55,7 +55,7 @@ class ConnectToSourceSqlServerTaskOutputLoginLevel(ConnectToSourceSqlServerTaskO
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'login_type': {'key': 'loginType', 'type': 'LoginType'},
+        'login_type': {'key': 'loginType', 'type': 'str'},
         'default_database': {'key': 'defaultDatabase', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'migration_eligibility': {'key': 'migrationEligibility', 'type': 'MigrationEligibilityInfo'},

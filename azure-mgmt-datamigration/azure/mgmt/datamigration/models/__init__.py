@@ -10,18 +10,62 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
     from .odata_error_py3 import ODataError
     from .reportable_exception_py3 import ReportableException
-    from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
-    from .blob_share_py3 import BlobShare
+    from .migrate_sync_complete_command_output_py3 import MigrateSyncCompleteCommandOutput
+    from .migrate_sync_complete_command_input_py3 import MigrateSyncCompleteCommandInput
+    from .migrate_sync_complete_command_properties_py3 import MigrateSyncCompleteCommandProperties
+    from .command_properties_py3 import CommandProperties
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .get_tde_certificates_sql_task_output_py3 import GetTdeCertificatesSqlTaskOutput
+    from .selected_certificate_input_py3 import SelectedCertificateInput
     from .file_share_py3 import FileShare
-    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
+    from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
+    from .my_sql_connection_info_py3 import MySqlConnectionInfo
     from .connection_info_py3 import ConnectionInfo
     from .sql_connection_info_py3 import SqlConnectionInfo
+    from .get_tde_certificates_sql_task_input_py3 import GetTdeCertificatesSqlTaskInput
+    from .get_tde_certificates_sql_task_properties_py3 import GetTdeCertificatesSqlTaskProperties
+    from .database_backup_info_py3 import DatabaseBackupInfo
+    from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from .blob_share_py3 import BlobShare
+    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
     from .validate_migration_input_sql_server_sql_mi_task_input_py3 import ValidateMigrationInputSqlServerSqlMITaskInput
     from .validate_migration_input_sql_server_sql_mi_task_properties_py3 import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from .validate_sync_migration_input_sql_server_task_output_py3 import ValidateSyncMigrationInputSqlServerTaskOutput
+    from .migrate_sql_server_sql_db_sync_database_input_py3 import MigrateSqlServerSqlDbSyncDatabaseInput
+    from .validate_sync_migration_input_sql_server_task_input_py3 import ValidateSyncMigrationInputSqlServerTaskInput
+    from .validate_migration_input_sql_server_sql_db_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
+    from .sync_migration_database_error_event_py3 import SyncMigrationDatabaseErrorEvent
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_migration_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_database_input_py3 import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_input_py3 import MigrateMySqlAzureDbForMySqlSyncTaskInput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_properties_py3 import MigrateMySqlAzureDbForMySqlSyncTaskProperties
+    from .migrate_sql_server_sql_db_sync_task_output_database_error_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
+    from .migrate_sql_server_sql_db_sync_task_output_error_py3 import MigrateSqlServerSqlDbSyncTaskOutputError
+    from .migrate_sql_server_sql_db_sync_task_output_table_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
+    from .migrate_sql_server_sql_db_sync_task_output_database_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_db_sync_task_output_migration_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_db_sync_task_output_py3 import MigrateSqlServerSqlDbSyncTaskOutput
+    from .sql_migration_task_input_py3 import SqlMigrationTaskInput
+    from .migration_validation_options_py3 import MigrationValidationOptions
+    from .migrate_sql_server_sql_db_sync_task_input_py3 import MigrateSqlServerSqlDbSyncTaskInput
+    from .migrate_sql_server_sql_db_sync_task_properties_py3 import MigrateSqlServerSqlDbSyncTaskProperties
     from .validation_error_py3 import ValidationError
     from .wait_statistics_py3 import WaitStatistics
     from .execution_statistics_py3 import ExecutionStatistics
@@ -41,8 +85,6 @@ try:
     from .database_summary_result_py3 import DatabaseSummaryResult
     from .migrate_sql_server_sql_db_task_output_migration_level_py3 import MigrateSqlServerSqlDbTaskOutputMigrationLevel
     from .migrate_sql_server_sql_db_task_output_py3 import MigrateSqlServerSqlDbTaskOutput
-    from .sql_migration_task_input_py3 import SqlMigrationTaskInput
-    from .migration_validation_options_py3 import MigrationValidationOptions
     from .migrate_sql_server_sql_db_database_input_py3 import MigrateSqlServerSqlDbDatabaseInput
     from .migrate_sql_server_sql_db_task_input_py3 import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties_py3 import MigrateSqlServerSqlDbTaskProperties
@@ -55,16 +97,24 @@ try:
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties_py3 import MigrateSqlServerSqlMITaskProperties
+    from .connect_to_target_azure_db_for_my_sql_task_output_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
+    from .connect_to_target_azure_db_for_my_sql_task_input_py3 import ConnectToTargetAzureDbForMySqlTaskInput
+    from .connect_to_target_azure_db_for_my_sql_task_properties_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
+    from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
+    from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
+    from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
     from .database_table_py3 import DatabaseTable
+    from .get_user_tables_sql_sync_task_output_py3 import GetUserTablesSqlSyncTaskOutput
+    from .get_user_tables_sql_sync_task_input_py3 import GetUserTablesSqlSyncTaskInput
+    from .get_user_tables_sql_sync_task_properties_py3 import GetUserTablesSqlSyncTaskProperties
     from .get_user_tables_sql_task_output_py3 import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input_py3 import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties_py3 import GetUserTablesSqlTaskProperties
     from .connect_to_target_sql_db_task_output_py3 import ConnectToTargetSqlDbTaskOutput
+    from .connect_to_target_sql_sql_db_sync_task_input_py3 import ConnectToTargetSqlSqlDbSyncTaskInput
+    from .connect_to_target_sql_sql_db_sync_task_properties_py3 import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input_py3 import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties_py3 import ConnectToTargetSqlDbTaskProperties
-    from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
-    from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
-    from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
     from .migration_eligibility_info_py3 import MigrationEligibilityInfo
     from .connect_to_source_sql_server_task_output_agent_job_level_py3 import ConnectToSourceSqlServerTaskOutputAgentJobLevel
     from .connect_to_source_sql_server_task_output_login_level_py3 import ConnectToSourceSqlServerTaskOutputLoginLevel
@@ -73,6 +123,7 @@ try:
     from .connect_to_source_sql_server_task_output_task_level_py3 import ConnectToSourceSqlServerTaskOutputTaskLevel
     from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
     from .connect_to_source_sql_server_task_input_py3 import ConnectToSourceSqlServerTaskInput
+    from .connect_to_source_sql_server_sync_task_properties_py3 import ConnectToSourceSqlServerSyncTaskProperties
     from .connect_to_source_sql_server_task_properties_py3 import ConnectToSourceSqlServerTaskProperties
     from .project_task_properties_py3 import ProjectTaskProperties
     from .project_task_py3 import ProjectTask
@@ -96,26 +147,88 @@ try:
     from .resource_sku_costs_py3 import ResourceSkuCosts
     from .resource_sku_capacity_py3 import ResourceSkuCapacity
     from .resource_sku_py3 import ResourceSku
+    from .connect_to_source_my_sql_task_input_py3 import ConnectToSourceMySqlTaskInput
+    from .server_properties_py3 import ServerProperties
+    from .connect_to_source_non_sql_task_output_py3 import ConnectToSourceNonSqlTaskOutput
+    from .connect_to_source_my_sql_task_properties_py3 import ConnectToSourceMySqlTaskProperties
+    from .schema_migration_setting_py3 import SchemaMigrationSetting
+    from .migrate_schema_sql_server_sql_db_database_input_py3 import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from .migrate_schema_sql_server_sql_db_task_input_py3 import MigrateSchemaSqlServerSqlDbTaskInput
+    from .migrate_schema_sql_server_sql_db_task_output_py3 import MigrateSchemaSqlServerSqlDbTaskOutput
+    from .migrate_schema_sql_server_sql_db_task_properties_py3 import MigrateSchemaSqlServerSqlDbTaskProperties
+    from .migrate_schema_sql_server_sql_db_task_output_migration_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_schema_sql_server_sql_db_task_output_database_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migrate_schema_sql_server_sql_db_task_output_error_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from .migrate_schema_sql_task_output_error_py3 import MigrateSchemaSqlTaskOutputError
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
     from .data_migration_project_metadata_py3 import DataMigrationProjectMetadata
+    from .get_project_details_non_sql_task_input_py3 import GetProjectDetailsNonSqlTaskInput
+    from .non_sql_data_migration_table_py3 import NonSqlDataMigrationTable
+    from .non_sql_migration_task_input_py3 import NonSqlMigrationTaskInput
     from .data_migration_error_py3 import DataMigrationError
+    from .non_sql_data_migration_table_result_py3 import NonSqlDataMigrationTableResult
+    from .non_sql_migration_task_output_py3 import NonSqlMigrationTaskOutput
     from .database_file_input_py3 import DatabaseFileInput
     from .migrate_sql_server_sql_server_database_input_py3 import MigrateSqlServerSqlServerDatabaseInput
 except (SyntaxError, ImportError):
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
     from .odata_error import ODataError
     from .reportable_exception import ReportableException
-    from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
-    from .blob_share import BlobShare
+    from .migrate_sync_complete_command_output import MigrateSyncCompleteCommandOutput
+    from .migrate_sync_complete_command_input import MigrateSyncCompleteCommandInput
+    from .migrate_sync_complete_command_properties import MigrateSyncCompleteCommandProperties
+    from .command_properties import CommandProperties
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .get_tde_certificates_sql_task_output import GetTdeCertificatesSqlTaskOutput
+    from .selected_certificate_input import SelectedCertificateInput
     from .file_share import FileShare
-    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
+    from .postgre_sql_connection_info import PostgreSqlConnectionInfo
+    from .my_sql_connection_info import MySqlConnectionInfo
     from .connection_info import ConnectionInfo
     from .sql_connection_info import SqlConnectionInfo
+    from .get_tde_certificates_sql_task_input import GetTdeCertificatesSqlTaskInput
+    from .get_tde_certificates_sql_task_properties import GetTdeCertificatesSqlTaskProperties
+    from .database_backup_info import DatabaseBackupInfo
+    from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from .blob_share import BlobShare
+    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
     from .validate_migration_input_sql_server_sql_mi_task_input import ValidateMigrationInputSqlServerSqlMITaskInput
     from .validate_migration_input_sql_server_sql_mi_task_properties import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from .validate_sync_migration_input_sql_server_task_output import ValidateSyncMigrationInputSqlServerTaskOutput
+    from .migrate_sql_server_sql_db_sync_database_input import MigrateSqlServerSqlDbSyncDatabaseInput
+    from .validate_sync_migration_input_sql_server_task_input import ValidateSyncMigrationInputSqlServerTaskInput
+    from .validate_migration_input_sql_server_sql_db_sync_task_properties import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
+    from .sync_migration_database_error_event import SyncMigrationDatabaseErrorEvent
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_migration_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output import MigrateMySqlAzureDbForMySqlSyncTaskOutput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_database_input import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_input import MigrateMySqlAzureDbForMySqlSyncTaskInput
+    from .migrate_my_sql_azure_db_for_my_sql_sync_task_properties import MigrateMySqlAzureDbForMySqlSyncTaskProperties
+    from .migrate_sql_server_sql_db_sync_task_output_database_error import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
+    from .migrate_sql_server_sql_db_sync_task_output_error import MigrateSqlServerSqlDbSyncTaskOutputError
+    from .migrate_sql_server_sql_db_sync_task_output_table_level import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
+    from .migrate_sql_server_sql_db_sync_task_output_database_level import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_db_sync_task_output_migration_level import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_db_sync_task_output import MigrateSqlServerSqlDbSyncTaskOutput
+    from .sql_migration_task_input import SqlMigrationTaskInput
+    from .migration_validation_options import MigrationValidationOptions
+    from .migrate_sql_server_sql_db_sync_task_input import MigrateSqlServerSqlDbSyncTaskInput
+    from .migrate_sql_server_sql_db_sync_task_properties import MigrateSqlServerSqlDbSyncTaskProperties
     from .validation_error import ValidationError
     from .wait_statistics import WaitStatistics
     from .execution_statistics import ExecutionStatistics
@@ -135,8 +248,6 @@ except (SyntaxError, ImportError):
     from .database_summary_result import DatabaseSummaryResult
     from .migrate_sql_server_sql_db_task_output_migration_level import MigrateSqlServerSqlDbTaskOutputMigrationLevel
     from .migrate_sql_server_sql_db_task_output import MigrateSqlServerSqlDbTaskOutput
-    from .sql_migration_task_input import SqlMigrationTaskInput
-    from .migration_validation_options import MigrationValidationOptions
     from .migrate_sql_server_sql_db_database_input import MigrateSqlServerSqlDbDatabaseInput
     from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
@@ -149,16 +260,24 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties import MigrateSqlServerSqlMITaskProperties
+    from .connect_to_target_azure_db_for_my_sql_task_output import ConnectToTargetAzureDbForMySqlTaskOutput
+    from .connect_to_target_azure_db_for_my_sql_task_input import ConnectToTargetAzureDbForMySqlTaskInput
+    from .connect_to_target_azure_db_for_my_sql_task_properties import ConnectToTargetAzureDbForMySqlTaskProperties
+    from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
+    from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
+    from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
     from .database_table import DatabaseTable
+    from .get_user_tables_sql_sync_task_output import GetUserTablesSqlSyncTaskOutput
+    from .get_user_tables_sql_sync_task_input import GetUserTablesSqlSyncTaskInput
+    from .get_user_tables_sql_sync_task_properties import GetUserTablesSqlSyncTaskProperties
     from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
     from .connect_to_target_sql_db_task_output import ConnectToTargetSqlDbTaskOutput
+    from .connect_to_target_sql_sql_db_sync_task_input import ConnectToTargetSqlSqlDbSyncTaskInput
+    from .connect_to_target_sql_sql_db_sync_task_properties import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
-    from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
-    from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
-    from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
     from .migration_eligibility_info import MigrationEligibilityInfo
     from .connect_to_source_sql_server_task_output_agent_job_level import ConnectToSourceSqlServerTaskOutputAgentJobLevel
     from .connect_to_source_sql_server_task_output_login_level import ConnectToSourceSqlServerTaskOutputLoginLevel
@@ -167,6 +286,7 @@ except (SyntaxError, ImportError):
     from .connect_to_source_sql_server_task_output_task_level import ConnectToSourceSqlServerTaskOutputTaskLevel
     from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
     from .connect_to_source_sql_server_task_input import ConnectToSourceSqlServerTaskInput
+    from .connect_to_source_sql_server_sync_task_properties import ConnectToSourceSqlServerSyncTaskProperties
     from .connect_to_source_sql_server_task_properties import ConnectToSourceSqlServerTaskProperties
     from .project_task_properties import ProjectTaskProperties
     from .project_task import ProjectTask
@@ -190,11 +310,29 @@ except (SyntaxError, ImportError):
     from .resource_sku_costs import ResourceSkuCosts
     from .resource_sku_capacity import ResourceSkuCapacity
     from .resource_sku import ResourceSku
+    from .connect_to_source_my_sql_task_input import ConnectToSourceMySqlTaskInput
+    from .server_properties import ServerProperties
+    from .connect_to_source_non_sql_task_output import ConnectToSourceNonSqlTaskOutput
+    from .connect_to_source_my_sql_task_properties import ConnectToSourceMySqlTaskProperties
+    from .schema_migration_setting import SchemaMigrationSetting
+    from .migrate_schema_sql_server_sql_db_database_input import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from .migrate_schema_sql_server_sql_db_task_input import MigrateSchemaSqlServerSqlDbTaskInput
+    from .migrate_schema_sql_server_sql_db_task_output import MigrateSchemaSqlServerSqlDbTaskOutput
+    from .migrate_schema_sql_server_sql_db_task_properties import MigrateSchemaSqlServerSqlDbTaskProperties
+    from .migrate_schema_sql_server_sql_db_task_output_migration_level import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_schema_sql_server_sql_db_task_output_database_level import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migrate_schema_sql_server_sql_db_task_output_error import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from .migrate_schema_sql_task_output_error import MigrateSchemaSqlTaskOutputError
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
     from .data_migration_project_metadata import DataMigrationProjectMetadata
+    from .get_project_details_non_sql_task_input import GetProjectDetailsNonSqlTaskInput
+    from .non_sql_data_migration_table import NonSqlDataMigrationTable
+    from .non_sql_migration_task_input import NonSqlMigrationTaskInput
     from .data_migration_error import DataMigrationError
+    from .non_sql_data_migration_table_result import NonSqlDataMigrationTableResult
+    from .non_sql_migration_task_output import NonSqlMigrationTaskOutput
     from .database_file_input import DatabaseFileInput
     from .migrate_sql_server_sql_server_database_input import MigrateSqlServerSqlServerDatabaseInput
 from .resource_sku_paged import ResourceSkuPaged
@@ -205,7 +343,13 @@ from .project_paged import ProjectPaged
 from .quota_paged import QuotaPaged
 from .service_operation_paged import ServiceOperationPaged
 from .data_migration_service_client_enums import (
+    CommandState,
+    SqlSourcePlatform,
     AuthenticationType,
+    BackupType,
+    BackupMode,
+    SyncTableMigrationState,
+    SyncDatabaseMigrationReportingState,
     ValidationStatus,
     Severity,
     UpdateActionType,
@@ -229,22 +373,70 @@ from .data_migration_service_client_enums import (
     ResourceSkuRestrictionsType,
     ResourceSkuRestrictionsReasonCode,
     ResourceSkuCapacityScaleType,
+    MySqlTargetPlatformType,
+    SchemaMigrationOption,
+    SchemaMigrationStage,
+    DataMigrationResultCode,
     ErrorType,
 )
 
 __all__ = [
-    'TrackedResource',
-    'Resource',
     'ODataError',
     'ReportableException',
-    'ValidateMigrationInputSqlServerSqlMITaskOutput',
-    'BlobShare',
+    'MigrateSyncCompleteCommandOutput',
+    'MigrateSyncCompleteCommandInput',
+    'MigrateSyncCompleteCommandProperties',
+    'CommandProperties',
+    'TrackedResource',
+    'Resource',
+    'GetTdeCertificatesSqlTaskOutput',
+    'SelectedCertificateInput',
     'FileShare',
-    'MigrateSqlServerSqlMIDatabaseInput',
+    'PostgreSqlConnectionInfo',
+    'MySqlConnectionInfo',
     'ConnectionInfo',
     'SqlConnectionInfo',
+    'GetTdeCertificatesSqlTaskInput',
+    'GetTdeCertificatesSqlTaskProperties',
+    'DatabaseBackupInfo',
+    'ValidateMigrationInputSqlServerSqlMITaskOutput',
+    'BlobShare',
+    'MigrateSqlServerSqlMIDatabaseInput',
     'ValidateMigrationInputSqlServerSqlMITaskInput',
     'ValidateMigrationInputSqlServerSqlMITaskProperties',
+    'ValidateSyncMigrationInputSqlServerTaskOutput',
+    'MigrateSqlServerSqlDbSyncDatabaseInput',
+    'ValidateSyncMigrationInputSqlServerTaskInput',
+    'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties',
+    'SyncMigrationDatabaseErrorEvent',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputError',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutput',
+    'MigrateMySqlAzureDbForMySqlSyncDatabaseInput',
+    'MigrateMySqlAzureDbForMySqlSyncTaskInput',
+    'MigrateMySqlAzureDbForMySqlSyncTaskProperties',
+    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseError',
+    'MigrateSqlServerSqlDbSyncTaskOutputError',
+    'MigrateSqlServerSqlDbSyncTaskOutputTableLevel',
+    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel',
+    'MigrateSqlServerSqlDbSyncTaskOutput',
+    'SqlMigrationTaskInput',
+    'MigrationValidationOptions',
+    'MigrateSqlServerSqlDbSyncTaskInput',
+    'MigrateSqlServerSqlDbSyncTaskProperties',
     'ValidationError',
     'WaitStatistics',
     'ExecutionStatistics',
@@ -264,8 +456,6 @@ __all__ = [
     'DatabaseSummaryResult',
     'MigrateSqlServerSqlDbTaskOutputMigrationLevel',
     'MigrateSqlServerSqlDbTaskOutput',
-    'SqlMigrationTaskInput',
-    'MigrationValidationOptions',
     'MigrateSqlServerSqlDbDatabaseInput',
     'MigrateSqlServerSqlDbTaskInput',
     'MigrateSqlServerSqlDbTaskProperties',
@@ -278,16 +468,24 @@ __all__ = [
     'MigrateSqlServerSqlMITaskOutput',
     'MigrateSqlServerSqlMITaskInput',
     'MigrateSqlServerSqlMITaskProperties',
+    'ConnectToTargetAzureDbForMySqlTaskOutput',
+    'ConnectToTargetAzureDbForMySqlTaskInput',
+    'ConnectToTargetAzureDbForMySqlTaskProperties',
+    'ConnectToTargetSqlMITaskOutput',
+    'ConnectToTargetSqlMITaskInput',
+    'ConnectToTargetSqlMITaskProperties',
     'DatabaseTable',
+    'GetUserTablesSqlSyncTaskOutput',
+    'GetUserTablesSqlSyncTaskInput',
+    'GetUserTablesSqlSyncTaskProperties',
     'GetUserTablesSqlTaskOutput',
     'GetUserTablesSqlTaskInput',
     'GetUserTablesSqlTaskProperties',
     'ConnectToTargetSqlDbTaskOutput',
+    'ConnectToTargetSqlSqlDbSyncTaskInput',
+    'ConnectToTargetSqlSqlDbSyncTaskProperties',
     'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskProperties',
-    'ConnectToTargetSqlMITaskOutput',
-    'ConnectToTargetSqlMITaskInput',
-    'ConnectToTargetSqlMITaskProperties',
     'MigrationEligibilityInfo',
     'ConnectToSourceSqlServerTaskOutputAgentJobLevel',
     'ConnectToSourceSqlServerTaskOutputLoginLevel',
@@ -296,6 +494,7 @@ __all__ = [
     'ConnectToSourceSqlServerTaskOutputTaskLevel',
     'ConnectToSourceSqlServerTaskOutput',
     'ConnectToSourceSqlServerTaskInput',
+    'ConnectToSourceSqlServerSyncTaskProperties',
     'ConnectToSourceSqlServerTaskProperties',
     'ProjectTaskProperties',
     'ProjectTask',
@@ -319,11 +518,29 @@ __all__ = [
     'ResourceSkuCosts',
     'ResourceSkuCapacity',
     'ResourceSku',
+    'ConnectToSourceMySqlTaskInput',
+    'ServerProperties',
+    'ConnectToSourceNonSqlTaskOutput',
+    'ConnectToSourceMySqlTaskProperties',
+    'SchemaMigrationSetting',
+    'MigrateSchemaSqlServerSqlDbDatabaseInput',
+    'MigrateSchemaSqlServerSqlDbTaskInput',
+    'MigrateSchemaSqlServerSqlDbTaskOutput',
+    'MigrateSchemaSqlServerSqlDbTaskProperties',
+    'MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel',
+    'MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel',
+    'MigrateSchemaSqlServerSqlDbTaskOutputError',
+    'MigrateSchemaSqlTaskOutputError',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',
     'DataMigrationProjectMetadata',
+    'GetProjectDetailsNonSqlTaskInput',
+    'NonSqlDataMigrationTable',
+    'NonSqlMigrationTaskInput',
     'DataMigrationError',
+    'NonSqlDataMigrationTableResult',
+    'NonSqlMigrationTaskOutput',
     'DatabaseFileInput',
     'MigrateSqlServerSqlServerDatabaseInput',
     'ResourceSkuPaged',
@@ -333,7 +550,13 @@ __all__ = [
     'ProjectPaged',
     'QuotaPaged',
     'ServiceOperationPaged',
+    'CommandState',
+    'SqlSourcePlatform',
     'AuthenticationType',
+    'BackupType',
+    'BackupMode',
+    'SyncTableMigrationState',
+    'SyncDatabaseMigrationReportingState',
     'ValidationStatus',
     'Severity',
     'UpdateActionType',
@@ -357,5 +580,9 @@ __all__ = [
     'ResourceSkuRestrictionsType',
     'ResourceSkuRestrictionsReasonCode',
     'ResourceSkuCapacityScaleType',
+    'MySqlTargetPlatformType',
+    'SchemaMigrationOption',
+    'SchemaMigrationStage',
+    'DataMigrationResultCode',
     'ErrorType',
 ]

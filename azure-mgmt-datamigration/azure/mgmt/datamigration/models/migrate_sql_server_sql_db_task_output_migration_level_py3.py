@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .migrate_sql_server_sql_db_task_output import MigrateSqlServerSqlDbTaskOutput
+from .migrate_sql_server_sql_db_task_output_py3 import MigrateSqlServerSqlDbTaskOutput
 
 
 class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOutput):
@@ -45,6 +45,9 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
     :ivar database_summary: Summary of database results in the migration
     :vartype database_summary: dict[str,
      ~azure.mgmt.datamigration.models.DatabaseSummaryResult]
+    :param migration_validation_result: Migration Validation Results
+    :type migration_validation_result:
+     ~azure.mgmt.datamigration.models.MigrationValidationResult
     :param migration_report_result: Migration Report Result, provides unique
      url for downloading your migration report.
     :type migration_report_result:
@@ -91,6 +94,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'message': {'key': 'message', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'database_summary': {'key': 'databaseSummary', 'type': '{DatabaseSummaryResult}'},
+        'migration_validation_result': {'key': 'migrationValidationResult', 'type': 'MigrationValidationResult'},
         'migration_report_result': {'key': 'migrationReportResult', 'type': 'MigrationReportResult'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
@@ -99,7 +103,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'exceptions_and_warnings': {'key': 'exceptionsAndWarnings', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, *, migration_report_result=None, **kwargs) -> None:
+    def __init__(self, *, migration_validation_result=None, migration_report_result=None, **kwargs) -> None:
         super(MigrateSqlServerSqlDbTaskOutputMigrationLevel, self).__init__(**kwargs)
         self.started_on = None
         self.ended_on = None
@@ -109,6 +113,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         self.message = None
         self.databases = None
         self.database_summary = None
+        self.migration_validation_result = migration_validation_result
         self.migration_report_result = migration_report_result
         self.source_server_version = None
         self.source_server_brand_version = None

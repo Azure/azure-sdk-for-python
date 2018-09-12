@@ -38,8 +38,8 @@ class PowerShellCommandResult(Model):
     :type message: str
     :param descriptions: Collection of PromptFieldDescription objects that
      contains the user input.
-    :type descriptions: list of :class:`PromptFieldDescription
-     <azure.mgmt.servermanager.models.PromptFieldDescription>`
+    :type descriptions:
+     list[~azure.mgmt.servermanager.models.PromptFieldDescription]
     """
 
     _attribute_map = {
@@ -55,14 +55,15 @@ class PowerShellCommandResult(Model):
         'descriptions': {'key': 'descriptions', 'type': '[PromptFieldDescription]'},
     }
 
-    def __init__(self, message_type=None, foreground_color=None, background_color=None, value=None, prompt=None, exit_code=None, id=None, caption=None, message=None, descriptions=None):
-        self.message_type = message_type
-        self.foreground_color = foreground_color
-        self.background_color = background_color
-        self.value = value
-        self.prompt = prompt
-        self.exit_code = exit_code
-        self.id = id
-        self.caption = caption
-        self.message = message
-        self.descriptions = descriptions
+    def __init__(self, **kwargs):
+        super(PowerShellCommandResult, self).__init__(**kwargs)
+        self.message_type = kwargs.get('message_type', None)
+        self.foreground_color = kwargs.get('foreground_color', None)
+        self.background_color = kwargs.get('background_color', None)
+        self.value = kwargs.get('value', None)
+        self.prompt = kwargs.get('prompt', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.id = kwargs.get('id', None)
+        self.caption = kwargs.get('caption', None)
+        self.message = kwargs.get('message', None)
+        self.descriptions = kwargs.get('descriptions', None)

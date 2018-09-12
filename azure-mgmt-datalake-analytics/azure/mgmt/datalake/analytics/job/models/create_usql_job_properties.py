@@ -15,15 +15,17 @@ from .create_job_properties import CreateJobProperties
 class CreateUSqlJobProperties(CreateJobProperties):
     """U-SQL job properties used when submitting U-SQL jobs.
 
-    :param runtime_version: the runtime version of the Data Lake Analytics
+    All required parameters must be populated in order to send to Azure.
+
+    :param runtime_version: The runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
-     is 3 MB.
+    :param script: Required. The script to run. Please note that the maximum
+     script size is 3 MB.
     :type script: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param compile_mode: the specific compilation mode for the job used during
+    :param compile_mode: The specific compilation mode for the job used during
      execution. If this is not specified during submission, the server will
      determine the optimal compilation mode. Possible values include:
      'Semantic', 'Full', 'SingleBox'
@@ -43,7 +45,7 @@ class CreateUSqlJobProperties(CreateJobProperties):
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, compile_mode=None):
-        super(CreateUSqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
-        self.compile_mode = compile_mode
+    def __init__(self, **kwargs):
+        super(CreateUSqlJobProperties, self).__init__(**kwargs)
+        self.compile_mode = kwargs.get('compile_mode', None)
         self.type = 'USql'

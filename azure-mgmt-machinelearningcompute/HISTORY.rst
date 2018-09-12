@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.4.1 (2018-05-29)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- msrestazure dependency version range
+
 0.4.0 (2018-01-02)
 ++++++++++++++++++
 

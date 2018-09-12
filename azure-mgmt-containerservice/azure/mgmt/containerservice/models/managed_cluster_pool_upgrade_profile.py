@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class ManagedClusterPoolUpgradeProfile(Model):
     """The list of available upgrade versions.
 
-    :param kubernetes_version: Kubernetes version (major, minor, patch).
+    All required parameters must be populated in order to send to Azure.
+
+    :param kubernetes_version: Required. Kubernetes version (major, minor,
+     patch).
     :type kubernetes_version: str
     :param name: Pool name.
     :type name: str
-    :param os_type: OsType to be used to specify os type. Choose from Linux
-     and Windows. Default to Linux. Possible values include: 'Linux',
-     'Windows'. Default value: "Linux" .
+    :param os_type: Required. OsType to be used to specify os type. Choose
+     from Linux and Windows. Default to Linux. Possible values include:
+     'Linux', 'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
     :param upgrades: List of orchestrator types and versions available for
      upgrade.
@@ -40,9 +43,9 @@ class ManagedClusterPoolUpgradeProfile(Model):
         'upgrades': {'key': 'upgrades', 'type': '[str]'},
     }
 
-    def __init__(self, kubernetes_version, name=None, os_type="Linux", upgrades=None):
-        super(ManagedClusterPoolUpgradeProfile, self).__init__()
-        self.kubernetes_version = kubernetes_version
-        self.name = name
-        self.os_type = os_type
-        self.upgrades = upgrades
+    def __init__(self, **kwargs):
+        super(ManagedClusterPoolUpgradeProfile, self).__init__(**kwargs)
+        self.kubernetes_version = kwargs.get('kubernetes_version', None)
+        self.name = kwargs.get('name', None)
+        self.os_type = kwargs.get('os_type', "Linux")
+        self.upgrades = kwargs.get('upgrades', None)
