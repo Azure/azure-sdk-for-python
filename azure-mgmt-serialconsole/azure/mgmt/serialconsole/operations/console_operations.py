@@ -40,7 +40,7 @@ class ConsoleOperations(object):
 
     def enable_console(
             self, custom_headers=None, raw=False, **operation_config):
-        """Enables Serial Console for a VM.
+        """Enables Serial Console for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -92,11 +92,11 @@ class ConsoleOperations(object):
             return client_raw_response
 
         return deserialized
-    enable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/providers/consoleServices/{default}/enableConsole'}
+    enable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/{default}/enableConsole'}
 
     def disable_console(
             self, custom_headers=None, raw=False, **operation_config):
-        """Disables Serial Console for a VM.
+        """Disables Serial Console for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -148,4 +148,4 @@ class ConsoleOperations(object):
             return client_raw_response
 
         return deserialized
-    disable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/providers/consoleServices/{default}/disableConsole'}
+    disable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/{default}/disableConsole'}
