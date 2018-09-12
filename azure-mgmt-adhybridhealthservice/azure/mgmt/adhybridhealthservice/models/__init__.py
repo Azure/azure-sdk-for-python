@@ -55,7 +55,6 @@ try:
     from .import_errors_py3 import ImportErrors
     from .inbound_replication_neighbor_py3 import InboundReplicationNeighbor
     from .inbound_replication_neighbors_py3 import InboundReplicationNeighbors
-    from .items_py3 import Items
     from .metric_group_py3 import MetricGroup
     from .metric_metadata_py3 import MetricMetadata
     from .metric_set_py3 import MetricSet
@@ -122,7 +121,6 @@ except (SyntaxError, ImportError):
     from .import_errors import ImportErrors
     from .inbound_replication_neighbor import InboundReplicationNeighbor
     from .inbound_replication_neighbors import InboundReplicationNeighbors
-    from .items import Items
     from .metric_group import MetricGroup
     from .metric_metadata import MetricMetadata
     from .metric_set import MetricSet
@@ -220,7 +218,6 @@ __all__ = [
     'ImportErrors',
     'InboundReplicationNeighbor',
     'InboundReplicationNeighbors',
-    'Items',
     'MetricGroup',
     'MetricMetadata',
     'MetricSet',

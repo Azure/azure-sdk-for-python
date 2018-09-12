@@ -44,13 +44,11 @@ class ServiceProperties(Model):
     :param monitoring_configurations_computed: The monitoring configuration of
      the service which determines what activities are monitored by Azure Active
      Directory Connect Health.
-    :type monitoring_configurations_computed:
-     list[~azure.mgmt.adhybridhealthservice.models.Items]
+    :type monitoring_configurations_computed: object
     :param monitoring_configurations_customized: The customized monitoring
      configuration of the service which determines what activities are
      monitored by Azure Active Directory Connect Health.
-    :type monitoring_configurations_customized:
-     list[~azure.mgmt.adhybridhealthservice.models.Items]
+    :type monitoring_configurations_customized: object
     :param notification_email_enabled: Indicates if email notification is
      enabled or not.
     :type notification_email_enabled: bool
@@ -98,8 +96,8 @@ class ServiceProperties(Model):
         'health': {'key': 'health', 'type': 'str'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': '[Items]'},
-        'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': '[Items]'},
+        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': 'object'},
+        'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': 'object'},
         'notification_email_enabled': {'key': 'notificationEmailEnabled', 'type': 'bool'},
         'notification_email_enabled_for_global_admins': {'key': 'notificationEmailEnabledForGlobalAdmins', 'type': 'bool'},
         'notification_emails_enabled_for_global_admins': {'key': 'notificationEmailsEnabledForGlobalAdmins', 'type': 'bool'},

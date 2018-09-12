@@ -57,8 +57,7 @@ class ServiceMember(Model):
     :param monitoring_configurations_computed: The monitoring configuration of
      the server which determines what activities are monitored by Azure Active
      Directory Connect Health.
-    :type monitoring_configurations_computed:
-     list[~azure.mgmt.adhybridhealthservice.models.Item]
+    :type monitoring_configurations_computed: object
     :param monitoring_configurations_customized: The customized monitoring
      configuration of the server which determines what activities are monitored
      by Azure Active Directory Connect Health.
@@ -69,7 +68,7 @@ class ServiceMember(Model):
      machine.
     :type os_version: str
     :param properties: Server specific properties.
-    :type properties: list[~azure.mgmt.adhybridhealthservice.models.Item]
+    :type properties: object
     :param recommended_qfes: The list of recommended hotfixes for the server.
     :type recommended_qfes: object
     :param resolved_alerts: The total count of alerts that are resolved for
@@ -102,11 +101,11 @@ class ServiceMember(Model):
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'machine_id': {'key': 'machineId', 'type': 'str'},
         'machine_name': {'key': 'machineName', 'type': 'str'},
-        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': '[Item]'},
+        'monitoring_configurations_computed': {'key': 'monitoringConfigurationsComputed', 'type': 'object'},
         'monitoring_configurations_customized': {'key': 'monitoringConfigurationsCustomized', 'type': 'object'},
         'os_name': {'key': 'osName', 'type': 'str'},
         'os_version': {'key': 'osVersion', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '[Item]'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'recommended_qfes': {'key': 'recommendedQfes', 'type': 'object'},
         'resolved_alerts': {'key': 'resolvedAlerts', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
