@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class UsageOperations(object):
-    """UsageOperations operations.
+class UsagesOperations(object):
+    """UsagesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,13 +37,11 @@ class UsageOperations(object):
 
         self.config = config
 
-    def list_by_location(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets the current usage count and the limit for the resources of the
-        location under the subscription.
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets the current usage count and the limit for the resources under the
+        subscription.
 
-        :param location: The location of the Azure Storage resource.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -58,10 +56,9 @@ class UsageOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_location.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'location': self._serialize.url("location", location, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -103,4 +100,4 @@ class UsageOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/locations/{location}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/usages'}

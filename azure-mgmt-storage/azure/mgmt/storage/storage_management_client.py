@@ -282,10 +282,13 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2018-03-01-preview: :class:`UsagesOperations<azure.mgmt.storage.v2018_03_01_preview.operations.UsagesOperations>`
+           * 2018-07-01: :class:`UsagesOperations<azure.mgmt.storage.v2018_07_01.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
         if api_version == '2018-03-01-preview':
             from .v2018_03_01_preview.operations import UsagesOperations as OperationClass
+        elif api_version == '2018-07-01':
+            from .v2018_07_01.operations import UsagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

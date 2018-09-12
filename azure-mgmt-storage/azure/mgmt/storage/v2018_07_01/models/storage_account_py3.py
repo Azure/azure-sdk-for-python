@@ -94,16 +94,16 @@ class StorageAccount(TrackedResource):
     :vartype access_tier: str or
      ~azure.mgmt.storage.v2018_07_01.models.AccessTier
     :param enable_azure_files_aad_integration: Enables Azure Files AAD
-     Integration for SMB if sets to true. Default value: False .
+     Integration for SMB if sets to true.
     :type enable_azure_files_aad_integration: bool
     :param enable_https_traffic_only: Allows https traffic only to storage
-     service if sets to true. Default value: False .
+     service if sets to true.
     :type enable_https_traffic_only: bool
     :ivar network_rule_set: Network rule set
     :vartype network_rule_set:
      ~azure.mgmt.storage.v2018_07_01.models.NetworkRuleSet
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
-     true. Default value: False .
+     true.
     :type is_hns_enabled: bool
     """
 
@@ -156,7 +156,7 @@ class StorageAccount(TrackedResource):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, enable_azure_files_aad_integration: bool=False, enable_https_traffic_only: bool=False, is_hns_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None

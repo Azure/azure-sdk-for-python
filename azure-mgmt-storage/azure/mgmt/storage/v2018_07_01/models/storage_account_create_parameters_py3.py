@@ -58,10 +58,10 @@ class StorageAccountCreateParameters(Model):
      Integration for SMB if sets to true.
     :type enable_azure_files_aad_integration: bool
     :param enable_https_traffic_only: Allows https traffic only to storage
-     service if sets to true. Default value: False .
+     service if sets to true.
     :type enable_https_traffic_only: bool
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
-     true. Default value: False .
+     true.
     :type is_hns_enabled: bool
     """
 
@@ -86,7 +86,7 @@ class StorageAccountCreateParameters(Model):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=False, is_hns_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind

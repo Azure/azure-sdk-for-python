@@ -45,7 +45,7 @@ class StorageAccountUpdateParameters(Model):
      Integration for SMB if sets to true.
     :type enable_azure_files_aad_integration: bool
     :param enable_https_traffic_only: Allows https traffic only to storage
-     service if sets to true. Default value: False .
+     service if sets to true.
     :type enable_https_traffic_only: bool
     :param network_rule_set: Network rule set
     :type network_rule_set:
@@ -78,6 +78,6 @@ class StorageAccountUpdateParameters(Model):
         self.encryption = kwargs.get('encryption', None)
         self.access_tier = kwargs.get('access_tier', None)
         self.enable_azure_files_aad_integration = kwargs.get('enable_azure_files_aad_integration', None)
-        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.kind = kwargs.get('kind', None)

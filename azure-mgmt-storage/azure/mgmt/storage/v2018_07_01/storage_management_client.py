@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.skus_operations import SkusOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
+from .operations.usages_operations import UsagesOperations
 from .operations.usage_operations import UsageOperations
 from .operations.blob_containers_operations import BlobContainersOperations
 from . import models
@@ -65,6 +66,8 @@ class StorageManagementClient(SDKClient):
     :vartype skus: azure.mgmt.storage.v2018_07_01.operations.SkusOperations
     :ivar storage_accounts: StorageAccounts operations
     :vartype storage_accounts: azure.mgmt.storage.v2018_07_01.operations.StorageAccountsOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.storage.v2018_07_01.operations.UsagesOperations
     :ivar usage: Usage operations
     :vartype usage: azure.mgmt.storage.v2018_07_01.operations.UsageOperations
     :ivar blob_containers: BlobContainers operations
@@ -94,6 +97,8 @@ class StorageManagementClient(SDKClient):
         self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(
             self._client, self.config, self._serialize, self._deserialize)

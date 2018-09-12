@@ -45,7 +45,7 @@ class StorageAccountUpdateParameters(Model):
      Integration for SMB if sets to true.
     :type enable_azure_files_aad_integration: bool
     :param enable_https_traffic_only: Allows https traffic only to storage
-     service if sets to true. Default value: False .
+     service if sets to true.
     :type enable_https_traffic_only: bool
     :param network_rule_set: Network rule set
     :type network_rule_set:
@@ -69,7 +69,7 @@ class StorageAccountUpdateParameters(Model):
         'kind': {'key': 'kind', 'type': 'Kind'},
     }
 
-    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=False, network_rule_set=None, kind=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=None, network_rule_set=None, kind=None, **kwargs) -> None:
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
