@@ -2,6 +2,8 @@ import importlib
 import inspect
 import json
 import logging
+import pkgutil
+from pathlib import Path
 import types
 from typing import Dict, Any
 
@@ -104,6 +106,53 @@ def main(input_parameter: str, output_filename: str):
     with open(output_filename, "w") as fd:
         json.dump(report, fd, indent=2)
 
+def find_autorest_generated_folder(module_prefix="azure"):
+    """Find all Autorest generated code in that module prefix.
+    This actually looks for a "models" package only. We could be smarter if necessary.
+    """
+    _LOGGER.info(f"Looking for Autorest generated package in {module_prefix}")
+
+    # Manually skip some namespaces for now
+    if module_prefix in ["azure.cli", "azure.storage"]:
+        _LOGGER.info(f"Skip {module_prefix}")
+        return []
+
+    result = []
+    prefix_module = importlib.import_module(module_prefix)
+    for _, sub_package, ispkg in pkgutil.iter_modules(prefix_module.__path__, module_prefix+"."):
+        try:
+            # ASM has a "models", but is not autorest. Patch it widly for now.
+            if sub_package in ["azure.servicemanagement", "azure.storage", "azure.servicebus"]:
+                continue
+
+            _LOGGER.debug(f"Try {sub_package}")
+            importlib.import_module(".models", sub_package)
+
+            # If not exception, we found it
+            _LOGGER.info(f"Found {sub_package}")
+            result.append(sub_package)
+        except ModuleNotFoundError:
+            # No model, might dig deeper
+            if ispkg:
+                result += find_autorest_generated_folder(sub_package)
+    return result
+
+def build_them_all():
+    """Build all reports for all packages.
+    """
+    root = Path(__file__).parent.parent.parent # Root of the repo
+
+    packages = dict()
+    for module_name in find_autorest_generated_folder():
+
+        main_module = importlib.import_module(module_name)
+
+        package_name = list(Path(main_module.__path__[0]).relative_to(root).parents)[-2]
+        packages.setdefault(package_name, set()).add(module_name)
+
+    from pprint import pprint
+    pprint(packages)
+
 if __name__ == "__main__":
     import argparse
 
@@ -112,7 +161,7 @@ if __name__ == "__main__":
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument('package_name',
-                        help='Package name')
+                        help='Package name.')
     parser.add_argument('--output-file', '-o',
                         dest='output_file', default='./report.json',
                         help='Output file. [default: %(default)s]')
@@ -126,4 +175,7 @@ if __name__ == "__main__":
     logging.basicConfig()
     main_logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
-    main(args.package_name, args.output_file)
+    if args.package_name == "all":
+        build_them_all()
+    else:
+        main(args.package_name, args.output_file)
