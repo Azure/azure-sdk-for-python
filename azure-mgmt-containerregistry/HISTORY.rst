@@ -3,6 +3,18 @@
 Release History
 ===============
 
+2.2.0 (2018-09-11)
+++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.get_build_source_upload_url
+- Added operation RegistriesOperations.schedule_run
+- Added operation group RunsOperations
+- Added operation group TasksOperations
+
+Default API version is now 2018-09-01
+
 2.1.0 (2018-07-26)
 ++++++++++++++++++
 
