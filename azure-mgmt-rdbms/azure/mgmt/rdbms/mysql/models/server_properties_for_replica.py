@@ -27,7 +27,7 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
-    :param source_server_id: Required. The primary server id to create replica
+    :param source_server_id: Required. The master server id to create replica
      from.
     :type source_server_id: str
     """

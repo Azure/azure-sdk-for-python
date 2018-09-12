@@ -56,9 +56,9 @@ class Server(TrackedResource):
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     :param replication_role: The replication role of the server.
     :type replication_role: str
-    :param primary_server_id: The primary server id of a relica server.
-    :type primary_server_id: str
-    :param replica_capacity: The maximum number of replicas that a primary
+    :param master_server_id: The master server id of a relica server.
+    :type master_server_id: str
+    :param replica_capacity: The maximum number of replicas that a master
      server can have.
     :type replica_capacity: int
     """
@@ -86,7 +86,7 @@ class Server(TrackedResource):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
-        'primary_server_id': {'key': 'properties.primaryServerId', 'type': 'str'},
+        'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
         'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
@@ -101,5 +101,5 @@ class Server(TrackedResource):
         self.earliest_restore_date = kwargs.get('earliest_restore_date', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.replication_role = kwargs.get('replication_role', None)
-        self.primary_server_id = kwargs.get('primary_server_id', None)
+        self.master_server_id = kwargs.get('master_server_id', None)
         self.replica_capacity = kwargs.get('replica_capacity', None)
