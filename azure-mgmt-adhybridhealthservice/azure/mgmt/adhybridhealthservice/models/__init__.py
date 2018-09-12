@@ -14,7 +14,6 @@ try:
     from .additional_information_py3 import AdditionalInformation
     from .hotfix_py3 import Hotfix
     from .adds_service_member_py3 import AddsServiceMember
-    from .credential_py3 import Credential
     from .agent_py3 import Agent
     from .help_link_py3 import HelpLink
     from .alert_py3 import Alert
@@ -27,8 +26,6 @@ try:
     from .change_not_reimported_delta_py3 import ChangeNotReimportedDelta
     from .change_not_reimported_entry_py3 import ChangeNotReimportedEntry
     from .change_not_reimported_py3 import ChangeNotReimported
-    from .password_management_settings_py3 import PasswordManagementSettings
-    from .password_hash_sync_configuration_py3 import PasswordHashSyncConfiguration
     from .partition_scope_py3 import PartitionScope
     from .partition_py3 import Partition
     from .run_step_py3 import RunStep
@@ -38,6 +35,7 @@ try:
     from .connector_connection_errors_py3 import ConnectorConnectionErrors
     from .connector_object_error_py3 import ConnectorObjectError
     from .connector_object_errors_py3 import ConnectorObjectErrors
+    from .credential_py3 import Credential
     from .dimension_py3 import Dimension
     from .display_py3 import Display
     from .error_count_py3 import ErrorCount
@@ -65,6 +63,8 @@ try:
     from .module_configuration_py3 import ModuleConfiguration
     from .module_configurations_py3 import ModuleConfigurations
     from .operation_py3 import Operation
+    from .password_management_settings_py3 import PasswordManagementSettings
+    from .password_hash_sync_configuration_py3 import PasswordHashSyncConfiguration
     from .replication_summary_py3 import ReplicationSummary
     from .replication_status_py3 import ReplicationStatus
     from .result_py3 import Result
@@ -81,7 +81,6 @@ except (SyntaxError, ImportError):
     from .additional_information import AdditionalInformation
     from .hotfix import Hotfix
     from .adds_service_member import AddsServiceMember
-    from .credential import Credential
     from .agent import Agent
     from .help_link import HelpLink
     from .alert import Alert
@@ -94,8 +93,6 @@ except (SyntaxError, ImportError):
     from .change_not_reimported_delta import ChangeNotReimportedDelta
     from .change_not_reimported_entry import ChangeNotReimportedEntry
     from .change_not_reimported import ChangeNotReimported
-    from .password_management_settings import PasswordManagementSettings
-    from .password_hash_sync_configuration import PasswordHashSyncConfiguration
     from .partition_scope import PartitionScope
     from .partition import Partition
     from .run_step import RunStep
@@ -105,6 +102,7 @@ except (SyntaxError, ImportError):
     from .connector_connection_errors import ConnectorConnectionErrors
     from .connector_object_error import ConnectorObjectError
     from .connector_object_errors import ConnectorObjectErrors
+    from .credential import Credential
     from .dimension import Dimension
     from .display import Display
     from .error_count import ErrorCount
@@ -132,6 +130,8 @@ except (SyntaxError, ImportError):
     from .module_configuration import ModuleConfiguration
     from .module_configurations import ModuleConfigurations
     from .operation import Operation
+    from .password_management_settings import PasswordManagementSettings
+    from .password_hash_sync_configuration import PasswordHashSyncConfiguration
     from .replication_summary import ReplicationSummary
     from .replication_status import ReplicationStatus
     from .result import Result
@@ -169,9 +169,9 @@ from .ad_hybrid_health_service_enums import (
     ValueType,
     AttributeMappingType,
     DeltaOperationType,
-    PasswordOperationTypes,
     HealthStatus,
     AlgorithmStepType,
+    PasswordOperationTypes,
 )
 
 __all__ = [
@@ -179,7 +179,6 @@ __all__ = [
     'AdditionalInformation',
     'Hotfix',
     'AddsServiceMember',
-    'Credential',
     'Agent',
     'HelpLink',
     'Alert',
@@ -192,8 +191,6 @@ __all__ = [
     'ChangeNotReimportedDelta',
     'ChangeNotReimportedEntry',
     'ChangeNotReimported',
-    'PasswordManagementSettings',
-    'PasswordHashSyncConfiguration',
     'PartitionScope',
     'Partition',
     'RunStep',
@@ -203,6 +200,7 @@ __all__ = [
     'ConnectorConnectionErrors',
     'ConnectorObjectError',
     'ConnectorObjectErrors',
+    'Credential',
     'Dimension',
     'Display',
     'ErrorCount',
@@ -230,6 +228,8 @@ __all__ = [
     'ModuleConfiguration',
     'ModuleConfigurations',
     'Operation',
+    'PasswordManagementSettings',
+    'PasswordHashSyncConfiguration',
     'ReplicationSummary',
     'ReplicationStatus',
     'Result',
@@ -266,7 +266,7 @@ __all__ = [
     'ValueType',
     'AttributeMappingType',
     'DeltaOperationType',
-    'PasswordOperationTypes',
     'HealthStatus',
     'AlgorithmStepType',
+    'PasswordOperationTypes',
 ]

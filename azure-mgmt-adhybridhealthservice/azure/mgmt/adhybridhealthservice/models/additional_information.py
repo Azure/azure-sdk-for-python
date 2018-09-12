@@ -21,7 +21,7 @@ class AdditionalInformation(Model):
     :type title_value: str
     :param properties: The list of properties which are included in the
      additional information.
-    :type properties: list[~azure.mgmt.adhybridhealthservice.models.Item]
+    :type properties: object
     :param has_properties: Indicates if properties are present or not.
     :type has_properties: bool
     """
@@ -29,7 +29,7 @@ class AdditionalInformation(Model):
     _attribute_map = {
         'title_name': {'key': 'titleName', 'type': 'str'},
         'title_value': {'key': 'titleValue', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '[Item]'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'has_properties': {'key': 'hasProperties', 'type': 'bool'},
     }
 

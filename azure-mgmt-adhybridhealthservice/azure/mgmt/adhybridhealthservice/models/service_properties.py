@@ -76,8 +76,7 @@ class ServiceProperties(Model):
     :type signature: str
     :param simple_properties: List of service specific configuration
      properties.
-    :type simple_properties:
-     list[~azure.mgmt.adhybridhealthservice.models.Items]
+    :type simple_properties: object
     :param tenant_id: The id of the tenant to which the service is registered
      to.
     :type tenant_id: str
@@ -110,7 +109,7 @@ class ServiceProperties(Model):
         'service_id': {'key': 'serviceId', 'type': 'str'},
         'service_name': {'key': 'serviceName', 'type': 'str'},
         'signature': {'key': 'signature', 'type': 'str'},
-        'simple_properties': {'key': 'simpleProperties', 'type': '[Items]'},
+        'simple_properties': {'key': 'simpleProperties', 'type': 'object'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }

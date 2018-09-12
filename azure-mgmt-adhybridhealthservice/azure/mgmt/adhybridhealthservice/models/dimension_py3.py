@@ -20,8 +20,7 @@ class Dimension(Model):
     :type health: str or ~azure.mgmt.adhybridhealthservice.models.HealthStatus
     :param simple_properties: List of service specific configuration
      properties.
-    :type simple_properties:
-     list[~azure.mgmt.adhybridhealthservice.models.Item]
+    :type simple_properties: object
     :param active_alerts: The count of alerts that are currently active for
      the service.
     :type active_alerts: int
@@ -47,7 +46,7 @@ class Dimension(Model):
 
     _attribute_map = {
         'health': {'key': 'health', 'type': 'str'},
-        'simple_properties': {'key': 'simpleProperties', 'type': '[Item]'},
+        'simple_properties': {'key': 'simpleProperties', 'type': 'object'},
         'active_alerts': {'key': 'activeAlerts', 'type': 'int'},
         'additional_information': {'key': 'additionalInformation', 'type': 'str'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},

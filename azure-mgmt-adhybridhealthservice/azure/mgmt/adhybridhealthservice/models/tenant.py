@@ -48,7 +48,7 @@ class Tenant(Model):
     :type disabled_reason: int
     :param global_admins_email: The list of golbal administrators for the
      tenant.
-    :type global_admins_email: list[str]
+    :type global_admins_email: object
     :param initial_domain: The initial domain of the tenant.
     :type initial_domain: str
     :param last_disabled: The date and time, in UTC, when the tenant was last
@@ -89,7 +89,7 @@ class Tenant(Model):
         'dev_ops_ttl': {'key': 'devOpsTtl', 'type': 'iso-8601'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'disabled_reason': {'key': 'disabledReason', 'type': 'int'},
-        'global_admins_email': {'key': 'globalAdminsEmail', 'type': '[str]'},
+        'global_admins_email': {'key': 'globalAdminsEmail', 'type': 'object'},
         'initial_domain': {'key': 'initialDomain', 'type': 'str'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_verified': {'key': 'lastVerified', 'type': 'iso-8601'},

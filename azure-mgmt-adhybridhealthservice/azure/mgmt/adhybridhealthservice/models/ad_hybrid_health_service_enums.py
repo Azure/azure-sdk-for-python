@@ -82,13 +82,6 @@ class DeltaOperationType(str, Enum):
     delet_add = "DeletAdd"
 
 
-class PasswordOperationTypes(str, Enum):
-
-    undefined = "Undefined"
-    set = "Set"
-    change = "Change"
-
-
 class HealthStatus(str, Enum):
 
     healthy = "Healthy"
@@ -113,3 +106,10 @@ class AlgorithmStepType(str, Enum):
     mv_deletion = "MvDeletion"
     recall = "Recall"
     mv_object_type_change = "MvObjectTypeChange"
+
+
+class PasswordOperationTypes(str, Enum):
+
+    undefined = "Undefined"
+    set = "Set"
+    change = "Change"

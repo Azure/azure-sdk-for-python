@@ -31,12 +31,10 @@ class Connector(Model):
     :type schema_xml: str
     :param password_management_settings: The password management settings of
      the connector.
-    :type password_management_settings:
-     list[~azure.mgmt.adhybridhealthservice.models.PasswordManagementSettings]
+    :type password_management_settings: object
     :param password_hash_sync_configuration: The password hash synchronization
      configuration of the connector.
-    :type password_hash_sync_configuration:
-     list[~azure.mgmt.adhybridhealthservice.models.PasswordHashSyncConfiguration]
+    :type password_hash_sync_configuration: object
     :param time_created: The date and time when this connector was created.
     :type time_created: datetime
     :param time_last_modified: The date and time when this connector was last
@@ -61,8 +59,8 @@ class Connector(Model):
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'schema_xml': {'key': 'schemaXml', 'type': 'str'},
-        'password_management_settings': {'key': 'passwordManagementSettings', 'type': '[PasswordManagementSettings]'},
-        'password_hash_sync_configuration': {'key': 'passwordHashSyncConfiguration', 'type': '[PasswordHashSyncConfiguration]'},
+        'password_management_settings': {'key': 'passwordManagementSettings', 'type': 'object'},
+        'password_hash_sync_configuration': {'key': 'passwordHashSyncConfiguration', 'type': 'object'},
         'time_created': {'key': 'timeCreated', 'type': 'iso-8601'},
         'time_last_modified': {'key': 'timeLastModified', 'type': 'iso-8601'},
         'partitions': {'key': 'partitions', 'type': '[Partition]'},

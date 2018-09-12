@@ -20,8 +20,7 @@ class Agent(Model):
     :param machine_id: The machine Id.
     :type machine_id: str
     :param credential: The agent credential details.
-    :type credential:
-     list[~azure.mgmt.adhybridhealthservice.models.Credential]
+    :type credential: object
     :param machine_name: The machine name.
     :type machine_name: str
     :param agent_version: The agent version.
@@ -36,7 +35,7 @@ class Agent(Model):
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'machine_id': {'key': 'machineId', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': '[Credential]'},
+        'credential': {'key': 'credential', 'type': 'object'},
         'machine_name': {'key': 'machineName', 'type': 'str'},
         'agent_version': {'key': 'agentVersion', 'type': 'str'},
         'created_date': {'key': 'createdDate', 'type': 'iso-8601'},

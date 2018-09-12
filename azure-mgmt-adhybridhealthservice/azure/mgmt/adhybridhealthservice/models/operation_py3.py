@@ -18,12 +18,12 @@ class Operation(Model):
     :param name: The name of the operation.
     :type name: str
     :param display: The display details for the operation.
-    :type display: list[~azure.mgmt.adhybridhealthservice.models.Display]
+    :type display: object
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': '[Display]'},
+        'display': {'key': 'display', 'type': 'object'},
     }
 
     def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
