@@ -47,6 +47,9 @@ class Volume(Model):
     :type usage_threshold: long
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
+    :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
+     the delegation Microsoft.NetApp/volumes
+    :type subnet_id: str
     """
 
     _validation = {
@@ -73,9 +76,10 @@ class Volume(Model):
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, tags=None, name1: str=None, service_level="Standard", usage_threshold: int=0, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, tags=None, name1: str=None, service_level="Standard", usage_threshold: int=0, subnet_id: str=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -88,3 +92,4 @@ class Volume(Model):
         self.service_level = service_level
         self.usage_threshold = usage_threshold
         self.provisioning_state = None
+        self.subnet_id = subnet_id
