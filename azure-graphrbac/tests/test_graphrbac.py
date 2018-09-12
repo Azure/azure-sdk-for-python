@@ -164,6 +164,15 @@ class GraphRbacTest(AzureMgmtTestCase):
             }]
         })
 
+        # Take this opportunity to test get_objects_by_object_ids
+        objects = self.graphrbac_client.objects.get_objects_by_object_ids({
+            'object_ids': [app.object_id],
+            'types': ['Application']
+        })
+        objects = list(objects)
+        assert len(objects) == 1
+        assert objects[0].display_name == 'pytest_app'
+
         apps = list(self.graphrbac_client.applications.list(
             filter="displayName eq 'pytest_app'"
         ))
