@@ -14,6 +14,7 @@ from .skus_operations import SkusOperations
 from .storage_accounts_operations import StorageAccountsOperations
 from .usages_operations import UsagesOperations
 from .blob_containers_operations import BlobContainersOperations
+from .management_policies_operations import ManagementPoliciesOperations
 
 __all__ = [
     'Operations',
@@ -21,4 +22,5 @@ __all__ = [
     'StorageAccountsOperations',
     'UsagesOperations',
     'BlobContainersOperations',
+    'ManagementPoliciesOperations',
 ]
