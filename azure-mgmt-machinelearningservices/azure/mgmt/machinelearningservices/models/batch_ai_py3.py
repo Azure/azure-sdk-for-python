@@ -20,6 +20,8 @@ class BatchAI(Compute):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param compute_location: Location for the underlying compute
+    :type compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values
      are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
      values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
@@ -53,6 +55,7 @@ class BatchAI(Compute):
     }
 
     _attribute_map = {
+        'compute_location': {'key': 'computeLocation', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
@@ -63,7 +66,7 @@ class BatchAI(Compute):
         'properties': {'key': 'properties', 'type': 'BatchAIProperties'},
     }
 
-    def __init__(self, *, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(BatchAI, self).__init__(description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
+        super(BatchAI, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
         self.properties = properties
         self.compute_type = 'BatchAI'

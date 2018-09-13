@@ -15,19 +15,34 @@ from msrest.serialization import Model
 class VirtualMachineProperties(Model):
     """VirtualMachineProperties.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param virtual_machine_size: Virtual Machine size
     :type virtual_machine_size: str
+    :param ssh_port: Port open for ssh connections.
+    :type ssh_port: int
+    :ivar address: Public IP address of the virtual machine.
+    :vartype address: str
     :param administrator_account: Admin credentials for virtual machine
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
     """
 
+    _validation = {
+        'address': {'readonly': True},
+    }
+
     _attribute_map = {
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
+        'ssh_port': {'key': 'sshPort', 'type': 'int'},
+        'address': {'key': 'address', 'type': 'str'},
         'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineProperties, self).__init__(**kwargs)
         self.virtual_machine_size = kwargs.get('virtual_machine_size', None)
+        self.ssh_port = kwargs.get('ssh_port', None)
+        self.address = None
         self.administrator_account = kwargs.get('administrator_account', None)

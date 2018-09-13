@@ -12,19 +12,19 @@
 from msrest.serialization import Model
 
 
-class VirtualMachineProperties(Model):
-    """VirtualMachineProperties.
+class HDInsightProperties(Model):
+    """HDInsightProperties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param virtual_machine_size: Virtual Machine size
-    :type virtual_machine_size: str
-    :param ssh_port: Port open for ssh connections.
+    :param ssh_port: Port open for ssh connections on the master node of the
+     cluster.
     :type ssh_port: int
-    :ivar address: Public IP address of the virtual machine.
+    :ivar address: Public IP address of the master node of the cluster.
     :vartype address: str
-    :param administrator_account: Admin credentials for virtual machine
+    :param administrator_account: Admin credentials for master node of the
+     cluster
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
     """
@@ -34,15 +34,13 @@ class VirtualMachineProperties(Model):
     }
 
     _attribute_map = {
-        'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'ssh_port': {'key': 'sshPort', 'type': 'int'},
         'address': {'key': 'address', 'type': 'str'},
         'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
     }
 
-    def __init__(self, *, virtual_machine_size: str=None, ssh_port: int=None, administrator_account=None, **kwargs) -> None:
-        super(VirtualMachineProperties, self).__init__(**kwargs)
-        self.virtual_machine_size = virtual_machine_size
-        self.ssh_port = ssh_port
+    def __init__(self, **kwargs):
+        super(HDInsightProperties, self).__init__(**kwargs)
+        self.ssh_port = kwargs.get('ssh_port', None)
         self.address = None
-        self.administrator_account = administrator_account
+        self.administrator_account = kwargs.get('administrator_account', None)

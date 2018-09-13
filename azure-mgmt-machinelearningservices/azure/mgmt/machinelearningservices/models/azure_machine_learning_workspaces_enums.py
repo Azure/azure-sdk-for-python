@@ -34,3 +34,4 @@ class ComputeType(str, Enum):
     batch_ai = "BatchAI"
     data_factory = "DataFactory"
     virtual_machine = "VirtualMachine"
+    hd_insight = "HDInsight"

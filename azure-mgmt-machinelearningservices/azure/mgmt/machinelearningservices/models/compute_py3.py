@@ -16,13 +16,15 @@ class Compute(Model):
     """Machine Learning compute object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AKS, BatchAI, VirtualMachine, DataFactory
+    sub-classes are: AKS, BatchAI, VirtualMachine, HDInsight, DataFactory
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param compute_location: Location for the underlying compute
+    :type compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values
      are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
      values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
@@ -53,6 +55,7 @@ class Compute(Model):
     }
 
     _attribute_map = {
+        'compute_location': {'key': 'computeLocation', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
@@ -63,11 +66,12 @@ class Compute(Model):
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'BatchAI': 'BatchAI', 'VirtualMachine': 'VirtualMachine', 'DataFactory': 'DataFactory'}
+        'compute_type': {'AKS': 'AKS', 'BatchAI': 'BatchAI', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory'}
     }
 
-    def __init__(self, *, description: str=None, resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, **kwargs) -> None:
         super(Compute, self).__init__(**kwargs)
+        self.compute_location = compute_location
         self.provisioning_state = None
         self.description = description
         self.created_on = None
