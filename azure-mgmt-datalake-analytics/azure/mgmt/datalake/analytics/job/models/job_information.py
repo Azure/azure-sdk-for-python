@@ -32,9 +32,11 @@ class JobInformation(JobInformationBasic):
     :ivar submitter: The user or account that submitted the job.
     :vartype submitter: str
     :param degree_of_parallelism: The degree of parallelism used for this job.
-     This must be greater than 0, if set to less than 0 it will default to 1.
      Default value: 1 .
     :type degree_of_parallelism: int
+    :ivar degree_of_parallelism_percent: the degree of parallelism in
+     percentage used for this job.
+    :vartype degree_of_parallelism_percent: float
     :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
@@ -85,6 +87,7 @@ class JobInformation(JobInformationBasic):
         'name': {'required': True},
         'type': {'required': True},
         'submitter': {'readonly': True},
+        'degree_of_parallelism_percent': {'readonly': True},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
@@ -102,6 +105,7 @@ class JobInformation(JobInformationBasic):
         'type': {'key': 'type', 'type': 'JobType'},
         'submitter': {'key': 'submitter', 'type': 'str'},
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+        'degree_of_parallelism_percent': {'key': 'degreeOfParallelismPercent', 'type': 'float'},
         'priority': {'key': 'priority', 'type': 'int'},
         'submit_time': {'key': 'submitTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
