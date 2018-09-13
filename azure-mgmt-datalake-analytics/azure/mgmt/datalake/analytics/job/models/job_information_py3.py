@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_information_basic import JobInformationBasic
+from .job_information_basic_py3 import JobInformationBasic
 
 
 class JobInformation(JobInformationBasic):

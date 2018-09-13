@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .create_job_parameters import CreateJobParameters
+from .create_job_parameters_py3 import CreateJobParameters
 
 
 class CreateScopeJobParameters(CreateJobParameters):

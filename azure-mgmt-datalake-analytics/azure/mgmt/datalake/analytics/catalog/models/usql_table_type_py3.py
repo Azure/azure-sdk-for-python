@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usql_type import USqlType
+from .usql_type_py3 import USqlType
 
 
 class USqlTableType(USqlType):
