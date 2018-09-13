@@ -55,6 +55,8 @@ try:
     from .legal_hold_py3 import LegalHold
     from .list_container_item_py3 import ListContainerItem
     from .list_container_items_py3 import ListContainerItems
+    from .storage_account_management_policies_py3 import StorageAccountManagementPolicies
+    from .management_policies_rules_set_parameter_py3 import ManagementPoliciesRulesSetParameter
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .dimension import Dimension
@@ -101,6 +103,8 @@ except (SyntaxError, ImportError):
     from .legal_hold import LegalHold
     from .list_container_item import ListContainerItem
     from .list_container_items import ListContainerItems
+    from .storage_account_management_policies import StorageAccountManagementPolicies
+    from .management_policies_rules_set_parameter import ManagementPoliciesRulesSetParameter
 from .operation_paged import OperationPaged
 from .sku_paged import SkuPaged
 from .storage_account_paged import StorageAccountPaged
@@ -180,6 +184,8 @@ __all__ = [
     'LegalHold',
     'ListContainerItem',
     'ListContainerItems',
+    'StorageAccountManagementPolicies',
+    'ManagementPoliciesRulesSetParameter',
     'OperationPaged',
     'SkuPaged',
     'StorageAccountPaged',
