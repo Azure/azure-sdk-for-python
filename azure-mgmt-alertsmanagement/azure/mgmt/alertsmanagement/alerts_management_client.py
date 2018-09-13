@@ -31,22 +31,11 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param monitor_service1: Filter by monitor service which is the source of
-     the alert instance. Default value is select all. Possible values include:
-     'Application Insights', 'ActivityLog Administrative', 'ActivityLog
-     Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
-     'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform', 'SCOM',
-     'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
-    :type monitor_service1: str or
-     ~azure.mgmt.alertsmanagement.models.MonitorService
-    :param alert_rule: Filter by alert rule(monitor) which fired alert
-     instance.  Default value is to select all.
-    :type alert_rule: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, monitor_service1=None, alert_rule=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -62,8 +51,6 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.monitor_service1 = monitor_service1
-        self.alert_rule = alert_rule
 
 
 class AlertsManagementClient(SDKClient):
@@ -86,24 +73,13 @@ class AlertsManagementClient(SDKClient):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param monitor_service1: Filter by monitor service which is the source of
-     the alert instance. Default value is select all. Possible values include:
-     'Application Insights', 'ActivityLog Administrative', 'ActivityLog
-     Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
-     'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform', 'SCOM',
-     'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
-    :type monitor_service1: str or
-     ~azure.mgmt.alertsmanagement.models.MonitorService
-    :param alert_rule: Filter by alert rule(monitor) which fired alert
-     instance.  Default value is to select all.
-    :type alert_rule: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, monitor_service1=None, alert_rule=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AlertsManagementClientConfiguration(credentials, subscription_id, monitor_service1, alert_rule, base_url)
+        self.config = AlertsManagementClientConfiguration(credentials, subscription_id, base_url)
         super(AlertsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

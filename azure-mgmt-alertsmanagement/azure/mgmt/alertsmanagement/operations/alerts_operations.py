@@ -37,7 +37,7 @@ class AlertsOperations(object):
         self.config = config
 
     def get_all(
-            self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_condition=None, severity=None, alert_state=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, sort_order1=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
+            self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, sort_order1=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
         """List all the existing alerts, where the results can be selective by
         passing multiple filter parameters including time range and sorted on
         specific fields. .
@@ -51,6 +51,15 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
+        :param monitor_service: Filter by monitor service which is the source
+         of the alert instance. Default value is select all. Possible values
+         include: 'Application Insights', 'ActivityLog Administrative',
+         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
+         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
+         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
+         'Zabbix'
+        :type monitor_service: str or
+         ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is the
          state of the  monitor(alertRule) at monitor service. Default value is
          to select all. Possible values include: 'Fired', 'Resolved'
@@ -64,6 +73,9 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
+        :param alert_rule: Filter by alert rule(monitor) which fired alert
+         instance.  Default value is to select all.
+        :type alert_rule: str
         :param smart_group_id: Filter the alerts list by the Smart Group Id.
          Default value is none.
         :type smart_group_id: str
@@ -134,16 +146,16 @@ class AlertsOperations(object):
                     query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
                 if target_resource_group is not None:
                     query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
-                if self.config.monitor_service is not None:
-                    query_parameters['monitorService'] = self._serialize.query("self.config.monitor_service", self.config.monitor_service, 'str')
+                if monitor_service is not None:
+                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
                 if monitor_condition is not None:
                     query_parameters['monitorCondition'] = self._serialize.query("monitor_condition", monitor_condition, 'str')
                 if severity is not None:
                     query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
                 if alert_state is not None:
                     query_parameters['alertState'] = self._serialize.query("alert_state", alert_state, 'str')
-                if self.config.alert_rule is not None:
-                    query_parameters['alertRule'] = self._serialize.query("self.config.alert_rule", self.config.alert_rule, 'str')
+                if alert_rule is not None:
+                    query_parameters['alertRule'] = self._serialize.query("alert_rule", alert_rule, 'str')
                 if smart_group_id is not None:
                     query_parameters['smartGroupId'] = self._serialize.query("smart_group_id", smart_group_id, 'str')
                 if include_context is not None:
@@ -379,7 +391,7 @@ class AlertsOperations(object):
     get_history.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'}
 
     def get_summary(
-            self, groupby, include_smart_groups_count=None, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_condition=None, severity=None, alert_state=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
+            self, groupby, include_smart_groups_count=None, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
         """Summary of alerts with the count each severity.
 
         :param groupby: This parameter allows the result set to be aggregated
@@ -400,6 +412,15 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
+        :param monitor_service: Filter by monitor service which is the source
+         of the alert instance. Default value is select all. Possible values
+         include: 'Application Insights', 'ActivityLog Administrative',
+         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
+         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
+         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
+         'Zabbix'
+        :type monitor_service: str or
+         ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is the
          state of the  monitor(alertRule) at monitor service. Default value is
          to select all. Possible values include: 'Fired', 'Resolved'
@@ -413,6 +434,9 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
+        :param alert_rule: Filter by alert rule(monitor) which fired alert
+         instance.  Default value is to select all.
+        :type alert_rule: str
         :param time_range: Filter by time range by below listed values.
          Default value is 1 day. Possible values include: '1h', '1d', '7d',
          '30d'
@@ -452,16 +476,16 @@ class AlertsOperations(object):
             query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
         if target_resource_group is not None:
             query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
-        if self.config.monitor_service is not None:
-            query_parameters['monitorService'] = self._serialize.query("self.config.monitor_service", self.config.monitor_service, 'str')
+        if monitor_service is not None:
+            query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
         if monitor_condition is not None:
             query_parameters['monitorCondition'] = self._serialize.query("monitor_condition", monitor_condition, 'str')
         if severity is not None:
             query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
         if alert_state is not None:
             query_parameters['alertState'] = self._serialize.query("alert_state", alert_state, 'str')
-        if self.config.alert_rule is not None:
-            query_parameters['alertRule'] = self._serialize.query("self.config.alert_rule", self.config.alert_rule, 'str')
+        if alert_rule is not None:
+            query_parameters['alertRule'] = self._serialize.query("alert_rule", alert_rule, 'str')
         if time_range is not None:
             query_parameters['timeRange'] = self._serialize.query("time_range", time_range, 'str')
         if custom_time_range is not None:

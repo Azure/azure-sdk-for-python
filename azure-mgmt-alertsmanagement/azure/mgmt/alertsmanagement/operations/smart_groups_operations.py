@@ -37,7 +37,7 @@ class SmartGroupsOperations(object):
         self.config = config
 
     def get_all(
-            self, target_resource=None, target_resource_group=None, target_resource_type=None, monitor_condition=None, severity=None, smart_group_state=None, time_range=None, page_count=None, sort_by=None, sort_order=None, custom_headers=None, raw=False, **operation_config):
+            self, target_resource=None, target_resource_group=None, target_resource_type=None, monitor_service=None, monitor_condition=None, severity=None, smart_group_state=None, time_range=None, page_count=None, sort_by=None, sort_order=None, custom_headers=None, raw=False, **operation_config):
         """Get all smartGroups within the subscription.
 
         List all the smartGroups within the specified subscription. .
@@ -51,6 +51,15 @@ class SmartGroupsOperations(object):
         :param target_resource_type: Filter by target resource type. Default
          value is select all.
         :type target_resource_type: str
+        :param monitor_service: Filter by monitor service which is the source
+         of the alert instance. Default value is select all. Possible values
+         include: 'Application Insights', 'ActivityLog Administrative',
+         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
+         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
+         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
+         'Zabbix'
+        :type monitor_service: str or
+         ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is the
          state of the  monitor(alertRule) at monitor service. Default value is
          to select all. Possible values include: 'Fired', 'Resolved'
@@ -109,8 +118,8 @@ class SmartGroupsOperations(object):
             query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
         if target_resource_type is not None:
             query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
-        if self.config.monitor_service is not None:
-            query_parameters['monitorService'] = self._serialize.query("self.config.monitor_service", self.config.monitor_service, 'str')
+        if monitor_service is not None:
+            query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
         if monitor_condition is not None:
             query_parameters['monitorCondition'] = self._serialize.query("monitor_condition", monitor_condition, 'str')
         if severity is not None:
