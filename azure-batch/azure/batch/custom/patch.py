@@ -1,9 +1,12 @@
 import collections
+import importlib
 import logging
 import threading
 import types
+import sys
 
-from ..models import BatchErrorException, TaskAddCollectionResult, TaskAddStatus, CreateTasksErrorException
+from ..models import BatchErrorException, TaskAddCollectionResult, TaskAddStatus
+from ..custom.custom_errors import CreateTasksErrorException
 from ..operations.task_operations import TaskOperations
 
 MAX_TASKS_PER_REQUEST = 100
@@ -191,6 +194,12 @@ def _handle_output(results_queue):
     return results
 
 def patch_client(client):
+    try:
+        models = sys.modules['azure.batch.models']
+    except KeyError:
+        models = importlib.import_module('azure.batch.models')
+    setattr(models, 'CreateTasksErrorException', CreateTasksErrorException)
+    sys.modules['azure.batch.models'] = models
     client.task.add_collection = types.MethodType(bulk_add_collection, client.task)
 
 def bulk_add_collection(

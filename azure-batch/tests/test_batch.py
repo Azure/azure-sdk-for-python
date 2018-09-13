@@ -14,6 +14,7 @@ import requests
 
 import azure.batch
 from azure.batch import models
+
 from batch_preparers import (
     AccountPreparer,
     PoolPreparer,
@@ -881,7 +882,7 @@ class BatchTest(AzureMgmtTestCase):
             constraints=models.TaskConstraints(max_task_retry_count=1))
         self.assertIsNone(response)
 
-        # Test Get Subtasks 
+        # Test Get Subtasks
         # TODO: Test with actual subtasks
         subtasks = client.task.list_subtasks(batch_job.id, task_param.id)
         self.assertIsInstance(subtasks, models.CloudTaskListSubtasksResult)

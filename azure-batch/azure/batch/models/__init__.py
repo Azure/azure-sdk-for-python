@@ -9,10 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-######DO NOT REMOVE######
-from ..custom.custom_errors import CreateTasksErrorException
-######DO NOT REMOVE######
-
 try:
     from .pool_usage_metrics_py3 import PoolUsageMetrics
     from .image_reference_py3 import ImageReference
@@ -471,7 +467,6 @@ from .batch_service_client_enums import (
 )
 
 __all__ = [
-    'CreateTasksErrorException',
     'PoolUsageMetrics',
     'ImageReference',
     'NodeAgentSku',
