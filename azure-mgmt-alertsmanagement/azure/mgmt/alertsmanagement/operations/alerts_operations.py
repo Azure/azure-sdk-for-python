@@ -37,7 +37,7 @@ class AlertsOperations(object):
         self.config = config
 
     def get_all(
-            self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, sort_order1=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
+            self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, select=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
         """List all the existing alerts, where the results can be selective by
         passing multiple filter parameters including time range and sorted on
         specific fields. .
@@ -101,12 +101,12 @@ class AlertsOperations(object):
          descending.  Default value is 'desc' for time fields and 'asc' for
          others. Possible values include: 'asc', 'desc'
         :type sort_order: str
-        :param sort_order1: This filter allows to selection of the
-         fields(comma seperated) which would  be part of the the essential
-         section. This would allow to project only the  required fields rather
-         than getting entire content.  Default is to fetch all the fields in
-         the essentials section.
-        :type sort_order1: str
+        :param select: This filter allows to selection of the fields(comma
+         seperated) which would  be part of the the essential section. This
+         would allow to project only the  required fields rather than getting
+         entire content.  Default is to fetch all the fields in the essentials
+         section.
+        :type select: str
         :param time_range: Filter by time range by below listed values.
          Default value is 1 day. Possible values include: '1h', '1d', '7d',
          '30d'
@@ -168,8 +168,8 @@ class AlertsOperations(object):
                     query_parameters['sortBy'] = self._serialize.query("sort_by", sort_by, 'str')
                 if sort_order is not None:
                     query_parameters['sortOrder'] = self._serialize.query("sort_order", sort_order, 'str')
-                if sort_order1 is not None:
-                    query_parameters['sortOrder'] = self._serialize.query("sort_order1", sort_order1, 'str')
+                if select is not None:
+                    query_parameters['select'] = self._serialize.query("select", select, 'str')
                 if time_range is not None:
                     query_parameters['timeRange'] = self._serialize.query("time_range", time_range, 'str')
                 if custom_time_range is not None:
