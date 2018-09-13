@@ -25,6 +25,7 @@ class SkuName(str, Enum):
     standard_ragrs = "Standard_RAGRS"
     standard_zrs = "Standard_ZRS"
     premium_lrs = "Premium_LRS"
+    premium_zrs = "Premium_ZRS"
 
 
 class SkuTier(str, Enum):
