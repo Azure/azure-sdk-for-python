@@ -156,7 +156,7 @@ class Python2PackageOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/python2Packages/{packageName}'}
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, package_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, package_name, content_link, tags=None, custom_headers=None, raw=False, **operation_config):
         """Create or Update the python 2 package identified by package name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -165,9 +165,10 @@ class Python2PackageOperations(object):
         :type automation_account_name: str
         :param package_name: The name of python package.
         :type package_name: str
-        :param parameters: The create or update parameters for python package.
-        :type parameters:
-         ~azure.mgmt.automation.models.ModuleCreateOrUpdateParameters
+        :param content_link: Gets or sets the module content link.
+        :type content_link: ~azure.mgmt.automation.models.ContentLink
+        :param tags: Gets or sets the tags attached to the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -179,6 +180,8 @@ class Python2PackageOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        parameters = models.PythonPackageCreateParameters(content_link=content_link, tags=tags)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -205,7 +208,7 @@ class Python2PackageOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ModuleCreateOrUpdateParameters')
+        body_content = self._serialize.body(parameters, 'PythonPackageCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -229,7 +232,7 @@ class Python2PackageOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/python2Packages/{packageName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, package_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, package_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Update the python 2 package identified by package name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -238,8 +241,8 @@ class Python2PackageOperations(object):
         :type automation_account_name: str
         :param package_name: The name of python package.
         :type package_name: str
-        :param parameters: The update parameters for python package.
-        :type parameters: ~azure.mgmt.automation.models.ModuleUpdateParameters
+        :param tags: Gets or sets the tags attached to the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -251,6 +254,8 @@ class Python2PackageOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        parameters = models.PythonPackageUpdateParameters(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -277,7 +282,7 @@ class Python2PackageOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ModuleUpdateParameters')
+        body_content = self._serialize.body(parameters, 'PythonPackageUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

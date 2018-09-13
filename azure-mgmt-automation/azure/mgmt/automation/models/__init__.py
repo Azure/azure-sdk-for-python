@@ -64,6 +64,8 @@ try:
     from .module_create_or_update_parameters_py3 import ModuleCreateOrUpdateParameters
     from .module_update_parameters_py3 import ModuleUpdateParameters
     from .type_field_py3 import TypeField
+    from .python_package_create_parameters_py3 import PythonPackageCreateParameters
+    from .python_package_update_parameters_py3 import PythonPackageUpdateParameters
     from .runbook_parameter_py3 import RunbookParameter
     from .runbook_draft_py3 import RunbookDraft
     from .runbook_py3 import Runbook
@@ -190,6 +192,8 @@ except (SyntaxError, ImportError):
     from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
     from .module_update_parameters import ModuleUpdateParameters
     from .type_field import TypeField
+    from .python_package_create_parameters import PythonPackageCreateParameters
+    from .python_package_update_parameters import PythonPackageUpdateParameters
     from .runbook_parameter import RunbookParameter
     from .runbook_draft import RunbookDraft
     from .runbook import Runbook
@@ -375,6 +379,8 @@ __all__ = [
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
     'TypeField',
+    'PythonPackageCreateParameters',
+    'PythonPackageUpdateParameters',
     'RunbookParameter',
     'RunbookDraft',
     'Runbook',
