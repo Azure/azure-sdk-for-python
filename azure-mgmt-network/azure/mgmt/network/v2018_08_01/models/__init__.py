@@ -201,7 +201,7 @@ try:
     from .connection_monitor_result_py3 import ConnectionMonitorResult
     from .connection_state_snapshot_py3 import ConnectionStateSnapshot
     from .connection_monitor_query_result_py3 import ConnectionMonitorQueryResult
-    from .traffic_query_py3 import TrafficQuery
+    from .network_configuration_diagnostic_profile_py3 import NetworkConfigurationDiagnosticProfile
     from .network_configuration_diagnostic_parameters_py3 import NetworkConfigurationDiagnosticParameters
     from .matched_rule_py3 import MatchedRule
     from .network_security_rules_evaluation_result_py3 import NetworkSecurityRulesEvaluationResult
@@ -468,7 +468,7 @@ except (SyntaxError, ImportError):
     from .connection_monitor_result import ConnectionMonitorResult
     from .connection_state_snapshot import ConnectionStateSnapshot
     from .connection_monitor_query_result import ConnectionMonitorQueryResult
-    from .traffic_query import TrafficQuery
+    from .network_configuration_diagnostic_profile import NetworkConfigurationDiagnosticProfile
     from .network_configuration_diagnostic_parameters import NetworkConfigurationDiagnosticParameters
     from .matched_rule import MatchedRule
     from .network_security_rules_evaluation_result import NetworkSecurityRulesEvaluationResult
@@ -661,6 +661,7 @@ from .network_management_client_enums import (
     ConnectionMonitorSourceStatus,
     ConnectionState,
     EvaluationState,
+    VerbosityLevel,
     PublicIPPrefixSkuName,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
@@ -880,7 +881,7 @@ __all__ = [
     'ConnectionMonitorResult',
     'ConnectionStateSnapshot',
     'ConnectionMonitorQueryResult',
-    'TrafficQuery',
+    'NetworkConfigurationDiagnosticProfile',
     'NetworkConfigurationDiagnosticParameters',
     'MatchedRule',
     'NetworkSecurityRulesEvaluationResult',
@@ -1072,6 +1073,7 @@ __all__ = [
     'ConnectionMonitorSourceStatus',
     'ConnectionState',
     'EvaluationState',
+    'VerbosityLevel',
     'PublicIPPrefixSkuName',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
