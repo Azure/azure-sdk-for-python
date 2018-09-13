@@ -20,7 +20,7 @@ class AzureMetricsData(Model):
     """
 
     _attribute_map = {
-        'base_data': {'key': 'BaseData', 'type': 'AzureMetricsBaseData'},
+        'base_data': {'key': 'baseData', 'type': 'AzureMetricsBaseData'},
     }
 
     def __init__(self, **kwargs):

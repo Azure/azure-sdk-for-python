@@ -22,8 +22,8 @@ class AzureMetricsDocument(Model):
     """
 
     _attribute_map = {
-        'time': {'key': 'Time', 'type': 'str'},
-        'data': {'key': 'Data', 'type': 'AzureMetricsData'},
+        'time': {'key': 'time', 'type': 'str'},
+        'data': {'key': 'data', 'type': 'AzureMetricsData'},
     }
 
     def __init__(self, *, time: str=None, data=None, **kwargs) -> None:

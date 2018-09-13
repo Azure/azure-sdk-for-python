@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class SystemRuntimeMethodHandle(Model):
-    """SystemRuntimeMethodHandle.
+class ApiError(Model):
+    """ApiError.
 
-    :param value:
-    :type value: ~azure.monitor.models.SystemIntPtr
+    :param code: Gets or sets the azure metrics error code
+    :type code: str
+    :param message: Gets or sets the azure metrics error message
+    :type message: str
     """
 
     _attribute_map = {
-        'value': {'key': 'Value', 'type': 'SystemIntPtr'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SystemRuntimeMethodHandle, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ApiError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message

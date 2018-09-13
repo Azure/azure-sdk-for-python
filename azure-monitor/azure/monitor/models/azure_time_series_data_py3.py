@@ -28,11 +28,11 @@ class AzureTimeSeriesData(Model):
     """
 
     _attribute_map = {
-        'dim_values': {'key': 'DimValues', 'type': '[str]'},
-        'min': {'key': 'Min', 'type': 'float'},
-        'max': {'key': 'Max', 'type': 'float'},
-        'sum': {'key': 'Sum', 'type': 'float'},
-        'count': {'key': 'Count', 'type': 'int'},
+        'dim_values': {'key': 'dimValues', 'type': '[str]'},
+        'min': {'key': 'min', 'type': 'float'},
+        'max': {'key': 'max', 'type': 'float'},
+        'sum': {'key': 'sum', 'type': 'float'},
+        'count': {'key': 'count', 'type': 'int'},
     }
 
     def __init__(self, *, dim_values=None, min: float=None, max: float=None, sum: float=None, count: int=None, **kwargs) -> None:

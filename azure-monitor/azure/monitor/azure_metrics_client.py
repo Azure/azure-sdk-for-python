@@ -102,12 +102,11 @@ class AzureMetricsClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MicrosoftAspNetCoreMvcObjectResult or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.monitor.models.MicrosoftAspNetCoreMvcObjectResult or
+        :return: AzureMetricsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.monitor.models.AzureMetricsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`MicrosoftAspNetCoreMvcObjectResultException<azure.monitor.models.MicrosoftAspNetCoreMvcObjectResultException>`
+         :class:`AzureMetricsResultException<azure.monitor.models.AzureMetricsResultException>`
         """
         body = models.AzureMetricsDocument(time=time, data=data)
 
@@ -148,12 +147,12 @@ class AzureMetricsClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.MicrosoftAspNetCoreMvcObjectResultException(self._deserialize, response)
+            raise models.AzureMetricsResultException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MicrosoftAspNetCoreMvcObjectResult', response)
+            deserialized = self._deserialize('AzureMetricsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

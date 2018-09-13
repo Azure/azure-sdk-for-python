@@ -27,10 +27,10 @@ class AzureMetricsBaseData(Model):
     """
 
     _attribute_map = {
-        'metric': {'key': 'Metric', 'type': 'str'},
-        'namespace': {'key': 'Namespace', 'type': 'str'},
-        'dim_names': {'key': 'DimNames', 'type': '[str]'},
-        'series': {'key': 'Series', 'type': '[AzureTimeSeriesData]'},
+        'metric': {'key': 'metric', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'dim_names': {'key': 'dimNames', 'type': '[str]'},
+        'series': {'key': 'series', 'type': '[AzureTimeSeriesData]'},
     }
 
     def __init__(self, **kwargs):

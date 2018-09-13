@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class SystemModuleHandle(Model):
-    """SystemModuleHandle.
+class ApiFailureResponse(Model):
+    """ApiFailureResponse.
 
-    :param md_stream_version:
-    :type md_stream_version: int
+    :param error:
+    :type error: ~azure.monitor.models.ApiError
     """
 
     _attribute_map = {
-        'md_stream_version': {'key': 'MDStreamVersion', 'type': 'int'},
+        'error': {'key': 'error', 'type': 'ApiError'},
     }
 
     def __init__(self, **kwargs):
-        super(SystemModuleHandle, self).__init__(**kwargs)
-        self.md_stream_version = kwargs.get('md_stream_version', None)
+        super(ApiFailureResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
