@@ -5,7 +5,7 @@ import logging
 import pkgutil
 from pathlib import Path
 import types
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,7 +41,12 @@ def create_report(module_name: str) -> Dict[str, Any]:
         else:
             report["models"]["enums"][model_name] = create_model_report(model_cls)
     # Look for operation groups
-    operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
+    try:
+        operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
+    except AttributeError:
+        # This guy has no "operations", this is possible (Cognitive Services). Just skip it then.
+        operations_classes = []
+
     for op_name in operations_classes:
         op_content = {'name': op_name}
         op_cls = getattr(module_to_generate.operations, op_name)
@@ -99,16 +104,21 @@ def create_report_from_func(function_attr):
         })
     return func_content
 
-def main(input_parameter: str, output_filename: str):
+def main(input_parameter: str, output_filename: Optional[str] = None, version: Optional[str] = None):
     package_name, module_name = parse_input(input_parameter)
     report = create_report(module_name)
 
+    version = version or "latest"
+
     if not output_filename:
         split_package_name = input_parameter.split('#')
-        output_filename = Path(package_name) / Path("code_reports")
+        output_filename = Path(package_name) / Path("code_reports") / Path(version)
         if len(split_package_name) == 2:
-            output_filename /= Path(split_package_name[1])
-        output_filename /= Path("latest.json")
+            output_filename /= Path(split_package_name[1]+".json")
+        else:
+            output_filename /= Path("report.json")
+    else:
+        output_filename = Path(output_filename)
 
     output_filename.parent.mkdir(parents=True, exist_ok=True)
 
@@ -117,7 +127,7 @@ def main(input_parameter: str, output_filename: str):
 
 def find_autorest_generated_folder(module_prefix="azure"):
     """Find all Autorest generated code in that module prefix.
-    This actually looks for a "models" package only. We could be smarter if necessary.
+    This actually looks for a "models" package only (not file). We could be smarter if necessary.
     """
     _LOGGER.info(f"Looking for Autorest generated package in {module_prefix}")
 
@@ -135,12 +145,14 @@ def find_autorest_generated_folder(module_prefix="azure"):
                 continue
 
             _LOGGER.debug(f"Try {sub_package}")
-            importlib.import_module(".models", sub_package)
+            model_module = importlib.import_module(".models", sub_package)
 
-            # If not exception, we found it
+            # If not exception, we MIGHT have found it, but cannot be a file.
+            # Keep continue to try to break it, file module have no __path__
+            model_module.__path__
             _LOGGER.info(f"Found {sub_package}")
             result.append(sub_package)
-        except ModuleNotFoundError:
+        except (ModuleNotFoundError, AttributeError):
             # No model, might dig deeper
             if ispkg:
                 result += find_autorest_generated_folder(sub_package)
@@ -159,8 +171,21 @@ def build_them_all():
         package_name = list(Path(main_module.__path__[0]).relative_to(root).parents)[-2]
         packages.setdefault(package_name, set()).add(module_name)
 
-    from pprint import pprint
-    pprint(packages)
+    for package_name, sub_module_list in packages.items():
+        _LOGGER.info(f"Processing {package_name}")
+        package_name_str = str(package_name)
+        if len(sub_module_list) == 1:
+            main(package_name_str)
+        else:
+            for sub_module in sub_module_list:
+                _LOGGER.info(f"\tProcessing sub-module {sub_module}")
+                sub_module_from_package = package_name_str.replace("-", ".")
+                if not sub_module.startswith(sub_module_from_package):
+                    _LOGGER.warning(f"Submodule {sub_module} does not package name {package_name}")
+                    continue
+                sub_module_last_part = sub_module[len(sub_module_from_package)+1:]
+                _LOGGER.info(f"Calling main with {package_name}#{sub_module_last_part}")
+                main(f"{package_name}#{sub_module_last_part}")
 
 if __name__ == "__main__":
     import argparse
@@ -173,7 +198,10 @@ if __name__ == "__main__":
                         help='Package name.')
     parser.add_argument('--output-file', '-o',
                         dest='output_file',
-                        help='Output file. [default: ./<package_name>/code_reports/<module_name>/latest.json]')
+                        help='Output file. [default: ./<package_name>/code_reports/<version>/<module_name>.json]')
+    parser.add_argument('--version', '-v',
+                        dest='version',
+                        help='The version of the package you want. By default, latest and current branch.')
     parser.add_argument("--debug",
                         dest="debug", action="store_true",
                         help="Verbosity in DEBUG mode")
@@ -187,4 +215,4 @@ if __name__ == "__main__":
     if args.package_name == "all":
         build_them_all()
     else:
-        main(args.package_name, args.output_file)
+        main(args.package_name, args.output_file, args.version)
