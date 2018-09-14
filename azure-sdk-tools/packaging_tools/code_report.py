@@ -100,8 +100,17 @@ def create_report_from_func(function_attr):
     return func_content
 
 def main(input_parameter: str, output_filename: str):
-    _, module_name = parse_input(input_parameter)
+    package_name, module_name = parse_input(input_parameter)
     report = create_report(module_name)
+
+    if not output_filename:
+        split_package_name = input_parameter.split('#')
+        output_filename = Path(package_name) / Path("code_reports")
+        if len(split_package_name) == 2:
+            output_filename /= Path(split_package_name[1])
+        output_filename /= Path("latest.json")
+
+    output_filename.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_filename, "w") as fd:
         json.dump(report, fd, indent=2)
@@ -163,8 +172,8 @@ if __name__ == "__main__":
     parser.add_argument('package_name',
                         help='Package name.')
     parser.add_argument('--output-file', '-o',
-                        dest='output_file', default='./report.json',
-                        help='Output file. [default: %(default)s]')
+                        dest='output_file',
+                        help='Output file. [default: ./<package_name>/code_reports/<module_name>/latest.json]')
     parser.add_argument("--debug",
                         dest="debug", action="store_true",
                         help="Verbosity in DEBUG mode")
