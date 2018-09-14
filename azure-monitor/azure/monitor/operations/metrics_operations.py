@@ -34,7 +34,7 @@ class MetricsOperations(object):
 
         self.config = config
 
-    def post(
+    def create(
             self, subscription_id, resource_group_name, resource_provider, resource_type_name, resource_name, content_type=None, content_length=None, time=None, data=None, custom_headers=None, raw=False, **operation_config):
         """**Post the metric values for a resource**.
 
@@ -71,7 +71,7 @@ class MetricsOperations(object):
         body = models.AzureMetricsDocument(time=time, data=data)
 
         # Construct URL
-        url = self.post.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -119,4 +119,4 @@ class MetricsOperations(object):
             return client_raw_response
 
         return deserialized
-    post.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProvider}/{resourceTypeName}/{resourceName}/metrics'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProvider}/{resourceTypeName}/{resourceName}/metrics'}
