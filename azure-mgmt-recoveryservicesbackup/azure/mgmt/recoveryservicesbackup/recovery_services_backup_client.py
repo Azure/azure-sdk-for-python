@@ -22,6 +22,7 @@ from .operations.export_jobs_operation_results_operations import ExportJobsOpera
 from .operations.jobs_operations import JobsOperations
 from .operations.backup_policies_operations import BackupPoliciesOperations
 from .operations.backup_protected_items_operations import BackupProtectedItemsOperations
+from .operations.backup_protection_intent_operations import BackupProtectionIntentOperations
 from .operations.backup_usage_summaries_operations import BackupUsageSummariesOperations
 from .operations.operation_operations import OperationOperations
 from .operations.backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
@@ -109,6 +110,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
     :ivar backup_protected_items: BackupProtectedItems operations
     :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
+    :ivar backup_protection_intent: BackupProtectionIntent operations
+    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
     :ivar backup_usage_summaries: BackupUsageSummaries operations
     :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
     :ivar operation: Operation operations
@@ -201,6 +204,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self.backup_policies = BackupPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_protected_items = BackupProtectedItemsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protection_intent = BackupProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_usage_summaries = BackupUsageSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)

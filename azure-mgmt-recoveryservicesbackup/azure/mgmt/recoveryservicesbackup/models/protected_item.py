@@ -52,6 +52,8 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param vault_id: ID of the vault which protects this item
+    :type vault_id: str
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -69,6 +71,7 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -86,4 +89,5 @@ class ProtectedItem(Model):
         self.last_recovery_point = kwargs.get('last_recovery_point', None)
         self.backup_set_name = kwargs.get('backup_set_name', None)
         self.create_mode = kwargs.get('create_mode', None)
+        self.vault_id = kwargs.get('vault_id', None)
         self.protected_item_type = None

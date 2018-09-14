@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class BackupProtectedItemsOperations(object):
-    """BackupProtectedItemsOperations operations.
+class BackupProtectionIntentOperations(object):
+    """BackupProtectionIntentOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,7 @@ class BackupProtectedItemsOperations(object):
 
     def list(
             self, vault_name, resource_group_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Provides a pageable list of all items that are backed up within a
+        """Provides a pageable list of all intents that are present within a
         vault.
 
         :param vault_name: The name of the recovery services vault.
@@ -56,9 +56,9 @@ class BackupProtectedItemsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ProtectedItemResource
+        :return: An iterator like instance of ProtectionIntentResource
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource]
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -107,12 +107,12 @@ class BackupProtectedItemsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ProtectedItemResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ProtectionIntentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ProtectedItemResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ProtectionIntentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems'}
+    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectionIntents'}

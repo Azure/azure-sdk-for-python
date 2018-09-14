@@ -30,6 +30,24 @@ class HealthStatus(str, Enum):
     invalid = "Invalid"
 
 
+class WorkloadType(str, Enum):
+
+    invalid = "Invalid"
+    vm = "VM"
+    file_folder = "FileFolder"
+    azure_sql_db = "AzureSqlDb"
+    sqldb = "SQLDB"
+    exchange = "Exchange"
+    sharepoint = "Sharepoint"
+    vmware_vm = "VMwareVM"
+    system_state = "SystemState"
+    client = "Client"
+    generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
+
+
 class RecoveryType(str, Enum):
 
     invalid = "Invalid"
@@ -95,6 +113,15 @@ class ProtectedItemHealthStatus(str, Enum):
     unhealthy = "Unhealthy"
     not_reachable = "NotReachable"
     ir_pending = "IRPending"
+
+
+class PolicyType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    differential = "Differential"
+    log = "Log"
+    copy_only_full = "CopyOnlyFull"
 
 
 class OverwriteOptions(str, Enum):
@@ -279,24 +306,6 @@ class MabServerType(str, Enum):
     generic_container = "GenericContainer"
 
 
-class WorkloadType(str, Enum):
-
-    invalid = "Invalid"
-    vm = "VM"
-    file_folder = "FileFolder"
-    azure_sql_db = "AzureSqlDb"
-    sqldb = "SQLDB"
-    exchange = "Exchange"
-    sharepoint = "Sharepoint"
-    vmware_vm = "VMwareVM"
-    system_state = "SystemState"
-    client = "Client"
-    generic_data_source = "GenericDataSource"
-    sql_data_base = "SQLDataBase"
-    azure_file_share = "AzureFileShare"
-    sap_hana_database = "SAPHanaDatabase"
-
-
 class HttpStatusCode(str, Enum):
 
     continue_enum = "Continue"
@@ -368,6 +377,13 @@ class HealthState(str, Enum):
     action_required = "ActionRequired"
     action_suggested = "ActionSuggested"
     invalid = "Invalid"
+
+
+class IntentItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_availability_group_container = "SQLAvailabilityGroupContainer"
 
 
 class ScheduleRunType(str, Enum):
