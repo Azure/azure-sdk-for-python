@@ -15,23 +15,16 @@ from msrest.serialization import Model
 class HDInsightProperties(Model):
     """HDInsightProperties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param ssh_port: Port open for ssh connections on the master node of the
      cluster.
     :type ssh_port: int
-    :ivar address: Public IP address of the master node of the cluster.
-    :vartype address: str
+    :param address: Public IP address of the master node of the cluster.
+    :type address: str
     :param administrator_account: Admin credentials for master node of the
      cluster
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
     """
-
-    _validation = {
-        'address': {'readonly': True},
-    }
 
     _attribute_map = {
         'ssh_port': {'key': 'sshPort', 'type': 'int'},
@@ -39,8 +32,8 @@ class HDInsightProperties(Model):
         'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
     }
 
-    def __init__(self, *, ssh_port: int=None, administrator_account=None, **kwargs) -> None:
+    def __init__(self, *, ssh_port: int=None, address: str=None, administrator_account=None, **kwargs) -> None:
         super(HDInsightProperties, self).__init__(**kwargs)
         self.ssh_port = ssh_port
-        self.address = None
+        self.address = address
         self.administrator_account = administrator_account
