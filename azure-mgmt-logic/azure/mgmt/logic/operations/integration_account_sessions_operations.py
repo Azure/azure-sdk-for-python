@@ -58,8 +58,7 @@ class IntegrationAccountSessionsOperations(object):
         :return: An iterator like instance of IntegrationAccountSession
         :rtype:
          ~azure.mgmt.logic.models.IntegrationAccountSessionPaged[~azure.mgmt.logic.models.IntegrationAccountSession]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -100,7 +99,9 @@ class IntegrationAccountSessionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -133,8 +134,7 @@ class IntegrationAccountSessionsOperations(object):
         :return: IntegrationAccountSession or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -165,7 +165,9 @@ class IntegrationAccountSessionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -199,8 +201,7 @@ class IntegrationAccountSessionsOperations(object):
         :return: IntegrationAccountSession or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -235,7 +236,9 @@ class IntegrationAccountSessionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
