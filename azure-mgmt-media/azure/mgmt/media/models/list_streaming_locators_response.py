@@ -13,12 +13,19 @@ from msrest.serialization import Model
 
 
 class ListStreamingLocatorsResponse(Model):
-    """The Streaming Locators associated with this asset.
+    """The Streaming Locators associated with this Asset.
 
-    :param streaming_locators: The list of Streaming Locators.
-    :type streaming_locators:
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar streaming_locators: The list of Streaming Locators.
+    :vartype streaming_locators:
      list[~azure.mgmt.media.models.AssetStreamingLocator]
     """
+
+    _validation = {
+        'streaming_locators': {'readonly': True},
+    }
 
     _attribute_map = {
         'streaming_locators': {'key': 'streamingLocators', 'type': '[AssetStreamingLocator]'},
@@ -26,4 +33,4 @@ class ListStreamingLocatorsResponse(Model):
 
     def __init__(self, **kwargs):
         super(ListStreamingLocatorsResponse, self).__init__(**kwargs)
-        self.streaming_locators = kwargs.get('streaming_locators', None)
+        self.streaming_locators = None

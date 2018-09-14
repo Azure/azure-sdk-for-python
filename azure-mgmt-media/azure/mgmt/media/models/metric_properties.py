@@ -15,9 +15,17 @@ from msrest.serialization import Model
 class MetricProperties(Model):
     """Metric properties.
 
-    :param service_specification: The service specifications.
-    :type service_specification: ~azure.mgmt.media.models.ServiceSpecification
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar service_specification: The service specifications.
+    :vartype service_specification:
+     ~azure.mgmt.media.models.ServiceSpecification
     """
+
+    _validation = {
+        'service_specification': {'readonly': True},
+    }
 
     _attribute_map = {
         'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
@@ -25,4 +33,4 @@ class MetricProperties(Model):
 
     def __init__(self, **kwargs):
         super(MetricProperties, self).__init__(**kwargs)
-        self.service_specification = kwargs.get('service_specification', None)
+        self.service_specification = None

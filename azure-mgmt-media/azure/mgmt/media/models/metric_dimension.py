@@ -15,19 +15,21 @@ from msrest.serialization import Model
 class MetricDimension(Model):
     """A metric dimension.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: The metric dimension name.
-    :type name: str
-    :param display_name: The display name for the dimension.
-    :type display_name: str
-    :param to_be_exported_for_shoebox: Required. Whether to export metric to
-     shoebox.
-    :type to_be_exported_for_shoebox: bool
+    :ivar name: The metric dimension name.
+    :vartype name: str
+    :ivar display_name: The display name for the dimension.
+    :vartype display_name: str
+    :ivar to_be_exported_for_shoebox: Whether to export metric to shoebox.
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _validation = {
-        'to_be_exported_for_shoebox': {'required': True},
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'to_be_exported_for_shoebox': {'readonly': True},
     }
 
     _attribute_map = {
@@ -38,6 +40,6 @@ class MetricDimension(Model):
 
     def __init__(self, **kwargs):
         super(MetricDimension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
+        self.name = None
+        self.display_name = None
+        self.to_be_exported_for_shoebox = None

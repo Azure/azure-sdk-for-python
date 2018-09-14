@@ -20,7 +20,7 @@ class FilterTrackPropertyCondition(Model):
     :param property: Required. The track property type. Possible values
      include: 'Unknown', 'Type', 'Name', 'Language', 'FourCC', 'Bitrate'
     :type property: str or ~azure.mgmt.media.models.FilterTrackPropertyType
-    :param value: The track proprty value.
+    :param value: Required. The track proprty value.
     :type value: str
     :param operation: Required. The track property condition operation.
      Possible values include: 'Equal', 'NotEqual'
@@ -30,6 +30,7 @@ class FilterTrackPropertyCondition(Model):
 
     _validation = {
         'property': {'required': True},
+        'value': {'required': True},
         'operation': {'required': True},
     }
 
@@ -39,7 +40,7 @@ class FilterTrackPropertyCondition(Model):
         'operation': {'key': 'operation', 'type': 'FilterTrackPropertyCompareOperation'},
     }
 
-    def __init__(self, *, property, operation, value: str=None, **kwargs) -> None:
+    def __init__(self, *, property, value: str, operation, **kwargs) -> None:
         super(FilterTrackPropertyCondition, self).__init__(**kwargs)
         self.property = property
         self.value = value

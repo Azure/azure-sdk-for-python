@@ -30,16 +30,16 @@ class FilterTrackPropertyCompareOperation(str, Enum):
 
 class MetricUnit(str, Enum):
 
-    bytes = "Bytes"
-    count = "Count"
-    milliseconds = "Milliseconds"
+    bytes = "Bytes"  #: The number of bytes.
+    count = "Count"  #: The count.
+    milliseconds = "Milliseconds"  #: The number of milliseconds.
 
 
 class MetricAggregationType(str, Enum):
 
-    average = "Average"
-    count = "Count"
-    total = "Total"
+    average = "Average"  #: The average.
+    count = "Count"  #: The count of a number of items, usually requests.
+    total = "Total"  #: The sum.
 
 
 class StorageAccountType(str, Enum):

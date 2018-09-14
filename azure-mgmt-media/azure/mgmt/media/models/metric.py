@@ -15,28 +15,33 @@ from msrest.serialization import Model
 class Metric(Model):
     """A metric emitted by service.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: The metric name.
-    :type name: str
-    :param display_name: The metric display name.
-    :type display_name: str
-    :param display_description: The metric display description.
-    :type display_description: str
-    :param unit: Required. The metric unit. Possible values include: 'Bytes',
-     'Count', 'Milliseconds'
-    :type unit: str or ~azure.mgmt.media.models.MetricUnit
-    :param aggregation_type: Required. The metric aggregation type. Possible
-     values include: 'Average', 'Count', 'Total'
-    :type aggregation_type: str or
+    :ivar name: The metric name.
+    :vartype name: str
+    :ivar display_name: The metric display name.
+    :vartype display_name: str
+    :ivar display_description: The metric display description.
+    :vartype display_description: str
+    :ivar unit: The metric unit. Possible values include: 'Bytes', 'Count',
+     'Milliseconds'
+    :vartype unit: str or ~azure.mgmt.media.models.MetricUnit
+    :ivar aggregation_type: The metric aggregation type. Possible values
+     include: 'Average', 'Count', 'Total'
+    :vartype aggregation_type: str or
      ~azure.mgmt.media.models.MetricAggregationType
-    :param dimensions: The metric dimensions.
-    :type dimensions: list[~azure.mgmt.media.models.MetricDimension]
+    :ivar dimensions: The metric dimensions.
+    :vartype dimensions: list[~azure.mgmt.media.models.MetricDimension]
     """
 
     _validation = {
-        'unit': {'required': True},
-        'aggregation_type': {'required': True},
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'display_description': {'readonly': True},
+        'unit': {'readonly': True},
+        'aggregation_type': {'readonly': True},
+        'dimensions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,9 +55,9 @@ class Metric(Model):
 
     def __init__(self, **kwargs):
         super(Metric, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.display_description = kwargs.get('display_description', None)
-        self.unit = kwargs.get('unit', None)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.dimensions = kwargs.get('dimensions', None)
+        self.name = None
+        self.display_name = None
+        self.display_description = None
+        self.unit = None
+        self.aggregation_type = None
+        self.dimensions = None

@@ -16,15 +16,21 @@ class FilterTrackSelection(Model):
     """Representing a list of FilterTrackPropertyConditions to select a track.
     The filters are combined using a logical AND operation.
 
-    :param track_selections: The track selections.
+    All required parameters must be populated in order to send to Azure.
+
+    :param track_selections: Required. The track selections.
     :type track_selections:
      list[~azure.mgmt.media.models.FilterTrackPropertyCondition]
     """
+
+    _validation = {
+        'track_selections': {'required': True},
+    }
 
     _attribute_map = {
         'track_selections': {'key': 'trackSelections', 'type': '[FilterTrackPropertyCondition]'},
     }
 
-    def __init__(self, *, track_selections=None, **kwargs) -> None:
+    def __init__(self, *, track_selections, **kwargs) -> None:
         super(FilterTrackSelection, self).__init__(**kwargs)
         self.track_selections = track_selections
