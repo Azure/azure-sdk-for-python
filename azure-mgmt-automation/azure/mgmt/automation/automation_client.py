@@ -30,10 +30,6 @@ from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
 from .operations.object_data_types_operations import ObjectDataTypesOperations
 from .operations.fields_operations import FieldsOperations
-from .operations.runbook_draft_operations import RunbookDraftOperations
-from .operations.runbook_operations import RunbookOperations
-from .operations.test_job_streams_operations import TestJobStreamsOperations
-from .operations.test_job_operations import TestJobOperations
 from .operations.schedule_operations import ScheduleOperations
 from .operations.variable_operations import VariableOperations
 from .operations.webhook_operations import WebhookOperations
@@ -53,6 +49,10 @@ from .operations.dsc_compilation_job_operations import DscCompilationJobOperatio
 from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .operations.node_count_information_operations import NodeCountInformationOperations
+from .operations.runbook_draft_operations import RunbookDraftOperations
+from .operations.runbook_operations import RunbookOperations
+from .operations.test_job_streams_operations import TestJobStreamsOperations
+from .operations.test_job_operations import TestJobOperations
 from . import models
 
 
@@ -136,14 +136,6 @@ class AutomationClient(SDKClient):
     :vartype object_data_types: azure.mgmt.automation.operations.ObjectDataTypesOperations
     :ivar fields: Fields operations
     :vartype fields: azure.mgmt.automation.operations.FieldsOperations
-    :ivar runbook_draft: RunbookDraft operations
-    :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
-    :ivar runbook: Runbook operations
-    :vartype runbook: azure.mgmt.automation.operations.RunbookOperations
-    :ivar test_job_streams: TestJobStreams operations
-    :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
-    :ivar test_job: TestJob operations
-    :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
     :ivar schedule: Schedule operations
     :vartype schedule: azure.mgmt.automation.operations.ScheduleOperations
     :ivar variable: Variable operations
@@ -182,6 +174,14 @@ class AutomationClient(SDKClient):
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
     :ivar node_count_information: NodeCountInformation operations
     :vartype node_count_information: azure.mgmt.automation.operations.NodeCountInformationOperations
+    :ivar runbook_draft: RunbookDraft operations
+    :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
+    :ivar runbook: Runbook operations
+    :vartype runbook: azure.mgmt.automation.operations.RunbookOperations
+    :ivar test_job_streams: TestJobStreams operations
+    :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
+    :ivar test_job: TestJob operations
+    :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -240,14 +240,6 @@ class AutomationClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.fields = FieldsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.runbook_draft = RunbookDraftOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.runbook = RunbookOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.test_job_streams = TestJobStreamsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.test_job = TestJobOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.schedule = ScheduleOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.variable = VariableOperations(
@@ -285,4 +277,12 @@ class AutomationClient(SDKClient):
         self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.node_count_information = NodeCountInformationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.runbook_draft = RunbookDraftOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.runbook = RunbookOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.test_job_streams = TestJobStreamsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.test_job = TestJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
