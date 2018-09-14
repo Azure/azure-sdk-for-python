@@ -450,6 +450,13 @@ class EvaluationState(str, Enum):
     completed = "Completed"
 
 
+class VerbosityLevel(str, Enum):
+
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
+
+
 class PublicIPPrefixSkuName(str, Enum):
 
     standard = "Standard"
