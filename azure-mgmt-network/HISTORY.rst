@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.2.1 (2018-09-14)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix unexpected exception with network_profiles.delete
+
 2.2.0 (2018-09-11)
 ++++++++++++++++++
 
