@@ -17,8 +17,8 @@ class StorageAccountUpdateParameters(Model):
     properties.
 
     :param sku: Gets or sets the SKU name. Note that the SKU name cannot be
-     updated to Standard_ZRS or Premium_LRS, nor can accounts of those sku
-     names be updated to any other value.
+     updated to Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of
+     those sku names be updated to any other value.
     :type sku: ~azure.mgmt.storage.v2018_07_01.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
