@@ -35,7 +35,7 @@ class RunbookDraftUndoEditResult(Model):
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'HttpStatusCode'},
+        'status_code': {'key': 'statusCode', 'type': 'str'},
         'request_id': {'key': 'requestId', 'type': 'str'},
     }
 
