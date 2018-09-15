@@ -18,13 +18,17 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param regions: The regions where the artifact is going to be published.
-    :type regions: list[str]
-    :param source:
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_regions: The target regions where the artifact is going to
+     be published.
+    :type target_regions:
+     list[~azure.mgmt.compute.v2018_06_01.models.TargetRegion]
+    :param source: Required.
     :type source: ~azure.mgmt.compute.v2018_06_01.models.GalleryArtifactSource
-    :param scale_tier: The scale tier of the gallery image version. Valid
-     values are 'S30' and 'S100'. Possible values include: 'S30', 'S100'
-    :type scale_tier: str or ~azure.mgmt.compute.v2018_06_01.models.ScaleTier
+    :param replica_count: This is the number of source blob copies in a
+     region.
+    :type replica_count: int
     :param exclude_from_latest: The flag means that if it is set to true,
      people deploying VMs with 'latest' as version will not use this version.
     :type exclude_from_latest: bool
@@ -37,13 +41,14 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     """
 
     _validation = {
+        'source': {'required': True},
         'published_date': {'readonly': True},
     }
 
     _attribute_map = {
-        'regions': {'key': 'regions', 'type': '[str]'},
+        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
         'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
-        'scale_tier': {'key': 'scaleTier', 'type': 'str'},
+        'replica_count': {'key': 'replicaCount', 'type': 'int'},
         'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
         'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
@@ -51,7 +56,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
 
     def __init__(self, **kwargs):
         super(GalleryImageVersionPublishingProfile, self).__init__(**kwargs)
-        self.scale_tier = kwargs.get('scale_tier', None)
+        self.replica_count = kwargs.get('replica_count', None)
         self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
         self.published_date = None
         self.end_of_life_date = kwargs.get('end_of_life_date', None)
