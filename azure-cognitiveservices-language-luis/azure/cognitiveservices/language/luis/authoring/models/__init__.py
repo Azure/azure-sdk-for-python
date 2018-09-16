@@ -108,8 +108,7 @@ try:
     from .pattern_any_entity_extractor_py3 import PatternAnyEntityExtractor
     from .pattern_rule_info_py3 import PatternRuleInfo
     from .label_text_object_py3 import LabelTextObject
-    from .version_setting_object_py3 import VersionSettingObject
-    from .version_setting_update_object_py3 import VersionSettingUpdateObject
+    from .app_version_setting_object_py3 import AppVersionSettingObject
     from .hierarchical_child_model_update_object_py3 import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object_py3 import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object_py3 import CompositeChildModelCreateObject
@@ -212,8 +211,7 @@ except (SyntaxError, ImportError):
     from .pattern_any_entity_extractor import PatternAnyEntityExtractor
     from .pattern_rule_info import PatternRuleInfo
     from .label_text_object import LabelTextObject
-    from .version_setting_object import VersionSettingObject
-    from .version_setting_update_object import VersionSettingUpdateObject
+    from .app_version_setting_object import AppVersionSettingObject
     from .hierarchical_child_model_update_object import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object import CompositeChildModelCreateObject
@@ -321,8 +319,7 @@ __all__ = [
     'PatternAnyEntityExtractor',
     'PatternRuleInfo',
     'LabelTextObject',
-    'VersionSettingObject',
-    'VersionSettingUpdateObject',
+    'AppVersionSettingObject',
     'HierarchicalChildModelUpdateObject',
     'HierarchicalChildModelCreateObject',
     'CompositeChildModelCreateObject',

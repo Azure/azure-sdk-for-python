@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class VersionSettingUpdateObject(Model):
-    """Object model of an application version updated setting.
+class AppVersionSettingObject(Model):
+    """Object model of an application version setting.
 
     :param name: The application version setting name.
     :type name: str
-    :param value: The application version updated setting value.
+    :param value: The application version setting value.
     :type value: str
     """
 
@@ -26,7 +26,7 @@ class VersionSettingUpdateObject(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(VersionSettingUpdateObject, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(AppVersionSettingObject, self).__init__(**kwargs)
+        self.name = name
+        self.value = value

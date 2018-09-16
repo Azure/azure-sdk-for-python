@@ -48,7 +48,7 @@ class SettingsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
         :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.VersionSettingObject]
+         list[~azure.cognitiveservices.language.luis.authoring.models.AppVersionSettingObject]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
@@ -81,7 +81,7 @@ class SettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[VersionSettingObject]', response)
+            deserialized = self._deserialize('[AppVersionSettingObject]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -100,7 +100,7 @@ class SettingsOperations(object):
         :type version_id: str
         :param name: The application version setting name.
         :type name: str
-        :param value: The application version updated setting value.
+        :param value: The application version setting value.
         :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -114,7 +114,7 @@ class SettingsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        list_of_version_setting_update_object = models.VersionSettingUpdateObject(name=name, value=value)
+        list_of_app_version_setting_object = models.AppVersionSettingObject(name=name, value=value)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -136,7 +136,7 @@ class SettingsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(list_of_version_setting_update_object, 'VersionSettingUpdateObject')
+        body_content = self._serialize.body(list_of_app_version_setting_object, 'AppVersionSettingObject')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
