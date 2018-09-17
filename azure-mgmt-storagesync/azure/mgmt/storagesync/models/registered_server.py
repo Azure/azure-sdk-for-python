@@ -9,20 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class RegisteredServer(Model):
+class RegisteredServer(Resource):
     """Registered Server resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param server_certificate: Registered Server Certificate
     :type server_certificate: str
@@ -95,9 +97,6 @@ class RegisteredServer(Model):
 
     def __init__(self, **kwargs):
         super(RegisteredServer, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
         self.server_certificate = kwargs.get('server_certificate', None)
         self.agent_version = kwargs.get('agent_version', None)
         self.server_os_version = kwargs.get('server_os_version', None)

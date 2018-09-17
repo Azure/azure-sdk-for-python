@@ -68,7 +68,7 @@ class CloudEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CloudEndpoint')
+        body_content = self._serialize.body(parameters, 'CloudEndpointCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -112,7 +112,8 @@ class CloudEndpointsOperations(object):
         :param cloud_endpoint_name: Name of Cloud Endpoint object.
         :type cloud_endpoint_name: str
         :param parameters: Body of Cloud Endpoint resource.
-        :type parameters: ~azure.mgmt.storagesync.models.CloudEndpoint
+        :type parameters:
+         ~azure.mgmt.storagesync.models.CloudEndpointCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

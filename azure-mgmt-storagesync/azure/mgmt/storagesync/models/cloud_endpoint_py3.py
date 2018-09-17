@@ -26,10 +26,6 @@ class CloudEndpoint(Resource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param storage_account_key: Storage Account access key.
-    :type storage_account_key: str
-    :param storage_account: Storage Account name.
-    :type storage_account: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
     :param storage_account_share_name: Storage Account Share name
@@ -61,8 +57,6 @@ class CloudEndpoint(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'storage_account_key': {'key': 'properties.storageAccountKey', 'type': 'str'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
         'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
@@ -74,10 +68,8 @@ class CloudEndpoint(Resource):
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_key: str=None, storage_account: str=None, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, **kwargs) -> None:
         super(CloudEndpoint, self).__init__(**kwargs)
-        self.storage_account_key = storage_account_key
-        self.storage_account = storage_account
         self.storage_account_resource_id = storage_account_resource_id
         self.storage_account_share_name = storage_account_share_name
         self.storage_account_tenant_id = storage_account_tenant_id
