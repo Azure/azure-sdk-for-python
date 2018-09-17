@@ -19,7 +19,7 @@ except ImportError:
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-alertsmanagement"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_PPRINT_NAME = "Alerts Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
