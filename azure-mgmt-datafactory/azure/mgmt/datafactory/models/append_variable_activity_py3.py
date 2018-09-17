@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .control_activity_py3 import ControlActivity
 
 
-class ControlActivity(Activity):
-    """Base class for all control activities like IfCondition, ForEach , Until.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, SetVariableActivity,
-    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
-    IfConditionActivity, ExecutePipelineActivity
+class AppendVariableActivity(ControlActivity):
+    """Append value to a array Variable.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,11 +30,19 @@ class ControlActivity(Activity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
+    :param append_variable_activity_name: Required. Name of the variable to
+     which value needs to be appended.
+    :type append_variable_activity_name: str
+    :param value: Required. Value to be appended. Could be a static value or
+     Expression
+    :type value: object
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'append_variable_activity_name': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
@@ -49,12 +52,12 @@ class ControlActivity(Activity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
+        'append_variable_activity_name': {'key': 'typeProperties.name', 'type': 'str'},
+        'value': {'key': 'typeProperties.value', 'type': 'object'},
     }
 
-    _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
-    }
-
-    def __init__(self, **kwargs):
-        super(ControlActivity, self).__init__(**kwargs)
-        self.type = 'Container'
+    def __init__(self, *, name: str, append_variable_activity_name: str, value, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:
+        super(AppendVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.append_variable_activity_name = append_variable_activity_name
+        self.value = value
+        self.type = 'AppendVariable'
