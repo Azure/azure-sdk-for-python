@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.3.0 (2018-09-13)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group ServerSecurityAlertPoliciesOperations (MySQL only)
+- Added support for PostregreSQL 10.x
+- Added support for MariaDB (public preview)
+
 1.2.0 (2018-05-30)
 ++++++++++++++++++
 
