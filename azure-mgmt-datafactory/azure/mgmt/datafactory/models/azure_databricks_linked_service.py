@@ -56,9 +56,12 @@ class AzureDatabricksLinkedService(LinkedService):
     :param new_cluster_node_type: The node types of new cluster. Type: string
      (or Expression with resultType string).
     :type new_cluster_node_type: object
-    :param new_cluster_spark_conf: a set of optional, user-specified Spark
+    :param new_cluster_spark_conf: A set of optional, user-specified Spark
      configuration key-value pairs.
     :type new_cluster_spark_conf: dict[str, object]
+    :param new_cluster_spark_env_vars: A set of optional, user-specified Spark
+     environment variables key-value pairs.
+    :type new_cluster_spark_env_vars: dict[str, object]
     :param new_cluster_custom_tags: Additional tags for cluster resources.
     :type new_cluster_custom_tags: dict[str, object]
     :param encrypted_credential: The encrypted credential used for
@@ -87,6 +90,7 @@ class AzureDatabricksLinkedService(LinkedService):
         'new_cluster_num_of_worker': {'key': 'typeProperties.newClusterNumOfWorker', 'type': 'object'},
         'new_cluster_node_type': {'key': 'typeProperties.newClusterNodeType', 'type': 'object'},
         'new_cluster_spark_conf': {'key': 'typeProperties.newClusterSparkConf', 'type': '{object}'},
+        'new_cluster_spark_env_vars': {'key': 'typeProperties.newClusterSparkEnvVars', 'type': '{object}'},
         'new_cluster_custom_tags': {'key': 'typeProperties.newClusterCustomTags', 'type': '{object}'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
@@ -100,6 +104,7 @@ class AzureDatabricksLinkedService(LinkedService):
         self.new_cluster_num_of_worker = kwargs.get('new_cluster_num_of_worker', None)
         self.new_cluster_node_type = kwargs.get('new_cluster_node_type', None)
         self.new_cluster_spark_conf = kwargs.get('new_cluster_spark_conf', None)
+        self.new_cluster_spark_env_vars = kwargs.get('new_cluster_spark_env_vars', None)
         self.new_cluster_custom_tags = kwargs.get('new_cluster_custom_tags', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDatabricks'

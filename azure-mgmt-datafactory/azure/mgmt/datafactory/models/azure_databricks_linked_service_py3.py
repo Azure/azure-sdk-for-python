@@ -56,9 +56,12 @@ class AzureDatabricksLinkedService(LinkedService):
     :param new_cluster_node_type: The node types of new cluster. Type: string
      (or Expression with resultType string).
     :type new_cluster_node_type: object
-    :param new_cluster_spark_conf: a set of optional, user-specified Spark
+    :param new_cluster_spark_conf: A set of optional, user-specified Spark
      configuration key-value pairs.
     :type new_cluster_spark_conf: dict[str, object]
+    :param new_cluster_spark_env_vars: A set of optional, user-specified Spark
+     environment variables key-value pairs.
+    :type new_cluster_spark_env_vars: dict[str, object]
     :param new_cluster_custom_tags: Additional tags for cluster resources.
     :type new_cluster_custom_tags: dict[str, object]
     :param encrypted_credential: The encrypted credential used for
@@ -87,11 +90,12 @@ class AzureDatabricksLinkedService(LinkedService):
         'new_cluster_num_of_worker': {'key': 'typeProperties.newClusterNumOfWorker', 'type': 'object'},
         'new_cluster_node_type': {'key': 'typeProperties.newClusterNodeType', 'type': 'object'},
         'new_cluster_spark_conf': {'key': 'typeProperties.newClusterSparkConf', 'type': '{object}'},
+        'new_cluster_spark_env_vars': {'key': 'typeProperties.newClusterSparkEnvVars', 'type': '{object}'},
         'new_cluster_custom_tags': {'key': 'typeProperties.newClusterCustomTags', 'type': '{object}'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, domain, access_token, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, existing_cluster_id=None, new_cluster_version=None, new_cluster_num_of_worker=None, new_cluster_node_type=None, new_cluster_spark_conf=None, new_cluster_custom_tags=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, domain, access_token, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, existing_cluster_id=None, new_cluster_version=None, new_cluster_num_of_worker=None, new_cluster_node_type=None, new_cluster_spark_conf=None, new_cluster_spark_env_vars=None, new_cluster_custom_tags=None, encrypted_credential=None, **kwargs) -> None:
         super(AzureDatabricksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.domain = domain
         self.access_token = access_token
@@ -100,6 +104,7 @@ class AzureDatabricksLinkedService(LinkedService):
         self.new_cluster_num_of_worker = new_cluster_num_of_worker
         self.new_cluster_node_type = new_cluster_node_type
         self.new_cluster_spark_conf = new_cluster_spark_conf
+        self.new_cluster_spark_env_vars = new_cluster_spark_env_vars
         self.new_cluster_custom_tags = new_cluster_custom_tags
         self.encrypted_credential = encrypted_credential
         self.type = 'AzureDatabricks'
