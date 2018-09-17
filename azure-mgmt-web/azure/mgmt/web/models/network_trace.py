@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_only_resource import ProxyOnlyResource
+from msrest.serialization import Model
 
 
-class NetworkTrace(ProxyOnlyResource):
+class NetworkTrace(Model):
     """Network trace.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param path: Local file path for the captured network trace file.
     :type path: str
     :param status: Current status of the network trace operation, same as
@@ -36,20 +25,10 @@ class NetworkTrace(ProxyOnlyResource):
     :type message: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
