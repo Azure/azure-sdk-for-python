@@ -40,10 +40,9 @@ class Workspace(Resource):
     :ivar creation_time: The creation time of the machine learning workspace
      in ISO8601 format.
     :vartype creation_time: datetime
-    :param batch_ai_workspace: ARM id of the Batch AI workspace associated
-     with this workspace. This cannot be changed once the workspace has been
-     created
-    :type batch_ai_workspace: str
+    :param batchai_workspace: ARM id of the Batch AI workspace associated with
+     this workspace. This cannot be changed once the workspace has been created
+    :type batchai_workspace: str
     :param key_vault: ARM id of the key vault associated with this workspace.
      This cannot be changed once the workspace has been created
     :type key_vault: str
@@ -90,7 +89,7 @@ class Workspace(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'batch_ai_workspace': {'key': 'properties.batchAIWorkspace', 'type': 'str'},
+        'batchai_workspace': {'key': 'properties.batchaiWorkspace', 'type': 'str'},
         'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
@@ -105,7 +104,7 @@ class Workspace(Resource):
         self.description = kwargs.get('description', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.creation_time = None
-        self.batch_ai_workspace = kwargs.get('batch_ai_workspace', None)
+        self.batchai_workspace = kwargs.get('batchai_workspace', None)
         self.key_vault = kwargs.get('key_vault', None)
         self.application_insights = kwargs.get('application_insights', None)
         self.container_registry = kwargs.get('container_registry', None)
