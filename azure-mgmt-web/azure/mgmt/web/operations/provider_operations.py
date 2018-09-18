@@ -42,7 +42,8 @@ class ProviderOperations(object):
 
         Get available application frameworks and their versions.
 
-        :param os_type_selected: Possible values include: 'Windows', 'Linux'
+        :param os_type_selected: Possible values include: 'Windows', 'Linux',
+         'WindowsFunctions', 'LinuxFunctions'
         :type os_type_selected: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -170,7 +171,8 @@ class ProviderOperations(object):
 
         Get available application frameworks and their versions.
 
-        :param os_type_selected: Possible values include: 'Windows', 'Linux'
+        :param os_type_selected: Possible values include: 'Windows', 'Linux',
+         'WindowsFunctions', 'LinuxFunctions'
         :type os_type_selected: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
