@@ -15,17 +15,26 @@ from msrest.serialization import Model
 class AzureTimeSeriesData(Model):
     """AzureTimeSeriesData.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param dim_values: Gets or sets dimension values
     :type dim_values: list[str]
-    :param min: Gets or sets Min value
+    :param min: Required. Gets or sets Min value
     :type min: float
-    :param max: Gets or sets Max value
+    :param max: Required. Gets or sets Max value
     :type max: float
-    :param sum: Gets or sets Sum value
+    :param sum: Required. Gets or sets Sum value
     :type sum: float
-    :param count: Gets or sets Count value
+    :param count: Required. Gets or sets Count value
     :type count: int
     """
+
+    _validation = {
+        'min': {'required': True},
+        'max': {'required': True},
+        'sum': {'required': True},
+        'count': {'required': True},
+    }
 
     _attribute_map = {
         'dim_values': {'key': 'dimValues', 'type': '[str]'},
@@ -35,7 +44,7 @@ class AzureTimeSeriesData(Model):
         'count': {'key': 'count', 'type': 'int'},
     }
 
-    def __init__(self, *, dim_values=None, min: float=None, max: float=None, sum: float=None, count: int=None, **kwargs) -> None:
+    def __init__(self, *, min: float, max: float, sum: float, count: int, dim_values=None, **kwargs) -> None:
         super(AzureTimeSeriesData, self).__init__(**kwargs)
         self.dim_values = dim_values
         self.min = min

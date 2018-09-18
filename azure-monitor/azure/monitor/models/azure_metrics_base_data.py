@@ -15,16 +15,24 @@ from msrest.serialization import Model
 class AzureMetricsBaseData(Model):
     """AzureMetricsBaseData.
 
-    :param metric: Gets or sets the Metric name
+    All required parameters must be populated in order to send to Azure.
+
+    :param metric: Required. Gets or sets the Metric name
     :type metric: str
-    :param namespace: Gets or sets the Metric namespace
+    :param namespace: Required. Gets or sets the Metric namespace
     :type namespace: str
     :param dim_names: Gets or sets the list of dimension names (optional)
     :type dim_names: list[str]
-    :param series: Gets or sets the list of time series data for the metric
-     (one per unique dimension combination)
+    :param series: Required. Gets or sets the list of time series data for the
+     metric (one per unique dimension combination)
     :type series: list[~azure.monitor.models.AzureTimeSeriesData]
     """
+
+    _validation = {
+        'metric': {'required': True},
+        'namespace': {'required': True},
+        'series': {'required': True},
+    }
 
     _attribute_map = {
         'metric': {'key': 'metric', 'type': 'str'},

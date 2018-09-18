@@ -15,11 +15,18 @@ from msrest.serialization import Model
 class AzureMetricsDocument(Model):
     """AzureMetricsDocument.
 
-    :param time: Gets or sets Time property (in ISO 8601 format)
+    All required parameters must be populated in order to send to Azure.
+
+    :param time: Required. Gets or sets Time property (in ISO 8601 format)
     :type time: str
-    :param data:
+    :param data: Required.
     :type data: ~azure.monitor.models.AzureMetricsData
     """
+
+    _validation = {
+        'time': {'required': True},
+        'data': {'required': True},
+    }
 
     _attribute_map = {
         'time': {'key': 'time', 'type': 'str'},

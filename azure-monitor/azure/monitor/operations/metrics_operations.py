@@ -35,9 +35,14 @@ class MetricsOperations(object):
         self.config = config
 
     def create(
-            self, subscription_id, resource_group_name, resource_provider, resource_type_name, resource_name, content_type=None, content_length=None, time=None, data=None, custom_headers=None, raw=False, **operation_config):
+            self, content_type, content_length, subscription_id, resource_group_name, resource_provider, resource_type_name, resource_name, time, data, custom_headers=None, raw=False, **operation_config):
         """**Post the metric values for a resource**.
 
+        :param content_type: Supports application/json and
+         application/x-ndjson
+        :type content_type: str
+        :param content_length: Content length of the payload
+        :type content_length: int
         :param subscription_id: The azure subscription id
         :type subscription_id: str
         :param resource_group_name: The ARM resource group name
@@ -48,11 +53,6 @@ class MetricsOperations(object):
         :type resource_type_name: str
         :param resource_name: The ARM resource name
         :type resource_name: str
-        :param content_type: Supports application/json and
-         application/x-ndjson
-        :type content_type: str
-        :param content_length: Content length of the payload
-        :type content_length: int
         :param time: Gets or sets Time property (in ISO 8601 format)
         :type time: str
         :param data:
@@ -92,10 +92,8 @@ class MetricsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if content_type is not None:
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        if content_length is not None:
-            header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'int')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'int')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
