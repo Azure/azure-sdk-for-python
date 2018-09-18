@@ -11,18 +11,11 @@
 
 try:
     from .storage_sync_error_details_py3 import StorageSyncErrorDetails
-    from .storage_sync_api_error_py3 import StorageSyncApiError
     from .storage_sync_error_py3 import StorageSyncError, StorageSyncErrorException
     from .subscription_state_py3 import SubscriptionState
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
     from .cloud_endpoint_py3 import CloudEndpoint
-    from .recall_action_parameters_py3 import RecallActionParameters
-    from .storage_sync_service_create_parameters_py3 import StorageSyncServiceCreateParameters
-    from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
-    from .cloud_endpoint_create_parameters_py3 import CloudEndpointCreateParameters
-    from .server_endpoint_create_parameters_py3 import ServerEndpointCreateParameters
-    from .registered_server_create_parameters_py3 import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
     from .server_endpoint_py3 import ServerEndpoint
     from .registered_server_py3 import RegisteredServer
@@ -46,18 +39,11 @@ try:
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
-    from .storage_sync_api_error import StorageSyncApiError
     from .storage_sync_error import StorageSyncError, StorageSyncErrorException
     from .subscription_state import SubscriptionState
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
     from .cloud_endpoint import CloudEndpoint
-    from .recall_action_parameters import RecallActionParameters
-    from .storage_sync_service_create_parameters import StorageSyncServiceCreateParameters
-    from .sync_group_create_parameters import SyncGroupCreateParameters
-    from .cloud_endpoint_create_parameters import CloudEndpointCreateParameters
-    from .server_endpoint_create_parameters import ServerEndpointCreateParameters
-    from .registered_server_create_parameters import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
     from .server_endpoint import ServerEndpoint
     from .registered_server import RegisteredServer
@@ -92,18 +78,11 @@ from .storage_sync_management_client_enums import (
 
 __all__ = [
     'StorageSyncErrorDetails',
-    'StorageSyncApiError',
     'StorageSyncError', 'StorageSyncErrorException',
     'SubscriptionState',
     'StorageSyncService',
     'SyncGroup',
     'CloudEndpoint',
-    'RecallActionParameters',
-    'StorageSyncServiceCreateParameters',
-    'SyncGroupCreateParameters',
-    'CloudEndpointCreateParameters',
-    'ServerEndpointCreateParameters',
-    'RegisteredServerCreateParameters',
     'ServerEndpointUpdateParameters',
     'ServerEndpoint',
     'RegisteredServer',

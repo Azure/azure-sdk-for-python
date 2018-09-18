@@ -210,7 +210,7 @@ class RegisteredServersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'RegisteredServerCreateParameters')
+        body_content = self._serialize.body(parameters, 'RegisteredServer')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -251,8 +251,7 @@ class RegisteredServersOperations(object):
         :param server_id: GUID identifying the on-premises server.
         :type server_id: str
         :param parameters: Body of Registered Server object.
-        :type parameters:
-         ~azure.mgmt.storagesync.models.RegisteredServerCreateParameters
+        :type parameters: ~azure.mgmt.storagesync.models.RegisteredServer
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

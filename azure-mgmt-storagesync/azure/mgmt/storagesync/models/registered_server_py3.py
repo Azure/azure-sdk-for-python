@@ -9,22 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from msrest.serialization import Model
 
 
-class RegisteredServer(Resource):
+class RegisteredServer(Model):
     """Registered Server resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :ivar id: Resource Id
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: Resource type
     :vartype type: str
     :param server_certificate: Registered Server Certificate
     :type server_certificate: str
@@ -97,6 +95,9 @@ class RegisteredServer(Resource):
 
     def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, **kwargs) -> None:
         super(RegisteredServer, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.server_certificate = server_certificate
         self.agent_version = agent_version
         self.server_os_version = server_os_version

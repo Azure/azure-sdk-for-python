@@ -105,7 +105,7 @@ class StorageSyncServicesOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageSync/locations/{locationName}/checkNameAvailability'}
 
     def create(
-            self, resource_group_name, storage_sync_service_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
         """Create a new StorageSyncService.
 
         :param resource_group_name: The name of the resource group. The name
@@ -114,18 +114,9 @@ class StorageSyncServicesOperations(object):
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
         :type storage_sync_service_name: str
-        :param location: Required. Gets or sets the location of the resource.
-         This will be one of the supported and registered Azure Geo Regions
-         (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
-         resource cannot be changed once it is created, but if an identical geo
-         region is specified on update, the request will succeed.
+        :param location: The geo-location where the resource lives
         :type location: str
-        :param tags: Gets or sets a list of key value pairs that describe the
-         resource. These tags can be used for viewing and grouping this
-         resource (across resource groups). A maximum of 15 tags can be
-         provided for a resource. Each tag must have a key with a length no
-         greater than 128 characters and a value with a length no greater than
-         256 characters.
+        :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -138,7 +129,7 @@ class StorageSyncServicesOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        parameters = models.StorageSyncServiceCreateParameters(location=location, tags=tags)
+        parameters = models.StorageSyncService(tags=tags, location=location)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -165,7 +156,7 @@ class StorageSyncServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'StorageSyncServiceCreateParameters')
+        body_content = self._serialize.body(parameters, 'StorageSyncService')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

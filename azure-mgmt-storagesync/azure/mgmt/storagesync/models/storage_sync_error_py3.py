@@ -16,21 +16,25 @@ from msrest.exceptions import HttpOperationError
 class StorageSyncError(Model):
     """Error type.
 
-    :param error: Error details of the given entry.
-    :type error: ~azure.mgmt.storagesync.models.StorageSyncApiError
-    :param innererror: Error details of the given entry.
-    :type innererror: ~azure.mgmt.storagesync.models.StorageSyncApiError
+    :param code: Error code of the given entry.
+    :type code: str
+    :param message: Error message of the given entry.
+    :type message: str
+    :param details: Error details of the given entry.
+    :type details: ~azure.mgmt.storagesync.models.StorageSyncErrorDetails
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'StorageSyncApiError'},
-        'innererror': {'key': 'innererror', 'type': 'StorageSyncApiError'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'StorageSyncErrorDetails'},
     }
 
-    def __init__(self, *, error=None, innererror=None, **kwargs) -> None:
+    def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
         super(StorageSyncError, self).__init__(**kwargs)
-        self.error = error
-        self.innererror = innererror
+        self.code = code
+        self.message = message
+        self.details = details
 
 
 class StorageSyncErrorException(HttpOperationError):

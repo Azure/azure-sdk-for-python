@@ -68,7 +68,7 @@ class ServerEndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ServerEndpointCreateParameters')
+        body_content = self._serialize.body(parameters, 'ServerEndpoint')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -111,8 +111,7 @@ class ServerEndpointsOperations(object):
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
         :param parameters: Body of Server Endpoint object.
-        :type parameters:
-         ~azure.mgmt.storagesync.models.ServerEndpointCreateParameters
+        :type parameters: ~azure.mgmt.storagesync.models.ServerEndpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -541,9 +540,7 @@ class ServerEndpointsOperations(object):
 
 
     def _recall_action_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, pattern=None, recall_path=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.RecallActionParameters(pattern=pattern, recall_path=recall_path)
-
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.recall_action.metadata['url']
         path_format_arguments = {
@@ -561,7 +558,6 @@ class ServerEndpointsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -569,11 +565,8 @@ class ServerEndpointsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'RecallActionParameters')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
@@ -590,7 +583,7 @@ class ServerEndpointsOperations(object):
             return client_raw_response
 
     def recall_action(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, pattern=None, recall_path=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Recall a serverendpoint.
 
         :param resource_group_name: The name of the resource group. The name
@@ -603,10 +596,6 @@ class ServerEndpointsOperations(object):
         :type sync_group_name: str
         :param server_endpoint_name: Name of Server Endpoint object.
         :type server_endpoint_name: str
-        :param pattern: Pattern of the files.
-        :type pattern: str
-        :param recall_path: Recall path.
-        :type recall_path: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -624,8 +613,6 @@ class ServerEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             server_endpoint_name=server_endpoint_name,
-            pattern=pattern,
-            recall_path=recall_path,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
