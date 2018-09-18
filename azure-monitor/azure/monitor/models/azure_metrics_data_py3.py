@@ -15,14 +15,20 @@ from msrest.serialization import Model
 class AzureMetricsData(Model):
     """AzureMetricsData.
 
-    :param base_data:
+    All required parameters must be populated in order to send to Azure.
+
+    :param base_data: Required.
     :type base_data: ~azure.monitor.models.AzureMetricsBaseData
     """
+
+    _validation = {
+        'base_data': {'required': True},
+    }
 
     _attribute_map = {
         'base_data': {'key': 'baseData', 'type': 'AzureMetricsBaseData'},
     }
 
-    def __init__(self, *, base_data=None, **kwargs) -> None:
+    def __init__(self, *, base_data, **kwargs) -> None:
         super(AzureMetricsData, self).__init__(**kwargs)
         self.base_data = base_data
