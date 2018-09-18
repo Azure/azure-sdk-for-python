@@ -38,19 +38,15 @@ class ServiceOperations(object):
         self.config = config
 
     def list_available_skus(
-            self, location, country, location1, custom_headers=None, raw=False, **operation_config):
+            self, location, available_sku_request, custom_headers=None, raw=False, **operation_config):
         """This method provides the list of available skus for the given
         subscription and location.
 
         :param location: The location of the resource
         :type location: str
-        :param country: ISO country code. Country for hardware shipment. For
-         codes check:
-         https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements
-        :type country: str
-        :param location1: Location for data transfer. For locations check:
-         https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
-        :type location1: str
+        :param available_sku_request: Filters for showing the available skus.
+        :type available_sku_request:
+         ~azure.mgmt.databox.models.AvailableSkuRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,8 +57,6 @@ class ServiceOperations(object):
          ~azure.mgmt.databox.models.SkuInformationPaged[~azure.mgmt.databox.models.SkuInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        available_sku_request = models.AvailableSkuRequest(country=country, location=location1)
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:

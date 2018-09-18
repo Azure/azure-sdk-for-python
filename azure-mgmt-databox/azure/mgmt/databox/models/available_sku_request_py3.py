@@ -31,6 +31,8 @@ class AvailableSkuRequest(Model):
      check:
      https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
     :type location: str
+    :param sku_names: Sku Names to filter for available skus
+    :type sku_names: list[str or ~azure.mgmt.databox.models.SkuName]
     """
 
     _validation = {
@@ -43,11 +45,13 @@ class AvailableSkuRequest(Model):
         'transfer_type': {'key': 'transferType', 'type': 'str'},
         'country': {'key': 'country', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'sku_names': {'key': 'skuNames', 'type': '[SkuName]'},
     }
 
     transfer_type = "ImportToAzure"
 
-    def __init__(self, *, country: str, location: str, **kwargs) -> None:
+    def __init__(self, *, country: str, location: str, sku_names=None, **kwargs) -> None:
         super(AvailableSkuRequest, self).__init__(**kwargs)
         self.country = country
         self.location = location
+        self.sku_names = sku_names
