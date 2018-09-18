@@ -121,7 +121,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_01_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def classic_administrators(self):
         """Instance depends on the API version:
