@@ -58,7 +58,7 @@ class ManagedInstance(TrackedResource):
     :type storage_size_in_gb: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
-    :ivar dns_zone: The Dns Zone taht the managed instance is in.
+    :ivar dns_zone: The Dns Zone that the managed instance is in.
     :vartype dns_zone: str
     :param dns_zone_partner: The resource id of another managed instance whose
      DNS zone this managed instance will share after creation.

@@ -31,7 +31,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
-     Access_Anomaly
+     Access_Anomaly, Data_Exfiltration, Unsafe_Action
     :type disabled_alerts: list[str]
     :param email_addresses: Specifies an array of e-mail addresses to which
      the alert is sent.
