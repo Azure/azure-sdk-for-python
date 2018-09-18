@@ -182,6 +182,7 @@ try:
     from .migrate_my_sql_status_py3 import MigrateMySqlStatus
     from .relay_service_connection_entity_py3 import RelayServiceConnectionEntity
     from .network_features_py3 import NetworkFeatures
+    from .network_trace_py3 import NetworkTrace
     from .perf_mon_sample_py3 import PerfMonSample
     from .perf_mon_set_py3 import PerfMonSet
     from .perf_mon_response_py3 import PerfMonResponse
@@ -403,6 +404,7 @@ except (SyntaxError, ImportError):
     from .migrate_my_sql_status import MigrateMySqlStatus
     from .relay_service_connection_entity import RelayServiceConnectionEntity
     from .network_features import NetworkFeatures
+    from .network_trace import NetworkTrace
     from .perf_mon_sample import PerfMonSample
     from .perf_mon_set import PerfMonSet
     from .perf_mon_response import PerfMonResponse
@@ -743,6 +745,7 @@ __all__ = [
     'MigrateMySqlStatus',
     'RelayServiceConnectionEntity',
     'NetworkFeatures',
+    'NetworkTrace',
     'PerfMonSample',
     'PerfMonSet',
     'PerfMonResponse',

@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.36.0"
+from msrest.serialization import Model
 
+
+class WorkflowArray(Model):
+    """Array of Workflow.
+
+    :param value: Collection of workflow items.
+    :type value: list[~azure.mgmt.storagesync.models.Workflow]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Workflow]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkflowArray, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

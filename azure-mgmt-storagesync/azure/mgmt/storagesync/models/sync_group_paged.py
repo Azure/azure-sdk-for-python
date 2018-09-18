@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.36.0"
+from msrest.paging import Paged
 
+
+class SyncGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SyncGroup <azure.mgmt.storagesync.models.SyncGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SyncGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SyncGroupPaged, self).__init__(*args, **kwargs)
