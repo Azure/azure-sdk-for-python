@@ -38,6 +38,7 @@ try:
     from .key_vault_key_reference_py3 import KeyVaultKeyReference
     from .disk_encryption_settings_py3 import DiskEncryptionSettings
     from .virtual_hard_disk_py3 import VirtualHardDisk
+    from .diff_disk_settings_py3 import DiffDiskSettings
     from .managed_disk_parameters_py3 import ManagedDiskParameters
     from .os_disk_py3 import OSDisk
     from .data_disk_py3 import DataDisk
@@ -202,6 +203,7 @@ except (SyntaxError, ImportError):
     from .key_vault_key_reference import KeyVaultKeyReference
     from .disk_encryption_settings import DiskEncryptionSettings
     from .virtual_hard_disk import VirtualHardDisk
+    from .diff_disk_settings import DiffDiskSettings
     from .managed_disk_parameters import ManagedDiskParameters
     from .os_disk import OSDisk
     from .data_disk import DataDisk
@@ -361,6 +363,7 @@ from .compute_management_client_enums import (
     CachingTypes,
     DiskCreateOptionTypes,
     StorageAccountTypes,
+    DiffDiskOption,
     PassNames,
     ComponentNames,
     SettingNames,
@@ -418,6 +421,7 @@ __all__ = [
     'KeyVaultKeyReference',
     'DiskEncryptionSettings',
     'VirtualHardDisk',
+    'DiffDiskSettings',
     'ManagedDiskParameters',
     'OSDisk',
     'DataDisk',
@@ -576,6 +580,7 @@ __all__ = [
     'CachingTypes',
     'DiskCreateOptionTypes',
     'StorageAccountTypes',
+    'DiffDiskOption',
     'PassNames',
     'ComponentNames',
     'SettingNames',
