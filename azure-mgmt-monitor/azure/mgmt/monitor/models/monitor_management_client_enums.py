@@ -26,8 +26,8 @@ class TimeAggregationType(str, Enum):
     minimum = "Minimum"
     maximum = "Maximum"
     total = "Total"
-    last = "Last"
     count = "Count"
+    last = "Last"
 
 
 class ComparisonOperationType(str, Enum):
