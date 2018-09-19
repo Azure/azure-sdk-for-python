@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MetricDimension(Model):
-    """MetricDimension.
+    """Specifies a metric dimension.
 
     All required parameters must be populated in order to send to Azure.
 

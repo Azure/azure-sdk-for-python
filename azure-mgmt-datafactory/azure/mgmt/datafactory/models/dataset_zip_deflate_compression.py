@@ -15,10 +15,12 @@ from .dataset_compression import DatasetCompression
 class DatasetZipDeflateCompression(DatasetCompression):
     """The ZipDeflate compression method used on a dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param level: The ZipDeflate compression level. Possible values include:
      'Optimal', 'Fastest'
@@ -35,7 +37,7 @@ class DatasetZipDeflateCompression(DatasetCompression):
         'level': {'key': 'level', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, level=None):
-        super(DatasetZipDeflateCompression, self).__init__(additional_properties=additional_properties)
-        self.level = level
+    def __init__(self, **kwargs):
+        super(DatasetZipDeflateCompression, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
         self.type = 'ZipDeflate'

@@ -18,7 +18,7 @@ class EventData(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar authorization:
+    :ivar authorization: The sender authorization information.
     :vartype authorization: ~azure.mgmt.monitor.models.SenderAuthorization
     :ivar claims: key value pairs to identify ARM permissions.
     :vartype claims: dict[str, str]

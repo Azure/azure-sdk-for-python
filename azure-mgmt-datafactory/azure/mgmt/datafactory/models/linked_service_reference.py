@@ -18,10 +18,12 @@ class LinkedServiceReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: Linked service reference type. Default value:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Linked service reference type. Default value:
      "LinkedServiceReference" .
     :vartype type: str
-    :param reference_name: Reference LinkedService name.
+    :param reference_name: Required. Reference LinkedService name.
     :type reference_name: str
     :param parameters: Arguments for LinkedService.
     :type parameters: dict[str, object]
@@ -40,7 +42,7 @@ class LinkedServiceReference(Model):
 
     type = "LinkedServiceReference"
 
-    def __init__(self, reference_name, parameters=None):
-        super(LinkedServiceReference, self).__init__()
-        self.reference_name = reference_name
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(LinkedServiceReference, self).__init__(**kwargs)
+        self.reference_name = kwargs.get('reference_name', None)
+        self.parameters = kwargs.get('parameters', None)

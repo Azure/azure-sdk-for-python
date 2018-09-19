@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class RedirectIncompatibleRowSettings(Model):
     """Redirect incompatible row settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param linked_service_name: Name of the Azure Storage, Storage SAS, or
-     Azure Data Lake Store linked service used for redirecting incompatible
-     row. Must be specified if redirectIncompatibleRowSettings is specified.
-     Type: string (or Expression with resultType string).
+    :param linked_service_name: Required. Name of the Azure Storage, Storage
+     SAS, or Azure Data Lake Store linked service used for redirecting
+     incompatible row. Must be specified if redirectIncompatibleRowSettings is
+     specified. Type: string (or Expression with resultType string).
     :type linked_service_name: object
     :param path: The path for storing the redirect incompatible row data.
      Type: string (or Expression with resultType string).
@@ -38,8 +40,8 @@ class RedirectIncompatibleRowSettings(Model):
         'path': {'key': 'path', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, path=None):
-        super(RedirectIncompatibleRowSettings, self).__init__()
-        self.additional_properties = additional_properties
-        self.linked_service_name = linked_service_name
-        self.path = path
+    def __init__(self, **kwargs):
+        super(RedirectIncompatibleRowSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.path = kwargs.get('path', None)
