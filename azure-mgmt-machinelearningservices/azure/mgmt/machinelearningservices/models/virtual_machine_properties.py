@@ -17,6 +17,10 @@ class VirtualMachineProperties(Model):
 
     :param virtual_machine_size: Virtual Machine size
     :type virtual_machine_size: str
+    :param ssh_port: Port open for ssh connections.
+    :type ssh_port: int
+    :param address: Public IP address of the virtual machine.
+    :type address: str
     :param administrator_account: Admin credentials for virtual machine
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
@@ -24,10 +28,14 @@ class VirtualMachineProperties(Model):
 
     _attribute_map = {
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
+        'ssh_port': {'key': 'sshPort', 'type': 'int'},
+        'address': {'key': 'address', 'type': 'str'},
         'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineProperties, self).__init__(**kwargs)
         self.virtual_machine_size = kwargs.get('virtual_machine_size', None)
+        self.ssh_port = kwargs.get('ssh_port', None)
+        self.address = kwargs.get('address', None)
         self.administrator_account = kwargs.get('administrator_account', None)

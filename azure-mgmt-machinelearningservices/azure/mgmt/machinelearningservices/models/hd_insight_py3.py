@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .compute_py3 import Compute
 
 
-class Compute(Model):
-    """Machine Learning compute object.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AKS, BatchAI, VirtualMachine, HDInsight, DataFactory
+class HDInsight(Compute):
+    """A HDInsight compute.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -44,6 +41,9 @@ class Compute(Model):
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
+    :param properties:
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.HDInsightProperties
     """
 
     _validation = {
@@ -63,19 +63,10 @@ class Compute(Model):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'HDInsightProperties'},
     }
 
-    _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'BatchAI': 'BatchAI', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory'}
-    }
-
-    def __init__(self, **kwargs):
-        super(Compute, self).__init__(**kwargs)
-        self.compute_location = kwargs.get('compute_location', None)
-        self.provisioning_state = None
-        self.description = kwargs.get('description', None)
-        self.created_on = None
-        self.modified_on = None
-        self.resource_id = kwargs.get('resource_id', None)
-        self.provisioning_errors = None
-        self.compute_type = None
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
+        super(HDInsight, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+        self.properties = properties
+        self.compute_type = 'HDInsight'

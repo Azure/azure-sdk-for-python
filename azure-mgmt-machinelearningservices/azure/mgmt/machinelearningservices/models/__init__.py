@@ -34,6 +34,8 @@ try:
     from .virtual_machine_ssh_credentials_py3 import VirtualMachineSshCredentials
     from .virtual_machine_properties_py3 import VirtualMachineProperties
     from .virtual_machine_py3 import VirtualMachine
+    from .hd_insight_properties_py3 import HDInsightProperties
+    from .hd_insight_py3 import HDInsight
     from .data_factory_py3 import DataFactory
     from .service_principal_credentials_py3 import ServicePrincipalCredentials
     from .compute_secrets_py3 import ComputeSecrets
@@ -64,6 +66,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_ssh_credentials import VirtualMachineSshCredentials
     from .virtual_machine_properties import VirtualMachineProperties
     from .virtual_machine import VirtualMachine
+    from .hd_insight_properties import HDInsightProperties
+    from .hd_insight import HDInsight
     from .data_factory import DataFactory
     from .service_principal_credentials import ServicePrincipalCredentials
     from .compute_secrets import ComputeSecrets
@@ -103,6 +107,8 @@ __all__ = [
     'VirtualMachineSshCredentials',
     'VirtualMachineProperties',
     'VirtualMachine',
+    'HDInsightProperties',
+    'HDInsight',
     'DataFactory',
     'ServicePrincipalCredentials',
     'ComputeSecrets',
