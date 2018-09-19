@@ -17,8 +17,8 @@ class TargetRegion(Model):
 
     :param name: The name of the region.
     :type name: str
-    :param regional_replica_count: This is the number of source blob copies in
-     this specific region.
+    :param regional_replica_count: The number of replicas of the Image Version
+     to be created per region.
     :type regional_replica_count: int
     """
 
