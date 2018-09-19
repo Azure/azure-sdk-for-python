@@ -141,4 +141,4 @@ class ManagementLockClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    list_operations.metadata = {'url': '/providers/Microsoft.Features/operations'}
+    list_operations.metadata = {'url': '/providers/Microsoft.Authorization/operations'}
