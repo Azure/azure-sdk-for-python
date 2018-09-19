@@ -21,14 +21,14 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     All required parameters must be populated in order to send to Azure.
 
     :param target_regions: The target regions where the Image Version is going
-     to be replicated to.
+     to be replicated to. This property is updateable.
     :type target_regions:
      list[~azure.mgmt.compute.v2018_06_01.models.TargetRegion]
     :param source: Required.
     :type source: ~azure.mgmt.compute.v2018_06_01.models.GalleryArtifactSource
     :param replica_count: The number of replicas of the Image Version to be
      created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified.
+     regionalReplicaCount is not specified. This property is updateable.
     :type replica_count: int
     :param exclude_from_latest: If set to true, Virtual Machines deployed from
      the latest version of the Image Definition won't use this Image Version.
@@ -37,7 +37,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      published.
     :vartype published_date: datetime
     :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes.
+     Version. This property can be used for decommissioning purposes. This
+     property is updateable.
     :type end_of_life_date: datetime
     """
 

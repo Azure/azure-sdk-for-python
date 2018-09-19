@@ -106,9 +106,7 @@ class GalleryImagesOperations(object):
         :param gallery_image_name: The name of the gallery Image Definition to
          be created or updated. The allowed characters are alphabets and
          numbers with dots, dashes, and periods allowed in the middle. The
-         maximum length is 80 characters as limited by
-         Constants.MaxResourceNameLength for any type of resource created in
-         Azure.
+         maximum length is 80 characters.
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the create or update
          gallery image operation.

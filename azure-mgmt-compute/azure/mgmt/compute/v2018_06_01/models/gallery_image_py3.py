@@ -32,7 +32,7 @@ class GalleryImage(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param description: The description of this gallery Image Definition
-     resource.
+     resource. This property is updateable.
     :type description: str
     :param eula: The Eula agreement for the gallery Image Definition.
     :type eula: str
@@ -50,7 +50,9 @@ class GalleryImage(Resource):
      'Generalized'. Possible values include: 'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemStateTypes
-    :param end_of_life_date: The end of life of this gallery Image Definition.
+    :param end_of_life_date: The end of life date of the gallery Image
+     Definition. This property can be used for decommissioning purposes. This
+     property is updateable.
     :type end_of_life_date: datetime
     :param identifier: Required.
     :type identifier:
