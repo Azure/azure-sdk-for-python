@@ -9,21 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class DiffDiskSettings(SubResource):
+class DiffDiskSettings(Model):
     """The parameters of a DiffDiskSettings for operating system disk.
 
-    :param id: Resource Id
-    :type id: str
     :param option: Specifies the diff disk option for operating system disk.
      Possible values are: Local. Possible values include: 'Local'
     :type option: str or ~azure.mgmt.compute.v2018_06_01.models.DiffDiskOption
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'option': {'key': 'option', 'type': 'str'},
     }
 
