@@ -18,7 +18,7 @@ class TargetRegion(Model):
     :param name: The name of the region.
     :type name: str
     :param regional_replica_count: The number of replicas of the Image Version
-     to be created per region.
+     to be created per region. This property is updateable.
     :type regional_replica_count: int
     """
 
