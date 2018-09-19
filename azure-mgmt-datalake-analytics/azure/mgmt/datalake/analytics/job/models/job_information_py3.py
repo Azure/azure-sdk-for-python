@@ -71,7 +71,7 @@ class JobInformation(JobInformationBasic):
      job information. (Only for use internally with Scope job type.)
     :type tags: dict[str, str]
     :ivar hierarchy_queue_node: the name of hierarchy queue node this job is
-     assigned to, null if job has not been assigned yet or the account doesn't
+     assigned to, Null if job has not been assigned yet or the account doesn't
      have hierarchy queue.
     :vartype hierarchy_queue_node: str
     :ivar error_message: The error message details for the job, if the job
