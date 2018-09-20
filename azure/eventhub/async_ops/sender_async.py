@@ -47,6 +47,7 @@ class AsyncSender(Sender):
         :param loop: An event loop. If not specified the default event loop will be used.
         """
         self.loop = loop or asyncio.get_event_loop()
+        self.running = False
         self.client = client
         self.target = target
         self.partition = partition
@@ -82,6 +83,7 @@ class AsyncSender(Sender):
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
         """
+        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClientAsync(
@@ -173,6 +175,7 @@ class AsyncSender(Sender):
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):

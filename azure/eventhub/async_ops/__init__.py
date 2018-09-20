@@ -75,7 +75,8 @@ class EventHubClientAsync(EventHubClient):
 
     async def _start_client_async(self, client):
         try:
-            await client.open_async()
+            if not client.running:
+                await client.open_async()
         except Exception as exp:  # pylint: disable=broad-except
             log.info("Encountered error while starting handler: %r", exp)
             await client.close_async(exception=exp)

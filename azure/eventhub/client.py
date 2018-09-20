@@ -233,7 +233,8 @@ class EventHubClient(object):
     def _start_clients(self):
         for client in self.clients:
             try:
-                client.open()
+                if not client.running:
+                    client.open()
             except Exception as exp:  # pylint: disable=broad-except
                 client.close(exception=exp)
 

@@ -35,6 +35,7 @@ class Receiver:
         :param epoch: An optional epoch value.
         :type epoch: int
         """
+        self.running = False
         self.client = client
         self.source = source
         self.offset = offset
@@ -75,6 +76,7 @@ class Receiver:
         :type: connection: ~uamqp.connection.Connection
         """
         # pylint: disable=protected-access
+        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -185,6 +187,7 @@ class Receiver:
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):

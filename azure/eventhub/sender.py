@@ -40,6 +40,7 @@ class Sender:
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        self.running = False
         self.client = client
         self.target = target
         self.partition = partition
@@ -74,6 +75,7 @@ class Sender:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
+        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClient(
@@ -169,6 +171,7 @@ class Sender:
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):

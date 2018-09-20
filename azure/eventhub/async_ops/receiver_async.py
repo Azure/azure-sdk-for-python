@@ -40,6 +40,7 @@ class AsyncReceiver(Receiver):
         :param loop: An event loop.
         """
         self.loop = loop or asyncio.get_event_loop()
+        self.running = False
         self.client = client
         self.source = source
         self.offset = offset
@@ -81,6 +82,7 @@ class AsyncReceiver(Receiver):
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
         """
         # pylint: disable=protected-access
+        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -188,6 +190,7 @@ class AsyncReceiver(Receiver):
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
         elif isinstance(exception, errors.LinkRedirect):
