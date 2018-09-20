@@ -356,6 +356,7 @@ from .disk_paged import DiskPaged
 from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
+    AvailabilitySetSkuTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
@@ -571,6 +572,7 @@ __all__ = [
     'DiskPaged',
     'SnapshotPaged',
     'StatusLevelTypes',
+    'AvailabilitySetSkuTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',

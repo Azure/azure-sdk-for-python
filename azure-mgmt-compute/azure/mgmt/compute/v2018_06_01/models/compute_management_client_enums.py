@@ -19,6 +19,12 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
+class AvailabilitySetSkuTypes(str, Enum):
+
+    classic = "Classic"
+    aligned = "Aligned"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
