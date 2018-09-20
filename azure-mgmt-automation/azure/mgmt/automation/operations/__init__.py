@@ -26,11 +26,6 @@ from .activity_operations import ActivityOperations
 from .module_operations import ModuleOperations
 from .object_data_types_operations import ObjectDataTypesOperations
 from .fields_operations import FieldsOperations
-from .python2_package_operations import Python2PackageOperations
-from .runbook_draft_operations import RunbookDraftOperations
-from .runbook_operations import RunbookOperations
-from .test_job_streams_operations import TestJobStreamsOperations
-from .test_job_operations import TestJobOperations
 from .schedule_operations import ScheduleOperations
 from .variable_operations import VariableOperations
 from .webhook_operations import WebhookOperations
@@ -50,6 +45,11 @@ from .dsc_compilation_job_operations import DscCompilationJobOperations
 from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .node_count_information_operations import NodeCountInformationOperations
+from .runbook_draft_operations import RunbookDraftOperations
+from .runbook_operations import RunbookOperations
+from .test_job_streams_operations import TestJobStreamsOperations
+from .test_job_operations import TestJobOperations
+from .python2_package_operations import Python2PackageOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -69,11 +69,6 @@ __all__ = [
     'ModuleOperations',
     'ObjectDataTypesOperations',
     'FieldsOperations',
-    'Python2PackageOperations',
-    'RunbookDraftOperations',
-    'RunbookOperations',
-    'TestJobStreamsOperations',
-    'TestJobOperations',
     'ScheduleOperations',
     'VariableOperations',
     'WebhookOperations',
@@ -93,4 +88,9 @@ __all__ = [
     'DscCompilationJobStreamOperations',
     'DscNodeConfigurationOperations',
     'NodeCountInformationOperations',
+    'RunbookDraftOperations',
+    'RunbookOperations',
+    'TestJobStreamsOperations',
+    'TestJobOperations',
+    'Python2PackageOperations',
 ]
