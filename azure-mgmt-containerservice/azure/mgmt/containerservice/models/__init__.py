@@ -21,6 +21,7 @@ try:
     from .open_shift_managed_cluster_py3 import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider_py3 import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object_py3 import TagsObject
+    from .open_shift_managed_cluster_list_result_py3 import OpenShiftManagedClusterListResult
     from .container_service_custom_profile_py3 import ContainerServiceCustomProfile
     from .key_vault_secret_ref_py3 import KeyVaultSecretRef
     from .container_service_service_principal_profile_py3 import ContainerServiceServicePrincipalProfile
@@ -60,6 +61,7 @@ except (SyntaxError, ImportError):
     from .open_shift_managed_cluster import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object import TagsObject
+    from .open_shift_managed_cluster_list_result import OpenShiftManagedClusterListResult
     from .container_service_custom_profile import ContainerServiceCustomProfile
     from .key_vault_secret_ref import KeyVaultSecretRef
     from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
@@ -87,7 +89,6 @@ except (SyntaxError, ImportError):
     from .credential_results import CredentialResults
     from .orchestrator_version_profile import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
-from .open_shift_managed_cluster_paged import OpenShiftManagedClusterPaged
 from .container_service_paged import ContainerServicePaged
 from .operation_value_paged import OperationValuePaged
 from .managed_cluster_paged import ManagedClusterPaged
@@ -114,6 +115,7 @@ __all__ = [
     'OpenShiftManagedCluster',
     'OpenShiftManagedClusterServiceAADIdentityProvider',
     'TagsObject',
+    'OpenShiftManagedClusterListResult',
     'ContainerServiceCustomProfile',
     'KeyVaultSecretRef',
     'ContainerServiceServicePrincipalProfile',
@@ -141,7 +143,6 @@ __all__ = [
     'CredentialResults',
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileListResult',
-    'OpenShiftManagedClusterPaged',
     'ContainerServicePaged',
     'OperationValuePaged',
     'ManagedClusterPaged',
