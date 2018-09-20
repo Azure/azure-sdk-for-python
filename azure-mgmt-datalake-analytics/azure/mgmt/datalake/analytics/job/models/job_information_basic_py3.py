@@ -69,6 +69,10 @@ class JobInformationBasic(Model):
     :param tags: The key-value pairs used to add additional metadata to the
      job information. (Only for use internally with Scope job type.)
     :type tags: dict[str, str]
+    :ivar hierarchy_queue_node: the name of hierarchy queue node this job is
+     assigned to, Null if job has not been assigned yet or the account doesn't
+     have hierarchy queue.
+    :vartype hierarchy_queue_node: str
     """
 
     _validation = {
@@ -83,6 +87,7 @@ class JobInformationBasic(Model):
         'state': {'readonly': True},
         'result': {'readonly': True},
         'log_folder': {'readonly': True},
+        'hierarchy_queue_node': {'readonly': True},
     }
 
     _attribute_map = {
@@ -102,6 +107,7 @@ class JobInformationBasic(Model):
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'hierarchy_queue_node': {'key': 'hierarchyQueueNode', 'type': 'str'},
     }
 
     def __init__(self, *, name: str, type, degree_of_parallelism: int=1, priority: int=None, log_file_patterns=None, related=None, tags=None, **kwargs) -> None:
@@ -122,3 +128,4 @@ class JobInformationBasic(Model):
         self.log_file_patterns = log_file_patterns
         self.related = related
         self.tags = tags
+        self.hierarchy_queue_node = None
