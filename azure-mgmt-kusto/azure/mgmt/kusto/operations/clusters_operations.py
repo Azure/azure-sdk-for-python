@@ -813,7 +813,7 @@ class ClustersOperations(object):
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Kusto/locations/{location}/checkNameAvailability'}
 
-    def list_skus_by_resource_group(
+    def list_skus_by_resource(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Returns the SKUs available for the provided resource.
 
@@ -836,7 +836,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_skus_by_resource_group.metadata['url']
+                url = self.list_skus_by_resource.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
@@ -882,4 +882,4 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_skus_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/skus'}
+    list_skus_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/skus'}
