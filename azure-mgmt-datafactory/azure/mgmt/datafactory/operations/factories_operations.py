@@ -574,3 +574,79 @@ class FactoriesOperations(object):
 
         return deserialized
     get_git_hub_access_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getGitHubAccessToken'}
+
+    def get_data_plane_read_only_token(
+            self, resource_group_name, factory_name, start_time=None, expire_time=None, custom_headers=None, raw=False, **operation_config):
+        """Get Data Plane read only token.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param start_time: Start time for the token. If not specified the
+         current time will be used.
+        :type start_time: str
+        :param expire_time: Expiration time for the token. Maximum duration
+         for the token is eight hours and by default the token will expire in
+         eight hours.
+        :type expire_time: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DataPlaneReadOnlyTokenResponse or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.datafactory.models.DataPlaneReadOnlyTokenResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        data_plane_read_only_token_request = models.DataPlaneReadOnlyTokenRequest(start_time=start_time, expire_time=expire_time)
+
+        # Construct URL
+        url = self.get_data_plane_read_only_token.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(data_plane_read_only_token_request, 'DataPlaneReadOnlyTokenRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DataPlaneReadOnlyTokenResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_data_plane_read_only_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getDataPlaneReadOnlyToken'}
