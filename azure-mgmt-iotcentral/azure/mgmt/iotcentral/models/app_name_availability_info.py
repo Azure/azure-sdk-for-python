@@ -22,22 +22,21 @@ class AppNameAvailabilityInfo(Model):
     :ivar name_available: The value which indicates whether the provided name
      is available.
     :vartype name_available: bool
-    :ivar reason: The reason for unavailability. Possible values include:
-     'Invalid', 'AlreadyExists'
-    :vartype reason: str or
-     ~azure.mgmt.iotcentral.models.AppNameUnavailabilityReason
-    :param message: The detailed reason message.
-    :type message: str
+    :ivar reason: The reason for unavailability.
+    :vartype reason: str
+    :ivar message: The detailed reason message.
+    :vartype message: str
     """
 
     _validation = {
         'name_available': {'readonly': True},
         'reason': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'AppNameUnavailabilityReason'},
+        'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
@@ -45,4 +44,4 @@ class AppNameAvailabilityInfo(Model):
         super(AppNameAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
-        self.message = kwargs.get('message', None)
+        self.message = None
