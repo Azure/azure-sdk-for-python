@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .databases_operations import DatabasesOperations
-from .event_hub_connections_operations import EventHubConnectionsOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'ClustersOperations',
-    'DatabasesOperations',
-    'EventHubConnectionsOperations',
-    'Operations',
-]
+
+class AzureSkuPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AzureSku <azure.mgmt.kusto.models.AzureSku>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AzureSku]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AzureSkuPaged, self).__init__(*args, **kwargs)
