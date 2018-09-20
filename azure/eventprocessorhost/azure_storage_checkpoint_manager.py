@@ -28,14 +28,39 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     Manages checkpoints and lease with azure storage blobs. In this implementation,
     checkpoints are data that's actually in the lease blob, so checkpoint operations
     turn into lease operations under the covers.
+
+    :param str storage_account_name: The storage account name. This is used to
+     authenticate requests signed with an account key and to construct the storage
+     endpoint. It is required unless a connection string is given.
+    :param str storage_account_key: The storage account key. This is used for shared key
+     authentication. If neither account key or sas token is specified, anonymous access
+     will be used.
+    :param str lease_container_name: The name of the container that will be used to store
+     leases. If it does not already exist it will be created. Default value is 'eph-leases'.
+    :param int lease_renew_interval: The interval in seconds at which EPH will attempt to
+     renew the lease of a particular partition. Default value is 10.
+    :param int lease_duration: The duration in seconds of a lease on a partition.
+     Default value is 30.
+    :param str sas_token: A shared access signature token to use to authenticate requests
+     instead of the account key. If account key and sas token are both specified,
+     account key will be used to sign. If neither are specified, anonymous access will be used.
+    :param str endpoint_suffix: The host base component of the url, minus the account name.
+     Defaults to Azure (core.windows.net). Override this to use a National Cloud.
+    :param str connection_string: If specified, this will override all other endpoint parameters.
+     See http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
+     for the connection string format.
     """
 
-    def __init__(self, storage_account_name, storage_account_key, lease_container_name,
-                 storage_blob_prefix=None, lease_renew_interval=10, lease_duration=30):
+    def __init__(self, storage_account_name=None, storage_account_key=None, lease_container_name="eph-leases",
+                 storage_blob_prefix=None, lease_renew_interval=10, lease_duration=30,
+                 sas_token=None, endpoint_suffix="core.windows.net", connection_string=None):
         AbstractCheckpointManager.__init__(self)
         AbstractLeaseManager.__init__(self, lease_renew_interval, lease_duration)
         self.storage_account_name = storage_account_name
         self.storage_account_key = storage_account_key
+        self.storage_sas_token = sas_token
+        self.endpoint_suffix = endpoint_suffix
+        self.connection_string = connection_string
         self.lease_container_name = lease_container_name
         self.storage_blob_prefix = storage_blob_prefix
         self.storage_client = None
@@ -47,8 +72,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=32)
 
         # Validate storage inputs
-        if not self.storage_account_name or not self.storage_account_key:
-            raise ValueError("Need a valid storage account name and key")
+        if not self.storage_account_name and not self.connection_string:
+            raise ValueError("Need a valid storage account name or connection string.")
         if not re.compile(r"^[a-z0-9](([a-z0-9\-[^\-])){1,61}[a-z0-9]$").match(self.lease_container_name):
             raise ValueError("Azure Storage lease container name is invalid.\
                               Please check naming conventions at\
@@ -68,6 +93,9 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         self.host = host
         self.storage_client = BlockBlobService(account_name=self.storage_account_name,
                                                account_key=self.storage_account_key,
+                                               sas_token=self.storage_sas_token,
+                                               endpoint_suffix=self.endpoint_suffix,
+                                               connection_string=self.connection_string,
                                                request_session=self.request_session)
         self.consumer_group_directory = self.storage_blob_prefix + self.host.eh_config.consumer_group
 
