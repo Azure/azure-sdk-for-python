@@ -19,10 +19,13 @@ class ApplicationGatewayFirewallExclusion(Model):
 
     :param match_variable: Required. The variable to be excluded.
     :type match_variable: str
-    :param selector_match_operator: Required. The operation on selector.
+    :param selector_match_operator: Required. When matchVariable is a
+     collection, operate on the selector to specify which elements in the
+     collection this exclusion applies to.
     :type selector_match_operator: str
-    :param selector: Required. The selector to be operated on for the variable
-     to be excluded.
+    :param selector: Required. When matchVariable is a collection, operator
+     used to specify which elements in the collection this exclusion applies
+     to.
     :type selector: str
     """
 
