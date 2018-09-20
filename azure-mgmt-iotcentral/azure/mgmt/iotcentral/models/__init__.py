@@ -14,7 +14,6 @@ try:
     from .app_py3 import App
     from .app_patch_py3 import AppPatch
     from .resource_py3 import Resource
-    from .error_details_py3 import ErrorDetails, ErrorDetailsException
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .operation_inputs_py3 import OperationInputs
@@ -24,7 +23,6 @@ except (SyntaxError, ImportError):
     from .app import App
     from .app_patch import AppPatch
     from .resource import Resource
-    from .error_details import ErrorDetails, ErrorDetailsException
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .operation_inputs import OperationInputs
@@ -41,7 +39,6 @@ __all__ = [
     'App',
     'AppPatch',
     'Resource',
-    'ErrorDetails', 'ErrorDetailsException',
     'OperationDisplay',
     'Operation',
     'OperationInputs',

@@ -26,7 +26,7 @@ class OperationInputs(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
