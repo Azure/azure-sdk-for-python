@@ -42,8 +42,8 @@ class ClusterUpdate(Resource):
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
-    :ivar query_uri: The cluster query URI.
-    :vartype query_uri: str
+    :ivar uri: The cluster URI.
+    :vartype uri: str
     :ivar data_ingestion_uri: The cluster data ingestion URI.
     :vartype data_ingestion_uri: str
     :param trusted_external_tenants: The cluster's external tenants.
@@ -58,7 +58,7 @@ class ClusterUpdate(Resource):
         'etag': {'readonly': True},
         'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'query_uri': {'readonly': True},
+        'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
     }
 
@@ -72,7 +72,7 @@ class ClusterUpdate(Resource):
         'sku': {'key': 'sku', 'type': 'AzureSku'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'query_uri': {'key': 'properties.queryUri', 'type': 'str'},
+        'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
     }
@@ -85,6 +85,6 @@ class ClusterUpdate(Resource):
         self.sku = kwargs.get('sku', None)
         self.state = None
         self.provisioning_state = None
-        self.query_uri = None
+        self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)

@@ -28,8 +28,6 @@ class DatabaseUpdate(Resource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param location: Resource location.
     :type location: str
     :ivar etag: An ETag of the resource updated.
@@ -61,7 +59,6 @@ class DatabaseUpdate(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -70,9 +67,8 @@ class DatabaseUpdate(Resource):
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
-    def __init__(self, *, soft_delete_period_in_days: int, tags=None, location: str=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
+    def __init__(self, *, soft_delete_period_in_days: int, location: str=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
         super(DatabaseUpdate, self).__init__(**kwargs)
-        self.tags = tags
         self.location = location
         self.etag = None
         self.provisioning_state = None
