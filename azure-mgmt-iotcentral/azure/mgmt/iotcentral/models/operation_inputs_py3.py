@@ -20,6 +20,9 @@ class OperationInputs(Model):
     :param name: Required. The name of the IoT Central application instance to
      check.
     :type name: str
+    :param type: The name of the IoT Central resource name to query. Default
+     value: "IoTApps" .
+    :type type: str
     """
 
     _validation = {
@@ -28,8 +31,10 @@ class OperationInputs(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, **kwargs) -> None:
+    def __init__(self, *, name: str, type: str="IoTApps", **kwargs) -> None:
         super(OperationInputs, self).__init__(**kwargs)
         self.name = name
+        self.type = type
