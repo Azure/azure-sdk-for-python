@@ -37,12 +37,11 @@ class ServicesOperations(object):
 
         self.config = config
 
-    def create(
+    def create_or_update(
             self, resource_group_name, service_topology_name, service_name, service_info, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a service in the topology.
 
-        This is an asynchronous operation and can be polled to completion using
-        the operation resource returned by this operation.
+        Synchronously creates a new service or updates an existing service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -65,7 +64,7 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -111,7 +110,7 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}'}
 
     def get(
             self, resource_group_name, service_topology_name, service_name, custom_headers=None, raw=False, **operation_config):

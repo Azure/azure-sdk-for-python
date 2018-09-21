@@ -40,10 +40,10 @@ class RolloutsOperations(object):
         self.config = config
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, rollout_name, rollout_request=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -97,12 +97,12 @@ class RolloutsOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, rollout_name, rollout_request=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new rollout.
+        """Creates or updates a rollout.
 
         This is an asynchronous operation and can be polled to completion using
-        the rollout identifier returned by this operation.
+        the location header returned by this operation.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -126,7 +126,7 @@ class RolloutsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.deploymentmanager.models.RolloutRequest]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             rollout_name=rollout_name,
             rollout_request=rollout_request,
@@ -155,7 +155,7 @@ class RolloutsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/rollouts/{rolloutName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/rollouts/{rolloutName}'}
 
     def get(
             self, resource_group_name, rollout_name, retry_attempt=None, custom_headers=None, raw=False, **operation_config):

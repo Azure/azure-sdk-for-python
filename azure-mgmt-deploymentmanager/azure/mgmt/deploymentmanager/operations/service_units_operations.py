@@ -40,10 +40,10 @@ class ServiceUnitsOperations(object):
         self.config = config
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, service_unit_info, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -96,7 +96,7 @@ class ServiceUnitsOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, service_unit_info, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a service unit in the service within the referenced
         topology resource.
@@ -129,7 +129,7 @@ class ServiceUnitsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.deploymentmanager.models.ServiceUnitResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             service_topology_name=service_topology_name,
             service_name=service_name,
@@ -160,7 +160,7 @@ class ServiceUnitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}/serviceUnits/{serviceUnitName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}/serviceUnits/{serviceUnitName}'}
 
     def get(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, custom_headers=None, raw=False, **operation_config):

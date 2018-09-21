@@ -37,12 +37,11 @@ class StepsOperations(object):
 
         self.config = config
 
-    def create(
+    def create_or_update(
             self, resource_group_name, step_name, step_info=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new deployment step.
+        """Creates or updates a deployment step.
 
-        This is an asynchronous operation and can be polled to completion using
-        the operation resource returned by this operation.
+        Synchronously creates a new step or updates an existing step.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -62,7 +61,7 @@ class StepsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -110,7 +109,7 @@ class StepsOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/steps/{stepName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/steps/{stepName}'}
 
     def get(
             self, resource_group_name, step_name, custom_headers=None, raw=False, **operation_config):
