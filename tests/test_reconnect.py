@@ -85,6 +85,15 @@ def test_send_with_forced_conn_close_sync(connection_str, receivers):
     assert list(received[0].body)[0] == b"A single event"
 
 
+def pump(receiver):
+    messages = []
+    batch = receiver.receive(timeout=1)
+    messages.extend(batch)
+    while batch:
+        batch = receiver.receive(timeout=1)
+        messages.extend(batch)
+    return messages
+
 @pytest.mark.asyncio
 async def test_send_with_forced_conn_close_async(connection_str, receivers):
     #pytest.skip("long running")
@@ -106,7 +115,7 @@ async def test_send_with_forced_conn_close_async(connection_str, receivers):
     
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
+       received.extend(pump(r))
     assert len(received) == 5
     assert list(received[0].body)[0] == b"A single event"
 

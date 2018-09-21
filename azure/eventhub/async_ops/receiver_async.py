@@ -219,6 +219,8 @@ class AsyncReceiver(Receiver):
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to receive until client has been started.")
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0

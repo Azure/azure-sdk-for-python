@@ -198,6 +198,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
@@ -242,6 +244,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         if callback:
@@ -254,6 +258,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         try:
             self._handler.wait()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
