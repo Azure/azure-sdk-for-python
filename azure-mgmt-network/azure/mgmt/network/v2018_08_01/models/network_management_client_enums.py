@@ -154,6 +154,12 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
     tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
 
 
+class ApplicationGatewayCustomErrorStatusCode(str, Enum):
+
+    four_zero_three = "403"
+    five_zero_two = "502"
+
+
 class ApplicationGatewayRequestRoutingRuleType(str, Enum):
 
     basic = "Basic"

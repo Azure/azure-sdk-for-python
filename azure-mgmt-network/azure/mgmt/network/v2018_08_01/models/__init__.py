@@ -55,6 +55,7 @@ try:
     from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
+    from .application_gateway_custom_error_py3 import ApplicationGatewayCustomError
     from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
     from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
     from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
@@ -323,6 +324,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
+    from .application_gateway_custom_error import ApplicationGatewayCustomError
     from .application_gateway_http_listener import ApplicationGatewayHttpListener
     from .application_gateway_path_rule import ApplicationGatewayPathRule
     from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
@@ -621,6 +623,7 @@ from .network_management_client_enums import (
     ApplicationGatewaySslPolicyType,
     ApplicationGatewaySslPolicyName,
     ApplicationGatewaySslCipherSuite,
+    ApplicationGatewayCustomErrorStatusCode,
     ApplicationGatewayRequestRoutingRuleType,
     ApplicationGatewayRedirectType,
     ApplicationGatewayOperationalState,
@@ -737,6 +740,7 @@ __all__ = [
     'ApplicationGatewaySslCertificate',
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
+    'ApplicationGatewayCustomError',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
     'ApplicationGatewayProbeHealthResponseMatch',
@@ -1034,6 +1038,7 @@ __all__ = [
     'ApplicationGatewaySslPolicyType',
     'ApplicationGatewaySslPolicyName',
     'ApplicationGatewaySslCipherSuite',
+    'ApplicationGatewayCustomErrorStatusCode',
     'ApplicationGatewayRequestRoutingRuleType',
     'ApplicationGatewayRedirectType',
     'ApplicationGatewayOperationalState',
