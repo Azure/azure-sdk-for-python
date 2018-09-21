@@ -15,18 +15,12 @@ from msrest.serialization import Model
 class TargetRegion(Model):
     """Describes the target region information.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the region.
+    :param name: The name of the region.
     :type name: str
     :param regional_replica_count: The number of replicas of the Image Version
      to be created per region. This property is updateable.
     :type regional_replica_count: int
     """
-
-    _validation = {
-        'name': {'required': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
