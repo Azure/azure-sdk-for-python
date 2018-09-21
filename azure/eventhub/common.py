@@ -207,7 +207,7 @@ class EventData(object):
             return "".join(b.decode(encoding) for b in data)
         except TypeError:
             return str(data)
-        except:
+        except:  # pylint: disable=bare-except
             pass
         try:
             return data.decode(encoding)
@@ -222,7 +222,7 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: dict
         """
-        data_str = self.body_as_str()
+        data_str = self.body_as_str(encoding=encoding)
         try:
             return json.loads(data_str)
         except Exception as e:
