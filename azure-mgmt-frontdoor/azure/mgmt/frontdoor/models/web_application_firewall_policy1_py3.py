@@ -65,7 +65,7 @@ class WebApplicationFirewallPolicy1(Resource):
         'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRules'},
         'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSets'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.ResourceState', 'type': 'str'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
