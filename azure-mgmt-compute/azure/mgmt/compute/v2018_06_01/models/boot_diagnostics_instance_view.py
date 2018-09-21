@@ -19,14 +19,20 @@ class BootDiagnosticsInstanceView(Model):
     :type console_screenshot_blob_uri: str
     :param serial_console_log_blob_uri: The Linux serial console log blob Uri.
     :type serial_console_log_blob_uri: str
+    :param status: The boot diagnostics status information for the VM.
+     <br><br> NOTE: It will be set only if there are errors encountered in
+     enabling boot diagnostics.
+    :type status: ~azure.mgmt.compute.v2018_06_01.models.InstanceViewStatus
     """
 
     _attribute_map = {
         'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
         'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
     def __init__(self, **kwargs):
         super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
         self.console_screenshot_blob_uri = kwargs.get('console_screenshot_blob_uri', None)
         self.serial_console_log_blob_uri = kwargs.get('serial_console_log_blob_uri', None)
+        self.status = kwargs.get('status', None)
