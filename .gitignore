@@ -39,6 +39,9 @@ pip-delete-this-directory.txt
 azure/storage/
 azure/common/
 azure/profiles/
+*.log.1
+*.log.2
+*.log.3
 
 htmlcov/
 .tox/

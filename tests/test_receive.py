@@ -24,6 +24,7 @@ def test_receive_end_of_stream(connection_str, senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
 
+        assert received[0].body_as_str() == "Receiving only a single event"
         assert list(received[-1].body)[0] == b"Receiving only a single event"
     except:
         raise
@@ -47,6 +48,9 @@ def test_receive_with_offset_sync(connection_str, senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
         offset = received[0].offset
+
+        assert list(received[0].body) == [b'Data']
+        assert received[0].body_as_str() == "Data"
 
         offset_receiver = client.add_receiver("$default", "0", offset=offset)
         client.run()
@@ -75,6 +79,9 @@ def test_receive_with_inclusive_offset(connection_str, senders):
         assert len(received) == 1
         offset = received[0].offset
 
+        assert list(received[0].body) == [b'Data']
+        assert received[0].body_as_str() == "Data"
+
         offset_receiver = client.add_receiver("$default", "0", offset=Offset(offset.value, inclusive=True))
         client.run()
         received = offset_receiver.receive(timeout=5)
@@ -100,6 +107,9 @@ def test_receive_with_datetime(connection_str, senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
         offset = received[0].enqueued_time
+
+        assert list(received[0].body) == [b'Data']
+        assert received[0].body_as_str() == "Data"
 
         offset_receiver = client.add_receiver("$default", "0", offset=Offset(offset))
         client.run()
