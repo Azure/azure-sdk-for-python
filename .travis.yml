@@ -1,7 +1,5 @@
 language: python
 cache: pip
-python:
-  - "3.6"
 dist: xenial
 matrix:
   include:
