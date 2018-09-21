@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class AssetStorageEncryptionKey(Model):
-    """The Asset Storage encryption key.
+class LiveEventInputAccessControl(Model):
+    """The IP access control for Live Event Input.
 
-    :param storage_encryption_key: The Asset storage encryption key.
-    :type storage_encryption_key: str
+    :param ip: The IP access control properties.
+    :type ip: ~azure.mgmt.media.models.IPAccessControl
     """
 
     _attribute_map = {
-        'storage_encryption_key': {'key': 'storageEncryptionKey', 'type': 'str'},
+        'ip': {'key': 'ip', 'type': 'IPAccessControl'},
     }
 
     def __init__(self, **kwargs):
-        super(AssetStorageEncryptionKey, self).__init__(**kwargs)
-        self.storage_encryption_key = kwargs.get('storage_encryption_key', None)
+        super(LiveEventInputAccessControl, self).__init__(**kwargs)
+        self.ip = kwargs.get('ip', None)
