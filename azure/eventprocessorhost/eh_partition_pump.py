@@ -36,8 +36,8 @@ class EventHubPartitionPump(PartitionPump):
                 _opened_ok = True
             except Exception as err:  # pylint: disable=broad-except
                 _logger.warning(
-                    "%r,%r PartitionPumpWarning: Failure creating client or receiver, " +
-                    "retrying: %r", self.host.guid, self.partition_context.partition_id, err)
+                    "%r,%r PartitionPumpWarning: Failure creating client or receiver, retrying: %r",
+                    self.host.guid, self.partition_context.partition_id, err)
                 last_exception = err
                 _retry_count += 1
 

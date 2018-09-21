@@ -158,12 +158,11 @@ class AsyncSender(Sender):
             timeout, auth_in_progress = await self._handler._auth.handle_token_async()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not await self._handler._client_ready_async():
+        if not await self._handler._client_ready_async():
             return False
-        else:
-            return True
+        return True
 
     async def close_async(self, exception=None):
         """
@@ -178,7 +177,7 @@ class AsyncSender(Sender):
         self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception

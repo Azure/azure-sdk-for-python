@@ -32,13 +32,13 @@ def _error_handler(error):
     """
     if error.condition == b'com.microsoft:server-busy':
         return errors.ErrorAction(retry=True, backoff=4)
-    elif error.condition == b'com.microsoft:timeout':
+    if error.condition == b'com.microsoft:timeout':
         return errors.ErrorAction(retry=True, backoff=2)
-    elif error.condition == b'com.microsoft:operation-cancelled':
+    if error.condition == b'com.microsoft:operation-cancelled':
         return errors.ErrorAction(retry=True)
-    elif error.condition == b"com.microsoft:container-close":
+    if error.condition == b"com.microsoft:container-close":
         return errors.ErrorAction(retry=True, backoff=4)
-    elif error.condition in _NO_RETRY_ERRORS:
+    if error.condition in _NO_RETRY_ERRORS:
         return errors.ErrorAction(retry=False)
     return errors.ErrorAction(retry=True)
 
@@ -269,7 +269,7 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (time.mktime(self.value.timetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        elif isinstance(self.value, int):
+        if isinstance(self.value, int):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 

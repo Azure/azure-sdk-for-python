@@ -143,7 +143,7 @@ class PartitionPump():
             # CloseAsync are protected by synchronizing too.
             try:
                 last = events[-1]
-                if last != None:
+                if last is not None:
                     self.partition_context.set_offset_and_sequence_number(last)
                     await self.processor.process_events_async(self.partition_context, events)
             except Exception as err:  # pylint: disable=broad-except

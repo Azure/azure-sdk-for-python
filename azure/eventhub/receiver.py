@@ -170,12 +170,11 @@ class Receiver:
             timeout, auth_in_progress = self._handler._auth.handle_token()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not self._handler._client_ready():
+        if not self._handler._client_ready():
             return False
-        else:
-            return True
+        return True
 
     def close(self, exception=None):
         """
@@ -190,7 +189,7 @@ class Receiver:
         self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
@@ -243,18 +242,16 @@ class Receiver:
             if shutdown.action.retry and self.auto_reconnect:
                 self.reconnect()
                 return data_batch
-            else:
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 self.reconnect()
                 return data_batch
-            else:
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except Exception as e:
             error = EventHubError("Receive failed: {}".format(e))
             self.close(exception=error)
