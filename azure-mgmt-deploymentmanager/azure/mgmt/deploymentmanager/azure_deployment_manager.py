@@ -58,7 +58,7 @@ class AzureDeploymentManagerConfiguration(AzureConfiguration):
 
 
 class AzureDeploymentManager(SDKClient):
-    """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM).
+    """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM). See https://docs.microsoft.com/en-us/azure/azure-resource-manager/deployment-manager-overview for more information.
 
     :ivar config: Configuration for client.
     :vartype config: AzureDeploymentManagerConfiguration
