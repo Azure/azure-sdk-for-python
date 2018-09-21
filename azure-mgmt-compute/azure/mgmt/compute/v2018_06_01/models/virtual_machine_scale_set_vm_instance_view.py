@@ -41,8 +41,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
      ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineHealthStatus
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
-     <br><br> For Linux Virtual Machines, you can easily view the output of
-     your console log. <br><br> For both Windows and Linux virtual machines,
+     <br><br> You can easily view the output of your console log. <br><br>
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
      ~azure.mgmt.compute.v2018_06_01.models.BootDiagnosticsInstanceView
