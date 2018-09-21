@@ -1,6 +1,7 @@
 language: python
 cache: pip
 dist: xenial
+sudo: required
 matrix:
   include:
     - os: linux
