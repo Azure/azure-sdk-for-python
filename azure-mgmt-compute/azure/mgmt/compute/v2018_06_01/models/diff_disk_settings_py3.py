@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class DiffDiskSettings(Model):
     """The parameters of a DiffDiskSettings for operating system disk.
 
-    :param option: Specifies the diff disk option for operating system disk.
-     Possible values are: Local. Possible values include: 'Local'
+    :param option: Specifies the differencing disk settings for operating
+     system disk. Possible values include: 'Local'
     :type option: str or ~azure.mgmt.compute.v2018_06_01.models.DiffDiskOption
     """
 
