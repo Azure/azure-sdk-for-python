@@ -45,7 +45,7 @@ try:
     from .custom_rules_py3 import CustomRules
     from .managed_rule_set_py3 import ManagedRuleSet
     from .managed_rule_sets_py3 import ManagedRuleSets
-    from .web_application_firewall_policy_py3 import WebApplicationFirewallPolicy
+    from .web_application_firewall_policy1_py3 import WebApplicationFirewallPolicy1
     from .azure_managed_override_rule_group_py3 import AzureManagedOverrideRuleGroup
     from .azure_managed_rule_set_py3 import AzureManagedRuleSet
 except (SyntaxError, ImportError):
@@ -84,7 +84,7 @@ except (SyntaxError, ImportError):
     from .custom_rules import CustomRules
     from .managed_rule_set import ManagedRuleSet
     from .managed_rule_sets import ManagedRuleSets
-    from .web_application_firewall_policy import WebApplicationFirewallPolicy
+    from .web_application_firewall_policy1 import WebApplicationFirewallPolicy1
     from .azure_managed_override_rule_group import AzureManagedOverrideRuleGroup
     from .azure_managed_rule_set import AzureManagedRuleSet
 from .front_door_paged import FrontDoorPaged
@@ -93,7 +93,7 @@ from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
 from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
 from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
-from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
+from .web_application_firewall_policy1_paged import WebApplicationFirewallPolicy1Paged
 from .frontdoor_management_client_enums import (
     FrontDoorResourceState,
     CustomHttpsProvisioningState,
@@ -117,6 +117,7 @@ from .frontdoor_management_client_enums import (
     Operator,
     Action,
     Transform,
+    WebApplicationFirewallPolicy,
     RuleGroupOverride,
 )
 
@@ -156,7 +157,7 @@ __all__ = [
     'CustomRules',
     'ManagedRuleSet',
     'ManagedRuleSets',
-    'WebApplicationFirewallPolicy',
+    'WebApplicationFirewallPolicy1',
     'AzureManagedOverrideRuleGroup',
     'AzureManagedRuleSet',
     'FrontDoorPaged',
@@ -165,7 +166,7 @@ __all__ = [
     'LoadBalancingSettingsModelPaged',
     'BackendPoolPaged',
     'FrontendEndpointPaged',
-    'WebApplicationFirewallPolicyPaged',
+    'WebApplicationFirewallPolicy1Paged',
     'FrontDoorResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
@@ -188,5 +189,6 @@ __all__ = [
     'Operator',
     'Action',
     'Transform',
+    'WebApplicationFirewallPolicy',
     'RuleGroupOverride',
 ]

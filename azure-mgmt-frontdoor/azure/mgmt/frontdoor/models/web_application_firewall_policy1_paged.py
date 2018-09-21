@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class WebApplicationFirewallPolicyPaged(Paged):
+class WebApplicationFirewallPolicy1Paged(Paged):
     """
-    A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy <azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy>` object
+    A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy1 <azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WebApplicationFirewallPolicy]'}
+        'current_page': {'key': 'value', 'type': '[WebApplicationFirewallPolicy1]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(WebApplicationFirewallPolicyPaged, self).__init__(*args, **kwargs)
+        super(WebApplicationFirewallPolicy1Paged, self).__init__(*args, **kwargs)

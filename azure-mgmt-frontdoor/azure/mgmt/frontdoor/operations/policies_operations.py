@@ -50,9 +50,9 @@ class PoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of WebApplicationFirewallPolicy
+        :return: An iterator like instance of WebApplicationFirewallPolicy1
         :rtype:
-         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicyPaged[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy]
+         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1Paged[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
@@ -95,11 +95,11 @@ class PoliciesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.WebApplicationFirewallPolicyPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WebApplicationFirewallPolicy1Paged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.WebApplicationFirewallPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WebApplicationFirewallPolicy1Paged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -118,8 +118,9 @@ class PoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebApplicationFirewallPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy or
+        :return: WebApplicationFirewallPolicy1 or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1 or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
@@ -157,7 +158,7 @@ class PoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('WebApplicationFirewallPolicy1', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -177,14 +178,15 @@ class PoliciesOperations(object):
         :type policy_name: str
         :param parameters: Policy to be created.
         :type parameters:
-         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy
+         ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebApplicationFirewallPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy or
+        :return: WebApplicationFirewallPolicy1 or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1 or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
@@ -214,7 +216,7 @@ class PoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'WebApplicationFirewallPolicy')
+        body_content = self._serialize.body(parameters, 'WebApplicationFirewallPolicy1')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -226,9 +228,9 @@ class PoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('WebApplicationFirewallPolicy1', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', response)
+            deserialized = self._deserialize('WebApplicationFirewallPolicy1', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

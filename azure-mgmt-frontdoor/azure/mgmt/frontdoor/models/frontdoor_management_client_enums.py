@@ -179,6 +179,16 @@ class Transform(str, Enum):
     html_entity_decode = "HtmlEntityDecode"
 
 
+class WebApplicationFirewallPolicy(str, Enum):
+
+    creating = "Creating"
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    deleting = "Deleting"
+
+
 class RuleGroupOverride(str, Enum):
 
     sql_injection = "SqlInjection"
