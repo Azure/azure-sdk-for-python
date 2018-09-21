@@ -25,8 +25,8 @@ class ApplicationGatewayCustomError(Model):
     """
 
     _attribute_map = {
-        'status_code': {'key': 'StatusCode', 'type': 'str'},
-        'custom_error_page_url': {'key': 'CustomErrorPageUrl', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'str'},
+        'custom_error_page_url': {'key': 'customErrorPageUrl', 'type': 'str'},
     }
 
     def __init__(self, *, status_code=None, custom_error_page_url: str=None, **kwargs) -> None:

@@ -61,7 +61,7 @@ class ApplicationGatewayHttpListener(SubResource):
         'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
         'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'custom_error_configuration': {'key': 'properties.CustomErrorConfiguration', 'type': '[ApplicationGatewayCustomError]'},
+        'custom_error_configuration': {'key': 'properties.customErrorConfiguration', 'type': '[ApplicationGatewayCustomError]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},

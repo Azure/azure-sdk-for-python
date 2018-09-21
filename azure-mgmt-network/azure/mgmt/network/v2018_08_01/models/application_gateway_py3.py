@@ -151,7 +151,7 @@ class ApplicationGateway(Resource):
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'custom_error_configuration': {'key': 'properties.CustomErrorConfiguration', 'type': '[ApplicationGatewayCustomError]'},
+        'custom_error_configuration': {'key': 'properties.customErrorConfiguration', 'type': '[ApplicationGatewayCustomError]'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
