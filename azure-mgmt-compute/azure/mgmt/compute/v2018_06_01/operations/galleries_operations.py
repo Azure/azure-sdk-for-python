@@ -100,8 +100,8 @@ class GalleriesOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. The allowed
-         characters are alphabets and numbers with dots, dashes, and periods
-         allowed in the middle. The maximum length is 80 characters.
+         characters are alphabets and numbers with dots and periods allowed in
+         the middle. The maximum length is 80 characters.
         :type gallery_name: str
         :param gallery: Parameters supplied to the create or update Shared
          Image Gallery operation.
