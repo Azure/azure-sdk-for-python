@@ -12,9 +12,9 @@
 from msrest.serialization import Model
 
 
-class AppNameAvailabilityInfo(Model):
-    """The properties indicating whether a given IoT Central application name is
-    available.
+class AppAvailabilityInfo(Model):
+    """The properties indicating whether a given IoT Central application
+    information is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,6 +22,9 @@ class AppNameAvailabilityInfo(Model):
     :ivar name_available: The value which indicates whether the provided name
      is available.
     :vartype name_available: bool
+    :ivar subdomain: The value which indicates whether the provided subdomain
+     is available.
+    :vartype subdomain: str
     :ivar reason: The reason for unavailability.
     :vartype reason: str
     :ivar message: The detailed reason message.
@@ -30,18 +33,21 @@ class AppNameAvailabilityInfo(Model):
 
     _validation = {
         'name_available': {'readonly': True},
+        'subdomain': {'readonly': True},
         'reason': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'subdomain': {'key': 'subdomain', 'type': 'str'},
         'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AppNameAvailabilityInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(AppAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
+        self.subdomain = None
         self.reason = None
         self.message = None
