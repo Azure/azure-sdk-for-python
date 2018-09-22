@@ -1,3 +1,12 @@
+## Changes in 3.0.0 : ##
+- Multi-region write support added
+- Naming changes
+  - DocumentClient to CosmosClient
+  - Collection to Container
+  - Document to Item
+  - Package name updated to “azure-cosmos”
+  - Namespace updated to “azure.cosmos”
+
 ## Changes in 2.3.3 : ##
 
 - Added support for proxy
@@ -21,9 +30,9 @@
 
 ## Changes in 2.2.1 : ##
 
-- Bugfix for aggregate dict
-- Bugfix for trimming slashes in the resource link
-- Added tests for unicode encoding
+- bugfix for aggregate dict
+- bugfix for trimming slashes in the resource link
+- tests for unicode encoding
 
 ## Changes in 2.2.0 : ##
 

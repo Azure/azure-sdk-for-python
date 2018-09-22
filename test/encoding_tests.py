@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import pydocumentdb.document_client as document_client
-import pydocumentdb.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
 import test.test_config as test_config
 
 class EncodingTest(unittest.TestCase):
@@ -17,7 +17,7 @@ class EncodingTest(unittest.TestCase):
     @classmethod
     def cleanUpTestDatabase(cls):
         global client
-        client = document_client.DocumentClient(cls.host,
+        client = cosmos_client.CosmosClient(cls.host,
                                                 {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
@@ -38,25 +38,25 @@ class EncodingTest(unittest.TestCase):
 
         collection_definition = { 'id': self.testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
         collection_options = { 'offerThroughput': 10100 }
-        created_collection = client.CreateCollection(created_db['_self'], collection_definition, collection_options)
+        created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
 
     def test_unicode_characters_in_partition_key (self):
         test_string = u'€€ کلید پارتیشن विभाजन कुंजी 	123'
         document_definition = {'pk': test_string, 'id':'myid'}
-        created_doc = client.CreateDocument(created_collection['_self'], document_definition)
+        created_doc = client.CreateItem(created_collection['_self'], document_definition)
 
         read_options = {'partitionKey': test_string }
-        read_doc = client.ReadDocument(created_doc['_self'], read_options)
+        read_doc = client.ReadItem(created_doc['_self'], read_options)
         self.assertEqual(read_doc['pk'], test_string)
 
     def test_create_document_with_line_separator_para_seperator_next_line_unicodes (self):
 
         test_string = u'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'
         document_definition = {'pk': 'pk', 'id':'myid', 'unicode_content':test_string }
-        created_doc = client.CreateDocument(created_collection['_self'], document_definition)
+        created_doc = client.CreateItem(created_collection['_self'], document_definition)
 
         read_options = {'partitionKey': 'pk' }
-        read_doc = client.ReadDocument(created_doc['_self'], read_options)
+        read_doc = client.ReadItem(created_doc['_self'], read_options)
         self.assertEqual(read_doc['unicode_content'], test_string)
 
     def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes (self):

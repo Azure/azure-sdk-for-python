@@ -1,19 +1,19 @@
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-import pydocumentdb.errors as errors
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.errors as errors
 
-import config as cfg
+import samples.Shared.config as cfg
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
 # 
-# 1. An Azure Cosmos DB account - 
+# 1. An Azure Cosmos account - 
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
-# 2. Microsoft Azure DocumentDB PyPi package - 
-#    https://pypi.python.org/pypi/pydocumentdb/
+# 2. Microsoft Azure Cosmos PyPi package - 
+#    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic CRUD operations on a Database resource for Azure Cosmos DB
+# Sample - demonstrates the basic CRUD operations on a Database resource for Azure Cosmos
 #
 # 1. Query for Database (QueryDatabases)
 #
@@ -69,7 +69,7 @@ class DatabaseManagement:
             client.CreateDatabase({"id": id})
             print('Database with id \'{0}\' created'.format(id))
 
-        except errors.DocumentDBError as e:
+        except errors.HTTPFailure as e:
             if e.status_code == 409:
                print('A database with id \'{0}\' already exists'.format(id))
             else: 
@@ -80,7 +80,7 @@ class DatabaseManagement:
         print("\n3. Get a Database by id")
 
         try:
-            # All Azure Cosmos DB resources are addressable via a link
+            # All Azure Cosmos resources are addressable via a link
             # This link is constructed from a combination of resource hierachy and 
             # the resource id. 
             # Eg. The link for database with an id of Foo would be dbs/Foo
@@ -89,7 +89,7 @@ class DatabaseManagement:
             database = client.ReadDatabase(database_link)
             print('Database with id \'{0}\' was found, it\'s _self is {1}'.format(id, database['_self']))
 
-        except errors.DocumentDBError as e:
+        except errors.HTTPFailure as e:
             if e.status_code == 404:
                print('A database with id \'{0}\' does not exist'.format(id))
             else: 
@@ -119,14 +119,14 @@ class DatabaseManagement:
 
            print('Database with id \'{0}\' was deleted'.format(id))
 
-        except errors.DocumentDBError as e:
+        except errors.HTTPFailure as e:
             if e.status_code == 404:
                print('A database with id \'{0}\' does not exist'.format(id))
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
 def run_sample():     
-    with IDisposable(document_client.DocumentClient(HOST, {'masterKey': MASTER_KEY} )) as client:
+    with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
             # query for a database
             DatabaseManagement.find_database(client, DATABASE_ID)

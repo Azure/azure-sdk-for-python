@@ -20,22 +20,22 @@
 # SOFTWARE.
 
 import unittest
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-from pydocumentdb import query_iterable
-import pydocumentdb.base as base
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import query_iterable
+import azure.cosmos.base as base
 import test.test_config as test_config
 
 # IMPORTANT NOTES:
   
-#      Most test cases in this file create collections in your Azure Cosmos DB
+#      Most test cases in this file create collections in your Azure Cosmos
 #      account.
 #      Collections are billing entities.  By running these test cases, you may
 #      incur monetary costs on your account.
   
 #      To Run the test, replace the two member fields (masterKey and host) with
 #      values
-#   associated with your Azure Cosmos DB account.
+#   associated with your Azure Cosmos account.
 class RuPerMinTests(unittest.TestCase):
     """RuPerMinTests Tests.
     """
@@ -47,7 +47,7 @@ class RuPerMinTests(unittest.TestCase):
     
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -62,13 +62,13 @@ class RuPerMinTests(unittest.TestCase):
         # database, collection and inserting all the docs only once
 
         if (cls.masterKey == '[YOUR_KEY_HERE]' or cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception("You must specify your Azure Cosmos DB account values for "
+            raise Exception("You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
         RuPerMinTests.cleanUpTestDatabase()
         
-        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })
         
     @classmethod
@@ -76,9 +76,9 @@ class RuPerMinTests(unittest.TestCase):
         RuPerMinTests.cleanUpTestDatabase()
 
     def setUp(self):
-        colls = list(self.client.ReadCollections(self.created_db['_self']))
+        colls = list(self.client.ReadContainers(self.created_db['_self']))
         for col in colls:
-            self.client.DeleteCollection(RuPerMinTests.GetDocumentCollectionLink(self.created_db, col))
+            self.client.DeleteContainer(RuPerMinTests.GetDocumentCollectionLink(self.created_db, col))
 
     def _query_offers(self, collection_self_link):
         offers = list(self.client.ReadOffers())
@@ -102,7 +102,7 @@ class RuPerMinTests(unittest.TestCase):
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateCollection(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
@@ -124,7 +124,7 @@ class RuPerMinTests(unittest.TestCase):
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateCollection(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
@@ -145,7 +145,7 @@ class RuPerMinTests(unittest.TestCase):
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateCollection(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
@@ -160,13 +160,12 @@ class RuPerMinTests(unittest.TestCase):
         doc = {
             'id' : 'test_doc'
         }
-        created_document = self.client.CreateDocument(created_collection['_self'], doc, request_options)
+        self.client.CreateItem(created_collection['_self'], doc, request_options)
 
 
     @classmethod
     def GetDatabaseLink(cls, database, is_name_based=True):
         if is_name_based:
-            print("helloooo" + str(database))
             return 'dbs/' + database['id']
         else:
             return database['_self']

@@ -1,7 +1,7 @@
 import unittest
 import uuid
-import pydocumentdb.document_client as document_client
-import pydocumentdb.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
 import test.test_config as test_config
 
 class QueryTest(unittest.TestCase):
@@ -15,7 +15,7 @@ class QueryTest(unittest.TestCase):
     @classmethod
     def cleanUpTestDatabase(cls):
         global client
-        client = document_client.DocumentClient(cls.host,
+        client = cosmos_client.CosmosClient(cls.host,
                                                 {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
@@ -39,15 +39,15 @@ class QueryTest(unittest.TestCase):
         testCollectionName = 'testCollection ' + str(uuid.uuid4())
         collection_definition = { 'id': testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
         collection_options = { 'offerThroughput': 10100 }
-        created_collection = client.CreateCollection(created_db['_self'], collection_definition, collection_options)
+        created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
 
         document_definition = {'pk': 'pk', 'id':'myId'}
-        created_doc = client.CreateDocument(created_collection['_self'], document_definition)
+        client.CreateItem(created_collection['_self'], document_definition)
 
         query_options = {'partitionKey': 'pk'}
         collectionLink = '/dbs/' + self.testDbName + '/colls/' + testCollectionName + '/'
         query = 'SELECT * from c'
-        query_iterable = client.QueryDocuments(collectionLink, query, query_options)
+        query_iterable = client.QueryItems(collectionLink, query, query_options)
 
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')
@@ -56,26 +56,26 @@ class QueryTest(unittest.TestCase):
         testCollectionName = 'testCollection ' + str(uuid.uuid4())
         collection_definition = { 'id': testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
         collection_options = { 'offerThroughput': 10100 }
-        created_collection = client.CreateCollection(created_db['_self'], collection_definition, collection_options)
+        created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
 
         collection_link = created_collection['_self']
         # The test targets partition #3
         pkRangeId = "3"
 
         # Read change feed with passing options
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link)
+        query_iterable = client.QueryItemsChangeFeed(collection_link)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed without specifying partition key range ID
         options = {}
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
         options['partitionKeyRangeId'] = pkRangeId
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in client.last_response_headers)
@@ -83,7 +83,7 @@ class QueryTest(unittest.TestCase):
 
         # Read change feed from beginning should return an empty list
         options['isStartFromBeginning'] = True
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in client.last_response_headers)
@@ -92,8 +92,8 @@ class QueryTest(unittest.TestCase):
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id':'doc1'}
-        created_doc = client.CreateDocument(collection_link, document_definition)
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        client.CreateItem(collection_link, document_definition)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 1)
         self.assertEqual(iter_list[0]['id'], 'doc1')
@@ -105,16 +105,16 @@ class QueryTest(unittest.TestCase):
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id':'doc2'}
-        created_doc = client.CreateDocument(collection_link, document_definition)
+        client.CreateItem(collection_link, document_definition)
         document_definition = {'pk': 'pk', 'id':'doc3'}
-        created_doc = client.CreateDocument(collection_link, document_definition)
+        client.CreateItem(collection_link, document_definition)
         options['isStartFromBeginning'] = False
         
         for pageSize in [1, 100]:
             # verify iterator
             options['continuation'] = continuation2
             options['maxItemCount'] = pageSize
-            query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+            query_iterable = client.QueryItemsChangeFeed(collection_link, options)
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
@@ -125,7 +125,7 @@ class QueryTest(unittest.TestCase):
             # verify fetch_next_block
             # the options is not copied, therefore it need to be restored
             options['continuation'] = continuation2
-            query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+            query_iterable = client.QueryItemsChangeFeed(collection_link, options)
             count = 0
             expected_count = 2
             all_fetched_res = []
@@ -146,7 +146,7 @@ class QueryTest(unittest.TestCase):
         # verify reading change feed from the beginning
         options['isStartFromBeginning'] = True
         options['continuation'] = None
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__iter__()
         for i in range(0, len(expected_ids)):
@@ -157,7 +157,7 @@ class QueryTest(unittest.TestCase):
 
         # verify reading empty change feed 
         options['continuation'] = continuation3
-        query_iterable = client.QueryDocumentsChangeFeed(collection_link, options)
+        query_iterable = client.QueryItemsChangeFeed(collection_link, options)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
 
@@ -165,17 +165,16 @@ class QueryTest(unittest.TestCase):
         testCollectionName = 'testCollection ' + str(uuid.uuid4())
         collection_definition = { 'id': testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
         collection_options = { 'offerThroughput': 10100 }
-        created_collection = client.CreateCollection(created_db['_self'], collection_definition, collection_options)
+        created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
 
         document_definition = {'pk': 'pk', 'id':'myId'}
-        created_doc = client.CreateDocument(created_collection['_self'], document_definition)
+        client.CreateItem(created_collection['_self'], document_definition)
 
         query_options = {'partitionKey': 'pk',
                          'populateQueryMetrics': True}
         collectionLink = '/dbs/' + self.testDbName + '/colls/' + testCollectionName + '/'
         query = 'SELECT * from c'
-        print(query)
-        query_iterable = client.QueryDocuments(collectionLink, query, query_options)
+        query_iterable = client.QueryItems(collectionLink, query, query_options)
 
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')

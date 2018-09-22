@@ -21,40 +21,46 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="README.md" />
-    <Compile Include="pydocumentdb\default_retry_policy.py" />
-    <Compile Include="pydocumentdb\consistent_hash_ring.py" />
-    <Compile Include="pydocumentdb\constants.py" />
-    <Compile Include="pydocumentdb\endpoint_discovery_retry_policy.py" />
-    <Compile Include="pydocumentdb\errors.py" />
-    <Compile Include="pydocumentdb\execution_context\__init__.py" />
-    <Compile Include="pydocumentdb\execution_context\base_execution_context.py" />
-    <Compile Include="pydocumentdb\execution_context\document_producer.py" />
-    <Compile Include="pydocumentdb\execution_context\endpoint_component.py" />
-    <Compile Include="pydocumentdb\execution_context\execution_dispatcher.py" />
-    <Compile Include="pydocumentdb\execution_context\multi_execution_aggregator.py" />
-    <Compile Include="pydocumentdb\execution_context\query_execution_info.py" />
-    <Compile Include="pydocumentdb\execution_context\aggregators.py" />
-    <Compile Include="pydocumentdb\global_endpoint_manager.py" />
-    <Compile Include="pydocumentdb\hash_partition_resolver.py" />
-    <Compile Include="pydocumentdb\http_constants.py" />
-    <Compile Include="pydocumentdb\murmur_hash.py" />
-    <Compile Include="pydocumentdb\partition.py" />
-    <Compile Include="pydocumentdb\query_iterable.py" />
-    <Compile Include="pydocumentdb\range.py" />
-    <Compile Include="pydocumentdb\range_partition_resolver.py" />
-    <Compile Include="pydocumentdb\resource_throttle_retry_policy.py" />
-    <Compile Include="pydocumentdb\retry_options.py" />
-    <Compile Include="pydocumentdb\retry_utility.py" />
-    <Compile Include="pydocumentdb\routing\collection_routing_map.py" />
-    <Compile Include="pydocumentdb\routing\routing_map_provider.py" />
-    <Compile Include="pydocumentdb\routing\routing_range.py" />
-    <Compile Include="pydocumentdb\routing\__init__.py" />
-    <Compile Include="pydocumentdb\runtime_constants.py" />
-    <Compile Include="pydocumentdb\session.py" />
-    <Compile Include="pydocumentdb\utils.py" />
+    <Compile Include="azure\cosmos\default_retry_policy.py" />
+    <Compile Include="azure\cosmos\consistent_hash_ring.py" />
+    <Compile Include="azure\cosmos\constants.py" />
+    <Compile Include="azure\cosmos\endpoint_discovery_retry_policy.py" />
+    <Compile Include="azure\cosmos\errors.py" />
+    <Compile Include="azure\cosmos\execution_context\__init__.py" />
+    <Compile Include="azure\cosmos\execution_context\base_execution_context.py" />
+    <Compile Include="azure\cosmos\execution_context\document_producer.py" />
+    <Compile Include="azure\cosmos\execution_context\endpoint_component.py" />
+    <Compile Include="azure\cosmos\execution_context\execution_dispatcher.py" />
+    <Compile Include="azure\cosmos\execution_context\multi_execution_aggregator.py" />
+    <Compile Include="azure\cosmos\execution_context\query_execution_info.py" />
+    <Compile Include="azure\cosmos\execution_context\aggregators.py" />
+    <Compile Include="azure\cosmos\global_endpoint_manager.py" />
+    <Compile Include="azure\cosmos\hash_partition_resolver.py" />
+    <Compile Include="azure\cosmos\http_constants.py" />
+    <Compile Include="azure\cosmos\location_cache.py" />
+    <Compile Include="azure\cosmos\murmur_hash.py" />
+    <Compile Include="azure\cosmos\partition.py" />
+    <Compile Include="azure\cosmos\query_iterable.py" />
+    <Compile Include="azure\cosmos\range.py" />
+    <Compile Include="azure\cosmos\range_partition_resolver.py" />
+    <Compile Include="azure\cosmos\request_object.py" />
+    <Compile Include="azure\cosmos\resource_throttle_retry_policy.py" />
+    <Compile Include="azure\cosmos\retry_options.py" />
+    <Compile Include="azure\cosmos\retry_utility.py" />
+    <Compile Include="azure\cosmos\routing\collection_routing_map.py" />
+    <Compile Include="azure\cosmos\routing\routing_map_provider.py" />
+    <Compile Include="azure\cosmos\routing\routing_range.py" />
+    <Compile Include="azure\cosmos\routing\__init__.py" />
+    <Compile Include="azure\cosmos\runtime_constants.py" />
+    <Compile Include="azure\cosmos\session.py" />
+    <Compile Include="azure\cosmos\session_retry_policy.py" />
+    <Compile Include="azure\cosmos\utils.py" />
+    <Compile Include="azure\cosmos\vector_session_token.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
     <Compile Include="test\encoding_tests.py" />
+    <Compile Include="test\location_cache_tests.py" />
+    <Compile Include="test\multimaster_tests.py" />
     <Compile Include="test\query_tests.py" />
     <Compile Include="test\orderby_tests.py" />
     <Compile Include="test\aggregate_tests.py" />
@@ -69,15 +75,17 @@
     <Compile Include="test\routing\__init__.py" />
     <Compile Include="test\session_container_tests.py" />
     <Compile Include="test\session_tests.py" />
+    <Compile Include="test\session_token_unit_tests.py" />
+    <Compile Include="test\streaming_failover_test.py" />
     <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
     <Compile Include="test\ru_per_min_tests.py" />
-    <Compile Include="pydocumentdb\auth.py" />
-    <Compile Include="pydocumentdb\base.py" />
-    <Compile Include="pydocumentdb\documents.py" />
-    <Compile Include="pydocumentdb\document_client.py" />
-    <Compile Include="pydocumentdb\synchronized_request.py" />
-    <Compile Include="pydocumentdb\__init__.py" />
+    <Compile Include="azure\cosmos\auth.py" />
+    <Compile Include="azure\cosmos\base.py" />
+    <Compile Include="azure\cosmos\documents.py" />
+    <Compile Include="azure\cosmos\cosmos_client.py" />
+    <Compile Include="azure\cosmos\synchronized_request.py" />
+    <Compile Include="azure\cosmos\__init__.py" />
     <Compile Include="test\test_partition_resolver.py" />
     <Compile Include="test\__init__.py" />
     <Content Include="requirements.txt" />
@@ -87,15 +95,15 @@
     <Content Include="test\BaselineTest.PathParser.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="pydocumentdb" />
-    <Folder Include="pydocumentdb\execution_context\" />
-    <Folder Include="pydocumentdb\routing\" />
+    <Folder Include="azure\" />
+    <Folder Include="azure\cosmos" />
+    <Folder Include="azure\cosmos\execution_context\" />
+    <Folder Include="azure\cosmos\routing\" />
     <Folder Include="test" />
     <Folder Include="test\routing\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
-    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />

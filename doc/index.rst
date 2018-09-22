@@ -1,9 +1,9 @@
-.. pydocumentdb documentation master file, created by
+.. azure-cosmos documentation master file, created by
    sphinx-quickstart on Fri Jun 27 15:42:45 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Azure DocumentDB Python SDK
+Azure Cosmos Python SDK
 ========================================
 
 System Requirements:
@@ -21,8 +21,8 @@ Installation:
 
     Method 1:
 
-    1. Download the Azure DocumentDB Python SDK source from
-       https://github.com/Azure/azure-documentdb-python which is needed to manage the Azure DocumentDB database service.
+    1. Download the Azure Cosmos Python SDK source from
+       https://github.com/Azure/azure-cosmos-python which is needed to manage the Azure Cosmos database service.
 
     2. Execute the following setup script in bash shell:
 
@@ -32,14 +32,14 @@ Installation:
 
     Method 2:
 
-    1. Install the Azure DocumentDB Python SDK using pip.
+    1. Install the Azure Cosmos Python SDK using pip.
        For more information on pip, please visit https://pypi.python.org/pypi/pip
 
     2. Execute the following in bash shell:
 
        .. code-block:: bash
 
-         $ pip install pydocumentdb
+         $ pip install azure-cosmos
 
 To run tests:
 -------------
@@ -60,7 +60,7 @@ To generate documentations:
     .. code-block:: bash
 
       $ cd doc
-      $ sphinx-apidoc -f -e -o api ..\pydocumentdb
+      $ sphinx-apidoc -f -e -o api ..\azure\cosmos
       $ make.bat html
 
 
@@ -74,5 +74,5 @@ Indices and tables
 .. toctree::
   :hidden:
 
-  api/pydocumentdb
+  api/azure-cosmos
   api/modules

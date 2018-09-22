@@ -20,13 +20,13 @@
 #SOFTWARE.
 
 import unittest
-from pydocumentdb.routing.routing_map_provider import _SmartRoutingMapProvider
-from pydocumentdb.routing.routing_map_provider import _CollectionRoutingMap
-from pydocumentdb.routing import routing_range as routing_range
+from azure.cosmos.routing.routing_map_provider import _SmartRoutingMapProvider
+from azure.cosmos.routing.routing_map_provider import _CollectionRoutingMap
+from azure.cosmos.routing import routing_range as routing_range
  
 class RoutingMapProviderTests(unittest.TestCase):
 
-    class MockedDocumentClient(object):
+    class MockedCosmosClient(object):
         
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
@@ -42,7 +42,7 @@ class RoutingMapProviderTests(unittest.TestCase):
         self.cached_collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
 
     def instantiate_smart_routing_map_provider(self, partition_key_ranges):
-        client = RoutingMapProviderTests.MockedDocumentClient(partition_key_ranges)
+        client = RoutingMapProviderTests.MockedCosmosClient(partition_key_ranges)
         return _SmartRoutingMapProvider(client)
     
     def test_full_range(self):
@@ -123,14 +123,14 @@ class RoutingMapProviderTests(unittest.TestCase):
                    routing_range._Range("0000000045", "0000000046", True, False),
                    routing_range._Range("0000000046", "0000000050", True, False)
                 ]
-        self.validate_against_cached_collection_results(ranges);
+        self.validate_against_cached_collection_results(ranges)
 
     def test_simple_boundary(self):
         ranges = [
                     
                    routing_range._Range("05C1C9CD673398", "05C1D9CD673398", True, False),
                   ]
-        self.validate_against_cached_collection_results(ranges);
+        self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:2])
 
     def test_two_adjacent_boundary(self):
@@ -141,7 +141,7 @@ class RoutingMapProviderTests(unittest.TestCase):
                    # self.partition_key_ranges[2]
                    routing_range._Range("05C1D9CD673398", "05C1D9CD673399", True, False),
                 ]
-        self.validate_against_cached_collection_results(ranges);
+        self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:3])
     
     def test_two_ranges_in_one_partition_key_range(self):
@@ -151,7 +151,7 @@ class RoutingMapProviderTests(unittest.TestCase):
            routing_range._Range("05C1C9CD673402", "05C1C9CD673403", True, False),
 
           ]
-        self.validate_against_cached_collection_results(ranges);
+        self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:2])
 
     def test_complex(self):

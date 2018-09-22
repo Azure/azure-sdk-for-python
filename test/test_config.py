@@ -20,7 +20,7 @@
 #SOFTWARE.
 
 import os
-import pydocumentdb.documents as documents
+import azure.cosmos.documents as documents
 try:
     import urllib3
     urllib3.disable_warnings()

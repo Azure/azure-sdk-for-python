@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DatabaseManagement", "DatabaseManagement\DatabaseManagement.pyproj", "{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}"
 EndProject
@@ -17,6 +17,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DocumentManagement", "Docum
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "IndexManagement", "IndexManagement\IndexManagement.pyproj", "{B1869509-4DC8-4AA8-8F2A-220FDBC14154}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "MultiMasterOperations", "MultiMasterOperations\MultiMasterOperations.pyproj", "{F29D7A3E-CB9A-4B15-BDA1-BB30F3CA9CFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,8 @@ Global
 		{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F29D7A3E-CB9A-4B15-BDA1-BB30F3CA9CFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F29D7A3E-CB9A-4B15-BDA1-BB30F3CA9CFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

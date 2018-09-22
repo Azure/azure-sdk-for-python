@@ -22,19 +22,19 @@
 import unittest
 import uuid
 from six.moves import xrange
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-from pydocumentdb.execution_context import base_execution_context as base_execution_context
-import pydocumentdb.base as base
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos.execution_context import base_execution_context as base_execution_context
+import azure.cosmos.base as base
 import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
-#      Most test cases in this file create collections in your Azure Cosmos DB account.
+#      Most test cases in this file create collections in your Azure Cosmos account.
 #      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
   
 #      To Run the test, replace the two member fields (masterKey and host) with values 
-#   associated with your Azure Cosmos DB account.
+#   associated with your Azure Cosmos account.
 
 class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
@@ -47,7 +47,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -60,18 +60,18 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
-                "You must specify your Azure Cosmos DB account values for "
+                "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
     @classmethod
     def tearDownClass(cls):
-        QueryExecutionContextEndToEndTests.cleanUpTestDatabase();
+        QueryExecutionContextEndToEndTests.cleanUpTestDatabase()
 
     def setUp(self):
-        QueryExecutionContextEndToEndTests.cleanUpTestDatabase();
+        QueryExecutionContextEndToEndTests.cleanUpTestDatabase()
         
-        self.client = document_client.DocumentClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
+        self.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
@@ -91,7 +91,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         self.insert_doc(self.client, self.created_db, self.collection_link, self.document_definitions)
 
         # sanity check: read documents after creation
-        queried_docs = list(self.client.ReadDocuments(self.collection_link))
+        queried_docs = list(self.client.ReadItems(self.collection_link))
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),
@@ -124,7 +124,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         options['enableCrossPartitionQuery'] = True
         options['maxItemCount'] = 2
     
-        res = self.client.QueryDocuments(self.collection_link, query, options)
+        res = self.client.QueryItems(self.collection_link, query, options)
         self.assertEqual(len(list(res)), 19)
     
     
@@ -169,7 +169,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                     
         results = {}            
         # validate that invocations of next() produces the same results as expected
-        for i in xrange(expected_number_of_results):
+        for _ in xrange(expected_number_of_results):
             item = invokeNext()
             results[item['id']] = item
        
@@ -222,7 +222,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         
         collection_options = {  }
 
-        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
                                 collection_definition, 
                                 collection_options)
 
@@ -233,7 +233,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         created_docs = []
         for d in document_definitions:
 
-            created_doc = client.CreateDocument(collection_link, d)
+            created_doc = client.CreateItem(collection_link, d)
             created_docs.append(created_doc)
                         
         return created_docs
