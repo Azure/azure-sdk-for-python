@@ -20,9 +20,9 @@
 #SOFTWARE.
 
 import unittest
-from pydocumentdb.routing.collection_routing_map import _CollectionRoutingMap
-import pydocumentdb.routing.routing_range as routing_range
-from pydocumentdb.routing.routing_map_provider import _PartitionKeyRangeCache
+from azure.cosmos.routing.collection_routing_map import _CollectionRoutingMap
+import azure.cosmos.routing.routing_range as routing_range
+from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 
 class CollectionRoutingMapTests(unittest.TestCase):
 
@@ -154,7 +154,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
         self.assertEqual(0, len(crm.get_overlapping_ranges([noPoint])))               
         
         onePoint = routing_range._Range("0000000040", "0000000040", True, True)
-        overlappingPartitionKeyRanges = crm.get_overlapping_ranges([onePoint]);
+        overlappingPartitionKeyRanges = crm.get_overlapping_ranges([onePoint])
         self.assertEqual(1, len(overlappingPartitionKeyRanges))
         self.assertEqual("1", overlappingPartitionKeyRanges[0][Id])
 
@@ -163,7 +163,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
                    routing_range._Range("0000000045", "0000000046", True, True),
                    routing_range._Range("0000000046", "0000000050", True, True)
                 ]
-        overlappingPartitionKeyRanges = crm.get_overlapping_ranges(ranges);
+        overlappingPartitionKeyRanges = crm.get_overlapping_ranges(ranges)
                                                    
         self.assertEqual(2, len(overlappingPartitionKeyRanges))
         self.assertEqual("1", overlappingPartitionKeyRanges[0][Id])

@@ -21,23 +21,25 @@
 
 import unittest
 import time
-from types import *
+# from types import *
 
-import pydocumentdb.document_client as document_client
-import pydocumentdb.documents as documents
-import pydocumentdb.errors as errors
-import pydocumentdb.base as base
-import pydocumentdb.http_constants as http_constants
-import pydocumentdb.constants as constants
-import pydocumentdb.session as session
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import azure.cosmos.errors as errors
+import azure.cosmos.base as base
+import azure.cosmos.http_constants as http_constants
+import azure.cosmos.constants as constants
+import azure.cosmos.session as session
+import test.test_config as test_config
 
 class Test_session_container(unittest.TestCase):
     # this test doesn't need real credentials, or connection to server
-    host = 'dummy_host'
-    masterkey = 'dummy_masterkey'
+    host = test_config._test_config.host
+    masterkey = test_config._test_config.masterKey
+    connectionPolicy = test_config._test_config.connectionPolicy
 
     def setUp(self):
-        self.client = document_client.DocumentClient(self.host, {'masterKey': self.masterkey})
+        self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterkey}, self.connectionPolicy)
         self.session = self.client.Session
 
     def tearDown(self):
@@ -49,30 +51,30 @@ class Test_session_container(unittest.TestCase):
         assert session_token == ''
 
         create_collection_response_result = {u'_self': u'dbs/DdAkAA==/colls/DdAkAPS2rAA=/', u'_rid': u'DdAkAPS2rAA=', u'id': u'sample collection'}
-        create_collection_response_header = {'x-ms-session-token': '0:409', 'x-ms-alt-content-path': 'dbs/sample%20database'}
+        create_collection_response_header = {'x-ms-session-token': '0:0#409#24=-1#12=-1', 'x-ms-alt-content-path': 'dbs/sample%20database'}
         self.session.update_session(create_collection_response_result, create_collection_response_header)
 
         token = self.session.get_session_token(u'/dbs/sample%20database/colls/sample%20collection')
-        assert token == '0:409'
+        assert token == '0:0#409#24=-1#12=-1'
 
         token = self.session.get_session_token(u'dbs/DdAkAA==/colls/DdAkAPS2rAA=/')
-        assert token == '0:409'
+        assert token == '0:0#409#24=-1#12=-1'
         return True
 
     def test_document_requests(self):
         # validate session token for rid based requests
         create_document_response_result = {u'_self': u'dbs/DdAkAA==/colls/DdAkAPS2rAA=/docs/DdAkAPS2rAACAAAAAAAAAA==/', 
                                            u'_rid': u'DdAkAPS2rAACAAAAAAAAAA==', u'id': u'eb391181-5c49-415a-ab27-848ce21d5d11'}
-        create_document_response_header = {'x-ms-session-token': '0:426', 'x-ms-alt-content-path': 'dbs/sample%20database/colls/sample%20collection', 
+        create_document_response_header = {'x-ms-session-token': '0:0#406#24=-1#12=-1', 'x-ms-alt-content-path': 'dbs/sample%20database/colls/sample%20collection', 
                                            'x-ms-content-path': 'DdAkAPS2rAA='}
         
         self.session.update_session(create_document_response_result, create_document_response_header)
 
         token = self.session.get_session_token(u'dbs/DdAkAA==/colls/DdAkAPS2rAA=/docs/DdAkAPS2rAACAAAAAAAAAA==/')
-        assert token == '0:426'
+        assert token == '0:0#406#24=-1#12=-1'
 
         token = self.session.get_session_token(u'dbs/sample%20database/colls/sample%20collection/docs/eb391181-5c49-415a-ab27-848ce21d5d11')
-        assert token == '0:426'
+        assert token == '0:0#406#24=-1#12=-1'
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,19 +20,19 @@
 #SOFTWARE.
 
 import unittest
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-from pydocumentdb.routing.routing_map_provider import _PartitionKeyRangeCache
-from pydocumentdb.routing import routing_range as routing_range
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
+from azure.cosmos.routing import routing_range as routing_range
 import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
-#      Most test cases in this file create collections in your Azure Cosmos DB account.
+#      Most test cases in this file create collections in your Azure Cosmos account.
 #      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
   
 #      To Run the test, replace the two member fields (masterKey and host) with values 
-#   associated with your Azure Cosmos DB account.
+#   associated with your Azure Cosmos account.
 
 class RoutingMapEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
@@ -45,7 +45,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -58,18 +58,18 @@ class RoutingMapEndToEndTests(unittest.TestCase):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
-                "You must specify your Azure Cosmos DB account values for "
+                "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
     @classmethod
     def tearDownClass(cls):
-        RoutingMapEndToEndTests.cleanUpTestDatabase();
+        RoutingMapEndToEndTests.cleanUpTestDatabase()
 
     def setUp(self):
-        RoutingMapEndToEndTests.cleanUpTestDatabase();
+        RoutingMapEndToEndTests.cleanUpTestDatabase()
         
-        self.client = document_client.DocumentClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
+        self.client = cosmos_client.CosmosClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
@@ -126,7 +126,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
         
         collection_options = { 'offerThroughput': 10100 }
 
-        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
                                 collection_definition, 
                                 collection_options)
 

@@ -1,6 +1,6 @@
-# Microsoft Azure Cosmos DB Python SDK
+# Microsoft Azure Cosmos Python SDK
 
-Welcome to the repo containing all things Python for the Azure Cosmos DB API which is published with name [pydocumentdb](https://pypi.python.org/pypi/pydocumentdb/). For documentation please see the Microsoft Azure [link](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-sdk-python).
+Welcome to the repo containing all things Python for the Azure Cosmos DB API which is published with name [azure-cosmos](https://pypi.python.org/pypi/azure-cosmos/). For documentation please see the Microsoft Azure [link](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-sdk-python).
 
 
 ## Pre-requirements
@@ -21,17 +21,17 @@ Follow instruction at https://docs.microsoft.com/en-us/azure/cosmos-db/local-emu
 
     or
 
-    $ pip install pydocumentdb
+    $ pip install azure-cosmos
 
 
 ## Running Testing
 Clone the repo 
 ```bash
-git clone https://github.com/Azure/azure-documentdb-python.git
-cd azure-documentdb-python
+git clone https://github.com/Azure/azure-cosmos-python.git
+cd azure-cosmos-python
 ```
 
-Most of the test files under test sub-folder require you to enter your Azure DocumentDB master key and host endpoint: 
+Most of the test files under test sub-folder require you to enter your Azure Cosmos master key and host endpoint: 
     
     masterKey = '[YOUR_KEY_HERE]'
     host = '[YOUR_ENDPOINT_HERE]'
@@ -44,7 +44,7 @@ To run the tests:
     and run all the tests in Test Explorer.
 
 **Note:**  
-Most of the test cases create collections in your DocumentDB account. Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
+Most of the test cases create containers in your Cosmos account. Containers are billing entities. By running these test cases, you may incur monetary costs on your account.
   
 
 ## Documentation generation
@@ -52,5 +52,5 @@ Most of the test cases create collections in your DocumentDB account. Collection
     Install Sphinx: http://sphinx-doc.org/install.html
 
     $ cd doc
-    $ sphinx-apidoc -f -e -o api ..\pydocumentdb
+    $ sphinx-apidoc -f -e -o api ..\azure\cosmos
     $ make.bat html

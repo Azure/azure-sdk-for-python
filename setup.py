@@ -3,9 +3,9 @@
 from distutils.core import setup
 import setuptools
 
-setup(name='pydocumentdb',
-      version='2.3.3',
-      description='Azure DocumentDB Python SDK',
+setup(name='azure-cosmos',
+      version='3.0.0',
+      description='Azure Cosmos Python SDK',
       author="Microsoft",
       author_email="askdocdb@microsoft.com",
       maintainer="Microsoft",

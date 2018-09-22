@@ -22,13 +22,13 @@
 import unittest
 import json
 
-import pydocumentdb.document_client as document_client
-import pydocumentdb.documents as documents
-import pydocumentdb.errors as errors
-import pydocumentdb.constants as constants
-from pydocumentdb.http_constants import StatusCodes
-import pydocumentdb.global_endpoint_manager as global_endpoint_manager
-import pydocumentdb.retry_utility as retry_utility
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import azure.cosmos.errors as errors
+import azure.cosmos.constants as constants
+from azure.cosmos.http_constants import StatusCodes
+import azure.cosmos.global_endpoint_manager as global_endpoint_manager
+import azure.cosmos.retry_utility as retry_utility
 import test.test_config as test_config
 
 location_changed = False
@@ -120,7 +120,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_GLOBAL_ENDPOINT_HERE]'):
             raise Exception(
-                "You must specify your Azure Cosmos DB account values for "
+                "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
@@ -132,7 +132,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         self.OriginalGlobalEndpointManager = global_endpoint_manager._GlobalEndpointManager
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
 
-        # Make pydocumentdb use the MockGlobalEndpointManager
+        # Make azure-cosmos use the MockGlobalEndpointManager
         global_endpoint_manager._GlobalEndpointManager = MockGlobalEndpointManager
 
     def tearDown(self):
@@ -164,7 +164,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = document_client.DocumentClient(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        write_location_client = cosmos_client.CosmosClient(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
         self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         
         self.MockCreateDatabase(write_location_client, { 'id': 'mock database' })
@@ -175,7 +175,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = document_client.DocumentClient(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        client = cosmos_client.CosmosClient(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
 
         self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.write_location_host)

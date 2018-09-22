@@ -20,9 +20,9 @@
 #SOFTWARE.
 
 import unittest
-import pydocumentdb.utils as utils
+import azure.cosmos.utils as utils
 import platform
-import pydocumentdb.http_constants as http_constants
+import azure.cosmos.http_constants as http_constants
 
 class UtilsTests(unittest.TestCase):
     """Utils Tests

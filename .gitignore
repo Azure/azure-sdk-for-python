@@ -227,3 +227,5 @@ pip-log.txt
 
 # Idea IDE
 .idea/*
+
+.vscode/*

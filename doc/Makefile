@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/pydocumentdb.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/azure-cosmos.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/pydocumentdb.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/azure-cosmos.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/pydocumentdb"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/pydocumentdb"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/azure-cosmos"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/azure-cosmos"
 	@echo "# devhelp"
 
 epub:

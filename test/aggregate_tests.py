@@ -27,11 +27,10 @@ import uuid
 from six import with_metaclass
 from six.moves import xrange
 
-import pydocumentdb.document_client as document_client
-import pydocumentdb.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
 import test.test_config as test_config
-from pydocumentdb.errors import HTTPFailure
-
+from azure.cosmos.errors import HTTPFailure
 
 class _config:
     host = test_config._test_config.host
@@ -50,7 +49,7 @@ class _config:
 class _helper:
     @classmethod
     def clean_up_database(cls):
-        client = document_client.DocumentClient(_config.host,
+        client = cosmos_client.CosmosClient(_config.host,
                                                 {'masterKey': _config.master_key}, _config.connection_policy)
         query_iterable = client.QueryDatabases(
             'SELECT * FROM root r WHERE r.id=\'{}\''.format(_config.TEST_DATABASE_NAME))
@@ -72,13 +71,13 @@ class AggregateQueryTestSequenceMeta(type):
         def _setup():
             if (not _config.master_key or not _config.host):
                 raise Exception(
-                    "You must specify your Azure Cosmos DB account values for "
+                    "You must specify your Azure Cosmos account values for "
                     "'masterKey' and 'host' at the top of this class to run the "
                     "tests.")
 
             _helper.clean_up_database()
 
-            mcs.client = document_client.DocumentClient(_config.host,
+            mcs.client = cosmos_client.CosmosClient(_config.host,
                                                         {'masterKey': _config.master_key}, _config.connection_policy)
             created_db = mcs.client.CreateDatabase({'id': _config.TEST_DATABASE_NAME})
             created_collection = _create_collection(mcs.client, created_db)
@@ -188,7 +187,7 @@ class AggregateQueryTestSequenceMeta(type):
             }
 
             collection_options = {'offerThroughput': 10100}
-            created_collection = client.CreateCollection(_get_database_link(created_db),
+            created_collection = client.CreateContainer(_get_database_link(created_db),
                                                          collection_definition,
                                                          collection_options)
 
@@ -197,7 +196,7 @@ class AggregateQueryTestSequenceMeta(type):
         def _insert_doc(collection_link, document_definitions, client):
             created_docs = []
             for d in document_definitions:
-                created_doc = client.CreateDocument(collection_link, d)
+                created_doc = client.CreateItem(collection_link, d)
                 created_docs.append(created_doc)
 
             return created_docs
@@ -232,7 +231,7 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
         # executes the query and validates the results against the expected results
         options = {'enableCrossPartitionQuery': 'true'}
 
-        result_iterable = client.QueryDocuments(collection_link, query, options)
+        result_iterable = client.QueryItems(collection_link, query, options)
 
         def _verify_result():
             ######################################

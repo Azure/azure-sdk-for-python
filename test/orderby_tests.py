@@ -21,20 +21,20 @@
 
 import unittest
 import uuid
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-from pydocumentdb import query_iterable
-import pydocumentdb.base as base
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import query_iterable
+import azure.cosmos.base as base
 from six.moves import xrange
 import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
-#      Most test cases in this file create collections in your Azure Cosmos DB account.
+#      Most test cases in this file create collections in your Azure Cosmos account.
 #      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
   
 #      To Run the test, replace the two member fields (masterKey and host) with values 
-#   associated with your Azure Cosmos DB account.
+#   associated with your Azure Cosmos account.
 
 class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
@@ -47,7 +47,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -63,13 +63,13 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
-                "You must specify your Azure Cosmos DB account values for "
+                "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
-        CrossPartitionTopOrderByTest.cleanUpTestDatabase();
+        CrossPartitionTopOrderByTest.cleanUpTestDatabase()
         
-        cls.client = document_client.DocumentClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })        
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
@@ -93,7 +93,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         
     @classmethod
     def tearDownClass(cls):
-        CrossPartitionTopOrderByTest.cleanUpTestDatabase();
+        CrossPartitionTopOrderByTest.cleanUpTestDatabase()
 
     def setUp(self):
         
@@ -102,7 +102,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertGreaterEqual(len(partition_key_ranges), 5)
         
         # sanity check: read documents after creation
-        queried_docs = list(self.client.ReadDocuments(self.collection_link))
+        queried_docs = list(self.client.ReadItems(self.collection_link))
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),
@@ -461,25 +461,25 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         options['enableCrossPartitionQuery'] = True
         options['maxItemCount'] = 2
     
-        result_iterable = self.client.QueryDocuments(self.collection_link, query, options)
-        results = list(result_iterable);
+        result_iterable = self.client.QueryItems(self.collection_link, query, options)
+        results = list(result_iterable)
         # validates the results size and order
 
-        self.assertEqual(len(results), len(self.document_definitions));
+        self.assertEqual(len(results), len(self.document_definitions))
 
         # false values before true values
-        index = 0;
+        index = 0
         while index < len(results):
             if results[index]['boolVar']:
-                break;
+                break
             
-            self.assertTrue(int(results[index]['id']) % 2 == 1);
-            index = index + 1;
+            self.assertTrue(int(results[index]['id']) % 2 == 1)
+            index = index + 1
         
         while index < len(results):
-            self.assertTrue(results[index]['boolVar']);
-            self.assertTrue(int(results[index]['id']) % 2 == 0);
-            index = index + 1;
+            self.assertTrue(results[index]['boolVar'])
+            self.assertTrue(int(results[index]['id']) % 2 == 0)
+            index = index + 1
             
     def find_docs_by_partition_key_range_id(self):
         query = {
@@ -506,7 +506,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         # executes the query and validates the results against the expected results
         page_size = options['maxItemCount']
 
-        result_iterable = self.client.QueryDocuments(self.collection_link, query, options)
+        result_iterable = self.client.QueryItems(self.collection_link, query, options)
         
         self.assertTrue(isinstance(result_iterable, query_iterable.QueryIterable))
         
@@ -586,7 +586,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         
         collection_options = { 'offerThroughput': 10100 }
 
-        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
                                 collection_definition, 
                                 collection_options)
 
@@ -598,7 +598,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         created_docs = []
         for d in cls.document_definitions:
 
-            created_doc = cls.client.CreateDocument(cls.collection_link, d)
+            created_doc = cls.client.CreateItem(cls.collection_link, d)
             created_docs.append(created_doc)
             
         return created_docs

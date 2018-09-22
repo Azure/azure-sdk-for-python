@@ -1,20 +1,20 @@
-import pydocumentdb.documents as documents
-import pydocumentdb.document_client as document_client
-import pydocumentdb.errors as errors
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.errors as errors
 import datetime
 
-import config as cfg
+import samples.Shared.config as cfg
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
 # 
-# 1. An Azure DocumentDB account - 
+# 1. An Azure Cosmos account - 
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
 #
-# 2. Microsoft Azure DocumentDB PyPi package - 
-#    https://pypi.python.org/pypi/pydocumentdb/
+# 2. Microsoft Azure Cosmos PyPi package - 
+#    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic CRUD operations on a Database resource for Azure DocumentDB
+# Sample - demonstrates the basic CRUD operations on a Database resource for Azure Cosmos
 #
 # 1. Query for Database (QueryDatabases)
 #
@@ -35,7 +35,7 @@ COLLECTION_ID = cfg.settings['collection_id']
 database_link = 'dbs/' + DATABASE_ID
 collection_link = database_link + '/colls/' + COLLECTION_ID
 
-class IDisposable:
+class IDisposable(cosmos_client.CosmosClient):
     """ A context manager to automatically close an object with a close method
     in a with statement. """
 
@@ -58,12 +58,12 @@ class DocumentManagement:
         # Create a SalesOrder object. This object has nested properties and various types including numbers, DateTimes and strings.
         # This can be saved as JSON as is without converting into rows/columns.
         sales_order = DocumentManagement.GetSalesOrder("SalesOrder1")
-        client.CreateDocument(collection_link, sales_order)
+        client.CreateItem(collection_link, sales_order)
 
         # As your app evolves, let's say your object has a new schema. You can insert SalesOrderV2 objects without any 
         # changes to the database tier.
         sales_order2 = DocumentManagement.GetSalesOrderV2("SalesOrder2")
-        client.CreateDocument(collection_link, sales_order2)
+        client.CreateItem(collection_link, sales_order2)
 
     @staticmethod
     def ReadDocument(client, doc_id):
@@ -72,7 +72,7 @@ class DocumentManagement:
         # Note that Reads require a partition key to be spcified. This can be skipped if your collection is not
         # partitioned i.e. does not have a partition key definition during creation.
         doc_link = collection_link + '/docs/' + doc_id
-        response = client.ReadDocument(doc_link)
+        response = client.ReadItem(doc_link)
 
         print('Document read by Id {0}'.format(doc_id))
         print('Account Number: {0}'.format(response.get('account_number')))
@@ -84,7 +84,7 @@ class DocumentManagement:
         # NOTE: Use MaxItemCount on Options to control how many documents come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        documentlist = list(client.ReadDocuments(collection_link, {'maxItemCount':10}))
+        documentlist = list(client.ReadItems(collection_link, {'maxItemCount':10}))
         
         print('Found {0} documents'.format(documentlist.__len__()))
         
@@ -143,13 +143,13 @@ class DocumentManagement:
         return order2
 
 def run_sample():
-    with IDisposable(document_client.DocumentClient(HOST, {'masterKey': MASTER_KEY} )) as client:
+    with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
             # setup database for this sample
             try:
                 client.CreateDatabase({"id": DATABASE_ID})
 
-            except errors.DocumentDBError as e:
+            except errors.HTTPFailure as e:
                 if e.status_code == 409:
                     pass
                 else:
@@ -157,10 +157,10 @@ def run_sample():
 
             # setup collection for this sample
             try:
-                client.CreateCollection(database_link, {"id": COLLECTION_ID})
+                client.CreateContainer(database_link, {"id": COLLECTION_ID})
                 print('Collection with id \'{0}\' created'.format(COLLECTION_ID))
 
-            except errors.DocumentDBError as e:
+            except errors.HTTPFailure as e:
                 if e.status_code == 409:
                     print('Collection with id \'{0}\' was found'.format(COLLECTION_ID))
                 else:
