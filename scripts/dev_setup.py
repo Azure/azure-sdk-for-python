@@ -30,13 +30,13 @@ packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 nspkg_packages = [p for p in packages if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
-# Consider "azure-common" as a power nspkg : has to be installed after nspkg
-nspkg_packages.append("azure-common")
-
 # Manually push meta-packages at the end, in reverse dependency order
 meta_packages = ['azure-mgmt', 'azure']
 
 content_packages = [p for p in packages if p not in nspkg_packages+meta_packages]
+# Put azure-common in front
+content_packages.remove("azure-common")
+content_packages.insert(0, "azure-common")
 
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
@@ -47,10 +47,14 @@ if os.path.isdir(privates_dir) and os.listdir(privates_dir):
     whl_list = ' '.join([os.path.join(privates_dir, f) for f in os.listdir(privates_dir)])
     pip_command('install {}'.format(whl_list))
 
-# install packages
-for package_list in [nspkg_packages, content_packages]:
-    for package_name in package_list:
+# install nspkg only on py2
+if sys.version_info < (3, ):
+    for package_name in nspkg_packages:
         pip_command('install -e {}'.format(package_name))
+
+# install packages
+for package_name in content_packages:
+    pip_command('install -e {}'.format(package_name))
 
 # Ensure that the site package's azure/__init__.py has the old style namespace
 # package declaration by installing the old namespace package
