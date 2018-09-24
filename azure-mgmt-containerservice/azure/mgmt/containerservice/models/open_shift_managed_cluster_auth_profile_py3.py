@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class OpenShiftManagedClusterAuthProfile(Model):
-    """OpenShiftManagedClusterAuthProfile.
+    """OpenShiftManagedClusterAuthProfile defines all possible authentication
+    profiles for the OpenShift cluster.
 
-    :param identity_providers: OpenShiftManagedClusterAuthProfile defines all
-     possible authentication profiles for the OpenShift cluster.
+    :param identity_providers: Type of authentication profile to use.
     :type identity_providers:
      list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProviders]
     """
