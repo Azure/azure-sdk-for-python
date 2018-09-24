@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-cognitiveservices-vision-face"
+package_nspkg = "azure-cognitiveservices-vision-nspkg"
+package_pprint_name = "Cognitive Services Face"
+package_doc_id = "cognitive-services"
+is_stable = false
+is_arm = false
