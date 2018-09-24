@@ -15,14 +15,15 @@ from subprocess import check_call, CalledProcessError
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
 
 
-def pip_command(command):
+def pip_command(command, error_ok=False):
     try:
         print('Executing: ' + command)
         check_call([sys.executable, '-m', 'pip'] + command.split(), cwd=root_dir)
         print()
     except CalledProcessError as err:
         print(err, file=sys.stderr)
-        sys.exit(1)
+        if not error_ok:
+            sys.exit(1)
 
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 
@@ -51,13 +52,14 @@ if os.path.isdir(privates_dir) and os.listdir(privates_dir):
 if sys.version_info < (3, ):
     for package_name in nspkg_packages:
         pip_command('install -e {}'.format(package_name))
-else:
-    # We need the azure-nspkg, at least until storage is gone with the new system
-    # Will be removed later
-    pip_command('install --ignore-requires-python -e azure-nspkg')
 
 # install packages
 for package_name in content_packages:
     pip_command('install --ignore-requires-python -e {}'.format(package_name))
+
+# On Python 3, uninstall azure-nspkg if he got installed
+if sys.version_info >= (3, ):
+    pip_command('uninstall -y azure-nspkg', error_ok=True)
+
 
 print('Finished dev setup.')
