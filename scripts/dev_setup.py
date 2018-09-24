@@ -54,7 +54,7 @@ if sys.version_info < (3, ):
 else:
     # We need the azure-nspkg, at least until storage is gone with the new system
     # Will be removed later
-    pip_command('install -e azure-nspkg')
+    pip_command('install --ignore-requires-python -e azure-nspkg')
 
 # install packages
 for package_name in content_packages:
