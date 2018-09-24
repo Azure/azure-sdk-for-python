@@ -73,6 +73,10 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
     if not conf:
         raise ValueError("Create a {} file before calling this script".format(package_folder / CONF_NAME))
 
+    if not conf.get("auto_update", True):
+        _LOGGER.info(f"Package {package_name} has no auto-packaging update enabled")
+        return
+
     env = Environment(
         loader=PackageLoader('packaging_tools', 'templates'),
         keep_trailing_newline=True
