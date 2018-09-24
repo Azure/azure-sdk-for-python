@@ -58,6 +58,6 @@ else:
 
 # install packages
 for package_name in content_packages:
-    pip_command('install -e {}'.format(package_name))
+    pip_command('install --ignore-requires-python -e {}'.format(package_name))
 
 print('Finished dev setup.')
