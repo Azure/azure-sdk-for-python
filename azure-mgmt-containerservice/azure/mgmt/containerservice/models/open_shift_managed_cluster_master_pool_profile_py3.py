@@ -18,8 +18,8 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Unique name of the master pool profile in the
-     context of the subscription and resource group.
+    :param name: Unique name of the master pool profile in the context of the
+     subscription and resource group.
     :type name: str
     :param count: Required. Number of masters (VMs) to host docker containers.
      The default value is 3. Default value: 3 .
@@ -38,7 +38,6 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
     """
 
     _validation = {
-        'name': {'required': True},
         'count': {'required': True, 'maximum': 10, 'minimum': 1},
         'vm_size': {'required': True},
     }
@@ -51,7 +50,7 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=3, vnet_subnet_id: str=None, os_type="Linux", **kwargs) -> None:
+    def __init__(self, *, vm_size, name: str=None, count: int=3, vnet_subnet_id: str=None, os_type="Linux", **kwargs) -> None:
         super(OpenShiftManagedClusterMasterPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
