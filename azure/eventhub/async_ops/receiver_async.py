@@ -40,6 +40,7 @@ class AsyncReceiver(Receiver):
         :param loop: An event loop.
         """
         self.loop = loop or asyncio.get_event_loop()
+        self.running = False
         self.client = client
         self.source = source
         self.offset = offset
@@ -81,6 +82,7 @@ class AsyncReceiver(Receiver):
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
         """
         # pylint: disable=protected-access
+        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -171,12 +173,11 @@ class AsyncReceiver(Receiver):
             timeout, auth_in_progress = await self._handler._auth.handle_token_async()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not await self._handler._client_ready_async():
+        if not await self._handler._client_ready_async():
             return False
-        else:
-            return True
+        return True
 
     async def close_async(self, exception=None):
         """
@@ -188,9 +189,10 @@ class AsyncReceiver(Receiver):
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
@@ -216,6 +218,8 @@ class AsyncReceiver(Receiver):
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to receive until client has been started.")
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0
@@ -232,21 +236,19 @@ class AsyncReceiver(Receiver):
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 await self.reconnect_async()
                 return data_batch
-            else:
-                log.info("AsyncReceiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+            log.info("AsyncReceiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 await self.reconnect_async()
                 return data_batch
-            else:
-                log.info("AsyncReceiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+            log.info("AsyncReceiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Receive failed: {}".format(e))

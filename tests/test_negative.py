@@ -7,6 +7,7 @@
 import os
 import asyncio
 import pytest
+import time
 
 from azure import eventhub
 from azure.eventhub import (
@@ -304,3 +305,58 @@ async def test_max_receivers_async(connection_str, senders):
         print(failed[0].message)
     finally:
         await client.stop_async()
+
+
+def test_message_body_types(connection_str, senders):
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
+    try:
+        client.run()
+
+        received = receiver.receive(timeout=5)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Bytes Data"))
+        time.sleep(1)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+        assert list(received[0].body) == [b'Bytes Data']
+        assert received[0].body_as_str() == "Bytes Data"
+        with pytest.raises(TypeError):
+            received[0].body_as_json()
+
+        senders[0].send(EventData("Str Data"))
+        time.sleep(1)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+        assert list(received[0].body) == [b'Str Data']
+        assert received[0].body_as_str() == "Str Data"
+        with pytest.raises(TypeError):
+            received[0].body_as_json()
+
+        senders[0].send(EventData(b'{"test_value": "JSON bytes data", "key1": true, "key2": 42}'))
+        time.sleep(1)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+        assert list(received[0].body) == [b'{"test_value": "JSON bytes data", "key1": true, "key2": 42}']
+        assert received[0].body_as_str() == '{"test_value": "JSON bytes data", "key1": true, "key2": 42}'
+        assert received[0].body_as_json() == {"test_value": "JSON bytes data", "key1": True, "key2": 42}
+
+        senders[0].send(EventData('{"test_value": "JSON str data", "key1": true, "key2": 42}'))
+        time.sleep(1)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+        assert list(received[0].body) == [b'{"test_value": "JSON str data", "key1": true, "key2": 42}']
+        assert received[0].body_as_str() == '{"test_value": "JSON str data", "key1": true, "key2": 42}'
+        assert received[0].body_as_json() == {"test_value": "JSON str data", "key1": True, "key2": 42}
+
+        senders[0].send(EventData(42))
+        time.sleep(1)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+        assert received[0].body_as_str() == "42"
+        with pytest.raises(ValueError):
+            received[0].body
+    except:
+        raise
+    finally:
+        client.stop()

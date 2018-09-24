@@ -38,11 +38,15 @@ try:
     receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
     client.run()
     start_time = time.time()
-    for event_data in receiver.receive(timeout=100):
-        last_offset = event_data.offset
-        last_sn = event_data.sequence_number
-        print("Received: {}, {}".format(last_offset.value, last_sn))
-        total += 1
+    batch = receiver.receive(timeout=5000)
+    while batch:
+        for event_data in batch:
+            last_offset = event_data.offset
+            last_sn = event_data.sequence_number
+            print("Received: {}, {}".format(last_offset.value, last_sn))
+            print(event_data.body_as_str())
+            total += 1
+        batch = receiver.receive(timeout=5000)
 
     end_time = time.time()
     client.stop()

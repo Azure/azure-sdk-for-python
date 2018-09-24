@@ -47,6 +47,7 @@ class AsyncSender(Sender):
         :param loop: An event loop. If not specified the default event loop will be used.
         """
         self.loop = loop or asyncio.get_event_loop()
+        self.running = False
         self.client = client
         self.target = target
         self.partition = partition
@@ -82,6 +83,7 @@ class AsyncSender(Sender):
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
         """
+        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClientAsync(
@@ -156,12 +158,11 @@ class AsyncSender(Sender):
             timeout, auth_in_progress = await self._handler._auth.handle_token_async()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not await self._handler._client_ready_async():
+        if not await self._handler._client_ready_async():
             return False
-        else:
-            return True
+        return True
 
     async def close_async(self, exception=None):
         """
@@ -173,9 +174,10 @@ class AsyncSender(Sender):
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
@@ -199,6 +201,8 @@ class AsyncSender(Sender):
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
@@ -238,6 +242,8 @@ class AsyncSender(Sender):
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         try:
             await self._handler.wait_async()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:

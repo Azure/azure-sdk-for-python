@@ -6,7 +6,7 @@ reports=no
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
 # locally-disabled: Warning locally suppressed using disable-msg
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
-disable=raising-bad-type,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,logging-format-interpolation,too-many-instance-attributes,too-few-public-methods
+disable=useless-object-inheritance,raising-bad-type,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,logging-format-interpolation,too-many-instance-attributes,too-few-public-methods
 
 [FORMAT]
 max-line-length=120

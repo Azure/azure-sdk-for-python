@@ -40,6 +40,7 @@ class Sender:
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        self.running = False
         self.client = client
         self.target = target
         self.partition = partition
@@ -74,6 +75,7 @@ class Sender:
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
         """
+        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClient(
@@ -152,12 +154,11 @@ class Sender:
             timeout, auth_in_progress = self._handler._auth.handle_token()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not self._handler._client_ready():
+        if not self._handler._client_ready():
             return False
-        else:
-            return True
+        return True
 
     def close(self, exception=None):
         """
@@ -169,9 +170,10 @@ class Sender:
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
@@ -195,6 +197,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
@@ -239,6 +243,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         if callback:
@@ -251,6 +257,8 @@ class Sender:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to send until client has been started.")
         try:
             self._handler.wait()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:

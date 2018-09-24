@@ -5,6 +5,7 @@
 
 import datetime
 import time
+import json
 
 from uamqp import Message, BatchMessage
 from uamqp import types, constants, errors
@@ -31,13 +32,13 @@ def _error_handler(error):
     """
     if error.condition == b'com.microsoft:server-busy':
         return errors.ErrorAction(retry=True, backoff=4)
-    elif error.condition == b'com.microsoft:timeout':
+    if error.condition == b'com.microsoft:timeout':
         return errors.ErrorAction(retry=True, backoff=2)
-    elif error.condition == b'com.microsoft:operation-cancelled':
+    if error.condition == b'com.microsoft:operation-cancelled':
         return errors.ErrorAction(retry=True)
-    elif error.condition == b"com.microsoft:container-close":
+    if error.condition == b"com.microsoft:container-close":
         return errors.ErrorAction(retry=True, backoff=4)
-    elif error.condition in _NO_RETRY_ERRORS:
+    if error.condition in _NO_RETRY_ERRORS:
         return errors.ErrorAction(retry=False)
     return errors.ErrorAction(retry=True)
 
@@ -87,7 +88,6 @@ class EventData(object):
                 raise ValueError("EventData cannot be None.")
             else:
                 self.message = Message(body, properties=self.msg_properties)
-
 
     @property
     def sequence_number(self):
@@ -188,7 +188,45 @@ class EventData(object):
 
         :rtype: bytes or Generator[bytes]
         """
-        return self.message.get_data()
+        try:
+            return self.message.get_data()
+        except TypeError:
+            raise ValueError("Message data empty.")
+
+    def body_as_str(self, encoding='UTF-8'):
+        """
+        The body of the event data as a string if the data is of a
+        compatible type.
+
+        :param encoding: The encoding to use for decoding message data.
+         Default is 'UTF-8'
+        :rtype: str
+        """
+        data = self.body
+        try:
+            return "".join(b.decode(encoding) for b in data)
+        except TypeError:
+            return str(data)
+        except:  # pylint: disable=bare-except
+            pass
+        try:
+            return data.decode(encoding)
+        except Exception as e:
+            raise TypeError("Message data is not compatible with string type: {}".format(e))
+
+    def body_as_json(self, encoding='UTF-8'):
+        """
+        The body of the event loaded as a JSON object is the data is compatible.
+
+        :param encoding: The encoding to use for decoding message data.
+         Default is 'UTF-8'
+        :rtype: dict
+        """
+        data_str = self.body_as_str(encoding=encoding)
+        try:
+            return json.loads(data_str)
+        except Exception as e:
+            raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
 
 class Offset(object):
@@ -231,7 +269,7 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (time.mktime(self.value.timetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        elif isinstance(self.value, int):
+        if isinstance(self.value, int):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 

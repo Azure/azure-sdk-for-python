@@ -233,7 +233,8 @@ class EventHubClient(object):
     def _start_clients(self):
         for client in self.clients:
             try:
-                client.open()
+                if not client.running:
+                    client.open()
             except Exception as exp:  # pylint: disable=broad-except
                 client.close(exception=exp)
 
@@ -329,8 +330,6 @@ class EventHubClient(object):
                 output['partition_count'] = eh_info[b'partition_count']
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
-        except:
-            raise
         finally:
             mgmt_client.close()
 

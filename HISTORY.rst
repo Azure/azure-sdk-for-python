@@ -3,6 +3,21 @@
 Release History
 ===============
 
+1.1.0 (2018-09-21)
+++++++++++++++++++
+
+- Changes to `AzureStorageCheckpointLeaseManager` parameters to support other connection options (issue #61):
+
+  - The `storage_account_name`, `storage_account_key` and `lease_container_name` arguments are now optional keyword arguments.
+  - Added a `sas_token` argument that must be specified with `storage_account_name` in place of `storage_account_key`.
+  - Added an `endpoint_suffix` argument to support storage endpoints in National Clouds.
+  - Added a `connection_string` argument that, if specified, overrides all other endpoint arguments.
+  - The `lease_container_name` argument now defaults to `"eph-leases"` if not specified.
+
+- Fix for clients failing to start if run called multipled times (issue #64).
+- Added convenience methods `body_as_str` and `body_as_json` to EventData object for easier processing of message data.
+
+
 1.0.0 (2018-08-22)
 ++++++++++++++++++
 

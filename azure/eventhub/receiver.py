@@ -35,6 +35,7 @@ class Receiver:
         :param epoch: An optional epoch value.
         :type epoch: int
         """
+        self.running = False
         self.client = client
         self.source = source
         self.offset = offset
@@ -75,6 +76,7 @@ class Receiver:
         :type: connection: ~uamqp.connection.Connection
         """
         # pylint: disable=protected-access
+        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -168,12 +170,11 @@ class Receiver:
             timeout, auth_in_progress = self._handler._auth.handle_token()
         if timeout:
             raise EventHubError("Authorization timeout.")
-        elif auth_in_progress:
+        if auth_in_progress:
             return False
-        elif not self._handler._client_ready():
+        if not self._handler._client_ready():
             return False
-        else:
-            return True
+        return True
 
     def close(self, exception=None):
         """
@@ -185,9 +186,10 @@ class Receiver:
          due to an error.
         :type exception: Exception
         """
+        self.running = False
         if self.error:
             return
-        elif isinstance(exception, errors.LinkRedirect):
+        if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception
         elif isinstance(exception, EventHubError):
             self.error = exception
@@ -223,6 +225,8 @@ class Receiver:
         """
         if self.error:
             raise self.error
+        if not self.running:
+            raise ValueError("Unable to receive until client has been started.")
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0
@@ -238,18 +242,16 @@ class Receiver:
             if shutdown.action.retry and self.auto_reconnect:
                 self.reconnect()
                 return data_batch
-            else:
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 self.reconnect()
                 return data_batch
-            else:
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except Exception as e:
             error = EventHubError("Receive failed: {}".format(e))
             self.close(exception=error)
