@@ -223,6 +223,11 @@ class StorageAccountTypes(str, Enum):
     ultra_ssd_lrs = "UltraSSD_LRS"
 
 
+class DiffDiskOptions(str, Enum):
+
+    local = "Local"
+
+
 class PassNames(str, Enum):
 
     oobe_system = "OobeSystem"
