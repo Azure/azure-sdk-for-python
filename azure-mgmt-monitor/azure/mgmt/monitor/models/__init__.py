@@ -62,7 +62,6 @@ try:
     from .voice_receiver_py3 import VoiceReceiver
     from .logic_app_receiver_py3 import LogicAppReceiver
     from .azure_function_receiver_py3 import AzureFunctionReceiver
-    from .arm_role_receiver_py3 import ArmRoleReceiver
     from .action_group_resource_py3 import ActionGroupResource
     from .enable_request_py3 import EnableRequest
     from .action_group_patch_body_py3 import ActionGroupPatchBody
@@ -107,6 +106,8 @@ try:
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
     from .alerting_action_py3 import AlertingAction
+    from .metric_namespace_name_py3 import MetricNamespaceName
+    from .metric_namespace_py3 import MetricNamespace
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -160,7 +161,6 @@ except (SyntaxError, ImportError):
     from .voice_receiver import VoiceReceiver
     from .logic_app_receiver import LogicAppReceiver
     from .azure_function_receiver import AzureFunctionReceiver
-    from .arm_role_receiver import ArmRoleReceiver
     from .action_group_resource import ActionGroupResource
     from .enable_request import EnableRequest
     from .action_group_patch_body import ActionGroupPatchBody
@@ -205,6 +205,8 @@ except (SyntaxError, ImportError):
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
     from .alerting_action import AlertingAction
+    from .metric_namespace_name import MetricNamespaceName
+    from .metric_namespace import MetricNamespace
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -216,6 +218,7 @@ from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .metric_alert_resource_paged import MetricAlertResourcePaged
 from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
+from .metric_namespace_paged import MetricNamespacePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
@@ -293,7 +296,6 @@ __all__ = [
     'VoiceReceiver',
     'LogicAppReceiver',
     'AzureFunctionReceiver',
-    'ArmRoleReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
@@ -338,6 +340,8 @@ __all__ = [
     'TriggerCondition',
     'AzNsActionGroup',
     'AlertingAction',
+    'MetricNamespaceName',
+    'MetricNamespace',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -349,6 +353,7 @@ __all__ = [
     'MetricDefinitionPaged',
     'MetricAlertResourcePaged',
     'LogSearchRuleResourcePaged',
+    'MetricNamespacePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',

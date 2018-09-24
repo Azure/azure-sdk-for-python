@@ -39,7 +39,7 @@ class MetricTrigger(Model):
     :param time_aggregation: Required. time aggregation type. How the data
      that is collected should be combined over time. The default value is
      Average. Possible values include: 'Average', 'Minimum', 'Maximum',
-     'Total', 'Count'
+     'Total', 'Count', 'Last'
     :type time_aggregation: str or
      ~azure.mgmt.monitor.models.TimeAggregationType
     :param operator: Required. the operator that is used to compare the metric
