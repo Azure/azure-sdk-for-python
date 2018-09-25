@@ -67,7 +67,7 @@ class HealthProbeSettingsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-                    'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=74, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9][a-zA-Z0-9])$')
+                    'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -139,7 +139,7 @@ class HealthProbeSettingsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=74, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9][a-zA-Z0-9])$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
             'healthProbeSettingsName': self._serialize.url("health_probe_settings_name", health_probe_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -185,7 +185,7 @@ class HealthProbeSettingsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=74, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9][a-zA-Z0-9])$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
             'healthProbeSettingsName': self._serialize.url("health_probe_settings_name", health_probe_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -299,7 +299,7 @@ class HealthProbeSettingsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=74, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9][a-zA-Z0-9])$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
             'healthProbeSettingsName': self._serialize.url("health_probe_settings_name", health_probe_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
