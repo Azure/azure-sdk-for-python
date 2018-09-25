@@ -12,32 +12,29 @@
 from msrest.serialization import Model
 
 
-class ResourceProviderOperationDisplayProperties(Model):
-    """Resource provider operation's display properties.
+class OperationDisplay(Model):
+    """The object that represents the operation.
 
-    :param publisher: Operation description.
-    :type publisher: str
-    :param provider: Operation provider.
+    :param provider: Service provider: Microsoft.Resources
     :type provider: str
-    :param resource: Operation resource.
+    :param resource: Resource on which the operation is performed: Profile,
+     endpoint, etc.
     :type resource: str
-    :param operation: Resource provider operation.
+    :param operation: Operation type: Read, write, delete, etc.
     :type operation: str
-    :param description: Operation description.
+    :param description: Description of the operation.
     :type description: str
     """
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, publisher: str=None, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
-        super(ResourceProviderOperationDisplayProperties, self).__init__(**kwargs)
-        self.publisher = publisher
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
+        super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
