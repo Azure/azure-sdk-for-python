@@ -15,11 +15,19 @@ from msrest.serialization import Model
 class BootDiagnosticsInstanceView(Model):
     """The instance view of a virtual machine boot diagnostics.
 
-    :param console_screenshot_blob_uri: The console screenshot blob URI.
-    :type console_screenshot_blob_uri: str
-    :param serial_console_log_blob_uri: The Linux serial console log blob Uri.
-    :type serial_console_log_blob_uri: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar console_screenshot_blob_uri: The console screenshot blob URI.
+    :vartype console_screenshot_blob_uri: str
+    :ivar serial_console_log_blob_uri: The Linux serial console log blob Uri.
+    :vartype serial_console_log_blob_uri: str
     """
+
+    _validation = {
+        'console_screenshot_blob_uri': {'readonly': True},
+        'serial_console_log_blob_uri': {'readonly': True},
+    }
 
     _attribute_map = {
         'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
@@ -28,5 +36,5 @@ class BootDiagnosticsInstanceView(Model):
 
     def __init__(self, **kwargs):
         super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
-        self.console_screenshot_blob_uri = kwargs.get('console_screenshot_blob_uri', None)
-        self.serial_console_log_blob_uri = kwargs.get('serial_console_log_blob_uri', None)
+        self.console_screenshot_blob_uri = None
+        self.serial_console_log_blob_uri = None

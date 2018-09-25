@@ -3,6 +3,20 @@
 Release History
 ===============
 
+4.2.0 (2018-09-25)
+++++++++++++++++++
+
+**Features**
+
+- Model OSDisk has a new parameter diff_disk_settings
+- Model BootDiagnosticsInstanceView has a new parameter status
+- Model VirtualMachineScaleSetOSDisk has a new parameter diff_disk_settings
+- Added operation VirtualMachinesOperations.list_by_location
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 4.1.0 (2018-09-12)
 ++++++++++++++++++
 
