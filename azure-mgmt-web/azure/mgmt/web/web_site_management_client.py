@@ -659,7 +659,7 @@ class WebSiteManagementClient(SDKClient):
 
         :param sku: Name of SKU used to filter the regions. Possible values
          include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
-         'Isolated', 'PremiumV2'
+         'Isolated', 'PremiumV2', 'ElasticPremium', 'ElasticIsolated'
         :type sku: str or ~azure.mgmt.web.models.SkuName
         :param linux_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Linux workers.

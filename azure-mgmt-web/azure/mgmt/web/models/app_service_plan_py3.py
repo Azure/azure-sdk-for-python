@@ -56,6 +56,9 @@ class AppServicePlan(Resource):
      If <code>false</code>, apps assigned to this App Service plan will scale
      to all instances of the plan. Default value: False .
     :type per_site_scaling: bool
+    :param maximum_elastic_worker_count: Maximum number of total workers
+     allowed for this ElasticScaleEnabled App Service Plan
+    :type maximum_elastic_worker_count: int
     :ivar number_of_sites: Number of apps assigned to this App Service plan.
     :vartype number_of_sites: int
     :param is_spot: If <code>true</code>, this App Service Plan owns spot
@@ -120,6 +123,7 @@ class AppServicePlan(Resource):
         'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int'},
         'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
         'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool'},
+        'maximum_elastic_worker_count': {'key': 'properties.maximumElasticWorkerCount', 'type': 'int'},
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'spot_expiration_time': {'key': 'properties.spotExpirationTime', 'type': 'iso-8601'},
@@ -134,7 +138,7 @@ class AppServicePlan(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str=None, tags=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, maximum_elastic_worker_count: int=None, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, sku=None, **kwargs) -> None:
         super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.worker_tier_name = worker_tier_name
         self.status = None
@@ -144,6 +148,7 @@ class AppServicePlan(Resource):
         self.maximum_number_of_workers = None
         self.geo_region = None
         self.per_site_scaling = per_site_scaling
+        self.maximum_elastic_worker_count = maximum_elastic_worker_count
         self.number_of_sites = None
         self.is_spot = is_spot
         self.spot_expiration_time = spot_expiration_time
