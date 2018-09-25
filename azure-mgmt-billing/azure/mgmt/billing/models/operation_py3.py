@@ -9,39 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class EnrollmentAccount(Resource):
-    """An enrollment account resource.
+class Operation(Model):
+    """A Billing REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar principal_name: The account owner's principal name.
-    :vartype principal_name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.billing.models.OperationDisplay
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
-        'principal_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(EnrollmentAccount, self).__init__(**kwargs)
-        self.principal_name = None
+    def __init__(self, *, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = display

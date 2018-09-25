@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class EnrollmentAccount(Resource):
@@ -42,6 +42,6 @@ class EnrollmentAccount(Resource):
         'principal_name': {'key': 'properties.principalName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(EnrollmentAccount, self).__init__(**kwargs)
         self.principal_name = None

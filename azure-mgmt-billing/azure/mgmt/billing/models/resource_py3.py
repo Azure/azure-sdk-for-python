@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class EnrollmentAccount(Resource):
-    """An enrollment account resource.
+class Resource(Model):
+    """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,24 +24,22 @@ class EnrollmentAccount(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar principal_name: The account owner's principal name.
-    :vartype principal_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'principal_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(EnrollmentAccount, self).__init__(**kwargs)
-        self.principal_name = None
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
