@@ -48,10 +48,10 @@ if os.path.isdir(privates_dir) and os.listdir(privates_dir):
     whl_list = ' '.join([os.path.join(privates_dir, f) for f in os.listdir(privates_dir)])
     pip_command('install {}'.format(whl_list))
 
-# install nspkg only on py2
+# install nspkg only on py2, but in wheel mode (not editable mode)
 if sys.version_info < (3, ):
     for package_name in nspkg_packages:
-        pip_command('install -e {}'.format(package_name))
+        pip_command('install ./{}/'.format(package_name))
 
 # install packages
 for package_name in content_packages:
