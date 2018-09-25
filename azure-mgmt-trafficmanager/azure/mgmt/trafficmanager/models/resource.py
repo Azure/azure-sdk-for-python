@@ -18,9 +18,9 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
+    :type id: str
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
@@ -29,7 +29,6 @@ class Resource(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -42,6 +41,6 @@ class Resource(Model):
 
     def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
-        self.id = None
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None
