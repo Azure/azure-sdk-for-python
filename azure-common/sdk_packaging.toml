@@ -1,2 +1,8 @@
 [packaging]
 auto_update = false
+package_name = "azure-common"
+package_nspkg = "azure-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
