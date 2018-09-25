@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .authorization_operations import AuthorizationOperations
-from .management_locks_operations import ManagementLocksOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'AuthorizationOperations',
-    'ManagementLocksOperations',
-]
+
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.resource.features.v2015_12_01.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

@@ -24,8 +24,6 @@ class ResourceGroup(Model):
     :vartype id: str
     :ivar name: The name of the resource group.
     :vartype name: str
-    :ivar type: The resource group object.
-    :vartype type: object
     :param properties:
     :type properties:
      ~azure.mgmt.resource.resources.v2018_05_01.models.ResourceGroupProperties
@@ -43,14 +41,12 @@ class ResourceGroup(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
         'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'object'},
         'properties': {'key': 'properties', 'type': 'ResourceGroupProperties'},
         'location': {'key': 'location', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
@@ -61,7 +57,6 @@ class ResourceGroup(Model):
         super(ResourceGroup, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.type = None
         self.properties = properties
         self.location = location
         self.managed_by = managed_by
