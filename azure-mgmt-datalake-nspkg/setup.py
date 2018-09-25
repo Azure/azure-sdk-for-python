@@ -42,8 +42,6 @@ setup(
     python_requires='<3',
     zip_safe=False,
     packages=[
-        'azure',
-        'azure.mgmt',
         'azure.mgmt.datalake',
     ],
     install_requires=[
