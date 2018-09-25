@@ -18,9 +18,9 @@ class Profile(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
+    :type id: str
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
@@ -58,7 +58,6 @@ class Profile(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -78,8 +77,8 @@ class Profile(TrackedResource):
         'max_return': {'key': 'properties.maxReturn', 'type': 'long'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, traffic_view_enrollment_status=None, max_return: int=None, **kwargs) -> None:
-        super(Profile, self).__init__(tags=tags, location=location, **kwargs)
+    def __init__(self, *, id: str=None, tags=None, location: str=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, traffic_view_enrollment_status=None, max_return: int=None, **kwargs) -> None:
+        super(Profile, self).__init__(id=id, tags=tags, location=location, **kwargs)
         self.profile_status = profile_status
         self.traffic_routing_method = traffic_routing_method
         self.dns_config = dns_config

@@ -19,9 +19,9 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
+    :type id: str
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
@@ -30,7 +30,6 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }

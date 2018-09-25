@@ -19,9 +19,9 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
+    :type id: str
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
@@ -33,7 +33,6 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -45,6 +44,6 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
         'geographic_hierarchy': {'key': 'properties.geographicHierarchy', 'type': 'Region'},
     }
 
-    def __init__(self, *, geographic_hierarchy=None, **kwargs) -> None:
-        super(TrafficManagerGeographicHierarchy, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, geographic_hierarchy=None, **kwargs) -> None:
+        super(TrafficManagerGeographicHierarchy, self).__init__(id=id, **kwargs)
         self.geographic_hierarchy = geographic_hierarchy
