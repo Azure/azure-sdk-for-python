@@ -41,7 +41,6 @@ setup(
     ],
     zip_safe=False,
     packages=[
-        'azure',
         'azure.mgmt',
     ],
     python_requires='<3',
