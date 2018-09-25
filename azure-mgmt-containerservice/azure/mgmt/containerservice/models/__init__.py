@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_value_py3 import OperationValue
     from .resource_py3 import Resource
     from .purchase_plan_py3 import PurchasePlan
     from .open_shift_router_profile_py3 import OpenShiftRouterProfile
@@ -21,7 +20,6 @@ try:
     from .open_shift_managed_cluster_py3 import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider_py3 import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object_py3 import TagsObject
-    from .open_shift_managed_cluster_list_result_py3 import OpenShiftManagedClusterListResult
     from .container_service_custom_profile_py3 import ContainerServiceCustomProfile
     from .key_vault_secret_ref_py3 import KeyVaultSecretRef
     from .container_service_service_principal_profile_py3 import ContainerServiceServicePrincipalProfile
@@ -35,6 +33,7 @@ try:
     from .container_service_vm_diagnostics_py3 import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .container_service_py3 import ContainerService
+    from .operation_value_py3 import OperationValue
     from .managed_cluster_service_principal_profile_py3 import ManagedClusterServicePrincipalProfile
     from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
     from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
@@ -50,7 +49,6 @@ try:
     from .orchestrator_version_profile_py3 import OrchestratorVersionProfile
     from .orchestrator_version_profile_list_result_py3 import OrchestratorVersionProfileListResult
 except (SyntaxError, ImportError):
-    from .operation_value import OperationValue
     from .resource import Resource
     from .purchase_plan import PurchasePlan
     from .open_shift_router_profile import OpenShiftRouterProfile
@@ -61,7 +59,6 @@ except (SyntaxError, ImportError):
     from .open_shift_managed_cluster import OpenShiftManagedCluster
     from .open_shift_managed_cluster_service_aad_identity_provider import OpenShiftManagedClusterServiceAADIdentityProvider
     from .tags_object import TagsObject
-    from .open_shift_managed_cluster_list_result import OpenShiftManagedClusterListResult
     from .container_service_custom_profile import ContainerServiceCustomProfile
     from .key_vault_secret_ref import KeyVaultSecretRef
     from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
@@ -75,6 +72,7 @@ except (SyntaxError, ImportError):
     from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .container_service import ContainerService
+    from .operation_value import OperationValue
     from .managed_cluster_service_principal_profile import ManagedClusterServicePrincipalProfile
     from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
     from .container_service_network_profile import ContainerServiceNetworkProfile
@@ -104,7 +102,6 @@ from .container_service_client_enums import (
 )
 
 __all__ = [
-    'OperationValue',
     'Resource',
     'PurchasePlan',
     'OpenShiftRouterProfile',
@@ -115,7 +112,6 @@ __all__ = [
     'OpenShiftManagedCluster',
     'OpenShiftManagedClusterServiceAADIdentityProvider',
     'TagsObject',
-    'OpenShiftManagedClusterListResult',
     'ContainerServiceCustomProfile',
     'KeyVaultSecretRef',
     'ContainerServiceServicePrincipalProfile',
@@ -129,6 +125,7 @@ __all__ = [
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
+    'OperationValue',
     'ManagedClusterServicePrincipalProfile',
     'ManagedClusterAgentPoolProfile',
     'ContainerServiceNetworkProfile',

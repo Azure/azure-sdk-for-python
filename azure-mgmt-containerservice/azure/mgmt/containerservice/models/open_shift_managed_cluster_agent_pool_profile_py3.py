@@ -13,8 +13,7 @@ from msrest.serialization import Model
 
 
 class OpenShiftManagedClusterAgentPoolProfile(Model):
-    """OpenShiftManagedClusterAgentPoolProfile represents configuration of
-    OpenShift cluster VMs.
+    """Defines the configuration of the OpenShift cluster VMs.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -23,7 +22,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
     :type name: str
     :param count: Required. Number of agents (VMs) to host docker containers.
      Allowed values must be in the range of 1 to 5 (inclusive). The default
-     value is 1. . Default value: 1 .
+     value is 2. . Default value: 2 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_D2s_v3', 'Standard_D4s_v3'
@@ -57,7 +56,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, vnet_subnet_id: str=None, os_type="Linux", role=None, **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=2, vnet_subnet_id: str=None, os_type="Linux", role=None, **kwargs) -> None:
         super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count

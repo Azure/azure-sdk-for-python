@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class OpenShiftManagedClusterIdentityProviders(Model):
-    """OpenShiftManagedClusterIdentityProvider is heavily cut down equivalent to
-    IdentityProvider in the upstream.
+    """Defines the configuration of the identity providers to be used in the
+    OpenShift cluster.
 
     :param name: Name of the provider.
     :type name: str
