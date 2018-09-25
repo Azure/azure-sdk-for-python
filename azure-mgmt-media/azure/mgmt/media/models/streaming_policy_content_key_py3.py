@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class StreamingPolicyContentKey(Model):
     """Class to specify properties of content key.
 
-    :param label: Label can be used to specify Content Key when creating
-     Stremaing Locator
+    :param label: Label can be used to specify Content Key when creating a
+     Streaming Locator
     :type label: str
     :param policy_name: Policy used by Content Key
     :type policy_name: str

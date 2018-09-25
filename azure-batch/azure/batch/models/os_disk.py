@@ -16,7 +16,8 @@ class OSDisk(Model):
     """Settings for the operating system disk of the virtual machine.
 
     :param caching: The type of caching to enable for the OS disk. The default
-     value for caching is none. For information about the caching options see:
+     value for caching is readwrite. For information about the caching options
+     see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
     :type caching: str or ~azure.batch.models.CachingType
@@ -26,6 +27,6 @@ class OSDisk(Model):
         'caching': {'key': 'caching', 'type': 'CachingType'},
     }
 
-    def __init__(self, caching=None):
-        super(OSDisk, self).__init__()
-        self.caching = caching
+    def __init__(self, **kwargs):
+        super(OSDisk, self).__init__(**kwargs)
+        self.caching = kwargs.get('caching', None)

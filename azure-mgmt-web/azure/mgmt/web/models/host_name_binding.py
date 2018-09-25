@@ -75,14 +75,14 @@ class HostNameBinding(ProxyOnlyResource):
         'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None):
-        super(HostNameBinding, self).__init__(kind=kind)
-        self.site_name = site_name
-        self.domain_id = domain_id
-        self.azure_resource_name = azure_resource_name
-        self.azure_resource_type = azure_resource_type
-        self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
-        self.host_name_type = host_name_type
-        self.ssl_state = ssl_state
-        self.thumbprint = thumbprint
+    def __init__(self, **kwargs):
+        super(HostNameBinding, self).__init__(**kwargs)
+        self.site_name = kwargs.get('site_name', None)
+        self.domain_id = kwargs.get('domain_id', None)
+        self.azure_resource_name = kwargs.get('azure_resource_name', None)
+        self.azure_resource_type = kwargs.get('azure_resource_type', None)
+        self.custom_host_name_dns_record_type = kwargs.get('custom_host_name_dns_record_type', None)
+        self.host_name_type = kwargs.get('host_name_type', None)
+        self.ssl_state = kwargs.get('ssl_state', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
         self.virtual_ip = None

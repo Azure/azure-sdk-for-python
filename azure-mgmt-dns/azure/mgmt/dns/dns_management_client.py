@@ -76,7 +76,7 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-03-01-preview'
+    DEFAULT_API_VERSION = '2018-05-01'
     _PROFILE_TAG = "azure.mgmt.dns.DnsManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -106,6 +106,7 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.dns.v2016_04_01.models>`
            * 2018-03-01-preview: :mod:`v2018_03_01_preview.models<azure.mgmt.dns.v2018_03_01_preview.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.dns.v2018_05_01.models>`
         """
         if api_version == '2016-04-01':
             from .v2016_04_01 import models
@@ -113,20 +114,39 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-03-01-preview':
             from .v2018_03_01_preview import models
             return models
+        elif api_version == '2018-05-01':
+            from .v2018_05_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
+    @property
+    def dns_resource_reference(self):
+        """Instance depends on the API version:
+
+           * 2018-05-01: :class:`DnsResourceReferenceOperations<azure.mgmt.dns.v2018_05_01.operations.DnsResourceReferenceOperations>`
+        """
+        api_version = self._get_api_version('dns_resource_reference')
+        if api_version == '2018-05-01':
+            from .v2018_05_01.operations import DnsResourceReferenceOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
     @property
     def record_sets(self):
         """Instance depends on the API version:
 
            * 2016-04-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2016_04_01.operations.RecordSetsOperations>`
            * 2018-03-01-preview: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_03_01_preview.operations.RecordSetsOperations>`
+           * 2018-05-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_05_01.operations.RecordSetsOperations>`
         """
         api_version = self._get_api_version('record_sets')
         if api_version == '2016-04-01':
             from .v2016_04_01.operations import RecordSetsOperations as OperationClass
         elif api_version == '2018-03-01-preview':
             from .v2018_03_01_preview.operations import RecordSetsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import RecordSetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -137,12 +157,15 @@ class DnsManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2016-04-01: :class:`ZonesOperations<azure.mgmt.dns.v2016_04_01.operations.ZonesOperations>`
            * 2018-03-01-preview: :class:`ZonesOperations<azure.mgmt.dns.v2018_03_01_preview.operations.ZonesOperations>`
+           * 2018-05-01: :class:`ZonesOperations<azure.mgmt.dns.v2018_05_01.operations.ZonesOperations>`
         """
         api_version = self._get_api_version('zones')
         if api_version == '2016-04-01':
             from .v2016_04_01.operations import ZonesOperations as OperationClass
         elif api_version == '2018-03-01-preview':
             from .v2018_03_01_preview.operations import ZonesOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import ZonesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

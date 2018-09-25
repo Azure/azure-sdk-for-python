@@ -49,7 +49,14 @@ class StreamingLocator(ProxyResource):
     :type default_content_key_policy_name: str
     :param content_keys: ContentKeys used by this Streaming Locator
     :type content_keys:
-     list[~azure.mgmt.media.models.StreamingLocatorUserDefinedContentKey]
+     list[~azure.mgmt.media.models.StreamingLocatorContentKey]
+    :param alternative_media_id: An Alternative Media Identifier associated
+     with the StreamingLocator.  This identifier can be used to distinguish
+     different StreamingLocators for the same Asset for authorization purposes
+     in the CustomLicenseAcquisitionUrlTemplate or the
+     CustomKeyAcquisitionUrlTemplate of the StreamingPolicy specified in the
+     StreamingPolicyName field.
+    :type alternative_media_id: str
     """
 
     _validation = {
@@ -72,7 +79,8 @@ class StreamingLocator(ProxyResource):
         'streaming_locator_id': {'key': 'properties.streamingLocatorId', 'type': 'str'},
         'streaming_policy_name': {'key': 'properties.streamingPolicyName', 'type': 'str'},
         'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
-        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorUserDefinedContentKey]'},
+        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorContentKey]'},
+        'alternative_media_id': {'key': 'properties.alternativeMediaId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -85,3 +93,4 @@ class StreamingLocator(ProxyResource):
         self.streaming_policy_name = kwargs.get('streaming_policy_name', None)
         self.default_content_key_policy_name = kwargs.get('default_content_key_policy_name', None)
         self.content_keys = kwargs.get('content_keys', None)
+        self.alternative_media_id = kwargs.get('alternative_media_id', None)

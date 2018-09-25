@@ -3,6 +3,33 @@
 Release History
 ===============
 
+5.1.0 (2018-08-28)
+++++++++++++++++++
+
+- Update operation TaskOperations.add_collection with the following added functionality:
+    - Retry server side errors.
+    - Automatically chunk lists of more than 100 tasks to multiple requests.
+    - If tasks are too large to be submitted in chunks of 100, reduces number of tasks per request.
+    - Add a parameter to specify number of threads to use when submitting tasks.
+
+5.0.0 (2018-08-24)
+++++++++++++++++++
+
+- Using REST API version 2018-08-01.7.0.
+  - Added `node_agent_info` in ComputeNode to return the node agent information
+  - **Breaking** Removed the `validation_status` property from `TaskCounts`.
+  - **Breaking** The default caching type for `DataDisk` and `OSDisk` is now `read_write` instead of `none`.
+- `BatchServiceClient` can be used as a context manager to keep the underlying HTTP session open for performance.
+- **Breaking** Model signatures are now using only keywords-arguments syntax. Each positional argument must be rewritten as a keyword argument.
+- **Breaking** The following operations signatures are changed:
+   - Operation PoolOperations.enable_auto_scale
+   - Operation TaskOperations.update
+   - Operation ComputeNodeOperations.reimage
+   - Operation ComputeNodeOperations.disable_scheduling
+   - Operation ComputeNodeOperations.reboot
+   - Operation JobOperations.terminate
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered. 
+
 4.1.3 (2018-04-24)
 ++++++++++++++++++
 
@@ -36,10 +63,10 @@ Release History
 - Using REST API version 2017-09-01.6.0.
 - Added the ability to get a discount on Windows VM pricing if you have on-premises licenses for the OS SKUs you are deploying, via `license_type` on `VirtualMachineConfiguration`.
 - Added support for attaching empty data drives to `VirtualMachineConfiguration` based pools, via the new `data_disks` attribute on `VirtualMachineConfiguration`.
-- [Breaking] Custom images must now be deployed using a reference to an ARM Image, instead of pointing to .vhd files in blobs directly.
+- **Breaking** Custom images must now be deployed using a reference to an ARM Image, instead of pointing to .vhd files in blobs directly.
   - The new `virtual_machine_image_id` property on `ImageReference` contains the reference to the ARM Image, and `OSDisk.image_uris` no longer exists.
   - Because of this, `image_reference` is now a required attribute of `VirtualMachineConfiguration`.
-- [Breaking] Multi-instance tasks (created using `MultiInstanceSettings`) must now specify a `coordination_commandLine`, and `number_of_instances` is now optional and defaults to 1.
+- **Breaking** Multi-instance tasks (created using `MultiInstanceSettings`) must now specify a `coordination_commandLine`, and `number_of_instances` is now optional and defaults to 1.
 - Added support for tasks run using Docker containers. To run a task using a Docker container you must specify a `container_configuration` on the `VirtualMachineConfiguration` for a pool, and then add `container_settings` on the Task.
 
 3.1.0 (2017-07-24)

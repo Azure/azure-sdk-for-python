@@ -423,6 +423,31 @@ try:
     from .chaos_move_primary_fault_scheduled_event_py3 import ChaosMovePrimaryFaultScheduledEvent
     from .chaos_restart_replica_fault_scheduled_event_py3 import ChaosRestartReplicaFaultScheduledEvent
     from .chaos_restart_node_fault_scheduled_event_py3 import ChaosRestartNodeFaultScheduledEvent
+    from .service_resource_description_py3 import ServiceResourceDescription
+    from .diagnostics_sink_properties_py3 import DiagnosticsSinkProperties
+    from .diagnostics_description_py3 import DiagnosticsDescription
+    from .application_resource_description_py3 import ApplicationResourceDescription
+    from .paged_service_resource_description_list_py3 import PagedServiceResourceDescriptionList
+    from .service_resource_replica_description_py3 import ServiceResourceReplicaDescription
+    from .paged_service_resource_replica_description_list_py3 import PagedServiceResourceReplicaDescriptionList
+    from .volume_provider_parameters_azure_file_py3 import VolumeProviderParametersAzureFile
+    from .volume_resource_description_py3 import VolumeResourceDescription
+    from .image_registry_credential_py3 import ImageRegistryCredential
+    from .environment_variable_py3 import EnvironmentVariable
+    from .setting_py3 import Setting
+    from .container_label_py3 import ContainerLabel
+    from .endpoint_properties_py3 import EndpointProperties
+    from .resource_requests_py3 import ResourceRequests
+    from .resource_limits_py3 import ResourceLimits
+    from .resource_requirements_py3 import ResourceRequirements
+    from .container_volume_py3 import ContainerVolume
+    from .container_state_py3 import ContainerState
+    from .container_event_py3 import ContainerEvent
+    from .container_instance_view_py3 import ContainerInstanceView
+    from .diagnostics_ref_py3 import DiagnosticsRef
+    from .container_code_package_properties_py3 import ContainerCodePackageProperties
+    from .network_ref_py3 import NetworkRef
+    from .service_replica_properties_py3 import ServiceReplicaProperties
 except (SyntaxError, ImportError):
     from .aad_metadata import AadMetadata
     from .aad_metadata_object import AadMetadataObject
@@ -837,6 +862,31 @@ except (SyntaxError, ImportError):
     from .chaos_move_primary_fault_scheduled_event import ChaosMovePrimaryFaultScheduledEvent
     from .chaos_restart_replica_fault_scheduled_event import ChaosRestartReplicaFaultScheduledEvent
     from .chaos_restart_node_fault_scheduled_event import ChaosRestartNodeFaultScheduledEvent
+    from .service_resource_description import ServiceResourceDescription
+    from .diagnostics_sink_properties import DiagnosticsSinkProperties
+    from .diagnostics_description import DiagnosticsDescription
+    from .application_resource_description import ApplicationResourceDescription
+    from .paged_service_resource_description_list import PagedServiceResourceDescriptionList
+    from .service_resource_replica_description import ServiceResourceReplicaDescription
+    from .paged_service_resource_replica_description_list import PagedServiceResourceReplicaDescriptionList
+    from .volume_provider_parameters_azure_file import VolumeProviderParametersAzureFile
+    from .volume_resource_description import VolumeResourceDescription
+    from .image_registry_credential import ImageRegistryCredential
+    from .environment_variable import EnvironmentVariable
+    from .setting import Setting
+    from .container_label import ContainerLabel
+    from .endpoint_properties import EndpointProperties
+    from .resource_requests import ResourceRequests
+    from .resource_limits import ResourceLimits
+    from .resource_requirements import ResourceRequirements
+    from .container_volume import ContainerVolume
+    from .container_state import ContainerState
+    from .container_event import ContainerEvent
+    from .container_instance_view import ContainerInstanceView
+    from .diagnostics_ref import DiagnosticsRef
+    from .container_code_package_properties import ContainerCodePackageProperties
+    from .network_ref import NetworkRef
+    from .service_replica_properties import ServiceReplicaProperties
 from .service_fabric_client_ap_is_enums import (
     ApplicationDefinitionKind,
     HealthState,
@@ -919,6 +969,10 @@ from .service_fabric_client_ap_is_enums import (
     RepairTaskHealthCheckState,
     ScalingTriggerKind,
     ScalingMechanismKind,
+    ServiceResourceStatus,
+    ApplicationResourceStatus,
+    DiagnosticsSinkKind,
+    OperatingSystemTypes,
     NodeStatusFilter,
     ReplicaHealthReportServiceKind,
     DataLossMode,
@@ -1341,6 +1395,31 @@ __all__ = [
     'ChaosMovePrimaryFaultScheduledEvent',
     'ChaosRestartReplicaFaultScheduledEvent',
     'ChaosRestartNodeFaultScheduledEvent',
+    'ServiceResourceDescription',
+    'DiagnosticsSinkProperties',
+    'DiagnosticsDescription',
+    'ApplicationResourceDescription',
+    'PagedServiceResourceDescriptionList',
+    'ServiceResourceReplicaDescription',
+    'PagedServiceResourceReplicaDescriptionList',
+    'VolumeProviderParametersAzureFile',
+    'VolumeResourceDescription',
+    'ImageRegistryCredential',
+    'EnvironmentVariable',
+    'Setting',
+    'ContainerLabel',
+    'EndpointProperties',
+    'ResourceRequests',
+    'ResourceLimits',
+    'ResourceRequirements',
+    'ContainerVolume',
+    'ContainerState',
+    'ContainerEvent',
+    'ContainerInstanceView',
+    'DiagnosticsRef',
+    'ContainerCodePackageProperties',
+    'NetworkRef',
+    'ServiceReplicaProperties',
     'ApplicationDefinitionKind',
     'HealthState',
     'ApplicationStatus',
@@ -1422,6 +1501,10 @@ __all__ = [
     'RepairTaskHealthCheckState',
     'ScalingTriggerKind',
     'ScalingMechanismKind',
+    'ServiceResourceStatus',
+    'ApplicationResourceStatus',
+    'DiagnosticsSinkKind',
+    'OperatingSystemTypes',
     'NodeStatusFilter',
     'ReplicaHealthReportServiceKind',
     'DataLossMode',

@@ -16,8 +16,8 @@ class DefaultKey(Model):
     """Class to specify properties of default content key for each encryption
     scheme.
 
-    :param label: Label can be used to specify Content Key when creating
-     Stremaing Locator
+    :param label: Label can be used to specify Content Key when creating a
+     Streaming Locator
     :type label: str
     :param policy_name: Policy used by Default Key
     :type policy_name: str

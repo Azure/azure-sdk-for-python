@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.0.0 (2018-08-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Set the signed resource as optional instead of required
+
 2.0.0rc4 (2018-06-26)
 +++++++++++++++++++++
 

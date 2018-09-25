@@ -30,9 +30,9 @@ class BuildFilter(Model):
     :type create_time: datetime
     :param finish_time: The time the build finished.
     :type finish_time: datetime
-    :param output_image_names: The list of all images that were generated from
-     the build.
-    :type output_image_names: list[str]
+    :param output_image_manifests: The list of comma-separated image manifests
+     that were generated from the build.
+    :type output_image_manifests: str
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not.
     :type is_archive_enabled: bool
@@ -47,18 +47,18 @@ class BuildFilter(Model):
         'status': {'key': 'status', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'output_image_names': {'key': 'outputImageNames', 'type': '[str]'},
+        'output_image_manifests': {'key': 'outputImageManifests', 'type': 'str'},
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
         'build_task_name': {'key': 'buildTaskName', 'type': 'str'},
     }
 
-    def __init__(self, *, build_id: str=None, build_type=None, status=None, create_time=None, finish_time=None, output_image_names=None, is_archive_enabled: bool=None, build_task_name: str=None, **kwargs) -> None:
+    def __init__(self, *, build_id: str=None, build_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, build_task_name: str=None, **kwargs) -> None:
         super(BuildFilter, self).__init__(**kwargs)
         self.build_id = build_id
         self.build_type = build_type
         self.status = status
         self.create_time = create_time
         self.finish_time = finish_time
-        self.output_image_names = output_image_names
+        self.output_image_manifests = output_image_manifests
         self.is_archive_enabled = is_archive_enabled
         self.build_task_name = build_task_name
