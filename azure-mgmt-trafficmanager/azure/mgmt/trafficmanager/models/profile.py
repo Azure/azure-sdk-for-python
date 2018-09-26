@@ -15,17 +15,14 @@ from .tracked_resource import TrackedResource
 class Profile(TrackedResource):
     """Class representing a Traffic Manager profile.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
     :type id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
+    :param name: The name of the resource
+    :type name: str
+    :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :vartype type: str
+    :type type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
@@ -56,11 +53,6 @@ class Profile(TrackedResource):
      MultiValue routing type.
     :type max_return: long
     """
-
-    _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
