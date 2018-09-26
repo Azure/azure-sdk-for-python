@@ -16,3 +16,9 @@ class AppSku(str, Enum):
 
     f1 = "F1"
     s1 = "S1"
+
+
+class AppNameUnavailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
