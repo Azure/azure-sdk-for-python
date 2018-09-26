@@ -521,12 +521,12 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
-        :param operation_inputs: Set the name parameter in the OperationInputs
-         structure to the name of the IoT Central application to check.
-        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
+        :param name: The name of the IoT Central application instance to
+         check.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -538,6 +538,8 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
+        operation_inputs = models.OperationInputs(name=name)
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
