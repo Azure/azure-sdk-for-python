@@ -521,12 +521,12 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, name=None, custom_headers=None, raw=False, **operation_config):
+            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
-        :param name: The name of the IoT Central application instance to
-         check.
-        :type name: str
+        :param operation_inputs: Set the name parameter in the OperationInputs
+         structure to the name of the IoT Central application to check.
+        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -538,8 +538,6 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
-        operation_inputs = models.OperationInputs(name=name)
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -585,12 +583,13 @@ class AppsOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkNameAvailability'}
 
     def check_subdomain_availability(
-            self, name=None, custom_headers=None, raw=False, **operation_config):
+            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application subdomain is available.
 
-        :param name: The name of the IoT Central application instance to
-         check.
-        :type name: str
+        :param operation_inputs: Set the subdomain parameter in the
+         OperationInputs structure to the subdomain of the IoT Central
+         application to check.
+        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -602,8 +601,6 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
-        operation_inputs = models.OperationInputs(name=name)
-
         # Construct URL
         url = self.check_subdomain_availability.metadata['url']
         path_format_arguments = {
