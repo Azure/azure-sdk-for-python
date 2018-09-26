@@ -15,17 +15,14 @@ from .proxy_resource_py3 import ProxyResource
 class Endpoint(ProxyResource):
     """Class representing a Traffic Manager endpoint.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
     :type id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
+    :param name: The name of the resource
+    :type name: str
+    :param type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
-    :vartype type: str
+    :type type: str
     :param target_resource_id: The Azure Resource URI of the of the endpoint.
      Not applicable to endpoints of type 'ExternalEndpoints'.
     :type target_resource_id: str
@@ -74,11 +71,6 @@ class Endpoint(ProxyResource):
      list[~azure.mgmt.trafficmanager.models.EndpointPropertiesCustomHeadersItem]
     """
 
-    _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -96,8 +88,8 @@ class Endpoint(ProxyResource):
         'custom_headers': {'key': 'properties.customHeaders', 'type': '[EndpointPropertiesCustomHeadersItem]'},
     }
 
-    def __init__(self, *, id: str=None, target_resource_id: str=None, target: str=None, endpoint_status=None, weight: int=None, priority: int=None, endpoint_location: str=None, endpoint_monitor_status=None, min_child_endpoints: int=None, geo_mapping=None, subnets=None, custom_headers=None, **kwargs) -> None:
-        super(Endpoint, self).__init__(id=id, **kwargs)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, target_resource_id: str=None, target: str=None, endpoint_status=None, weight: int=None, priority: int=None, endpoint_location: str=None, endpoint_monitor_status=None, min_child_endpoints: int=None, geo_mapping=None, subnets=None, custom_headers=None, **kwargs) -> None:
+        super(Endpoint, self).__init__(id=id, name=name, type=type, **kwargs)
         self.target_resource_id = target_resource_id
         self.target = target
         self.endpoint_status = endpoint_status
