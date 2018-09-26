@@ -12,14 +12,11 @@
 from msrest.serialization import Model
 
 
-class OperationInputs(Model):
+class NameAvailabilityInputs(Model):
     """Input values.
 
     :param name: The name of the IoT Central application instance to check.
     :type name: str
-    :param subdomain: The subdomain of the IoT Central application instance to
-     check.
-    :type subdomain: str
     :param type: The name of the IoT Central resource name to query. Default
      value: "IoTApps" .
     :type type: str
@@ -27,17 +24,14 @@ class OperationInputs(Model):
 
     _validation = {
         'name': {'pattern': r'^[a-z0-9-]{1,63}$'},
-        'subdomain': {'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'subdomain': {'key': 'subdomain', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, subdomain: str=None, type: str="IoTApps", **kwargs) -> None:
-        super(OperationInputs, self).__init__(**kwargs)
+    def __init__(self, *, name: str=None, type: str="IoTApps", **kwargs) -> None:
+        super(NameAvailabilityInputs, self).__init__(**kwargs)
         self.name = name
-        self.subdomain = subdomain
         self.type = type

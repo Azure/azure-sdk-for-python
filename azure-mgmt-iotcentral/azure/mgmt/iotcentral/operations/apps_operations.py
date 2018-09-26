@@ -521,12 +521,14 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
+            self, name=None, type="IoTApps", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
-        :param operation_inputs: Set the name parameter in the OperationInputs
-         structure to the name of the IoT Central application to check.
-        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
+        :param name: The name of the IoT Central application instance to
+         check.
+        :type name: str
+        :param type: The name of the IoT Central resource name to query.
+        :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -538,6 +540,8 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
+        name_availability_inputs = models.NameAvailabilityInputs(name=name, type=type)
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -561,7 +565,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(operation_inputs, 'OperationInputs')
+        body_content = self._serialize.body(name_availability_inputs, 'NameAvailabilityInputs')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -583,13 +587,14 @@ class AppsOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkNameAvailability'}
 
     def check_subdomain_availability(
-            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
+            self, subdomain=None, type="IoTApps", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application subdomain is available.
 
-        :param operation_inputs: Set the subdomain parameter in the
-         OperationInputs structure to the subdomain of the IoT Central
-         application to check.
-        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
+        :param subdomain: The subdomain of the IoT Central application
+         instance to check.
+        :type subdomain: str
+        :param type: The name of the IoT Central resource name to query.
+        :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -601,6 +606,8 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
+        subdomain_availability_inputs = models.SubdomainAvailabilityInputs(subdomain=subdomain, type=type)
+
         # Construct URL
         url = self.check_subdomain_availability.metadata['url']
         path_format_arguments = {
@@ -624,7 +631,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(operation_inputs, 'OperationInputs')
+        body_content = self._serialize.body(subdomain_availability_inputs, 'SubdomainAvailabilityInputs')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
