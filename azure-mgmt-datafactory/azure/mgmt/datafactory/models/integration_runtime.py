@@ -19,12 +19,14 @@ class IntegrationRuntime(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SelfHostedIntegrationRuntime, ManagedIntegrationRuntime
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -42,8 +44,8 @@ class IntegrationRuntime(Model):
         'type': {'SelfHosted': 'SelfHostedIntegrationRuntime', 'Managed': 'ManagedIntegrationRuntime'}
     }
 
-    def __init__(self, additional_properties=None, description=None):
-        super(IntegrationRuntime, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
+    def __init__(self, **kwargs):
+        super(IntegrationRuntime, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
         self.type = None

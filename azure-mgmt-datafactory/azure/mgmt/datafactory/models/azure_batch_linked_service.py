@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureBatchLinkedService(LinkedService):
     """Azure Batch linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,20 +31,21 @@ class AzureBatchLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param account_name: The Azure Batch account name. Type: string (or
-     Expression with resultType string).
+    :param account_name: Required. The Azure Batch account name. Type: string
+     (or Expression with resultType string).
     :type account_name: object
     :param access_key: The Azure Batch account access key.
     :type access_key: ~azure.mgmt.datafactory.models.SecretBase
-    :param batch_uri: The Azure Batch URI. Type: string (or Expression with
-     resultType string).
+    :param batch_uri: Required. The Azure Batch URI. Type: string (or
+     Expression with resultType string).
     :type batch_uri: object
-    :param pool_name: The Azure Batch pool name. Type: string (or Expression
-     with resultType string).
+    :param pool_name: Required. The Azure Batch pool name. Type: string (or
+     Expression with resultType string).
     :type pool_name: object
-    :param linked_service_name: The Azure Storage linked service reference.
+    :param linked_service_name: Required. The Azure Storage linked service
+     reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param encrypted_credential: The encrypted credential used for
@@ -74,12 +77,12 @@ class AzureBatchLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, account_name, batch_uri, pool_name, linked_service_name, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, access_key=None, encrypted_credential=None):
-        super(AzureBatchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.account_name = account_name
-        self.access_key = access_key
-        self.batch_uri = batch_uri
-        self.pool_name = pool_name
-        self.linked_service_name = linked_service_name
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureBatchLinkedService, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.access_key = kwargs.get('access_key', None)
+        self.batch_uri = kwargs.get('batch_uri', None)
+        self.pool_name = kwargs.get('pool_name', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureBatch'

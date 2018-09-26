@@ -646,15 +646,16 @@ class AppsOperations(object):
     delete.metadata = {'url': '/apps/{appId}'}
 
     def publish(
-            self, app_id, application_publish_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id=None, is_staging=False, custom_headers=None, raw=False, **operation_config):
         """Publishes a specific version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param application_publish_object: The application publish object. The
-         region is the target region that the application is published to.
-        :type application_publish_object:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationPublishObject
+        :param version_id: The version ID to publish.
+        :type version_id: str
+        :param is_staging: Indicates if the staging slot should be used,
+         instead of the Production one.
+        :type is_staging: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -668,6 +669,8 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
+        application_publish_object = models.ApplicationPublishObject(version_id=version_id, is_staging=is_staging)
+
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {

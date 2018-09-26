@@ -27,6 +27,9 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :param storage_account_id: The resource ID of the storage account to which
      you would like to send Diagnostic Logs.
     :type storage_account_id: str
+    :param service_bus_rule_id: The service bus rule Id of the diagnostic
+     setting. This is here to maintain backwards compatibility.
+    :type service_bus_rule_id: str
     :param event_hub_authorization_rule_id: The resource Id for the event hub
      authorization rule.
     :type event_hub_authorization_rule_id: str
@@ -55,6 +58,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
+        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
         'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
         'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
@@ -62,9 +66,10 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_id: str=None, event_hub_authorization_rule_id: str=None, event_hub_name: str=None, metrics=None, logs=None, workspace_id: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_id: str=None, service_bus_rule_id: str=None, event_hub_authorization_rule_id: str=None, event_hub_name: str=None, metrics=None, logs=None, workspace_id: str=None, **kwargs) -> None:
         super(DiagnosticSettingsResource, self).__init__(**kwargs)
         self.storage_account_id = storage_account_id
+        self.service_bus_rule_id = service_bus_rule_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
         self.event_hub_name = event_hub_name
         self.metrics = metrics

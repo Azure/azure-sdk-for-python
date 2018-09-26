@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class ShopifyLinkedService(LinkedService):
     """Shopify Serivce linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class ShopifyLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The endpoint of the Shopify server. (i.e.
+    :param host: Required. The endpoint of the Shopify server. (i.e.
      mystore.myshopify.com)
     :type host: object
     :param access_token: The API access token that can be used to access
@@ -73,12 +75,12 @@ class ShopifyLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, access_token=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(ShopifyLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.access_token = access_token
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(ShopifyLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.access_token = kwargs.get('access_token', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Shopify'
