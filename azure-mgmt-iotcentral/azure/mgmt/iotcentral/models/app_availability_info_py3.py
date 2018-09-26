@@ -22,9 +22,6 @@ class AppAvailabilityInfo(Model):
     :ivar name_available: The value which indicates whether the provided name
      is available.
     :vartype name_available: bool
-    :ivar subdomain: The value which indicates whether the provided subdomain
-     is available.
-    :vartype subdomain: str
     :ivar reason: The reason for unavailability.
     :vartype reason: str
     :ivar message: The detailed reason message.
@@ -33,14 +30,12 @@ class AppAvailabilityInfo(Model):
 
     _validation = {
         'name_available': {'readonly': True},
-        'subdomain': {'readonly': True},
         'reason': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'subdomain': {'key': 'subdomain', 'type': 'str'},
         'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
@@ -48,6 +43,5 @@ class AppAvailabilityInfo(Model):
     def __init__(self, **kwargs) -> None:
         super(AppAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
-        self.subdomain = None
         self.reason = None
         self.message = None
