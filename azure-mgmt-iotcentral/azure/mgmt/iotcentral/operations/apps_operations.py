@@ -521,12 +521,12 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, name=None, custom_headers=None, raw=False, **operation_config):
+            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
-        :param name: The name of the IoT Central application instance to
-         check.
-        :type name: str
+        :param operation_inputs: Set the name parameter in the OperationInputs
+         structure to the name of the IoT Central application to check.
+        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -538,8 +538,6 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
-        operation_inputs = models.OperationInputs(name=name)
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -583,3 +581,66 @@ class AppsOperations(object):
 
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkNameAvailability'}
+
+    def check_subdomain_availability(
+            self, operation_inputs, custom_headers=None, raw=False, **operation_config):
+        """Check if an IoT Central application subdomain is available.
+
+        :param operation_inputs: Set the subdomain parameter in the
+         OperationInputs model to the subdomain of the IoT Central application
+         to check.
+        :type operation_inputs: ~azure.mgmt.iotcentral.models.OperationInputs
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AppAvailabilityInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iotcentral.models.AppAvailabilityInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
+        """
+        # Construct URL
+        url = self.check_subdomain_availability.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(operation_inputs, 'OperationInputs')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorDetailsException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppAvailabilityInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_subdomain_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkSubdomainAvailability'}
