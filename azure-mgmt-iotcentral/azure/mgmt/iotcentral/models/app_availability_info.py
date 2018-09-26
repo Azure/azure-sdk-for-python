@@ -12,9 +12,9 @@
 from msrest.serialization import Model
 
 
-class AppNameAvailabilityInfo(Model):
-    """The properties indicating whether a given IoT Central application name is
-    available.
+class AppAvailabilityInfo(Model):
+    """The properties indicating whether a given IoT Central application
+    information is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -41,8 +41,8 @@ class AppNameAvailabilityInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, message: str=None, **kwargs) -> None:
-        super(AppNameAvailabilityInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(AppAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
-        self.message = message
+        self.message = kwargs.get('message', None)

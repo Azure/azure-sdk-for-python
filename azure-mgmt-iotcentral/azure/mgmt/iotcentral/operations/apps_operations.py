@@ -532,8 +532,8 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AppNameAvailabilityInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.iotcentral.models.AppNameAvailabilityInfo or
+        :return: AppAvailabilityInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iotcentral.models.AppAvailabilityInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
@@ -575,7 +575,7 @@ class AppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AppNameAvailabilityInfo', response)
+            deserialized = self._deserialize('AppAvailabilityInfo', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
