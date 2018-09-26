@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['FrontDoorManagementClient']
 
-__version__ = VERSION
+class SubResource(Model):
+    """Reference to another subresource.
 
+    :param id: Resource ID.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(SubResource, self).__init__(**kwargs)
+        self.id = id

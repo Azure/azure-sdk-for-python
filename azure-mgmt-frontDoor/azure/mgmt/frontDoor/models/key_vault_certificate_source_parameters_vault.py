@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['FrontDoorManagementClient']
 
-__version__ = VERSION
+class KeyVaultCertificateSourceParametersVault(Model):
+    """The Key Vault containing the SSL certificate.
 
+    :param id: Resource ID.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultCertificateSourceParametersVault, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

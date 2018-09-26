@@ -29,8 +29,8 @@ from .operations.policies_operations import PoliciesOperations
 from . import models
 
 
-class FrontdoorManagementClientConfiguration(AzureConfiguration):
-    """Configuration for FrontdoorManagementClient
+class FrontDoorManagementClientConfiguration(AzureConfiguration):
+    """Configuration for FrontDoorManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -54,20 +54,20 @@ class FrontdoorManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(FrontdoorManagementClientConfiguration, self).__init__(base_url)
+        super(FrontDoorManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-frontdoor/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-frontDoor/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class FrontdoorManagementClient(SDKClient):
-    """Frontdoor Client
+class FrontDoorManagementClient(SDKClient):
+    """FrontDoor Client
 
     :ivar config: Configuration for client.
-    :vartype config: FrontdoorManagementClientConfiguration
+    :vartype config: FrontDoorManagementClientConfiguration
 
     :ivar front_doors: FrontDoors operations
     :vartype front_doors: azure.mgmt.frontdoor.operations.FrontDoorsOperations
@@ -99,8 +99,8 @@ class FrontdoorManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = FrontdoorManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(FrontdoorManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = FrontDoorManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(FrontDoorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

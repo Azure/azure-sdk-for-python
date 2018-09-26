@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['FrontDoorManagementClient']
 
-__version__ = VERSION
+class CustomRules(Model):
+    """Defines contents of custom rules.
 
+    :param rules: List of rules
+    :type rules: list[~azure.mgmt.frontdoor.models.CustomRule]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[CustomRule]'},
+    }
+
+    def __init__(self, *, rules=None, **kwargs) -> None:
+        super(CustomRules, self).__init__(**kwargs)
+        self.rules = rules

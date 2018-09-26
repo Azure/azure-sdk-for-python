@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['FrontDoorManagementClient']
 
-__version__ = VERSION
+class RoutingRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RoutingRule <azure.mgmt.frontdoor.models.RoutingRule>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RoutingRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RoutingRulePaged, self).__init__(*args, **kwargs)

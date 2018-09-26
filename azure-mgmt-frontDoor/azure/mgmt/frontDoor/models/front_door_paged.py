@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['FrontDoorManagementClient']
 
-__version__ = VERSION
+class FrontDoorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`FrontDoor <azure.mgmt.frontdoor.models.FrontDoor>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FrontDoor]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FrontDoorPaged, self).__init__(*args, **kwargs)
