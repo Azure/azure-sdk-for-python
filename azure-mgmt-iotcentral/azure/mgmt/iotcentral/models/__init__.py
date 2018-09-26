@@ -35,7 +35,6 @@ from .app_paged import AppPaged
 from .operation_paged import OperationPaged
 from .iot_central_client_enums import (
     AppSku,
-    AppNameUnavailabilityReason,
 )
 
 __all__ = [
@@ -52,5 +51,4 @@ __all__ = [
     'AppPaged',
     'OperationPaged',
     'AppSku',
-    'AppNameUnavailabilityReason',
 ]

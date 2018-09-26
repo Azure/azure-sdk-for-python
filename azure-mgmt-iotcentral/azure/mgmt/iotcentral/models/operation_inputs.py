@@ -16,7 +16,6 @@ class OperationInputs(Model):
     """Input values.
 
     :param name: The name of the IoT Central application instance to check.
-     Default value: "abc" .
     :type name: str
     """
 
@@ -30,4 +29,4 @@ class OperationInputs(Model):
 
     def __init__(self, **kwargs):
         super(OperationInputs, self).__init__(**kwargs)
-        self.name = kwargs.get('name', "abc")
+        self.name = kwargs.get('name', None)
