@@ -48,14 +48,6 @@ try:
     from .application_get_endpoint_py3 import ApplicationGetEndpoint
     from .application_properties_py3 import ApplicationProperties
     from .application_py3 import Application
-    from .version_spec_py3 import VersionSpec
-    from .versions_capability_py3 import VersionsCapability
-    from .regions_capability_py3 import RegionsCapability
-    from .vm_sizes_capability_py3 import VmSizesCapability
-    from .vm_size_compatibility_filter_py3 import VmSizeCompatibilityFilter
-    from .regional_quota_capability_py3 import RegionalQuotaCapability
-    from .quota_capability_py3 import QuotaCapability
-    from .capabilities_result_py3 import CapabilitiesResult
     from .localized_name_py3 import LocalizedName
     from .usage_py3 import Usage
     from .usages_list_result_py3 import UsagesListResult
@@ -104,14 +96,6 @@ except (SyntaxError, ImportError):
     from .application_get_endpoint import ApplicationGetEndpoint
     from .application_properties import ApplicationProperties
     from .application import Application
-    from .version_spec import VersionSpec
-    from .versions_capability import VersionsCapability
-    from .regions_capability import RegionsCapability
-    from .vm_sizes_capability import VmSizesCapability
-    from .vm_size_compatibility_filter import VmSizeCompatibilityFilter
-    from .regional_quota_capability import RegionalQuotaCapability
-    from .quota_capability import QuotaCapability
-    from .capabilities_result import CapabilitiesResult
     from .localized_name import LocalizedName
     from .usage import Usage
     from .usages_list_result import UsagesListResult
@@ -172,14 +156,6 @@ __all__ = [
     'ApplicationGetEndpoint',
     'ApplicationProperties',
     'Application',
-    'VersionSpec',
-    'VersionsCapability',
-    'RegionsCapability',
-    'VmSizesCapability',
-    'VmSizeCompatibilityFilter',
-    'RegionalQuotaCapability',
-    'QuotaCapability',
-    'CapabilitiesResult',
     'LocalizedName',
     'Usage',
     'UsagesListResult',
