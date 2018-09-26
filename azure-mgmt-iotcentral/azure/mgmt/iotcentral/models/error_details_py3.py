@@ -16,34 +16,17 @@ from msrest.exceptions import HttpOperationError
 class ErrorDetails(Model):
     """Error details.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The target of the particular error.
-    :vartype target: str
+    :param error:
+    :type error: ~azure.mgmt.iotcentral.models.ErrorResponseBody
     """
 
-    _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-    }
-
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
+        self.error = error
 
 
 class ErrorDetailsException(HttpOperationError):
