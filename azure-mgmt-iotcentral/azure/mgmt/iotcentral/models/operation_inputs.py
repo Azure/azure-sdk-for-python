@@ -15,15 +15,13 @@ from msrest.serialization import Model
 class OperationInputs(Model):
     """Input values.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the IoT Central application instance to
-     check.
+    :param name: The name of the IoT Central application instance to check.
+     Default value: "abc" .
     :type name: str
     """
 
     _validation = {
-        'name': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
+        'name': {'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
@@ -32,4 +30,4 @@ class OperationInputs(Model):
 
     def __init__(self, **kwargs):
         super(OperationInputs, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get('name', "abc")

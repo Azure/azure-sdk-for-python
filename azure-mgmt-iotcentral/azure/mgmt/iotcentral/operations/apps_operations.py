@@ -521,7 +521,7 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, name, custom_headers=None, raw=False, **operation_config):
+            self, name="abc", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
         :param name: The name of the IoT Central application instance to
