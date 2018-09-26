@@ -18,9 +18,9 @@ class Endpoint(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
+    :type id: str
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
@@ -75,7 +75,6 @@ class Endpoint(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -97,8 +96,8 @@ class Endpoint(ProxyResource):
         'custom_headers': {'key': 'properties.customHeaders', 'type': '[EndpointPropertiesCustomHeadersItem]'},
     }
 
-    def __init__(self, *, target_resource_id: str=None, target: str=None, endpoint_status=None, weight: int=None, priority: int=None, endpoint_location: str=None, endpoint_monitor_status=None, min_child_endpoints: int=None, geo_mapping=None, subnets=None, custom_headers=None, **kwargs) -> None:
-        super(Endpoint, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, target_resource_id: str=None, target: str=None, endpoint_status=None, weight: int=None, priority: int=None, endpoint_location: str=None, endpoint_monitor_status=None, min_child_endpoints: int=None, geo_mapping=None, subnets=None, custom_headers=None, **kwargs) -> None:
+        super(Endpoint, self).__init__(id=id, **kwargs)
         self.target_resource_id = target_resource_id
         self.target = target
         self.endpoint_status = endpoint_status
