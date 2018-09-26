@@ -37,6 +37,10 @@ class MigrationConfigProperties(Resource):
     :param post_migration_name: Required. Name to access Standard Namespace
      after migration
     :type post_migration_name: str
+    :ivar migration_state: State in which Standard to Premium Migration is,
+     possible values : Unknown, Reverting, Completing, Initiating, Syncing,
+     Active
+    :vartype migration_state: str
     """
 
     _validation = {
@@ -47,6 +51,7 @@ class MigrationConfigProperties(Resource):
         'pending_replication_operations_count': {'readonly': True},
         'target_namespace': {'required': True},
         'post_migration_name': {'required': True},
+        'migration_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -57,6 +62,7 @@ class MigrationConfigProperties(Resource):
         'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
+        'migration_state': {'key': 'properties.migrationState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -65,3 +71,4 @@ class MigrationConfigProperties(Resource):
         self.pending_replication_operations_count = None
         self.target_namespace = kwargs.get('target_namespace', None)
         self.post_migration_name = kwargs.get('post_migration_name', None)
+        self.migration_state = None
