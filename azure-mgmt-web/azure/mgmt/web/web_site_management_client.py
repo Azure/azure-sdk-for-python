@@ -652,7 +652,7 @@ class WebSiteManagementClient(SDKClient):
     get_subscription_deployment_locations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'}
 
     def list_geo_regions(
-            self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, linux_dynamic_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
@@ -667,6 +667,9 @@ class WebSiteManagementClient(SDKClient):
         :param xenon_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Xenon workers.
         :type xenon_workers_enabled: bool
+        :param linux_dynamic_workers_enabled: Specify <code>true</code> if you
+         want to filter to only regions that support Linux Consumption Workers.
+        :type linux_dynamic_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -696,6 +699,8 @@ class WebSiteManagementClient(SDKClient):
                     query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
                 if xenon_workers_enabled is not None:
                     query_parameters['xenonWorkersEnabled'] = self._serialize.query("xenon_workers_enabled", xenon_workers_enabled, 'bool')
+                if linux_dynamic_workers_enabled is not None:
+                    query_parameters['linuxDynamicWorkersEnabled'] = self._serialize.query("linux_dynamic_workers_enabled", linux_dynamic_workers_enabled, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
