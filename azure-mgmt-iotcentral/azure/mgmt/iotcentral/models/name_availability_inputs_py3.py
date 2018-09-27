@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class OperationInputs(Model):
+class NameAvailabilityInputs(Model):
     """Input values.
 
     All required parameters must be populated in order to send to Azure.
@@ -20,16 +20,21 @@ class OperationInputs(Model):
     :param name: Required. The name of the IoT Central application instance to
      check.
     :type name: str
+    :param type: The type of the IoT Central resource to query. Default value:
+     "IoTApps" .
+    :type type: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(OperationInputs, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, name: str, type: str="IoTApps", **kwargs) -> None:
+        super(NameAvailabilityInputs, self).__init__(**kwargs)
+        self.name = name
+        self.type = type
