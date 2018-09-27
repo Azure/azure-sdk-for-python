@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SubdomainAvailabilityInputs(Model):
     """Input values.
 
-    :param subdomain: The subdomain of the IoT Central application instance to
-     check.
+    All required parameters must be populated in order to send to Azure.
+
+    :param subdomain: Required. The subdomain of the IoT Central application
+     instance to check.
     :type subdomain: str
     :param type: The type of the IoT Central resource to query. Default value:
      "IoTApps" .
@@ -24,7 +26,7 @@ class SubdomainAvailabilityInputs(Model):
     """
 
     _validation = {
-        'subdomain': {'pattern': r'^[a-z0-9-]{1,63}$'},
+        'subdomain': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
