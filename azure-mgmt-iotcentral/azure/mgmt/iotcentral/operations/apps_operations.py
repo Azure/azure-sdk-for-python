@@ -521,7 +521,7 @@ class AppsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTCentral/IoTApps'}
 
     def check_name_availability(
-            self, name, type="IoTApps", custom_headers=None, raw=False, **operation_config):
+            self, name=None, type="IoTApps", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application name is available.
 
         :param name: The name of the IoT Central application instance to
@@ -587,7 +587,7 @@ class AppsOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkNameAvailability'}
 
     def check_subdomain_availability(
-            self, subdomain, type="IoTApps", custom_headers=None, raw=False, **operation_config):
+            self, subdomain=None, type="IoTApps", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application subdomain is available.
 
         :param subdomain: The subdomain of the IoT Central application
