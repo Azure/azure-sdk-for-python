@@ -94,7 +94,7 @@ from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
 from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
 from .web_application_firewall_policy1_paged import WebApplicationFirewallPolicy1Paged
-from .frontdoor_management_client_enums import (
+from .front_door_management_client_enums import (
     FrontDoorResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
