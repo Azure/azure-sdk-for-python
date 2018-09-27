@@ -97,6 +97,8 @@ try:
     from .metric_dimension_py3 import MetricDimension
     from .metric_criteria_py3 import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
+    from .multi_metric_criteria_py3 import MultiMetricCriteria
+    from .metric_alert_multiple_resource_multiple_metric_criteria_py3 import MetricAlertMultipleResourceMultipleMetricCriteria
     from .source_py3 import Source
     from .schedule_py3 import Schedule
     from .action_py3 import Action
@@ -196,6 +198,8 @@ except (SyntaxError, ImportError):
     from .metric_dimension import MetricDimension
     from .metric_criteria import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
+    from .multi_metric_criteria import MultiMetricCriteria
+    from .metric_alert_multiple_resource_multiple_metric_criteria import MetricAlertMultipleResourceMultipleMetricCriteria
     from .source import Source
     from .schedule import Schedule
     from .action import Action
@@ -331,6 +335,8 @@ __all__ = [
     'MetricDimension',
     'MetricCriteria',
     'MetricAlertSingleResourceMultipleMetricCriteria',
+    'MultiMetricCriteria',
+    'MetricAlertMultipleResourceMultipleMetricCriteria',
     'Source',
     'Schedule',
     'Action',
