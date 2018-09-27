@@ -46,8 +46,6 @@ class DPMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param vault_id: ID of the vault which protects this item
-    :type vault_id: str
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the managed item
@@ -81,7 +79,6 @@ class DPMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
@@ -90,8 +87,8 @@ class DPMProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, vault_id: str=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, is_scheduled_for_deferred_delete: bool=None, extended_info=None, **kwargs) -> None:
-        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, vault_id=vault_id, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, is_scheduled_for_deferred_delete: bool=None, extended_info=None, **kwargs) -> None:
+        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, **kwargs)
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state

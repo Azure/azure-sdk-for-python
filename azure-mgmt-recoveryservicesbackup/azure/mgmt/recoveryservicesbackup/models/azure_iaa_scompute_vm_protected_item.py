@@ -47,8 +47,6 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param vault_id: ID of the vault which protects this item
-    :type vault_id: str
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -96,7 +94,6 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},

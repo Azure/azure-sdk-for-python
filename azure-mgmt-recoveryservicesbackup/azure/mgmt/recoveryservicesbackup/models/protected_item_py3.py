@@ -52,8 +52,6 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param vault_id: ID of the vault which protects this item
-    :type vault_id: str
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -71,7 +69,6 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -79,7 +76,7 @@ class ProtectedItem(Model):
         'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, vault_id: str=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, **kwargs) -> None:
         super(ProtectedItem, self).__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
@@ -89,5 +86,4 @@ class ProtectedItem(Model):
         self.last_recovery_point = last_recovery_point
         self.backup_set_name = backup_set_name
         self.create_mode = create_mode
-        self.vault_id = vault_id
         self.protected_item_type = None
