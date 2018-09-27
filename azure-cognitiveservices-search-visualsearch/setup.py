@@ -10,16 +10,10 @@ import re
 import os.path
 from io import open
 from setuptools import find_packages, setup
-try:
-    from azure_bdist_wheel import cmdclass
-except ImportError:
-    from distutils import log as logger
-    logger.warn("Wheel is not available, disabling bdist_wheel hook")
-    cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-cognitiveservices-search-visualsearch"
-PACKAGE_PPRINT_NAME = "Cognitive Services VisualSearch"
+PACKAGE_PPRINT_NAME = "Cognitive Services Visual Search"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -72,13 +66,22 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=[
+        'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.cognitiveservices',
+        'azure.cognitiveservices.search',
+    ]),
     install_requires=[
-        'msrest>=0.4.28,<2.0.0',
+        'msrest>=0.5.0',
         'azure-common~=1.1',
     ],
-    cmdclass=cmdclass
+    extras_require={
+        ":python_version<'3.0'": ['azure-cognitiveservices-search-nspkg'],
+    }
 )

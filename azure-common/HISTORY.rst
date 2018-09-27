@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.1.16 (2018-09-26)
++++++++++++++++++++
+
+- azure-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+1.1.15 (2018-09-13)
++++++++++++++++++++
+
+**Features**
+
+- Adding profile v2018-03-01-hybrid definition
+
 1.1.14 (2018-07-23)
 +++++++++++++++++++
 
