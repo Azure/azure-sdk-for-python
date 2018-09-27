@@ -12,30 +12,29 @@
 from msrest.serialization import Model
 
 
-class QueryFailureError(Model):
-    """Error definition.
+class TypedErrorInfo(Model):
+    """Scenario specific error details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Service specific error code which serves as the substatus for
-     the HTTP error code.
-    :vartype code: str
-    :ivar message: Description of the error.
-    :vartype message: str
+    :ivar type: The type of included error details.
+    :vartype type: str
+    :ivar info: The scenario specific error details.
+    :vartype info: object
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'type': {'readonly': True},
+        'info': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(QueryFailureError, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+    def __init__(self, **kwargs) -> None:
+        super(TypedErrorInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
