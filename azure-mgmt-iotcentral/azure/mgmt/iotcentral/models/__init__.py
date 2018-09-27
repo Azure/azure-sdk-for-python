@@ -18,8 +18,7 @@ try:
     from .error_details_py3 import ErrorDetails, ErrorDetailsException
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .name_availability_inputs_py3 import NameAvailabilityInputs
-    from .subdomain_availability_inputs_py3 import SubdomainAvailabilityInputs
+    from .operation_inputs_py3 import OperationInputs
     from .app_availability_info_py3 import AppAvailabilityInfo
 except (SyntaxError, ImportError):
     from .app_sku_info import AppSkuInfo
@@ -30,8 +29,7 @@ except (SyntaxError, ImportError):
     from .error_details import ErrorDetails, ErrorDetailsException
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .name_availability_inputs import NameAvailabilityInputs
-    from .subdomain_availability_inputs import SubdomainAvailabilityInputs
+    from .operation_inputs import OperationInputs
     from .app_availability_info import AppAvailabilityInfo
 from .app_paged import AppPaged
 from .operation_paged import OperationPaged
@@ -48,8 +46,7 @@ __all__ = [
     'ErrorDetails', 'ErrorDetailsException',
     'OperationDisplay',
     'Operation',
-    'NameAvailabilityInputs',
-    'SubdomainAvailabilityInputs',
+    'OperationInputs',
     'AppAvailabilityInfo',
     'AppPaged',
     'OperationPaged',

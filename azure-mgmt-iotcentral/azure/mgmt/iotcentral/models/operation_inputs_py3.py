@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class NameAvailabilityInputs(Model):
+class OperationInputs(Model):
     """Input values.
 
     All required parameters must be populated in order to send to Azure.
@@ -35,6 +35,6 @@ class NameAvailabilityInputs(Model):
     }
 
     def __init__(self, *, name: str, type: str="IoTApps", **kwargs) -> None:
-        super(NameAvailabilityInputs, self).__init__(**kwargs)
+        super(OperationInputs, self).__init__(**kwargs)
         self.name = name
         self.type = type

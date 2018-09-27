@@ -540,7 +540,7 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
-        name_availability_inputs = models.NameAvailabilityInputs(name=name, type=type)
+        operation_inputs = models.OperationInputs(name=name, type=type)
 
         # Construct URL
         url = self.check_name_availability.metadata['url']
@@ -565,7 +565,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(name_availability_inputs, 'NameAvailabilityInputs')
+        body_content = self._serialize.body(operation_inputs, 'OperationInputs')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -587,12 +587,12 @@ class AppsOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkNameAvailability'}
 
     def check_subdomain_availability(
-            self, subdomain, type="IoTApps", custom_headers=None, raw=False, **operation_config):
+            self, name, type="IoTApps", custom_headers=None, raw=False, **operation_config):
         """Check if an IoT Central application subdomain is available.
 
-        :param subdomain: The subdomain of the IoT Central application
-         instance to check.
-        :type subdomain: str
+        :param name: The name of the IoT Central application instance to
+         check.
+        :type name: str
         :param type: The type of the IoT Central resource to query.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
@@ -606,7 +606,7 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iotcentral.models.ErrorDetailsException>`
         """
-        subdomain_availability_inputs = models.SubdomainAvailabilityInputs(subdomain=subdomain, type=type)
+        operation_inputs = models.OperationInputs(name=name, type=type)
 
         # Construct URL
         url = self.check_subdomain_availability.metadata['url']
@@ -631,7 +631,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(subdomain_availability_inputs, 'SubdomainAvailabilityInputs')
+        body_content = self._serialize.body(operation_inputs, 'OperationInputs')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)

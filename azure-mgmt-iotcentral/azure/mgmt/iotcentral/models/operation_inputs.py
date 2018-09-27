@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class SubdomainAvailabilityInputs(Model):
+class OperationInputs(Model):
     """Input values.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subdomain: Required. The subdomain of the IoT Central application
-     instance to check.
-    :type subdomain: str
+    :param name: Required. The name of the IoT Central application instance to
+     check.
+    :type name: str
     :param type: The type of the IoT Central resource to query. Default value:
      "IoTApps" .
     :type type: str
     """
 
     _validation = {
-        'subdomain': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
+        'name': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
     }
 
     _attribute_map = {
-        'subdomain': {'key': 'subdomain', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SubdomainAvailabilityInputs, self).__init__(**kwargs)
-        self.subdomain = kwargs.get('subdomain', None)
+        super(OperationInputs, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.type = kwargs.get('type', "IoTApps")
