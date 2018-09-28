@@ -3,6 +3,15 @@
 Release History
 ===============
 
+5.1.0 (2018-08-28)
+++++++++++++++++++
+
+- Update operation TaskOperations.add_collection with the following added functionality:
+    - Retry server side errors.
+    - Automatically chunk lists of more than 100 tasks to multiple requests.
+    - If tasks are too large to be submitted in chunks of 100, reduces number of tasks per request.
+    - Add a parameter to specify number of threads to use when submitting tasks.
+
 5.0.0 (2018-08-24)
 ++++++++++++++++++
 

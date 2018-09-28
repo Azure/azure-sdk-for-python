@@ -18,9 +18,9 @@ class ManagedDiskParameters(SubResource):
     :param id: Resource Id
     :type id: str
     :param storage_account_type: Specifies the storage account type for the
-     managed disk. Possible values are: Standard_LRS, Premium_LRS, and
-     StandardSSD_LRS. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'StandardSSD_LRS'
+     managed disk. UltraSSD_LRS can only be used for data disks. Possible
+     values include: 'Standard_LRS', 'Premium_LRS', 'StandardSSD_LRS',
+     'UltraSSD_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2018_06_01.models.StorageAccountTypes
     """
