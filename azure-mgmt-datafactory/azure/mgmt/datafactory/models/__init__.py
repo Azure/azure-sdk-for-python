@@ -73,6 +73,7 @@ try:
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
+    from .script_action_py3 import ScriptAction
     from .hd_insight_on_demand_linked_service_py3 import HDInsightOnDemandLinkedService
     from .salesforce_marketing_cloud_linked_service_py3 import SalesforceMarketingCloudLinkedService
     from .netezza_linked_service_py3 import NetezzaLinkedService
@@ -418,6 +419,7 @@ except (SyntaxError, ImportError):
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
+    from .script_action import ScriptAction
     from .hd_insight_on_demand_linked_service import HDInsightOnDemandLinkedService
     from .salesforce_marketing_cloud_linked_service import SalesforceMarketingCloudLinkedService
     from .netezza_linked_service import NetezzaLinkedService
@@ -831,6 +833,7 @@ __all__ = [
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
+    'ScriptAction',
     'HDInsightOnDemandLinkedService',
     'SalesforceMarketingCloudLinkedService',
     'NetezzaLinkedService',

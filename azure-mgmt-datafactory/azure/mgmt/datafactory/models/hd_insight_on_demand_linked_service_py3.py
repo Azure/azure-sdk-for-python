@@ -132,6 +132,10 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :param zookeeper_node_size: Specifies the size of the Zoo Keeper node for
      the HDInsight cluster.
     :type zookeeper_node_size: object
+    :param script_actions: Custom script actions to run on HDI ondemand
+     cluster once it's up. Please refer to
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+    :type script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
     """
 
     _validation = {
@@ -182,9 +186,10 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'head_node_size': {'key': 'typeProperties.headNodeSize', 'type': 'object'},
         'data_node_size': {'key': 'typeProperties.dataNodeSize', 'type': 'object'},
         'zookeeper_node_size': {'key': 'typeProperties.zookeeperNodeSize', 'type': 'object'},
+        'script_actions': {'key': 'typeProperties.scriptActions', 'type': '[ScriptAction]'},
     }
 
-    def __init__(self, *, cluster_size, time_to_live, version, linked_service_name, host_subscription_id, tenant, cluster_resource_group, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, cluster_name_prefix=None, cluster_user_name=None, cluster_password=None, cluster_ssh_user_name=None, cluster_ssh_password=None, additional_linked_service_names=None, hcatalog_linked_service_name=None, cluster_type=None, spark_version=None, core_configuration=None, h_base_configuration=None, hdfs_configuration=None, hive_configuration=None, map_reduce_configuration=None, oozie_configuration=None, storm_configuration=None, yarn_configuration=None, encrypted_credential=None, head_node_size=None, data_node_size=None, zookeeper_node_size=None, **kwargs) -> None:
+    def __init__(self, *, cluster_size, time_to_live, version, linked_service_name, host_subscription_id, tenant, cluster_resource_group, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, cluster_name_prefix=None, cluster_user_name=None, cluster_password=None, cluster_ssh_user_name=None, cluster_ssh_password=None, additional_linked_service_names=None, hcatalog_linked_service_name=None, cluster_type=None, spark_version=None, core_configuration=None, h_base_configuration=None, hdfs_configuration=None, hive_configuration=None, map_reduce_configuration=None, oozie_configuration=None, storm_configuration=None, yarn_configuration=None, encrypted_credential=None, head_node_size=None, data_node_size=None, zookeeper_node_size=None, script_actions=None, **kwargs) -> None:
         super(HDInsightOnDemandLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.cluster_size = cluster_size
         self.time_to_live = time_to_live
@@ -216,4 +221,5 @@ class HDInsightOnDemandLinkedService(LinkedService):
         self.head_node_size = head_node_size
         self.data_node_size = data_node_size
         self.zookeeper_node_size = zookeeper_node_size
+        self.script_actions = script_actions
         self.type = 'HDInsightOnDemand'

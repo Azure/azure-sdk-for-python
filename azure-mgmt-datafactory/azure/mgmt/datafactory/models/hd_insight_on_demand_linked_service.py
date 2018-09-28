@@ -132,6 +132,10 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :param zookeeper_node_size: Specifies the size of the Zoo Keeper node for
      the HDInsight cluster.
     :type zookeeper_node_size: object
+    :param script_actions: Custom script actions to run on HDI ondemand
+     cluster once it's up. Please refer to
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+    :type script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
     """
 
     _validation = {
@@ -182,6 +186,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'head_node_size': {'key': 'typeProperties.headNodeSize', 'type': 'object'},
         'data_node_size': {'key': 'typeProperties.dataNodeSize', 'type': 'object'},
         'zookeeper_node_size': {'key': 'typeProperties.zookeeperNodeSize', 'type': 'object'},
+        'script_actions': {'key': 'typeProperties.scriptActions', 'type': '[ScriptAction]'},
     }
 
     def __init__(self, **kwargs):
@@ -216,4 +221,5 @@ class HDInsightOnDemandLinkedService(LinkedService):
         self.head_node_size = kwargs.get('head_node_size', None)
         self.data_node_size = kwargs.get('data_node_size', None)
         self.zookeeper_node_size = kwargs.get('zookeeper_node_size', None)
+        self.script_actions = kwargs.get('script_actions', None)
         self.type = 'HDInsightOnDemand'
