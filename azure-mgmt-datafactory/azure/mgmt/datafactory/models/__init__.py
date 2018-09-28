@@ -39,6 +39,7 @@ try:
     from .activity_dependency_py3 import ActivityDependency
     from .user_property_py3 import UserProperty
     from .activity_py3 import Activity
+    from .variable_specification_py3 import VariableSpecification
     from .pipeline_folder_py3 import PipelineFolder
     from .pipeline_resource_py3 import PipelineResource
     from .trigger_py3 import Trigger
@@ -325,6 +326,8 @@ try:
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
     from .execution_activity_py3 import ExecutionActivity
+    from .append_variable_activity_py3 import AppendVariableActivity
+    from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
@@ -385,6 +388,7 @@ except (SyntaxError, ImportError):
     from .activity_dependency import ActivityDependency
     from .user_property import UserProperty
     from .activity import Activity
+    from .variable_specification import VariableSpecification
     from .pipeline_folder import PipelineFolder
     from .pipeline_resource import PipelineResource
     from .trigger import Trigger
@@ -671,6 +675,8 @@ except (SyntaxError, ImportError):
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
     from .execution_activity import ExecutionActivity
+    from .append_variable_activity import AppendVariableActivity
+    from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
@@ -713,6 +719,7 @@ from .data_factory_management_client_enums import (
     IntegrationRuntimeAutoUpdate,
     ParameterType,
     DependencyCondition,
+    VariableType,
     TriggerRuntimeState,
     RunQueryFilterOperand,
     RunQueryFilterOperator,
@@ -799,6 +806,7 @@ __all__ = [
     'ActivityDependency',
     'UserProperty',
     'Activity',
+    'VariableSpecification',
     'PipelineFolder',
     'PipelineResource',
     'Trigger',
@@ -1085,6 +1093,8 @@ __all__ = [
     'CopySink',
     'CopyActivity',
     'ExecutionActivity',
+    'AppendVariableActivity',
+    'SetVariableActivity',
     'FilterActivity',
     'UntilActivity',
     'WaitActivity',
@@ -1126,6 +1136,7 @@ __all__ = [
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
     'DependencyCondition',
+    'VariableType',
     'TriggerRuntimeState',
     'RunQueryFilterOperand',
     'RunQueryFilterOperator',

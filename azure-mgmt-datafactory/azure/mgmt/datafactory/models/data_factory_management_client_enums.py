@@ -51,6 +51,13 @@ class DependencyCondition(str, Enum):
     completed = "Completed"
 
 
+class VariableType(str, Enum):
+
+    string = "String"
+    bool_enum = "Bool"
+    array = "Array"
+
+
 class TriggerRuntimeState(str, Enum):
 
     started = "Started"
