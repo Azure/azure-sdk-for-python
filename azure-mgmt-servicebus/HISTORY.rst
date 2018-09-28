@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.2 (2018-09-28)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationConfigProperties has a new parameter migration_state
+
 0.5.1 (2018-07-09)
 ++++++++++++++++++
 
