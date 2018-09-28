@@ -32,7 +32,7 @@ class UpdateIntegrationRuntimeRequest(Model):
         'update_delay_offset': {'key': 'updateDelayOffset', 'type': 'str'},
     }
 
-    def __init__(self, auto_update=None, update_delay_offset=None):
-        super(UpdateIntegrationRuntimeRequest, self).__init__()
-        self.auto_update = auto_update
-        self.update_delay_offset = update_delay_offset
+    def __init__(self, **kwargs):
+        super(UpdateIntegrationRuntimeRequest, self).__init__(**kwargs)
+        self.auto_update = kwargs.get('auto_update', None)
+        self.update_delay_offset = kwargs.get('update_delay_offset', None)
