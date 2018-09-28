@@ -53,4 +53,4 @@ class AlertingAction(Action):
         self.azns_action = kwargs.get('azns_action', None)
         self.throttling_in_min = kwargs.get('throttling_in_min', None)
         self.trigger = kwargs.get('trigger', None)
-        self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'
+        self.odatatype = 'AlertingAction'

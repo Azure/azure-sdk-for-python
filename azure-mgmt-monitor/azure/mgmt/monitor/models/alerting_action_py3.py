@@ -53,4 +53,4 @@ class AlertingAction(Action):
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min
         self.trigger = trigger
-        self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'
+        self.odatatype = 'AlertingAction'
