@@ -26,6 +26,7 @@ try:
     from .purchase_plan_py3 import PurchasePlan
     from .os_disk_image_py3 import OSDiskImage
     from .data_disk_image_py3 import DataDiskImage
+    from .automatic_os_upgrade_properties_py3 import AutomaticOSUpgradeProperties
     from .virtual_machine_image_py3 import VirtualMachineImage
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
@@ -157,6 +158,7 @@ except (SyntaxError, ImportError):
     from .purchase_plan import PurchasePlan
     from .os_disk_image import OSDiskImage
     from .data_disk_image import DataDiskImage
+    from .automatic_os_upgrade_properties import AutomaticOSUpgradeProperties
     from .virtual_machine_image import VirtualMachineImage
     from .usage_name import UsageName
     from .usage import Usage
@@ -329,6 +331,7 @@ __all__ = [
     'PurchasePlan',
     'OSDiskImage',
     'DataDiskImage',
+    'AutomaticOSUpgradeProperties',
     'VirtualMachineImage',
     'UsageName',
     'Usage',

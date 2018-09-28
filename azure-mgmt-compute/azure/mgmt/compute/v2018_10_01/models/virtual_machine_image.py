@@ -35,6 +35,9 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param data_disk_images:
     :type data_disk_images:
      list[~azure.mgmt.compute.v2018_10_01.models.DataDiskImage]
+    :param automatic_os_upgrade_properties:
+    :type automatic_os_upgrade_properties:
+     ~azure.mgmt.compute.v2018_10_01.models.AutomaticOSUpgradeProperties
     """
 
     _validation = {
@@ -50,6 +53,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
         'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
+        'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -57,3 +61,4 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.plan = kwargs.get('plan', None)
         self.os_disk_image = kwargs.get('os_disk_image', None)
         self.data_disk_images = kwargs.get('data_disk_images', None)
+        self.automatic_os_upgrade_properties = kwargs.get('automatic_os_upgrade_properties', None)
