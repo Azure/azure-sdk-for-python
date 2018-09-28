@@ -55,6 +55,7 @@ try:
     from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
+    from .application_gateway_custom_error_py3 import ApplicationGatewayCustomError
     from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
     from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
     from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
@@ -63,6 +64,7 @@ try:
     from .application_gateway_redirect_configuration_py3 import ApplicationGatewayRedirectConfiguration
     from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
+    from .application_gateway_firewall_exclusion_py3 import ApplicationGatewayFirewallExclusion
     from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
     from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway_py3 import ApplicationGateway
@@ -201,7 +203,7 @@ try:
     from .connection_monitor_result_py3 import ConnectionMonitorResult
     from .connection_state_snapshot_py3 import ConnectionStateSnapshot
     from .connection_monitor_query_result_py3 import ConnectionMonitorQueryResult
-    from .traffic_query_py3 import TrafficQuery
+    from .network_configuration_diagnostic_profile_py3 import NetworkConfigurationDiagnosticProfile
     from .network_configuration_diagnostic_parameters_py3 import NetworkConfigurationDiagnosticParameters
     from .matched_rule_py3 import MatchedRule
     from .network_security_rules_evaluation_result_py3 import NetworkSecurityRulesEvaluationResult
@@ -322,6 +324,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
     from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
     from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
+    from .application_gateway_custom_error import ApplicationGatewayCustomError
     from .application_gateway_http_listener import ApplicationGatewayHttpListener
     from .application_gateway_path_rule import ApplicationGatewayPathRule
     from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
@@ -330,6 +333,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_redirect_configuration import ApplicationGatewayRedirectConfiguration
     from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
     from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
+    from .application_gateway_firewall_exclusion import ApplicationGatewayFirewallExclusion
     from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
     from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
     from .application_gateway import ApplicationGateway
@@ -468,7 +472,7 @@ except (SyntaxError, ImportError):
     from .connection_monitor_result import ConnectionMonitorResult
     from .connection_state_snapshot import ConnectionStateSnapshot
     from .connection_monitor_query_result import ConnectionMonitorQueryResult
-    from .traffic_query import TrafficQuery
+    from .network_configuration_diagnostic_profile import NetworkConfigurationDiagnosticProfile
     from .network_configuration_diagnostic_parameters import NetworkConfigurationDiagnosticParameters
     from .matched_rule import MatchedRule
     from .network_security_rules_evaluation_result import NetworkSecurityRulesEvaluationResult
@@ -619,6 +623,7 @@ from .network_management_client_enums import (
     ApplicationGatewaySslPolicyType,
     ApplicationGatewaySslPolicyName,
     ApplicationGatewaySslCipherSuite,
+    ApplicationGatewayCustomErrorStatusCode,
     ApplicationGatewayRequestRoutingRuleType,
     ApplicationGatewayRedirectType,
     ApplicationGatewayOperationalState,
@@ -661,6 +666,7 @@ from .network_management_client_enums import (
     ConnectionMonitorSourceStatus,
     ConnectionState,
     EvaluationState,
+    VerbosityLevel,
     PublicIPPrefixSkuName,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
@@ -734,6 +740,7 @@ __all__ = [
     'ApplicationGatewaySslCertificate',
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
+    'ApplicationGatewayCustomError',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
     'ApplicationGatewayProbeHealthResponseMatch',
@@ -742,6 +749,7 @@ __all__ = [
     'ApplicationGatewayRedirectConfiguration',
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayFirewallDisabledRuleGroup',
+    'ApplicationGatewayFirewallExclusion',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGatewayAutoscaleConfiguration',
     'ApplicationGateway',
@@ -880,7 +888,7 @@ __all__ = [
     'ConnectionMonitorResult',
     'ConnectionStateSnapshot',
     'ConnectionMonitorQueryResult',
-    'TrafficQuery',
+    'NetworkConfigurationDiagnosticProfile',
     'NetworkConfigurationDiagnosticParameters',
     'MatchedRule',
     'NetworkSecurityRulesEvaluationResult',
@@ -1030,6 +1038,7 @@ __all__ = [
     'ApplicationGatewaySslPolicyType',
     'ApplicationGatewaySslPolicyName',
     'ApplicationGatewaySslCipherSuite',
+    'ApplicationGatewayCustomErrorStatusCode',
     'ApplicationGatewayRequestRoutingRuleType',
     'ApplicationGatewayRedirectType',
     'ApplicationGatewayOperationalState',
@@ -1072,6 +1081,7 @@ __all__ = [
     'ConnectionMonitorSourceStatus',
     'ConnectionState',
     'EvaluationState',
+    'VerbosityLevel',
     'PublicIPPrefixSkuName',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',

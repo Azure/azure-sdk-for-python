@@ -154,6 +154,12 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
     tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
 
 
+class ApplicationGatewayCustomErrorStatusCode(str, Enum):
+
+    four_zero_three = "403"
+    five_zero_two = "502"
+
+
 class ApplicationGatewayRequestRoutingRuleType(str, Enum):
 
     basic = "Basic"
@@ -213,6 +219,7 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     tcp = "TCP"
     udp = "UDP"
     any = "Any"
+    icmp = "ICMP"
 
 
 class AuthorizationUseStatus(str, Enum):
@@ -448,6 +455,13 @@ class EvaluationState(str, Enum):
     not_started = "NotStarted"
     in_progress = "InProgress"
     completed = "Completed"
+
+
+class VerbosityLevel(str, Enum):
+
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
 
 
 class PublicIPPrefixSkuName(str, Enum):
