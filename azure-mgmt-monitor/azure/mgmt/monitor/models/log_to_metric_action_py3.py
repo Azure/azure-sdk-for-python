@@ -37,4 +37,4 @@ class LogToMetricAction(Action):
     def __init__(self, *, criteria, **kwargs) -> None:
         super(LogToMetricAction, self).__init__(**kwargs)
         self.criteria = criteria
-        self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'
+        self.odatatype = 'LogToMetricAction'

@@ -33,7 +33,7 @@ class Action(Model):
     }
 
     _subtype_map = {
-        'odatatype': {'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction': 'AlertingAction', 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction': 'LogToMetricAction'}
+        'odatatype': {'AlertingAction': 'AlertingAction', 'LogToMetricAction': 'LogToMetricAction'}
     }
 
     def __init__(self, **kwargs):
