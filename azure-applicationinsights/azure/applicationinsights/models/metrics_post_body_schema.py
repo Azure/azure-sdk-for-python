@@ -23,7 +23,7 @@ class MetricsPostBodySchema(Model):
     :type id: str
     :param parameters: Required. The parameters for a single metrics query
     :type parameters:
-     ~azure.applicationinsights.models.MetricsPostBodySchemaParameters
+     ~azure.applicationinsights.query.models.MetricsPostBodySchemaParameters
     """
 
     _validation = {

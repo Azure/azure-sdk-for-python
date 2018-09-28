@@ -49,7 +49,8 @@ class EventsOperations(object):
          'traces', 'customEvents', 'pageViews', 'browserTimings', 'requests',
          'dependencies', 'exceptions', 'availabilityResults',
          'performanceCounters', 'customMetrics'
-        :type event_type: str or ~azure.applicationinsights.models.EventType
+        :type event_type: str or
+         ~azure.applicationinsights.query.models.EventType
         :param timespan: Optional. The timespan over which to retrieve events.
          This is an ISO8601 time period value.  This timespan is applied in
          addition to any that are specified in the Odata expression.
@@ -82,10 +83,10 @@ class EventsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: EventsResults or ClientRawResponse if raw=true
-        :rtype: ~azure.applicationinsights.models.EventsResults or
+        :rtype: ~azure.applicationinsights.query.models.EventsResults or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_type.metadata['url']
@@ -159,7 +160,8 @@ class EventsOperations(object):
          'traces', 'customEvents', 'pageViews', 'browserTimings', 'requests',
          'dependencies', 'exceptions', 'availabilityResults',
          'performanceCounters', 'customMetrics'
-        :type event_type: str or ~azure.applicationinsights.models.EventType
+        :type event_type: str or
+         ~azure.applicationinsights.query.models.EventType
         :param event_id: ID of event.
         :type event_id: str
         :param timespan: Optional. The timespan over which to retrieve events.
@@ -172,10 +174,10 @@ class EventsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: EventsResults or ClientRawResponse if raw=true
-        :rtype: ~azure.applicationinsights.models.EventsResults or
+        :rtype: ~azure.applicationinsights.query.models.EventsResults or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -233,7 +235,7 @@ class EventsOperations(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_odata_metadata.metadata['url']

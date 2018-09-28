@@ -47,7 +47,7 @@ class EventsExceptionInfo(Model):
     :type innermost_assembly: str
     :param details: The details of the exception
     :type details:
-     list[~azure.applicationinsights.models.EventsExceptionDetail]
+     list[~azure.applicationinsights.query.models.EventsExceptionDetail]
     """
 
     _attribute_map = {

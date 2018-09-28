@@ -25,7 +25,8 @@ class MetricsSegmentInfo(Model):
      specified).
     :type end: datetime
     :param segments: Segmented metric data (if further segmented).
-    :type segments: list[~azure.applicationinsights.models.MetricsSegmentInfo]
+    :type segments:
+     list[~azure.applicationinsights.query.models.MetricsSegmentInfo]
     """
 
     _attribute_map = {

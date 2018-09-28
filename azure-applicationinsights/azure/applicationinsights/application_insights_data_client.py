@@ -39,7 +39,7 @@ class ApplicationInsightsDataClientConfiguration(Configuration):
 
         super(ApplicationInsightsDataClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-applicationinsights/{}'.format(VERSION))
+        self.add_user_agent('azure-applicationinsights-query/{}'.format(VERSION))
 
         self.credentials = credentials
 
@@ -51,11 +51,11 @@ class ApplicationInsightsDataClient(SDKClient):
     :vartype config: ApplicationInsightsDataClientConfiguration
 
     :ivar metrics: Metrics operations
-    :vartype metrics: azure.applicationinsights.operations.MetricsOperations
+    :vartype metrics: azure.applicationinsights.query.operations.MetricsOperations
     :ivar events: Events operations
-    :vartype events: azure.applicationinsights.operations.EventsOperations
+    :vartype events: azure.applicationinsights.query.operations.EventsOperations
     :ivar query: Query operations
-    :vartype query: azure.applicationinsights.operations.QueryOperations
+    :vartype query: azure.applicationinsights.query.operations.QueryOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.

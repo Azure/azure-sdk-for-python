@@ -22,7 +22,7 @@ class MetricsResultsItem(Model):
     :param status: Required. The HTTP status code of this metric query.
     :type status: int
     :param body: Required. The results of this metric query.
-    :type body: ~azure.applicationinsights.models.MetricsResult
+    :type body: ~azure.applicationinsights.query.models.MetricsResult
     """
 
     _validation = {

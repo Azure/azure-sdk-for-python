@@ -22,9 +22,9 @@ class ErrorInfo(Model):
     :param message: Required. A human readable error message.
     :type message: str
     :param details: error details.
-    :type details: list[~azure.applicationinsights.models.ErrorDetail]
+    :type details: list[~azure.applicationinsights.query.models.ErrorDetail]
     :param innererror: Inner error details if they exist.
-    :type innererror: ~azure.applicationinsights.models.ErrorInfo
+    :type innererror: ~azure.applicationinsights.query.models.ErrorInfo
     :param additional_properties:
     :type additional_properties: object
     """

@@ -16,9 +16,9 @@ class EventsResult(Model):
     """An event query result.
 
     :param aimessages: OData messages for this response.
-    :type aimessages: list[~azure.applicationinsights.models.ErrorInfo]
+    :type aimessages: list[~azure.applicationinsights.query.models.ErrorInfo]
     :param value:
-    :type value: ~azure.applicationinsights.models.EventsResultData
+    :type value: ~azure.applicationinsights.query.models.EventsResultData
     """
 
     _attribute_map = {

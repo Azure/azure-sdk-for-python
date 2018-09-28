@@ -16,7 +16,7 @@ class MetricsResult(Model):
     """A metric result.
 
     :param value:
-    :type value: ~azure.applicationinsights.models.MetricsResultInfo
+    :type value: ~azure.applicationinsights.query.models.MetricsResultInfo
     """
 
     _attribute_map = {
