@@ -135,6 +135,7 @@ try:
     from .log_analytics_input_base_py3 import LogAnalyticsInputBase
     from .log_analytics_output_py3 import LogAnalyticsOutput
     from .log_analytics_operation_result_py3 import LogAnalyticsOperationResult
+    from .in_guest_software_item_py3 import InGuestSoftwareItem
     from .run_command_input_parameter_py3 import RunCommandInputParameter
     from .run_command_input_py3 import RunCommandInput
     from .run_command_parameter_definition_py3 import RunCommandParameterDefinition
@@ -267,6 +268,7 @@ except (SyntaxError, ImportError):
     from .log_analytics_input_base import LogAnalyticsInputBase
     from .log_analytics_output import LogAnalyticsOutput
     from .log_analytics_operation_result import LogAnalyticsOperationResult
+    from .in_guest_software_item import InGuestSoftwareItem
     from .run_command_input_parameter import RunCommandInputParameter
     from .run_command_input import RunCommandInput
     from .run_command_parameter_definition import RunCommandParameterDefinition
@@ -278,6 +280,7 @@ from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
 from .virtual_machine_paged import VirtualMachinePaged
+from .in_guest_software_item_paged import InGuestSoftwareItemPaged
 from .image_paged import ImagePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
@@ -440,6 +443,7 @@ __all__ = [
     'LogAnalyticsInputBase',
     'LogAnalyticsOutput',
     'LogAnalyticsOperationResult',
+    'InGuestSoftwareItem',
     'RunCommandInputParameter',
     'RunCommandInput',
     'RunCommandParameterDefinition',
@@ -451,6 +455,7 @@ __all__ = [
     'VirtualMachineSizePaged',
     'UsagePaged',
     'VirtualMachinePaged',
+    'InGuestSoftwareItemPaged',
     'ImagePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
