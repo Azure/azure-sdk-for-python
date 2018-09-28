@@ -13,7 +13,7 @@ from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTa
 
 
 class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTaskOutput):
-    """AgentJob level output for the task that validates connection to SQL Server
+    """Agent Job level output for the task that validates connection to SQL Server
     and also validates source server requirements.
 
     Variables are only populated by the server, and will be ignored when
@@ -25,17 +25,20 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
     :vartype id: str
     :param result_type: Required. Constant filled by server.
     :type result_type: str
-    :ivar name: AgentJob name
+    :ivar name: Agent Job name
     :vartype name: str
-    :ivar job_category: The type of AgentJob.
+    :ivar job_category: The type of Agent Job.
     :vartype job_category: str
-    :ivar is_enabled: The state of the original AgentJob.
+    :ivar is_enabled: The state of the original Agent Job.
     :vartype is_enabled: bool
-    :ivar job_owner: The owner of the AgentJob
+    :ivar job_owner: The owner of the Agent Job
     :vartype job_owner: str
-    :ivar last_executed_on: UTC Date and time when the AgentJob was last
+    :ivar last_executed_on: UTC Date and time when the Agent Job was last
      executed.
     :vartype last_executed_on: datetime
+    :ivar validation_errors: Validation errors
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
     :ivar migration_eligibility: Information about eligiblity of agent job for
      migration.
     :vartype migration_eligibility:
@@ -50,6 +53,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         'is_enabled': {'readonly': True},
         'job_owner': {'readonly': True},
         'last_executed_on': {'readonly': True},
+        'validation_errors': {'readonly': True},
         'migration_eligibility': {'readonly': True},
     }
 
@@ -61,6 +65,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'job_owner': {'key': 'jobOwner', 'type': 'str'},
         'last_executed_on': {'key': 'lastExecutedOn', 'type': 'iso-8601'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
         'migration_eligibility': {'key': 'migrationEligibility', 'type': 'MigrationEligibilityInfo'},
     }
 
@@ -71,5 +76,6 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
         self.is_enabled = None
         self.job_owner = None
         self.last_executed_on = None
+        self.validation_errors = None
         self.migration_eligibility = None
         self.result_type = 'AgentJobLevelOutput'

@@ -55,6 +55,33 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         disk_resource = async_creation.result()
 
     @ResourceGroupPreparer()
+    def test_grant_access(self, resource_group, location):
+        '''Create an empty Managed Disk.'''
+        DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
+
+        async_creation = self.compute_client.disks.create_or_update(
+            resource_group.name,
+            'my_disk_name',
+            {
+                'location': location,
+                'disk_size_gb': 20,
+                'creation_data': {
+                    'create_option': DiskCreateOption.empty
+                }
+            }
+        )
+        disk_resource = async_creation.result()
+
+        grant_access_poller = self.compute_client.disks.grant_access(
+            resource_group.name,
+            'my_disk_name',
+            'Read',
+            '1',
+        )
+        access_uri = grant_access_poller.result()
+        assert access_uri.access_sas is not None
+
+    @ResourceGroupPreparer()
     def test_md_from_storage_blob(self, resource_group, location):
         '''Create a Managed Disk from Blob Storage.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
@@ -334,7 +361,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                             'name': naming_infix + 'ipconfig',
                             'subnet': {
                                 'id': subnet_id
-                            } 
+                            }
                         }]
                     }]
                 }
