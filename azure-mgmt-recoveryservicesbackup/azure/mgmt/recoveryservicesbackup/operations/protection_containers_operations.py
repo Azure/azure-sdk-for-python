@@ -255,11 +255,10 @@ class ProtectionContainersOperations(object):
 
     def inquire(
             self, vault_name, resource_group_name, fabric_name, container_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Inquires all the protectable item in the given container that can be
-        protected.
+        """Inquires all the protectable items under the given container.
 
-        Inquires all the protectable items that are protectable under the given
-        container.
+        This is an async operation and the results should be tracked using
+        location header or Azure-async-url.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

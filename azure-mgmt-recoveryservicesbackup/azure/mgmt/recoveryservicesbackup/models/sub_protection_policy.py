@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SubProtectionPolicy(Model):
     """Sub-protection policy which includes schedule and retention.
 
-    :param policy_type: Type of backup policy type
-    :type policy_type: str
+    :param policy_type: Type of backup policy type. Possible values include:
+     'Invalid', 'Full', 'Differential', 'Log', 'CopyOnlyFull'
+    :type policy_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.PolicyType
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:

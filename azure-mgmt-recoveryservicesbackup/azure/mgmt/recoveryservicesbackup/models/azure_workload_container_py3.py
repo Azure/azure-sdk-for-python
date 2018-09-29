@@ -79,4 +79,4 @@ class AzureWorkloadContainer(ProtectionContainer):
         self.last_updated_time = last_updated_time
         self.extended_info = extended_info
         self.workload_type = workload_type
-        self.container_type = 'AzureWorkloadContainer'
+        self.container_type = 'AzureWorkloadBackupRequest'

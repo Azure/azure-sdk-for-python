@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ProtectableContainersOperations(object):
-    """ProtectableContainersOperations operations.
+class BackupProtectionIntentOperations(object):
+    """BackupProtectionIntentOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
 
     models = models
@@ -33,31 +33,32 @@ class ProtectableContainersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
     def list(
-            self, vault_name, resource_group_name, fabric_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the containers that can be registered to Recovery Services Vault.
+            self, vault_name, resource_group_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+        """Provides a pageable list of all intents that are present within a
+        vault.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the container.
-        :type fabric_name: str
         :param filter: OData filter options.
         :type filter: str
+        :param skip_token: skipToken Filter.
+        :type skip_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ProtectableContainerResource
+        :return: An iterator like instance of ProtectionIntentResource
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.ProtectableContainerResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectableContainerResource]
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -68,8 +69,7 @@ class ProtectableContainersOperations(object):
                 path_format_arguments = {
                     'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'fabricName': self._serialize.url("fabric_name", fabric_name, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -78,6 +78,8 @@ class ProtectableContainersOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             else:
                 url = next_link
@@ -105,12 +107,12 @@ class ProtectableContainersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ProtectableContainerResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ProtectionIntentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ProtectableContainerResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ProtectionIntentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectableContainers'}
+    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectionIntents'}

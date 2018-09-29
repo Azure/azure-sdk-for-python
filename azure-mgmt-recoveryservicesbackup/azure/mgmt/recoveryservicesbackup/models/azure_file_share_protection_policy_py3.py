@@ -21,8 +21,12 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
-    :param work_load_type: Type of workload for the backup management
-    :type work_load_type: str
+    :param work_load_type: Type of workload for the backup management.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type work_load_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -49,7 +53,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, work_load_type: str=None, schedule_policy=None, retention_policy=None, time_zone: str=None, **kwargs) -> None:
+    def __init__(self, *, protected_items_count: int=None, work_load_type=None, schedule_policy=None, retention_policy=None, time_zone: str=None, **kwargs) -> None:
         super(AzureFileShareProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
         self.work_load_type = work_load_type
         self.schedule_policy = schedule_policy

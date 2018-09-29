@@ -50,6 +50,8 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     :param is_auto_protectable: Indicates if protectable item is
      auto-protectable
     :type is_auto_protectable: bool
+    :param is_auto_protected: Indicates if protectable item is auto-protected
+    :type is_auto_protected: bool
     :param subinquireditemcount: For instance or AG, indicates number of DB's
      present
     :type subinquireditemcount: int
@@ -75,6 +77,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
         'parent_unique_name': {'key': 'parentUniqueName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
         'is_auto_protectable': {'key': 'isAutoProtectable', 'type': 'bool'},
+        'is_auto_protected': {'key': 'isAutoProtected', 'type': 'bool'},
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
@@ -90,6 +93,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
         self.parent_unique_name = kwargs.get('parent_unique_name', None)
         self.server_name = kwargs.get('server_name', None)
         self.is_auto_protectable = kwargs.get('is_auto_protectable', None)
+        self.is_auto_protected = kwargs.get('is_auto_protected', None)
         self.subinquireditemcount = kwargs.get('subinquireditemcount', None)
         self.subprotectableitemcount = kwargs.get('subprotectableitemcount', None)
         self.prebackupvalidation = kwargs.get('prebackupvalidation', None)

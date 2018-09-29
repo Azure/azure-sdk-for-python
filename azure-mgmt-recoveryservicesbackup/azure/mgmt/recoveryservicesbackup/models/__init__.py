@@ -109,6 +109,7 @@ try:
     from .protected_item_query_object_py3 import ProtectedItemQueryObject
     from .protected_item_resource_py3 import ProtectedItemResource
     from .protection_intent_py3 import ProtectionIntent
+    from .protection_intent_query_object_py3 import ProtectionIntentQueryObject
     from .protection_intent_resource_py3 import ProtectionIntentResource
     from .protection_policy_py3 import ProtectionPolicy
     from .protection_policy_query_object_py3 import ProtectionPolicyQueryObject
@@ -329,6 +330,7 @@ except (SyntaxError, ImportError):
     from .protected_item_query_object import ProtectedItemQueryObject
     from .protected_item_resource import ProtectedItemResource
     from .protection_intent import ProtectionIntent
+    from .protection_intent_query_object import ProtectionIntentQueryObject
     from .protection_intent_resource import ProtectionIntentResource
     from .protection_policy import ProtectionPolicy
     from .protection_policy_query_object import ProtectionPolicyQueryObject
@@ -452,6 +454,7 @@ except (SyntaxError, ImportError):
 from .job_resource_paged import JobResourcePaged
 from .protection_policy_resource_paged import ProtectionPolicyResourcePaged
 from .protected_item_resource_paged import ProtectedItemResourcePaged
+from .protection_intent_resource_paged import ProtectionIntentResourcePaged
 from .backup_management_usage_paged import BackupManagementUsagePaged
 from .backup_engine_base_resource_paged import BackupEngineBaseResourcePaged
 from .protectable_container_resource_paged import ProtectableContainerResourcePaged
@@ -463,6 +466,7 @@ from .client_discovery_value_for_single_api_paged import ClientDiscoveryValueFor
 from .recovery_services_backup_client_enums import (
     ProtectionState,
     HealthStatus,
+    WorkloadType,
     RecoveryType,
     CopyOptions,
     RestoreRequestType,
@@ -471,6 +475,7 @@ from .recovery_services_backup_client_enums import (
     SupportStatus,
     LastBackupStatus,
     ProtectedItemHealthStatus,
+    PolicyType,
     OverwriteOptions,
     WorkloadItemType,
     SQLDataDirectoryType,
@@ -488,11 +493,11 @@ from .recovery_services_backup_client_enums import (
     WeekOfMonth,
     MonthOfYear,
     MabServerType,
-    WorkloadType,
     HttpStatusCode,
     ValidationStatus,
     CreateMode,
     HealthState,
+    IntentItemType,
     ScheduleRunType,
     AzureFileShareType,
     InquiryStatus,
@@ -609,6 +614,7 @@ __all__ = [
     'ProtectedItemQueryObject',
     'ProtectedItemResource',
     'ProtectionIntent',
+    'ProtectionIntentQueryObject',
     'ProtectionIntentResource',
     'ProtectionPolicy',
     'ProtectionPolicyQueryObject',
@@ -732,6 +738,7 @@ __all__ = [
     'JobResourcePaged',
     'ProtectionPolicyResourcePaged',
     'ProtectedItemResourcePaged',
+    'ProtectionIntentResourcePaged',
     'BackupManagementUsagePaged',
     'BackupEngineBaseResourcePaged',
     'ProtectableContainerResourcePaged',
@@ -742,6 +749,7 @@ __all__ = [
     'ClientDiscoveryValueForSingleApiPaged',
     'ProtectionState',
     'HealthStatus',
+    'WorkloadType',
     'RecoveryType',
     'CopyOptions',
     'RestoreRequestType',
@@ -750,6 +758,7 @@ __all__ = [
     'SupportStatus',
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
+    'PolicyType',
     'OverwriteOptions',
     'WorkloadItemType',
     'SQLDataDirectoryType',
@@ -767,11 +776,11 @@ __all__ = [
     'WeekOfMonth',
     'MonthOfYear',
     'MabServerType',
-    'WorkloadType',
     'HttpStatusCode',
     'ValidationStatus',
     'CreateMode',
     'HealthState',
+    'IntentItemType',
     'ScheduleRunType',
     'AzureFileShareType',
     'InquiryStatus',

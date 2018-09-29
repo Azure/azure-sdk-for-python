@@ -21,8 +21,12 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
-    :param work_load_type: Type of workload for the backup management
-    :type work_load_type: str
+    :param work_load_type: Type of workload for the backup management.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type work_load_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param settings: Common settings for the backup management
     :type settings: ~azure.mgmt.recoveryservicesbackup.models.Settings
     :param sub_protection_policy: List of sub-protection policies which
