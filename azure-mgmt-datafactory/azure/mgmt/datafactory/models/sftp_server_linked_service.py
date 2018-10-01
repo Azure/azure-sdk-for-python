@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SftpServerLinkedService(LinkedService):
     """A linked service for an SSH File Transfer Protocol (SFTP) server. .
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class SftpServerLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The SFTP server host name. Type: string (or Expression with
-     resultType string).
+    :param host: Required. The SFTP server host name. Type: string (or
+     Expression with resultType string).
     :type host: object
     :param port: The TCP port number that the SFTP server uses to listen for
      client connections. Default value is 22. Type: integer (or Expression with
@@ -101,17 +103,17 @@ class SftpServerLinkedService(LinkedService):
         'host_key_fingerprint': {'key': 'typeProperties.hostKeyFingerprint', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, private_key_path=None, private_key_content=None, pass_phrase=None, skip_host_key_validation=None, host_key_fingerprint=None):
-        super(SftpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.port = port
-        self.authentication_type = authentication_type
-        self.user_name = user_name
-        self.password = password
-        self.encrypted_credential = encrypted_credential
-        self.private_key_path = private_key_path
-        self.private_key_content = private_key_content
-        self.pass_phrase = pass_phrase
-        self.skip_host_key_validation = skip_host_key_validation
-        self.host_key_fingerprint = host_key_fingerprint
+    def __init__(self, **kwargs):
+        super(SftpServerLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.port = kwargs.get('port', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.private_key_path = kwargs.get('private_key_path', None)
+        self.private_key_content = kwargs.get('private_key_content', None)
+        self.pass_phrase = kwargs.get('pass_phrase', None)
+        self.skip_host_key_validation = kwargs.get('skip_host_key_validation', None)
+        self.host_key_fingerprint = kwargs.get('host_key_fingerprint', None)
         self.type = 'Sftp'

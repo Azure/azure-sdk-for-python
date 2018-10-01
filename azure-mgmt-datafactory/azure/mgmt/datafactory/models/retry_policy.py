@@ -32,7 +32,7 @@ class RetryPolicy(Model):
         'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, count=None, interval_in_seconds=None):
-        super(RetryPolicy, self).__init__()
-        self.count = count
-        self.interval_in_seconds = interval_in_seconds
+    def __init__(self, **kwargs):
+        super(RetryPolicy, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)

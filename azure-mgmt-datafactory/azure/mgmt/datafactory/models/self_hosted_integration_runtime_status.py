@@ -18,6 +18,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,10 +28,10 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
-     'NeedRegistration', 'Online', 'Limited', 'Offline'
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
@@ -70,6 +72,14 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :param links: The list of linked integration runtimes that are created to
      share with this integration runtime.
     :type links: list[~azure.mgmt.datafactory.models.LinkedIntegrationRuntime]
+    :ivar pushed_version: The version that the integration runtime is going to
+     update to.
+    :vartype pushed_version: str
+    :ivar latest_version: The latest version on download center.
+    :vartype latest_version: str
+    :ivar auto_update_eta: The estimated time when the self-hosted integration
+     runtime will be updated.
+    :vartype auto_update_eta: datetime
     """
 
     _validation = {
@@ -87,6 +97,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'service_urls': {'readonly': True},
         'auto_update': {'readonly': True},
         'version_status': {'readonly': True},
+        'pushed_version': {'readonly': True},
+        'latest_version': {'readonly': True},
+        'auto_update_eta': {'readonly': True},
     }
 
     _attribute_map = {
@@ -107,15 +120,18 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
         'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
         'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
+        'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
+        'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
+        'auto_update_eta': {'key': 'typeProperties.autoUpdateETA', 'type': 'iso-8601'},
     }
 
-    def __init__(self, additional_properties=None, nodes=None, links=None):
-        super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties)
+    def __init__(self, **kwargs):
+        super(SelfHostedIntegrationRuntimeStatus, self).__init__(**kwargs)
         self.create_time = None
         self.task_queue_id = None
         self.internal_channel_encryption = None
         self.version = None
-        self.nodes = nodes
+        self.nodes = kwargs.get('nodes', None)
         self.scheduled_update_date = None
         self.update_delay_offset = None
         self.local_time_zone_offset = None
@@ -123,5 +139,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.service_urls = None
         self.auto_update = None
         self.version_status = None
-        self.links = links
+        self.links = kwargs.get('links', None)
+        self.pushed_version = None
+        self.latest_version = None
+        self.auto_update_eta = None
         self.type = 'SelfHosted'

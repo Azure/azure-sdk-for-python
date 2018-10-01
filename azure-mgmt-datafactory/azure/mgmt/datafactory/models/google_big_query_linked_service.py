@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class GoogleBigQueryLinkedService(LinkedService):
     """Google BigQuery service linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class GoogleBigQueryLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param project: The default BigQuery project to query against.
+    :param project: Required. The default BigQuery project to query against.
     :type project: object
     :param additional_projects: A comma-separated list of public BigQuery
      projects to access.
@@ -41,9 +43,10 @@ class GoogleBigQueryLinkedService(LinkedService):
      that combine BigQuery data with data from Google Drive. The default value
      is false.
     :type request_google_drive_scope: object
-    :param authentication_type: The OAuth 2.0 authentication mechanism used
-     for authentication. ServiceAuthentication can only be used on self-hosted
-     IR. Possible values include: 'ServiceAuthentication', 'UserAuthentication'
+    :param authentication_type: Required. The OAuth 2.0 authentication
+     mechanism used for authentication. ServiceAuthentication can only be used
+     on self-hosted IR. Possible values include: 'ServiceAuthentication',
+     'UserAuthentication'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.GoogleBigQueryAuthenticationType
     :param refresh_token: The refresh token obtained from Google for
@@ -104,18 +107,18 @@ class GoogleBigQueryLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, project, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, additional_projects=None, request_google_drive_scope=None, refresh_token=None, client_id=None, client_secret=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
-        super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.project = project
-        self.additional_projects = additional_projects
-        self.request_google_drive_scope = request_google_drive_scope
-        self.authentication_type = authentication_type
-        self.refresh_token = refresh_token
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.email = email
-        self.key_file_path = key_file_path
-        self.trusted_cert_path = trusted_cert_path
-        self.use_system_trust_store = use_system_trust_store
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(GoogleBigQueryLinkedService, self).__init__(**kwargs)
+        self.project = kwargs.get('project', None)
+        self.additional_projects = kwargs.get('additional_projects', None)
+        self.request_google_drive_scope = kwargs.get('request_google_drive_scope', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.refresh_token = kwargs.get('refresh_token', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.email = kwargs.get('email', None)
+        self.key_file_path = kwargs.get('key_file_path', None)
+        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
+        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'GoogleBigQuery'
