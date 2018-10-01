@@ -16,7 +16,7 @@ class ApplicationGatewayCustomError(Model):
     """Customer error of an application gateway.
 
     :param status_code: Status code of the application gateway customer error.
-     Possible values include: '403', '502'
+     Possible values include: 'HttpStatus403', 'HttpStatus502'
     :type status_code: str or
      ~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayCustomErrorStatusCode
     :param custom_error_page_url: Error page URL of the application gateway

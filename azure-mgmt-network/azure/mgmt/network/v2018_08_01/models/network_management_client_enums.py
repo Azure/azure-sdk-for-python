@@ -156,8 +156,8 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
 
 class ApplicationGatewayCustomErrorStatusCode(str, Enum):
 
-    four_zero_three = "403"
-    five_zero_two = "502"
+    http_status403 = "HttpStatus403"
+    http_status502 = "HttpStatus502"
 
 
 class ApplicationGatewayRequestRoutingRuleType(str, Enum):
