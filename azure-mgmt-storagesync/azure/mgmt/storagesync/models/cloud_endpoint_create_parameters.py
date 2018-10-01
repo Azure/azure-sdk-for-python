@@ -9,12 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class CloudEndpointCreateParameters(Model):
+class CloudEndpointCreateParameters(ProxyResource):
     """The parameters used when creating a storage sync service.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
     :param storage_account_share_name: Storage Account Share name
@@ -23,7 +34,16 @@ class CloudEndpointCreateParameters(Model):
     :type storage_account_tenant_id: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
         'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},

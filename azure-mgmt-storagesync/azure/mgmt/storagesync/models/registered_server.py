@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class RegisteredServer(Resource):
+class RegisteredServer(ProxyResource):
     """Registered Server resource.
 
     Variables are only populated by the server, and will be ignored when

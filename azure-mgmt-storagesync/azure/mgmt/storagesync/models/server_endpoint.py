@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class ServerEndpoint(Resource):
+class ServerEndpoint(ProxyResource):
     """Server Endpoint object.
 
     Variables are only populated by the server, and will be ignored when

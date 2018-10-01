@@ -9,12 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class RegisteredServerCreateParameters(Model):
-    """The parameters used when creating a storage sync service.
+class RegisteredServerCreateParameters(ProxyResource):
+    """The parameters used when creating a registered server.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
     :param server_certificate: Registered Server Certificate
     :type server_certificate: str
     :param agent_version: Registered Server Agent Version
@@ -35,7 +46,16 @@ class RegisteredServerCreateParameters(Model):
     :type friendly_name: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'server_certificate': {'key': 'properties.serverCertificate', 'type': 'str'},
         'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
         'server_os_version': {'key': 'properties.serverOSVersion', 'type': 'str'},

@@ -41,10 +41,10 @@ try:
     from .post_backup_response_py3 import PostBackupResponse
     from .workflow_array_py3 import WorkflowArray
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
-    from .proxy_resource_py3 import ProxyResource
     from .tracked_resource_py3 import TrackedResource
     from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
     from .storage_sync_api_error import StorageSyncApiError
@@ -77,10 +77,10 @@ except (SyntaxError, ImportError):
     from .post_backup_response import PostBackupResponse
     from .workflow_array import WorkflowArray
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
-    from .proxy_resource import ProxyResource
     from .tracked_resource import TrackedResource
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
+    from .proxy_resource import ProxyResource
 from .operation_entity_paged import OperationEntityPaged
 from .storage_sync_service_paged import StorageSyncServicePaged
 from .sync_group_paged import SyncGroupPaged
@@ -124,10 +124,10 @@ __all__ = [
     'PostBackupResponse',
     'WorkflowArray',
     'StorageSyncServiceUpdateParameters',
-    'ProxyResource',
     'TrackedResource',
     'AzureEntityResource',
     'Resource',
+    'ProxyResource',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
     'SyncGroupPaged',

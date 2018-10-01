@@ -9,12 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource_py3 import ProxyResource
 
 
-class ServerEndpointCreateParameters(Model):
+class ServerEndpointCreateParameters(ProxyResource):
     """The parameters used when creating a storage sync service.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
     :param server_local_path: Server Local path.
     :type server_local_path: str
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
@@ -31,11 +42,17 @@ class ServerEndpointCreateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
         'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'server_local_path': {'key': 'properties.serverLocalPath', 'type': 'str'},
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},

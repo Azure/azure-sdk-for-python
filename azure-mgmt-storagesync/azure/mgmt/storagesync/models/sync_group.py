@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class SyncGroup(Resource):
+class SyncGroup(ProxyResource):
     """Sync Group object.
 
     Variables are only populated by the server, and will be ignored when

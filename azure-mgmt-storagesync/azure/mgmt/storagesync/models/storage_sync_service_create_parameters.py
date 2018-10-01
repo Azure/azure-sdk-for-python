@@ -9,32 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .tracked_resource import TrackedResource
 
 
-class StorageSyncServiceCreateParameters(Model):
+class StorageSyncServiceCreateParameters(TrackedResource):
     """The parameters used when creating a storage sync service.
 
-    :param location: Required. Gets or sets the location of the resource. This
-     will be one of the supported and registered Azure Geo Regions (e.g. West
-     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
-     changed once it is created, but if an identical geo region is specified on
-     update, the request will succeed.
-    :type location: str
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used for viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key with a length no greater than 128
-     characters and a value with a length no greater than 256 characters.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(StorageSyncServiceCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)

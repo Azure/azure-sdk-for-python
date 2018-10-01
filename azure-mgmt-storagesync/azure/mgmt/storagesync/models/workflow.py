@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class Workflow(Resource):
+class Workflow(ProxyResource):
     """Workflow resource.
 
     Variables are only populated by the server, and will be ignored when
