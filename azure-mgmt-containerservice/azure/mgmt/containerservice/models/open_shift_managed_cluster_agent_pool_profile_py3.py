@@ -28,9 +28,9 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
      'Standard_D2s_v3', 'Standard_D4s_v3'
     :type vm_size: str or
      ~azure.mgmt.containerservice.models.OpenShiftContainerServiceVMSize
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
-     identifier.
-    :type vnet_subnet_id: str
+    :param subnet_cidr: Subnet CIDR for the peering. Default value:
+     "10.0.0.0/24" .
+    :type subnet_cidr: str
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
@@ -51,16 +51,16 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
         'name': {'key': 'name', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
+        'subnet_cidr': {'key': 'subnetCIDR', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=2, vnet_subnet_id: str=None, os_type="Linux", role=None, **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=2, subnet_cidr: str="10.0.0.0/24", os_type="Linux", role=None, **kwargs) -> None:
         super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
         self.vm_size = vm_size
-        self.vnet_subnet_id = vnet_subnet_id
+        self.subnet_cidr = subnet_cidr
         self.os_type = os_type
         self.role = role

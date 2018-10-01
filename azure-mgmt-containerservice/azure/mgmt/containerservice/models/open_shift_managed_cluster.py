@@ -45,6 +45,8 @@ class OpenShiftManagedCluster(Resource):
     :param fqdn: User-specified FQDN for OpenShift API server loadbalancer
      internal hostname.
     :type fqdn: str
+    :param network_profile: Configuration for OpenShift networking.
+    :type network_profile: ~azure.mgmt.containerservice.models.NetworkProfile
     :param router_profiles: Configuration for OpenShift router(s).
     :type router_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftRouterProfile]
@@ -79,6 +81,7 @@ class OpenShiftManagedCluster(Resource):
         'open_shift_version': {'key': 'properties.openShiftVersion', 'type': 'str'},
         'public_hostname': {'key': 'properties.publicHostname', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'router_profiles': {'key': 'properties.routerProfiles', 'type': '[OpenShiftRouterProfile]'},
         'master_pool_profile': {'key': 'properties.masterPoolProfile', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[OpenShiftManagedClusterAgentPoolProfile]'},
@@ -92,6 +95,7 @@ class OpenShiftManagedCluster(Resource):
         self.open_shift_version = kwargs.get('open_shift_version', None)
         self.public_hostname = kwargs.get('public_hostname', None)
         self.fqdn = kwargs.get('fqdn', None)
+        self.network_profile = kwargs.get('network_profile', None)
         self.router_profiles = kwargs.get('router_profiles', None)
         self.master_pool_profile = kwargs.get('master_pool_profile', None)
         self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)

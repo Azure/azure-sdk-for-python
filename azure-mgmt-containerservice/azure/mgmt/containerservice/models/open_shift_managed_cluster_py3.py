@@ -45,6 +45,8 @@ class OpenShiftManagedCluster(Resource):
     :param fqdn: User-specified FQDN for OpenShift API server loadbalancer
      internal hostname.
     :type fqdn: str
+    :param network_profile: Configuration for OpenShift networking.
+    :type network_profile: ~azure.mgmt.containerservice.models.NetworkProfile
     :param router_profiles: Configuration for OpenShift router(s).
     :type router_profiles:
      list[~azure.mgmt.containerservice.models.OpenShiftRouterProfile]
@@ -79,19 +81,21 @@ class OpenShiftManagedCluster(Resource):
         'open_shift_version': {'key': 'properties.openShiftVersion', 'type': 'str'},
         'public_hostname': {'key': 'properties.publicHostname', 'type': 'str'},
         'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'router_profiles': {'key': 'properties.routerProfiles', 'type': '[OpenShiftRouterProfile]'},
         'master_pool_profile': {'key': 'properties.masterPoolProfile', 'type': 'OpenShiftManagedClusterMasterPoolProfile'},
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[OpenShiftManagedClusterAgentPoolProfile]'},
         'auth_profile': {'key': 'properties.authProfile', 'type': 'OpenShiftManagedClusterAuthProfile'},
     }
 
-    def __init__(self, *, location: str, open_shift_version: str, tags=None, plan=None, public_hostname: str=None, fqdn: str=None, router_profiles=None, master_pool_profile=None, agent_pool_profiles=None, auth_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, open_shift_version: str, tags=None, plan=None, public_hostname: str=None, fqdn: str=None, network_profile=None, router_profiles=None, master_pool_profile=None, agent_pool_profiles=None, auth_profile=None, **kwargs) -> None:
         super(OpenShiftManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.provisioning_state = None
         self.open_shift_version = open_shift_version
         self.public_hostname = public_hostname
         self.fqdn = fqdn
+        self.network_profile = network_profile
         self.router_profiles = router_profiles
         self.master_pool_profile = master_pool_profile
         self.agent_pool_profiles = agent_pool_profiles

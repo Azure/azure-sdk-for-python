@@ -13,6 +13,7 @@ try:
     from .resource_py3 import Resource
     from .purchase_plan_py3 import PurchasePlan
     from .open_shift_router_profile_py3 import OpenShiftRouterProfile
+    from .network_profile_py3 import NetworkProfile
     from .open_shift_managed_cluster_master_pool_profile_py3 import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile_py3 import OpenShiftManagedClusterAgentPoolProfile
     from .open_shift_managed_cluster_identity_providers_py3 import OpenShiftManagedClusterIdentityProviders
@@ -52,6 +53,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .purchase_plan import PurchasePlan
     from .open_shift_router_profile import OpenShiftRouterProfile
+    from .network_profile import NetworkProfile
     from .open_shift_managed_cluster_master_pool_profile import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile import OpenShiftManagedClusterAgentPoolProfile
     from .open_shift_managed_cluster_identity_providers import OpenShiftManagedClusterIdentityProviders
@@ -105,6 +107,7 @@ __all__ = [
     'Resource',
     'PurchasePlan',
     'OpenShiftRouterProfile',
+    'NetworkProfile',
     'OpenShiftManagedClusterMasterPoolProfile',
     'OpenShiftManagedClusterAgentPoolProfile',
     'OpenShiftManagedClusterIdentityProviders',

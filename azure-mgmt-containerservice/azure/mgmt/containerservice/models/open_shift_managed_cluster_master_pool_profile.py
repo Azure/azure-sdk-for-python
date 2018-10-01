@@ -28,9 +28,8 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
      'Standard_D2s_v3', 'Standard_D4s_v3'
     :type vm_size: str or
      ~azure.mgmt.containerservice.models.OpenShiftContainerServiceVMSize
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
-     identifier.
-    :type vnet_subnet_id: str
+    :param subnet_cidr: Subnet CIDR for the peering.
+    :type subnet_cidr: str
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
@@ -46,7 +45,7 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
         'name': {'key': 'name', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
+        'subnet_cidr': {'key': 'subnetCIDR', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
@@ -55,5 +54,5 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
         self.name = kwargs.get('name', None)
         self.count = kwargs.get('count', 3)
         self.vm_size = kwargs.get('vm_size', None)
-        self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
+        self.subnet_cidr = kwargs.get('subnet_cidr', None)
         self.os_type = kwargs.get('os_type', "Linux")
