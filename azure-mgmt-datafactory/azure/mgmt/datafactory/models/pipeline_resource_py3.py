@@ -36,6 +36,9 @@ class PipelineResource(SubResource):
     :param parameters: List of parameters for pipeline.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param variables: List of variables for pipeline.
+    :type variables: dict[str,
+     ~azure.mgmt.datafactory.models.VariableSpecification]
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
     :param annotations: List of tags that can be used for describing the
@@ -63,17 +66,19 @@ class PipelineResource(SubResource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'activities': {'key': 'properties.activities', 'type': '[Activity]'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterSpecification}'},
+        'variables': {'key': 'properties.variables', 'type': '{VariableSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
-    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, concurrency: int=None, annotations=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, variables=None, concurrency: int=None, annotations=None, folder=None, **kwargs) -> None:
         super(PipelineResource, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
         self.activities = activities
         self.parameters = parameters
+        self.variables = variables
         self.concurrency = concurrency
         self.annotations = annotations
         self.folder = folder
