@@ -20,8 +20,13 @@ class ArtifactSourcePropertiesModel(Model):
 
     :param source_type: Required. The type of artifact source used.
     :type source_type: str
-    :param artifact_root: The root folder under which all artifacts for all
-     environments are expected to be organized.
+    :param artifact_root: The path from the location that the 'authentication'
+     property [say, a SAS URI to the blob container] refers to, to the location
+     of the artifacts. This can be used to differentiate different versions of
+     the artifacts. Or, different types of artifacts like binaries or
+     templates. The location referenced by the authentication property
+     concatenated with this optional artifactRoot path forms the artifact
+     source location where the artifacts are expected to be found.
     :type artifact_root: str
     :param authentication: Required. The authentication method to use to
      access the artifact source.

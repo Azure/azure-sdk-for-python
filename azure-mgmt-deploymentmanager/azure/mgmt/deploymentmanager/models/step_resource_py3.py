@@ -13,7 +13,7 @@ from .tracked_resource_py3 import TrackedResource
 
 
 class StepResource(TrackedResource):
-    """The resource representation of a deployment step.
+    """The resource representation of a rollout step.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -32,7 +32,7 @@ class StepResource(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param properties: Required. The properties for the resource.
+    :param properties: Required. The properties that define the step.
     :type properties: ~azure.mgmt.deploymentmanager.models.StepProperties
     """
 

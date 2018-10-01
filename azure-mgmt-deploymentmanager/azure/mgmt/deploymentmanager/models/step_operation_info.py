@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class StepOperationInfo(Model):
-    """Detailed information of specific step execution.
+    """Detailed information of a specific step run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar deployment_name: The name of the Azure Resource Manager deployment
-     initiated as part of the step.
+    :ivar deployment_name: The name of the ARM deployment initiated as part of
+     the step.
     :vartype deployment_name: str
     :ivar correlation_id: Unique identifier to track the request for ARM-based
      resources.

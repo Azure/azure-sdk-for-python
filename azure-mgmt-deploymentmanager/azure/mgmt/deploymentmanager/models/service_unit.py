@@ -18,7 +18,7 @@ class ServiceUnit(ServiceUnitProperties):
     All required parameters must be populated in order to send to Azure.
 
     :param target_resource_group: Required. The Azure Resource Group to which
-     the resources in the service unit belong to.
+     the resources in the service unit belong to or should be deployed to.
     :type target_resource_group: str
     :param deployment_mode: Required. Describes the type of ARM deployment to
      be performed on the resource. Possible values include: 'Incremental',

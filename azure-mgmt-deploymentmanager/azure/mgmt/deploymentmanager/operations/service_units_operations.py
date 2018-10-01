@@ -98,8 +98,8 @@ class ServiceUnitsOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, service_unit_info, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a service unit in the service within the referenced
-        topology resource.
+        """Creates or updates a service unit under the service in the service
+        topology.
 
         This is an asynchronous operation and can be polled to completion using
         the operation resource returned by this operation.
@@ -164,7 +164,7 @@ class ServiceUnitsOperations(object):
 
     def get(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a service unit resource.
+        """Gets the service unit.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -233,7 +233,7 @@ class ServiceUnitsOperations(object):
 
     def delete(
             self, resource_group_name, service_topology_name, service_name, service_unit_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a service unit resource.
+        """Deletes the service unit.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

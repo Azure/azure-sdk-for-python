@@ -20,8 +20,7 @@ class RolloutStep(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the step as specified in the rollout
-     specification input artifact.
+    :param name: Required. Name of the step.
     :type name: str
     :ivar status: Current state of the step.
     :vartype status: str
@@ -30,8 +29,8 @@ class RolloutStep(Model):
     :ivar operation_info: Detailed information of specific action execution.
     :vartype operation_info:
      ~azure.mgmt.deploymentmanager.models.StepOperationInfo
-    :ivar resource_operations: Set of resource operations that were performed
-     on the Azure resource that the action acted upon.
+    :ivar resource_operations: Set of resource operations that were performed,
+     if any, on an Azure resource.
     :vartype resource_operations:
      list[~azure.mgmt.deploymentmanager.models.ResourceOperation]
     :ivar messages: Supplementary informative messages during rollout.

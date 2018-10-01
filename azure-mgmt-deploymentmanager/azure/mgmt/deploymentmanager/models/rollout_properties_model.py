@@ -26,8 +26,7 @@ class RolloutPropertiesModel(Model):
     :ivar operation_info: Operational information of the rollout.
     :vartype operation_info:
      ~azure.mgmt.deploymentmanager.models.RolloutOperationInfo
-    :ivar services: Set of detailed step result information on target resource
-     groups.
+    :ivar services: The detailed information on the services being deployed.
     :vartype services: list[~azure.mgmt.deploymentmanager.models.Service]
     """
 

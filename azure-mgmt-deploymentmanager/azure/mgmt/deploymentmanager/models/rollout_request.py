@@ -13,7 +13,7 @@ from .tracked_resource import TrackedResource
 
 
 class RolloutRequest(TrackedResource):
-    """Defines the resource format for creating a rollout.
+    """Defines the PUT rollout request body.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,13 +36,14 @@ class RolloutRequest(TrackedResource):
     :type identity: ~azure.mgmt.deploymentmanager.models.Identity
     :param build_version: Required. The version of the build being deployed.
     :type build_version: str
-    :param artifact_source_id: The reference to the ARM resource Id where the
-     payload is located.
+    :param artifact_source_id: The reference to the artifact source resource
+     Id where the payload is located.
     :type artifact_source_id: str
-    :param target_service_topology_id: Required. The reference to the resource
-     Id of the service topology from which services are chosen to be deployed.
+    :param target_service_topology_id: Required. The resource Id of the
+     service topology from which service units are being referenced in step
+     groups to be deployed.
     :type target_service_topology_id: str
-    :param step_groups: Required. The list of steps that define the
+    :param step_groups: Required. The list of step groups that define the
      orchestration.
     :type step_groups: list[~azure.mgmt.deploymentmanager.models.Step]
     """
