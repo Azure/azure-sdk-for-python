@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class SyncGroupCreateParameters(Model):
-    """The parameters used when creating a sync group.
+class TriggerRolloverRequest(Model):
+    """Trigger Rollover Request.
 
-    :param properties: The parameters used to create the sync group
-    :type properties: object
+    :param certificate_data: Certificate Data
+    :type certificate_data: str
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'object'},
+        'certificate_data': {'key': 'certificateData', 'type': 'str'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
-        super(SyncGroupCreateParameters, self).__init__(**kwargs)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(TriggerRolloverRequest, self).__init__(**kwargs)
+        self.certificate_data = kwargs.get('certificate_data', None)

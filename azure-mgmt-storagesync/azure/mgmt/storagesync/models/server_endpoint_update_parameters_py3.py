@@ -15,27 +15,28 @@ from msrest.serialization import Model
 class ServerEndpointUpdateParameters(Model):
     """Parameters for updating an Server Endpoint.
 
-    :param tags: The user-specified tags associated with the server endpoint.
-    :type tags: dict[str, str]
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
     :type cloud_tiering: str or ~azure.mgmt.storagesync.models.enum
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
+    :param tier_files_older_than_days: Tier files older than days.
+    :type tier_files_older_than_days: int
     """
 
     _validation = {
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
+        'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
+        'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
     }
 
-    def __init__(self, *, tags=None, cloud_tiering=None, volume_free_space_percent: int=None, **kwargs) -> None:
+    def __init__(self, *, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, **kwargs) -> None:
         super(ServerEndpointUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
         self.cloud_tiering = cloud_tiering
         self.volume_free_space_percent = volume_free_space_percent
+        self.tier_files_older_than_days = tier_files_older_than_days

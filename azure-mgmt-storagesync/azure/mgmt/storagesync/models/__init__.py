@@ -22,6 +22,7 @@ try:
     from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
     from .cloud_endpoint_create_parameters_py3 import CloudEndpointCreateParameters
     from .server_endpoint_create_parameters_py3 import ServerEndpointCreateParameters
+    from .trigger_rollover_request_py3 import TriggerRolloverRequest
     from .registered_server_create_parameters_py3 import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
     from .server_endpoint_py3 import ServerEndpoint
@@ -57,6 +58,7 @@ except (SyntaxError, ImportError):
     from .sync_group_create_parameters import SyncGroupCreateParameters
     from .cloud_endpoint_create_parameters import CloudEndpointCreateParameters
     from .server_endpoint_create_parameters import ServerEndpointCreateParameters
+    from .trigger_rollover_request import TriggerRolloverRequest
     from .registered_server_create_parameters import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
     from .server_endpoint import ServerEndpoint
@@ -103,6 +105,7 @@ __all__ = [
     'SyncGroupCreateParameters',
     'CloudEndpointCreateParameters',
     'ServerEndpointCreateParameters',
+    'TriggerRolloverRequest',
     'RegisteredServerCreateParameters',
     'ServerEndpointUpdateParameters',
     'ServerEndpoint',

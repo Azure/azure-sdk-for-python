@@ -15,18 +15,6 @@ from msrest.serialization import Model
 class ServerEndpointCreateParameters(Model):
     """The parameters used when creating a storage sync service.
 
-    :param location: Required. Gets or sets the location of the resource. This
-     will be one of the supported and registered Azure Geo Regions (e.g. West
-     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
-     changed once it is created, but if an identical geo region is specified on
-     update, the request will succeed.
-    :type location: str
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used for viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key with a length no greater than 128
-     characters and a value with a length no greater than 256 characters.
-    :type tags: dict[str, str]
     :param server_local_path: Server Local path.
     :type server_local_path: str
     :param cloud_tiering: Cloud Tiering. Possible values include: 'on', 'off'
@@ -34,6 +22,8 @@ class ServerEndpointCreateParameters(Model):
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
+    :param tier_files_older_than_days: Tier files older than days.
+    :type tier_files_older_than_days: int
     :param friendly_name: Friendly Name
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
@@ -42,24 +32,23 @@ class ServerEndpointCreateParameters(Model):
 
     _validation = {
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
+        'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'server_local_path': {'key': 'properties.serverLocalPath', 'type': 'str'},
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
+        'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ServerEndpointCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.server_local_path = kwargs.get('server_local_path', None)
         self.cloud_tiering = kwargs.get('cloud_tiering', None)
         self.volume_free_space_percent = kwargs.get('volume_free_space_percent', None)
+        self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)

@@ -15,18 +15,6 @@ from msrest.serialization import Model
 class CloudEndpointCreateParameters(Model):
     """The parameters used when creating a storage sync service.
 
-    :param location: Required. Gets or sets the location of the resource. This
-     will be one of the supported and registered Azure Geo Regions (e.g. West
-     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
-     changed once it is created, but if an identical geo region is specified on
-     update, the request will succeed.
-    :type location: str
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used for viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key with a length no greater than 128
-     characters and a value with a length no greater than 256 characters.
-    :type tags: dict[str, str]
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
     :param storage_account_share_name: Storage Account Share name
@@ -36,8 +24,6 @@ class CloudEndpointCreateParameters(Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
         'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
@@ -45,8 +31,6 @@ class CloudEndpointCreateParameters(Model):
 
     def __init__(self, **kwargs):
         super(CloudEndpointCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
         self.storage_account_share_name = kwargs.get('storage_account_share_name', None)
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
