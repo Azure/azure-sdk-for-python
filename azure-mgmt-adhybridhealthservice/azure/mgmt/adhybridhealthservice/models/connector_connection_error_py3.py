@@ -27,7 +27,7 @@ class ConnectorConnectionError(Model):
     :type error_code: str
     :param message: The message for the connection error.
     :type message: str
-    :param time_occured: The time when the connection error occured.
+    :param time_occured: The time when the connection error occurred.
     :type time_occured: datetime
     :param server: The server where the connection error happened.
     :type server: str

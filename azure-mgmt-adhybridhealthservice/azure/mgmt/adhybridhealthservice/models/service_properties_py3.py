@@ -27,7 +27,7 @@ class ServiceProperties(Model):
      onboarded to Azure Active Directory Connect Health.
     :type created_date: datetime
     :param custom_notification_emails: The list of additional emails that are
-     configured to recieve notifications about the service.
+     configured to receive notifications about the service.
     :type custom_notification_emails: list[str]
     :param disabled: Indicates if the service is disabled or not.
     :type disabled: bool

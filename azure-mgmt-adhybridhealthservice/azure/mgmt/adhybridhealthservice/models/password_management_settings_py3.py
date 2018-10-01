@@ -22,7 +22,7 @@ class PasswordManagementSettings(Model):
     :type extension_file_path: str
     :param connect_to: Connection point of password management.
     :type connect_to: str
-    :param connection_timeout: Connection timeoit for password extension.
+    :param connection_timeout: Connection timeout for password extension.
     :type connection_timeout: int
     :param user: User to execute password extension.
     :type user: str
@@ -37,7 +37,7 @@ class PasswordManagementSettings(Model):
     :param requires_secure_connection: Indicates if a secure connection is
      required for password management.
     :type requires_secure_connection: bool
-    :param unlock_account: Indicates if accounts should be unloacked when
+    :param unlock_account: Indicates if accounts should be unlocked when
      resetting password.
     :type unlock_account: bool
     """

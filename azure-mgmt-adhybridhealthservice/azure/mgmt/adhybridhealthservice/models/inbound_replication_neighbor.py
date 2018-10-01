@@ -17,7 +17,7 @@ class InboundReplicationNeighbor(Model):
 
     :param source_domain_controller: The name of the source domain controller.
     :type source_domain_controller: str
-    :param consecutive_failure_count: The number of consecutive faulire
+    :param consecutive_failure_count: The number of consecutive failure
      counts.
     :type consecutive_failure_count: int
     :param naming_context: The naming context.

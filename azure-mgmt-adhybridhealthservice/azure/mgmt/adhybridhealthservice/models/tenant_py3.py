@@ -26,7 +26,7 @@ class Tenant(Model):
      automatically receive updates for Azure Active Directory Connect Health
      client side features.
     :type agent_auto_update: bool
-    :param alert_suppression_time_in_mins: The time in minutues after which an
+    :param alert_suppression_time_in_mins: The time in minutes after which an
      alert will be autosupressed.
     :type alert_suppression_time_in_mins: int
     :param consented_to_microsoft_dev_ops: Indicates if the tenant data can be

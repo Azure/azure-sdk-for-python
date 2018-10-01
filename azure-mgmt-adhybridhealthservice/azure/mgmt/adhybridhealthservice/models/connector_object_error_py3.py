@@ -33,7 +33,7 @@ class ConnectorObjectError(Model):
     :type line_number: int
     :param column_number: The column number for the object error.
     :type column_number: int
-    :param dn: The distingished name of the object.
+    :param dn: The distinguished name of the object.
     :type dn: str
     :param anchor: The name for the anchor of the object.
     :type anchor: str

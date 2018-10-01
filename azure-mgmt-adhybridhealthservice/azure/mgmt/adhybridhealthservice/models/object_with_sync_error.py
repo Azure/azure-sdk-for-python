@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ObjectWithSyncError(Model):
-    """The objects withg sync errors.
+    """The objects with sync errors.
 
     :param source_of_authority: The source of authority.
     :type source_of_authority: str
@@ -31,7 +31,7 @@ class ObjectWithSyncError(Model):
     :type user_principal_name: str
     :param object_guid: The object guid.
     :type object_guid: str
-    :param attribute_multi_values: Indicates if the atttibute is multi-valued
+    :param attribute_multi_values: Indicates if the attribute is multi-valued
      or not.
     :type attribute_multi_values: bool
     :param min_limit: The minimum limit.
@@ -42,7 +42,7 @@ class ObjectWithSyncError(Model):
     :type distinguished_name: str
     :param mail: The email.
     :type mail: str
-    :param time_occured: The date and time of occurance.
+    :param time_occured: The date and time of occurrance.
     :type time_occured: datetime
     :param error_type: The error type.
     :type error_type: str
