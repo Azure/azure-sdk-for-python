@@ -13,15 +13,16 @@ from .authentication_py3 import Authentication
 
 
 class SasAuthentication(Authentication):
-    """Defines the authentication properties to access the artifacts using Azure
-    Storage SAS URI.
+    """Defines the properties to access the artifacts using an Azure Storage SAS
+    URI.
 
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Constant filled by server.
     :type type: str
-    :param sas_uri: Required. The complete SAS URI to the location of the
-     artifacts.
+    :param sas_uri: Required. The SAS URI to the Azure Storage blob container.
+     Any offset from the root of the container to where the artifacts are
+     located can be defined in the artifactRoot.
     :type sas_uri: str
     """
 

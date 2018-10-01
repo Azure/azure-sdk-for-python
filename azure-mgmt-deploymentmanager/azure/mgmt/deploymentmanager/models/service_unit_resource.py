@@ -33,7 +33,7 @@ class ServiceUnitResource(TrackedResource):
     :param location: Required. The geo-location where the resource lives
     :type location: str
     :param target_resource_group: Required. The Azure Resource Group to which
-     the resources in the service unit belong to.
+     the resources in the service unit belong to or should be deployed to.
     :type target_resource_group: str
     :param deployment_mode: Required. Describes the type of ARM deployment to
      be performed on the resource. Possible values include: 'Incremental',

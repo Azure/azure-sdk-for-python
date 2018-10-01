@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class ServiceTopologyProperties(Model):
     """The properties of a service topology.
 
-    :param artifact_source_id: The artifact source that contains the artifacts
-     that can be referenced in the service units.
+    :param artifact_source_id: The resource Id of the artifact source that
+     contains the artifacts that can be referenced in the service units.
     :type artifact_source_id: str
     """
 

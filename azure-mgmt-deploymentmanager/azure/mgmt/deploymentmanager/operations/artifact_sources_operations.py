@@ -39,7 +39,7 @@ class ArtifactSourcesOperations(object):
 
     def create_or_update(
             self, resource_group_name, artifact_source_name, artifact_source_info=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Artifact source.
+        """Creates or updates an artifact source.
 
         Synchronously creates a new artifact source or updates an existing
         artifact source.
@@ -115,7 +115,7 @@ class ArtifactSourcesOperations(object):
 
     def get(
             self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an artifact resource.
+        """Gets an artifact source.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -178,7 +178,7 @@ class ArtifactSourcesOperations(object):
 
     def delete(
             self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an artifact source resource.
+        """Deletes an artifact source.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

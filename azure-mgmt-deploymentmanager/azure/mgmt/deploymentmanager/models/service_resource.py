@@ -13,7 +13,7 @@ from .tracked_resource import TrackedResource
 
 
 class ServiceResource(TrackedResource):
-    """The resource representation of a service in a topology.
+    """The resource representation of a service in a service topology.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -33,10 +33,10 @@ class ServiceResource(TrackedResource):
     :param location: Required. The geo-location where the resource lives
     :type location: str
     :param target_location: Required. The Azure location to which the
-     resources in the service belong to.
+     resources in the service belong to or should be deployed to.
     :type target_location: str
     :param target_subscription_id: Required. The subscription to which the
-     resources in the service belong to.
+     resources in the service belong to or should be deployed to.
     :type target_subscription_id: str
     """
 

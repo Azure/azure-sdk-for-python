@@ -32,8 +32,8 @@ class ServiceTopologyResource(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param artifact_source_id: The artifact source that contains the artifacts
-     that can be referenced in the service units.
+    :param artifact_source_id: The resource Id of the artifact source that
+     contains the artifacts that can be referenced in the service units.
     :type artifact_source_id: str
     """
 

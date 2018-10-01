@@ -159,7 +159,7 @@ class RolloutsOperations(object):
 
     def get(
             self, resource_group_name, rollout_name, retry_attempt=None, custom_headers=None, raw=False, **operation_config):
-        """Gets detailed information of an ongoing or completed rollout.
+        """Gets detailed information of a rollout.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -229,7 +229,7 @@ class RolloutsOperations(object):
             self, resource_group_name, rollout_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a rollout resource.
 
-        A rollout can only be deleted if it is in a terminal state.
+        Only rollouts in terminal state can be deleted.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -285,7 +285,7 @@ class RolloutsOperations(object):
             self, resource_group_name, rollout_name, custom_headers=None, raw=False, **operation_config):
         """Stops a running rollout.
 
-        A rollout can be canceled only if it is in running state.
+        Only running rollouts can be canceled.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -350,7 +350,7 @@ class RolloutsOperations(object):
             self, resource_group_name, rollout_name, skip_succeeded=None, custom_headers=None, raw=False, **operation_config):
         """Restarts a failed rollout and optionally skips all succeeded steps.
 
-        A rollout can be restarted only if is in a terminal state and failed.
+        Only failed rollouts can be restarted.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

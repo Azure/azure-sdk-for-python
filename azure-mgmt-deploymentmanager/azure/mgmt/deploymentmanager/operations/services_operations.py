@@ -39,7 +39,7 @@ class ServicesOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_topology_name, service_name, service_info, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a service in the topology.
+        """Creates or updates a service in the service topology.
 
         Synchronously creates a new service or updates an existing service.
 
@@ -50,7 +50,7 @@ class ServicesOperations(object):
         :type service_topology_name: str
         :param service_name: The name of the service resource.
         :type service_name: str
-        :param service_info: The topoogy group resource object
+        :param service_info: The service object
         :type service_info:
          ~azure.mgmt.deploymentmanager.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
@@ -114,7 +114,7 @@ class ServicesOperations(object):
 
     def get(
             self, resource_group_name, service_topology_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a service resource.
+        """Gets the service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -180,7 +180,7 @@ class ServicesOperations(object):
 
     def delete(
             self, resource_group_name, service_topology_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a service resource.
+        """Deletes the service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

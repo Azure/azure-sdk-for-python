@@ -39,7 +39,7 @@ class StepsOperations(object):
 
     def create_or_update(
             self, resource_group_name, step_name, step_info=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a deployment step.
+        """Creates or updates a rollout step with the given step properties.
 
         Synchronously creates a new step or updates an existing step.
 
@@ -48,7 +48,7 @@ class StepsOperations(object):
         :type resource_group_name: str
         :param step_name: The name of the deployment step.
         :type step_name: str
-        :param step_info: The resource object.
+        :param step_info: The step object.
         :type step_info: ~azure.mgmt.deploymentmanager.models.StepResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -113,7 +113,7 @@ class StepsOperations(object):
 
     def get(
             self, resource_group_name, step_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a topology resource.
+        """Gets the step.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -176,7 +176,7 @@ class StepsOperations(object):
 
     def delete(
             self, resource_group_name, step_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a deployment step.
+        """Deletes the step.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

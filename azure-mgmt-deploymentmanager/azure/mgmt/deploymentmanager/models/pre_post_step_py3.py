@@ -17,7 +17,7 @@ class PrePostStep(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param step_id: Required. The reference to the ARM resource Id of a step.
+    :param step_id: Required. The resource Id of the step to be run.
     :type step_id: str
     """
 

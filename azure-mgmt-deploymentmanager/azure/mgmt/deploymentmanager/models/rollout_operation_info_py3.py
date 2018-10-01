@@ -18,11 +18,13 @@ class RolloutOperationInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar retry_attempt: The ordinal count of retry attempt. 0 if no retries
-     of the rollout have been performed.
+    :ivar retry_attempt: The ordinal count of the number of retry attempts on
+     a rollout. 0 if no retries of the rollout have been performed. If the
+     rollout is updated with a PUT, this count is reset to 0.
     :vartype retry_attempt: int
-    :ivar skip_succeeded_on_retry: True if skipping all successful steps in
-     the given retry attempt was chosen. False otherwise.
+    :ivar skip_succeeded_on_retry: True, if all steps that succeeded on the
+     previous run/attempt were chosen to be skipped in this retry attempt.
+     False, otherwise.
     :vartype skip_succeeded_on_retry: bool
     :ivar start_time: The start time of the rollout in UTC.
     :vartype start_time: datetime

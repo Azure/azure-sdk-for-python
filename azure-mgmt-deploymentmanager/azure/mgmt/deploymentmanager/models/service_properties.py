@@ -18,10 +18,10 @@ class ServiceProperties(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param target_location: Required. The Azure location to which the
-     resources in the service belong to.
+     resources in the service belong to or should be deployed to.
     :type target_location: str
     :param target_subscription_id: Required. The subscription to which the
-     resources in the service belong to.
+     resources in the service belong to or should be deployed to.
     :type target_subscription_id: str
     """
 

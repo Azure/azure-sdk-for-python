@@ -13,7 +13,7 @@ from .tracked_resource_py3 import TrackedResource
 
 
 class Rollout(TrackedResource):
-    """Defines the rollout resource.
+    """Defines the rollout.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,13 +36,14 @@ class Rollout(TrackedResource):
     :type identity: ~azure.mgmt.deploymentmanager.models.Identity
     :param build_version: Required. The version of the build being deployed.
     :type build_version: str
-    :param artifact_source_id: The reference to the ARM resource Id where the
-     payload is located.
+    :param artifact_source_id: The reference to the artifact source resource
+     Id where the payload is located.
     :type artifact_source_id: str
-    :param target_service_topology_id: Required. The reference to the resource
-     Id of the service topology from which services are chosen to be deployed.
+    :param target_service_topology_id: Required. The resource Id of the
+     service topology from which service units are being referenced in step
+     groups to be deployed.
     :type target_service_topology_id: str
-    :param step_groups: Required. The list of steps that define the
+    :param step_groups: Required. The list of step groups that define the
      orchestration.
     :type step_groups: list[~azure.mgmt.deploymentmanager.models.Step]
     :ivar status: The current status of the rollout.
@@ -53,8 +54,7 @@ class Rollout(TrackedResource):
     :ivar operation_info: Operational information of the rollout.
     :vartype operation_info:
      ~azure.mgmt.deploymentmanager.models.RolloutOperationInfo
-    :ivar services: Set of detailed step result information on target resource
-     groups.
+    :ivar services: The detailed information on the services being deployed.
     :vartype services: list[~azure.mgmt.deploymentmanager.models.Service]
     """
 

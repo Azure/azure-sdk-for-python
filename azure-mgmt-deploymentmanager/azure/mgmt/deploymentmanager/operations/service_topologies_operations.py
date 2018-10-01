@@ -113,7 +113,7 @@ class ServiceTopologiesOperations(object):
 
     def get(
             self, resource_group_name, service_topology_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a topology resource.
+        """Gets the service topology.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -176,7 +176,7 @@ class ServiceTopologiesOperations(object):
 
     def delete(
             self, resource_group_name, service_topology_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a topology resource.
+        """Deletes the service topology.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
