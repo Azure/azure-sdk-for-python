@@ -94,8 +94,8 @@ class BatchAccount(Resource):
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(BatchAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(BatchAccount, self).__init__(**kwargs)
         self.account_endpoint = None
         self.provisioning_state = None
         self.pool_allocation_mode = None

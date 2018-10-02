@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class TaskSchedulingPolicy(Model):
     """Specifies how tasks should be distributed across compute nodes.
 
-    :param node_fill_type: How tasks should be distributed across compute
-     nodes. Possible values include: 'Spread', 'Pack'
+    All required parameters must be populated in order to send to Azure.
+
+    :param node_fill_type: Required. How tasks should be distributed across
+     compute nodes. Possible values include: 'Spread', 'Pack'
     :type node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
@@ -28,6 +30,6 @@ class TaskSchedulingPolicy(Model):
         'node_fill_type': {'key': 'nodeFillType', 'type': 'ComputeNodeFillType'},
     }
 
-    def __init__(self, node_fill_type):
-        super(TaskSchedulingPolicy, self).__init__()
-        self.node_fill_type = node_fill_type
+    def __init__(self, **kwargs):
+        super(TaskSchedulingPolicy, self).__init__(**kwargs)
+        self.node_fill_type = kwargs.get('node_fill_type', None)

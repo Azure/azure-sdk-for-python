@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class DeleteCertificateError(Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are
-     intended to be consumed programmatically.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. An identifier for the error. Codes are invariant
+     and are intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the error, intended to be suitable
-     for display in a user interface.
+    :param message: Required. A message describing the error, intended to be
+     suitable for display in a user interface.
     :type message: str
     :param target: The target of the particular error. For example, the name
      of the property in error.
@@ -40,9 +42,9 @@ class DeleteCertificateError(Model):
         'details': {'key': 'details', 'type': '[DeleteCertificateError]'},
     }
 
-    def __init__(self, code, message, target=None, details=None):
-        super(DeleteCertificateError, self).__init__()
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+    def __init__(self, **kwargs):
+        super(DeleteCertificateError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)

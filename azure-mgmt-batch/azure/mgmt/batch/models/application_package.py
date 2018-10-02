@@ -59,8 +59,8 @@ class ApplicationPackage(Model):
         'last_activation_time': {'key': 'lastActivationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(ApplicationPackage, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationPackage, self).__init__(**kwargs)
         self.id = None
         self.version = None
         self.state = None
