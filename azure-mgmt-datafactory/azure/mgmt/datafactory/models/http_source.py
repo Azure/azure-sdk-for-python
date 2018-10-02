@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class HttpSource(CopySource):
     """A copy activity source for an HTTP file.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class HttpSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param http_request_timeout: Specifies the timeout for a HTTP client to
      get HTTP response from HTTP server. The default value is equivalent to
@@ -47,7 +49,7 @@ class HttpSource(CopySource):
         'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, http_request_timeout=None):
-        super(HttpSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.http_request_timeout = http_request_timeout
+    def __init__(self, **kwargs):
+        super(HttpSource, self).__init__(**kwargs)
+        self.http_request_timeout = kwargs.get('http_request_timeout', None)
         self.type = 'HttpSource'

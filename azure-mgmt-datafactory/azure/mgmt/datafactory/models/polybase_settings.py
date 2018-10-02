@@ -44,10 +44,10 @@ class PolybaseSettings(Model):
         'use_type_default': {'key': 'useTypeDefault', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, reject_type=None, reject_value=None, reject_sample_value=None, use_type_default=None):
-        super(PolybaseSettings, self).__init__()
-        self.additional_properties = additional_properties
-        self.reject_type = reject_type
-        self.reject_value = reject_value
-        self.reject_sample_value = reject_sample_value
-        self.use_type_default = use_type_default
+    def __init__(self, **kwargs):
+        super(PolybaseSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.reject_type = kwargs.get('reject_type', None)
+        self.reject_value = kwargs.get('reject_value', None)
+        self.reject_sample_value = kwargs.get('reject_sample_value', None)
+        self.use_type_default = kwargs.get('use_type_default', None)
