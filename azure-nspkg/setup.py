@@ -32,7 +32,7 @@ if sys.version_info[0] < 3:
 
 setup(
     name='azure-nspkg',
-    version='3.0.1',
+    version='3.0.2',
     description='Microsoft Azure Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
