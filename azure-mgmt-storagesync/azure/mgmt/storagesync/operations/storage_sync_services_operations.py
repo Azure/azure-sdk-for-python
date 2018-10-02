@@ -105,7 +105,7 @@ class StorageSyncServicesOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageSync/locations/{locationName}/checkNameAvailability'}
 
     def create(
-            self, resource_group_name, storage_sync_service_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a new StorageSyncService.
 
         :param resource_group_name: The name of the resource group. The name
@@ -114,10 +114,9 @@ class StorageSyncServicesOperations(object):
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
         :type storage_sync_service_name: str
-        :param location: The geo-location where the resource lives
-        :type location: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Storage Sync Service resource name.
+        :type parameters:
+         ~azure.mgmt.storagesync.models.StorageSyncServiceCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -129,8 +128,6 @@ class StorageSyncServicesOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
-        parameters = models.StorageSyncServiceCreateParameters(tags=tags, location=location)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
