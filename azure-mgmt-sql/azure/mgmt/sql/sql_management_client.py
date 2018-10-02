@@ -73,6 +73,9 @@ from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
+from .operations.managed_database_vulnerability_assessment_rule_baselines_operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+from .operations.managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
+from .operations.managed_database_vulnerability_assessments_operations import ManagedDatabaseVulnerabilityAssessmentsOperations
 from .operations.instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .operations.backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from .operations.tde_certificates_operations import TdeCertificatesOperations
@@ -241,6 +244,12 @@ class SqlManagementClient(SDKClient):
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
     :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScans operations
     :vartype database_vulnerability_assessment_scans: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
+    :ivar managed_database_vulnerability_assessment_rule_baselines: ManagedDatabaseVulnerabilityAssessmentRuleBaselines operations
+    :vartype managed_database_vulnerability_assessment_rule_baselines: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar managed_database_vulnerability_assessment_scans: ManagedDatabaseVulnerabilityAssessmentScans operations
+    :vartype managed_database_vulnerability_assessment_scans: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentScansOperations
+    :ivar managed_database_vulnerability_assessments: ManagedDatabaseVulnerabilityAssessments operations
+    :vartype managed_database_vulnerability_assessments: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentsOperations
     :ivar instance_failover_groups: InstanceFailoverGroups operations
     :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
     :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
@@ -392,6 +401,12 @@ class SqlManagementClient(SDKClient):
         self.capabilities = CapabilitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessment_rule_baselines = ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessment_scans = ManagedDatabaseVulnerabilityAssessmentScansOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessments = ManagedDatabaseVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.instance_failover_groups = InstanceFailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
