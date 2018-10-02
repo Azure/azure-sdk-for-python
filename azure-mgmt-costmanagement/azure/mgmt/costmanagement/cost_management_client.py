@@ -19,6 +19,7 @@ from .operations.report_config_operations import ReportConfigOperations
 from .operations.billing_account_dimensions_operations import BillingAccountDimensionsOperations
 from .operations.subscription_dimensions_operations import SubscriptionDimensionsOperations
 from .operations.resource_group_dimensions_operations import ResourceGroupDimensionsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -68,6 +69,8 @@ class CostManagementClient(SDKClient):
     :vartype subscription_dimensions: azure.mgmt.costmanagement.operations.SubscriptionDimensionsOperations
     :ivar resource_group_dimensions: ResourceGroupDimensions operations
     :vartype resource_group_dimensions: azure.mgmt.costmanagement.operations.ResourceGroupDimensionsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.costmanagement.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -95,6 +98,8 @@ class CostManagementClient(SDKClient):
         self.subscription_dimensions = SubscriptionDimensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_group_dimensions = ResourceGroupDimensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def query_subscription(
