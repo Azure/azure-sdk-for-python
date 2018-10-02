@@ -45,7 +45,7 @@ class OpenShiftManagedClusterMasterPoolProfile(Model):
         'name': {'key': 'name', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'subnet_cidr': {'key': 'subnetCIDR', 'type': 'str'},
+        'subnet_cidr': {'key': 'subnetCidr', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 

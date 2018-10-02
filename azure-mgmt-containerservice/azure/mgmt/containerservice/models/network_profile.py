@@ -23,8 +23,8 @@ class NetworkProfile(Model):
     """
 
     _attribute_map = {
-        'vnet_cidr': {'key': 'vnetCIDR', 'type': 'str'},
-        'peer_vnet_id': {'key': 'peerVnetID', 'type': 'str'},
+        'vnet_cidr': {'key': 'vnetCidr', 'type': 'str'},
+        'peer_vnet_id': {'key': 'peerVnetId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
