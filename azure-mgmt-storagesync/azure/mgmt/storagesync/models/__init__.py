@@ -39,7 +39,6 @@ try:
     from .pre_restore_request_py3 import PreRestoreRequest
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
-    from .workflow_array_py3 import WorkflowArray
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
     from .tracked_resource_py3 import TrackedResource
     from .azure_entity_resource_py3 import AzureEntityResource
@@ -75,7 +74,6 @@ except (SyntaxError, ImportError):
     from .pre_restore_request import PreRestoreRequest
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
-    from .workflow_array import WorkflowArray
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
     from .tracked_resource import TrackedResource
     from .azure_entity_resource import AzureEntityResource
@@ -87,6 +85,7 @@ from .sync_group_paged import SyncGroupPaged
 from .cloud_endpoint_paged import CloudEndpointPaged
 from .server_endpoint_paged import ServerEndpointPaged
 from .registered_server_paged import RegisteredServerPaged
+from .workflow_paged import WorkflowPaged
 from .storage_sync_management_client_enums import (
     Reason,
     NameAvailabilityReason,
@@ -122,7 +121,6 @@ __all__ = [
     'PreRestoreRequest',
     'BackupRequest',
     'PostBackupResponse',
-    'WorkflowArray',
     'StorageSyncServiceUpdateParameters',
     'TrackedResource',
     'AzureEntityResource',
@@ -134,6 +132,7 @@ __all__ = [
     'CloudEndpointPaged',
     'ServerEndpointPaged',
     'RegisteredServerPaged',
+    'WorkflowPaged',
     'Reason',
     'NameAvailabilityReason',
 ]

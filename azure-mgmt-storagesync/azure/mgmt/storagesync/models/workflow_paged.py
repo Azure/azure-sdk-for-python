@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class WorkflowArray(Model):
-    """Array of Workflow.
-
-    :param value: Collection of workflow items.
-    :type value: list[~azure.mgmt.storagesync.models.Workflow]
+class WorkflowPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workflow <azure.mgmt.storagesync.models.Workflow>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workflow]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workflow]'}
     }
 
-    def __init__(self, **kwargs):
-        super(WorkflowArray, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(WorkflowPaged, self).__init__(*args, **kwargs)
