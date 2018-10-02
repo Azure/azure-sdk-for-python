@@ -30,6 +30,9 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
+    :param identity: The identity of the container group, if configured.
+    :type identity:
+     ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group.
      This only appears in the response.
     :vartype provisioning_state: str
@@ -86,6 +89,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},
         'image_registry_credentials': {'key': 'properties.imageRegistryCredentials', 'type': '[ImageRegistryCredential]'},
@@ -100,6 +104,7 @@ class ContainerGroup(Resource):
 
     def __init__(self, **kwargs):
         super(ContainerGroup, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.containers = kwargs.get('containers', None)
         self.image_registry_credentials = kwargs.get('image_registry_credentials', None)
