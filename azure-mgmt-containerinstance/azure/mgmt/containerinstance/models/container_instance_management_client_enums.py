@@ -18,6 +18,14 @@ class ContainerNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
 class ContainerGroupRestartPolicy(str, Enum):
 
     always = "Always"
