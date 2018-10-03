@@ -1,10 +1,10 @@
 Microsoft Azure SDK for Event Hubs
 ==================================
 
-.. image:: https://img.shields.io/pypi/v/azure-eventhub.svg?maxAge=2592000
+.. image:: https://img.shields.io/pypi/v/azure-eventhub.svg
     :target: https://pypi.python.org/pypi/azure-eventhub/
 
-.. image:: https://img.shields.io/pypi/pyversions/azure-eventhub.svg?maxAge=2592000
+.. image:: https://img.shields.io/pypi/pyversions/azure-eventhub.svg
     :target: https://pypi.python.org/pypi/azure-eventhub/
 
 .. image:: https://travis-ci.org/Azure/azure-event-hubs-python.svg?branch=master
