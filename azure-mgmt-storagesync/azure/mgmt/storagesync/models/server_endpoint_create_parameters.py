@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class ServerEndpointCreateParameters(ProxyResource):
-    """The parameters used when creating a storage sync service.
+    """The parameters used when creating a server endpoint.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
