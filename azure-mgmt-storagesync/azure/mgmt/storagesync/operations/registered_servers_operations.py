@@ -448,7 +448,7 @@ class RegisteredServersOperations(object):
 
     def trigger_rollover(
             self, resource_group_name, storage_sync_service_name, server_id, certificate_data=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Recall a serverendpoint.
+        """Triggers Server certificate rollover.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
