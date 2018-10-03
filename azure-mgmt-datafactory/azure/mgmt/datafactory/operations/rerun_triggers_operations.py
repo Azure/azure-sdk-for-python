@@ -41,7 +41,7 @@ class RerunTriggersOperations(object):
 
     def create(
             self, resource_group_name, factory_name, trigger_name, rerun_trigger_name, rerun_tumbling_window_trigger_action_parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates?a?rerun?trigger.
+        """Creates a rerun trigger.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -51,8 +51,8 @@ class RerunTriggersOperations(object):
         :type trigger_name: str
         :param rerun_trigger_name: The rerun trigger name.
         :type rerun_trigger_name: str
-        :param rerun_tumbling_window_trigger_action_parameters:
-         Rerun?tumbling?window?trigger?action?parameters.
+        :param rerun_tumbling_window_trigger_action_parameters: Rerun tumbling
+         window trigger action parameters.
         :type rerun_tumbling_window_trigger_action_parameters:
          ~azure.mgmt.datafactory.models.RerunTumblingWindowTriggerActionParameters
         :param dict custom_headers: headers that will be added to the request

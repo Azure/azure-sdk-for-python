@@ -13,7 +13,8 @@ from .trigger import Trigger
 
 
 class RerunTumblingWindowTrigger(Trigger):
-    """Trigger?that?schedules?pipeline?reruns?for?all?fixed?time?interval?windows?from?a?requested?start?time?to?requested?end?time.
+    """Trigger that schedules pipeline reruns for all fixed time interval windows
+    from a requested start time to requested end time.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,16 +35,14 @@ class RerunTumblingWindowTrigger(Trigger):
     :type type: str
     :param parent_trigger: The parent trigger reference.
     :type parent_trigger: object
-    :param requested_start_time: Required.
-     The?start?time?for?the?time?period?for?which?restatement?is?initiated.
-     Only?UTC?time?is?currently?supported.
+    :param requested_start_time: Required. The start time for the time period
+     for which restatement is initiated. Only UTC time is currently supported.
     :type requested_start_time: datetime
-    :param requested_end_time: Required.
-     The?end?time?for?the?time?period?for?which?restatement?is?initiated.
-     Only?UTC?time?is?currently?supported.
+    :param requested_end_time: Required. The end time for the time period for
+     which restatement is initiated. Only UTC time is currently supported.
     :type requested_end_time: datetime
-    :param max_concurrency: Required.
-     The?max?number?of?parallel?time?windows?(ready?for?execution)?for?which?a?rerun?is?triggered.
+    :param max_concurrency: Required. The max number of parallel time windows
+     (ready for execution) for which a rerun is triggered.
     :type max_concurrency: int
     """
 

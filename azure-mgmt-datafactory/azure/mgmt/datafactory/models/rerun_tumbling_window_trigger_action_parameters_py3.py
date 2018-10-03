@@ -13,21 +13,18 @@ from msrest.serialization import Model
 
 
 class RerunTumblingWindowTriggerActionParameters(Model):
-    """Rerun?tumbling?window?trigger?Parameters.
+    """Rerun tumbling window trigger Parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required.
-     The?start?time?for?the?time?period?for?which?restatement?is?initiated.
-     Only?UTC?time?is?currently?supported.
+    :param start_time: Required. The start time for the time period for which
+     restatement is initiated. Only UTC time is currently supported.
     :type start_time: datetime
-    :param end_time: Required.
-     The?end?time?for?the?time?period?for?which?restatement?is?initiated.
-     Only?UTC?time?is?currently?supported.
+    :param end_time: Required. The end time for the time period for which
+     restatement is initiated. Only UTC time is currently supported.
     :type end_time: datetime
-    :param max_concurrency: Required.
-     The?max?number?of?parallel?time?windows?(ready?for?execution)?for?which
-     a?rerun?is?triggered.
+    :param max_concurrency: Required. The max number of parallel time windows
+     (ready for execution) for which a rerun is triggered.
     :type max_concurrency: int
     """
 
