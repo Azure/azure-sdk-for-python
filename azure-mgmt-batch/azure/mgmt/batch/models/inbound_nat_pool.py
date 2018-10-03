@@ -16,30 +16,32 @@ class InboundNatPool(Model):
     """A inbound NAT pool that can be used to address specific ports on compute
     nodes in a Batch pool externally.
 
-    :param name: The name of the endpoint. The name must be unique within a
-     Batch pool, can contain letters, numbers, underscores, periods, and
-     hyphens. Names must start with a letter or number, must end with a letter,
-     number, or underscore, and cannot exceed 77 characters.  If any invalid
-     values are provided the request fails with HTTP status code 400.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the endpoint. The name must be unique
+     within a Batch pool, can contain letters, numbers, underscores, periods,
+     and hyphens. Names must start with a letter or number, must end with a
+     letter, number, or underscore, and cannot exceed 77 characters.  If any
+     invalid values are provided the request fails with HTTP status code 400.
     :type name: str
-    :param protocol: The protocol of the endpoint. Possible values include:
-     'TCP', 'UDP'
+    :param protocol: Required. The protocol of the endpoint. Possible values
+     include: 'TCP', 'UDP'
     :type protocol: str or ~azure.mgmt.batch.models.InboundEndpointProtocol
-    :param backend_port: The port number on the compute node. This must be
-     unique within a Batch pool. Acceptable values are between 1 and 65535
-     except for 22, 3389, 29876 and 29877 as these are reserved. If any
+    :param backend_port: Required. The port number on the compute node. This
+     must be unique within a Batch pool. Acceptable values are between 1 and
+     65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any
      reserved values are provided the request fails with HTTP status code 400.
     :type backend_port: int
-    :param frontend_port_range_start: The first port number in the range of
-     external ports that will be used to provide inbound access to the
+    :param frontend_port_range_start: Required. The first port number in the
+     range of external ports that will be used to provide inbound access to the
      backendPort on individual compute nodes. Acceptable values range between 1
      and 65534 except ports from 50000 to 55000 which are reserved. All ranges
      within a pool must be distinct and cannot overlap. If any reserved or
      overlapping values are provided the request fails with HTTP status code
      400.
     :type frontend_port_range_start: int
-    :param frontend_port_range_end: The last port number in the range of
-     external ports that will be used to provide inbound access to the
+    :param frontend_port_range_end: Required. The last port number in the
+     range of external ports that will be used to provide inbound access to the
      backendPort on individual compute nodes. Acceptable values range between 1
      and 65534 except ports from 50000 to 55000 which are reserved by the Batch
      service. All ranges within a pool must be distinct and cannot overlap. If
@@ -74,11 +76,11 @@ class InboundNatPool(Model):
         'network_security_group_rules': {'key': 'networkSecurityGroupRules', 'type': '[NetworkSecurityGroupRule]'},
     }
 
-    def __init__(self, name, protocol, backend_port, frontend_port_range_start, frontend_port_range_end, network_security_group_rules=None):
-        super(InboundNatPool, self).__init__()
-        self.name = name
-        self.protocol = protocol
-        self.backend_port = backend_port
-        self.frontend_port_range_start = frontend_port_range_start
-        self.frontend_port_range_end = frontend_port_range_end
-        self.network_security_group_rules = network_security_group_rules
+    def __init__(self, **kwargs):
+        super(InboundNatPool, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.backend_port = kwargs.get('backend_port', None)
+        self.frontend_port_range_start = kwargs.get('frontend_port_range_start', None)
+        self.frontend_port_range_end = kwargs.get('frontend_port_range_end', None)
+        self.network_security_group_rules = kwargs.get('network_security_group_rules', None)

@@ -16,11 +16,13 @@ class AutoStorageProperties(AutoStorageBaseProperties):
     """Contains information about the auto-storage account associated with a Batch
     account.
 
-    :param storage_account_id: The resource ID of the storage account to be
-     used for auto-storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_account_id: Required. The resource ID of the storage
+     account to be used for auto-storage account.
     :type storage_account_id: str
-    :param last_key_sync: The UTC time at which storage keys were last
-     synchronized with the Batch account.
+    :param last_key_sync: Required. The UTC time at which storage keys were
+     last synchronized with the Batch account.
     :type last_key_sync: datetime
     """
 
@@ -34,6 +36,6 @@ class AutoStorageProperties(AutoStorageBaseProperties):
         'last_key_sync': {'key': 'lastKeySync', 'type': 'iso-8601'},
     }
 
-    def __init__(self, storage_account_id, last_key_sync):
-        super(AutoStorageProperties, self).__init__(storage_account_id=storage_account_id)
-        self.last_key_sync = last_key_sync
+    def __init__(self, **kwargs):
+        super(AutoStorageProperties, self).__init__(**kwargs)
+        self.last_key_sync = kwargs.get('last_key_sync', None)
