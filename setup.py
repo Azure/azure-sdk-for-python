@@ -54,7 +54,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=["examples", "tests"]),
+    packages=find_packages(exclude=["azure", "examples", "tests"]),
     install_requires=[
         'uamqp>=1.0.0,<2.0.0',
         'msrestazure~=0.4.11',
