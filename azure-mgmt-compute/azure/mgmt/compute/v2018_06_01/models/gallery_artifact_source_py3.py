@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GalleryArtifactSource(Model):
-    """The source of the gallery artifact.
+    """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
