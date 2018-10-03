@@ -30,6 +30,8 @@ try:
     from .dimension_py3 import Dimension
     from .query_column_py3 import QueryColumn
     from .query_py3 import Query
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
 except (SyntaxError, ImportError):
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
@@ -51,8 +53,11 @@ except (SyntaxError, ImportError):
     from .dimension import Dimension
     from .query_column import QueryColumn
     from .query import Query
+    from .operation_display import OperationDisplay
+    from .operation import Operation
 from .dimension_paged import DimensionPaged
 from .query_paged import QueryPaged
+from .operation_paged import OperationPaged
 from .cost_management_client_enums import (
     StatusType,
     RecurrenceType,
@@ -83,8 +88,11 @@ __all__ = [
     'Dimension',
     'QueryColumn',
     'Query',
+    'OperationDisplay',
+    'Operation',
     'DimensionPaged',
     'QueryPaged',
+    'OperationPaged',
     'StatusType',
     'RecurrenceType',
     'FormatType',

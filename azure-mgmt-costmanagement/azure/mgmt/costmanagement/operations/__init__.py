@@ -13,10 +13,12 @@ from .report_config_operations import ReportConfigOperations
 from .billing_account_dimensions_operations import BillingAccountDimensionsOperations
 from .subscription_dimensions_operations import SubscriptionDimensionsOperations
 from .resource_group_dimensions_operations import ResourceGroupDimensionsOperations
+from .operations import Operations
 
 __all__ = [
     'ReportConfigOperations',
     'BillingAccountDimensionsOperations',
     'SubscriptionDimensionsOperations',
     'ResourceGroupDimensionsOperations',
+    'Operations',
 ]
