@@ -22,6 +22,7 @@ try:
     from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
     from .cloud_endpoint_create_parameters_py3 import CloudEndpointCreateParameters
     from .server_endpoint_create_parameters_py3 import ServerEndpointCreateParameters
+    from .trigger_rollover_request_py3 import TriggerRolloverRequest
     from .registered_server_create_parameters_py3 import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
     from .server_endpoint_py3 import ServerEndpoint
@@ -38,12 +39,11 @@ try:
     from .pre_restore_request_py3 import PreRestoreRequest
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
-    from .workflow_array_py3 import WorkflowArray
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
-    from .proxy_resource_py3 import ProxyResource
     from .tracked_resource_py3 import TrackedResource
     from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .storage_sync_error_details import StorageSyncErrorDetails
     from .storage_sync_api_error import StorageSyncApiError
@@ -57,6 +57,7 @@ except (SyntaxError, ImportError):
     from .sync_group_create_parameters import SyncGroupCreateParameters
     from .cloud_endpoint_create_parameters import CloudEndpointCreateParameters
     from .server_endpoint_create_parameters import ServerEndpointCreateParameters
+    from .trigger_rollover_request import TriggerRolloverRequest
     from .registered_server_create_parameters import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
     from .server_endpoint import ServerEndpoint
@@ -73,18 +74,18 @@ except (SyntaxError, ImportError):
     from .pre_restore_request import PreRestoreRequest
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
-    from .workflow_array import WorkflowArray
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
-    from .proxy_resource import ProxyResource
     from .tracked_resource import TrackedResource
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
+    from .proxy_resource import ProxyResource
 from .operation_entity_paged import OperationEntityPaged
 from .storage_sync_service_paged import StorageSyncServicePaged
 from .sync_group_paged import SyncGroupPaged
 from .cloud_endpoint_paged import CloudEndpointPaged
 from .server_endpoint_paged import ServerEndpointPaged
 from .registered_server_paged import RegisteredServerPaged
+from .workflow_paged import WorkflowPaged
 from .storage_sync_management_client_enums import (
     Reason,
     NameAvailabilityReason,
@@ -103,6 +104,7 @@ __all__ = [
     'SyncGroupCreateParameters',
     'CloudEndpointCreateParameters',
     'ServerEndpointCreateParameters',
+    'TriggerRolloverRequest',
     'RegisteredServerCreateParameters',
     'ServerEndpointUpdateParameters',
     'ServerEndpoint',
@@ -119,18 +121,18 @@ __all__ = [
     'PreRestoreRequest',
     'BackupRequest',
     'PostBackupResponse',
-    'WorkflowArray',
     'StorageSyncServiceUpdateParameters',
-    'ProxyResource',
     'TrackedResource',
     'AzureEntityResource',
     'Resource',
+    'ProxyResource',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
     'SyncGroupPaged',
     'CloudEndpointPaged',
     'ServerEndpointPaged',
     'RegisteredServerPaged',
+    'WorkflowPaged',
     'Reason',
     'NameAvailabilityReason',
 ]

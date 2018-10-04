@@ -22,7 +22,7 @@ class SyncGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-04-02".
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-07-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class SyncGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-04-02"
+        self.api_version = "2018-07-01"
 
         self.config = config
 
@@ -108,7 +108,7 @@ class SyncGroupsOperations(object):
     list_by_storage_sync_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups'}
 
     def create(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """Create a new SyncGroup.
 
         :param resource_group_name: The name of the resource group. The name
@@ -119,9 +119,8 @@ class SyncGroupsOperations(object):
         :type storage_sync_service_name: str
         :param sync_group_name: Name of Sync Group resource.
         :type sync_group_name: str
-        :param parameters: Sync Group Body
-        :type parameters:
-         ~azure.mgmt.storagesync.models.SyncGroupCreateParameters
+        :param properties: The parameters used to create the sync group
+        :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -133,6 +132,8 @@ class SyncGroupsOperations(object):
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
+        parameters = models.SyncGroupCreateParameters(properties=properties)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {

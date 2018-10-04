@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class ServerEndpoint(Resource):
+class ServerEndpoint(ProxyResource):
     """Server Endpoint object.
 
     Variables are only populated by the server, and will be ignored when
@@ -33,6 +33,8 @@ class ServerEndpoint(Resource):
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
+    :param tier_files_older_than_days: Tier files older than days.
+    :type tier_files_older_than_days: int
     :param friendly_name: Friendly Name
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
@@ -52,6 +54,7 @@ class ServerEndpoint(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
+        'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -61,6 +64,7 @@ class ServerEndpoint(Resource):
         'server_local_path': {'key': 'properties.serverLocalPath', 'type': 'str'},
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
+        'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -74,6 +78,7 @@ class ServerEndpoint(Resource):
         self.server_local_path = kwargs.get('server_local_path', None)
         self.cloud_tiering = kwargs.get('cloud_tiering', None)
         self.volume_free_space_percent = kwargs.get('volume_free_space_percent', None)
+        self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)

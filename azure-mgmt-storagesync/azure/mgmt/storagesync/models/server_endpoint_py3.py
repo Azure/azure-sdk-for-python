@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .proxy_resource_py3 import ProxyResource
 
 
-class ServerEndpoint(Resource):
+class ServerEndpoint(ProxyResource):
     """Server Endpoint object.
 
     Variables are only populated by the server, and will be ignored when
@@ -33,6 +33,8 @@ class ServerEndpoint(Resource):
     :param volume_free_space_percent: Level of free space to be maintained by
      Cloud Tiering if it is enabled.
     :type volume_free_space_percent: int
+    :param tier_files_older_than_days: Tier files older than days.
+    :type tier_files_older_than_days: int
     :param friendly_name: Friendly Name
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
@@ -52,6 +54,7 @@ class ServerEndpoint(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
+        'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -61,6 +64,7 @@ class ServerEndpoint(Resource):
         'server_local_path': {'key': 'properties.serverLocalPath', 'type': 'str'},
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
+        'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -69,11 +73,12 @@ class ServerEndpoint(Resource):
         'sync_status': {'key': 'properties.syncStatus', 'type': 'object'},
     }
 
-    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, friendly_name: str=None, server_resource_id: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, sync_status=None, **kwargs) -> None:
+    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, sync_status=None, **kwargs) -> None:
         super(ServerEndpoint, self).__init__(**kwargs)
         self.server_local_path = server_local_path
         self.cloud_tiering = cloud_tiering
         self.volume_free_space_percent = volume_free_space_percent
+        self.tier_files_older_than_days = tier_files_older_than_days
         self.friendly_name = friendly_name
         self.server_resource_id = server_resource_id
         self.provisioning_state = provisioning_state

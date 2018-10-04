@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class WorkflowArray(Model):
-    """Array of Workflow.
+class TriggerRolloverRequest(Model):
+    """Trigger Rollover Request.
 
-    :param value: Collection of workflow items.
-    :type value: list[~azure.mgmt.storagesync.models.Workflow]
+    :param certificate_data: Certificate Data
+    :type certificate_data: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workflow]'},
+        'certificate_data': {'key': 'certificateData', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(WorkflowArray, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(TriggerRolloverRequest, self).__init__(**kwargs)
+        self.certificate_data = kwargs.get('certificate_data', None)
