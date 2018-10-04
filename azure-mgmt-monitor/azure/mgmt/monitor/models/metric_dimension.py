@@ -19,7 +19,8 @@ class MetricDimension(Model):
 
     :param name: Required. Name of the dimension.
     :type name: str
-    :param operator: Required. the dimension operator.
+    :param operator: Required. the dimension operator. Only 'Include' and
+     'Exclude' are supported
     :type operator: str
     :param values: Required. list of dimension values.
     :type values: list[str]
