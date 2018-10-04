@@ -1,4 +1,11 @@
+## Changes in 3.0.1 : ##
+
+- Bug fix in LocationCache
+- Bug fix endpoint retry logic
+- Fixed documentation
+
 ## Changes in 3.0.0 : ##
+
 - Multi-region write support added
 - Naming changes
   - DocumentClient to CosmosClient

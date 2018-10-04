@@ -87,23 +87,23 @@ class ConsistencyLevel(object):
     Consistency levels by order of strength are Strong, BoundedStaleness,
     Session, ConsistentPrefix and Eventual.
 
-    :ivar str Strong:
+    :ivar str ConsistencyLevel.Strong:
         Strong Consistency guarantees that read operations always
         return the value that was last written.
-    :ivar str BoundedStaleness:
+    :ivar str ConsistencyLevel.BoundedStaleness:
         Bounded Staleness guarantees that reads are not
         too out-of-date. This can be configured based on number of operations
         (MaxStalenessPrefix) or time (MaxStalenessIntervalInSeconds).
-    :ivar str Session:
+    :ivar str ConsistencyLevel.Session:
         Session Consistency guarantees monotonic reads (you never
         read old data, then new, then old again), monotonic writes (writes
         are ordered) and read your writes (your writes are immediately
         visible to your reads) within any single session.
-    :ivar str Eventual:
+    :ivar str ConsistencyLevel.Eventual:
         Eventual Consistency guarantees that reads will return
         a subset of writes. All writes will be eventually be available for
         reads.
-    :ivar str ConsistentPrefix: 
+    :ivar str ConsistencyLevel.ConsistentPrefix: 
         ConsistentPrefix Consistency guarantees that
         reads will return some prefix of all writes with no gaps. All writes
         will be eventually be available for reads.
@@ -147,11 +147,11 @@ class IndexingMode(object):
 class IndexKind(object):
     """Specifies the index kind of index specs.
 
-    :ivar str Hash:
+    :ivar str IndexKind.Hash:
         The index entries are hashed to serve point look up queries.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
 
-    :ivar str Range:
+    :ivar str IndexKind.Range:
         The index entries are ordered. Range indexes are optimized for
         inequality predicate queries with efficient range scans.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
@@ -162,7 +162,7 @@ class IndexKind(object):
 class PartitionKind(object):
     """Specifies the kind of partitioning to be applied.
 
-    :ivar str Hash:
+    :ivar str PartitionKind.Hash:
         The partition key definition path is hashed.
     """
     Hash = 'Hash'
@@ -236,11 +236,11 @@ class MediaReadMode(object):
 class PermissionMode(object):
     """Enumeration specifying applicability of permission.
 
-    :ivar str NoneMode:
+    :ivar str PermissionMode.NoneMode:
         None.
-    :ivar str Read:
+    :ivar str PermissionMode.Read:
         Permission applicable for read operations only.
-    :ivar str All:
+    :ivar str PermissionMode.All:
         Permission applicable for all operations.
     """
     NoneMode = 'none'  # None is python's key word.
@@ -251,9 +251,9 @@ class PermissionMode(object):
 class TriggerType(object):
     """Specifies the type of the trigger.
 
-    :ivar str Pre:
+    :ivar str TriggerType.Pre:
         Trigger should be executed before the associated operation(s).
-    :ivar str Post:
+    :ivar str TriggerType.Post:
         Trigger should be executed after the associated operation(s).
     """
     Pre = 'pre'
@@ -263,15 +263,15 @@ class TriggerType(object):
 class TriggerOperation(object):
     """Specifies the operations on which a trigger should be executed.
 
-    :ivar str All:
+    :ivar str TriggerOperation.All:
         All operations.
-    :ivar str Create:
+    :ivar str TriggerOperation.Create:
         Create operations only.
-    :ivar str Update:
+    :ivar str TriggerOperation.Update:
         Update operations only.
-    :ivar str Delete:
+    :ivar str TriggerOperation.Delete:
         Delete operations only.
-    :ivar str Replace:
+    :ivar str TriggerOperation.Replace:
         Replace operations only.
     """
     All = 'all'

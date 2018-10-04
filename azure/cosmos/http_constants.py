@@ -257,7 +257,7 @@ class Versions:
     """
     CurrentVersion = '2018-06-18'
     SDKName = 'azure-cosmos'
-    SDKVersion = '3.0.0'
+    SDKVersion = '3.0.1'
 
 
 class Delimiters:

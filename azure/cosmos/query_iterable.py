@@ -65,6 +65,7 @@ class QueryIterable(object):
         This constructor instantiates a QueryIterable for
         client side partitioning queries, and sets _MultiCollectionQueryExecutionContext
         as the internal execution context.
+        
         :param CosmosClient client:
             Instance of document client
         :param (str or dict) options:

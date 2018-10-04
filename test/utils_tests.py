@@ -31,7 +31,7 @@ class UtilsTests(unittest.TestCase):
     def test_user_agent(self):
         user_agent = utils._get_user_agent()
 
-        expected_user_agent = "{}/{} Python/{} documentdb-python-sdk/{}".format(
+        expected_user_agent = "{}/{} Python/{} azure-cosmos/{}".format(
             platform.system(), platform.release(), platform.python_version(), 
             http_constants.Versions.SDKVersion
         )
