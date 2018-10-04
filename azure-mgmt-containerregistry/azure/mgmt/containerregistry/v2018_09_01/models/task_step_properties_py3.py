@@ -26,6 +26,9 @@ class TaskStepProperties(Model):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageDependency]
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -37,6 +40,7 @@ class TaskStepProperties(Model):
 
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
+        'context_path': {'key': 'contextPath', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -44,7 +48,8 @@ class TaskStepProperties(Model):
         'type': {'Docker': 'DockerBuildStep', 'FileTask': 'FileTaskStep', 'EncodedTask': 'EncodedTaskStep'}
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, context_path: str=None, **kwargs) -> None:
         super(TaskStepProperties, self).__init__(**kwargs)
         self.base_image_dependencies = None
+        self.context_path = context_path
         self.type = None
