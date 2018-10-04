@@ -60,7 +60,7 @@ To generate documentations:
     .. code-block:: bash
 
       $ cd doc
-      $ sphinx-apidoc -f -e -o api ..\azure\cosmos
+      $ sphinx-apidoc -f -e -o api ..\azure
       $ make.bat html
 
 
@@ -74,5 +74,5 @@ Indices and tables
 .. toctree::
   :hidden:
 
-  api/azure-cosmos
+  api/azure
   api/modules

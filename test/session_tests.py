@@ -69,7 +69,6 @@ class SessionTests(unittest.TestCase):
 
     def test_clear_session_token(self):
         created_document = client.CreateItem(created_collection['_self'], {'id': '1', 'pk': 'mypk'})
-        print(client.session.get_session_token(created_collection['_self']))
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
@@ -79,4 +78,20 @@ class SessionTests(unittest.TestCase):
             self.assertEqual(client.session.get_session_token(created_collection['_self']), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+
+    def _MockExecuteFunctionInvalidSessionToken(self, function, *args, **kwargs):
+        response = {'_self':'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id':'1'}
+        headers = {HttpHeaders.SessionToken: '0:2', HttpHeaders.AlternateContentPath: 'dbs/testDatabase/colls/testCollection'}
+        return (response, headers)
+
+    def test_internal_server_error_raised_for_invalid_session_token_received_from_server(self):
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
+        try:
+            client.CreateItem(created_collection['_self'], {'id': '1', 'pk': 'mypk'})
+            self.fail()
+        except errors.HTTPFailure as e:
+            self.assertEqual(e._http_error_message, "Could not parse the received session token: 2")
+            self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction

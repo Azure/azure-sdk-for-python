@@ -28,6 +28,7 @@ import threading
 import azure.cosmos.base as base
 import azure.cosmos.http_constants as http_constants
 from azure.cosmos.vector_session_token import VectorSessionToken
+from azure.cosmos.errors import HTTPFailure
 
 class SessionContainer(object):
 
@@ -188,9 +189,12 @@ class SessionContainer(object):
             token_pairs = session_token.split(',')
             for token_pair in token_pairs:
                 tokens = token_pair.split(':')
-                id = tokens[0]
-                sessionToken = VectorSessionToken.create(tokens[1])
-                id_to_sessionlsn[id] = sessionToken
+                if (len(tokens) == 2):
+                    id = tokens[0]
+                    sessionToken = VectorSessionToken.create(tokens[1])
+                    if sessionToken is None:
+                        raise HTTPFailure(http_constants.StatusCodes.INTERNAL_SERVER_ERROR, "Could not parse the received session token: %s" % tokens[1])
+                    id_to_sessionlsn[id] = sessionToken
         return id_to_sessionlsn
 
 class Session:

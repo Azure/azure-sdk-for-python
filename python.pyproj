@@ -80,6 +80,7 @@
     <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
     <Compile Include="test\ru_per_min_tests.py" />
+    <Compile Include="test\utils_tests.py" />
     <Compile Include="azure\cosmos\auth.py" />
     <Compile Include="azure\cosmos\base.py" />
     <Compile Include="azure\cosmos\documents.py" />
@@ -90,7 +91,6 @@
     <Compile Include="test\__init__.py" />
     <Content Include="requirements.txt" />
     <Content Include="test-requirements.txt" />
-    <Content Include="test\test-requirements.txt" />
     <Content Include="tox.ini" />
     <Content Include="test\BaselineTest.PathParser.json" />
   </ItemGroup>
