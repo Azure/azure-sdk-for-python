@@ -69,6 +69,9 @@ from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
 from .database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
+from .managed_database_vulnerability_assessment_rule_baselines_operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+from .managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
+from .managed_database_vulnerability_assessments_operations import ManagedDatabaseVulnerabilityAssessmentsOperations
 from .instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from .backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from .tde_certificates_operations import TdeCertificatesOperations
@@ -137,6 +140,9 @@ __all__ = [
     'ElasticPoolOperations',
     'CapabilitiesOperations',
     'DatabaseVulnerabilityAssessmentScansOperations',
+    'ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations',
+    'ManagedDatabaseVulnerabilityAssessmentScansOperations',
+    'ManagedDatabaseVulnerabilityAssessmentsOperations',
     'InstanceFailoverGroupsOperations',
     'BackupShortTermRetentionPoliciesOperations',
     'TdeCertificatesOperations',
