@@ -33,6 +33,9 @@ class Registry(Resource):
     :type tags: dict[str, str]
     :param sku: Required. The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.Sku
+    :param identity: The Identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.RegistryIdentity
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
@@ -76,6 +79,7 @@ class Registry(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'RegistryIdentity'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -84,9 +88,10 @@ class Registry(Resource):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, admin_user_enabled: bool=False, storage_account=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, storage_account=None, **kwargs) -> None:
         super(Registry, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.identity = identity
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
