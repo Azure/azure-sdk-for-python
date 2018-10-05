@@ -43,6 +43,14 @@ class EntityInfo(Model):
      ~azure.mgmt.managementgroups.models.enum
     :param number_of_descendants: Number of Descendants.
     :type number_of_descendants: int
+    :param number_of_children: Number of Children. Number of children is the
+     number of Groups and Subscriptions that are exactly one level underneath
+     the current Group.
+    :type number_of_children: int
+    :param number_of_child_groups: Number of Child Groups. Number of child
+     groups is the number of Groups that are exactly one level underneath the
+     current Group.
+    :type number_of_child_groups: int
     :param parent_display_name_chain: The parent display name chain from the
      root group to the immediate parent
     :type parent_display_name_chain: list[str]
@@ -67,11 +75,13 @@ class EntityInfo(Model):
         'permissions': {'key': 'properties.permissions', 'type': 'str'},
         'inherited_permissions': {'key': 'properties.inheritedPermissions', 'type': 'str'},
         'number_of_descendants': {'key': 'properties.numberOfDescendants', 'type': 'int'},
+        'number_of_children': {'key': 'properties.numberOfChildren', 'type': 'int'},
+        'number_of_child_groups': {'key': 'properties.numberOfChildGroups', 'type': 'int'},
         'parent_display_name_chain': {'key': 'properties.parentDisplayNameChain', 'type': '[str]'},
         'parent_name_chain': {'key': 'properties.parentNameChain', 'type': '[str]'},
     }
 
-    def __init__(self, *, tenant_id: str=None, display_name: str=None, parent=None, permissions=None, inherited_permissions=None, number_of_descendants: int=None, parent_display_name_chain=None, parent_name_chain=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str=None, display_name: str=None, parent=None, permissions=None, inherited_permissions=None, number_of_descendants: int=None, number_of_children: int=None, number_of_child_groups: int=None, parent_display_name_chain=None, parent_name_chain=None, **kwargs) -> None:
         super(EntityInfo, self).__init__(**kwargs)
         self.id = None
         self.type = None
@@ -82,5 +92,7 @@ class EntityInfo(Model):
         self.permissions = permissions
         self.inherited_permissions = inherited_permissions
         self.number_of_descendants = number_of_descendants
+        self.number_of_children = number_of_children
+        self.number_of_child_groups = number_of_child_groups
         self.parent_display_name_chain = parent_display_name_chain
         self.parent_name_chain = parent_name_chain
