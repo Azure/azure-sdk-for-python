@@ -18,12 +18,10 @@ class DeploymentExtended(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The ID of the deployment.
     :vartype id: str
-    :param name: Required. The name of the deployment.
-    :type name: str
+    :ivar name: The name of the deployment.
+    :vartype name: str
     :param location: the location of the deployment.
     :type location: str
     :param properties: Deployment properties.
@@ -33,7 +31,7 @@ class DeploymentExtended(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,9 +41,9 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, *, name: str, location: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, properties=None, **kwargs) -> None:
         super(DeploymentExtended, self).__init__(**kwargs)
         self.id = None
-        self.name = name
+        self.name = None
         self.location = location
         self.properties = properties
