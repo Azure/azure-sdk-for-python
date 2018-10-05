@@ -33,7 +33,7 @@ class Registry(Resource):
     :type tags: dict[str, str]
     :param sku: Required. The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2017_10_01.models.Sku
-    :param identity: The Identity of the container registry.
+    :param identity: The identity of the container registry.
     :type identity:
      ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryIdentity
     :ivar login_server: The URL that can be used to log into the container

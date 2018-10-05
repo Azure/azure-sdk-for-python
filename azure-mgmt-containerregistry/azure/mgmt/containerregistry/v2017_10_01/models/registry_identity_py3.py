@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class RegistryIdentity(Model):
-    """The Identity of the container registry.
+    """The identity of the container registry.
 
     :param type: The type of identity used for the registry.
     :type type: str
-    :param principal_id: The principal id of registry identity.
+    :param principal_id: The principal ID of registry identity.
     :type principal_id: str
-    :param tenant_id: The tenant id associated with the registry.
+    :param tenant_id: The tenant ID associated with the registry.
     :type tenant_id: str
     """
 
