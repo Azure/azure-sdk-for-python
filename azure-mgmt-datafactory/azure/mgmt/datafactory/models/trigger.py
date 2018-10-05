@@ -17,7 +17,8 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TumblingWindowTrigger, MultiplePipelineTrigger
+    sub-classes are: RerunTumblingWindowTrigger, TumblingWindowTrigger,
+    MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -51,7 +52,7 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
     def __init__(self, **kwargs):
