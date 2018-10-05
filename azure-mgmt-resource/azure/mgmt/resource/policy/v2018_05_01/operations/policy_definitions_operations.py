@@ -38,7 +38,7 @@ class PolicyDefinitionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, policy_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, policy_definition_name, parameters, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a policy definition in a subscription.
 
         This operation creates or updates a policy definition in the given
@@ -50,6 +50,8 @@ class PolicyDefinitionsOperations(object):
         :param parameters: The policy definition properties.
         :type parameters:
          ~azure.mgmt.resource.policy.v2018_05_01.models.PolicyDefinition
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -65,7 +67,7 @@ class PolicyDefinitionsOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -109,7 +111,7 @@ class PolicyDefinitionsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def delete(
-            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
+            self, policy_definition_name, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a policy definition in a subscription.
 
         This operation deletes the policy definition in the given subscription
@@ -118,6 +120,8 @@ class PolicyDefinitionsOperations(object):
         :param policy_definition_name: The name of the policy definition to
          delete.
         :type policy_definition_name: str
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -131,7 +135,7 @@ class PolicyDefinitionsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -163,7 +167,7 @@ class PolicyDefinitionsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def get(
-            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
+            self, policy_definition_name, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Retrieves a policy definition in a subscription.
 
         This operation retrieves the policy definition in the given
@@ -172,6 +176,8 @@ class PolicyDefinitionsOperations(object):
         :param policy_definition_name: The name of the policy definition to
          get.
         :type policy_definition_name: str
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -187,7 +193,7 @@ class PolicyDefinitionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -485,12 +491,14 @@ class PolicyDefinitionsOperations(object):
     get_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Retrieves policy definitions in a subscription.
 
         This operation retrieves a list of all the policy definitions in a
         given subscription.
 
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -507,7 +515,7 @@ class PolicyDefinitionsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

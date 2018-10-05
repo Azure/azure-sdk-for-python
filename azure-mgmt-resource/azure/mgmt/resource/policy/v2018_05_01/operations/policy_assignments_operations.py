@@ -263,7 +263,7 @@ class PolicyAssignmentsOperations(object):
     get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}
 
     def list_for_resource_group(
-            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, subscription_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a resource group.
 
         This operation retrieves the list of all policy assignments associated
@@ -284,6 +284,8 @@ class PolicyAssignmentsOperations(object):
         :param resource_group_name: The name of the resource group that
          contains policy assignments.
         :type resource_group_name: str
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param filter: The filter to apply on the operation. Valid values for
          $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
          $filter is not provided, no filtering is performed.
@@ -306,7 +308,7 @@ class PolicyAssignmentsOperations(object):
                 url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -351,7 +353,7 @@ class PolicyAssignmentsOperations(object):
     list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyAssignments'}
 
     def list_for_resource(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, subscription_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a resource.
 
         This operation retrieves the list of all policy assignments associated
@@ -399,6 +401,8 @@ class PolicyAssignmentsOperations(object):
         :type resource_type: str
         :param resource_name: The name of the resource.
         :type resource_name: str
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param filter: The filter to apply on the operation. Valid values for
          $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
          $filter is not provided, no filtering is performed.
@@ -425,7 +429,7 @@ class PolicyAssignmentsOperations(object):
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -470,7 +474,7 @@ class PolicyAssignmentsOperations(object):
     list_for_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments'}
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a subscription.
 
         This operation retrieves the list of all policy assignments associated
@@ -488,6 +492,8 @@ class PolicyAssignmentsOperations(object):
         assignments that apply to the subscription and assign the policy
         definition whose id is {value}.
 
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param filter: The filter to apply on the operation. Valid values for
          $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
          $filter is not provided, no filtering is performed.
@@ -509,7 +515,7 @@ class PolicyAssignmentsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
