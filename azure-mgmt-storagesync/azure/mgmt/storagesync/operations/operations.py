@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BotServicesOperations(object):
-    """BotServicesOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-12-01. Constant value: "2017-12-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-07-01".
     """
 
     models = models
@@ -32,39 +32,34 @@ class BotServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01"
+        self.api_version = "2018-07-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Returns all the resources of a particular type belonging to a
-        subscription.
+        """Lists all of the available Storage Sync Rest API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Bot
+        :return: An iterator like instance of OperationEntity
         :rtype:
-         ~azure.mgmt.botservice.models.BotPaged[~azure.mgmt.botservice.models.Bot]
+         ~azure.mgmt.storagesync.models.OperationEntityPaged[~azure.mgmt.storagesync.models.OperationEntity]
         :raises:
-         :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/botServices'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -72,7 +67,7 @@ class BotServicesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -81,21 +76,21 @@ class BotServicesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                raise models.StorageSyncErrorException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.BotPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.BotPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.StorageSync/operations'}
