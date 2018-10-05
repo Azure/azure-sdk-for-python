@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -56,7 +56,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
         self.tenant_id = tenant_id
 
 
-class GraphRbacManagementClient(object):
+class GraphRbacManagementClient(SDKClient):
     """The Graph RBAC Management Client
 
     :ivar config: Configuration for client.
@@ -91,7 +91,7 @@ class GraphRbacManagementClient(object):
             self, credentials, tenant_id, base_url=None):
 
         self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(GraphRbacManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.6'

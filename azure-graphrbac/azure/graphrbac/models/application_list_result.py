@@ -26,7 +26,7 @@ class ApplicationListResult(Model):
         'odatanext_link': {'key': 'odata\\.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, odatanext_link=None):
-        super(ApplicationListResult, self).__init__()
-        self.value = value
-        self.odatanext_link = odatanext_link
+    def __init__(self, **kwargs):
+        super(ApplicationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.odatanext_link = kwargs.get('odatanext_link', None)

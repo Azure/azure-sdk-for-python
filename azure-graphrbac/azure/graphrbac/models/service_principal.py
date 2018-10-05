@@ -18,6 +18,8 @@ class ServicePrincipal(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +28,7 @@ class ServicePrincipal(DirectoryObject):
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
-    :param object_type: Constant filled by server.
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param display_name: The display name of the service principal.
     :type display_name: str
@@ -52,9 +54,9 @@ class ServicePrincipal(DirectoryObject):
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, additional_properties=None, display_name=None, app_id=None, service_principal_names=None):
-        super(ServicePrincipal, self).__init__(additional_properties=additional_properties)
-        self.display_name = display_name
-        self.app_id = app_id
-        self.service_principal_names = service_principal_names
+    def __init__(self, **kwargs):
+        super(ServicePrincipal, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.service_principal_names = kwargs.get('service_principal_names', None)
         self.object_type = 'ServicePrincipal'
