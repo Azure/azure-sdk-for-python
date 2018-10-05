@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -48,7 +48,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class SubscriptionClient(object):
+class SubscriptionClient(SDKClient):
     """The subscription client
 
     :ivar config: Configuration for client.
@@ -75,7 +75,7 @@ class SubscriptionClient(object):
             self, credentials, base_url=None):
 
         self.config = SubscriptionClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
