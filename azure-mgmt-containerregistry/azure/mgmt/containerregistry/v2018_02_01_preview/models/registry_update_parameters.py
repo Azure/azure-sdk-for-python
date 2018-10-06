@@ -19,7 +19,7 @@ class RegistryUpdateParameters(Model):
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.Sku
-    :param identity: The Identity of the container registry.
+    :param identity: The identity of the container registry.
     :type identity:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.RegistryIdentity
     :param admin_user_enabled: The value that indicates whether the admin user
