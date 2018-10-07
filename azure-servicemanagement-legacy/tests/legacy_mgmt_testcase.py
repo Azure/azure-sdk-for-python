@@ -53,7 +53,7 @@ class LegacyMgmtTestCase(RecordingTestCase):
 
     def create_service_management(self, service_class):
         conn_type = self.settings.CONNECTION_TYPE
-        if conn_type == 'requests_with_token' or conn_type == 'requests_with_cert':
+        if conn_type == 'requests_with_token' or conn_type == 'requests_with_cert' or conn_type == 'requests_with_string_cert':
             if conn_type == 'requests_with_token':
                 import requests
                 session = requests.Session()
@@ -64,11 +64,16 @@ class LegacyMgmtTestCase(RecordingTestCase):
                     self.settings.SUBSCRIPTION_ID,
                     request_session=session,
                 )
-            else:
+            if conn_type == 'requests_with_cert':
                 # Note this works only with RunLiveNoRecord
                 service = service_class(
                     self.settings.SUBSCRIPTION_ID,
                     self.settings.PEM_PATH,
+                )
+            if conn_type == 'requests_with_string_cert':
+                service = service_class(
+                    self.settings.SUBSCRIPTION_ID,
+                    self.settings.PEM_STRING_VALID,
                 )
         elif conn_type == 'winhttp':
             # Note this works only with RunLiveNoRecord

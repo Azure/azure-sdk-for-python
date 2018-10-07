@@ -14,6 +14,7 @@
 #--------------------------------------------------------------------------
 import os
 import sys
+import tempfile
 import time
 
 import requests
@@ -78,18 +79,36 @@ class _ServiceManagementClient(object):
         if not self.request_session:
             if not self.cert_file or not self.subscription_id:
                 raise ValueError(
-                    'You need to provide subscription id and certificate file')
+                    'You need to provide subscription id and certificate file or string')
 
         if not self.request_session:
             if _ServiceManagementClient.should_use_requests(self.cert_file):
                 self.request_session = requests.Session()
-                self.request_session.cert = self.cert_file
+                self.request_session.cert_file = _ServiceManagementClient.should_wrap_string(self.cert_file)
 
         self._httpclient = _HTTPClient(
             service_instance=self, cert_file=self.cert_file,
             request_session=self.request_session, timeout=timeout,
             user_agent=_USER_AGENT_STRING)
         self._filter = self._httpclient.perform_request
+
+    @staticmethod
+    def should_wrap_string(cert_file):
+        '''Returns a NamedTemporaryFile's name if the cert is a string, otherwise it retuns in the passed
+        in certificate's path.'''
+        try:
+            import OpenSSL.crypto as crypto
+        except:
+            raise Exception("pyopenssl is required to check if the certificate is a string")
+
+        try:
+            crypto.load_certificate(crypto.FILETYPE_PEM, cert_file)
+            cert_temp = tempfile.NamedTemporaryFile()
+            cert_temp.write(cert_file)
+            cert_temp.seek(0)
+            return cert_temp.name
+        except:
+            return cert_file
 
     @staticmethod
     def should_use_requests(cert_file):
@@ -108,10 +127,22 @@ class _ServiceManagementClient(object):
             # When using OpenSSL .pem certificate file on Windows, make sure
             # you are on CPython 2.7.4 or later.
 
-            # If it's not an existing file on disk, then treat it as a path in
-            # the Windows Certificate Store, which means we can't use requests.
+            # If it's not an existing file on disk or a valid certificate
+            # string, then treat it as a path in the Windows Certificate Store,
+            # which means we can't use requests.
             if not os.path.isfile(cert_file):
-                return False
+                try:
+                    import OpenSSL.crypto as crypto
+                except:
+                   raise Exception("pyopenssl is required to check if the certificate string"
+                                   " is valid on windows platforms")
+
+                # If the certificate is a string, use requests.
+                try:
+                    crypto.load_certificate(crypto.FILETYPE_PEM, cert_file)
+                    return True
+                except:
+                    return False
 
         return True
 
