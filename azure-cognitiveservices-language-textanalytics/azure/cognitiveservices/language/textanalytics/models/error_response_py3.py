@@ -10,15 +10,18 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
-class InternalError(Model):
-    """InternalError.
+class ErrorResponse(Model):
+    """ErrorResponse.
 
     :param code:
     :type code: str
     :param message:
     :type message: str
+    :param target:
+    :type target: str
     :param inner_error:
     :type inner_error:
      ~azure.cognitiveservices.language.textanalytics.models.InternalError
@@ -27,11 +30,25 @@ class InternalError(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'inner_error': {'key': 'innerError', 'type': 'InternalError'},
     }
 
-    def __init__(self, **kwargs):
-        super(InternalError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.inner_error = kwargs.get('inner_error', None)
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, inner_error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.inner_error = inner_error
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

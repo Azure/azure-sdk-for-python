@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class ErrorRecord(Model):
-    """ErrorRecord.
+class MultiLanguageBatchInput(Model):
+    """MultiLanguageBatchInput.
 
-    :param id: Input document unique identifier the error refers to.
-    :type id: str
-    :param message: Error message.
-    :type message: str
+    :param documents:
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'documents': {'key': 'documents', 'type': '[MultiLanguageInput]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorRecord, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.message = kwargs.get('message', None)
+    def __init__(self, *, documents=None, **kwargs) -> None:
+        super(MultiLanguageBatchInput, self).__init__(**kwargs)
+        self.documents = documents

@@ -9,20 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class AzureRegions(Enum):
+class BatchInput(Model):
+    """BatchInput.
 
-    westus = "westus"
-    westeurope = "westeurope"
-    southeastasia = "southeastasia"
-    eastus2 = "eastus2"
-    westcentralus = "westcentralus"
-    westus2 = "westus2"
-    eastus = "eastus"
-    southcentralus = "southcentralus"
-    northeurope = "northeurope"
-    eastasia = "eastasia"
-    australiaeast = "australiaeast"
-    brazilsouth = "brazilsouth"
+    :param documents:
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.Input]
+    """
+
+    _attribute_map = {
+        'documents': {'key': 'documents', 'type': '[Input]'},
+    }
+
+    def __init__(self, *, documents=None, **kwargs) -> None:
+        super(BatchInput, self).__init__(**kwargs)
+        self.documents = documents

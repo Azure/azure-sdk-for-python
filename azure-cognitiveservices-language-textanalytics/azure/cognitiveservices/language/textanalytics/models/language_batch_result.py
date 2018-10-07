@@ -36,7 +36,7 @@ class LanguageBatchResult(Model):
         'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
-    def __init__(self):
-        super(LanguageBatchResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(LanguageBatchResult, self).__init__(**kwargs)
         self.documents = None
         self.errors = None

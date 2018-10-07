@@ -12,26 +12,21 @@
 from msrest.serialization import Model
 
 
-class InternalError(Model):
-    """InternalError.
+class ErrorRecord(Model):
+    """ErrorRecord.
 
-    :param code:
-    :type code: str
-    :param message:
+    :param id: Input document unique identifier the error refers to.
+    :type id: str
+    :param message: Error message.
     :type message: str
-    :param inner_error:
-    :type inner_error:
-     ~azure.cognitiveservices.language.textanalytics.models.InternalError
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InternalError'},
     }
 
-    def __init__(self, **kwargs):
-        super(InternalError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.inner_error = kwargs.get('inner_error', None)
+    def __init__(self, *, id: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorRecord, self).__init__(**kwargs)
+        self.id = id
+        self.message = message

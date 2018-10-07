@@ -12,30 +12,31 @@
 from msrest.serialization import Model
 
 
-class LanguageBatchResultItem(Model):
-    """LanguageBatchResultItem.
+class EntitiesBatchResult(Model):
+    """EntitiesBatchResult.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Unique document identifier.
-    :vartype id: str
-    :ivar detected_languages: A list of extracted languages.
-    :vartype detected_languages:
-     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
+    :ivar documents:
+    :vartype documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResultItem]
+    :ivar errors:
+    :vartype errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.ErrorRecord]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'detected_languages': {'readonly': True},
+        'documents': {'readonly': True},
+        'errors': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'documents': {'key': 'documents', 'type': '[EntitiesBatchResultItem]'},
+        'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
     def __init__(self, **kwargs):
-        super(LanguageBatchResultItem, self).__init__(**kwargs)
-        self.id = None
-        self.detected_languages = None
+        super(EntitiesBatchResult, self).__init__(**kwargs)
+        self.documents = None
+        self.errors = None
