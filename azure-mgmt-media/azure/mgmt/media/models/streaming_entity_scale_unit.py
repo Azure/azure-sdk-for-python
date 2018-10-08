@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class StreamingEntityScaleUnit(Model):
     """scale units definition.
 
-    :param scale_unit: ScaleUnit. The scale unit number of the
-     StreamingEndpoint.
+    :param scale_unit: The scale unit number of the StreamingEndpoint.
     :type scale_unit: int
     """
 
