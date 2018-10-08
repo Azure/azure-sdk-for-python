@@ -77,6 +77,9 @@ class DatabaseAccount(Resource):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
     """
 
     _validation = {
@@ -110,9 +113,10 @@ class DatabaseAccount(Resource):
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, **kwargs) -> None:
         super(DatabaseAccount, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -127,3 +131,4 @@ class DatabaseAccount(Resource):
         self.read_locations = None
         self.failover_policies = None
         self.virtual_network_rules = virtual_network_rules
+        self.enable_multiple_write_locations = enable_multiple_write_locations
