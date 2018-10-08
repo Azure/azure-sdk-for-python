@@ -19,6 +19,9 @@ class RegistryUpdateParameters(Model):
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.RegistryIdentity
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
@@ -33,13 +36,15 @@ class RegistryUpdateParameters(Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'RegistryIdentity'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, *, tags=None, sku=None, admin_user_enabled: bool=None, storage_account=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, identity=None, admin_user_enabled: bool=None, storage_account=None, **kwargs) -> None:
         super(RegistryUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
+        self.identity = identity
         self.admin_user_enabled = admin_user_enabled
         self.storage_account = storage_account
