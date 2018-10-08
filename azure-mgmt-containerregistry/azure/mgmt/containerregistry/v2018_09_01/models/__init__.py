@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .import_source_credentials_py3 import ImportSourceCredentials
     from .import_source_py3 import ImportSource
     from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
@@ -89,6 +90,7 @@ try:
     from .file_task_step_update_parameters_py3 import FileTaskStepUpdateParameters
     from .encoded_task_step_update_parameters_py3 import EncodedTaskStepUpdateParameters
 except (SyntaxError, ImportError):
+    from .import_source_credentials import ImportSourceCredentials
     from .import_source import ImportSource
     from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
@@ -200,6 +202,7 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ImportSourceCredentials',
     'ImportSource',
     'ImportImageParameters',
     'RegistryNameCheckRequest',
