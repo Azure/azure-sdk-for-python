@@ -27,7 +27,7 @@ class ServiceCreatedEvent(ServiceEvent):
     :type has_correlated_events: bool
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param service_id: Required. The identity of the service. This is an
+    :param service_id: Required. The identity of the service. This ID is an
      encoded representation of the service name. This is used in the REST APIs
      to identify the service resource.
      Starting in version 6.0, hierarchical names are delimited with the "\\~"

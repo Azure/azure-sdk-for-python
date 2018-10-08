@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_namespace_patch import ResourceNamespacePatch
+from .resource_namespace_patch_py3 import ResourceNamespacePatch
 
 
 class SBNamespaceUpdateParameters(ResourceNamespacePatch):

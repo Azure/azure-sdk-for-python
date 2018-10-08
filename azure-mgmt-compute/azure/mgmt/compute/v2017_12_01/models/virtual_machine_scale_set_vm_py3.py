@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class VirtualMachineScaleSetVM(Resource):
@@ -41,7 +41,7 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineInstanceView
+     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVMInstanceView
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
     :type hardware_profile:
@@ -123,7 +123,7 @@ class VirtualMachineScaleSetVM(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},

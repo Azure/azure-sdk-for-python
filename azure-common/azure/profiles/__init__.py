@@ -72,11 +72,17 @@ class KnownProfiles(Enum):
     latest = ProfileDefinition(None, "latest")
     v2017_03_09_profile = ProfileDefinition(
         {
+            "azure.keyvault.KeyVaultClient":{
+                None: "2016-10-01"
+            },
             "azure.mgmt.authorization.AuthorizationManagementClient": {
                 None: "2015-07-01"
             },
             "azure.mgmt.compute.ComputeManagementClient": {
                 None: "2016-03-30"
+            },
+            "azure.mgmt.keyvault.KeyVaultManagementClient":{
+                None: "2016-10-01"
             },
             "azure.mgmt.network.NetworkManagementClient": {
                 None: "2015-06-15"
@@ -102,6 +108,48 @@ class KnownProfiles(Enum):
         },
         "2017-03-09-profile"
     )
+    v2018_03_01_hybrid = ProfileDefinition(
+        {
+            "azure.keyvault.KeyVaultClient":{
+                None: "2016-10-01"
+            },
+            "azure.mgmt.authorization.AuthorizationManagementClient": {
+                None: "2015-07-01"
+            },
+            "azure.mgmt.compute.ComputeManagementClient": {
+                None: "2017-03-30"
+            },
+            "azure.mgmt.keyvault.KeyVaultManagementClient":{
+                None: "2016-10-01"
+            },
+            "azure.mgmt.network.NetworkManagementClient": {
+                None: "2017-10-01"
+            },
+            "azure.mgmt.storage.StorageManagementClient": {
+                None: "2016-01-01"
+            },
+            "azure.mgmt.resource.policy.PolicyClient": {
+                None: "2016-12-01"
+            },
+            "azure.mgmt.resource.locks.ManagementLockClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.links.ManagementLinkClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.resources.ResourceManagementClient": {
+                None: "2018-02-01"
+            },
+            "azure.mgmt.resource.subscriptions.SubscriptionClient": {
+                None: "2016-06-01"
+            },
+            "azure.mgmt.dns": {
+                None: "2016-04-01"
+            }
+        },
+        "2018-03-01-hybrid"
+    )
+
 
     def __init__(self, profile_definition):
         self._profile_definition = profile_definition

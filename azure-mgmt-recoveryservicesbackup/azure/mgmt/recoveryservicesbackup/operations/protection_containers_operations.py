@@ -254,7 +254,7 @@ class ProtectionContainersOperations(object):
     unregister.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}'}
 
     def inquire(
-            self, vault_name, resource_group_name, fabric_name, container_name, custom_headers=None, raw=False, **operation_config):
+            self, vault_name, resource_group_name, fabric_name, container_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Inquires all the protectable item in the given container that can be
         protected.
 
@@ -271,6 +271,8 @@ class ProtectionContainersOperations(object):
         :param container_name: Name of the container in which inquiry needs to
          be triggered.
         :type container_name: str
+        :param filter: OData filter options.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -294,6 +296,8 @@ class ProtectionContainersOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}

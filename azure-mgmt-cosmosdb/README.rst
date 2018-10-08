@@ -36,8 +36,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `MyService Management
-<https://docs.microsoft.com/python/api/overview/azure/>`__
+For code examples, see `Cosmos DB Management
+<https://docs.microsoft.com/python/api/overview/azure/cosmosdb>`__
 on docs.microsoft.com.
 
 

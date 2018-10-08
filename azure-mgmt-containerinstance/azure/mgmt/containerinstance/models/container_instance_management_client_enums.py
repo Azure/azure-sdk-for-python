@@ -12,32 +12,44 @@
 from enum import Enum
 
 
-class ContainerNetworkProtocol(Enum):
+class ContainerNetworkProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
 
 
-class ContainerGroupRestartPolicy(Enum):
+class ContainerGroupRestartPolicy(str, Enum):
 
     always = "Always"
     on_failure = "OnFailure"
     never = "Never"
 
 
-class ContainerGroupNetworkProtocol(Enum):
+class ContainerGroupNetworkProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
 
 
-class OperatingSystemTypes(Enum):
+class ContainerGroupIpAddressType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
+class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
 
 
-class ContainerInstanceOperationsOrigin(Enum):
+class LogAnalyticsLogType(str, Enum):
+
+    container_insights = "ContainerInsights"
+    container_instance_logs = "ContainerInstanceLogs"
+
+
+class ContainerInstanceOperationsOrigin(str, Enum):
 
     user = "User"
     system = "System"

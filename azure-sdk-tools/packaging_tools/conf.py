@@ -12,9 +12,11 @@ _SECTION = "packaging"
 # Default conf
 _CONFIG = {
     "package_name": "packagename",
+    "package_nspkg": "packagenspkg",
     "package_pprint_name": "MyService Management",
     "package_doc_id": "",
-    "is_stable": False
+    "is_stable": False,
+    "is_arm": True
 }
 
 def read_conf(folder: Path) -> Dict[str, Any]:
@@ -34,6 +36,7 @@ def build_default_conf(folder: Path, package_name: str) -> None:
     _LOGGER.info("Build default conf for %s", package_name)
     conf = {_SECTION: _CONFIG.copy()}
     conf[_SECTION]["package_name"] = package_name
+    conf[_SECTION]["package_nspkg"] = package_name[:package_name.rindex('-')]+"-nspkg"
 
     with open(conf_path, "w") as fd:
         toml.dump(conf, fd)

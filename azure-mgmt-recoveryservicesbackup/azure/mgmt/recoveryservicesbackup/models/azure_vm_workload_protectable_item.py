@@ -16,7 +16,9 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     """Azure VM workload-specific protectable item.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSQLAvailabilityGroupProtectableItem,
+    sub-classes are: AzureVmWorkloadSAPHanaDatabaseProtectableItem,
+    AzureVmWorkloadSAPHanaSystemProtectableItem,
+    AzureVmWorkloadSQLAvailabilityGroupProtectableItem,
     AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
 
@@ -79,7 +81,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     }
 
     _subtype_map = {
-        'protectable_item_type': {'SQLAvailabilityGroupContainer': 'AzureVmWorkloadSQLAvailabilityGroupProtectableItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseProtectableItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceProtectableItem'}
+        'protectable_item_type': {'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectableItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemProtectableItem', 'SQLAvailabilityGroupContainer': 'AzureVmWorkloadSQLAvailabilityGroupProtectableItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseProtectableItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceProtectableItem'}
     }
 
     def __init__(self, **kwargs):

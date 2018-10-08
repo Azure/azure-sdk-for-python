@@ -18,60 +18,60 @@ class JobStatisticsVertexStage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar data_read: the amount of data read, in bytes.
+    :ivar data_read: The amount of data read, in bytes.
     :vartype data_read: long
-    :ivar data_read_cross_pod: the amount of data read across multiple pods,
+    :ivar data_read_cross_pod: The amount of data read across multiple pods,
      in bytes.
     :vartype data_read_cross_pod: long
-    :ivar data_read_intra_pod: the amount of data read in one pod, in bytes.
+    :ivar data_read_intra_pod: The amount of data read in one pod, in bytes.
     :vartype data_read_intra_pod: long
-    :ivar data_to_read: the amount of data remaining to be read, in bytes.
+    :ivar data_to_read: The amount of data remaining to be read, in bytes.
     :vartype data_to_read: long
-    :ivar data_written: the amount of data written, in bytes.
+    :ivar data_written: The amount of data written, in bytes.
     :vartype data_written: long
-    :ivar duplicate_discard_count: the number of duplicates that were
+    :ivar duplicate_discard_count: The number of duplicates that were
      discarded.
     :vartype duplicate_discard_count: int
-    :ivar failed_count: the number of failures that occured in this stage.
+    :ivar failed_count: The number of failures that occured in this stage.
     :vartype failed_count: int
-    :ivar max_vertex_data_read: the maximum amount of data read in a single
+    :ivar max_vertex_data_read: The maximum amount of data read in a single
      vertex, in bytes.
     :vartype max_vertex_data_read: long
-    :ivar min_vertex_data_read: the minimum amount of data read in a single
+    :ivar min_vertex_data_read: The minimum amount of data read in a single
      vertex, in bytes.
     :vartype min_vertex_data_read: long
-    :ivar read_failure_count: the number of read failures in this stage.
+    :ivar read_failure_count: The number of read failures in this stage.
     :vartype read_failure_count: int
-    :ivar revocation_count: the number of vertices that were revoked during
+    :ivar revocation_count: The number of vertices that were revoked during
      this stage.
     :vartype revocation_count: int
-    :ivar running_count: the number of currently running vertices in this
+    :ivar running_count: The number of currently running vertices in this
      stage.
     :vartype running_count: int
-    :ivar scheduled_count: the number of currently scheduled vertices in this
-     stage
+    :ivar scheduled_count: The number of currently scheduled vertices in this
+     stage.
     :vartype scheduled_count: int
-    :ivar stage_name: the name of this stage in job execution.
+    :ivar stage_name: The name of this stage in job execution.
     :vartype stage_name: str
-    :ivar succeeded_count: the number of vertices that succeeded in this
+    :ivar succeeded_count: The number of vertices that succeeded in this
      stage.
     :vartype succeeded_count: int
-    :ivar temp_data_written: the amount of temporary data written, in bytes.
+    :ivar temp_data_written: The amount of temporary data written, in bytes.
     :vartype temp_data_written: long
-    :ivar total_count: the total vertex count for this stage.
+    :ivar total_count: The total vertex count for this stage.
     :vartype total_count: int
-    :ivar total_failed_time: the amount of time that failed vertices took up
+    :ivar total_failed_time: The amount of time that failed vertices took up
      in this stage.
     :vartype total_failed_time: timedelta
-    :ivar total_progress: the current progress of this stage, as a percentage.
+    :ivar total_progress: The current progress of this stage, as a percentage.
     :vartype total_progress: int
-    :ivar total_succeeded_time: the amount of time all successful vertices
+    :ivar total_succeeded_time: The amount of time all successful vertices
      took in this stage.
     :vartype total_succeeded_time: timedelta
-    :ivar total_peak_mem_usage: the sum of the peak memory usage of all the
+    :ivar total_peak_mem_usage: The sum of the peak memory usage of all the
      vertices in the stage, in bytes.
     :vartype total_peak_mem_usage: long
-    :ivar total_execution_time: the sum of the total execution time of all the
+    :ivar total_execution_time: The sum of the total execution time of all the
      vertices in the stage.
     :vartype total_execution_time: timedelta
     :param max_data_read_vertex: the vertex with the maximum amount of data
@@ -86,28 +86,28 @@ class JobStatisticsVertexStage(Model):
      usage.
     :type max_peak_mem_usage_vertex:
      ~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertex
-    :ivar estimated_vertex_cpu_core_count: the estimated vertex CPU core
+    :ivar estimated_vertex_cpu_core_count: The estimated vertex CPU core
      count.
     :vartype estimated_vertex_cpu_core_count: int
-    :ivar estimated_vertex_peak_cpu_core_count: the estimated vertex peak CPU
+    :ivar estimated_vertex_peak_cpu_core_count: The estimated vertex peak CPU
      core count.
     :vartype estimated_vertex_peak_cpu_core_count: int
-    :ivar estimated_vertex_mem_size: the estimated vertex memory size, in
+    :ivar estimated_vertex_mem_size: The estimated vertex memory size, in
      bytes.
     :vartype estimated_vertex_mem_size: long
-    :param allocated_container_cpu_core_count: the statistics information for
+    :param allocated_container_cpu_core_count: The statistics information for
      the allocated container CPU core count.
     :type allocated_container_cpu_core_count:
      ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
-    :param allocated_container_mem_size: the statistics information for the
+    :param allocated_container_mem_size: The statistics information for the
      allocated container memory size.
     :type allocated_container_mem_size:
      ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
-    :param used_vertex_cpu_core_count: the statistics information for the used
+    :param used_vertex_cpu_core_count: The statistics information for the used
      vertex CPU core count.
     :type used_vertex_cpu_core_count:
      ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
-    :param used_vertex_peak_mem_size: the statistics information for the used
+    :param used_vertex_peak_mem_size: The statistics information for the used
      vertex peak memory size.
     :type used_vertex_peak_mem_size:
      ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
@@ -176,8 +176,8 @@ class JobStatisticsVertexStage(Model):
         'used_vertex_peak_mem_size': {'key': 'usedVertexPeakMemSize', 'type': 'ResourceUsageStatistics'},
     }
 
-    def __init__(self, max_data_read_vertex=None, max_execution_time_vertex=None, max_peak_mem_usage_vertex=None, allocated_container_cpu_core_count=None, allocated_container_mem_size=None, used_vertex_cpu_core_count=None, used_vertex_peak_mem_size=None):
-        super(JobStatisticsVertexStage, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatisticsVertexStage, self).__init__(**kwargs)
         self.data_read = None
         self.data_read_cross_pod = None
         self.data_read_intra_pod = None
@@ -200,13 +200,13 @@ class JobStatisticsVertexStage(Model):
         self.total_succeeded_time = None
         self.total_peak_mem_usage = None
         self.total_execution_time = None
-        self.max_data_read_vertex = max_data_read_vertex
-        self.max_execution_time_vertex = max_execution_time_vertex
-        self.max_peak_mem_usage_vertex = max_peak_mem_usage_vertex
+        self.max_data_read_vertex = kwargs.get('max_data_read_vertex', None)
+        self.max_execution_time_vertex = kwargs.get('max_execution_time_vertex', None)
+        self.max_peak_mem_usage_vertex = kwargs.get('max_peak_mem_usage_vertex', None)
         self.estimated_vertex_cpu_core_count = None
         self.estimated_vertex_peak_cpu_core_count = None
         self.estimated_vertex_mem_size = None
-        self.allocated_container_cpu_core_count = allocated_container_cpu_core_count
-        self.allocated_container_mem_size = allocated_container_mem_size
-        self.used_vertex_cpu_core_count = used_vertex_cpu_core_count
-        self.used_vertex_peak_mem_size = used_vertex_peak_mem_size
+        self.allocated_container_cpu_core_count = kwargs.get('allocated_container_cpu_core_count', None)
+        self.allocated_container_mem_size = kwargs.get('allocated_container_mem_size', None)
+        self.used_vertex_cpu_core_count = kwargs.get('used_vertex_cpu_core_count', None)
+        self.used_vertex_peak_mem_size = kwargs.get('used_vertex_peak_mem_size', None)

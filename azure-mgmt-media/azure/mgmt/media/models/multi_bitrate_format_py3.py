@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .format import Format
+from .format_py3 import Format
 
 
 class MultiBitrateFormat(Format):

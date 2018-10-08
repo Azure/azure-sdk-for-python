@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-devspaces"
+package_pprint_name = "Dev Spaces"
+package_doc_id = ""
+is_stable = false
+is_arm = true
