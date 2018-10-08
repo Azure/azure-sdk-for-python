@@ -125,6 +125,10 @@ try:
     from .express_route_gateway_py3 import ExpressRouteGateway
     from .express_route_gateway_list_py3 import ExpressRouteGatewayList
     from .express_route_connection_list_py3 import ExpressRouteConnectionList
+    from .express_route_ports_location_bandwidths_py3 import ExpressRoutePortsLocationBandwidths
+    from .express_route_ports_location_py3 import ExpressRoutePortsLocation
+    from .express_route_link_py3 import ExpressRouteLink
+    from .express_route_port_py3 import ExpressRoutePort
     from .load_balancer_sku_py3 import LoadBalancerSku
     from .load_balancing_rule_py3 import LoadBalancingRule
     from .probe_py3 import Probe
@@ -394,6 +398,10 @@ except (SyntaxError, ImportError):
     from .express_route_gateway import ExpressRouteGateway
     from .express_route_gateway_list import ExpressRouteGatewayList
     from .express_route_connection_list import ExpressRouteConnectionList
+    from .express_route_ports_location_bandwidths import ExpressRoutePortsLocationBandwidths
+    from .express_route_ports_location import ExpressRoutePortsLocation
+    from .express_route_link import ExpressRouteLink
+    from .express_route_port import ExpressRoutePort
     from .load_balancer_sku import LoadBalancerSku
     from .load_balancing_rule import LoadBalancingRule
     from .probe import Probe
@@ -561,6 +569,9 @@ from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
 from .express_route_cross_connection_peering_paged import ExpressRouteCrossConnectionPeeringPaged
+from .express_route_ports_location_paged import ExpressRoutePortsLocationPaged
+from .express_route_port_paged import ExpressRoutePortPaged
+from .express_route_link_paged import ExpressRouteLinkPaged
 from .interface_endpoint_paged import InterfaceEndpointPaged
 from .load_balancer_paged import LoadBalancerPaged
 from .backend_address_pool_paged import BackendAddressPoolPaged
@@ -643,6 +654,9 @@ from .network_management_client_enums import (
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
+    ExpressRouteLinkConnectorType,
+    ExpressRouteLinkAdminState,
+    ExpressRoutePortsEncapsulation,
     LoadBalancerSkuName,
     LoadDistribution,
     ProbeProtocol,
@@ -810,6 +824,10 @@ __all__ = [
     'ExpressRouteGateway',
     'ExpressRouteGatewayList',
     'ExpressRouteConnectionList',
+    'ExpressRoutePortsLocationBandwidths',
+    'ExpressRoutePortsLocation',
+    'ExpressRouteLink',
+    'ExpressRoutePort',
     'LoadBalancerSku',
     'LoadBalancingRule',
     'Probe',
@@ -977,6 +995,9 @@ __all__ = [
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
     'ExpressRouteCrossConnectionPeeringPaged',
+    'ExpressRoutePortsLocationPaged',
+    'ExpressRoutePortPaged',
+    'ExpressRouteLinkPaged',
     'InterfaceEndpointPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
@@ -1058,6 +1079,9 @@ __all__ = [
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
+    'ExpressRouteLinkConnectorType',
+    'ExpressRouteLinkAdminState',
+    'ExpressRoutePortsEncapsulation',
     'LoadBalancerSkuName',
     'LoadDistribution',
     'ProbeProtocol',
