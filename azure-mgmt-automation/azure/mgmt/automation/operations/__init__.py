@@ -49,6 +49,7 @@ from .runbook_draft_operations import RunbookDraftOperations
 from .runbook_operations import RunbookOperations
 from .test_job_streams_operations import TestJobStreamsOperations
 from .test_job_operations import TestJobOperations
+from .python2_package_operations import Python2PackageOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -91,4 +92,5 @@ __all__ = [
     'RunbookOperations',
     'TestJobStreamsOperations',
     'TestJobOperations',
+    'Python2PackageOperations',
 ]

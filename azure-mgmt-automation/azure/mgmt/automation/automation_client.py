@@ -53,6 +53,7 @@ from .operations.runbook_draft_operations import RunbookDraftOperations
 from .operations.runbook_operations import RunbookOperations
 from .operations.test_job_streams_operations import TestJobStreamsOperations
 from .operations.test_job_operations import TestJobOperations
+from .operations.python2_package_operations import Python2PackageOperations
 from . import models
 
 
@@ -182,6 +183,8 @@ class AutomationClient(SDKClient):
     :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
     :ivar test_job: TestJob operations
     :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
+    :ivar python2_package: Python2Package operations
+    :vartype python2_package: azure.mgmt.automation.operations.Python2PackageOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -285,4 +288,6 @@ class AutomationClient(SDKClient):
         self.test_job_streams = TestJobStreamsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.test_job = TestJobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.python2_package = Python2PackageOperations(
             self._client, self.config, self._serialize, self._deserialize)
