@@ -135,6 +135,8 @@ try:
     from .test_job_py3 import TestJob
     from .runbook_create_or_update_draft_properties_py3 import RunbookCreateOrUpdateDraftProperties
     from .runbook_create_or_update_draft_parameters_py3 import RunbookCreateOrUpdateDraftParameters
+    from .python_package_create_parameters_py3 import PythonPackageCreateParameters
+    from .python_package_update_parameters_py3 import PythonPackageUpdateParameters
 except (SyntaxError, ImportError):
     from .sku import Sku
     from .automation_account import AutomationAccount
@@ -261,6 +263,8 @@ except (SyntaxError, ImportError):
     from .test_job import TestJob
     from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
     from .runbook_create_or_update_draft_parameters import RunbookCreateOrUpdateDraftParameters
+    from .python_package_create_parameters import PythonPackageCreateParameters
+    from .python_package_update_parameters import PythonPackageUpdateParameters
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -446,6 +450,8 @@ __all__ = [
     'TestJob',
     'RunbookCreateOrUpdateDraftProperties',
     'RunbookCreateOrUpdateDraftParameters',
+    'PythonPackageCreateParameters',
+    'PythonPackageUpdateParameters',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',

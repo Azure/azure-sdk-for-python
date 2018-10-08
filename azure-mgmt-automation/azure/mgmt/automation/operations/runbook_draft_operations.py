@@ -110,7 +110,7 @@ class RunbookDraftOperations(object):
 
 
     def _replace_content_initial(
-            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, callback=None, **operation_config):
         # Construct URL
         url = self.replace_content.metadata['url']
         path_format_arguments = {
@@ -137,7 +137,7 @@ class RunbookDraftOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(runbook_content, 'str')
+        body_content = upload_gen(runbook_content)
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -150,7 +150,7 @@ class RunbookDraftOperations(object):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize('object', response)
             header_dict = {
                 'location': 'str',
             }
@@ -163,7 +163,7 @@ class RunbookDraftOperations(object):
         return deserialized
 
     def replace_content(
-            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, callback=None, polling=True, **operation_config):
         """Replaces the runbook draft content.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -173,16 +173,17 @@ class RunbookDraftOperations(object):
         :param runbook_name: The runbook name.
         :type runbook_name: str
         :param runbook_content: The runbook draft content.
-        :type runbook_content: str
+        :type runbook_content: Generator
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns str or
-         ClientRawResponse<str> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[str]]
+        :return: An instance of LROPoller that returns object or
+         ClientRawResponse<object> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[Generator]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[Generator]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
@@ -200,7 +201,7 @@ class RunbookDraftOperations(object):
             header_dict = {
                 'location': 'str',
             }
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize('object', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
