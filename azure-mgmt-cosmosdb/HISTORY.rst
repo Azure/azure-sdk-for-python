@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.5.0 (2018-10-08)
+++++++++++++++++++
+
+**Features**
+
+- Add enable_multiple_write_locations support
+
+**Note**
+
+- `database_accounts.list_read_only_keys` is now doing a POST call, and not GET anymore. This should not impact anything.
+  Old behavior be can found with the `database_accounts.get_read_only_keys` **deprecated** method.
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.4.1 (2018-05-15)
 ++++++++++++++++++
 
@@ -33,7 +46,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
