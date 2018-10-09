@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class ObjectsOperations(object):
-    """ObjectsOperations operations.
+class SignedInUserOperations(object):
+    """SignedInUserOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,14 +36,65 @@ class ObjectsOperations(object):
 
         self.config = config
 
-    def get_objects_by_object_ids(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Gets the directory objects specified in a list of object IDs. You can
-        also specify which resource collections (users, groups, etc.) should be
-        searched by specifying the optional types parameter.
+    def get(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets the details for the currently logged-in user.
 
-        :param parameters: Objects filtering parameters.
-        :type parameters: ~azure.graphrbac.models.GetObjectsParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: User or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.User or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('User', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/{tenantID}/me'}
+
+    def list_owned_objects(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get the list of directory objects that are owned by the user.
+
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -53,13 +103,14 @@ class ObjectsOperations(object):
         :return: An iterator like instance of DirectoryObject
         :rtype:
          ~azure.graphrbac.models.DirectoryObjectPaged[~azure.graphrbac.models.DirectoryObject]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.get_objects_by_object_ids.metadata['url']
+                url = self.list_owned_objects.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -82,7 +133,6 @@ class ObjectsOperations(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -90,17 +140,12 @@ class ObjectsOperations(object):
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            # Construct body
-            body_content = self._serialize.body(parameters, 'GetObjectsParameters')
-
             # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
+            request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -113,4 +158,4 @@ class ObjectsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_objects_by_object_ids.metadata = {'url': '/{tenantID}/getObjectsByObjectIds'}
+    list_owned_objects.metadata = {'url': '/{tenantID}/me/ownedObjects'}

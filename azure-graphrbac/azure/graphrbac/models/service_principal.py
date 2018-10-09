@@ -34,6 +34,10 @@ class ServicePrincipal(DirectoryObject):
     :type display_name: str
     :param app_id: The application ID.
     :type app_id: str
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param service_principal_names: A collection of service principal names.
     :type service_principal_names: list[str]
     """
@@ -51,6 +55,7 @@ class ServicePrincipal(DirectoryObject):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
@@ -58,5 +63,6 @@ class ServicePrincipal(DirectoryObject):
         super(ServicePrincipal, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
         self.app_id = kwargs.get('app_id', None)
+        self.app_roles = kwargs.get('app_roles', None)
         self.service_principal_names = kwargs.get('service_principal_names', None)
         self.object_type = 'ServicePrincipal'

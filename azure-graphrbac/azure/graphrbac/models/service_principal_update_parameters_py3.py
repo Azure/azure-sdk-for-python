@@ -12,17 +12,15 @@
 from msrest.serialization import Model
 
 
-class ServicePrincipalCreateParameters(Model):
+class ServicePrincipalUpdateParameters(Model):
     """Request parameters for creating a new service principal.
-
-    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
     :param account_enabled: Whether the account is enabled
     :type account_enabled: bool
-    :param app_id: Required. application Id
+    :param app_id: application Id
     :type app_id: str
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
@@ -52,10 +50,6 @@ class ServicePrincipalCreateParameters(Model):
     :type tags: list[str]
     """
 
-    _validation = {
-        'app_id': {'required': True},
-    }
-
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
@@ -73,19 +67,19 @@ class ServicePrincipalCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.account_enabled = kwargs.get('account_enabled', None)
-        self.app_id = kwargs.get('app_id', None)
-        self.app_role_assignment_required = kwargs.get('app_role_assignment_required', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.publisher_name = kwargs.get('publisher_name', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.service_principal_names = kwargs.get('service_principal_names', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, additional_properties=None, account_enabled: bool=None, app_id: str=None, app_role_assignment_required: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, key_credentials=None, password_credentials=None, publisher_name: str=None, reply_urls=None, saml_metadata_url: str=None, service_principal_names=None, tags=None, **kwargs) -> None:
+        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.account_enabled = account_enabled
+        self.app_id = app_id
+        self.app_role_assignment_required = app_role_assignment_required
+        self.display_name = display_name
+        self.error_url = error_url
+        self.homepage = homepage
+        self.key_credentials = key_credentials
+        self.password_credentials = password_credentials
+        self.publisher_name = publisher_name
+        self.reply_urls = reply_urls
+        self.saml_metadata_url = saml_metadata_url
+        self.service_principal_names = service_principal_names
+        self.tags = tags
