@@ -17,16 +17,17 @@ class HorovodSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param python_script_file_path: Required. The path and file name of the
-     python script to execute the job.
+    :param python_script_file_path: Required. Python script file path. The
+     python script to execute.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter.
+    :param python_interpreter_path: Python interpreter path. The path to the
+     Python interpreter.
     :type python_interpreter_path: str
-    :param command_line_args: Command line arguments that needs to be passed
-     to the python script.
+    :param command_line_args: Command line arguments. Command line arguments
+     that need to be passed to the python script.
     :type command_line_args: str
-    :param process_count: Number of processes parameter that is passed to MPI
-     runtime. The default value for this property is equal to nodeCount
+    :param process_count: Process count. Number of processes to launch for the
+     job execution. The default value for this property is equal to nodeCount
      property
     :type process_count: int
     """

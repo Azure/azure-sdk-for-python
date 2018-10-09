@@ -17,11 +17,11 @@ class InputDirectory(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The id for the input directory. The path of the input
-     directory will be available as a value of an environment variable with
-     AZ_BATCHAI_INPUT_<id> name, where <id> is the value of id attribute.
+    :param id: Required. ID. The ID for the input directory. The job can use
+     AZ_BATCHAI_INPUT_<id> environment variable to find the directory path,
+     where <id> is the value of id attribute.
     :type id: str
-    :param path: Required. The path to the input directory.
+    :param path: Required. Path. The path to the input directory.
     :type path: str
     """
 

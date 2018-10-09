@@ -13,27 +13,27 @@ from msrest.serialization import Model
 
 
 class AzureBlobFileSystemReference(Model):
-    """Provides required information, for the service to be able to mount Azure
-    Blob Storage container on the cluster nodes.
+    """Azure Blob Storage Container mounting configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. Name of the Azure Blob Storage account.
+    :param account_name: Required. Account name. Name of the Azure storage
+     account.
     :type account_name: str
-    :param container_name: Required. Name of the Azure Blob Storage container
-     to mount on the cluster.
+    :param container_name: Required. Container name. Name of the Azure Blob
+     Storage container to mount on the cluster.
     :type container_name: str
-    :param credentials: Required. Information of the Azure Blob Storage
-     account credentials.
+    :param credentials: Required. Credentials. Information about the Azure
+     storage credentials.
     :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
-    :param relative_mount_path: Required. Specifies the relative path on the
-     compute node where the Azure Blob file system will be mounted. Note that
-     all cluster level blob file systems will be mounted under
-     $AZ_BATCHAI_MOUNT_ROOT location and all job level blob file systems will
-     be mounted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
+    :param relative_mount_path: Required. Relative mount path. The relative
+     path on the compute node where the Azure File container will be mounted.
+     Note that all cluster level containers will be mounted under
+     $AZ_BATCHAI_MOUNT_ROOT location and all job level containers will be
+     mounted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
-    :param mount_options: Specifies the various mount options that can be used
-     to configure Blob file system.
+    :param mount_options: Mount options. Mount options for mounting blobfuse
+     file system.
     :type mount_options: str
     """
 

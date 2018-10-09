@@ -13,7 +13,7 @@ from .resource_py3 import Resource
 
 
 class Workspace(Resource):
-    """Describes Batch AI Workspace.
+    """Batch AI Workspace information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,15 +28,16 @@ class Workspace(Resource):
     :vartype location: str
     :ivar tags: The tags of the resource
     :vartype tags: dict[str, str]
-    :ivar creation_time: Time when the Workspace was created.
+    :ivar creation_time: Creation time. Time when the Workspace was created.
     :vartype creation_time: datetime
-    :ivar provisioning_state: The provisioned state of the workspace. Possible
-     values include: 'creating', 'succeeded', 'failed', 'deleting'
+    :ivar provisioning_state: Provisioning state. The provisioned state of the
+     Workspace. Possible values include: 'creating', 'succeeded', 'failed',
+     'deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batchai.models.ProvisioningState
-    :ivar provisioning_state_transition_time: The time at which the workspace
-     entered its current provisioning state. The time at which the workspace
-     entered its current provisioning state.
+    :ivar provisioning_state_transition_time: Provisioning state transition
+     time. The time at which the workspace entered its current provisioning
+     state.
     :vartype provisioning_state_transition_time: datetime
     """
 

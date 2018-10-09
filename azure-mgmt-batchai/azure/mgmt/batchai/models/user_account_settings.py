@@ -18,14 +18,14 @@ class UserAccountSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param admin_user_name: Required. Specifies the name of the administrator
-     account.
+    :param admin_user_name: Required. User name. Name of the administrator
+     user account which can be used to SSH to nodes.
     :type admin_user_name: str
-    :param admin_user_ssh_public_key: SSH public keys used to authenticate
-     with linux based VMs. This does not get returned in a GET response body.
+    :param admin_user_ssh_public_key: SSH public key. SSH public key of the
+     administrator user account.
     :type admin_user_ssh_public_key: str
-    :param admin_user_password: Admin user Password (linux only). This does
-     not get returned in a GET response body.
+    :param admin_user_password: Password. Password of the administrator user
+     account.
     :type admin_user_password: str
     """
 

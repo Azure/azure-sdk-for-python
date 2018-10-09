@@ -13,16 +13,14 @@ from msrest.serialization import Model
 
 
 class AzureStorageCredentialsInfo(Model):
-    """Credentials to access Azure File Share.
+    """Azure storage account credentials.
 
-    :param account_key: Storage account key. One of accountKey or
+    :param account_key: Account key. Storage account key. One of accountKey or
      accountKeySecretReference must be specified.
     :type account_key: str
-    :param account_key_secret_reference: Specifies the location of the storage
-     account key, which is a Key Vault Secret. Users can store their secrets in
-     Azure KeyVault and pass it to the Batch AI Service to integrate with
-     KeyVault. One of accountKey or accountKeySecretReference must be
-     specified.
+    :param account_key_secret_reference: Account key secret reference.
+     Information about KeyVault secret storing the storage account key. One of
+     accountKey or accountKeySecretReference must be specified.
     :type account_key_secret_reference:
      ~azure.mgmt.batchai.models.KeyVaultSecretReference
     """

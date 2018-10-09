@@ -13,23 +13,24 @@ from msrest.serialization import Model
 
 
 class CaffeSettings(Model):
-    """Specifies the settings for Caffe job.
+    """Caffe job settings.
 
-    :param config_file_path: Specifies the path of the config file. This
-     property cannot be specified if pythonScriptFilePath is specified.
+    :param config_file_path: Config file path. Path of the config file for the
+     job. This property cannot be specified if pythonScriptFilePath is
+     specified.
     :type config_file_path: str
-    :param python_script_file_path: The path and file name of the python
-     script to execute the job. This property cannot be specified if
-     configFilePath is specified.
+    :param python_script_file_path: Python script file path. Python script to
+     execute. This property cannot be specified if configFilePath is specified.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter. This
-     property can be specified only if the pythonScriptFilePath is specified.
+    :param python_interpreter_path: Python interpreter path. The path to the
+     Python interpreter. The property can be specified only if the
+     pythonScriptFilePath is specified.
     :type python_interpreter_path: str
-    :param command_line_args: Command line arguments that needs to be passed
-     to the Caffe job.
+    :param command_line_args: Command line arguments. Command line arguments
+     that need to be passed to the Caffe job.
     :type command_line_args: str
-    :param process_count: Number of processes parameter that is passed to MPI
-     runtime. The default value for this property is equal to nodeCount
+    :param process_count: Process count. Number of processes to launch for the
+     job execution. The default value for this property is equal to nodeCount
      property
     :type process_count: int
     """

@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class JobPreparation(Model):
-    """Specifies the settings for job preparation.
+    """Job preparation settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. The command line to execute. If
-     containerSettings is specified on the job, this commandLine will be
+    :param command_line: Required. Command line. The command line to execute.
+     If containerSettings is specified on the job, this commandLine will be
      executed in the same container as job. Otherwise it will be executed on
      the node.
     :type command_line: str

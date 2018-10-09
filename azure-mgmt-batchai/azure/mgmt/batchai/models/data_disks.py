@@ -13,23 +13,27 @@ from msrest.serialization import Model
 
 
 class DataDisks(Model):
-    """Settings for the data disk which would be created for the File Server.
+    """Data disks settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param disk_size_in_gb: Required. Initial disk size in GB for blank data
-     disks, and the new desired size for resizing existing data disks.
+    :param disk_size_in_gb: Required. Disk size in GB. Disk size in GB for the
+     blank data disks.
     :type disk_size_in_gb: int
-    :param caching_type: None, ReadOnly, ReadWrite. Default value is None.
-     This property is not patchable. Possible values include: 'none',
-     'readonly', 'readwrite'. Default value: "none" .
+    :param caching_type: Caching type. Caching type for the disks. Available
+     values are none (default), readonly, readwrite. Caching type can be set
+     only for VM sizes supporting premium storage. Possible values include:
+     'none', 'readonly', 'readwrite'. Default value: "none" .
     :type caching_type: str or ~azure.mgmt.batchai.models.CachingType
-    :param disk_count: Required. Number of data disks to be attached to the
-     VM. RAID level 0 will be applied in the case of multiple disks.
+    :param disk_count: Required. Number of data disks. Number of data disks
+     attached to the File Server. If multiple disks attached, they will be
+     configured in RAID level 0.
     :type disk_count: int
-    :param storage_account_type: Required. Specifies the type of storage
-     account to be used on the disk. Possible values are: Standard_LRS or
-     Premium_LRS. Possible values include: 'Standard_LRS', 'Premium_LRS'
+    :param storage_account_type: Required. Storage account type. Type of
+     storage account to be used on the disk. Possible values are: Standard_LRS
+     or Premium_LRS. Premium storage account type can only be used with VM
+     sizes supporting premium storage. Possible values include: 'Standard_LRS',
+     'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.batchai.models.StorageAccountType
     """
