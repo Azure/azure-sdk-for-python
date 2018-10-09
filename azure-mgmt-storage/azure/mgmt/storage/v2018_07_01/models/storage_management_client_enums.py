@@ -159,6 +159,13 @@ class SignedResource(str, Enum):
     s = "s"
 
 
+class ReplicationStatus(str, Enum):
+
+    live = "Live"
+    bootstrap = "Bootstrap"
+    unavailable = "Unavailable"
+
+
 class PublicAccess(str, Enum):
 
     container = "Container"

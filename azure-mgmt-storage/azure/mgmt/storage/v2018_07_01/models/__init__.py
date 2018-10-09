@@ -42,6 +42,7 @@ try:
     from .list_account_sas_response_py3 import ListAccountSasResponse
     from .service_sas_parameters_py3 import ServiceSasParameters
     from .list_service_sas_response_py3 import ListServiceSasResponse
+    from .get_last_sync_time_result_py3 import GetLastSyncTimeResult
     from .proxy_resource_py3 import ProxyResource
     from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
@@ -90,6 +91,7 @@ except (SyntaxError, ImportError):
     from .list_account_sas_response import ListAccountSasResponse
     from .service_sas_parameters import ServiceSasParameters
     from .list_service_sas_response import ListServiceSasResponse
+    from .get_last_sync_time_result import GetLastSyncTimeResult
     from .proxy_resource import ProxyResource
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
@@ -130,6 +132,7 @@ from .storage_management_client_enums import (
     Permissions,
     HttpProtocol,
     SignedResource,
+    ReplicationStatus,
     PublicAccess,
     LeaseStatus,
     LeaseState,
@@ -171,6 +174,7 @@ __all__ = [
     'ListAccountSasResponse',
     'ServiceSasParameters',
     'ListServiceSasResponse',
+    'GetLastSyncTimeResult',
     'ProxyResource',
     'AzureEntityResource',
     'Resource',
@@ -210,6 +214,7 @@ __all__ = [
     'Permissions',
     'HttpProtocol',
     'SignedResource',
+    'ReplicationStatus',
     'PublicAccess',
     'LeaseStatus',
     'LeaseState',
