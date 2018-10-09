@@ -27,6 +27,8 @@ class MediaJobStateChangeEventData(Model):
      'Canceled', 'Canceling', 'Error', 'Finished', 'Processing', 'Queued',
      'Scheduled'
     :vartype state: str or ~azure.eventgrid.models.JobState
+    :param correlation_data: Gets the Job correlation data.
+    :type correlation_data: dict[str, str]
     """
 
     _validation = {
@@ -37,9 +39,11 @@ class MediaJobStateChangeEventData(Model):
     _attribute_map = {
         'previous_state': {'key': 'previousState', 'type': 'JobState'},
         'state': {'key': 'state', 'type': 'JobState'},
+        'correlation_data': {'key': 'correlationData', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(MediaJobStateChangeEventData, self).__init__(**kwargs)
         self.previous_state = None
         self.state = None
+        self.correlation_data = kwargs.get('correlation_data', None)
