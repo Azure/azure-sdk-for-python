@@ -63,6 +63,8 @@ class RegisteredServer(ProxyResource):
     :type friendly_name: str
     :param management_endpoint_uri: Management Endpoint Uri
     :type management_endpoint_uri: str
+    :param monitoring_configuration: Monitoring Configuration
+    :type monitoring_configuration: str
     """
 
     _validation = {
@@ -93,9 +95,10 @@ class RegisteredServer(ProxyResource):
         'service_location': {'key': 'properties.serviceLocation', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'management_endpoint_uri': {'key': 'properties.managementEndpointUri', 'type': 'str'},
+        'monitoring_configuration': {'key': 'properties.monitoringConfiguration', 'type': 'str'},
     }
 
-    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, monitoring_configuration: str=None, **kwargs) -> None:
         super(RegisteredServer, self).__init__(**kwargs)
         self.server_certificate = server_certificate
         self.agent_version = agent_version
@@ -115,3 +118,4 @@ class RegisteredServer(ProxyResource):
         self.service_location = service_location
         self.friendly_name = friendly_name
         self.management_endpoint_uri = management_endpoint_uri
+        self.monitoring_configuration = monitoring_configuration
