@@ -111,7 +111,6 @@ try:
     from .tracking_event_error_info_py3 import TrackingEventErrorInfo
     from .tracking_event_py3 import TrackingEvent
     from .tracking_events_definition_py3 import TrackingEventsDefinition
-    from .access_key_regenerate_action_definition_py3 import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition_py3 import SetTriggerStateActionDefinition
     from .expression_root_py3 import ExpressionRoot
     from .azure_resource_error_info_py3 import AzureResourceErrorInfo
@@ -234,7 +233,6 @@ except (SyntaxError, ImportError):
     from .tracking_event_error_info import TrackingEventErrorInfo
     from .tracking_event import TrackingEvent
     from .tracking_events_definition import TrackingEventsDefinition
-    from .access_key_regenerate_action_definition import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition import SetTriggerStateActionDefinition
     from .expression_root import ExpressionRoot
     from .azure_resource_error_info import AzureResourceErrorInfo
@@ -305,7 +303,6 @@ from .logic_management_client_enums import (
     TrackEventsOperationOptions,
     EventLevel,
     TrackingRecordType,
-    AccessKeyType,
 )
 
 __all__ = [
@@ -410,7 +407,6 @@ __all__ = [
     'TrackingEventErrorInfo',
     'TrackingEvent',
     'TrackingEventsDefinition',
-    'AccessKeyRegenerateActionDefinition',
     'SetTriggerStateActionDefinition',
     'ExpressionRoot',
     'AzureResourceErrorInfo',
@@ -480,5 +476,4 @@ __all__ = [
     'TrackEventsOperationOptions',
     'EventLevel',
     'TrackingRecordType',
-    'AccessKeyType',
 ]

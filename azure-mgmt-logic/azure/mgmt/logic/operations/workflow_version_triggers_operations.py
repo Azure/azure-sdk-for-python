@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class WorkflowRunOperations(object):
-    """WorkflowRunOperations operations.
+class WorkflowVersionTriggersOperations(object):
+    """WorkflowVersionTriggersOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,36 +37,45 @@ class WorkflowRunOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, workflow_name, run_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Gets an operation for a run.
+    def list_callback_url(
+            self, resource_group_name, workflow_name, version_id, trigger_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
+        """Get the callback url for a trigger of a workflow version.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param workflow_name: The workflow name.
         :type workflow_name: str
-        :param run_name: The workflow run name.
-        :type run_name: str
-        :param operation_id: The workflow operation id.
-        :type operation_id: str
+        :param version_id: The workflow versionId.
+        :type version_id: str
+        :param trigger_name: The workflow trigger name.
+        :type trigger_name: str
+        :param not_after: The expiry time.
+        :type not_after: datetime
+        :param key_type: The key type. Possible values include:
+         'NotSpecified', 'Primary', 'Secondary'
+        :type key_type: str or ~azure.mgmt.logic.models.KeyType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WorkflowRun or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.WorkflowRun or
+        :return: WorkflowTriggerCallbackUrl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = None
+        if not_after is not None or key_type is not None:
+            parameters = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
+
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list_callback_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
-            'runName': self._serialize.url("run_name", run_name, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -77,6 +86,7 @@ class WorkflowRunOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -84,8 +94,14 @@ class WorkflowRunOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'GetCallbackUrlParameters')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -96,11 +112,11 @@ class WorkflowRunOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WorkflowRun', response)
+            deserialized = self._deserialize('WorkflowTriggerCallbackUrl', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}/operations/{operationId}'}
+    list_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}/triggers/{triggerName}/listCallbackUrl'}
