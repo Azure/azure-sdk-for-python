@@ -32,9 +32,9 @@ class ConfigData(Model):
         'properties': {'key': 'properties', 'type': 'ConfigDataProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, type: str=None, name: str=None, properties=None, **kwargs) -> None:
         super(ConfigData, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        self.id = id
+        self.type = type
+        self.name = name
+        self.properties = properties

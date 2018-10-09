@@ -28,7 +28,7 @@ class ARMErrorResponseBody(Model):
         'code': {'key': 'code', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, message: str=None, code: str=None, **kwargs) -> None:
         super(ARMErrorResponseBody, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.code = kwargs.get('code', None)
+        self.message = message
+        self.code = code
