@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.6"
+from msrest.paging import Paged
 
+
+class AADObjectPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AADObject <azure.graphrbac.models.AADObject>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AADObject]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AADObjectPaged, self).__init__(*args, **kwargs)

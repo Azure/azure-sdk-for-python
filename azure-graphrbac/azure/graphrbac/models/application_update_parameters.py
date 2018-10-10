@@ -18,10 +18,6 @@ class ApplicationUpdateParameters(Model):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param app_roles: The collection of application roles that an application
-     may declare. These roles can be assigned to users, groups or service
-     principals.
-    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param available_to_other_tenants: Whether the application is available to
      other tenants
     :type available_to_other_tenants: bool
@@ -51,7 +47,6 @@ class ApplicationUpdateParameters(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
@@ -66,7 +61,6 @@ class ApplicationUpdateParameters(Model):
     def __init__(self, **kwargs):
         super(ApplicationUpdateParameters, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.app_roles = kwargs.get('app_roles', None)
         self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
         self.display_name = kwargs.get('display_name', None)
         self.homepage = kwargs.get('homepage', None)

@@ -13,13 +13,11 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.signed_in_user_operations import SignedInUserOperations
+from .operations.objects_operations import ObjectsOperations
 from .operations.applications_operations import ApplicationsOperations
-from .operations.deleted_applications_operations import DeletedApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
-from .operations.objects_operations import ObjectsOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.oauth2_operations import OAuth2Operations
 from . import models
@@ -63,20 +61,16 @@ class GraphRbacManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
 
-    :ivar signed_in_user: SignedInUser operations
-    :vartype signed_in_user: azure.graphrbac.operations.SignedInUserOperations
+    :ivar objects: Objects operations
+    :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar applications: Applications operations
     :vartype applications: azure.graphrbac.operations.ApplicationsOperations
-    :ivar deleted_applications: DeletedApplications operations
-    :vartype deleted_applications: azure.graphrbac.operations.DeletedApplicationsOperations
     :ivar groups: Groups operations
     :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
     :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
     :ivar users: Users operations
     :vartype users: azure.graphrbac.operations.UsersOperations
-    :ivar objects: Objects operations
-    :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar domains: Domains operations
     :vartype domains: azure.graphrbac.operations.DomainsOperations
     :ivar oauth2: OAuth2 operations
@@ -101,19 +95,15 @@ class GraphRbacManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.signed_in_user = SignedInUserOperations(
+        self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.deleted_applications = DeletedApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.groups = GroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_principals = ServicePrincipalsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -20,10 +20,6 @@ class ApplicationCreateParameters(Model):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param app_roles: The collection of application roles that an application
-     may declare. These roles can be assigned to users, groups or service
-     principals.
-    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param available_to_other_tenants: Required. Whether the application is
      available to other tenants.
     :type available_to_other_tenants: bool
@@ -60,7 +56,6 @@ class ApplicationCreateParameters(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
@@ -72,10 +67,9 @@ class ApplicationCreateParameters(Model):
         'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
     }
 
-    def __init__(self, *, available_to_other_tenants: bool, display_name: str, identifier_uris, additional_properties=None, app_roles=None, homepage: str=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow: bool=None, required_resource_access=None, **kwargs) -> None:
+    def __init__(self, *, available_to_other_tenants: bool, display_name: str, identifier_uris, additional_properties=None, homepage: str=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow: bool=None, required_resource_access=None, **kwargs) -> None:
         super(ApplicationCreateParameters, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.app_roles = app_roles
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage
