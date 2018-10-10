@@ -30,6 +30,6 @@ class RedisRegenerateKeyParameters(Model):
         'key_type': {'key': 'keyType', 'type': 'RedisKeyType'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_type, **kwargs) -> None:
         super(RedisRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_type = kwargs.get('key_type', None)
+        self.key_type = key_type
