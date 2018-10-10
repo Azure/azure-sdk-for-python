@@ -18,13 +18,16 @@ class RedisPatchSchedule(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param schedule_entries: List of patch schedules for a Redis cache.
+    :param schedule_entries: Required. List of patch schedules for a Redis
+     cache.
     :type schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
     """
 
@@ -42,6 +45,6 @@ class RedisPatchSchedule(ProxyResource):
         'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
     }
 
-    def __init__(self, schedule_entries):
-        super(RedisPatchSchedule, self).__init__()
-        self.schedule_entries = schedule_entries
+    def __init__(self, **kwargs):
+        super(RedisPatchSchedule, self).__init__(**kwargs)
+        self.schedule_entries = kwargs.get('schedule_entries', None)

@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ImportRDBParameters(Model):
     """Parameters for Redis import operation.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param format: File format.
     :type format: str
-    :param files: files to import.
+    :param files: Required. files to import.
     :type files: list[str]
     """
 
@@ -30,7 +32,7 @@ class ImportRDBParameters(Model):
         'files': {'key': 'files', 'type': '[str]'},
     }
 
-    def __init__(self, files, format=None):
-        super(ImportRDBParameters, self).__init__()
-        self.format = format
-        self.files = files
+    def __init__(self, **kwargs):
+        super(ImportRDBParameters, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
+        self.files = kwargs.get('files', None)
