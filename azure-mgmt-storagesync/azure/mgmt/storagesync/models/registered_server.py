@@ -63,6 +63,8 @@ class RegisteredServer(ProxyResource):
     :type friendly_name: str
     :param management_endpoint_uri: Management Endpoint Uri
     :type management_endpoint_uri: str
+    :param monitoring_configuration: Monitoring Configuration
+    :type monitoring_configuration: str
     """
 
     _validation = {
@@ -93,6 +95,7 @@ class RegisteredServer(ProxyResource):
         'service_location': {'key': 'properties.serviceLocation', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'management_endpoint_uri': {'key': 'properties.managementEndpointUri', 'type': 'str'},
+        'monitoring_configuration': {'key': 'properties.monitoringConfiguration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -115,3 +118,4 @@ class RegisteredServer(ProxyResource):
         self.service_location = kwargs.get('service_location', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.management_endpoint_uri = kwargs.get('management_endpoint_uri', None)
+        self.monitoring_configuration = kwargs.get('monitoring_configuration', None)
