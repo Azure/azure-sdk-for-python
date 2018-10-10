@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .offer_term_info import OfferTermInfo
+from msrest.serialization import Model
 
 
-class MonetaryCredit(OfferTermInfo):
-    """Indicates that this is a monetary credit offer.
+class OfferTermInfo(Model):
+    """Describes the offer term.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MonetaryCredit, MonetaryCommitment, RecurringCharge
 
     All required parameters must be populated in order to send to Azure.
 
@@ -22,12 +25,6 @@ class MonetaryCredit(OfferTermInfo):
     :type effective_date: datetime
     :param name: Required. Constant filled by server.
     :type name: str
-    :param credit: The amount of credit provided under the terms of the given
-     offer level.
-    :type credit: decimal.Decimal
-    :param excluded_meter_ids: An array of meter ids that are excluded from
-     the given offer terms.
-    :type excluded_meter_ids: list[str]
     """
 
     _validation = {
@@ -37,12 +34,13 @@ class MonetaryCredit(OfferTermInfo):
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'name': {'key': 'Name', 'type': 'str'},
-        'credit': {'key': 'Credit', 'type': 'decimal'},
-        'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MonetaryCredit, self).__init__(**kwargs)
-        self.credit = kwargs.get('credit', None)
-        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
-        self.name = 'Monetary Credit'
+    _subtype_map = {
+        'name': {'Monetary Credit': 'MonetaryCredit', 'Monetary Commitment': 'MonetaryCommitment', 'Recurring Charge': 'RecurringCharge'}
+    }
+
+    def __init__(self, *, effective_date=None, **kwargs) -> None:
+        super(OfferTermInfo, self).__init__(**kwargs)
+        self.effective_date = effective_date
+        self.name = None

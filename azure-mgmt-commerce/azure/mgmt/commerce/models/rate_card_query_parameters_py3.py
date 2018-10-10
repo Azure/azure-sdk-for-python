@@ -49,9 +49,9 @@ class RateCardQueryParameters(Model):
         'region_info': {'key': 'RegionInfo', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, offer_durable_id: str, currency: str, locale: str, region_info: str, **kwargs) -> None:
         super(RateCardQueryParameters, self).__init__(**kwargs)
-        self.offer_durable_id = kwargs.get('offer_durable_id', None)
-        self.currency = kwargs.get('currency', None)
-        self.locale = kwargs.get('locale', None)
-        self.region_info = kwargs.get('region_info', None)
+        self.offer_durable_id = offer_durable_id
+        self.currency = currency
+        self.locale = locale
+        self.region_info = region_info

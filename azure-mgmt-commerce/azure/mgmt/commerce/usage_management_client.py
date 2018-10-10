@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -52,7 +52,7 @@ class UsageManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class UsageManagementClient(object):
+class UsageManagementClient(SDKClient):
     """UsageManagementClient
 
     :ivar config: Configuration for client.
@@ -77,7 +77,7 @@ class UsageManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = UsageManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(UsageManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-06-01-preview'
