@@ -26,6 +26,8 @@ try:
     from .azure_file_volume_py3 import AzureFileVolume
     from .git_repo_volume_py3 import GitRepoVolume
     from .volume_py3 import Volume
+    from .container_group_identity_user_assigned_identities_value_py3 import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from .container_group_identity_py3 import ContainerGroupIdentity
     from .image_registry_credential_py3 import ImageRegistryCredential
     from .port_py3 import Port
     from .ip_address_py3 import IpAddress
@@ -62,6 +64,8 @@ except (SyntaxError, ImportError):
     from .azure_file_volume import AzureFileVolume
     from .git_repo_volume import GitRepoVolume
     from .volume import Volume
+    from .container_group_identity_user_assigned_identities_value import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from .container_group_identity import ContainerGroupIdentity
     from .image_registry_credential import ImageRegistryCredential
     from .port import Port
     from .ip_address import IpAddress
@@ -84,6 +88,7 @@ except (SyntaxError, ImportError):
 from .container_group_paged import ContainerGroupPaged
 from .container_instance_management_client_enums import (
     ContainerNetworkProtocol,
+    ResourceIdentityType,
     ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
     ContainerGroupIpAddressType,
@@ -109,6 +114,8 @@ __all__ = [
     'AzureFileVolume',
     'GitRepoVolume',
     'Volume',
+    'ContainerGroupIdentityUserAssignedIdentitiesValue',
+    'ContainerGroupIdentity',
     'ImageRegistryCredential',
     'Port',
     'IpAddress',
@@ -130,6 +137,7 @@ __all__ = [
     'Resource',
     'ContainerGroupPaged',
     'ContainerNetworkProtocol',
+    'ResourceIdentityType',
     'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',
     'ContainerGroupIpAddressType',
