@@ -9,35 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class UpgradeNotification(Model):
+    """Properties of upgrade notification.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Name of upgrade notification.
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar timestamp: Timestamp when upgrade notification occured.
+    :vartype timestamp: datetime
+    :ivar upsell_notification: Details about this upgrade notification
+    :vartype upsell_notification: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
+        'timestamp': {'readonly': True},
+        'upsell_notification': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'upsell_notification': {'key': 'upsellNotification', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(UpgradeNotification, self).__init__(**kwargs)
+        self.name = None
+        self.timestamp = None
+        self.upsell_notification = None

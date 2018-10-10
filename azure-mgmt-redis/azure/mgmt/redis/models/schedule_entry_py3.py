@@ -40,8 +40,8 @@ class ScheduleEntry(Model):
         'maintenance_window': {'key': 'maintenanceWindow', 'type': 'duration'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, day_of_week, start_hour_utc: int, maintenance_window=None, **kwargs) -> None:
         super(ScheduleEntry, self).__init__(**kwargs)
-        self.day_of_week = kwargs.get('day_of_week', None)
-        self.start_hour_utc = kwargs.get('start_hour_utc', None)
-        self.maintenance_window = kwargs.get('maintenance_window', None)
+        self.day_of_week = day_of_week
+        self.start_hour_utc = start_hour_utc
+        self.maintenance_window = maintenance_window
