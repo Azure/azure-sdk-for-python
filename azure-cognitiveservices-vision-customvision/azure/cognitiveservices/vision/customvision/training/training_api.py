@@ -89,14 +89,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -143,14 +143,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -230,14 +230,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -308,14 +308,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -374,14 +374,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -434,14 +434,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -500,14 +500,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -565,6 +565,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -576,9 +577,8 @@ class TrainingApi(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -627,14 +627,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -684,6 +683,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -693,9 +693,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageFileCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -752,6 +751,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -761,9 +761,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageUrlCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -820,6 +819,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -829,9 +829,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageIdCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -883,6 +882,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -892,9 +892,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageTagCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -946,14 +945,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1002,6 +1000,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1011,9 +1010,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageRegionCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1061,14 +1059,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1115,14 +1112,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1171,14 +1168,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1222,6 +1218,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1231,9 +1228,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(query, 'PredictionQueryToken')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1290,6 +1286,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1299,9 +1296,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1356,6 +1352,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1367,9 +1364,8 @@ class TrainingApi(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1416,14 +1412,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1464,14 +1460,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1529,14 +1525,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1583,14 +1579,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1635,14 +1631,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1685,6 +1680,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1694,9 +1690,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(updated_project, 'Project')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1743,14 +1738,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1800,14 +1795,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1855,14 +1850,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1912,6 +1906,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1921,9 +1916,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(updated_iteration, 'Iteration')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1982,14 +1976,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2068,14 +2062,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2135,14 +2129,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2192,14 +2186,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2258,14 +2252,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2320,14 +2314,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2375,14 +2369,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -2431,6 +2424,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -2440,9 +2434,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(updated_tag, 'Tag')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2493,14 +2486,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2554,14 +2547,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
