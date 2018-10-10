@@ -29,7 +29,7 @@ class MediaJobErroredEventData(MediaJobStateChangeEventData):
     :param correlation_data: Gets the Job correlation data.
     :type correlation_data: dict[str, str]
     :param outputs: Gets the Job outputs.
-    :type outputs: list[~azure.eventgrid.models.JobOutput]
+    :type outputs: list[~azure.eventgrid.models.MediaJobOutput]
     """
 
     _validation = {
@@ -41,7 +41,7 @@ class MediaJobErroredEventData(MediaJobStateChangeEventData):
         'previous_state': {'key': 'previousState', 'type': 'JobState'},
         'state': {'key': 'state', 'type': 'JobState'},
         'correlation_data': {'key': 'correlationData', 'type': '{str}'},
-        'outputs': {'key': 'outputs', 'type': '[JobOutput]'},
+        'outputs': {'key': 'outputs', 'type': '[MediaJobOutput]'},
     }
 
     def __init__(self, **kwargs):

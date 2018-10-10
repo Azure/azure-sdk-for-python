@@ -48,10 +48,10 @@ try:
     from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
-    from .job_error_detail_py3 import JobErrorDetail
-    from .job_error_py3 import JobError
-    from .job_output_py3 import JobOutput
-    from .job_output_asset_py3 import JobOutputAsset
+    from .media_job_error_detail_py3 import MediaJobErrorDetail
+    from .media_job_error_py3 import MediaJobError
+    from .media_job_output_py3 import MediaJobOutput
+    from .media_job_output_asset_py3 import MediaJobOutputAsset
     from .media_job_output_state_change_event_data_py3 import MediaJobOutputStateChangeEventData
     from .media_job_scheduled_event_data_py3 import MediaJobScheduledEventData
     from .media_job_processing_event_data_py3 import MediaJobProcessingEventData
@@ -113,10 +113,10 @@ except (SyntaxError, ImportError):
     from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data import MediaJobStateChangeEventData
-    from .job_error_detail import JobErrorDetail
-    from .job_error import JobError
-    from .job_output import JobOutput
-    from .job_output_asset import JobOutputAsset
+    from .media_job_error_detail import MediaJobErrorDetail
+    from .media_job_error import MediaJobError
+    from .media_job_output import MediaJobOutput
+    from .media_job_output_asset import MediaJobOutputAsset
     from .media_job_output_state_change_event_data import MediaJobOutputStateChangeEventData
     from .media_job_scheduled_event_data import MediaJobScheduledEventData
     from .media_job_processing_event_data import MediaJobProcessingEventData
@@ -185,10 +185,10 @@ __all__ = [
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'MediaJobStateChangeEventData',
-    'JobErrorDetail',
-    'JobError',
-    'JobOutput',
-    'JobOutputAsset',
+    'MediaJobErrorDetail',
+    'MediaJobError',
+    'MediaJobOutput',
+    'MediaJobOutputAsset',
     'MediaJobOutputStateChangeEventData',
     'MediaJobScheduledEventData',
     'MediaJobProcessingEventData',

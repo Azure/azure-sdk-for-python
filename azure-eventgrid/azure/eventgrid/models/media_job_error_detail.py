@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class JobErrorDetail(Model):
+class MediaJobErrorDetail(Model):
     """Details of JobOutput errors.
 
     Variables are only populated by the server, and will be ignored when
@@ -35,6 +35,6 @@ class JobErrorDetail(Model):
     }
 
     def __init__(self, **kwargs):
-        super(JobErrorDetail, self).__init__(**kwargs)
+        super(MediaJobErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None

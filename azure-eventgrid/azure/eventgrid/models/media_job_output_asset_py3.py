@@ -9,16 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_output_py3 import JobOutput
+from .media_job_output_py3 import MediaJobOutput
 
 
-class JobOutputAsset(JobOutput):
+class MediaJobOutputAsset(MediaJobOutput):
     """The event data for a Job output asset.
 
     All required parameters must be populated in order to send to Azure.
 
     :param error: Gets the Job output error.
-    :type error: ~azure.eventgrid.models.JobError
+    :type error: ~azure.eventgrid.models.MediaJobError
     :param label: Gets the Job output label.
     :type label: str
     :param progress: Required. Gets the Job output progress.
@@ -37,7 +37,7 @@ class JobOutputAsset(JobOutput):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'JobError'},
+        'error': {'key': 'error', 'type': 'MediaJobError'},
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
         'state': {'key': 'state', 'type': 'JobState'},
@@ -45,5 +45,5 @@ class JobOutputAsset(JobOutput):
     }
 
     def __init__(self, *, progress: int, state, error=None, label: str=None, asset_name: str=None, **kwargs) -> None:
-        super(JobOutputAsset, self).__init__(error=error, label=label, progress=progress, state=state, **kwargs)
+        super(MediaJobOutputAsset, self).__init__(error=error, label=label, progress=progress, state=state, **kwargs)
         self.asset_name = asset_name

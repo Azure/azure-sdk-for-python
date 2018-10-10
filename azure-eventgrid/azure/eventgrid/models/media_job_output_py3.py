@@ -9,16 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_output import JobOutput
+from msrest.serialization import Model
 
 
-class JobOutputAsset(JobOutput):
-    """The event data for a Job output asset.
+class MediaJobOutput(Model):
+    """The event data for a Job output.
 
     All required parameters must be populated in order to send to Azure.
 
     :param error: Gets the Job output error.
-    :type error: ~azure.eventgrid.models.JobError
+    :type error: ~azure.eventgrid.models.MediaJobError
     :param label: Gets the Job output label.
     :type label: str
     :param progress: Required. Gets the Job output progress.
@@ -27,8 +27,6 @@ class JobOutputAsset(JobOutput):
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
     :type state: str or ~azure.eventgrid.models.JobState
-    :param asset_name: Gets the Job output asset name.
-    :type asset_name: str
     """
 
     _validation = {
@@ -37,13 +35,15 @@ class JobOutputAsset(JobOutput):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'JobError'},
+        'error': {'key': 'error', 'type': 'MediaJobError'},
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
         'state': {'key': 'state', 'type': 'JobState'},
-        'asset_name': {'key': 'assetName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(JobOutputAsset, self).__init__(**kwargs)
-        self.asset_name = kwargs.get('asset_name', None)
+    def __init__(self, *, progress: int, state, error=None, label: str=None, **kwargs) -> None:
+        super(MediaJobOutput, self).__init__(**kwargs)
+        self.error = error
+        self.label = label
+        self.progress = progress
+        self.state = state

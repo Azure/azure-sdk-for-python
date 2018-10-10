@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class JobError(Model):
+class MediaJobError(Model):
     """Details of JobOutput errors.
 
     Variables are only populated by the server, and will be ignored when
@@ -35,7 +35,7 @@ class JobError(Model):
     :vartype retry: str or ~azure.eventgrid.models.JobRetry
     :ivar details: An array of details about specific errors that led to this
      reported error.
-    :vartype details: list[~azure.eventgrid.models.JobErrorDetail]
+    :vartype details: list[~azure.eventgrid.models.MediaJobErrorDetail]
     """
 
     _validation = {
@@ -51,11 +51,11 @@ class JobError(Model):
         'message': {'key': 'message', 'type': 'str'},
         'category': {'key': 'category', 'type': 'JobErrorCategory'},
         'retry': {'key': 'retry', 'type': 'JobRetry'},
-        'details': {'key': 'details', 'type': '[JobErrorDetail]'},
+        'details': {'key': 'details', 'type': '[MediaJobErrorDetail]'},
     }
 
-    def __init__(self, **kwargs):
-        super(JobError, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(MediaJobError, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.category = None

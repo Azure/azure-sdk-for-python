@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class JobOutput(Model):
+class MediaJobOutput(Model):
     """The event data for a Job output.
 
     All required parameters must be populated in order to send to Azure.
 
     :param error: Gets the Job output error.
-    :type error: ~azure.eventgrid.models.JobError
+    :type error: ~azure.eventgrid.models.MediaJobError
     :param label: Gets the Job output label.
     :type label: str
     :param progress: Required. Gets the Job output progress.
@@ -35,14 +35,14 @@ class JobOutput(Model):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'JobError'},
+        'error': {'key': 'error', 'type': 'MediaJobError'},
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
         'state': {'key': 'state', 'type': 'JobState'},
     }
 
     def __init__(self, **kwargs):
-        super(JobOutput, self).__init__(**kwargs)
+        super(MediaJobOutput, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
         self.label = kwargs.get('label', None)
         self.progress = kwargs.get('progress', None)

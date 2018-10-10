@@ -23,7 +23,7 @@ class MediaJobOutputFinishedEventData(MediaJobOutputStateChangeEventData):
      'Queued', 'Scheduled'
     :vartype previous_state: str or ~azure.eventgrid.models.JobState
     :param output: Gets the output.
-    :type output: ~azure.eventgrid.models.JobOutput
+    :type output: ~azure.eventgrid.models.MediaJobOutput
     :param job_correlation_data: Gets the Job correlation data.
     :type job_correlation_data: dict[str, str]
     """
@@ -34,7 +34,7 @@ class MediaJobOutputFinishedEventData(MediaJobOutputStateChangeEventData):
 
     _attribute_map = {
         'previous_state': {'key': 'previousState', 'type': 'JobState'},
-        'output': {'key': 'output', 'type': 'JobOutput'},
+        'output': {'key': 'output', 'type': 'MediaJobOutput'},
         'job_correlation_data': {'key': 'jobCorrelationData', 'type': '{str}'},
     }
 
