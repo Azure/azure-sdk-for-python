@@ -32,6 +32,10 @@ class Application(DirectoryObject):
     :type object_type: str
     :param app_id: The application ID.
     :type app_id: str
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param app_permissions: The application permissions.
     :type app_permissions: list[str]
     :param available_to_other_tenants: Whether the application is be available
@@ -62,6 +66,7 @@ class Application(DirectoryObject):
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -71,9 +76,10 @@ class Application(DirectoryObject):
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, *, additional_properties=None, app_id: str=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, identifier_uris=None, reply_urls=None, homepage: str=None, oauth2_allow_implicit_flow: bool=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, app_id: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, identifier_uris=None, reply_urls=None, homepage: str=None, oauth2_allow_implicit_flow: bool=None, **kwargs) -> None:
         super(Application, self).__init__(additional_properties=additional_properties, **kwargs)
         self.app_id = app_id
+        self.app_roles = app_roles
         self.app_permissions = app_permissions
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name

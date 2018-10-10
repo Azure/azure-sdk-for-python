@@ -12,17 +12,15 @@
 from msrest.serialization import Model
 
 
-class ServicePrincipalCreateParameters(Model):
+class ServicePrincipalUpdateParameters(Model):
     """Request parameters for creating a new service principal.
-
-    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
     :param account_enabled: Whether the account is enabled
     :type account_enabled: bool
-    :param app_id: Required. application Id
+    :param app_id: application Id
     :type app_id: str
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
@@ -52,10 +50,6 @@ class ServicePrincipalCreateParameters(Model):
     :type tags: list[str]
     """
 
-    _validation = {
-        'app_id': {'required': True},
-    }
-
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
@@ -74,7 +68,7 @@ class ServicePrincipalCreateParameters(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
+        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
         self.account_enabled = kwargs.get('account_enabled', None)
         self.app_id = kwargs.get('app_id', None)

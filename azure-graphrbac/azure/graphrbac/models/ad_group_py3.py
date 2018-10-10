@@ -32,6 +32,12 @@ class ADGroup(DirectoryObject):
     :type object_type: str
     :param display_name: The display name of the group.
     :type display_name: str
+    :param mail_enabled: Whether the group is mail-enabled. Must be false.
+     This is because only pure security groups can be created using the Graph
+     API.
+    :type mail_enabled: bool
+    :param mail_nickname: The mail alias for the group.
+    :type mail_nickname: str
     :param security_enabled: Whether the group is security-enable.
     :type security_enabled: bool
     :param mail: The primary email address of the group.
@@ -50,13 +56,17 @@ class ADGroup(DirectoryObject):
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'mail_enabled': {'key': 'mailEnabled', 'type': 'bool'},
+        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, display_name: str=None, security_enabled: bool=None, mail: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, display_name: str=None, mail_enabled: bool=None, mail_nickname: str=None, security_enabled: bool=None, mail: str=None, **kwargs) -> None:
         super(ADGroup, self).__init__(additional_properties=additional_properties, **kwargs)
         self.display_name = display_name
+        self.mail_enabled = mail_enabled
+        self.mail_nickname = mail_nickname
         self.security_enabled = security_enabled
         self.mail = mail
         self.object_type = 'Group'

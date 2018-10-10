@@ -428,7 +428,7 @@ class ApplicationsOperations(object):
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
-        parameters = models.ApplicationAddOwnerParameters(additional_properties=additional_properties, url=url)
+        parameters = models.AddOwnerParameters(additional_properties=additional_properties, url=url)
 
         # Construct URL
         url = self.add_owner.metadata['url']
@@ -453,7 +453,7 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplicationAddOwnerParameters')
+        body_content = self._serialize.body(parameters, 'AddOwnerParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
