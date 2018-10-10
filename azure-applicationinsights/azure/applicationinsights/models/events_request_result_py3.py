@@ -25,28 +25,30 @@ class EventsRequestResult(EventsResultData):
     :type timestamp: datetime
     :param custom_dimensions: Custom dimensions of the event
     :type custom_dimensions:
-     ~azure.applicationinsights.models.EventsResultDataCustomDimensions
+     ~azure.applicationinsights.query.models.EventsResultDataCustomDimensions
     :param custom_measurements: Custom measurements of the event
     :type custom_measurements:
-     ~azure.applicationinsights.models.EventsResultDataCustomMeasurements
+     ~azure.applicationinsights.query.models.EventsResultDataCustomMeasurements
     :param operation: Operation info of the event
-    :type operation: ~azure.applicationinsights.models.EventsOperationInfo
+    :type operation:
+     ~azure.applicationinsights.query.models.EventsOperationInfo
     :param session: Session info of the event
-    :type session: ~azure.applicationinsights.models.EventsSessionInfo
+    :type session: ~azure.applicationinsights.query.models.EventsSessionInfo
     :param user: User info of the event
-    :type user: ~azure.applicationinsights.models.EventsUserInfo
+    :type user: ~azure.applicationinsights.query.models.EventsUserInfo
     :param cloud: Cloud info of the event
-    :type cloud: ~azure.applicationinsights.models.EventsCloudInfo
+    :type cloud: ~azure.applicationinsights.query.models.EventsCloudInfo
     :param ai: AI info of the event
-    :type ai: ~azure.applicationinsights.models.EventsAiInfo
+    :type ai: ~azure.applicationinsights.query.models.EventsAiInfo
     :param application: Application info of the event
-    :type application: ~azure.applicationinsights.models.EventsApplicationInfo
+    :type application:
+     ~azure.applicationinsights.query.models.EventsApplicationInfo
     :param client: Client info of the event
-    :type client: ~azure.applicationinsights.models.EventsClientInfo
+    :type client: ~azure.applicationinsights.query.models.EventsClientInfo
     :param type: Required. Constant filled by server.
     :type type: str
     :param request:
-    :type request: ~azure.applicationinsights.models.EventsRequestInfo
+    :type request: ~azure.applicationinsights.query.models.EventsRequestInfo
     """
 
     _validation = {

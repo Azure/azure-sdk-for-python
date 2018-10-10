@@ -22,7 +22,7 @@ class Table(Model):
     :param name: Required. The name of the table.
     :type name: str
     :param columns: Required. The list of columns in this table.
-    :type columns: list[~azure.applicationinsights.models.Column]
+    :type columns: list[~azure.applicationinsights.query.models.Column]
     :param rows: Required. The resulting rows from this query.
     :type rows: list[list[object]]
     """

@@ -36,17 +36,17 @@ class MetricsPostBodySchemaParameters(Model):
      'availabilityResults/availabilityPercentage',
      'availabilityResults/duration', 'billing/telemetryCount',
      'customEvents/count'
-    :type metric_id: str or ~azure.applicationinsights.models.MetricId
+    :type metric_id: str or ~azure.applicationinsights.query.models.MetricId
     :param timespan:
     :type timespan: str
     :param aggregation:
     :type aggregation: list[str or
-     ~azure.applicationinsights.models.MetricsAggregation]
+     ~azure.applicationinsights.query.models.MetricsAggregation]
     :param interval:
     :type interval: timedelta
     :param segment:
     :type segment: list[str or
-     ~azure.applicationinsights.models.MetricsSegment]
+     ~azure.applicationinsights.query.models.MetricsSegment]
     :param top:
     :type top: int
     :param orderby:
@@ -62,7 +62,7 @@ class MetricsPostBodySchemaParameters(Model):
     _attribute_map = {
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'timespan': {'key': 'timespan', 'type': 'str'},
-        'aggregation': {'key': 'aggregation', 'type': '[MetricsAggregation]'},
+        'aggregation': {'key': 'aggregation', 'type': '[str]'},
         'interval': {'key': 'interval', 'type': 'duration'},
         'segment': {'key': 'segment', 'type': '[str]'},
         'top': {'key': 'top', 'type': 'int'},

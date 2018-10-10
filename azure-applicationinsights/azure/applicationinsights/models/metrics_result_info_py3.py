@@ -25,7 +25,8 @@ class MetricsResultInfo(Model):
     :param interval: The interval used to segment the metric data.
     :type interval: timedelta
     :param segments: Segmented metric data (if segmented).
-    :type segments: list[~azure.applicationinsights.models.MetricsSegmentInfo]
+    :type segments:
+     list[~azure.applicationinsights.query.models.MetricsSegmentInfo]
     """
 
     _attribute_map = {

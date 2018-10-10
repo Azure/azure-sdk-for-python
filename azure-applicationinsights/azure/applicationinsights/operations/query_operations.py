@@ -47,17 +47,17 @@ class QueryOperations(object):
         :param body: The Analytics query. Learn more about the [Analytics
          query
          syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/)
-        :type body: ~azure.applicationinsights.models.QueryBody
+        :type body: ~azure.applicationinsights.query.models.QueryBody
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: QueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.applicationinsights.models.QueryResults or
+        :rtype: ~azure.applicationinsights.query.models.QueryResults or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.execute.metadata['url']

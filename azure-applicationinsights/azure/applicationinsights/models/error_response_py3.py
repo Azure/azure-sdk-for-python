@@ -21,7 +21,7 @@ class ErrorResponse(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param error: Required. The error details.
-    :type error: ~azure.applicationinsights.models.ErrorInfo
+    :type error: ~azure.applicationinsights.query.models.ErrorInfo
     """
 
     _validation = {

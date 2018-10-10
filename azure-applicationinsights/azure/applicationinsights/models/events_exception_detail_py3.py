@@ -27,7 +27,7 @@ class EventsExceptionDetail(Model):
     :type id: str
     :param parsed_stack: The parsed stack
     :type parsed_stack:
-     list[~azure.applicationinsights.models.EventsExceptionDetailsParsedStack]
+     list[~azure.applicationinsights.query.models.EventsExceptionDetailsParsedStack]
     """
 
     _attribute_map = {
