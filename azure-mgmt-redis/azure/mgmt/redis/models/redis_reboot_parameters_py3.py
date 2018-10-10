@@ -35,7 +35,7 @@ class RedisRebootParameters(Model):
         'shard_id': {'key': 'shardId', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, reboot_type, shard_id: int=None, **kwargs) -> None:
         super(RedisRebootParameters, self).__init__(**kwargs)
-        self.reboot_type = kwargs.get('reboot_type', None)
-        self.shard_id = kwargs.get('shard_id', None)
+        self.reboot_type = reboot_type
+        self.shard_id = shard_id
