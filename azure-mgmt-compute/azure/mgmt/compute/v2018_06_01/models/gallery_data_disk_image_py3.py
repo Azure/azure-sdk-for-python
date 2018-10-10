@@ -18,16 +18,18 @@ class GalleryDataDiskImage(GalleryDiskImage):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar size_in_gb: It indicates the size of the VHD to create.
+    :ivar size_in_gb: This property indicates the size of the VHD to be
+     created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None',
      'ReadOnly', and 'ReadWrite'. Possible values include: 'None', 'ReadOnly',
      'ReadWrite'
     :vartype host_caching: str or
      ~azure.mgmt.compute.v2018_06_01.models.HostCaching
-    :ivar lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
+    :ivar lun: This property specifies the logical unit number of the data
+     disk. This value is used to identify data disks within the Virtual Machine
+     and therefore must be unique for each data disk attached to the Virtual
+     Machine.
     :vartype lun: int
     """
 

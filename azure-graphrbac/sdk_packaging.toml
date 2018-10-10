@@ -1,6 +1,7 @@
 [packaging]
 package_name = "azure-graphrbac"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
+package_nspkg = "azure-nspkg"
+package_pprint_name = "Graph RBAC"
+package_doc_id = "activedirectory"
 is_stable = false
-is_arm = true
+is_arm = false

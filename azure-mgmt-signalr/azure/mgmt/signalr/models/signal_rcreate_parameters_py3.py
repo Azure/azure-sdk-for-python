@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .signal_rupdate_parameters import SignalRUpdateParameters
+from .signal_rupdate_parameters_py3 import SignalRUpdateParameters
 
 
 class SignalRCreateParameters(SignalRUpdateParameters):

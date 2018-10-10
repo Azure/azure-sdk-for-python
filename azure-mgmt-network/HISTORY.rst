@@ -3,6 +3,79 @@
 Release History
 ===============
 
+2.2.1 (2018-09-14)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix unexpected exception with network_profiles.delete
+
+2.2.0 (2018-09-11)
+++++++++++++++++++
+
+Default API version is now 2018-08-01
+
+**Features**
+
+- Model AzureFirewall has a new parameter nat_rule_collections
+- Model VirtualHub has a new parameter route_table
+- Model VirtualHub has a new parameter virtual_network_connections
+- Model VirtualHub has a new parameter p2_svpn_gateway
+- Model VirtualHub has a new parameter express_route_gateway
+- Model VirtualHub has a new parameter vpn_gateway
+- Model VirtualWAN has a new parameter allow_vnet_to_vnet_traffic
+- Model VirtualWAN has a new parameter p2_svpn_server_configurations
+- Model VirtualWAN has a new parameter office365_local_breakout_category
+- Model VirtualWAN has a new parameter allow_branch_to_branch_traffic
+- Model VirtualWAN has a new parameter security_provider_name
+- Model VpnSite has a new parameter is_security_site
+- Model VpnConnection has a new parameter connection_bandwidth
+- Model VpnConnection has a new parameter enable_internet_security
+- Model VpnConnection has a new parameter vpn_connection_protocol_type
+- Model VpnConnection has a new parameter enable_rate_limiting
+- Model ServiceEndpointPolicy has a new parameter subnets
+- Model AzureFirewallApplicationRule has a new parameter fqdn_tags
+- Model AzureFirewallApplicationRule has a new parameter target_fqdns
+- Model VpnGateway has a new parameter vpn_gateway_scale_unit
+- Model ApplicationGatewayBackendHttpSettings has a new parameter trusted_root_certificates
+- Model VirtualNetworkGatewayConnection has a new parameter connection_protocol
+- Model ExpressRouteCircuitPeering has a new parameter express_route_connection
+- Model Subnet has a new parameter delegations
+- Model Subnet has a new parameter address_prefixes
+- Model Subnet has a new parameter ip_configuration_profiles
+- Model Subnet has a new parameter service_association_links
+- Model Subnet has a new parameter interface_endpoints
+- Model Subnet has a new parameter purpose
+- Model ApplicationGateway has a new parameter trusted_root_certificates
+- Model NetworkInterface has a new parameter tap_configurations
+- Model NetworkInterface has a new parameter hosted_workloads
+- Model NetworkInterface has a new parameter interface_endpoint
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter connection_protocol
+- Model HubVirtualNetworkConnection has a new parameter enable_internet_security
+- Model NetworkInterfaceIPConfiguration has a new parameter virtual_network_taps
+- Added operation VirtualNetworkGatewaysOperations.reset_vpn_client_shared_key
+- Added operation group ExpressRouteConnectionsOperations
+- Added operation group AzureFirewallFqdnTagsOperations
+- Added operation group VirtualNetworkTapsOperations
+- Added operation group NetworkProfilesOperations
+- Added operation group P2sVpnServerConfigurationsOperations
+- Added operation group AvailableDelegationsOperations
+- Added operation group InterfaceEndpointsOperations
+- Added operation group P2sVpnGatewaysOperations
+- Added operation group AvailableResourceGroupDelegationsOperations
+- Added operation group ExpressRouteGatewaysOperations
+- Added operation group NetworkInterfaceTapConfigurationsOperations
+
+**Breaking changes**
+
+- Model VirtualHub no longer has parameter hub_virtual_network_connections
+- Model VpnConnection no longer has parameter connection_bandwidth_in_mbps
+- Model AzureFirewallApplicationRule no longer has parameter target_urls
+- Model VpnGateway no longer has parameter policies
+- Model AzureFirewallIPConfiguration no longer has parameter internal_public_ip_address
+- Model ApplicationGatewayAutoscaleConfiguration has a new signature
+- Renamed virtual_wa_ns to virtual_wans
+
 2.1.0 (2018-08-28)
 ++++++++++++++++++
 
