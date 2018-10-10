@@ -12,14 +12,6 @@
 from enum import Enum
 
 
-class TextOperationStatusCodes(str, Enum):
-
-    not_started = "Not Started"
-    running = "Running"
-    failed = "Failed"
-    succeeded = "Succeeded"
-
-
 class Gender(str, Enum):
 
     male = "Male"
@@ -41,6 +33,14 @@ class ComputerVisionErrorCodes(str, Enum):
     internal_server_error = "InternalServerError"
     unspecified = "Unspecified"
     storage_exception = "StorageException"
+
+
+class TextOperationStatusCodes(str, Enum):
+
+    not_started = "Not Started"
+    running = "Running"
+    failed = "Failed"
+    succeeded = "Succeeded"
 
 
 class VisualFeatureTypes(str, Enum):
