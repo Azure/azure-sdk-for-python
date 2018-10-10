@@ -15,17 +15,24 @@ from msrest.serialization import Model
 class ApplicationCreateParameters(Model):
     """Request parameters for creating a new application.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param available_to_other_tenants: Whether the application is available to
-     other tenants.
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
+    :param available_to_other_tenants: Required. Whether the application is
+     available to other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: The display name of the application.
+    :param display_name: Required. The display name of the application.
     :type display_name: str
     :param homepage: The home page of the application.
     :type homepage: str
-    :param identifier_uris: A collection of URIs for the application.
+    :param identifier_uris: Required. A collection of URIs for the
+     application.
     :type identifier_uris: list[str]
     :param reply_urls: A collection of reply URLs for the application.
     :type reply_urls: list[str]
@@ -53,6 +60,7 @@ class ApplicationCreateParameters(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
@@ -64,15 +72,16 @@ class ApplicationCreateParameters(Model):
         'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, identifier_uris, additional_properties=None, homepage=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow=None, required_resource_access=None):
-        super(ApplicationCreateParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.available_to_other_tenants = available_to_other_tenants
-        self.display_name = display_name
-        self.homepage = homepage
-        self.identifier_uris = identifier_uris
-        self.reply_urls = reply_urls
-        self.key_credentials = key_credentials
-        self.password_credentials = password_credentials
-        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
-        self.required_resource_access = required_resource_access
+    def __init__(self, **kwargs):
+        super(ApplicationCreateParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)

@@ -27,10 +27,6 @@ class GetObjectsParameters(Model):
     :type include_directory_object_references: bool
     """
 
-    _validation = {
-        'include_directory_object_references': {'required': True},
-    }
-
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'object_ids': {'key': 'objectIds', 'type': '[str]'},
@@ -38,9 +34,9 @@ class GetObjectsParameters(Model):
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, additional_properties=None, object_ids=None, types=None):
-        super(GetObjectsParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.object_ids = object_ids
-        self.types = types
-        self.include_directory_object_references = include_directory_object_references
+    def __init__(self, **kwargs):
+        super(GetObjectsParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.object_ids = kwargs.get('object_ids', None)
+        self.types = kwargs.get('types', None)
+        self.include_directory_object_references = kwargs.get('include_directory_object_references', None)
