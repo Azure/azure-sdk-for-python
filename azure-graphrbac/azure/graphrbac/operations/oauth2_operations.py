@@ -98,7 +98,7 @@ class OAuth2Operations(object):
         return deserialized
     get.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}
 
-    def post(
+    def grant(
             self, body=None, custom_headers=None, raw=False, **operation_config):
         """Grants OAuth2 permissions for the relevant resource Ids of an app.
 
@@ -116,7 +116,7 @@ class OAuth2Operations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.post.metadata['url']
+        url = self.grant.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -162,4 +162,4 @@ class OAuth2Operations(object):
             return client_raw_response
 
         return deserialized
-    post.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}
+    grant.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}
