@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure MyService Management Client Library.
+This is the Microsoft Azure Graph RBAC Client Library.
 
 This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
