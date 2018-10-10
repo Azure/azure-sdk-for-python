@@ -171,62 +171,6 @@ class ServicePrincipalsOperations(object):
         return deserialized
     list.metadata = {'url': '/{tenantID}/servicePrincipals'}
 
-    def update(
-            self, object_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates a service principal in the directory.
-
-        :param object_id: The object ID of the service principal to delete.
-        :type object_id: str
-        :param parameters: Parameters to update a service principal.
-        :type parameters:
-         ~azure.graphrbac.models.ServicePrincipalUpdateParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
-        """
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str'),
-            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'ServicePrincipalUpdateParameters')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise models.GraphErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    update.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}'}
-
     def delete(
             self, object_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a service principal from the directory.

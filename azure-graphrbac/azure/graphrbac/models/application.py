@@ -32,10 +32,6 @@ class Application(DirectoryObject):
     :type object_type: str
     :param app_id: The application ID.
     :type app_id: str
-    :param app_roles: The collection of application roles that an application
-     may declare. These roles can be assigned to users, groups or service
-     principals.
-    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param app_permissions: The application permissions.
     :type app_permissions: list[str]
     :param available_to_other_tenants: Whether the application is be available
@@ -66,7 +62,6 @@ class Application(DirectoryObject):
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
-        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -79,7 +74,6 @@ class Application(DirectoryObject):
     def __init__(self, **kwargs):
         super(Application, self).__init__(**kwargs)
         self.app_id = kwargs.get('app_id', None)
-        self.app_roles = kwargs.get('app_roles', None)
         self.app_permissions = kwargs.get('app_permissions', None)
         self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
         self.display_name = kwargs.get('display_name', None)
