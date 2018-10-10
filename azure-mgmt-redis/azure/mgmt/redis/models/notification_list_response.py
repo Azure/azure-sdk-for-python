@@ -9,35 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class NotificationListResponse(Model):
+    """The response of listUpgradeNotifications.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :param value: List of all notifications.
+    :type value: list[~azure.mgmt.redis.models.UpgradeNotification]
+    :ivar next_link: Link for next set of notifications.
+    :vartype next_link: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[UpgradeNotification]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(NotificationListResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = None

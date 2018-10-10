@@ -72,16 +72,16 @@ class RedisCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, sku, location: str, redis_configuration=None, enable_non_ssl_port: bool=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, subnet_id: str=None, static_ip: str=None, zones=None, tags=None, **kwargs) -> None:
         super(RedisCreateParameters, self).__init__(**kwargs)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.sku = kwargs.get('sku', None)
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.static_ip = kwargs.get('static_ip', None)
-        self.zones = kwargs.get('zones', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.redis_configuration = redis_configuration
+        self.enable_non_ssl_port = enable_non_ssl_port
+        self.tenant_settings = tenant_settings
+        self.shard_count = shard_count
+        self.minimum_tls_version = minimum_tls_version
+        self.sku = sku
+        self.subnet_id = subnet_id
+        self.static_ip = static_ip
+        self.zones = zones
+        self.location = location
+        self.tags = tags
