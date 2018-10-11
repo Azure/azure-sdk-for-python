@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.51.0 (2018-10-11)
++++++++++++++++++++
+
+**Features**
+
+- Add delete group/application owner
+
 0.50.0 (2018-10-10)
 +++++++++++++++++++
 
