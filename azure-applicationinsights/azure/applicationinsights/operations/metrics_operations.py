@@ -63,7 +63,8 @@ class MetricsOperations(object):
          'availabilityResults/availabilityPercentage',
          'availabilityResults/duration', 'billing/telemetryCount',
          'customEvents/count'
-        :type metric_id: str or ~azure.applicationinsights.models.MetricId
+        :type metric_id: str or
+         ~azure.applicationinsights.query.models.MetricId
         :param timespan: The timespan over which to retrieve metric values.
          This is an ISO8601 time period value. If timespan is omitted, a
          default time range of `PT12H` ("last 12 hours") is used. The actual
@@ -83,14 +84,14 @@ class MetricsOperations(object):
          with a comma. If no aggregation is specified, then the default
          aggregation for the metric is used.
         :type aggregation: list[str or
-         ~azure.applicationinsights.models.MetricsAggregation]
+         ~azure.applicationinsights.query.models.MetricsAggregation]
         :param segment: The name of the dimension to segment the metric values
          by. This dimension must be applicable to the metric you are
          retrieving. To segment by more than one dimension at a time, separate
          them with a comma (,). In this case, the metric data will be segmented
          in the order the dimensions are listed in the parameter.
         :type segment: list[str or
-         ~azure.applicationinsights.models.MetricsSegment]
+         ~azure.applicationinsights.query.models.MetricsSegment]
         :param top: The number of segments to return.  This value is only
          valid when segment is specified.
         :type top: int
@@ -108,10 +109,10 @@ class MetricsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MetricsResult or ClientRawResponse if raw=true
-        :rtype: ~azure.applicationinsights.models.MetricsResult or
+        :rtype: ~azure.applicationinsights.query.models.MetricsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -128,7 +129,7 @@ class MetricsOperations(object):
         if interval is not None:
             query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
         if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, '[MetricsAggregation]', div=',', min_items=1)
+            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, '[str]', div=',', min_items=1)
         if segment is not None:
             query_parameters['segment'] = self._serialize.query("segment", segment, '[str]', div=',', min_items=1)
         if top is not None:
@@ -174,17 +175,18 @@ class MetricsOperations(object):
         :type app_id: str
         :param body: The batched metrics query.
         :type body:
-         list[~azure.applicationinsights.models.MetricsPostBodySchema]
+         list[~azure.applicationinsights.query.models.MetricsPostBodySchema]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.applicationinsights.models.MetricsResultsItem] or
+        :rtype:
+         list[~azure.applicationinsights.query.models.MetricsResultsItem] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_multiple.metadata['url']
@@ -242,7 +244,7 @@ class MetricsOperations(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.applicationinsights.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.applicationinsights.query.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_metadata.metadata['url']

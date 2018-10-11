@@ -20,7 +20,7 @@ class QueryResults(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param tables: Required. The list of tables, columns and rows.
-    :type tables: list[~azure.applicationinsights.models.Table]
+    :type tables: list[~azure.applicationinsights.query.models.Table]
     """
 
     _validation = {
