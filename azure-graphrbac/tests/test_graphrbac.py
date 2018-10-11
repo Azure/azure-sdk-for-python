@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.graphrbac
+import azure.graphrbac.models
 from devtools_testutils import AzureMgmtTestCase
 
 import pytest
@@ -53,6 +53,15 @@ class GraphRbacTest(AzureMgmtTestCase):
                     break
             else:
                 pytest.fail("Didn't found the group I just created in my owned objects")
+
+            try:
+                self.graphrbac_client.groups.remove_owner(
+                    group.object_id,
+                    user.object_id
+                )
+                pytest.fail("Remove the only owner MUST fail")
+            except azure.graphrbac.models.GraphErrorException as err:
+                assert "The group must have at least one owner, hence this owner cannot be removed." in err.message
 
         finally:
             if group:
