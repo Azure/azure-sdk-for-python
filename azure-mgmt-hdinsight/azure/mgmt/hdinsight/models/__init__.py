@@ -25,6 +25,8 @@ try:
     from .storage_account_py3 import StorageAccount
     from .storage_profile_py3 import StorageProfile
     from .cluster_create_properties_py3 import ClusterCreateProperties
+    from .cluster_identity_user_assigned_identities_value_py3 import ClusterIdentityUserAssignedIdentitiesValue
+    from .cluster_identity_py3 import ClusterIdentity
     from .cluster_create_parameters_extended_py3 import ClusterCreateParametersExtended
     from .cluster_patch_parameters_py3 import ClusterPatchParameters
     from .quota_info_py3 import QuotaInfo
@@ -73,6 +75,8 @@ except (SyntaxError, ImportError):
     from .storage_account import StorageAccount
     from .storage_profile import StorageProfile
     from .cluster_create_properties import ClusterCreateProperties
+    from .cluster_identity_user_assigned_identities_value import ClusterIdentityUserAssignedIdentitiesValue
+    from .cluster_identity import ClusterIdentity
     from .cluster_create_parameters_extended import ClusterCreateParametersExtended
     from .cluster_patch_parameters import ClusterPatchParameters
     from .quota_info import QuotaInfo
@@ -113,6 +117,7 @@ from .hd_insight_management_client_enums import (
     DirectoryType,
     OSType,
     Tier,
+    ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
 )
@@ -133,6 +138,8 @@ __all__ = [
     'StorageAccount',
     'StorageProfile',
     'ClusterCreateProperties',
+    'ClusterIdentityUserAssignedIdentitiesValue',
+    'ClusterIdentity',
     'ClusterCreateParametersExtended',
     'ClusterPatchParameters',
     'QuotaInfo',
@@ -172,6 +179,7 @@ __all__ = [
     'DirectoryType',
     'OSType',
     'Tier',
+    'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
 ]

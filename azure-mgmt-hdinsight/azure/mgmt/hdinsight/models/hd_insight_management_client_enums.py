@@ -29,6 +29,14 @@ class Tier(str, Enum):
     premium = "Premium"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
 class HDInsightClusterProvisioningState(str, Enum):
 
     in_progress = "InProgress"
