@@ -61,10 +61,10 @@ class User(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, identity=None, secret_store=None, provisioning_state=None, unique_identifier=None):
-        super(User, self).__init__(location=location, tags=tags)
-        self.identity = identity
-        self.secret_store = secret_store
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
+        self.secret_store = kwargs.get('secret_store', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

@@ -41,11 +41,11 @@ class ArtifactInstallPropertiesFragment(Model):
         'install_time': {'key': 'installTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, artifact_id=None, parameters=None, status=None, deployment_status_message=None, vm_extension_status_message=None, install_time=None):
-        super(ArtifactInstallPropertiesFragment, self).__init__()
-        self.artifact_id = artifact_id
-        self.parameters = parameters
-        self.status = status
-        self.deployment_status_message = deployment_status_message
-        self.vm_extension_status_message = vm_extension_status_message
-        self.install_time = install_time
+    def __init__(self, **kwargs):
+        super(ArtifactInstallPropertiesFragment, self).__init__(**kwargs)
+        self.artifact_id = kwargs.get('artifact_id', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.status = kwargs.get('status', None)
+        self.deployment_status_message = kwargs.get('deployment_status_message', None)
+        self.vm_extension_status_message = kwargs.get('vm_extension_status_message', None)
+        self.install_time = kwargs.get('install_time', None)

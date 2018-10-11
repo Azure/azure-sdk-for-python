@@ -147,39 +147,39 @@ class LabVirtualMachineCreationParameter(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, bulk_creation_parameters=None, notes=None, owner_object_id=None, owner_user_principal_name=None, created_by_user_id=None, created_by_user=None, created_date=None, custom_image_id=None, os_type=None, size=None, user_name=None, password=None, ssh_key=None, is_authentication_with_ssh_key=None, fqdn=None, lab_subnet_name=None, lab_virtual_network_id=None, disallow_public_ip_address=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, compute_vm=None, network_interface=None, applicable_schedule=None, expiration_date=None, allow_claim=None, storage_type=None, virtual_machine_creation_source=None, environment_id=None, provisioning_state=None, unique_identifier=None, name=None, location=None, tags=None):
-        super(LabVirtualMachineCreationParameter, self).__init__()
-        self.bulk_creation_parameters = bulk_creation_parameters
-        self.notes = notes
-        self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.custom_image_id = custom_image_id
-        self.os_type = os_type
-        self.size = size
-        self.user_name = user_name
-        self.password = password
-        self.ssh_key = ssh_key
-        self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
-        self.lab_subnet_name = lab_subnet_name
-        self.lab_virtual_network_id = lab_virtual_network_id
-        self.disallow_public_ip_address = disallow_public_ip_address
-        self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
-        self.gallery_image_reference = gallery_image_reference
-        self.compute_vm = compute_vm
-        self.network_interface = network_interface
-        self.applicable_schedule = applicable_schedule
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
-        self.name = name
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(LabVirtualMachineCreationParameter, self).__init__(**kwargs)
+        self.bulk_creation_parameters = kwargs.get('bulk_creation_parameters', None)
+        self.notes = kwargs.get('notes', None)
+        self.owner_object_id = kwargs.get('owner_object_id', None)
+        self.owner_user_principal_name = kwargs.get('owner_user_principal_name', None)
+        self.created_by_user_id = kwargs.get('created_by_user_id', None)
+        self.created_by_user = kwargs.get('created_by_user', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.custom_image_id = kwargs.get('custom_image_id', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.size = kwargs.get('size', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.ssh_key = kwargs.get('ssh_key', None)
+        self.is_authentication_with_ssh_key = kwargs.get('is_authentication_with_ssh_key', None)
+        self.fqdn = kwargs.get('fqdn', None)
+        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
+        self.lab_virtual_network_id = kwargs.get('lab_virtual_network_id', None)
+        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', None)
+        self.artifacts = kwargs.get('artifacts', None)
+        self.artifact_deployment_status = kwargs.get('artifact_deployment_status', None)
+        self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
+        self.compute_vm = kwargs.get('compute_vm', None)
+        self.network_interface = kwargs.get('network_interface', None)
+        self.applicable_schedule = kwargs.get('applicable_schedule', None)
+        self.expiration_date = kwargs.get('expiration_date', None)
+        self.allow_claim = kwargs.get('allow_claim', None)
+        self.storage_type = kwargs.get('storage_type', None)
+        self.virtual_machine_creation_source = kwargs.get('virtual_machine_creation_source', None)
+        self.environment_id = kwargs.get('environment_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)
+        self.name = kwargs.get('name', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

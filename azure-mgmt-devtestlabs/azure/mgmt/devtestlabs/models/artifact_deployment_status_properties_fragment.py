@@ -31,8 +31,8 @@ class ArtifactDeploymentStatusPropertiesFragment(Model):
         'total_artifacts': {'key': 'totalArtifacts', 'type': 'int'},
     }
 
-    def __init__(self, deployment_status=None, artifacts_applied=None, total_artifacts=None):
-        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__()
-        self.deployment_status = deployment_status
-        self.artifacts_applied = artifacts_applied
-        self.total_artifacts = total_artifacts
+    def __init__(self, **kwargs):
+        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__(**kwargs)
+        self.deployment_status = kwargs.get('deployment_status', None)
+        self.artifacts_applied = kwargs.get('artifacts_applied', None)
+        self.total_artifacts = kwargs.get('total_artifacts', None)

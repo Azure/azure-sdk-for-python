@@ -73,13 +73,13 @@ class VirtualNetwork(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, allowed_subnets=None, description=None, external_provider_resource_id=None, external_subnets=None, subnet_overrides=None, provisioning_state=None, unique_identifier=None):
-        super(VirtualNetwork, self).__init__(location=location, tags=tags)
-        self.allowed_subnets = allowed_subnets
-        self.description = description
-        self.external_provider_resource_id = external_provider_resource_id
-        self.external_subnets = external_subnets
-        self.subnet_overrides = subnet_overrides
+    def __init__(self, **kwargs):
+        super(VirtualNetwork, self).__init__(**kwargs)
+        self.allowed_subnets = kwargs.get('allowed_subnets', None)
+        self.description = kwargs.get('description', None)
+        self.external_provider_resource_id = kwargs.get('external_provider_resource_id', None)
+        self.external_subnets = kwargs.get('external_subnets', None)
+        self.subnet_overrides = kwargs.get('subnet_overrides', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

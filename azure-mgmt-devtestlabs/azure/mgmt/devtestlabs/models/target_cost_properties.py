@@ -41,11 +41,11 @@ class TargetCostProperties(Model):
         'cycle_type': {'key': 'cycleType', 'type': 'str'},
     }
 
-    def __init__(self, status=None, target=None, cost_thresholds=None, cycle_start_date_time=None, cycle_end_date_time=None, cycle_type=None):
-        super(TargetCostProperties, self).__init__()
-        self.status = status
-        self.target = target
-        self.cost_thresholds = cost_thresholds
-        self.cycle_start_date_time = cycle_start_date_time
-        self.cycle_end_date_time = cycle_end_date_time
-        self.cycle_type = cycle_type
+    def __init__(self, **kwargs):
+        super(TargetCostProperties, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.target = kwargs.get('target', None)
+        self.cost_thresholds = kwargs.get('cost_thresholds', None)
+        self.cycle_start_date_time = kwargs.get('cycle_start_date_time', None)
+        self.cycle_end_date_time = kwargs.get('cycle_end_date_time', None)
+        self.cycle_type = kwargs.get('cycle_type', None)

@@ -71,13 +71,13 @@ class Formula(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, description=None, author=None, os_type=None, formula_content=None, vm=None, provisioning_state=None, unique_identifier=None):
-        super(Formula, self).__init__(location=location, tags=tags)
-        self.description = description
-        self.author = author
-        self.os_type = os_type
+    def __init__(self, **kwargs):
+        super(Formula, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.author = kwargs.get('author', None)
+        self.os_type = kwargs.get('os_type', None)
         self.creation_date = None
-        self.formula_content = formula_content
-        self.vm = vm
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.formula_content = kwargs.get('formula_content', None)
+        self.vm = kwargs.get('vm', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

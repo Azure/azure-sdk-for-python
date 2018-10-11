@@ -64,11 +64,11 @@ class NotificationChannel(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, web_hook_url=None, description=None, events=None, provisioning_state=None, unique_identifier=None):
-        super(NotificationChannel, self).__init__(location=location, tags=tags)
-        self.web_hook_url = web_hook_url
-        self.description = description
-        self.events = events
+    def __init__(self, **kwargs):
+        super(NotificationChannel, self).__init__(**kwargs)
+        self.web_hook_url = kwargs.get('web_hook_url', None)
+        self.description = kwargs.get('description', None)
+        self.events = kwargs.get('events', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

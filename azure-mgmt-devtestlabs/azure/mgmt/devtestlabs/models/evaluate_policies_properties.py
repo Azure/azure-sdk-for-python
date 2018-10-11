@@ -29,8 +29,8 @@ class EvaluatePoliciesProperties(Model):
         'value_offset': {'key': 'valueOffset', 'type': 'str'},
     }
 
-    def __init__(self, fact_name=None, fact_data=None, value_offset=None):
-        super(EvaluatePoliciesProperties, self).__init__()
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.value_offset = value_offset
+    def __init__(self, **kwargs):
+        super(EvaluatePoliciesProperties, self).__init__(**kwargs)
+        self.fact_name = kwargs.get('fact_name', None)
+        self.fact_data = kwargs.get('fact_data', None)
+        self.value_offset = kwargs.get('value_offset', None)

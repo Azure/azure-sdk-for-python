@@ -69,11 +69,11 @@ class DtlEnvironment(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, deployment_properties=None, arm_template_display_name=None, provisioning_state=None, unique_identifier=None):
-        super(DtlEnvironment, self).__init__(location=location, tags=tags)
-        self.deployment_properties = deployment_properties
-        self.arm_template_display_name = arm_template_display_name
+    def __init__(self, **kwargs):
+        super(DtlEnvironment, self).__init__(**kwargs)
+        self.deployment_properties = kwargs.get('deployment_properties', None)
+        self.arm_template_display_name = kwargs.get('arm_template_display_name', None)
         self.resource_group_id = None
         self.created_by_user = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

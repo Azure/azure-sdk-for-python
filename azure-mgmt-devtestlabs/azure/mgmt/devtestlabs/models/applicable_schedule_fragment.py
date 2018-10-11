@@ -53,7 +53,7 @@ class ApplicableScheduleFragment(Resource):
         'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'ScheduleFragment'},
     }
 
-    def __init__(self, location=None, tags=None, lab_vms_shutdown=None, lab_vms_startup=None):
-        super(ApplicableScheduleFragment, self).__init__(location=location, tags=tags)
-        self.lab_vms_shutdown = lab_vms_shutdown
-        self.lab_vms_startup = lab_vms_startup
+    def __init__(self, **kwargs):
+        super(ApplicableScheduleFragment, self).__init__(**kwargs)
+        self.lab_vms_shutdown = kwargs.get('lab_vms_shutdown', None)
+        self.lab_vms_startup = kwargs.get('lab_vms_startup', None)
