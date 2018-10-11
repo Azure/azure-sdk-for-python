@@ -13,7 +13,7 @@ from .orchestrator_specific_connection_details_py3 import OrchestratorSpecificCo
 
 
 class KubernetesConnectionDetails(OrchestratorSpecificConnectionDetails):
-    """KubernetesConnectionDetails.
+    """Contains information used to connect to a Kubernetes cluster.
 
     All required parameters must be populated in order to send to Azure.
 

@@ -20,6 +20,7 @@ class ProvisioningState(str, Enum):
     updating = "Updating"
     creating = "Creating"
     deleting = "Deleting"
+    deleted = "Deleted"
 
 
 class SkuTier(str, Enum):

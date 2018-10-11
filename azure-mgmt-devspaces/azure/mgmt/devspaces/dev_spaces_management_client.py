@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.container_host_mappings_operations import ContainerHostMappingsOperations
 from .operations.controllers_operations import ControllersOperations
 from .operations.operations import Operations
 from . import models
@@ -56,6 +57,8 @@ class DevSpacesManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: DevSpacesManagementClientConfiguration
 
+    :ivar container_host_mappings: ContainerHostMappings operations
+    :vartype container_host_mappings: azure.mgmt.devspaces.operations.ContainerHostMappingsOperations
     :ivar controllers: Controllers operations
     :vartype controllers: azure.mgmt.devspaces.operations.ControllersOperations
     :ivar operations: Operations operations
@@ -80,6 +83,8 @@ class DevSpacesManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.container_host_mappings = ContainerHostMappingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.controllers = ControllersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

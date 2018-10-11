@@ -32,7 +32,7 @@ class Controller(TrackedResource):
     :type location: str
     :ivar provisioning_state: Provisioning state of the Azure Dev Spaces
      Controller. Possible values include: 'Succeeded', 'Failed', 'Canceled',
-     'Updating', 'Creating', 'Deleting'
+     'Updating', 'Creating', 'Deleting', 'Deleted'
     :vartype provisioning_state: str or
      ~azure.mgmt.devspaces.models.ProvisioningState
     :param host_suffix: Required. DNS suffix for public endpoints running in
