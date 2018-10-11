@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class AgreementTerms(Resource):
@@ -64,13 +64,13 @@ class AgreementTerms(Resource):
         'accepted': {'key': 'properties.accepted', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, publisher: str=None, product: str=None, plan: str=None, license_text_link: str=None, privacy_policy_link: str=None, retrieve_datetime: str=None, signature: str=None, accepted: bool=None, **kwargs) -> None:
         super(AgreementTerms, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
-        self.plan = kwargs.get('plan', None)
-        self.license_text_link = kwargs.get('license_text_link', None)
-        self.privacy_policy_link = kwargs.get('privacy_policy_link', None)
-        self.retrieve_datetime = kwargs.get('retrieve_datetime', None)
-        self.signature = kwargs.get('signature', None)
-        self.accepted = kwargs.get('accepted', None)
+        self.publisher = publisher
+        self.product = product
+        self.plan = plan
+        self.license_text_link = license_text_link
+        self.privacy_policy_link = privacy_policy_link
+        self.retrieve_datetime = retrieve_datetime
+        self.signature = signature
+        self.accepted = accepted
