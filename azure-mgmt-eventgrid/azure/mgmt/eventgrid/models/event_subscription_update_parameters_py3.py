@@ -25,8 +25,7 @@ class EventSubscriptionUpdateParameters(Model):
     :type labels: list[str]
     :param event_delivery_schema: The event delivery schema for the event
      subscription. Possible values include: 'EventGridSchema',
-     'InputEventSchema', 'CloudEventV01Schema'. Default value:
-     "EventGridSchema" .
+     'InputEventSchema', 'CloudEventV01Schema'
     :type event_delivery_schema: str or
      ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
@@ -47,7 +46,7 @@ class EventSubscriptionUpdateParameters(Model):
         'dead_letter_destination': {'key': 'deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, event_delivery_schema="EventGridSchema", retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, event_delivery_schema=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscriptionUpdateParameters, self).__init__(**kwargs)
         self.destination = destination
         self.filter = filter
