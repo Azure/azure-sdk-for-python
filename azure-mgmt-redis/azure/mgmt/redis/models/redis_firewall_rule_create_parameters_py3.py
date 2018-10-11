@@ -9,24 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class RedisFirewallRule(ProxyResource):
-    """A firewall rule on a redis cache has a name, and describes a contiguous
-    range of IP addresses permitted to connect.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class RedisFirewallRuleCreateParameters(Model):
+    """Parameters required for creating a firewall rule on redis cache.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param start_ip: Required. lowest IP address included in the range
     :type start_ip: str
     :param end_ip: Required. highest IP address included in the range
@@ -34,22 +24,16 @@ class RedisFirewallRule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'start_ip': {'required': True},
         'end_ip': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'start_ip': {'key': 'properties.startIP', 'type': 'str'},
         'end_ip': {'key': 'properties.endIP', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisFirewallRule, self).__init__(**kwargs)
-        self.start_ip = kwargs.get('start_ip', None)
-        self.end_ip = kwargs.get('end_ip', None)
+    def __init__(self, *, start_ip: str, end_ip: str, **kwargs) -> None:
+        super(RedisFirewallRuleCreateParameters, self).__init__(**kwargs)
+        self.start_ip = start_ip
+        self.end_ip = end_ip

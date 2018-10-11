@@ -12,24 +12,24 @@
 from msrest.serialization import Model
 
 
-class RedisLinkedServer(Model):
-    """Linked server Id.
+class RedisForceRebootResponse(Model):
+    """Response to force reboot for Redis cache.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Linked server Id.
-    :vartype id: str
+    :ivar message: Status message
+    :vartype message: str
     """
 
     _validation = {
-        'id': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisLinkedServer, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, **kwargs) -> None:
+        super(RedisForceRebootResponse, self).__init__(**kwargs)
+        self.message = None

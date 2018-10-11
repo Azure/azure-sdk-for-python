@@ -12,21 +12,30 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """REST API operation.
+class CheckNameAvailabilityParameters(Model):
+    """Parameters body to pass for resource name availability check.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name.
     :type name: str
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.redis.models.OperationDisplay
+    :param type: Required. Resource type. The only legal value of this
+     property for checking redis cache name availability is
+     'Microsoft.Cache/redis'.
+    :type type: str
     """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
+        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.type = kwargs.get('type', None)

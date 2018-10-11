@@ -12,24 +12,28 @@
 from msrest.serialization import Model
 
 
-class RedisLinkedServer(Model):
-    """Linked server Id.
+class NotificationListResponse(Model):
+    """The response of listUpgradeNotifications.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Linked server Id.
-    :vartype id: str
+    :param value: List of all notifications.
+    :type value: list[~azure.mgmt.redis.models.UpgradeNotification]
+    :ivar next_link: Link for next set of notifications.
+    :vartype next_link: str
     """
 
     _validation = {
-        'id': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[UpgradeNotification]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisLinkedServer, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(NotificationListResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
