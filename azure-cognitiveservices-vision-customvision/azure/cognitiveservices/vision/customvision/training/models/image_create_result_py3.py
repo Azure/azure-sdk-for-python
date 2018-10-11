@@ -22,9 +22,10 @@ class ImageCreateResult(Model):
     :vartype source_url: str
     :ivar status: Possible values include: 'OK', 'OKDuplicate', 'ErrorSource',
      'ErrorImageFormat', 'ErrorImageSize', 'ErrorStorage', 'ErrorLimitExceed',
-     'ErrorTagLimitExceed', 'ErrorRegionLimitExceed', 'ErrorUnknown'
+     'ErrorTagLimitExceed', 'ErrorRegionLimitExceed', 'ErrorUnknown',
+     'ErrorNegativeAndRegularTagOnSameImage'
     :vartype status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ImageUploadStatus
+     ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateStatus
     :ivar image:
     :vartype image:
      ~azure.cognitiveservices.vision.customvision.training.models.Image

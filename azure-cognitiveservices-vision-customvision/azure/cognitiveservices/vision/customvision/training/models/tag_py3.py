@@ -24,6 +24,10 @@ class Tag(Model):
     :type name: str
     :param description: Gets or sets the description of the tag
     :type description: str
+    :param type: Gets or sets the type of the tag. Possible values include:
+     'Regular', 'Negative'
+    :type type: str or
+     ~azure.cognitiveservices.vision.customvision.training.models.TagType
     :ivar image_count: Gets the number of images with this tag
     :vartype image_count: int
     """
@@ -37,12 +41,14 @@ class Tag(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'image_count': {'key': 'imageCount', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, description: str=None, type=None, **kwargs) -> None:
         super(Tag, self).__init__(**kwargs)
         self.id = None
         self.name = name
         self.description = description
+        self.type = type
         self.image_count = None

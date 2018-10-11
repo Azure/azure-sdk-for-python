@@ -21,15 +21,16 @@ class Export(Model):
     :ivar platform: Possible values include: 'CoreML', 'TensorFlow',
      'DockerFile', 'ONNX'
     :vartype platform: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatformModel
     :ivar status: Possible values include: 'Exporting', 'Failed', 'Done'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportStatusModel
     :ivar download_uri:
     :vartype download_uri: str
-    :ivar flavor: Possible values include: 'Linux', 'Windows'
+    :ivar flavor: Possible values include: 'Linux', 'Windows', 'ONNX10',
+     'ONNX12'
     :vartype flavor: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavorModel
     :ivar newer_version_available:
     :vartype newer_version_available: bool
     """

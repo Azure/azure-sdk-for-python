@@ -18,7 +18,7 @@ class DomainType(str, Enum):
     object_detection = "ObjectDetection"
 
 
-class ImageUploadStatus(str, Enum):
+class ImageCreateStatus(str, Enum):
 
     ok = "OK"
     ok_duplicate = "OKDuplicate"
@@ -30,6 +30,7 @@ class ImageUploadStatus(str, Enum):
     error_tag_limit_exceed = "ErrorTagLimitExceed"
     error_region_limit_exceed = "ErrorRegionLimitExceed"
     error_unknown = "ErrorUnknown"
+    error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
 
 
 class OrderBy(str, Enum):
@@ -45,7 +46,7 @@ class Classifier(str, Enum):
     multilabel = "Multilabel"
 
 
-class ExportPlatform(str, Enum):
+class ExportPlatformModel(str, Enum):
 
     core_ml = "CoreML"
     tensor_flow = "TensorFlow"
@@ -60,7 +61,15 @@ class ExportStatusModel(str, Enum):
     done = "Done"
 
 
-class ExportFlavor(str, Enum):
+class ExportFlavorModel(str, Enum):
 
     linux = "Linux"
     windows = "Windows"
+    onnx10 = "ONNX10"
+    onnx12 = "ONNX12"
+
+
+class TagType(str, Enum):
+
+    regular = "Regular"
+    negative = "Negative"
