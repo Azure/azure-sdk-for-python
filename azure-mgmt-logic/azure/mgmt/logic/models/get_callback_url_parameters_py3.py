@@ -24,7 +24,7 @@ class GetCallbackUrlParameters(Model):
 
     _attribute_map = {
         'not_after': {'key': 'notAfter', 'type': 'iso-8601'},
-        'key_type': {'key': 'keyType', 'type': 'KeyType'},
+        'key_type': {'key': 'keyType', 'type': 'str'},
     }
 
     def __init__(self, *, not_after=None, key_type=None, **kwargs) -> None:

@@ -59,7 +59,7 @@ class X12ValidationOverride(Model):
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'validate_character_set': {'key': 'validateCharacterSet', 'type': 'bool'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
-        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
+        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
