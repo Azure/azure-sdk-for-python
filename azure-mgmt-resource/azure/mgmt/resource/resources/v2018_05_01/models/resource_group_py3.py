@@ -22,8 +22,8 @@ class ResourceGroup(Model):
 
     :ivar id: The ID of the resource group.
     :vartype id: str
-    :param name: The name of the resource group.
-    :type name: str
+    :ivar name: The name of the resource group.
+    :vartype name: str
     :param properties:
     :type properties:
      ~azure.mgmt.resource.resources.v2018_05_01.models.ResourceGroupProperties
@@ -40,6 +40,7 @@ class ResourceGroup(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -52,10 +53,10 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str, name: str=None, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
         super(ResourceGroup, self).__init__(**kwargs)
         self.id = None
-        self.name = name
+        self.name = None
         self.properties = properties
         self.location = location
         self.managed_by = managed_by
