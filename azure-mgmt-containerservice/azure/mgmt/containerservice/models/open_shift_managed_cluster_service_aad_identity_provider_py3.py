@@ -15,8 +15,9 @@ from msrest.serialization import Model
 class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
     """AADIdentityProvider defines Identity provider for MS AAD.
 
-    :param kind: The kind of the provider.
-    :type kind: str
+    :param kind: The kind of the provider. Possible values include:
+     'AADIdentityProvider'
+    :type kind: str or ~azure.mgmt.containerservice.models.Kind
     :param client_id: The clientId password associated with the provider.
     :type client_id: str
     :param secret: The secret password associated with the provider.
@@ -32,7 +33,7 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, client_id: str=None, secret: str=None, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, kind=None, client_id: str=None, secret: str=None, tenant_id: str=None, **kwargs) -> None:
         super(OpenShiftManagedClusterServiceAADIdentityProvider, self).__init__(**kwargs)
         self.kind = kind
         self.client_id = client_id
