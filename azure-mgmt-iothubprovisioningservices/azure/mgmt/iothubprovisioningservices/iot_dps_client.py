@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -51,7 +51,7 @@ class IotDpsClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class IotDpsClient(object):
+class IotDpsClient(SDKClient):
     """API for using the Azure IoT Hub Device Provisioning Service features.
 
     :ivar config: Configuration for client.
@@ -76,7 +76,7 @@ class IotDpsClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = IotDpsClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(IotDpsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-01-22'
