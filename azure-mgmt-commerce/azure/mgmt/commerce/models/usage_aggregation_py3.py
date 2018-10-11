@@ -71,20 +71,20 @@ class UsageAggregation(Model):
         'instance_data': {'key': 'properties.instanceData', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, subscription_id: str=None, meter_id: str=None, usage_start_time=None, usage_end_time=None, quantity: float=None, unit: str=None, meter_name: str=None, meter_category: str=None, meter_sub_category: str=None, meter_region: str=None, info_fields=None, instance_data: str=None, **kwargs) -> None:
         super(UsageAggregation, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.meter_id = kwargs.get('meter_id', None)
-        self.usage_start_time = kwargs.get('usage_start_time', None)
-        self.usage_end_time = kwargs.get('usage_end_time', None)
-        self.quantity = kwargs.get('quantity', None)
-        self.unit = kwargs.get('unit', None)
-        self.meter_name = kwargs.get('meter_name', None)
-        self.meter_category = kwargs.get('meter_category', None)
-        self.meter_sub_category = kwargs.get('meter_sub_category', None)
-        self.meter_region = kwargs.get('meter_region', None)
-        self.info_fields = kwargs.get('info_fields', None)
-        self.instance_data = kwargs.get('instance_data', None)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.subscription_id = subscription_id
+        self.meter_id = meter_id
+        self.usage_start_time = usage_start_time
+        self.usage_end_time = usage_end_time
+        self.quantity = quantity
+        self.unit = unit
+        self.meter_name = meter_name
+        self.meter_category = meter_category
+        self.meter_sub_category = meter_sub_category
+        self.meter_region = meter_region
+        self.info_fields = info_fields
+        self.instance_data = instance_data

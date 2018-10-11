@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .offer_term_info import OfferTermInfo
+from .offer_term_info_py3 import OfferTermInfo
 
 
 class MonetaryCredit(OfferTermInfo):
@@ -41,8 +41,8 @@ class MonetaryCredit(OfferTermInfo):
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MonetaryCredit, self).__init__(**kwargs)
-        self.credit = kwargs.get('credit', None)
-        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
+    def __init__(self, *, effective_date=None, credit=None, excluded_meter_ids=None, **kwargs) -> None:
+        super(MonetaryCredit, self).__init__(effective_date=effective_date, **kwargs)
+        self.credit = credit
+        self.excluded_meter_ids = excluded_meter_ids
         self.name = 'Monetary Credit'

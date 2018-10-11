@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .offer_term_info import OfferTermInfo
+from .offer_term_info_py3 import OfferTermInfo
 
 
-class MonetaryCredit(OfferTermInfo):
-    """Indicates that this is a monetary credit offer.
+class MonetaryCommitment(OfferTermInfo):
+    """Indicates that a monetary commitment is required for this offer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -22,9 +22,11 @@ class MonetaryCredit(OfferTermInfo):
     :type effective_date: datetime
     :param name: Required. Constant filled by server.
     :type name: str
-    :param credit: The amount of credit provided under the terms of the given
-     offer level.
-    :type credit: decimal.Decimal
+    :param tiered_discount: The list of key/value pairs for the tiered meter
+     rates, in the format 'key':'value' where key = price, and value = the
+     corresponding discount percentage. This field is used only by offer terms
+     of type 'Monetary Commitment'.
+    :type tiered_discount: dict[str, decimal.Decimal]
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list[str]
@@ -37,12 +39,12 @@ class MonetaryCredit(OfferTermInfo):
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'name': {'key': 'Name', 'type': 'str'},
-        'credit': {'key': 'Credit', 'type': 'decimal'},
+        'tiered_discount': {'key': 'TieredDiscount', 'type': '{decimal}'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MonetaryCredit, self).__init__(**kwargs)
-        self.credit = kwargs.get('credit', None)
-        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
-        self.name = 'Monetary Credit'
+    def __init__(self, *, effective_date=None, tiered_discount=None, excluded_meter_ids=None, **kwargs) -> None:
+        super(MonetaryCommitment, self).__init__(effective_date=effective_date, **kwargs)
+        self.tiered_discount = tiered_discount
+        self.excluded_meter_ids = excluded_meter_ids
+        self.name = 'Monetary Commitment'

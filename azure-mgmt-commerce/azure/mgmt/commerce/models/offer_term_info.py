@@ -18,10 +18,12 @@ class OfferTermInfo(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MonetaryCredit, MonetaryCommitment, RecurringCharge
 
+    All required parameters must be populated in order to send to Azure.
+
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Constant filled by server.
+    :param name: Required. Constant filled by server.
     :type name: str
     """
 
@@ -38,7 +40,7 @@ class OfferTermInfo(Model):
         'name': {'Monetary Credit': 'MonetaryCredit', 'Monetary Commitment': 'MonetaryCommitment', 'Recurring Charge': 'RecurringCharge'}
     }
 
-    def __init__(self, effective_date=None):
-        super(OfferTermInfo, self).__init__()
-        self.effective_date = effective_date
+    def __init__(self, **kwargs):
+        super(OfferTermInfo, self).__init__(**kwargs)
+        self.effective_date = kwargs.get('effective_date', None)
         self.name = None
