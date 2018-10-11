@@ -9,22 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class CheckAvailabilityParameters(Model):
-    """Parameters supplied to the Check Name Availability for Namespace and
-    NotificationHubs.
+class DebugSendResponse(Resource):
+    """Description of a NotificationHub Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Required. Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param location: Resource location
@@ -33,14 +30,17 @@ class CheckAvailabilityParameters(Model):
     :type tags: dict[str, str]
     :param sku: The sku of the created namespace
     :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param is_availiable: True if the name is available and can be used to
-     create new Namespace/NotificationHub. Otherwise false.
-    :type is_availiable: bool
+    :param success: successful send
+    :type success: float
+    :param failure: send failure
+    :type failure: float
+    :param results: actual failure description
+    :type results: object
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -51,15 +51,13 @@ class CheckAvailabilityParameters(Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
+        'success': {'key': 'properties.success', 'type': 'float'},
+        'failure': {'key': 'properties.failure', 'type': 'float'},
+        'results': {'key': 'properties.results', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, location: str=None, tags=None, sku=None, is_availiable: bool=None, **kwargs) -> None:
-        super(CheckAvailabilityParameters, self).__init__(**kwargs)
-        self.id = None
-        self.name = name
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.sku = sku
-        self.is_availiable = is_availiable
+    def __init__(self, **kwargs):
+        super(DebugSendResponse, self).__init__(**kwargs)
+        self.success = kwargs.get('success', None)
+        self.failure = kwargs.get('failure', None)
+        self.results = kwargs.get('results', None)
