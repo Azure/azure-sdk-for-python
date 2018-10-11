@@ -32,9 +32,11 @@ class JobInformation(JobInformationBasic):
     :ivar submitter: The user or account that submitted the job.
     :vartype submitter: str
     :param degree_of_parallelism: The degree of parallelism used for this job.
-     This must be greater than 0, if set to less than 0 it will default to 1.
      Default value: 1 .
     :type degree_of_parallelism: int
+    :ivar degree_of_parallelism_percent: the degree of parallelism in
+     percentage used for this job.
+    :vartype degree_of_parallelism_percent: float
     :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
@@ -68,6 +70,10 @@ class JobInformation(JobInformationBasic):
     :param tags: The key-value pairs used to add additional metadata to the
      job information. (Only for use internally with Scope job type.)
     :type tags: dict[str, str]
+    :ivar hierarchy_queue_node: the name of hierarchy queue node this job is
+     assigned to, Null if job has not been assigned yet or the account doesn't
+     have hierarchy queue.
+    :vartype hierarchy_queue_node: str
     :ivar error_message: The error message details for the job, if the job
      failed.
     :vartype error_message:
@@ -85,12 +91,14 @@ class JobInformation(JobInformationBasic):
         'name': {'required': True},
         'type': {'required': True},
         'submitter': {'readonly': True},
+        'degree_of_parallelism_percent': {'readonly': True},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'state': {'readonly': True},
         'result': {'readonly': True},
         'log_folder': {'readonly': True},
+        'hierarchy_queue_node': {'readonly': True},
         'error_message': {'readonly': True},
         'state_audit_records': {'readonly': True},
         'properties': {'required': True},
@@ -102,6 +110,7 @@ class JobInformation(JobInformationBasic):
         'type': {'key': 'type', 'type': 'JobType'},
         'submitter': {'key': 'submitter', 'type': 'str'},
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+        'degree_of_parallelism_percent': {'key': 'degreeOfParallelismPercent', 'type': 'float'},
         'priority': {'key': 'priority', 'type': 'int'},
         'submit_time': {'key': 'submitTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -112,6 +121,7 @@ class JobInformation(JobInformationBasic):
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'hierarchy_queue_node': {'key': 'hierarchyQueueNode', 'type': 'str'},
         'error_message': {'key': 'errorMessage', 'type': '[JobErrorDetails]'},
         'state_audit_records': {'key': 'stateAuditRecords', 'type': '[JobStateAuditRecord]'},
         'properties': {'key': 'properties', 'type': 'JobProperties'},

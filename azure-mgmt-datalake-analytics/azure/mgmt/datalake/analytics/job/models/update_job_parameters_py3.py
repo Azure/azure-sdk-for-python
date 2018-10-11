@@ -17,8 +17,10 @@ class UpdateJobParameters(Model):
     information properties. (Only for use internally with Scope job type.).
 
     :param degree_of_parallelism: The degree of parallelism used for this job.
-     This must be greater than 0, if set to less than 0 it will default to 1.
     :type degree_of_parallelism: int
+    :param degree_of_parallelism_percent: the degree of parallelism in
+     percentage used for this job.
+    :type degree_of_parallelism_percent: float
     :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
@@ -30,12 +32,14 @@ class UpdateJobParameters(Model):
 
     _attribute_map = {
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+        'degree_of_parallelism_percent': {'key': 'degreeOfParallelismPercent', 'type': 'float'},
         'priority': {'key': 'priority', 'type': 'int'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, degree_of_parallelism: int=None, priority: int=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, degree_of_parallelism: int=None, degree_of_parallelism_percent: float=None, priority: int=None, tags=None, **kwargs) -> None:
         super(UpdateJobParameters, self).__init__(**kwargs)
         self.degree_of_parallelism = degree_of_parallelism
+        self.degree_of_parallelism_percent = degree_of_parallelism_percent
         self.priority = priority
         self.tags = tags
