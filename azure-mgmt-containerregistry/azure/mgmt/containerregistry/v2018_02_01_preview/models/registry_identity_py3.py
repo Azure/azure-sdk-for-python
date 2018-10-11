@@ -13,24 +13,24 @@ from msrest.serialization import Model
 
 
 class RegistryIdentity(Model):
-    """The identity of the container registry.
+    """Identity of the container registry.
 
-    :param type: The type of identity used for the registry.
-    :type type: str
-    :param principal_id: The principal ID of registry identity.
-    :type principal_id: str
-    :param tenant_id: The tenant ID associated with the registry.
+    :param identity_type: The type of identity used for registry.
+    :type identity_type: str
+    :param identity_principal_id: The principal ID of registry identity.
+    :type identity_principal_id: str
+    :param tenant_id: The tenant ID of registry.
     :type tenant_id: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'identity_type': {'key': 'identityType', 'type': 'str'},
+        'identity_principal_id': {'key': 'identityPrincipalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str=None, principal_id: str=None, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, identity_type: str=None, identity_principal_id: str=None, tenant_id: str=None, **kwargs) -> None:
         super(RegistryIdentity, self).__init__(**kwargs)
-        self.type = type
-        self.principal_id = principal_id
+        self.identity_type = identity_type
+        self.identity_principal_id = identity_principal_id
         self.tenant_id = tenant_id

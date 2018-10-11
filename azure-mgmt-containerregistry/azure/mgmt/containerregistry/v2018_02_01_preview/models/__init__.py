@@ -20,10 +20,10 @@ try:
     from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
     from .operation_definition_py3 import OperationDefinition
     from .sku_py3 import Sku
-    from .registry_identity_py3 import RegistryIdentity
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
     from .registry_py3 import Registry
+    from .registry_identity_py3 import RegistryIdentity
     from .registry_update_parameters_py3 import RegistryUpdateParameters
     from .registry_password_py3 import RegistryPassword
     from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
@@ -87,10 +87,10 @@ except (SyntaxError, ImportError):
     from .operation_service_specification_definition import OperationServiceSpecificationDefinition
     from .operation_definition import OperationDefinition
     from .sku import Sku
-    from .registry_identity import RegistryIdentity
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
     from .registry import Registry
+    from .registry_identity import RegistryIdentity
     from .registry_update_parameters import RegistryUpdateParameters
     from .registry_password import RegistryPassword
     from .registry_list_credentials_result import RegistryListCredentialsResult
@@ -184,10 +184,10 @@ __all__ = [
     'OperationServiceSpecificationDefinition',
     'OperationDefinition',
     'Sku',
-    'RegistryIdentity',
     'Status',
     'StorageAccountProperties',
     'Registry',
+    'RegistryIdentity',
     'RegistryUpdateParameters',
     'RegistryPassword',
     'RegistryListCredentialsResult',
