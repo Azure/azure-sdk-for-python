@@ -40,8 +40,8 @@ class BackupsOperations(object):
     def trigger(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Triggers backup for specified backed up item. This is an asynchronous
-        operation. To know the status of the operation, call
-        GetProtectedItemOperationResult API.
+        operation. To know the status of the
+        operation, call GetProtectedItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -97,9 +97,8 @@ class BackupsOperations(object):
         body_content = self._serialize.body(parameters, 'BackupRequestResource')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)

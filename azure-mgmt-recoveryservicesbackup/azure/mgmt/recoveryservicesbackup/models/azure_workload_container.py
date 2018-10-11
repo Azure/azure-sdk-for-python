@@ -79,4 +79,4 @@ class AzureWorkloadContainer(ProtectionContainer):
         self.last_updated_time = kwargs.get('last_updated_time', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.workload_type = kwargs.get('workload_type', None)
-        self.container_type = 'AzureWorkloadContainer'
+        self.container_type = 'AzureWorkloadBackupRequest'

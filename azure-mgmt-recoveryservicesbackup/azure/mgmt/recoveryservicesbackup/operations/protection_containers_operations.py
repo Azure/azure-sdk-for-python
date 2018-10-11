@@ -80,7 +80,7 @@ class ProtectionContainersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -89,8 +89,8 @@ class ProtectionContainersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -113,7 +113,8 @@ class ProtectionContainersOperations(object):
             self, vault_name, resource_group_name, fabric_name, container_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Registers the container with Recovery Services vault.
         This is an asynchronous operation. To track the operation status, use
-        location header to call get latest status of the operation.
+        location header to call get latest status of
+        the operation.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -155,6 +156,7 @@ class ProtectionContainersOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -167,9 +169,8 @@ class ProtectionContainersOperations(object):
         body_content = self._serialize.body(parameters, 'ProtectionContainerResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -190,10 +191,10 @@ class ProtectionContainersOperations(object):
 
     def unregister(
             self, vault_name, resource_group_name, fabric_name, container_name, custom_headers=None, raw=False, **operation_config):
-        """Unregisters the given container from your Recovery Services Vault.
-        This is an asynchronous operation. To determine whether the backend
-        service has finished processing the request, call Get Container
-        Operation Result API.
+        """Unregisters the given container from your Recovery Services Vault. This
+        is an asynchronous operation. To determine
+        whether the backend service has finished processing the request, call
+        Get Container Operation Result API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -231,7 +232,6 @@ class ProtectionContainersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -240,8 +240,8 @@ class ProtectionContainersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
@@ -255,11 +255,10 @@ class ProtectionContainersOperations(object):
 
     def inquire(
             self, vault_name, resource_group_name, fabric_name, container_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Inquires all the protectable item in the given container that can be
-        protected.
+        """Inquires all the protectable items under the given container.
 
-        Inquires all the protectable items that are protectable under the given
-        container.
+        This is an async operation and the results should be tracked using
+        location header or Azure-async-url.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -301,7 +300,6 @@ class ProtectionContainersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -310,8 +308,8 @@ class ProtectionContainersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)
@@ -326,8 +324,9 @@ class ProtectionContainersOperations(object):
     def refresh(
             self, vault_name, resource_group_name, fabric_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Discovers all the containers in the subscription that can be backed up
-        to Recovery Services Vault. This is an asynchronous operation. To know
-        the status of the operation, call GetRefreshOperationResult API.
+        to Recovery Services Vault. This is an
+        asynchronous operation. To know the status of the operation, call
+        GetRefreshOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -365,7 +364,6 @@ class ProtectionContainersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -374,8 +372,8 @@ class ProtectionContainersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)
