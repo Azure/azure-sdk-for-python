@@ -13,14 +13,15 @@ from msrest.serialization import Model
 
 
 class KeyVaultSecretReference(Model):
-    """Describes a reference to Key Vault Secret.
+    """Key Vault Secret reference.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_vault: Required. Fully qualified resource Id for the Key
-     Vault.
+    :param source_vault: Required. Key Vault resource identifier. Fully
+     qualified resource indentifier of the Key Vault.
     :type source_vault: ~azure.mgmt.batchai.models.ResourceId
-    :param secret_url: Required. The URL referencing a secret in a Key Vault.
+    :param secret_url: Required. Secret URL. The URL referencing a secret in
+     the Key Vault.
     :type secret_url: str
     """
 

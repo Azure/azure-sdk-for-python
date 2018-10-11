@@ -13,21 +13,19 @@ from msrest.serialization import Model
 
 
 class EnvironmentVariableWithSecretValue(Model):
-    """A collection of environment variables with secret values to set.
+    """An environment variable with secret value definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable to store the
-     secret value.
+    :param name: Required. Name. The name of the environment variable to store
+     the secret value.
     :type name: str
-    :param value: The value of the environment variable. This value will never
-     be reported back by Batch AI.
+    :param value: Value. The value of the environment variable. This value
+     will never be reported back by Batch AI.
     :type value: str
-    :param value_secret_reference: Specifies the location of the Azure
-     KeyVault secret which will be used as the environment variable value.
-     Specifies KeyVault Store and Secret which contains the value for the
-     environment variable. One of value or valueSecretReference must be
-     provided.
+    :param value_secret_reference: KeyVault secret reference. KeyVault store
+     and secret which contains the value for the environment variable. One of
+     value or valueSecretReference must be provided.
     :type value_secret_reference:
      ~azure.mgmt.batchai.models.KeyVaultSecretReference
     """

@@ -13,7 +13,7 @@ from .proxy_resource_py3 import ProxyResource
 
 
 class Experiment(ProxyResource):
-    """Contains information about the experiment.
+    """Experiment information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,15 +24,16 @@ class Experiment(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar creation_time: Time when the Experiment was created.
+    :ivar creation_time: Creation time. Time when the Experiment was created.
     :vartype creation_time: datetime
-    :ivar provisioning_state: The provisioned state of the experiment.
-     Possible values include: 'creating', 'succeeded', 'failed', 'deleting'
+    :ivar provisioning_state: Provisioning state. The provisioned state of the
+     experiment. Possible values include: 'creating', 'succeeded', 'failed',
+     'deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batchai.models.ProvisioningState
-    :ivar provisioning_state_transition_time: The time at which the experiment
-     entered its current provisioning state. The time at which the experiment
-     entered its current provisioning state.
+    :ivar provisioning_state_transition_time: Provisioning state transition
+     time. The time at which the experiment entered its current provisioning
+     state.
     :vartype provisioning_state_transition_time: datetime
     """
 

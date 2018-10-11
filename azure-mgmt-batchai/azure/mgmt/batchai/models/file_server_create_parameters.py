@@ -13,20 +13,23 @@ from msrest.serialization import Model
 
 
 class FileServerCreateParameters(Model):
-    """Parameters supplied to the Create operation.
+    """File Server creation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_size: Required. The size of the virtual machine of the file
-     server. For information about available VM sizes for fileservers from the
-     Virtual Machines Marketplace, see Sizes for Virtual Machines (Linux).
+    :param vm_size: Required. VM size. The size of the virtual machine for the
+     File Server. For information about available VM sizes from the Virtual
+     Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
-    :param ssh_configuration: Required. SSH configuration for the file server.
+    :param ssh_configuration: Required. SSH configuration. SSH configuration
+     for the File Server node.
     :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
-    :param data_disks: Required. Settings for the data disk which would be
-     created for the file server.
+    :param data_disks: Required. Data disks. Settings for the data disks which
+     will be created for the File Server.
     :type data_disks: ~azure.mgmt.batchai.models.DataDisks
-    :param subnet: Specifies the identifier of the subnet.
+    :param subnet: Subnet identifier. Identifier of an existing virtual
+     network subnet to put the File Server in. If not provided, a new virtual
+     network and subnet will be created.
     :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 

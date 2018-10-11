@@ -13,16 +13,17 @@ from msrest.serialization import Model
 
 
 class SshConfiguration(Model):
-    """SSH configuration settings for the VM.
+    """SSH configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param public_ips_to_allow: List of source IP ranges to allow SSH
-     connection to a node. Default value is '*' can be used to match all source
-     IPs. Maximum number of IP ranges that can be specified are 400.
+    :param public_ips_to_allow: Allowed public IPs. List of source IP ranges
+     to allow SSH connection from. The default value is '*' (all source IPs are
+     allowed). Maximum number of IP ranges that can be specified is 400.
     :type public_ips_to_allow: list[str]
-    :param user_account_settings: Required. Settings for user account to be
-     created on a node.
+    :param user_account_settings: Required. User account settings. Settings
+     for administrator user account to be created on a node. The account can be
+     used to establish SSH connection to the node.
     :type user_account_settings:
      ~azure.mgmt.batchai.models.UserAccountSettings
     """
