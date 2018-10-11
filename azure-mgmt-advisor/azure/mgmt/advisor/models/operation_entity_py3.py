@@ -26,7 +26,7 @@ class OperationEntity(Model):
         'display': {'key': 'display', 'type': 'OperationDisplayInfo'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
         super(OperationEntity, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.name = name
+        self.display = display

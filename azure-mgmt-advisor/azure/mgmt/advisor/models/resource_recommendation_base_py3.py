@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class ResourceRecommendationBase(Resource):
@@ -76,16 +76,16 @@ class ResourceRecommendationBase(Resource):
         'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, category=None, impact=None, impacted_field: str=None, impacted_value: str=None, last_updated=None, metadata=None, recommendation_type_id: str=None, risk=None, short_description=None, suppression_ids=None, extended_properties=None, **kwargs) -> None:
         super(ResourceRecommendationBase, self).__init__(**kwargs)
-        self.category = kwargs.get('category', None)
-        self.impact = kwargs.get('impact', None)
-        self.impacted_field = kwargs.get('impacted_field', None)
-        self.impacted_value = kwargs.get('impacted_value', None)
-        self.last_updated = kwargs.get('last_updated', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.recommendation_type_id = kwargs.get('recommendation_type_id', None)
-        self.risk = kwargs.get('risk', None)
-        self.short_description = kwargs.get('short_description', None)
-        self.suppression_ids = kwargs.get('suppression_ids', None)
-        self.extended_properties = kwargs.get('extended_properties', None)
+        self.category = category
+        self.impact = impact
+        self.impacted_field = impacted_field
+        self.impacted_value = impacted_value
+        self.last_updated = last_updated
+        self.metadata = metadata
+        self.recommendation_type_id = recommendation_type_id
+        self.risk = risk
+        self.short_description = short_description
+        self.suppression_ids = suppression_ids
+        self.extended_properties = extended_properties
