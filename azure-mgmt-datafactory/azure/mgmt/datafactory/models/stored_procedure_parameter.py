@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class StoredProcedureParameter(Model):
     """SQL stored procedure parameter.
 
-    :param value: Stored procedure parameter value. Type: string (or
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. Stored procedure parameter value. Type: string (or
      Expression with resultType string).
     :type value: object
     :param type: Stored procedure parameter type. Possible values include:
@@ -33,7 +35,7 @@ class StoredProcedureParameter(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, value, type=None):
-        super(StoredProcedureParameter, self).__init__()
-        self.value = value
-        self.type = type
+    def __init__(self, **kwargs):
+        super(StoredProcedureParameter, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.type = kwargs.get('type', None)

@@ -40,11 +40,11 @@ class RecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
     }
 
-    def __init__(self, additional_properties=None, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
-        super(RecurrenceSchedule, self).__init__()
-        self.additional_properties = additional_properties
-        self.minutes = minutes
-        self.hours = hours
-        self.week_days = week_days
-        self.month_days = month_days
-        self.monthly_occurrences = monthly_occurrences
+    def __init__(self, **kwargs):
+        super(RecurrenceSchedule, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.minutes = kwargs.get('minutes', None)
+        self.hours = kwargs.get('hours', None)
+        self.week_days = kwargs.get('week_days', None)
+        self.month_days = kwargs.get('month_days', None)
+        self.monthly_occurrences = kwargs.get('monthly_occurrences', None)

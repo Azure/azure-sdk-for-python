@@ -28,6 +28,8 @@ class Factory(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
+    :ivar e_tag: Etag identifies change in the resource.
+    :vartype e_tag: str
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -39,12 +41,16 @@ class Factory(Resource):
     :vartype create_time: datetime
     :ivar version: Version of the factory.
     :vartype version: str
+    :param repo_configuration: Git repo information of the factory.
+    :type repo_configuration:
+     ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'e_tag': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'create_time': {'readonly': True},
         'version': {'readonly': True},
@@ -56,17 +62,20 @@ class Factory(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'additional_properties': {'key': '', 'type': '{object}'},
         'identity': {'key': 'identity', 'type': 'FactoryIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
         'version': {'key': 'properties.version', 'type': 'str'},
+        'repo_configuration': {'key': 'properties.repoConfiguration', 'type': 'FactoryRepoConfiguration'},
     }
 
-    def __init__(self, location=None, tags=None, additional_properties=None, identity=None):
-        super(Factory, self).__init__(location=location, tags=tags)
-        self.additional_properties = additional_properties
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(Factory, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.create_time = None
         self.version = None
+        self.repo_configuration = kwargs.get('repo_configuration', None)

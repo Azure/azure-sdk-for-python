@@ -16,16 +16,18 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
     """A WebLinkedService that uses basic authentication to communicate with an
     HTTP endpoint.
 
-    :param url: The URL of the web service endpoint, e.g.
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. The URL of the web service endpoint, e.g.
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Constant filled by server.
+    :param authentication_type: Required. Constant filled by server.
     :type authentication_type: str
-    :param username: User name for Basic authentication. Type: string (or
-     Expression with resultType string).
+    :param username: Required. User name for Basic authentication. Type:
+     string (or Expression with resultType string).
     :type username: object
-    :param password: The password for Basic authentication.
+    :param password: Required. The password for Basic authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
@@ -43,8 +45,8 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         'password': {'key': 'password', 'type': 'SecretBase'},
     }
 
-    def __init__(self, url, username, password):
-        super(WebBasicAuthentication, self).__init__(url=url)
-        self.username = username
-        self.password = password
+    def __init__(self, **kwargs):
+        super(WebBasicAuthentication, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
         self.authentication_type = 'Basic'
