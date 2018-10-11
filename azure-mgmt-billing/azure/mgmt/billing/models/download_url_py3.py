@@ -12,28 +12,30 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """A Billing REST API operation.
+class DownloadUrl(Model):
+    """A secure URL that can be used to download a PDF invoice until the URL
+    expires.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.billing.models.OperationDisplay
+    :ivar expiry_time: The time in UTC at which this download URL will expire.
+    :vartype expiry_time: datetime
+    :ivar url: The URL to the PDF file.
+    :vartype url: str
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'expiry_time': {'readonly': True},
+        'url': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
-        self.display = kwargs.get('display', None)
+    def __init__(self, **kwargs) -> None:
+        super(DownloadUrl, self).__init__(**kwargs)
+        self.expiry_time = None
+        self.url = None
