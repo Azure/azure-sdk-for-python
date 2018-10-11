@@ -50,7 +50,7 @@ class JobInformation(JobInformationBasic):
     :ivar state: The job state. When the job is in the Ended state, refer to
      Result and ErrorMessage for details. Possible values include: 'Accepted',
      'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
-     'Starting', 'Paused', 'WaitingForCapacity'
+     'Starting', 'Paused', 'WaitingForCapacity', 'Yielded', 'Finalizing'
     :vartype state: str or ~azure.mgmt.datalake.analytics.job.models.JobState
     :ivar result: The result of job execution or the current result of the
      running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
