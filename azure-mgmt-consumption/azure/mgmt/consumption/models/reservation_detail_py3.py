@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class ReservationDetails(Resource):
-    """reservation details resource.
+class ReservationDetail(Resource):
+    """reservation detail resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -85,8 +85,8 @@ class ReservationDetails(Resource):
         'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'decimal'},
     }
 
-    def __init__(self):
-        super(ReservationDetails, self).__init__()
+    def __init__(self, **kwargs) -> None:
+        super(ReservationDetail, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None
