@@ -30,11 +30,6 @@ class OpenShiftAgentPoolProfileRole(str, Enum):
     infra = "infra"
 
 
-class Kind(str, Enum):
-
-    aad_identity_provider = "AADIdentityProvider"
-
-
 class ContainerServiceStorageProfileTypes(str, Enum):
 
     storage_account = "StorageAccount"

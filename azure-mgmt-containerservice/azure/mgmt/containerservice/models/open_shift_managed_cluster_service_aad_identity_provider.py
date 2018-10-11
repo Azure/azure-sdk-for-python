@@ -15,9 +15,14 @@ from msrest.serialization import Model
 class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
     """AADIdentityProvider defines Identity provider for MS AAD.
 
-    :param kind: The kind of the provider. Possible values include:
-     'AADIdentityProvider'
-    :type kind: str or ~azure.mgmt.containerservice.models.Kind
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. The kind of the provider. Default value:
+     "AADIdentityProvider" .
+    :vartype kind: str
     :param client_id: The clientId password associated with the provider.
     :type client_id: str
     :param secret: The secret password associated with the provider.
@@ -26,6 +31,10 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
     :type tenant_id: str
     """
 
+    _validation = {
+        'kind': {'required': True, 'constant': True},
+    }
+
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
@@ -33,9 +42,10 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
+    kind = "AADIdentityProvider"
+
     def __init__(self, **kwargs):
         super(OpenShiftManagedClusterServiceAADIdentityProvider, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
         self.client_id = kwargs.get('client_id', None)
         self.secret = kwargs.get('secret', None)
         self.tenant_id = kwargs.get('tenant_id', None)
