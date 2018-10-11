@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -45,7 +45,7 @@ class ACEProvisioningManagementPartnerAPIConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class ACEProvisioningManagementPartnerAPI(object):
+class ACEProvisioningManagementPartnerAPI(SDKClient):
     """This API describe ACE Provisioning ManagementPartner
 
     :ivar config: Configuration for client.
@@ -66,7 +66,7 @@ class ACEProvisioningManagementPartnerAPI(object):
             self, credentials, base_url=None):
 
         self.config = ACEProvisioningManagementPartnerAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ACEProvisioningManagementPartnerAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-02-01'

@@ -21,7 +21,7 @@ class PartnerOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Supported version. Constant value: "2018-02-01".
     """
 
@@ -56,7 +56,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -68,7 +68,7 @@ class PartnerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -77,8 +77,8 @@ class PartnerOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -93,6 +93,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def create(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -114,7 +115,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -126,7 +127,7 @@ class PartnerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -135,8 +136,8 @@ class PartnerOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -151,6 +152,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def update(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -172,7 +174,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -184,7 +186,7 @@ class PartnerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -193,8 +195,8 @@ class PartnerOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -209,6 +211,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def delete(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -229,7 +232,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -241,7 +244,6 @@ class PartnerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -250,8 +252,8 @@ class PartnerOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -259,3 +261,4 @@ class PartnerOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}

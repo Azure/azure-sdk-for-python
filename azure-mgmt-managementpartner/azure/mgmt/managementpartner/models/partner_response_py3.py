@@ -66,17 +66,17 @@ class PartnerResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, etag: int=None, partner_id: str=None, partner_name: str=None, tenant_id: str=None, object_id: str=None, version: str=None, updated_time=None, created_time=None, state=None, **kwargs) -> None:
         super(PartnerResponse, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
+        self.etag = etag
         self.id = None
         self.name = None
-        self.partner_id = kwargs.get('partner_id', None)
-        self.partner_name = kwargs.get('partner_name', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.object_id = kwargs.get('object_id', None)
-        self.version = kwargs.get('version', None)
-        self.updated_time = kwargs.get('updated_time', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.state = kwargs.get('state', None)
+        self.partner_id = partner_id
+        self.partner_name = partner_name
+        self.tenant_id = tenant_id
+        self.object_id = object_id
+        self.version = version
+        self.updated_time = updated_time
+        self.created_time = created_time
+        self.state = state
         self.type = None
