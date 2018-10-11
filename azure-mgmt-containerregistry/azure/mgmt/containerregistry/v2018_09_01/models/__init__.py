@@ -23,7 +23,6 @@ try:
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
     from .registry_py3 import Registry
-    from .registry_identity_py3 import RegistryIdentity
     from .registry_update_parameters_py3 import RegistryUpdateParameters
     from .registry_password_py3 import RegistryPassword
     from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
@@ -103,7 +102,6 @@ except (SyntaxError, ImportError):
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
     from .registry import Registry
-    from .registry_identity import RegistryIdentity
     from .registry_update_parameters import RegistryUpdateParameters
     from .registry_password import RegistryPassword
     from .registry_list_credentials_result import RegistryListCredentialsResult
@@ -215,7 +213,6 @@ __all__ = [
     'Status',
     'StorageAccountProperties',
     'Registry',
-    'RegistryIdentity',
     'RegistryUpdateParameters',
     'RegistryPassword',
     'RegistryListCredentialsResult',
