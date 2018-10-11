@@ -12,18 +12,19 @@
 from msrest.serialization import Model
 
 
-class KubernetesClusterProperties(Model):
-    """Kubernetes cluster specific properties.
+class StorageAccountProperties(Model):
+    """Properties of Storage Account.
 
-    :param service_principal: The Azure Service Principal used by Kubernetes
-    :type service_principal:
-     ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
+    :param resource_id: ARM resource ID of the Azure Storage Account to store
+     CLI specific files. If not provided one will be created. This cannot be
+     changed once the cluster is created.
+    :type resource_id: str
     """
 
     _attribute_map = {
-        'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(KubernetesClusterProperties, self).__init__(**kwargs)
-        self.service_principal = kwargs.get('service_principal', None)
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(StorageAccountProperties, self).__init__(**kwargs)
+        self.resource_id = resource_id

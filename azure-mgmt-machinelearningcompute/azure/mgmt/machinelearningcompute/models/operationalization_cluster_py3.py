@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class OperationalizationCluster(Resource):
@@ -100,16 +100,16 @@ class OperationalizationCluster(Resource):
         'global_service_configuration': {'key': 'properties.globalServiceConfiguration', 'type': 'GlobalServiceConfiguration'},
     }
 
-    def __init__(self, **kwargs):
-        super(OperationalizationCluster, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+    def __init__(self, *, location: str, cluster_type, tags=None, description: str=None, storage_account=None, container_registry=None, container_service=None, app_insights=None, global_service_configuration=None, **kwargs) -> None:
+        super(OperationalizationCluster, self).__init__(location=location, tags=tags, **kwargs)
+        self.description = description
         self.created_on = None
         self.modified_on = None
         self.provisioning_state = None
         self.provisioning_errors = None
-        self.cluster_type = kwargs.get('cluster_type', None)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.container_registry = kwargs.get('container_registry', None)
-        self.container_service = kwargs.get('container_service', None)
-        self.app_insights = kwargs.get('app_insights', None)
-        self.global_service_configuration = kwargs.get('global_service_configuration', None)
+        self.cluster_type = cluster_type
+        self.storage_account = storage_account
+        self.container_registry = container_registry
+        self.container_service = container_service
+        self.app_insights = app_insights
+        self.global_service_configuration = global_service_configuration

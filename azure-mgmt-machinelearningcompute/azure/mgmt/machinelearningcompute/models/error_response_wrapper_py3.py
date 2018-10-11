@@ -24,9 +24,9 @@ class ErrorResponseWrapper(Model):
         'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(ErrorResponseWrapper, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class ErrorResponseWrapperException(HttpOperationError):

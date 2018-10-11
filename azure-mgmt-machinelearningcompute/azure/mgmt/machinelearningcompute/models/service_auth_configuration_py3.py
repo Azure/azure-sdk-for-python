@@ -38,7 +38,7 @@ class ServiceAuthConfiguration(Model):
         'secondary_auth_key_hash': {'key': 'secondaryAuthKeyHash', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, primary_auth_key_hash: str, secondary_auth_key_hash: str, **kwargs) -> None:
         super(ServiceAuthConfiguration, self).__init__(**kwargs)
-        self.primary_auth_key_hash = kwargs.get('primary_auth_key_hash', None)
-        self.secondary_auth_key_hash = kwargs.get('secondary_auth_key_hash', None)
+        self.primary_auth_key_hash = primary_auth_key_hash
+        self.secondary_auth_key_hash = secondary_auth_key_hash

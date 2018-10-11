@@ -28,7 +28,7 @@ class AppInsightsCredentials(Model):
         'instrumentation_key': {'key': 'instrumentationKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, app_id: str=None, instrumentation_key: str=None, **kwargs) -> None:
         super(AppInsightsCredentials, self).__init__(**kwargs)
-        self.app_id = kwargs.get('app_id', None)
-        self.instrumentation_key = kwargs.get('instrumentation_key', None)
+        self.app_id = app_id
+        self.instrumentation_key = instrumentation_key
