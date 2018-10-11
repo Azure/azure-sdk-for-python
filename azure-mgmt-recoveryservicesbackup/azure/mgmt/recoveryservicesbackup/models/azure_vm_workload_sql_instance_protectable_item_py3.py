@@ -43,6 +43,8 @@ class AzureVmWorkloadSQLInstanceProtectableItem(AzureVmWorkloadProtectableItem):
     :param is_auto_protectable: Indicates if protectable item is
      auto-protectable
     :type is_auto_protectable: bool
+    :param is_auto_protected: Indicates if protectable item is auto-protected
+    :type is_auto_protected: bool
     :param subinquireditemcount: For instance or AG, indicates number of DB's
      present
     :type subinquireditemcount: int
@@ -68,11 +70,12 @@ class AzureVmWorkloadSQLInstanceProtectableItem(AzureVmWorkloadProtectableItem):
         'parent_unique_name': {'key': 'parentUniqueName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
         'is_auto_protectable': {'key': 'isAutoProtectable', 'type': 'bool'},
+        'is_auto_protected': {'key': 'isAutoProtected', 'type': 'bool'},
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
     }
 
-    def __init__(self, *, backup_management_type: str=None, workload_type: str=None, friendly_name: str=None, protection_state=None, parent_name: str=None, parent_unique_name: str=None, server_name: str=None, is_auto_protectable: bool=None, subinquireditemcount: int=None, subprotectableitemcount: int=None, prebackupvalidation=None, **kwargs) -> None:
-        super(AzureVmWorkloadSQLInstanceProtectableItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, friendly_name=friendly_name, protection_state=protection_state, parent_name=parent_name, parent_unique_name=parent_unique_name, server_name=server_name, is_auto_protectable=is_auto_protectable, subinquireditemcount=subinquireditemcount, subprotectableitemcount=subprotectableitemcount, prebackupvalidation=prebackupvalidation, **kwargs)
+    def __init__(self, *, backup_management_type: str=None, workload_type: str=None, friendly_name: str=None, protection_state=None, parent_name: str=None, parent_unique_name: str=None, server_name: str=None, is_auto_protectable: bool=None, is_auto_protected: bool=None, subinquireditemcount: int=None, subprotectableitemcount: int=None, prebackupvalidation=None, **kwargs) -> None:
+        super(AzureVmWorkloadSQLInstanceProtectableItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, friendly_name=friendly_name, protection_state=protection_state, parent_name=parent_name, parent_unique_name=parent_unique_name, server_name=server_name, is_auto_protectable=is_auto_protectable, is_auto_protected=is_auto_protected, subinquireditemcount=subinquireditemcount, subprotectableitemcount=subprotectableitemcount, prebackupvalidation=prebackupvalidation, **kwargs)
         self.protectable_item_type = 'SQLInstance'

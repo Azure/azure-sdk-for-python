@@ -25,6 +25,9 @@ class AzureIaaSVMJobExtendedInfo(Model):
     :param progress_percentage: Indicates progress of the job. Null if it has
      not started or completed.
     :type progress_percentage: float
+    :param estimated_remaining_duration: Time remaining for execution of this
+     job.
+    :type estimated_remaining_duration: str
     :param dynamic_error_message: Non localized error message on job
      execution.
     :type dynamic_error_message: str
@@ -35,13 +38,15 @@ class AzureIaaSVMJobExtendedInfo(Model):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'internal_property_bag': {'key': 'internalPropertyBag', 'type': '{str}'},
         'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
+        'estimated_remaining_duration': {'key': 'estimatedRemainingDuration', 'type': 'str'},
         'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
     }
 
-    def __init__(self, *, tasks_list=None, property_bag=None, internal_property_bag=None, progress_percentage: float=None, dynamic_error_message: str=None, **kwargs) -> None:
+    def __init__(self, *, tasks_list=None, property_bag=None, internal_property_bag=None, progress_percentage: float=None, estimated_remaining_duration: str=None, dynamic_error_message: str=None, **kwargs) -> None:
         super(AzureIaaSVMJobExtendedInfo, self).__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.internal_property_bag = internal_property_bag
         self.progress_percentage = progress_percentage
+        self.estimated_remaining_duration = estimated_remaining_duration
         self.dynamic_error_message = dynamic_error_message

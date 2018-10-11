@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SubProtectionPolicy(Model):
     """Sub-protection policy which includes schedule and retention.
 
-    :param policy_type: Type of backup policy type
-    :type policy_type: str
+    :param policy_type: Type of backup policy type. Possible values include:
+     'Invalid', 'Full', 'Differential', 'Log', 'CopyOnlyFull'
+    :type policy_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.PolicyType
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -33,7 +35,7 @@ class SubProtectionPolicy(Model):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, *, policy_type: str=None, schedule_policy=None, retention_policy=None, **kwargs) -> None:
+    def __init__(self, *, policy_type=None, schedule_policy=None, retention_policy=None, **kwargs) -> None:
         super(SubProtectionPolicy, self).__init__(**kwargs)
         self.policy_type = policy_type
         self.schedule_policy = schedule_policy

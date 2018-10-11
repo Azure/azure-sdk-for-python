@@ -40,10 +40,11 @@ class ProtectedItemOperationStatusesOperations(object):
     def get(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Fetches the status of an operation such as triggering a backup,
-        restore. The status can be in progress, completed or failed. You can
-        refer to the OperationStatus enum for all the possible states of the
-        operation. Some operations create jobs. This method returns the list of
-        jobs associated with the operation.
+        restore. The status can be in progress, completed
+        or failed. You can refer to the OperationStatus enum for all the
+        possible states of the operation. Some operations
+        create jobs. This method returns the list of jobs associated with the
+        operation.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -89,7 +90,7 @@ class ProtectedItemOperationStatusesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -98,8 +99,8 @@ class ProtectedItemOperationStatusesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

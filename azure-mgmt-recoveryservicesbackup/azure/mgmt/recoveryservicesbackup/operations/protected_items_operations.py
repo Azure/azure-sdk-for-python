@@ -40,8 +40,8 @@ class ProtectedItemsOperations(object):
     def get(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Provides the details of the backed up item. This is an asynchronous
-        operation. To know the status of the operation, call the
-        GetItemOperationResult API.
+        operation. To know the status of the operation,
+        call the GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -89,7 +89,7 @@ class ProtectedItemsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -98,8 +98,8 @@ class ProtectedItemsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -121,8 +121,9 @@ class ProtectedItemsOperations(object):
     def create_or_update(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Enables backup of an item or to modifies the backup policy information
-        of an already backed up item. This is an asynchronous operation. To
-        know the status of the operation, call the GetItemOperationResult API.
+        of an already backed up item. This is an
+        asynchronous operation. To know the status of the operation, call the
+        GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -143,8 +144,10 @@ class ProtectedItemsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: ProtectedItemResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -165,6 +168,7 @@ class ProtectedItemsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -177,25 +181,31 @@ class ProtectedItemsOperations(object):
         body_content = self._serialize.body(parameters, 'ProtectedItemResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ProtectedItemResource', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     create_or_update.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}'}
 
     def delete(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, custom_headers=None, raw=False, **operation_config):
         """Used to disable backup of an item within a container. This is an
-        asynchronous operation. To know the status of the request, call the
-        GetItemOperationResult API.
+        asynchronous operation. To know the status of the
+        request, call the GetItemOperationResult API.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -236,7 +246,6 @@ class ProtectedItemsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -245,8 +254,8 @@ class ProtectedItemsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
