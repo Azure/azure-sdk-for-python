@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_tracked_resources_operations import PolicyTrackedResourcesOperations
-from .remediations_operations import RemediationsOperations
-from .policy_events_operations import PolicyEventsOperations
-from .policy_states_operations import PolicyStatesOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'PolicyTrackedResourcesOperations',
-    'RemediationsOperations',
-    'PolicyEventsOperations',
-    'PolicyStatesOperations',
-    'Operations',
-]
+
+class RemediationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Remediation <azure.mgmt.policyinsights.models.Remediation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Remediation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RemediationPaged, self).__init__(*args, **kwargs)
