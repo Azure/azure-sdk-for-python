@@ -20,8 +20,11 @@ class Recurrence(Model):
 
     :param frequency: Required. the recurrence frequency. How often the
      schedule profile should take effect. This value must be Week, meaning each
-     week will have the same set of profiles. Possible values include: 'None',
-     'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
+     week will have the same set of profiles. For example, to set a daily
+     schedule, set **schedule** to every day of the week. The frequency
+     property specifies that the schedule is repeated weekly. Possible values
+     include: 'None', 'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month',
+     'Year'
     :type frequency: str or ~azure.mgmt.monitor.models.RecurrenceFrequency
     :param schedule: Required. the scheduling constraints for when the profile
      begins.

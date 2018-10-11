@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class MetricDefinitionsOperations(object):
-    """MetricDefinitionsOperations operations.
+class MetricNamespacesOperations(object):
+    """MetricNamespacesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-01-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-12-01-preview".
     """
 
     models = models
@@ -32,27 +32,27 @@ class MetricDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2017-12-01-preview"
 
         self.config = config
 
     def list(
-            self, resource_uri, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric definitions for the resource.
+            self, resource_uri, start_time=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metricnamespace: Metric namespace to query metric definitions
-         for.
-        :type metricnamespace: str
+        :param start_time: The ISO 8601 conform Date start time from which to
+         query for metric namespaces.
+        :type start_time: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MetricDefinition
+        :return: An iterator like instance of MetricNamespace
         :rtype:
-         ~azure.mgmt.monitor.models.MetricDefinitionPaged[~azure.mgmt.monitor.models.MetricDefinition]
+         ~azure.mgmt.monitor.models.MetricNamespacePaged[~azure.mgmt.monitor.models.MetricNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -69,8 +69,8 @@ class MetricDefinitionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if metricnamespace is not None:
-                    query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
+                if start_time is not None:
+                    query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
 
             else:
                 url = next_link
@@ -96,12 +96,12 @@ class MetricDefinitionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MetricNamespacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MetricNamespacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricDefinitions'}
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricNamespaces'}

@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .multi_metric_criteria import MultiMetricCriteria
 
 
-class MetricCriteria(Model):
-    """MetricCriteria.
+class MetricCriteria(MultiMetricCriteria):
+    """Criterion to filter metrics.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param criterion_type: Required. Constant filled by server.
+    :type criterion_type: str
     :param name: Required. Name of the criteria.
     :type name: str
     :param metric_name: Required. Name of the metric.
@@ -35,6 +40,7 @@ class MetricCriteria(Model):
     """
 
     _validation = {
+        'criterion_type': {'required': True},
         'name': {'required': True},
         'metric_name': {'required': True},
         'operator': {'required': True},
@@ -43,6 +49,8 @@ class MetricCriteria(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
@@ -61,3 +69,4 @@ class MetricCriteria(Model):
         self.time_aggregation = kwargs.get('time_aggregation', None)
         self.threshold = kwargs.get('threshold', None)
         self.dimensions = kwargs.get('dimensions', None)
+        self.criterion_type = 'StaticThresholdCriterion'

@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .multi_metric_criteria_py3 import MultiMetricCriteria
 
 
-class MetricCriteria(Model):
-    """MetricCriteria.
+class MetricCriteria(MultiMetricCriteria):
+    """Criterion to filter metrics.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param criterion_type: Required. Constant filled by server.
+    :type criterion_type: str
     :param name: Required. Name of the criteria.
     :type name: str
     :param metric_name: Required. Name of the metric.
@@ -35,6 +40,7 @@ class MetricCriteria(Model):
     """
 
     _validation = {
+        'criterion_type': {'required': True},
         'name': {'required': True},
         'metric_name': {'required': True},
         'operator': {'required': True},
@@ -43,6 +49,8 @@ class MetricCriteria(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
@@ -52,8 +60,8 @@ class MetricCriteria(Model):
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
     }
 
-    def __init__(self, *, name: str, metric_name: str, operator, time_aggregation, threshold: float, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
-        super(MetricCriteria, self).__init__(**kwargs)
+    def __init__(self, *, name: str, metric_name: str, operator, time_aggregation, threshold: float, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
+        super(MetricCriteria, self).__init__(additional_properties=additional_properties, **kwargs)
         self.name = name
         self.metric_name = metric_name
         self.metric_namespace = metric_namespace
@@ -61,3 +69,4 @@ class MetricCriteria(Model):
         self.time_aggregation = time_aggregation
         self.threshold = threshold
         self.dimensions = dimensions
+        self.criterion_type = 'StaticThresholdCriterion'
