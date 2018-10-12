@@ -12,28 +12,31 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """A Relay REST API operation.
+class Sku(Model):
+    """SKU of the namespace.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Name of this SKU. Default value: "Standard" .
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.relay.models.OperationDisplay
+    :param tier: The tier of this SKU. Possible values include: 'Standard'
+    :type tier: str or ~azure.mgmt.relay.models.SkuTier
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'name': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'tier': {'key': 'tier', 'type': 'SkuTier'},
     }
 
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
-        self.display = kwargs.get('display', None)
+    name = "Standard"
+
+    def __init__(self, *, tier=None, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.tier = tier

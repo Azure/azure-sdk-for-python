@@ -12,28 +12,34 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """A Relay REST API operation.
+class Resource(Model):
+    """The resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.relay.models.OperationDisplay
+    :ivar type: Resource type.
+    :vartype type: str
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
         self.name = None
-        self.display = kwargs.get('display', None)
+        self.type = None
