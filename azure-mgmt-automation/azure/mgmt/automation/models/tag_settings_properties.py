@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TagSettingsProperties(Model):
-    """Tag filter Information of the VM.
+    """Tag filter information of the VM.
 
     :param tags: dictionary of tags with its list of value
     :type tags: dict[str, list[str]]
@@ -23,7 +23,7 @@ class TagSettingsProperties(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{[str]}'},
-        'filter_operator': {'key': 'filterOperator', 'type': 'str'},
+        'filter_operator': {'key': 'filterOperator', 'type': 'TagOperators'},
     }
 
     def __init__(self, **kwargs):

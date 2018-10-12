@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AzureQueryProperties(Model):
     """Azure query specific to the group of machines for update configuration.
 
-    :param scope: List of Subscription or Resource group arm Id.
+    :param scope: List of Subscription or Resource Group ARM Id.
     :type scope: list[str]
     :param location: list of locations for the VM filter .
     :type location: list[str]
