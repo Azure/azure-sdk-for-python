@@ -74,13 +74,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -162,13 +162,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -253,13 +253,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -344,13 +344,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -435,13 +435,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -526,13 +526,102 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
+          },
+          "file": "/tmp/_root_.autorest.lock"
+        },
+        "dotnetPath": "/root/.dotnet"
+      },
+      "installationPath": "/root/.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest-core",
+        "version": "2.0.4290",
+        "engines": {
+          "node": ">=7.10.0"
+        },
+        "dependencies": {},
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@types/commonmark": "^0.27.0",
+          "@types/jsonpath": "^0.1.29",
+          "@types/node": "10.9.4",
+          "@types/source-map": "0.5.0",
+          "@types/yargs": "^8.0.2",
+          "@types/z-schema": "^3.16.31",
+          "dts-generator": "^2.1.0",
+          "mocha": "^5.0.0",
+          "mocha-typescript": "1.1.17",
+          "shx": "0.2.2",
+          "static-link": "^0.2.3",
+          "tslint": "^5.9.1",
+          "tslint-language-service": "^0.9.9",
+          "tslint-microsoft-contrib": "^5.0.3",
+          "typescript": "^3.0.0",
+          "vscode-jsonrpc": "^3.3.1"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+        "_integrity": null,
+        "_shasum": "3ec16aca3c0c1ce3de24e2ba16bd5ac292128cf2",
+        "_shrinkwrap": null,
+        "bin": {
+          "autorest-core": "./dist/app.js",
+          "autorest-language-service": "dist/language-service/language-service.js"
+        },
+        "_id": "@microsoft.azure/autorest-core@2.0.4290",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+        "_requested": {
+          "type": "directory",
+          "where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core"
+        },
+        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core",
+        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4290/node_modules/@microsoft.azure/autorest-core"
+      },
+      "extensionManager": {
+        "installationPath": "/root/.autorest",
+        "sharedLock": {
+          "name": "/root/.autorest",
+          "exclusiveLock": {
+            "name": "_root_.autorest.exclusive-lock",
+            "options": {
+              "port": 45234,
+              "host": "2130706813",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.exclusive-lock:45234"
+          },
+          "busyLock": {
+            "name": "_root_.autorest.busy-lock",
+            "options": {
+              "port": 37199,
+              "host": "2130756895",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
+          },
+          "personalLock": {
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
+            "options": {
+              "port": 39664,
+              "host": "2130732345",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -612,13 +701,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -697,13 +786,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -782,13 +871,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -867,13 +956,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -952,13 +1041,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -1037,13 +1126,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -1122,13 +1211,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -1192,13 +1281,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -1275,13 +1364,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -1391,13 +1480,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.9276.559961572826.personal-lock",
+            "name": "_root_.autorest.8483.711959082608.personal-lock",
             "options": {
-              "port": 37770,
-              "host": "2130718002",
+              "port": 39664,
+              "host": "2130732345",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.9276.559961572826.personal-lock:37770"
+            "pipe": "/tmp/pipe__root_.autorest.8483.711959082608.personal-lock:39664"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
