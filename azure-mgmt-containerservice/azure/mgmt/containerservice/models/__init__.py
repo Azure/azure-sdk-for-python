@@ -16,10 +16,11 @@ try:
     from .network_profile_py3 import NetworkProfile
     from .open_shift_managed_cluster_master_pool_profile_py3 import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile_py3 import OpenShiftManagedClusterAgentPoolProfile
-    from .open_shift_managed_cluster_identity_providers_py3 import OpenShiftManagedClusterIdentityProviders
+    from .open_shift_managed_cluster_base_identity_provider_py3 import OpenShiftManagedClusterBaseIdentityProvider
+    from .open_shift_managed_cluster_identity_provider_py3 import OpenShiftManagedClusterIdentityProvider
     from .open_shift_managed_cluster_auth_profile_py3 import OpenShiftManagedClusterAuthProfile
     from .open_shift_managed_cluster_py3 import OpenShiftManagedCluster
-    from .open_shift_managed_cluster_service_aad_identity_provider_py3 import OpenShiftManagedClusterServiceAADIdentityProvider
+    from .open_shift_managed_cluster_aad_identity_provider_py3 import OpenShiftManagedClusterAADIdentityProvider
     from .tags_object_py3 import TagsObject
     from .container_service_custom_profile_py3 import ContainerServiceCustomProfile
     from .key_vault_secret_ref_py3 import KeyVaultSecretRef
@@ -56,10 +57,11 @@ except (SyntaxError, ImportError):
     from .network_profile import NetworkProfile
     from .open_shift_managed_cluster_master_pool_profile import OpenShiftManagedClusterMasterPoolProfile
     from .open_shift_managed_cluster_agent_pool_profile import OpenShiftManagedClusterAgentPoolProfile
-    from .open_shift_managed_cluster_identity_providers import OpenShiftManagedClusterIdentityProviders
+    from .open_shift_managed_cluster_base_identity_provider import OpenShiftManagedClusterBaseIdentityProvider
+    from .open_shift_managed_cluster_identity_provider import OpenShiftManagedClusterIdentityProvider
     from .open_shift_managed_cluster_auth_profile import OpenShiftManagedClusterAuthProfile
     from .open_shift_managed_cluster import OpenShiftManagedCluster
-    from .open_shift_managed_cluster_service_aad_identity_provider import OpenShiftManagedClusterServiceAADIdentityProvider
+    from .open_shift_managed_cluster_aad_identity_provider import OpenShiftManagedClusterAADIdentityProvider
     from .tags_object import TagsObject
     from .container_service_custom_profile import ContainerServiceCustomProfile
     from .key_vault_secret_ref import KeyVaultSecretRef
@@ -110,10 +112,11 @@ __all__ = [
     'NetworkProfile',
     'OpenShiftManagedClusterMasterPoolProfile',
     'OpenShiftManagedClusterAgentPoolProfile',
-    'OpenShiftManagedClusterIdentityProviders',
+    'OpenShiftManagedClusterBaseIdentityProvider',
+    'OpenShiftManagedClusterIdentityProvider',
     'OpenShiftManagedClusterAuthProfile',
     'OpenShiftManagedCluster',
-    'OpenShiftManagedClusterServiceAADIdentityProvider',
+    'OpenShiftManagedClusterAADIdentityProvider',
     'TagsObject',
     'ContainerServiceCustomProfile',
     'KeyVaultSecretRef',

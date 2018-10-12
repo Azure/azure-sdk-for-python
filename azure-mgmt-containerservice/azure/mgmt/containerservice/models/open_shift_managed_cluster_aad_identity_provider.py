@@ -9,20 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .open_shift_managed_cluster_base_identity_provider import OpenShiftManagedClusterBaseIdentityProvider
 
 
-class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
-    """AADIdentityProvider defines Identity provider for MS AAD.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIdentityProvider):
+    """Defines the Identity provider for MS AAD.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The kind of the provider. Default value:
-     "AADIdentityProvider" .
-    :vartype kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param client_id: The clientId password associated with the provider.
     :type client_id: str
     :param secret: The secret password associated with the provider.
@@ -32,7 +28,7 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
     """
 
     _validation = {
-        'kind': {'required': True, 'constant': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -42,10 +38,9 @@ class OpenShiftManagedClusterServiceAADIdentityProvider(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    kind = "AADIdentityProvider"
-
-    def __init__(self, *, client_id: str=None, secret: str=None, tenant_id: str=None, **kwargs) -> None:
-        super(OpenShiftManagedClusterServiceAADIdentityProvider, self).__init__(**kwargs)
-        self.client_id = client_id
-        self.secret = secret
-        self.tenant_id = tenant_id
+    def __init__(self, **kwargs):
+        super(OpenShiftManagedClusterAADIdentityProvider, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.secret = kwargs.get('secret', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.kind = 'AADIdentityProvider'

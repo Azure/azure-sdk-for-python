@@ -17,11 +17,11 @@ class OpenShiftManagedClusterAuthProfile(Model):
 
     :param identity_providers: Type of authentication profile to use.
     :type identity_providers:
-     list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProviders]
+     list[~azure.mgmt.containerservice.models.OpenShiftManagedClusterIdentityProvider]
     """
 
     _attribute_map = {
-        'identity_providers': {'key': 'identityProviders', 'type': '[OpenShiftManagedClusterIdentityProviders]'},
+        'identity_providers': {'key': 'identityProviders', 'type': '[OpenShiftManagedClusterIdentityProvider]'},
     }
 
     def __init__(self, *, identity_providers=None, **kwargs) -> None:

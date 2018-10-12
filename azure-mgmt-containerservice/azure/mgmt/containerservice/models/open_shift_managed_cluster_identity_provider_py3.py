@@ -12,22 +12,23 @@
 from msrest.serialization import Model
 
 
-class OpenShiftManagedClusterIdentityProviders(Model):
+class OpenShiftManagedClusterIdentityProvider(Model):
     """Defines the configuration of the identity providers to be used in the
     OpenShift cluster.
 
     :param name: Name of the provider.
     :type name: str
     :param provider: Configuration of the provider.
-    :type provider: object
+    :type provider:
+     ~azure.mgmt.containerservice.models.OpenShiftManagedClusterBaseIdentityProvider
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'object'},
+        'provider': {'key': 'provider', 'type': 'OpenShiftManagedClusterBaseIdentityProvider'},
     }
 
     def __init__(self, *, name: str=None, provider=None, **kwargs) -> None:
-        super(OpenShiftManagedClusterIdentityProviders, self).__init__(**kwargs)
+        super(OpenShiftManagedClusterIdentityProvider, self).__init__(**kwargs)
         self.name = name
         self.provider = provider
