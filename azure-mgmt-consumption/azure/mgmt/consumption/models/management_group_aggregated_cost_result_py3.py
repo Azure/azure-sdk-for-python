@@ -47,6 +47,12 @@ class ManagementGroupAggregatedCostResult(Resource):
     :param children: Children of a management group
     :type children:
      list[~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult]
+    :param included_subscriptions: List of subscriptionGuids included in the
+     calculation of aggregated cost
+    :type included_subscriptions: list[str]
+    :param excluded_subscriptions: List of subscriptionGuids excluded from the
+     calculation of aggregated cost
+    :type excluded_subscriptions: list[str]
     """
 
     _validation = {
@@ -76,9 +82,11 @@ class ManagementGroupAggregatedCostResult(Resource):
         'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'decimal'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
         'children': {'key': 'properties.children', 'type': '[ManagementGroupAggregatedCostResult]'},
+        'included_subscriptions': {'key': 'properties.includedSubscriptions', 'type': '[str]'},
+        'excluded_subscriptions': {'key': 'properties.excludedSubscriptions', 'type': '[str]'},
     }
 
-    def __init__(self, *, children=None, **kwargs) -> None:
+    def __init__(self, *, children=None, included_subscriptions=None, excluded_subscriptions=None, **kwargs) -> None:
         super(ManagementGroupAggregatedCostResult, self).__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
@@ -88,3 +96,5 @@ class ManagementGroupAggregatedCostResult(Resource):
         self.charges_billed_separately = None
         self.currency = None
         self.children = children
+        self.included_subscriptions = included_subscriptions
+        self.excluded_subscriptions = excluded_subscriptions
