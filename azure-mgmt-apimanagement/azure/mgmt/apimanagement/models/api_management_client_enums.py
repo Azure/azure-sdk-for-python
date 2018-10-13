@@ -42,6 +42,12 @@ class SoapApiType(str, Enum):
     soap_pass_through = "soap"  #: Imports the Soap API having a SOAP front end.
 
 
+class BearerTokenSendingMethods(str, Enum):
+
+    authorization_header = "authorizationHeader"  #: Access token will be transmitted in the Authorization header using Bearer schema
+    query = "query"  #: Access token will be transmitted as query parameters.
+
+
 class ApiType(str, Enum):
 
     http = "http"
