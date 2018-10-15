@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class TopicTypesOperations(object):
-    """TopicTypesOperations operations.
+class DomainTopicsOperations(object):
+    """DomainTopicsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,90 +37,36 @@ class TopicTypesOperations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List topic types.
-
-        List all registered topic types.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TopicTypeInfo
-        :rtype:
-         ~azure.mgmt.eventgrid.models.TopicTypeInfoPaged[~azure.mgmt.eventgrid.models.TopicTypeInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.TopicTypeInfoPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.TopicTypeInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes'}
-
     def get(
-            self, topic_type_name, custom_headers=None, raw=False, **operation_config):
-        """Get a topic type.
+            self, resource_group_name, domain_name, topic_name, custom_headers=None, raw=False, **operation_config):
+        """Get a domain topic.
 
-        Get information about a topic type.
+        Get properties of a domain topic.
 
-        :param topic_type_name: Name of the topic type
-        :type topic_type_name: str
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param domain_name: Name of the domain
+        :type domain_name: str
+        :param topic_name: Name of the topic
+        :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TopicTypeInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo or
+        :return: DomainTopic or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.DomainTopic or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'topicTypeName': self._serialize.url("topic_type_name", topic_type_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -150,40 +96,45 @@ class TopicTypesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TopicTypeInfo', response)
+            deserialized = self._deserialize('DomainTopic', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{topicName}'}
 
-    def list_event_types(
-            self, topic_type_name, custom_headers=None, raw=False, **operation_config):
-        """List event types.
+    def list_by_domain(
+            self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
+        """List domain topics.
 
-        List event types for a topic type.
+        List all the topics in a domain.
 
-        :param topic_type_name: Name of the topic type
-        :type topic_type_name: str
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param domain_name: Domain name.
+        :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of EventType
+        :return: An iterator like instance of DomainTopic
         :rtype:
-         ~azure.mgmt.eventgrid.models.EventTypePaged[~azure.mgmt.eventgrid.models.EventType]
+         ~azure.mgmt.eventgrid.models.DomainTopicPaged[~azure.mgmt.eventgrid.models.DomainTopic]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_event_types.metadata['url']
+                url = self.list_by_domain.metadata['url']
                 path_format_arguments = {
-                    'topicTypeName': self._serialize.url("topic_type_name", topic_type_name, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'domainName': self._serialize.url("domain_name", domain_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -217,12 +168,12 @@ class TopicTypesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EventTypePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DomainTopicPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.EventTypePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DomainTopicPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_event_types.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventTypes'}
+    list_by_domain.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics'}
