@@ -27,6 +27,7 @@ try:
     from .api_create_or_update_parameter_py3 import ApiCreateOrUpdateParameter
     from .api_update_contract_py3 import ApiUpdateContract
     from .oauth2_authentication_settings_contract_py3 import OAuth2AuthenticationSettingsContract
+    from .open_id_authentication_settings_contract_py3 import OpenIdAuthenticationSettingsContract
     from .authentication_settings_contract_py3 import AuthenticationSettingsContract
     from .subscription_key_parameter_names_contract_py3 import SubscriptionKeyParameterNamesContract
     from .api_entity_base_contract_py3 import ApiEntityBaseContract
@@ -172,6 +173,7 @@ except (SyntaxError, ImportError):
     from .api_create_or_update_parameter import ApiCreateOrUpdateParameter
     from .api_update_contract import ApiUpdateContract
     from .oauth2_authentication_settings_contract import OAuth2AuthenticationSettingsContract
+    from .open_id_authentication_settings_contract import OpenIdAuthenticationSettingsContract
     from .authentication_settings_contract import AuthenticationSettingsContract
     from .subscription_key_parameter_names_contract import SubscriptionKeyParameterNamesContract
     from .api_entity_base_contract import ApiEntityBaseContract
@@ -336,6 +338,7 @@ from .api_management_client_enums import (
     Protocol,
     ContentFormat,
     SoapApiType,
+    BearerTokenSendingMethods,
     ApiType,
     State,
     LoggerType,
@@ -382,6 +385,7 @@ __all__ = [
     'ApiCreateOrUpdateParameter',
     'ApiUpdateContract',
     'OAuth2AuthenticationSettingsContract',
+    'OpenIdAuthenticationSettingsContract',
     'AuthenticationSettingsContract',
     'SubscriptionKeyParameterNamesContract',
     'ApiEntityBaseContract',
@@ -545,6 +549,7 @@ __all__ = [
     'Protocol',
     'ContentFormat',
     'SoapApiType',
+    'BearerTokenSendingMethods',
     'ApiType',
     'State',
     'LoggerType',

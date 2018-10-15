@@ -18,12 +18,24 @@ class AuthenticationSettingsContract(Model):
     :param o_auth2: OAuth2 Authentication settings
     :type o_auth2:
      ~azure.mgmt.apimanagement.models.OAuth2AuthenticationSettingsContract
+    :param openid: OpenID Connect Authentication Settings
+    :type openid:
+     ~azure.mgmt.apimanagement.models.OpenIdAuthenticationSettingsContract
+    :param subscription_key_required: Specifies whether subscription key is
+     required during call to this API, true - API is included into closed
+     products only, false - API is included into open products alone, null -
+     there is a mix of products.
+    :type subscription_key_required: bool
     """
 
     _attribute_map = {
         'o_auth2': {'key': 'oAuth2', 'type': 'OAuth2AuthenticationSettingsContract'},
+        'openid': {'key': 'openid', 'type': 'OpenIdAuthenticationSettingsContract'},
+        'subscription_key_required': {'key': 'subscriptionKeyRequired', 'type': 'bool'},
     }
 
-    def __init__(self, *, o_auth2=None, **kwargs) -> None:
+    def __init__(self, *, o_auth2=None, openid=None, subscription_key_required: bool=None, **kwargs) -> None:
         super(AuthenticationSettingsContract, self).__init__(**kwargs)
         self.o_auth2 = o_auth2
+        self.openid = openid
+        self.subscription_key_required = subscription_key_required
