@@ -36,7 +36,7 @@ class ServicePrincipalProperties(Model):
         'secret': {'key': 'secret', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, client_id: str, secret: str, **kwargs) -> None:
         super(ServicePrincipalProperties, self).__init__(**kwargs)
-        self.client_id = kwargs.get('client_id', None)
-        self.secret = kwargs.get('secret', None)
+        self.client_id = client_id
+        self.secret = secret

@@ -24,6 +24,6 @@ class AvailableOperations(Model):
         'value': {'key': 'value', 'type': '[ResourceOperation]'},
     }
 
-    def __init__(self, value=None):
-        super(AvailableOperations, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(AvailableOperations, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
