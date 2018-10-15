@@ -9,15 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .metric_alert_criteria import MetricAlertCriteria
 
 
-class MetricAlertCriteria(Model):
-    """The rule criteria that defines the conditions of the alert rule.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MetricAlertSingleResourceMultipleMetricCriteria,
-    MetricAlertMultipleResourceMultipleMetricCriteria
+class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
+    """Speficies the metric alert criteria for multiple resource that has multiple
+    metric criteria.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,6 +23,9 @@ class MetricAlertCriteria(Model):
     :type additional_properties: dict[str, object]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
+    :param all_of: the list of multiple metric criteria for this 'all of'
+     operation.
+    :type all_of: list[~azure.mgmt.monitor.models.MultiMetricCriteria]
     """
 
     _validation = {
@@ -35,13 +35,10 @@ class MetricAlertCriteria(Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
+        'all_of': {'key': 'allOf', 'type': '[MultiMetricCriteria]'},
     }
 
-    _subtype_map = {
-        'odatatype': {'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria'}
-    }
-
-    def __init__(self, *, additional_properties=None, **kwargs) -> None:
-        super(MetricAlertCriteria, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.odatatype = None
+    def __init__(self, **kwargs):
+        super(MetricAlertMultipleResourceMultipleMetricCriteria, self).__init__(**kwargs)
+        self.all_of = kwargs.get('all_of', None)
+        self.odatatype = 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'

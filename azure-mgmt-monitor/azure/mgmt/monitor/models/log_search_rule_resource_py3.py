@@ -44,7 +44,8 @@ class LogSearchRuleResource(Resource):
      ~azure.mgmt.monitor.models.ProvisioningState
     :param source: Required. Data Source against which rule will Query Data
     :type source: ~azure.mgmt.monitor.models.Source
-    :param schedule: Required. Schedule (Frequnecy, Time Window) for rule.
+    :param schedule: Schedule (Frequnecy, Time Window) for rule. Required for
+     action type - AlertingAction
     :type schedule: ~azure.mgmt.monitor.models.Schedule
     :param action: Required. Action needs to be taken on rule execution.
     :type action: ~azure.mgmt.monitor.models.Action
@@ -58,7 +59,6 @@ class LogSearchRuleResource(Resource):
         'last_updated_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'source': {'required': True},
-        'schedule': {'required': True},
         'action': {'required': True},
     }
 
@@ -77,7 +77,7 @@ class LogSearchRuleResource(Resource):
         'action': {'key': 'properties.action', 'type': 'Action'},
     }
 
-    def __init__(self, *, location: str, source, schedule, action, tags=None, description: str=None, enabled=None, **kwargs) -> None:
+    def __init__(self, *, location: str, source, action, tags=None, description: str=None, enabled=None, schedule=None, **kwargs) -> None:
         super(LogSearchRuleResource, self).__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.enabled = enabled

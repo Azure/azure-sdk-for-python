@@ -12,23 +12,26 @@
 from msrest.serialization import Model
 
 
-class MetricDimension(Model):
-    """Specifies a metric dimension.
+class Dimension(Model):
+    """Specifies the criteria for converting log to metric.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the dimension.
+    :param name: Required. Name of the dimension
     :type name: str
-    :param operator: Required. the dimension operator. Only 'Include' and
-     'Exclude' are supported
-    :type operator: str
-    :param values: Required. list of dimension values.
+    :ivar operator: Required. Operator for dimension values. Default value:
+     "Include" .
+    :vartype operator: str
+    :param values: Required. List of dimension values
     :type values: list[str]
     """
 
     _validation = {
         'name': {'required': True},
-        'operator': {'required': True},
+        'operator': {'required': True, 'constant': True},
         'values': {'required': True},
     }
 
@@ -38,8 +41,9 @@ class MetricDimension(Model):
         'values': {'key': 'values', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MetricDimension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.operator = kwargs.get('operator', None)
-        self.values = kwargs.get('values', None)
+    operator = "Include"
+
+    def __init__(self, *, name: str, values, **kwargs) -> None:
+        super(Dimension, self).__init__(**kwargs)
+        self.name = name
+        self.values = values

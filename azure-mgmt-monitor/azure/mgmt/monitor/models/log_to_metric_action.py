@@ -9,33 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .action import Action
 
 
-class Action(Model):
-    """Action descriptor.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AlertingAction, LogToMetricAction
+class LogToMetricAction(Action):
+    """Specifiy action need to be taken when rule type is converting log to
+    metric.
 
     All required parameters must be populated in order to send to Azure.
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
+    :param criteria: Required. Severity of the alert
+    :type criteria: ~azure.mgmt.monitor.models.Criteria
     """
 
     _validation = {
         'odatatype': {'required': True},
+        'criteria': {'required': True},
     }
 
     _attribute_map = {
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
+        'criteria': {'key': 'criteria', 'type': 'Criteria'},
     }
 
-    _subtype_map = {
-        'odatatype': {'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction': 'AlertingAction', 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction': 'LogToMetricAction'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Action, self).__init__(**kwargs)
-        self.odatatype = None
+    def __init__(self, **kwargs):
+        super(LogToMetricAction, self).__init__(**kwargs)
+        self.criteria = kwargs.get('criteria', None)
+        self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'

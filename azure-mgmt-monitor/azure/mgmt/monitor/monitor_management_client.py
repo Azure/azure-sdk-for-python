@@ -31,6 +31,7 @@ from .operations.metric_baseline_operations import MetricBaselineOperations
 from .operations.metric_alerts_operations import MetricAlertsOperations
 from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
 from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
+from .operations.metric_namespaces_operations import MetricNamespacesOperations
 from . import models
 
 
@@ -108,6 +109,8 @@ class MonitorManagementClient(SDKClient):
     :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
     :ivar scheduled_query_rules: ScheduledQueryRules operations
     :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
+    :ivar metric_namespaces: MetricNamespaces operations
+    :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -162,4 +165,6 @@ class MonitorManagementClient(SDKClient):
         self.metric_alerts_status = MetricAlertsStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.scheduled_query_rules = ScheduledQueryRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_namespaces = MetricNamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
