@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class AzureQueryProperties(Model):
-    """Azure query specific to the group of machines for update configuration.
+    """Azure query for the update configuration.
 
-    :param scope: List of Subscription or Resource Group ARM Id.
+    :param scope: List of Subscription or Resource Group ARM Ids.
     :type scope: list[str]
-    :param location: list of locations for the VM filter .
+    :param location: List of locations for the VM.
     :type location: list[str]
-    :param tag_settings: tag filter information of the Vm.
+    :param tag_settings: Tag settings for the VM.
     :type tag_settings: ~azure.mgmt.automation.models.TagSettingsProperties
     """
 

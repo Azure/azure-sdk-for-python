@@ -13,11 +13,12 @@ from msrest.serialization import Model
 
 
 class TagSettingsProperties(Model):
-    """Tag filter information of the VM.
+    """Tag filter information for the VM.
 
-    :param tags: dictionary of tags with its list of value
+    :param tags: Dictionary of tags with its list of values
     :type tags: dict[str, list[str]]
-    :param filter_operator: Possible values include: 'All', 'Any'
+    :param filter_operator: Filter VMs by Any or All specified tags. Possible
+     values include: 'All', 'Any'
     :type filter_operator: str or ~azure.mgmt.automation.models.TagOperators
     """
 
