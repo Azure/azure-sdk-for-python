@@ -38,27 +38,25 @@ class DockerBuildRequest(RunRequest):
      executing the run.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
-    :param source_location: Required. The URL(absolute or relative) of the
-     source that needs to be built. For Docker build, it can be an URL to a tar
-     or github repoistory as supported by Docker.
-     If it is relative URL, the relative path should be obtained from calling
-     getSourceUploadUrl API.
-    :type source_location: str
-    :param timeout: Build timeout in seconds. Default value: 3600 .
+    :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
-    :param platform: Required. The platform properties against which the build
-     will happen.
+    :param platform: Required. The platform properties against which the run
+     has to happen.
     :type platform:
      ~azure.mgmt.containerregistry.v2018_09_01.models.PlatformProperties
-    :param agent_configuration: The machine configuration of the build agent.
+    :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
+    :param source_location: The URL(absolute or relative) of the source
+     context. It can be an URL to a tar or git repoistory.
+     If it is relative URL, the relative path should be obtained from calling
+     listBuildSourceUploadUrl API.
+    :type source_location: str
     """
 
     _validation = {
         'type': {'required': True},
         'docker_file_path': {'required': True},
-        'source_location': {'required': True},
         'timeout': {'maximum': 28800, 'minimum': 300},
         'platform': {'required': True},
     }
@@ -71,10 +69,10 @@ class DockerBuildRequest(RunRequest):
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'source_location': {'key': 'sourceLocation', 'type': 'str'},
         'timeout': {'key': 'timeout', 'type': 'int'},
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
+        'source_location': {'key': 'sourceLocation', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -84,8 +82,8 @@ class DockerBuildRequest(RunRequest):
         self.no_cache = kwargs.get('no_cache', False)
         self.docker_file_path = kwargs.get('docker_file_path', None)
         self.arguments = kwargs.get('arguments', None)
-        self.source_location = kwargs.get('source_location', None)
         self.timeout = kwargs.get('timeout', 3600)
         self.platform = kwargs.get('platform', None)
         self.agent_configuration = kwargs.get('agent_configuration', None)
+        self.source_location = kwargs.get('source_location', None)
         self.type = 'DockerBuildRequest'

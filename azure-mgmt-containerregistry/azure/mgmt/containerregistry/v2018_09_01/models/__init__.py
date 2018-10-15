@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .import_source_credentials_py3 import ImportSourceCredentials
     from .import_source_py3 import ImportSource
     from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
@@ -19,6 +20,7 @@ try:
     from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
     from .operation_definition_py3 import OperationDefinition
     from .sku_py3 import Sku
+    from .registry_identity_py3 import RegistryIdentity
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
     from .registry_py3 import Registry
@@ -88,6 +90,7 @@ try:
     from .file_task_step_update_parameters_py3 import FileTaskStepUpdateParameters
     from .encoded_task_step_update_parameters_py3 import EncodedTaskStepUpdateParameters
 except (SyntaxError, ImportError):
+    from .import_source_credentials import ImportSourceCredentials
     from .import_source import ImportSource
     from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
@@ -97,6 +100,7 @@ except (SyntaxError, ImportError):
     from .operation_service_specification_definition import OperationServiceSpecificationDefinition
     from .operation_definition import OperationDefinition
     from .sku import Sku
+    from .registry_identity import RegistryIdentity
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
     from .registry import Registry
@@ -198,6 +202,7 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ImportSourceCredentials',
     'ImportSource',
     'ImportImageParameters',
     'RegistryNameCheckRequest',
@@ -207,6 +212,7 @@ __all__ = [
     'OperationServiceSpecificationDefinition',
     'OperationDefinition',
     'Sku',
+    'RegistryIdentity',
     'Status',
     'StorageAccountProperties',
     'Registry',
