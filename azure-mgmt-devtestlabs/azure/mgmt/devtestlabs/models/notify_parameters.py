@@ -28,7 +28,7 @@ class NotifyParameters(Model):
         'json_payload': {'key': 'jsonPayload', 'type': 'str'},
     }
 
-    def __init__(self, event_name=None, json_payload=None):
-        super(NotifyParameters, self).__init__()
-        self.event_name = event_name
-        self.json_payload = json_payload
+    def __init__(self, **kwargs):
+        super(NotifyParameters, self).__init__(**kwargs)
+        self.event_name = kwargs.get('event_name', None)
+        self.json_payload = kwargs.get('json_payload', None)

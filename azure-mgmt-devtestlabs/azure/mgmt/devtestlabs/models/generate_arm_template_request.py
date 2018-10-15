@@ -35,9 +35,9 @@ class GenerateArmTemplateRequest(Model):
         'file_upload_options': {'key': 'fileUploadOptions', 'type': 'str'},
     }
 
-    def __init__(self, virtual_machine_name=None, parameters=None, location=None, file_upload_options=None):
-        super(GenerateArmTemplateRequest, self).__init__()
-        self.virtual_machine_name = virtual_machine_name
-        self.parameters = parameters
-        self.location = location
-        self.file_upload_options = file_upload_options
+    def __init__(self, **kwargs):
+        super(GenerateArmTemplateRequest, self).__init__(**kwargs)
+        self.virtual_machine_name = kwargs.get('virtual_machine_name', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.location = kwargs.get('location', None)
+        self.file_upload_options = kwargs.get('file_upload_options', None)

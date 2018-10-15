@@ -82,14 +82,14 @@ class Policy(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, description=None, status=None, fact_name=None, fact_data=None, threshold=None, evaluator_type=None, provisioning_state=None, unique_identifier=None):
-        super(Policy, self).__init__(location=location, tags=tags)
-        self.description = description
-        self.status = status
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.threshold = threshold
-        self.evaluator_type = evaluator_type
+    def __init__(self, **kwargs):
+        super(Policy, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.status = kwargs.get('status', None)
+        self.fact_name = kwargs.get('fact_name', None)
+        self.fact_data = kwargs.get('fact_data', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.evaluator_type = kwargs.get('evaluator_type', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

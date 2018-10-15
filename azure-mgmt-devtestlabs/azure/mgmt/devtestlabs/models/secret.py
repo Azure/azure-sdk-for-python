@@ -54,8 +54,8 @@ class Secret(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, value=None, provisioning_state=None, unique_identifier=None):
-        super(Secret, self).__init__(location=location, tags=tags)
-        self.value = value
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(Secret, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

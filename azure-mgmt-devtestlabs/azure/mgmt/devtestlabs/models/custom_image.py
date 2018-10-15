@@ -70,13 +70,13 @@ class CustomImage(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, vm=None, vhd=None, description=None, author=None, managed_image_id=None, provisioning_state=None, unique_identifier=None):
-        super(CustomImage, self).__init__(location=location, tags=tags)
-        self.vm = vm
-        self.vhd = vhd
-        self.description = description
-        self.author = author
+    def __init__(self, **kwargs):
+        super(CustomImage, self).__init__(**kwargs)
+        self.vm = kwargs.get('vm', None)
+        self.vhd = kwargs.get('vhd', None)
+        self.description = kwargs.get('description', None)
+        self.author = kwargs.get('author', None)
         self.creation_date = None
-        self.managed_image_id = managed_image_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.managed_image_id = kwargs.get('managed_image_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

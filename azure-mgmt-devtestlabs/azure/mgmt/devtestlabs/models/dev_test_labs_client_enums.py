@@ -12,114 +12,114 @@
 from enum import Enum
 
 
-class EnableStatus(Enum):
+class EnableStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class NotificationStatus(Enum):
+class NotificationStatus(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
 
 
-class SourceControlType(Enum):
+class SourceControlType(str, Enum):
 
     vso_git = "VsoGit"
     git_hub = "GitHub"
 
 
-class StorageType(Enum):
+class StorageType(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
 
 
-class CostThresholdStatus(Enum):
+class CostThresholdStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class WindowsOsState(Enum):
+class WindowsOsState(str, Enum):
 
     non_sysprepped = "NonSysprepped"
     sysprep_requested = "SysprepRequested"
     sysprep_applied = "SysprepApplied"
 
 
-class LinuxOsState(Enum):
+class LinuxOsState(str, Enum):
 
     non_deprovisioned = "NonDeprovisioned"
     deprovision_requested = "DeprovisionRequested"
     deprovision_applied = "DeprovisionApplied"
 
 
-class CustomImageOsType(Enum):
+class CustomImageOsType(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
     none = "None"
 
 
-class HostCachingOptions(Enum):
+class HostCachingOptions(str, Enum):
 
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
 
-class NotificationChannelEventType(Enum):
+class NotificationChannelEventType(str, Enum):
 
     auto_shutdown = "AutoShutdown"
     cost = "Cost"
 
 
-class TransportProtocol(Enum):
+class TransportProtocol(str, Enum):
 
     tcp = "Tcp"
     udp = "Udp"
 
 
-class VirtualMachineCreationSource(Enum):
+class VirtualMachineCreationSource(str, Enum):
 
     from_custom_image = "FromCustomImage"
     from_gallery_image = "FromGalleryImage"
 
 
-class FileUploadOptions(Enum):
+class FileUploadOptions(str, Enum):
 
     upload_files_and_generate_sas_tokens = "UploadFilesAndGenerateSasTokens"
     none = "None"
 
 
-class PremiumDataDisk(Enum):
+class PremiumDataDisk(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
 
 
-class TargetCostStatus(Enum):
+class TargetCostStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class ReportingCycleType(Enum):
+class ReportingCycleType(str, Enum):
 
     calendar_month = "CalendarMonth"
     custom = "Custom"
 
 
-class CostType(Enum):
+class CostType(str, Enum):
 
     unavailable = "Unavailable"
     reported = "Reported"
     projected = "Projected"
 
 
-class HttpStatusCode(Enum):
+class HttpStatusCode(str, Enum):
 
     continue_enum = "Continue"
     switching_protocols = "SwitchingProtocols"
@@ -165,13 +165,13 @@ class HttpStatusCode(Enum):
     http_version_not_supported = "HttpVersionNotSupported"
 
 
-class PolicyStatus(Enum):
+class PolicyStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class PolicyFactName(Enum):
+class PolicyFactName(str, Enum):
 
     user_owned_lab_vm_count = "UserOwnedLabVmCount"
     user_owned_lab_premium_vm_count = "UserOwnedLabPremiumVmCount"
@@ -183,13 +183,13 @@ class PolicyFactName(Enum):
     lab_target_cost = "LabTargetCost"
 
 
-class PolicyEvaluatorType(Enum):
+class PolicyEvaluatorType(str, Enum):
 
     allowed_values_policy = "AllowedValuesPolicy"
     max_value_policy = "MaxValuePolicy"
 
 
-class UsagePermissionType(Enum):
+class UsagePermissionType(str, Enum):
 
     default = "Default"
     deny = "Deny"

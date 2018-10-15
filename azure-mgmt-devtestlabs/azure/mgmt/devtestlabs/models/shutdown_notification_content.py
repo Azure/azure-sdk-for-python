@@ -55,16 +55,16 @@ class ShutdownNotificationContent(Model):
         'lab_name': {'key': 'labName', 'type': 'str'},
     }
 
-    def __init__(self, skip_url=None, delay_url60=None, delay_url120=None, vm_name=None, guid=None, owner=None, event_type=None, text=None, subscription_id=None, resource_group_name=None, lab_name=None):
-        super(ShutdownNotificationContent, self).__init__()
-        self.skip_url = skip_url
-        self.delay_url60 = delay_url60
-        self.delay_url120 = delay_url120
-        self.vm_name = vm_name
-        self.guid = guid
-        self.owner = owner
-        self.event_type = event_type
-        self.text = text
-        self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.lab_name = lab_name
+    def __init__(self, **kwargs):
+        super(ShutdownNotificationContent, self).__init__(**kwargs)
+        self.skip_url = kwargs.get('skip_url', None)
+        self.delay_url60 = kwargs.get('delay_url60', None)
+        self.delay_url120 = kwargs.get('delay_url120', None)
+        self.vm_name = kwargs.get('vm_name', None)
+        self.guid = kwargs.get('guid', None)
+        self.owner = kwargs.get('owner', None)
+        self.event_type = kwargs.get('event_type', None)
+        self.text = kwargs.get('text', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.lab_name = kwargs.get('lab_name', None)
