@@ -35,7 +35,7 @@ class UpdateConfiguration(Model):
     :param non_azure_computer_names: List of names of non-azure machines
      targeted by the software update configuration.
     :type non_azure_computer_names: list[str]
-    :param targets: Group information that will be patched during run time.
+    :param targets: Group targets for the software update configuration.
     :type targets: ~azure.mgmt.automation.models.TargetProperties
     """
 

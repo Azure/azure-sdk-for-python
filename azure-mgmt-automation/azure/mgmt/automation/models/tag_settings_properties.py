@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class TagSettingsProperties(Model):
     """Tag filter information for the VM.
 
-    :param tags: Dictionary of tags with its list of values
+    :param tags: Dictionary of tags with its list of values.
     :type tags: dict[str, list[str]]
     :param filter_operator: Filter VMs by Any or All specified tags. Possible
      values include: 'All', 'Any'

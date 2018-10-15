@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class TargetProperties(Model):
     """Group specific to the update configuration.
 
-    :param azure_queries: List of Azure queries in software update
+    :param azure_queries: List of Azure queries in the software update
      configuration.
     :type azure_queries:
      list[~azure.mgmt.automation.models.AzureQueryProperties]
