@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class EventSubscription(Resource):
@@ -42,7 +42,7 @@ class EventSubscription(Resource):
     :param event_delivery_schema: The event delivery schema for the event
      subscription. Possible values include: 'EventGridSchema',
      'InputEventSchema', 'CloudEventV01Schema'. Default value:
-     "EventGridSchema" .
+     "InputEventSchema" .
     :type event_delivery_schema: str or
      ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
@@ -76,7 +76,7 @@ class EventSubscription(Resource):
         'dead_letter_destination': {'key': 'properties.deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, event_delivery_schema="EventGridSchema", retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, event_delivery_schema="InputEventSchema", retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscription, self).__init__(**kwargs)
         self.topic = None
         self.provisioning_state = None

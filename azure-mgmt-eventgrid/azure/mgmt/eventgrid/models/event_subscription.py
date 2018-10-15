@@ -42,7 +42,7 @@ class EventSubscription(Resource):
     :param event_delivery_schema: The event delivery schema for the event
      subscription. Possible values include: 'EventGridSchema',
      'InputEventSchema', 'CloudEventV01Schema'. Default value:
-     "EventGridSchema" .
+     "InputEventSchema" .
     :type event_delivery_schema: str or
      ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
@@ -83,6 +83,6 @@ class EventSubscription(Resource):
         self.destination = kwargs.get('destination', None)
         self.filter = kwargs.get('filter', None)
         self.labels = kwargs.get('labels', None)
-        self.event_delivery_schema = kwargs.get('event_delivery_schema', "EventGridSchema")
+        self.event_delivery_schema = kwargs.get('event_delivery_schema', "InputEventSchema")
         self.retry_policy = kwargs.get('retry_policy', None)
         self.dead_letter_destination = kwargs.get('dead_letter_destination', None)
