@@ -41,6 +41,6 @@ class ResourceNamespacePatch(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, tags=None):
-        super(ResourceNamespacePatch, self).__init__()
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ResourceNamespacePatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

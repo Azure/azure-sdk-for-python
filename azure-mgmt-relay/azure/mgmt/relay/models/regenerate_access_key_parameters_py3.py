@@ -35,7 +35,7 @@ class RegenerateAccessKeyParameters(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_type, key: str=None, **kwargs) -> None:
         super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
-        self.key_type = kwargs.get('key_type', None)
-        self.key = kwargs.get('key', None)
+        self.key_type = key_type
+        self.key = key

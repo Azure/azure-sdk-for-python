@@ -12,18 +12,18 @@
 from enum import Enum
 
 
-class Relaytype(Enum):
+class Relaytype(str, Enum):
 
     net_tcp = "NetTcp"
     http = "Http"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     standard = "Standard"
 
 
-class ProvisioningStateEnum(Enum):
+class ProvisioningStateEnum(str, Enum):
 
     created = "Created"
     succeeded = "Succeeded"
@@ -33,20 +33,20 @@ class ProvisioningStateEnum(Enum):
     unknown = "Unknown"
 
 
-class AccessRights(Enum):
+class AccessRights(str, Enum):
 
     manage = "Manage"
     send = "Send"
     listen = "Listen"
 
 
-class KeyType(Enum):
+class KeyType(str, Enum):
 
     primary_key = "PrimaryKey"
     secondary_key = "SecondaryKey"
 
 
-class UnavailableReason(Enum):
+class UnavailableReason(str, Enum):
 
     none = "None"
     invalid_name = "InvalidName"

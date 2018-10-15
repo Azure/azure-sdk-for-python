@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource_namespace_patch_py3 import ResourceNamespacePatch
 
 
-class RelayNamespace(TrackedResource):
+class RelayUpdateParameters(ResourceNamespacePatch):
     """Description of a namespace resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -26,8 +24,6 @@ class RelayNamespace(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param sku: SKU of the namespace.
@@ -51,7 +47,6 @@ class RelayNamespace(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
@@ -63,7 +58,6 @@ class RelayNamespace(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateEnum'},
@@ -73,9 +67,9 @@ class RelayNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RelayNamespace, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, tags=None, sku=None, **kwargs) -> None:
+        super(RelayUpdateParameters, self).__init__(tags=tags, **kwargs)
+        self.sku = sku
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

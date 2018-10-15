@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class TrackedResource(Resource):
-    """Definition of resource.
+class AuthorizationRule(Resource):
+    """Description of a namespace authorization rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,28 +26,24 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
+    :param rights: Required. The rights associated with the rule.
+    :type rights: list[str or ~azure.mgmt.relay.models.AccessRights]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'rights': {'required': True, 'unique': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, rights, **kwargs) -> None:
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.rights = rights

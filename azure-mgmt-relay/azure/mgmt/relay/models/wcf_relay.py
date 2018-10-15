@@ -73,13 +73,13 @@ class WcfRelay(Resource):
         'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, relay_type=None, requires_client_authorization=None, requires_transport_security=None, user_metadata=None):
-        super(WcfRelay, self).__init__()
+    def __init__(self, **kwargs):
+        super(WcfRelay, self).__init__(**kwargs)
         self.is_dynamic = None
         self.created_at = None
         self.updated_at = None
         self.listener_count = None
-        self.relay_type = relay_type
-        self.requires_client_authorization = requires_client_authorization
-        self.requires_transport_security = requires_transport_security
-        self.user_metadata = user_metadata
+        self.relay_type = kwargs.get('relay_type', None)
+        self.requires_client_authorization = kwargs.get('requires_client_authorization', None)
+        self.requires_transport_security = kwargs.get('requires_transport_security', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
