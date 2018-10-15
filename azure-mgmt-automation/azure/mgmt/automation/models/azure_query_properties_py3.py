@@ -17,7 +17,7 @@ class AzureQueryProperties(Model):
 
     :param scope: List of Subscription or Resource Group ARM Ids.
     :type scope: list[str]
-    :param location: List of locations for the VM.
+    :param location: List of locations to scope the query to.
     :type location: list[str]
     :param tag_settings: Tag settings for the VM.
     :type tag_settings: ~azure.mgmt.automation.models.TagSettingsProperties
