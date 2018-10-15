@@ -15,17 +15,14 @@ from msrest.serialization import Model
 class ManagedClusterAgentPoolProfile(Model):
     """Profile for the container service agent pool.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+    :param count: Required. Number of agents (VMs) to host docker containers.
+     Allowed values must be in the range of 1 to 100 (inclusive). The default
+     value is 1. . Default value: 1 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -84,11 +81,6 @@ class ManagedClusterAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :ivar storage_profile: Storage profile specifies what kind of storage
-     used. Defaults to ManagedDisks. Possible values include: 'StorageAccount',
-     'ManagedDisks'
-    :vartype storage_profile: str or
-     ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier.
     :type vnet_subnet_id: str
@@ -98,13 +90,22 @@ class ManagedClusterAgentPoolProfile(Model):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
+    :param max_count: Maximun number of nodes for auto-scaling
+    :type max_count: int
+    :param min_count: Minimun number of nodes for auto-scaling
+    :type min_count: int
+    :param enable_auto_scaling: Wheter to enable auto-scaler
+    :type enable_auto_scaling: bool
+    :param type: AgentPoolType represents types of agentpool. Possible values
+     include: 'VirtualMachineScaleSets', 'AvailabilitySet'. Default value:
+     "VirtualMachineScaleSets" .
+    :type type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     """
 
     _validation = {
         'name': {'required': True},
-        'count': {'maximum': 100, 'minimum': 1},
+        'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
-        'storage_profile': {'readonly': True},
     }
 
     _attribute_map = {
@@ -112,10 +113,13 @@ class ManagedClusterAgentPoolProfile(Model):
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'min_count': {'key': 'minCount', 'type': 'int'},
+        'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -124,7 +128,10 @@ class ManagedClusterAgentPoolProfile(Model):
         self.count = kwargs.get('count', 1)
         self.vm_size = kwargs.get('vm_size', None)
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
-        self.storage_profile = None
         self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
         self.max_pods = kwargs.get('max_pods', None)
         self.os_type = kwargs.get('os_type', "Linux")
+        self.max_count = kwargs.get('max_count', None)
+        self.min_count = kwargs.get('min_count', None)
+        self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
+        self.type = kwargs.get('type', "VirtualMachineScaleSets")

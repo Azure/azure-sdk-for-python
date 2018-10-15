@@ -21,7 +21,7 @@ class ManagedClusterAADProfile(Model):
     :type client_app_id: str
     :param server_app_id: Required. The server AAD application ID.
     :type server_app_id: str
-    :param server_app_secret: The server AAD application secret.
+    :param server_app_secret: Required. The server AAD application secret.
     :type server_app_secret: str
     :param tenant_id: The AAD tenant ID to use for authentication. If not
      specified, will use the tenant of the deployment subscription.
@@ -31,6 +31,7 @@ class ManagedClusterAADProfile(Model):
     _validation = {
         'client_app_id': {'required': True},
         'server_app_id': {'required': True},
+        'server_app_secret': {'required': True},
     }
 
     _attribute_map = {
@@ -40,7 +41,7 @@ class ManagedClusterAADProfile(Model):
         'tenant_id': {'key': 'tenantID', 'type': 'str'},
     }
 
-    def __init__(self, *, client_app_id: str, server_app_id: str, server_app_secret: str=None, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, client_app_id: str, server_app_id: str, server_app_secret: str, tenant_id: str=None, **kwargs) -> None:
         super(ManagedClusterAADProfile, self).__init__(**kwargs)
         self.client_app_id = client_app_id
         self.server_app_id = server_app_id

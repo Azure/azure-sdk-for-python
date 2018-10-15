@@ -211,6 +211,12 @@ class OSType(str, Enum):
     windows = "Windows"
 
 
+class AgentPoolType(str, Enum):
+
+    virtual_machine_scale_sets = "VirtualMachineScaleSets"
+    availability_set = "AvailabilitySet"
+
+
 class NetworkPlugin(str, Enum):
 
     azure = "azure"
