@@ -18,23 +18,25 @@ class Contact(Model):
     through the Whois
     directories as per ICANN requirements.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param address_mailing: Mailing address.
     :type address_mailing: ~azure.mgmt.web.models.Address
-    :param email: Email address.
+    :param email: Required. Email address.
     :type email: str
     :param fax: Fax number.
     :type fax: str
     :param job_title: Job title.
     :type job_title: str
-    :param name_first: First name.
+    :param name_first: Required. First name.
     :type name_first: str
-    :param name_last: Last name.
+    :param name_last: Required. Last name.
     :type name_last: str
     :param name_middle: Middle name.
     :type name_middle: str
     :param organization: Organization contact belongs to.
     :type organization: str
-    :param phone: Phone number.
+    :param phone: Required. Phone number.
     :type phone: str
     """
 
@@ -57,14 +59,14 @@ class Contact(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, email, name_first, name_last, phone, address_mailing=None, fax=None, job_title=None, name_middle=None, organization=None):
-        super(Contact, self).__init__()
-        self.address_mailing = address_mailing
-        self.email = email
-        self.fax = fax
-        self.job_title = job_title
-        self.name_first = name_first
-        self.name_last = name_last
-        self.name_middle = name_middle
-        self.organization = organization
-        self.phone = phone
+    def __init__(self, **kwargs):
+        super(Contact, self).__init__(**kwargs)
+        self.address_mailing = kwargs.get('address_mailing', None)
+        self.email = kwargs.get('email', None)
+        self.fax = kwargs.get('fax', None)
+        self.job_title = kwargs.get('job_title', None)
+        self.name_first = kwargs.get('name_first', None)
+        self.name_last = kwargs.get('name_last', None)
+        self.name_middle = kwargs.get('name_middle', None)
+        self.organization = kwargs.get('organization', None)
+        self.phone = kwargs.get('phone', None)

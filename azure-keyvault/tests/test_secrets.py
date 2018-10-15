@@ -29,6 +29,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 self.assertEqual(attributes, secret.attributes)
                 del expected[secret.id]
 
+
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_secret_crud_operations(self, vault, **kwargs):

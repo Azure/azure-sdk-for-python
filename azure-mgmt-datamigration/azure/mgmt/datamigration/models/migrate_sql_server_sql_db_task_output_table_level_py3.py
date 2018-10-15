@@ -13,7 +13,7 @@ from .migrate_sql_server_sql_db_task_output_py3 import MigrateSqlServerSqlDbTask
 
 
 class MigrateSqlServerSqlDbTaskOutputTableLevel(MigrateSqlServerSqlDbTaskOutput):
-    """Table level result for Sql Server to Azure Sql DB migration.
+    """MigrateSqlServerSqlDbTaskOutputTableLevel.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

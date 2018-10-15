@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-cognitiveservices-language-luis"
+package_pprint_name = "Cognitive Services LUIS"
+package_doc_id = "cognitive-services"
+is_stable = false
+is_arm = false

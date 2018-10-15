@@ -72,12 +72,12 @@ class MSDeploy(ProxyOnlyResource):
         'app_offline': {'key': 'properties.appOffline', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, package_uri=None, connection_string=None, db_type=None, set_parameters_xml_file_uri=None, set_parameters=None, skip_app_data=None, app_offline=None):
-        super(MSDeploy, self).__init__(kind=kind)
-        self.package_uri = package_uri
-        self.connection_string = connection_string
-        self.db_type = db_type
-        self.set_parameters_xml_file_uri = set_parameters_xml_file_uri
-        self.set_parameters = set_parameters
-        self.skip_app_data = skip_app_data
-        self.app_offline = app_offline
+    def __init__(self, **kwargs):
+        super(MSDeploy, self).__init__(**kwargs)
+        self.package_uri = kwargs.get('package_uri', None)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.db_type = kwargs.get('db_type', None)
+        self.set_parameters_xml_file_uri = kwargs.get('set_parameters_xml_file_uri', None)
+        self.set_parameters = kwargs.get('set_parameters', None)
+        self.skip_app_data = kwargs.get('skip_app_data', None)
+        self.app_offline = kwargs.get('app_offline', None)

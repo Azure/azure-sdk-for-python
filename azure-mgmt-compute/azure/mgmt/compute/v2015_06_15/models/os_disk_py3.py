@@ -55,7 +55,7 @@ class OSDisk(Model):
     :type create_option: str or
      ~azure.mgmt.compute.v2015_06_15.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
-     gigabytes. This element can be used to overwrite the name of the disk in a
+     gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     """
