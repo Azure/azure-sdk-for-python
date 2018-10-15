@@ -47,11 +47,11 @@ class ManagementGroupAggregatedCostResult(Resource):
     :param children: Children of a management group
     :type children:
      list[~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult]
-    :param included_subscriptions: List of subscriptionGuids included in the
+    :param included_subscriptions: List of subscription Guids included in the
      calculation of aggregated cost
     :type included_subscriptions: list[str]
-    :param excluded_subscriptions: List of subscriptionGuids excluded from the
-     calculation of aggregated cost
+    :param excluded_subscriptions: List of subscription Guids excluded from
+     the calculation of aggregated cost
     :type excluded_subscriptions: list[str]
     """
 
