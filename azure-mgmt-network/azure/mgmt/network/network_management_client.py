@@ -849,6 +849,45 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def express_route_links(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2018_08_01.operations.ExpressRouteLinksOperations>`
+        """
+        api_version = self._get_api_version('express_route_links')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import ExpressRouteLinksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def express_route_ports(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2018_08_01.operations.ExpressRoutePortsOperations>`
+        """
+        api_version = self._get_api_version('express_route_ports')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import ExpressRoutePortsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def express_route_ports_locations(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2018_08_01.operations.ExpressRoutePortsLocationsOperations>`
+        """
+        api_version = self._get_api_version('express_route_ports_locations')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import ExpressRoutePortsLocationsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def express_route_service_providers(self):
         """Instance depends on the API version:
 

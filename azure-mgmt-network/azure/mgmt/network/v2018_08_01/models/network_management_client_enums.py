@@ -288,6 +288,24 @@ class ServiceProviderProvisioningState(str, Enum):
     deprovisioning = "Deprovisioning"
 
 
+class ExpressRouteLinkConnectorType(str, Enum):
+
+    lc = "LC"
+    sc = "SC"
+
+
+class ExpressRouteLinkAdminState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ExpressRoutePortsEncapsulation(str, Enum):
+
+    dot1_q = "Dot1Q"
+    qin_q = "QinQ"
+
+
 class LoadBalancerSkuName(str, Enum):
 
     basic = "Basic"

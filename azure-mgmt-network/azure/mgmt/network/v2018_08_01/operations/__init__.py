@@ -26,6 +26,9 @@ from .express_route_cross_connections_operations import ExpressRouteCrossConnect
 from .express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
 from .express_route_gateways_operations import ExpressRouteGatewaysOperations
 from .express_route_connections_operations import ExpressRouteConnectionsOperations
+from .express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
+from .express_route_ports_operations import ExpressRoutePortsOperations
+from .express_route_links_operations import ExpressRouteLinksOperations
 from .interface_endpoints_operations import InterfaceEndpointsOperations
 from .load_balancers_operations import LoadBalancersOperations
 from .load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
@@ -91,6 +94,9 @@ __all__ = [
     'ExpressRouteCrossConnectionPeeringsOperations',
     'ExpressRouteGatewaysOperations',
     'ExpressRouteConnectionsOperations',
+    'ExpressRoutePortsLocationsOperations',
+    'ExpressRoutePortsOperations',
+    'ExpressRouteLinksOperations',
     'InterfaceEndpointsOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',
