@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource_read_only import SubResourceReadOnly
+from .sub_resource_read_only_py3 import SubResourceReadOnly
 
 
 class VirtualMachineScaleSetExtension(SubResourceReadOnly):

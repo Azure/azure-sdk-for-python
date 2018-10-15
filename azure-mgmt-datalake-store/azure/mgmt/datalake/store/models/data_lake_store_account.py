@@ -68,6 +68,10 @@ class DataLakeStoreAccount(Resource):
      Lake Store account.
     :vartype firewall_rules:
      list[~azure.mgmt.datalake.store.models.FirewallRule]
+    :ivar virtual_network_rules: The list of virtual network rules associated
+     with this Data Lake Store account.
+    :vartype virtual_network_rules:
+     list[~azure.mgmt.datalake.store.models.VirtualNetworkRule]
     :ivar firewall_state: The current state of the IP address firewall for
      this Data Lake Store account. Possible values include: 'Enabled',
      'Disabled'
@@ -117,6 +121,7 @@ class DataLakeStoreAccount(Resource):
         'encryption_state': {'readonly': True},
         'encryption_provisioning_state': {'readonly': True},
         'firewall_rules': {'readonly': True},
+        'virtual_network_rules': {'readonly': True},
         'firewall_state': {'readonly': True},
         'firewall_allow_azure_ips': {'readonly': True},
         'trusted_id_providers': {'readonly': True},
@@ -143,6 +148,7 @@ class DataLakeStoreAccount(Resource):
         'encryption_state': {'key': 'properties.encryptionState', 'type': 'EncryptionState'},
         'encryption_provisioning_state': {'key': 'properties.encryptionProvisioningState', 'type': 'EncryptionProvisioningState'},
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[TrustedIdProvider]'},
@@ -151,8 +157,8 @@ class DataLakeStoreAccount(Resource):
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
     }
 
-    def __init__(self):
-        super(DataLakeStoreAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataLakeStoreAccount, self).__init__(**kwargs)
         self.identity = None
         self.account_id = None
         self.provisioning_state = None
@@ -165,6 +171,7 @@ class DataLakeStoreAccount(Resource):
         self.encryption_state = None
         self.encryption_provisioning_state = None
         self.firewall_rules = None
+        self.virtual_network_rules = None
         self.firewall_state = None
         self.firewall_allow_azure_ips = None
         self.trusted_id_providers = None

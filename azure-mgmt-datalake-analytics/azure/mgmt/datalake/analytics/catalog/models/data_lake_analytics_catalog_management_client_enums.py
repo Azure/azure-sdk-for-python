@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AclType(Enum):
+class AclType(str, Enum):
 
     user_obj = "UserObj"
     group_obj = "GroupObj"
@@ -21,7 +21,7 @@ class AclType(Enum):
     group = "Group"
 
 
-class PermissionType(Enum):
+class PermissionType(str, Enum):
 
     none = "None"
     use = "Use"
@@ -32,7 +32,7 @@ class PermissionType(Enum):
     all = "All"
 
 
-class FileType(Enum):
+class FileType(str, Enum):
 
     assembly = "Assembly"
     resource = "Resource"

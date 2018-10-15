@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     updating = "Updating"
     succeeded = "Succeeded"

@@ -28,8 +28,6 @@ class Usage(ProxyOnlyResource):
     :vartype type: str
     :ivar display_name: Friendly name shown in the UI.
     :vartype display_name: str
-    :ivar usage_name: Name of the quota.
-    :vartype usage_name: str
     :ivar resource_name: Name of the quota resource.
     :vartype resource_name: str
     :ivar unit: Units of measurement for the quota resource.
@@ -52,7 +50,6 @@ class Usage(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'display_name': {'readonly': True},
-        'usage_name': {'readonly': True},
         'resource_name': {'readonly': True},
         'unit': {'readonly': True},
         'current_value': {'readonly': True},
@@ -68,7 +65,6 @@ class Usage(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'usage_name': {'key': 'properties.name', 'type': 'str'},
         'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'current_value': {'key': 'properties.currentValue', 'type': 'long'},
@@ -78,10 +74,9 @@ class Usage(ProxyOnlyResource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(Usage, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.display_name = None
-        self.usage_name = None
         self.resource_name = None
         self.unit = None
         self.current_value = None

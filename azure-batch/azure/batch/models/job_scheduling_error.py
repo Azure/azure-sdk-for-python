@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class JobSchedulingError(Model):
     """An error encountered by the Batch service when scheduling a job.
 
-    :param category: The category of the job scheduling error. Possible values
-     include: 'userError', 'serverError'
+    All required parameters must be populated in order to send to Azure.
+
+    :param category: Required. The category of the job scheduling error.
+     Possible values include: 'userError', 'serverError'
     :type category: str or ~azure.batch.models.ErrorCategory
     :param code: An identifier for the job scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
@@ -40,9 +42,9 @@ class JobSchedulingError(Model):
         'details': {'key': 'details', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, category, code=None, message=None, details=None):
-        super(JobSchedulingError, self).__init__()
-        self.category = category
-        self.code = code
-        self.message = message
-        self.details = details
+    def __init__(self, **kwargs):
+        super(JobSchedulingError, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)

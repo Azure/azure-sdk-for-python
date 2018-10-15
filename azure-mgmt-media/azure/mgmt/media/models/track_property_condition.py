@@ -24,7 +24,7 @@ class TrackPropertyCondition(Model):
      values include: 'Unknown', 'Equal'
     :type operation: str or
      ~azure.mgmt.media.models.TrackPropertyCompareOperation
-    :param value: Track proprty value
+    :param value: Track property value
     :type value: str
     """
 

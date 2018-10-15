@@ -12,6 +12,11 @@
 from enum import Enum
 
 
+class UsageUnit(str, Enum):
+
+    count = "Count"
+
+
 class CachingType(str, Enum):
 
     none = "none"
@@ -23,12 +28,6 @@ class StorageAccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
-
-
-class FileServerType(str, Enum):
-
-    nfs = "nfs"
-    glusterfs = "glusterfs"
 
 
 class FileServerProvisioningState(str, Enum):
@@ -51,7 +50,6 @@ class DeallocationOption(str, Enum):
     requeue = "requeue"
     terminate = "terminate"
     waitforjobcompletion = "waitforjobcompletion"
-    unknown = "unknown"
 
 
 class ProvisioningState(str, Enum):
@@ -68,12 +66,11 @@ class AllocationState(str, Enum):
     resizing = "resizing"
 
 
-class OutputType(str, Enum):
+class JobPriority(str, Enum):
 
-    model = "model"
-    logs = "logs"
-    summary = "summary"
-    custom = "custom"
+    low = "low"
+    normal = "normal"
+    high = "high"
 
 
 class ToolType(str, Enum):
@@ -83,6 +80,8 @@ class ToolType(str, Enum):
     caffe = "caffe"
     caffe2 = "caffe2"
     chainer = "chainer"
+    horovod = "horovod"
+    mpi = "mpi"
     custom = "custom"
 
 
@@ -93,3 +92,9 @@ class ExecutionState(str, Enum):
     terminating = "terminating"
     succeeded = "succeeded"
     failed = "failed"
+
+
+class FileType(str, Enum):
+
+    file = "file"
+    directory = "directory"

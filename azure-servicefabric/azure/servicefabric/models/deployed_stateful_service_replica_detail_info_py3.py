@@ -13,7 +13,7 @@ from .deployed_service_replica_detail_info_py3 import DeployedServiceReplicaDeta
 
 
 class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo):
-    """Information about a stateful replica running in a code package. Please note
+    """Information about a stateful replica running in a code package. Note
     DeployedServiceReplicaQueryResult will contain duplicate data like
     ServiceKind, ServiceName, PartitionId and replicaId.
 

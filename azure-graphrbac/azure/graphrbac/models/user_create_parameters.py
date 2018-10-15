@@ -15,6 +15,8 @@ from .user_base import UserBase
 class UserCreateParameters(UserBase):
     """Request parameters for creating a new work or school account user.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -36,17 +38,17 @@ class UserCreateParameters(UserBase):
      in your directory, such as 'Member' and 'Guest'. Possible values include:
      'Member', 'Guest'
     :type user_type: str or ~azure.graphrbac.models.UserType
-    :param account_enabled: Whether the account is enabled.
+    :param account_enabled: Required. Whether the account is enabled.
     :type account_enabled: bool
-    :param display_name: The display name of the user.
+    :param display_name: Required. The display name of the user.
     :type display_name: str
-    :param password_profile: Password Profile
+    :param password_profile: Required. Password Profile
     :type password_profile: ~azure.graphrbac.models.PasswordProfile
-    :param user_principal_name: The user principal name
+    :param user_principal_name: Required. The user principal name
      (someuser@contoso.com). It must contain one of the verified domains for
      the tenant.
     :type user_principal_name: str
-    :param mail_nickname: The mail alias for the user.
+    :param mail_nickname: Required. The mail alias for the user.
     :type mail_nickname: str
     :param mail: The primary email address of the user.
     :type mail: str
@@ -75,11 +77,11 @@ class UserCreateParameters(UserBase):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, account_enabled, display_name, password_profile, user_principal_name, mail_nickname, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, mail=None):
-        super(UserCreateParameters, self).__init__(additional_properties=additional_properties, immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
-        self.account_enabled = account_enabled
-        self.display_name = display_name
-        self.password_profile = password_profile
-        self.user_principal_name = user_principal_name
-        self.mail_nickname = mail_nickname
-        self.mail = mail
+    def __init__(self, **kwargs):
+        super(UserCreateParameters, self).__init__(**kwargs)
+        self.account_enabled = kwargs.get('account_enabled', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.password_profile = kwargs.get('password_profile', None)
+        self.user_principal_name = kwargs.get('user_principal_name', None)
+        self.mail_nickname = kwargs.get('mail_nickname', None)
+        self.mail = kwargs.get('mail', None)
