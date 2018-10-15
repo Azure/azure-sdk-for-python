@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .container_host_mapping_py3 import ContainerHostMapping
     from .sku_py3 import Sku
     from .controller_py3 import Controller
     from .controller_update_parameters_py3 import ControllerUpdateParameters
@@ -24,6 +25,7 @@ try:
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
 except (SyntaxError, ImportError):
+    from .container_host_mapping import ContainerHostMapping
     from .sku import Sku
     from .controller import Controller
     from .controller_update_parameters import ControllerUpdateParameters
@@ -45,6 +47,7 @@ from .dev_spaces_management_client_enums import (
 )
 
 __all__ = [
+    'ContainerHostMapping',
     'Sku',
     'Controller',
     'ControllerUpdateParameters',

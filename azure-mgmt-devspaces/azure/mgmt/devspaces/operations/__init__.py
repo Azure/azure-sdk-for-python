@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .container_host_mappings_operations import ContainerHostMappingsOperations
 from .controllers_operations import ControllersOperations
 from .operations import Operations
 
 __all__ = [
+    'ContainerHostMappingsOperations',
     'ControllersOperations',
     'Operations',
 ]
