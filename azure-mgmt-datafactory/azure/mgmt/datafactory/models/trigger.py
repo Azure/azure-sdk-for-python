@@ -17,10 +17,13 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TumblingWindowTrigger, MultiplePipelineTrigger
+    sub-classes are: RerunTumblingWindowTrigger, TumblingWindowTrigger,
+    MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -32,7 +35,7 @@ class Trigger(Model):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -49,12 +52,12 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
-    def __init__(self, additional_properties=None, description=None):
-        super(Trigger, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
+    def __init__(self, **kwargs):
+        super(Trigger, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
         self.runtime_state = None
         self.type = None

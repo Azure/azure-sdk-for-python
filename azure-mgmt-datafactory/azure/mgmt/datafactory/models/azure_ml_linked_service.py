@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureMLLinkedService(LinkedService):
     """Azure ML Web Service linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,12 +31,13 @@ class AzureMLLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param ml_endpoint: The Batch Execution REST URL for an Azure ML Web
-     Service endpoint. Type: string (or Expression with resultType string).
+    :param ml_endpoint: Required. The Batch Execution REST URL for an Azure ML
+     Web Service endpoint. Type: string (or Expression with resultType string).
     :type ml_endpoint: object
-    :param api_key: The API key for accessing the Azure ML model endpoint.
+    :param api_key: Required. The API key for accessing the Azure ML model
+     endpoint.
     :type api_key: ~azure.mgmt.datafactory.models.SecretBase
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
      ML Web Service endpoint. Type: string (or Expression with resultType
@@ -79,13 +82,13 @@ class AzureMLLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, ml_endpoint, api_key, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, update_resource_endpoint=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
-        super(AzureMLLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.ml_endpoint = ml_endpoint
-        self.api_key = api_key
-        self.update_resource_endpoint = update_resource_endpoint
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.tenant = tenant
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureMLLinkedService, self).__init__(**kwargs)
+        self.ml_endpoint = kwargs.get('ml_endpoint', None)
+        self.api_key = kwargs.get('api_key', None)
+        self.update_resource_endpoint = kwargs.get('update_resource_endpoint', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureML'
