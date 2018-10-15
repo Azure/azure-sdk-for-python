@@ -98,6 +98,7 @@ try:
     from .update_resource_py3 import UpdateResource
     from .sub_resource_read_only_py3 import SubResourceReadOnly
     from .operation_status_response_py3 import OperationStatusResponse
+    from .in_guest_software_item_py3 import InGuestSoftwareItem
     from .resource_update_py3 import ResourceUpdate
     from .image_disk_reference_py3 import ImageDiskReference
     from .creation_data_py3 import CreationData
@@ -200,6 +201,7 @@ except (SyntaxError, ImportError):
     from .update_resource import UpdateResource
     from .sub_resource_read_only import SubResourceReadOnly
     from .operation_status_response import OperationStatusResponse
+    from .in_guest_software_item import InGuestSoftwareItem
     from .resource_update import ResourceUpdate
     from .image_disk_reference import ImageDiskReference
     from .creation_data import CreationData
@@ -216,6 +218,7 @@ except (SyntaxError, ImportError):
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .virtual_machine_paged import VirtualMachinePaged
+from .in_guest_software_item_paged import InGuestSoftwareItemPaged
 from .usage_paged import UsagePaged
 from .image_paged import ImagePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
@@ -332,6 +335,7 @@ __all__ = [
     'UpdateResource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
+    'InGuestSoftwareItem',
     'ResourceUpdate',
     'ImageDiskReference',
     'CreationData',
@@ -348,6 +352,7 @@ __all__ = [
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'VirtualMachinePaged',
+    'InGuestSoftwareItemPaged',
     'UsagePaged',
     'ImagePaged',
     'VirtualMachineScaleSetPaged',
