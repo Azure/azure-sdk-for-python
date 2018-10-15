@@ -12,6 +12,24 @@
 from enum import Enum
 
 
+class OSType(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
+
+
+class OpenShiftContainerServiceVMSize(str, Enum):
+
+    standard_d2s_v3 = "Standard_D2s_v3"
+    standard_d4s_v3 = "Standard_D4s_v3"
+
+
+class OpenShiftAgentPoolProfileRole(str, Enum):
+
+    compute = "compute"
+    infra = "infra"
+
+
 class ContainerServiceStorageProfileTypes(str, Enum):
 
     storage_account = "StorageAccount"
@@ -203,12 +221,6 @@ class ContainerServiceOrchestratorTypes(str, Enum):
     dcos = "DCOS"
     docker_ce = "DockerCE"
     custom = "Custom"
-
-
-class OSType(str, Enum):
-
-    linux = "Linux"
-    windows = "Windows"
 
 
 class AgentPoolType(str, Enum):

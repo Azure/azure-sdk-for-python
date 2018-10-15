@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.open_shift_managed_clusters_operations import OpenShiftManagedClustersOperations
 from .operations.container_services_operations import ContainerServicesOperations
 from .operations.operations import Operations
 from .operations.managed_clusters_operations import ManagedClustersOperations
@@ -59,6 +60,8 @@ class ContainerServiceClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ContainerServiceClientConfiguration
 
+    :ivar open_shift_managed_clusters: OpenShiftManagedClusters operations
+    :vartype open_shift_managed_clusters: azure.mgmt.containerservice.operations.OpenShiftManagedClustersOperations
     :ivar container_services: ContainerServices operations
     :vartype container_services: azure.mgmt.containerservice.operations.ContainerServicesOperations
     :ivar operations: Operations operations
@@ -86,6 +89,8 @@ class ContainerServiceClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.open_shift_managed_clusters = OpenShiftManagedClustersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.container_services = ContainerServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
