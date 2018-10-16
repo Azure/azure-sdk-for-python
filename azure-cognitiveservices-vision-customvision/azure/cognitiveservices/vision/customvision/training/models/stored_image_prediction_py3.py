@@ -18,14 +18,14 @@ class StoredImagePrediction(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resized_image_uri: The Uri to the (resized) prediction image
+    :ivar resized_image_uri: The URI to the (resized) prediction image.
     :vartype resized_image_uri: str
-    :ivar thumbnail_uri: The Uri to the thumbnail of the original prediction
-     image
+    :ivar thumbnail_uri: The URI to the thumbnail of the original prediction
+     image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The Uri to the original prediction image
+    :ivar original_image_uri: The URI to the original prediction image.
     :vartype original_image_uri: str
-    :ivar domain:
+    :ivar domain: Domain used for the prediction.
     :vartype domain: str
     :ivar id:
     :vartype id: str

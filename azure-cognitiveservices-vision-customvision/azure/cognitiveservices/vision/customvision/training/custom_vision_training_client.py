@@ -125,7 +125,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, domain_id, custom_headers=None, raw=False, **operation_config):
         """Get information about a specific domain.
 
-        :param domain_id: The id of the domain to get information about
+        :param domain_id: The id of the domain to get information about.
         :type domain_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -185,9 +185,9 @@ class CustomVisionTrainingClient(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images to count.
          Defaults to all tags when null.
@@ -251,9 +251,9 @@ class CustomVisionTrainingClient(SDKClient):
         optionally an iteration. If no iteration is specified the
         current workspace is used.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -308,9 +308,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, tags=None, custom_headers=None, raw=False, **operation_config):
         """Associate a set of images with a set of tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param tags:
+        :param tags: Image Tag entries to include in this batch.
         :type tags:
          list[~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateEntry]
         :param dict custom_headers: headers that will be added to the request
@@ -372,12 +372,12 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, image_ids, tag_ids, custom_headers=None, raw=False, **operation_config):
         """Remove a set of tags from a set of images.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_ids: Image ids. Limited to 64 images
+        :param image_ids: Image ids. Limited to 64 images.
         :type image_ids: list[str]
         :param tag_ids: Tags to be deleted from the specified images. Limted
-         to 20 tags
+         to 20 tags.
         :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -428,7 +428,7 @@ class CustomVisionTrainingClient(SDKClient):
         update existing images with region information.
         There is a limit of 64 entries in the batch.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param regions:
         :type regions:
@@ -492,9 +492,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, region_ids, custom_headers=None, raw=False, **operation_config):
         """Delete a set of image regions.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param region_ids: Regions to delete. Limited to 64
+        :param region_ids: Regions to delete. Limited to 64.
         :type region_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -549,21 +549,21 @@ class CustomVisionTrainingClient(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images. Defaults to
-         all tagged images when null. Limited to 20
+         all tagged images when null. Limited to 20.
         :type tag_ids: list[str]
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -633,18 +633,18 @@ class CustomVisionTrainingClient(SDKClient):
         Use the {take} and {skip} parameters to control how many images to
         return in a given batch.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -711,11 +711,11 @@ class CustomVisionTrainingClient(SDKClient):
         optionally iteration. If no iteration is specified the
         current workspace is used.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_ids: The list of image ids to retrieve. Limited to 256
+        :param image_ids: The list of image ids to retrieve. Limited to 256.
         :type image_ids: list[str]
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -778,12 +778,12 @@ class CustomVisionTrainingClient(SDKClient):
         application/octet-stream. When using multipart
         multiple image files can be sent at once, with a maximum of 64 files.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_data:
+        :param image_data: Binary image data.
         :type image_data: Generator
         :param tag_ids: The tags ids with which to tag each image. Limited to
-         20
+         20.
         :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -846,10 +846,10 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, image_ids, custom_headers=None, raw=False, **operation_config):
         """Delete images from the set of training images.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param image_ids: Ids of the images to be deleted. Limted to 256
-         images per batch
+         images per batch.
         :type image_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -898,7 +898,7 @@ class CustomVisionTrainingClient(SDKClient):
         This API accepts a batch of files, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -967,7 +967,7 @@ class CustomVisionTrainingClient(SDKClient):
         This API accepts a batch of urls, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -1036,7 +1036,7 @@ class CustomVisionTrainingClient(SDKClient):
         This API creates a batch of images from predicted images specified.
         There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -1106,9 +1106,9 @@ class CustomVisionTrainingClient(SDKClient):
         This API will get region proposals for an image along with confidences
         for the region. It returns an empty array if no proposals are found.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_id: The image id
+        :param image_id: The image id.
         :type image_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1165,9 +1165,9 @@ class CustomVisionTrainingClient(SDKClient):
         """Delete a set of predicted images and their associated prediction
         results.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param ids: The prediction ids. Limited to 64
+        :param ids: The prediction ids. Limited to 64.
         :type ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1213,7 +1213,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image url.
 
-        :param project_id: The project to evaluate against
+        :param project_id: The project to evaluate against.
         :type project_id: str
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1282,9 +1282,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, image_data, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_data:
+        :param image_data: Binary image data.
         :type image_data: Generator
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1351,10 +1351,10 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, query, custom_headers=None, raw=False, **operation_config):
         """Get images that were sent to your prediction endpoint.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param query: Parameters used to query the predictions. Limited to
-         combining 2 tags
+         combining 2 tags.
         :type query:
          ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
         :param dict custom_headers: headers that will be added to the request
@@ -1414,14 +1414,14 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, threshold=None, overlap_threshold=None, custom_headers=None, raw=False, **operation_config):
         """Get detailed performance information about an iteration.
 
-        :param project_id: The id of the project the iteration belongs to
+        :param project_id: The id of the project the iteration belongs to.
         :type project_id: str
-        :param iteration_id: The id of the iteration to get
+        :param iteration_id: The id of the iteration to get.
         :type iteration_id: str
-        :param threshold: The threshold used to determine true predictions
+        :param threshold: The threshold used to determine true predictions.
         :type threshold: float
         :param overlap_threshold: If applicable, the bounding box overlap
-         threshold used to determine true predictions
+         threshold used to determine true predictions.
         :type overlap_threshold: float
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1490,21 +1490,21 @@ class CustomVisionTrainingClient(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images. Defaults to
-         all tagged images when null. Limited to 20
+         all tagged images when null. Limited to 20.
         :type tag_ids: list[str]
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1575,9 +1575,9 @@ class CustomVisionTrainingClient(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images to count.
          Defaults to all tags when null.
@@ -1688,12 +1688,12 @@ class CustomVisionTrainingClient(SDKClient):
             self, name, description=None, domain_id=None, classification_type=None, custom_headers=None, raw=False, **operation_config):
         """Create a project.
 
-        :param name: Name of the project
+        :param name: Name of the project.
         :type name: str
-        :param description: The description of the project
+        :param description: The description of the project.
         :type description: str
         :param domain_id: The id of the domain to use for this project.
-         Defaults to General
+         Defaults to General.
         :type domain_id: str
         :param classification_type: The type of classifier to create for this
          project. Possible values include: 'Multiclass', 'Multilabel'
@@ -1757,7 +1757,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Get a specific project.
 
-        :param project_id: The id of the project to get
+        :param project_id: The id of the project to get.
         :type project_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1812,7 +1812,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Delete a specific project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1857,9 +1857,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, updated_project, custom_headers=None, raw=False, **operation_config):
         """Update a specific project.
 
-        :param project_id: The id of the project to update
+        :param project_id: The id of the project to update.
         :type project_id: str
-        :param updated_project: The updated project model
+        :param updated_project: The updated project model.
         :type updated_project:
          ~azure.cognitiveservices.vision.customvision.training.models.Project
         :param dict custom_headers: headers that will be added to the request
@@ -1919,7 +1919,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Get iterations for the project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1974,9 +1974,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
         """Get a specific iteration.
 
-        :param project_id: The id of the project the iteration belongs to
+        :param project_id: The id of the project the iteration belongs to.
         :type project_id: str
-        :param iteration_id: The id of the iteration to get
+        :param iteration_id: The id of the iteration to get.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2032,9 +2032,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
         """Delete a specific iteration of a project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id
+        :param iteration_id: The iteration id.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2080,14 +2080,14 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, name=None, is_default=None, custom_headers=None, raw=False, **operation_config):
         """Update a specific iteration.
 
-        :param project_id: Project id
+        :param project_id: Project id.
         :type project_id: str
-        :param iteration_id: Iteration id
+        :param iteration_id: Iteration id.
         :type iteration_id: str
-        :param name: Gets or sets the name of the iteration
+        :param name: Gets or sets the name of the iteration.
         :type name: str
         :param is_default: Gets or sets a value indicating whether the
-         iteration is the default iteration for the project
+         iteration is the default iteration for the project.
         :type is_default: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2149,7 +2149,7 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Queues project for training.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2204,9 +2204,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
         """Get the list of exports for a specific iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id
+        :param iteration_id: The iteration id.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2262,16 +2262,15 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id, platform, flavor=None, custom_headers=None, raw=False, **operation_config):
         """Export a trained iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id
+        :param iteration_id: The iteration id.
         :type iteration_id: str
-        :param platform: The target platform (coreml or tensorflow). Possible
-         values include: 'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
+        :param platform: The target platform. Possible values include:
+         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
         :type platform: str
-        :param flavor: The flavor of the target platform (Windows, Linux, ARM,
-         or GPU). Possible values include: 'Linux', 'Windows', 'ONNX10',
-         'ONNX12'
+        :param flavor: The flavor of the target platform. Possible values
+         include: 'Linux', 'Windows', 'ONNX10', 'ONNX12'
         :type flavor: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2330,12 +2329,12 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, tag_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Get information about a specific tag.
 
-        :param project_id: The project this tag belongs to
+        :param project_id: The project this tag belongs to.
         :type project_id: str
-        :param tag_id: The tag id
+        :param tag_id: The tag id.
         :type tag_id: str
         :param iteration_id: The iteration to retrieve this tag from.
-         Optional, defaults to current training set
+         Optional, defaults to current training set.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2393,9 +2392,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, tag_id, custom_headers=None, raw=False, **operation_config):
         """Delete a tag from the project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param tag_id: Id of the tag to be deleted
+        :param tag_id: Id of the tag to be deleted.
         :type tag_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2441,11 +2440,11 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, tag_id, updated_tag, custom_headers=None, raw=False, **operation_config):
         """Update a tag.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param tag_id: The id of the target tag
+        :param tag_id: The id of the target tag.
         :type tag_id: str
-        :param updated_tag: The updated tag model
+        :param updated_tag: The updated tag model.
         :type updated_tag:
          ~azure.cognitiveservices.vision.customvision.training.models.Tag
         :param dict custom_headers: headers that will be added to the request
@@ -2506,9 +2505,9 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Get the tags for a given project and iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2565,11 +2564,11 @@ class CustomVisionTrainingClient(SDKClient):
             self, project_id, name, description=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Create a tag for the project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param name: The tag name
+        :param name: The tag name.
         :type name: str
-        :param description: Optional description for the tag
+        :param description: Optional description for the tag.
         :type description: str
         :param type: Optional type for the tag. Possible values include:
          'Regular', 'Negative'

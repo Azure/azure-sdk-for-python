@@ -18,17 +18,17 @@ class Tag(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the Tag ID
+    :ivar id: Gets the Tag ID.
     :vartype id: str
-    :param name: Gets or sets the name of the tag
+    :param name: Gets or sets the name of the tag.
     :type name: str
-    :param description: Gets or sets the description of the tag
+    :param description: Gets or sets the description of the tag.
     :type description: str
     :param type: Gets or sets the type of the tag. Possible values include:
      'Regular', 'Negative'
     :type type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.TagType
-    :ivar image_count: Gets the number of images with this tag
+    :ivar image_count: Gets the number of images with this tag.
     :vartype image_count: int
     """
 
