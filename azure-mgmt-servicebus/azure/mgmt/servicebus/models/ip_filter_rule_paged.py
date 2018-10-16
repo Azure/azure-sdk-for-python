@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.5.0"
+from msrest.paging import Paged
 
+
+class IpFilterRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IpFilterRule <azure.mgmt.servicebus.models.IpFilterRule>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IpFilterRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IpFilterRulePaged, self).__init__(*args, **kwargs)

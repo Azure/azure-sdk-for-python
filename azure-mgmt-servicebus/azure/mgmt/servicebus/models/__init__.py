@@ -41,6 +41,8 @@ try:
     from .eventhub_py3 import Eventhub
     from .arm_disaster_recovery_py3 import ArmDisasterRecovery
     from .migration_config_properties_py3 import MigrationConfigProperties
+    from .ip_filter_rule_py3 import IpFilterRule
+    from .virtual_network_rule_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -73,9 +75,13 @@ except (SyntaxError, ImportError):
     from .eventhub import Eventhub
     from .arm_disaster_recovery import ArmDisasterRecovery
     from .migration_config_properties import MigrationConfigProperties
+    from .ip_filter_rule import IpFilterRule
+    from .virtual_network_rule import VirtualNetworkRule
 from .operation_paged import OperationPaged
 from .sb_namespace_paged import SBNamespacePaged
 from .sb_authorization_rule_paged import SBAuthorizationRulePaged
+from .ip_filter_rule_paged import IpFilterRulePaged
+from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
 from .migration_config_properties_paged import MigrationConfigPropertiesPaged
 from .sb_queue_paged import SBQueuePaged
@@ -95,6 +101,7 @@ from .service_bus_management_client_enums import (
     EncodingCaptureDescription,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    IPAction,
 )
 
 __all__ = [
@@ -129,9 +136,13 @@ __all__ = [
     'Eventhub',
     'ArmDisasterRecovery',
     'MigrationConfigProperties',
+    'IpFilterRule',
+    'VirtualNetworkRule',
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
+    'IpFilterRulePaged',
+    'VirtualNetworkRulePaged',
     'ArmDisasterRecoveryPaged',
     'MigrationConfigPropertiesPaged',
     'SBQueuePaged',
@@ -150,4 +161,5 @@ __all__ = [
     'EncodingCaptureDescription',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'IPAction',
 ]
