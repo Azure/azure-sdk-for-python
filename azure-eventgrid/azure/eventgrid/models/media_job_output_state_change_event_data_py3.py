@@ -22,7 +22,7 @@ class MediaJobOutputStateChangeEventData(Model):
     :ivar previous_state: The previous state of the Job. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
-    :vartype previous_state: str or ~azure.eventgrid.models.JobState
+    :vartype previous_state: str or ~azure.eventgrid.models.MediaJobState
     :param output: Gets the output.
     :type output: ~azure.eventgrid.models.MediaJobOutput
     :param job_correlation_data: Gets the Job correlation data.
@@ -34,7 +34,7 @@ class MediaJobOutputStateChangeEventData(Model):
     }
 
     _attribute_map = {
-        'previous_state': {'key': 'previousState', 'type': 'JobState'},
+        'previous_state': {'key': 'previousState', 'type': 'MediaJobState'},
         'output': {'key': 'output', 'type': 'MediaJobOutput'},
         'job_correlation_data': {'key': 'jobCorrelationData', 'type': '{str}'},
     }

@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class JobState(str, Enum):
+class MediaJobState(str, Enum):
 
     canceled = "Canceled"  #: The job was canceled. This is a final state for the job.
     canceling = "Canceling"  #: The job is in the process of being canceled. This is a transient state for the job.
@@ -23,7 +23,7 @@ class JobState(str, Enum):
     scheduled = "Scheduled"  #: The job is being scheduled to run on an available resource. This is a transient state, between queued and processing states.
 
 
-class JobErrorCode(str, Enum):
+class MediaJobErrorCode(str, Enum):
 
     service_error = "ServiceError"  #: Fatal service error, please contact support.
     service_transient_error = "ServiceTransientError"  #: Transient error, please retry, if retry is unsuccessful, please contact support.
@@ -36,7 +36,7 @@ class JobErrorCode(str, Enum):
     content_unsupported = "ContentUnsupported"  #: There was a problem with the format of the input (not valid media file, or an unsupported file/codec), check the validity of the input files.
 
 
-class JobErrorCategory(str, Enum):
+class MediaJobErrorCategory(str, Enum):
 
     service = "Service"  #: The error is service related.
     download = "Download"  #: The error is download related.
@@ -45,7 +45,7 @@ class JobErrorCategory(str, Enum):
     content = "Content"  #: The error is related to data in the input files.
 
 
-class JobRetry(str, Enum):
+class MediaJobRetry(str, Enum):
 
     do_not_retry = "DoNotRetry"  #: Issue needs to be investigated and then the job resubmitted with corrections or retried once the underlying issue has been corrected.
     may_retry = "MayRetry"  #: Issue may be resolved after waiting for a period of time and resubmitting the same Job.

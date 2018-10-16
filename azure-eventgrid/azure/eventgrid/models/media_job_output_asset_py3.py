@@ -26,7 +26,7 @@ class MediaJobOutputAsset(MediaJobOutput):
     :param state: Required. Gets the Job output state. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
-    :type state: str or ~azure.eventgrid.models.JobState
+    :type state: str or ~azure.eventgrid.models.MediaJobState
     :param asset_name: Gets the Job output asset name.
     :type asset_name: str
     """
@@ -40,7 +40,7 @@ class MediaJobOutputAsset(MediaJobOutput):
         'error': {'key': 'error', 'type': 'MediaJobError'},
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
-        'state': {'key': 'state', 'type': 'JobState'},
+        'state': {'key': 'state', 'type': 'MediaJobState'},
         'asset_name': {'key': 'assetName', 'type': 'str'},
     }
 

@@ -22,17 +22,17 @@ class MediaJobError(Model):
      'ServiceError', 'ServiceTransientError', 'DownloadNotAccessible',
      'DownloadTransientError', 'UploadNotAccessible', 'UploadTransientError',
      'ConfigurationUnsupported', 'ContentMalformed', 'ContentUnsupported'
-    :vartype code: str or ~azure.eventgrid.models.JobErrorCode
+    :vartype code: str or ~azure.eventgrid.models.MediaJobErrorCode
     :ivar message: A human-readable language-dependent representation of the
      error.
     :vartype message: str
     :ivar category: Helps with categorization of errors. Possible values
      include: 'Service', 'Download', 'Upload', 'Configuration', 'Content'
-    :vartype category: str or ~azure.eventgrid.models.JobErrorCategory
+    :vartype category: str or ~azure.eventgrid.models.MediaJobErrorCategory
     :ivar retry: Indicates that it may be possible to retry the Job. If retry
      is unsuccessful, please contact Azure support via Azure Portal. Possible
      values include: 'DoNotRetry', 'MayRetry'
-    :vartype retry: str or ~azure.eventgrid.models.JobRetry
+    :vartype retry: str or ~azure.eventgrid.models.MediaJobRetry
     :ivar details: An array of details about specific errors that led to this
      reported error.
     :vartype details: list[~azure.eventgrid.models.MediaJobErrorDetail]
@@ -47,10 +47,10 @@ class MediaJobError(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'JobErrorCode'},
+        'code': {'key': 'code', 'type': 'MediaJobErrorCode'},
         'message': {'key': 'message', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'JobErrorCategory'},
-        'retry': {'key': 'retry', 'type': 'JobRetry'},
+        'category': {'key': 'category', 'type': 'MediaJobErrorCategory'},
+        'retry': {'key': 'retry', 'type': 'MediaJobRetry'},
         'details': {'key': 'details', 'type': '[MediaJobErrorDetail]'},
     }
 

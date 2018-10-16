@@ -26,7 +26,7 @@ class MediaJobOutput(Model):
     :param state: Required. Gets the Job output state. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
-    :type state: str or ~azure.eventgrid.models.JobState
+    :type state: str or ~azure.eventgrid.models.MediaJobState
     """
 
     _validation = {
@@ -38,7 +38,7 @@ class MediaJobOutput(Model):
         'error': {'key': 'error', 'type': 'MediaJobError'},
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
-        'state': {'key': 'state', 'type': 'JobState'},
+        'state': {'key': 'state', 'type': 'MediaJobState'},
     }
 
     def __init__(self, *, progress: int, state, error=None, label: str=None, **kwargs) -> None:

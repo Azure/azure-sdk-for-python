@@ -140,10 +140,10 @@ except (SyntaxError, ImportError):
     from .media_live_event_ingest_heartbeat_event_data import MediaLiveEventIngestHeartbeatEventData
     from .media_live_event_track_discontinuity_detected_event_data import MediaLiveEventTrackDiscontinuityDetectedEventData
 from .event_grid_client_enums import (
-    JobState,
-    JobErrorCode,
-    JobErrorCategory,
-    JobRetry,
+    MediaJobState,
+    MediaJobErrorCode,
+    MediaJobErrorCategory,
+    MediaJobRetry,
 )
 
 __all__ = [
@@ -211,8 +211,8 @@ __all__ = [
     'MediaLiveEventIncomingDataChunkDroppedEventData',
     'MediaLiveEventIngestHeartbeatEventData',
     'MediaLiveEventTrackDiscontinuityDetectedEventData',
-    'JobState',
-    'JobErrorCode',
-    'JobErrorCategory',
-    'JobRetry',
+    'MediaJobState',
+    'MediaJobErrorCode',
+    'MediaJobErrorCategory',
+    'MediaJobRetry',
 ]
