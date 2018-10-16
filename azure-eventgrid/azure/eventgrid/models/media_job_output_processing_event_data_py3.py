@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .media_job_output_state_change_event_data_py3 import MediaJobOutputStateChangeEventData
 
 
-class MediaJobStateChangeEventData(Model):
-    """Schema of the Data property of an EventGridEvent for a
-    Microsoft.Media.JobStateChange event.
+class MediaJobOutputProcessingEventData(MediaJobOutputStateChangeEventData):
+    """Job output processing event data.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -23,27 +22,21 @@ class MediaJobStateChangeEventData(Model):
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
     :vartype previous_state: str or ~azure.eventgrid.models.MediaJobState
-    :ivar state: The new state of the Job. Possible values include:
-     'Canceled', 'Canceling', 'Error', 'Finished', 'Processing', 'Queued',
-     'Scheduled'
-    :vartype state: str or ~azure.eventgrid.models.MediaJobState
-    :param correlation_data: Gets the Job correlation data.
-    :type correlation_data: dict[str, str]
+    :param output: Gets the output.
+    :type output: ~azure.eventgrid.models.MediaJobOutput
+    :param job_correlation_data: Gets the Job correlation data.
+    :type job_correlation_data: dict[str, str]
     """
 
     _validation = {
         'previous_state': {'readonly': True},
-        'state': {'readonly': True},
     }
 
     _attribute_map = {
         'previous_state': {'key': 'previousState', 'type': 'MediaJobState'},
-        'state': {'key': 'state', 'type': 'MediaJobState'},
-        'correlation_data': {'key': 'correlationData', 'type': '{str}'},
+        'output': {'key': 'output', 'type': 'MediaJobOutput'},
+        'job_correlation_data': {'key': 'jobCorrelationData', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(MediaJobStateChangeEventData, self).__init__(**kwargs)
-        self.previous_state = None
-        self.state = None
-        self.correlation_data = kwargs.get('correlation_data', None)
+    def __init__(self, *, output=None, job_correlation_data=None, **kwargs) -> None:
+        super(MediaJobOutputProcessingEventData, self).__init__(output=output, job_correlation_data=job_correlation_data, **kwargs)
