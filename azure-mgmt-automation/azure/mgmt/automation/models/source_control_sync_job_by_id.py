@@ -32,8 +32,8 @@ class SourceControlSyncJobById(Model):
     :vartype start_time: datetime
     :ivar end_time: The end time of the job.
     :vartype end_time: datetime
-    :param sync_type: The sync type. Possible values include: 'PartialSync',
-     'FullSync'
+    :param sync_type: The sync type. Possible values include:
+     'IncrementalSync', 'FullSync'
     :type sync_type: str or ~azure.mgmt.automation.models.SyncType
     :param exception: The exceptions that occured while running the sync job.
     :type exception: str
