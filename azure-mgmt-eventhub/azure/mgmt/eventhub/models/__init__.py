@@ -30,6 +30,8 @@ try:
     from .messaging_regions_properties_py3 import MessagingRegionsProperties
     from .messaging_regions_py3 import MessagingRegions
     from .messaging_plan_py3 import MessagingPlan
+    from .ip_filter_rule_py3 import IpFilterRule
+    from .virtual_network_rule_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -51,9 +53,13 @@ except (SyntaxError, ImportError):
     from .messaging_regions_properties import MessagingRegionsProperties
     from .messaging_regions import MessagingRegions
     from .messaging_plan import MessagingPlan
+    from .ip_filter_rule import IpFilterRule
+    from .virtual_network_rule import VirtualNetworkRule
 from .operation_paged import OperationPaged
 from .eh_namespace_paged import EHNamespacePaged
 from .authorization_rule_paged import AuthorizationRulePaged
+from .ip_filter_rule_paged import IpFilterRulePaged
+from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
 from .eventhub_paged import EventhubPaged
 from .consumer_group_paged import ConsumerGroupPaged
@@ -68,6 +74,7 @@ from .event_hub_management_client_enums import (
     UnavailableReason,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    IPAction,
 )
 
 __all__ = [
@@ -91,9 +98,13 @@ __all__ = [
     'MessagingRegionsProperties',
     'MessagingRegions',
     'MessagingPlan',
+    'IpFilterRule',
+    'VirtualNetworkRule',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
+    'IpFilterRulePaged',
+    'VirtualNetworkRulePaged',
     'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
@@ -107,4 +118,5 @@ __all__ = [
     'UnavailableReason',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'IPAction',
 ]
