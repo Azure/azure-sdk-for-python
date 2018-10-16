@@ -80,6 +80,9 @@ try:
     from .watcher_update_parameters_py3 import WatcherUpdateParameters
     from .windows_properties_py3 import WindowsProperties
     from .linux_properties_py3 import LinuxProperties
+    from .tag_settings_properties_py3 import TagSettingsProperties
+    from .azure_query_properties_py3 import AzureQueryProperties
+    from .target_properties_py3 import TargetProperties
     from .update_configuration_py3 import UpdateConfiguration
     from .software_update_configuration_py3 import SoftwareUpdateConfiguration
     from .collection_item_update_configuration_py3 import CollectionItemUpdateConfiguration
@@ -208,6 +211,9 @@ except (SyntaxError, ImportError):
     from .watcher_update_parameters import WatcherUpdateParameters
     from .windows_properties import WindowsProperties
     from .linux_properties import LinuxProperties
+    from .tag_settings_properties import TagSettingsProperties
+    from .azure_query_properties import AzureQueryProperties
+    from .target_properties import TargetProperties
     from .update_configuration import UpdateConfiguration
     from .software_update_configuration import SoftwareUpdateConfiguration
     from .collection_item_update_configuration import CollectionItemUpdateConfiguration
@@ -308,6 +314,7 @@ from .automation_client_enums import (
     OperatingSystemType,
     WindowsUpdateClasses,
     LinuxUpdateClasses,
+    TagOperators,
     SourceType,
     TokenType,
     ProvisioningState,
@@ -395,6 +402,9 @@ __all__ = [
     'WatcherUpdateParameters',
     'WindowsProperties',
     'LinuxProperties',
+    'TagSettingsProperties',
+    'AzureQueryProperties',
+    'TargetProperties',
     'UpdateConfiguration',
     'SoftwareUpdateConfiguration',
     'CollectionItemUpdateConfiguration',
@@ -494,6 +504,7 @@ __all__ = [
     'OperatingSystemType',
     'WindowsUpdateClasses',
     'LinuxUpdateClasses',
+    'TagOperators',
     'SourceType',
     'TokenType',
     'ProvisioningState',

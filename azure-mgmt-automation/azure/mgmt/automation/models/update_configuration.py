@@ -35,6 +35,8 @@ class UpdateConfiguration(Model):
     :param non_azure_computer_names: List of names of non-azure machines
      targeted by the software update configuration.
     :type non_azure_computer_names: list[str]
+    :param targets: Group targets for the software update configuration.
+    :type targets: ~azure.mgmt.automation.models.TargetProperties
     """
 
     _validation = {
@@ -48,6 +50,7 @@ class UpdateConfiguration(Model):
         'duration': {'key': 'duration', 'type': 'duration'},
         'azure_virtual_machines': {'key': 'azureVirtualMachines', 'type': '[str]'},
         'non_azure_computer_names': {'key': 'nonAzureComputerNames', 'type': '[str]'},
+        'targets': {'key': 'targets', 'type': 'TargetProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -58,3 +61,4 @@ class UpdateConfiguration(Model):
         self.duration = kwargs.get('duration', None)
         self.azure_virtual_machines = kwargs.get('azure_virtual_machines', None)
         self.non_azure_computer_names = kwargs.get('non_azure_computer_names', None)
+        self.targets = kwargs.get('targets', None)

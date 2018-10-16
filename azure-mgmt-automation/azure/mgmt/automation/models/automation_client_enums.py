@@ -128,6 +128,12 @@ class LinuxUpdateClasses(str, Enum):
     other = "Other"
 
 
+class TagOperators(str, Enum):
+
+    all = "All"
+    any = "Any"
+
+
 class SourceType(str, Enum):
 
     vso_git = "VsoGit"
