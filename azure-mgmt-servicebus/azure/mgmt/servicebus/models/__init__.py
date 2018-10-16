@@ -101,6 +101,7 @@ from .service_bus_management_client_enums import (
     EncodingCaptureDescription,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    ReplicationType,
     IPAction,
 )
 
@@ -161,5 +162,6 @@ __all__ = [
     'EncodingCaptureDescription',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'ReplicationType',
     'IPAction',
 ]

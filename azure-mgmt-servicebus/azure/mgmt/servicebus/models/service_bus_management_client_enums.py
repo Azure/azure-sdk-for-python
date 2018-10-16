@@ -88,6 +88,11 @@ class RoleDisasterRecovery(str, Enum):
     secondary = "Secondary"
 
 
+class ReplicationType(str, Enum):
+
+    metadata_replication = "MetadataReplication"
+
+
 class IPAction(str, Enum):
 
     accept = "Accept"
