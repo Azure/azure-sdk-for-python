@@ -20,9 +20,9 @@ class OperationInputs(Model):
     :param name: Required. The name of the IoT Central application instance to
      check.
     :type name: str
-    :param type: The type of the IoT Central resource to query. Possible
-     values include: 'IoTApps'. Default value: "IoTApps" .
-    :type type: str or ~azure.mgmt.iotcentral.models.enum
+    :param type: The type of the IoT Central resource to query. Default value:
+     "IoTApps" .
+    :type type: str
     """
 
     _validation = {
@@ -34,7 +34,7 @@ class OperationInputs(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, type="IoTApps", **kwargs) -> None:
+    def __init__(self, *, name: str, type: str="IoTApps", **kwargs) -> None:
         super(OperationInputs, self).__init__(**kwargs)
         self.name = name
         self.type = type
