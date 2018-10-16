@@ -527,8 +527,9 @@ class AppsOperations(object):
         :param name: The name of the IoT Central application instance to
          check.
         :type name: str
-        :param type: The type of the IoT Central resource to query.
-        :type type: str
+        :param type: The type of the IoT Central resource to query. Possible
+         values include: 'IoTApps'
+        :type type: str or ~azure.mgmt.iotcentral.models.enum
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -593,8 +594,9 @@ class AppsOperations(object):
         :param name: The name of the IoT Central application instance to
          check.
         :type name: str
-        :param type: The type of the IoT Central resource to query.
-        :type type: str
+        :param type: The type of the IoT Central resource to query. Possible
+         values include: 'IoTApps'
+        :type type: str or ~azure.mgmt.iotcentral.models.enum
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
