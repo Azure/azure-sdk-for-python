@@ -20,13 +20,14 @@ class OperationInputs(Model):
     :param name: Required. The name of the IoT Central application instance to
      check.
     :type name: str
-    :param type: The type of the IoT Central resource to query. Default value:
-     "IoTApps" .
+    :param type: Required. The type of the IoT Central resource to query.
+     Default value: "IoTApps" .
     :type type: str
     """
 
     _validation = {
         'name': {'required': True, 'pattern': r'^[a-z0-9-]{1,63}$'},
+        'type': {'required': True},
     }
 
     _attribute_map = {
