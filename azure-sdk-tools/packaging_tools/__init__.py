@@ -37,6 +37,10 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
         ".".join(package_parts[:i+1])
         for i in range(len(package_parts))
     ]
+    result['init_names'] = [
+        "/".join(package_parts[:i+1])+"/__init__.py"
+        for i in range(len(package_parts))
+    ]
 
     # Return result
     return result
