@@ -3,6 +3,25 @@
 Release History
 ===============
 
+1.2.1 (2018-10-16)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 1.2.0. No code change.
+
+1.2.0 (2018-10-08)
+++++++++++++++++++
+
+**Features**
+
+- Model ContainerGroup has a new parameter identity (MSI support)
+- Added operation group ServiceAssociationLinkOperations
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 1.1.0 (2018-09-06)
 ++++++++++++++++++
 

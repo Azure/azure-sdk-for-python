@@ -21,7 +21,7 @@ class GroupsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -56,7 +56,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/isMemberOf'
+        url = self.is_member_of.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -68,6 +68,7 @@ class GroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -80,9 +81,8 @@ class GroupsOperations(object):
         body_content = self._serialize.body(parameters, 'CheckGroupMembershipParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -97,6 +97,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    is_member_of.metadata = {'url': '/{tenantID}/isMemberOf'}
 
     def remove_member(
             self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
@@ -118,7 +119,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
+        url = self.remove_member.metadata['url']
         path_format_arguments = {
             'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str'),
@@ -132,7 +133,6 @@ class GroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -141,8 +141,8 @@ class GroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -150,6 +150,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_member.metadata = {'url': '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'}
 
     def add_member(
             self, group_object_id, url, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -180,7 +181,7 @@ class GroupsOperations(object):
         parameters = models.GroupAddMemberParameters(additional_properties=additional_properties, url=url)
 
         # Construct URL
-        url = '/{tenantID}/groups/{groupObjectId}/$links/members'
+        url = self.add_member.metadata['url']
         path_format_arguments = {
             'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -205,9 +206,8 @@ class GroupsOperations(object):
         body_content = self._serialize.body(parameters, 'GroupAddMemberParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -215,6 +215,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_member.metadata = {'url': '/{tenantID}/groups/{groupObjectId}/$links/members'}
 
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
@@ -234,7 +235,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -246,6 +247,7 @@ class GroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -258,9 +260,8 @@ class GroupsOperations(object):
         body_content = self._serialize.body(parameters, 'GroupCreateParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -275,6 +276,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/groups'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -297,7 +299,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -321,7 +323,7 @@ class GroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -330,9 +332,8 @@ class GroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -348,6 +349,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/groups'}
 
     def get_group_members(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -361,9 +363,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AADObject
+        :return: An iterator like instance of DirectoryObject
         :rtype:
-         ~azure.graphrbac.models.AADObjectPaged[~azure.graphrbac.models.AADObject]
+         ~azure.graphrbac.models.DirectoryObjectPaged[~azure.graphrbac.models.DirectoryObject]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -371,7 +373,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups/{objectId}/members'
+                url = self.get_group_members.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -394,7 +396,7 @@ class GroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -403,9 +405,8 @@ class GroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -413,14 +414,15 @@ class GroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AADObjectPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AADObjectPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    get_group_members.metadata = {'url': '/{tenantID}/groups/{objectId}/members'}
 
     def get(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -441,7 +443,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{objectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -454,7 +456,7 @@ class GroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -463,8 +465,8 @@ class GroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -479,6 +481,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/groups/{objectId}'}
 
     def delete(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -497,7 +500,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{objectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -510,7 +513,6 @@ class GroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -519,8 +521,8 @@ class GroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -528,6 +530,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/groups/{objectId}'}
 
     def get_member_groups(
             self, object_id, security_enabled_only, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -560,7 +563,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups/{objectId}/getMemberGroups'
+                url = self.get_member_groups.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -577,6 +580,7 @@ class GroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
             header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -589,9 +593,8 @@ class GroupsOperations(object):
             body_content = self._serialize.body(parameters, 'GroupGetMemberGroupsParameters')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
+            request = self._client.post(url, query_parameters, header_parameters, body_content)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -607,3 +610,191 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_member_groups.metadata = {'url': '/{tenantID}/groups/{objectId}/getMemberGroups'}
+
+    def list_owners(
+            self, object_id, custom_headers=None, raw=False, **operation_config):
+        """Directory objects that are owners of the group.
+
+        The owners are a set of non-admin users who are allowed to modify this
+        object.
+
+        :param object_id: The object ID of the group for which to get owners.
+        :type object_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DirectoryObject
+        :rtype:
+         ~azure.graphrbac.models.DirectoryObjectPaged[~azure.graphrbac.models.DirectoryObject]
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_owners.metadata['url']
+                path_format_arguments = {
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.GraphErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DirectoryObjectPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_owners.metadata = {'url': '/{tenantID}/groups/{objectId}/owners'}
+
+    def add_owner(
+            self, object_id, url, additional_properties=None, custom_headers=None, raw=False, **operation_config):
+        """Add an owner to a group.
+
+        :param object_id: The object ID of the application to which to add the
+         owner.
+        :type object_id: str
+        :param url: A owner object URL, such as
+         "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
+         where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
+         "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the owner
+         (user, application, servicePrincipal, group) to be added.
+        :type url: str
+        :param additional_properties: Unmatched properties from the message
+         are deserialized this collection
+        :type additional_properties: dict[str, object]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        parameters = models.AddOwnerParameters(additional_properties=additional_properties, url=url)
+
+        # Construct URL
+        url = self.add_owner.metadata['url']
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AddOwnerParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    add_owner.metadata = {'url': '/{tenantID}/groups/{objectId}/$links/owners'}
+
+    def remove_owner(
+            self, object_id, owner_object_id, custom_headers=None, raw=False, **operation_config):
+        """Remove a member from owners.
+
+        :param object_id: The object ID of the group from which to remove the
+         owner.
+        :type object_id: str
+        :param owner_object_id: Owner object id
+        :type owner_object_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = self.remove_owner.metadata['url']
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
+            'ownerObjectId': self._serialize.url("owner_object_id", owner_object_id, 'str'),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_owner.metadata = {'url': '/{tenantID}/groups/{objectId}/$links/owners/{ownerObjectId}'}

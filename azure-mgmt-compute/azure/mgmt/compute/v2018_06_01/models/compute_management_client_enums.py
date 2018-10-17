@@ -19,6 +19,12 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
+class AvailabilitySetSkuTypes(str, Enum):
+
+    classic = "Classic"
+    aligned = "Aligned"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
@@ -214,6 +220,12 @@ class StorageAccountTypes(str, Enum):
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
     standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
+
+
+class DiffDiskOptions(str, Enum):
+
+    local = "Local"
 
 
 class PassNames(str, Enum):
@@ -328,12 +340,6 @@ class IntervalInMins(str, Enum):
     sixty_mins = "SixtyMins"
 
 
-class ScaleTier(str, Enum):
-
-    s30 = "S30"
-    s100 = "S100"
-
-
 class AggregatedReplicationState(str, Enum):
 
     unknown = "Unknown"
@@ -355,6 +361,37 @@ class HostCaching(str, Enum):
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
+
+
+class DiskStorageAccountTypes(str, Enum):
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
+
+
+class DiskCreateOption(str, Enum):
+
+    empty = "Empty"
+    attach = "Attach"
+    from_image = "FromImage"
+    import_enum = "Import"
+    copy = "Copy"
+    restore = "Restore"
+
+
+class SnapshotStorageAccountTypes(str, Enum):
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_zrs = "Standard_ZRS"
+
+
+class AccessLevel(str, Enum):
+
+    none = "None"
+    read = "Read"
 
 
 class InstanceViewTypes(str, Enum):

@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.5.2 (2018-09-28)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationConfigProperties has a new parameter migration_state
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.5.1 (2018-07-09)
 ++++++++++++++++++
 
