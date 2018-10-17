@@ -3,6 +3,24 @@
 Release History
 ===============
 
+4.3.1 (2018-10-15)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 4.3.0. No code change.
+
+4.3.0 (2018-10-02)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2018-10-01
+
+**Features/BreakingChanges**
+
+- This version updates the access to properties realted to automatic OS upgrade introduced in 4.0.0
+
 4.2.0 (2018-09-25)
 ++++++++++++++++++
 

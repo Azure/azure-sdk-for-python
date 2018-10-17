@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class UserType(Enum):
+class UserType(str, Enum):
 
     member = "Member"
     guest = "Guest"

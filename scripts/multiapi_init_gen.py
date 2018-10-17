@@ -1,4 +1,7 @@
+import ast
 import importlib
+import inspect
+import ast
 import logging
 import os
 import pkgutil
@@ -52,14 +55,34 @@ def get_versionned_modules(package_name, module_name, sdk_root=None):
             for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
             if label.startswith("v20") and ispkg]
 
+class ApiVersionExtractor(ast.NodeVisitor):
+    def __init__(self, *args, **kwargs):
+        self.api_version = None
+        super(ApiVersionExtractor, self).__init__(*args, **kwargs)
+
+    def visit_Assign(self, node):
+        try:
+            if node.targets[0].id == "api_version":
+                self.api_version = node.value.s
+        except Exception:
+            pass
+
+
 def extract_api_version_from_code(function):
     """Will extract from __code__ the API version. Should be use if you use this is an operation group with no constant api_version.
     """
     try:
-        if "api_version" in function.__code__.co_varnames:
-            return function.__code__.co_consts[1]
+        srccode = inspect.getsource(function)
+        try:
+            ast_tree = ast.parse(srccode)
+        except IndentationError:
+            ast_tree = ast.parse('with 0:\n'+srccode)
+
+        api_version_visitor = ApiVersionExtractor()
+        api_version_visitor.visit(ast_tree)
+        return api_version_visitor.api_version
     except Exception:
-        pass
+        raise
 
 def build_operation_meta(versionned_modules):
     version_dict = {}
@@ -70,19 +93,25 @@ def build_operation_meta(versionned_modules):
         operations = list(re.finditer(r':ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n', client_doc))
         for operation in operations:
             attr, clsname = operation.groups()
+            _LOGGER.debug("Class name: %s", clsname)
             version_dict.setdefault(attr, []).append((versionned_label, clsname))
 
             # Create a fake operation group to extract easily the real api version
             extracted_api_version = None
             try:
                 extracted_api_version = versionned_mod.operations.__dict__[clsname](None, None, None, None).api_version
+                _LOGGER.debug("Found an obvious API version: %s", extracted_api_version)
+                if extracted_api_version:
+                    extracted_api_versions.add(extracted_api_version)
             except Exception:
-                # Should not happen. I guess it mixed operation groups like VMSS Network...
+                _LOGGER.debug("Should not happen. I guess it mixed operation groups like VMSS Network...")
                 for func_name, function in versionned_mod.operations.__dict__[clsname].__dict__.items():
                     if not func_name.startswith("__"):
+                        _LOGGER.debug("Try to extract API version from: %s", func_name)
                         extracted_api_version = extract_api_version_from_code(function)
-            if extracted_api_version:
-                extracted_api_versions.add(extracted_api_version)
+                        _LOGGER.debug("Extracted API version: %s", extracted_api_version)
+                        if extracted_api_version:
+                            extracted_api_versions.add(extracted_api_version)
 
         if not extracted_api_versions:
             sys.exit("Was not able to extract api_version of {}".format(versionned_label))
