@@ -23,6 +23,9 @@ class EncodedTaskStep(TaskStepProperties):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageDependency]
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param encoded_task_content: Required. Base64 encoded value of the
@@ -45,6 +48,7 @@ class EncodedTaskStep(TaskStepProperties):
 
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
+        'context_path': {'key': 'contextPath', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
         'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
