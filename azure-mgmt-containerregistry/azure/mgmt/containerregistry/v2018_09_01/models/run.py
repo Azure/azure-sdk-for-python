@@ -34,7 +34,7 @@ class Run(ProxyResource):
     :param last_updated_time: The last updated time for the run.
     :type last_updated_time: datetime
     :param run_type: The type of run. Possible values include: 'QuickBuild',
-     'AutoBuild'
+     'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.RunType
     :param create_time: The time the run was scheduled.
@@ -44,13 +44,13 @@ class Run(ProxyResource):
     :param finish_time: The time the run finished.
     :type finish_time: datetime
     :param output_images: The list of all images that were generated from the
-     run. This is applicable if the run is of type Build.
+     run. This is applicable if the run generates base image dependencies.
     :type output_images:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.ImageDescriptor]
     :param task: The task against which run was scheduled.
     :type task: str
     :param image_update_trigger: The image update trigger that caused the run.
-     This is applicable if the task is of build type.
+     This is applicable if the task has base image trigger configured.
     :type image_update_trigger:
      ~azure.mgmt.containerregistry.v2018_09_01.models.ImageUpdateTrigger
     :param source_trigger: The source trigger that caused the run.

@@ -23,6 +23,9 @@ class DockerBuildStep(TaskStepProperties):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageDependency]
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param image_names: The fully qualified image names including the
@@ -41,11 +44,6 @@ class DockerBuildStep(TaskStepProperties):
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
-    :param context_path: The URL(absolute or relative) of the source context
-     for the build task.
-     If it is relative, the context will be relative to the source repository
-     URL of the build task.
-    :type context_path: str
     """
 
     _validation = {
@@ -56,21 +54,20 @@ class DockerBuildStep(TaskStepProperties):
 
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
+        'context_path': {'key': 'contextPath', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'image_names': {'key': 'imageNames', 'type': '[str]'},
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
     }
 
-    def __init__(self, *, docker_file_path: str, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, arguments=None, context_path: str=None, **kwargs) -> None:
-        super(DockerBuildStep, self).__init__(**kwargs)
+    def __init__(self, *, docker_file_path: str, context_path: str=None, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, arguments=None, **kwargs) -> None:
+        super(DockerBuildStep, self).__init__(context_path=context_path, **kwargs)
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
         self.docker_file_path = docker_file_path
         self.arguments = arguments
-        self.context_path = context_path
         self.type = 'Docker'
