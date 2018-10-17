@@ -86,3 +86,9 @@ class RoleDisasterRecovery(str, Enum):
     primary = "Primary"
     primary_not_replicating = "PrimaryNotReplicating"
     secondary = "Secondary"
+
+
+class IPAction(str, Enum):
+
+    accept = "Accept"
+    reject = "Reject"
