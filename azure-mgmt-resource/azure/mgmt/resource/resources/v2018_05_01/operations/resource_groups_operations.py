@@ -456,7 +456,9 @@ class ResourceGroupsOperations(object):
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the resource groups for a subscription.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation.<br><br>You can
+         filter by tag names and values. For example, to filter for a tag name
+         and value, use $filter=tagName eq 'tag1' and tagValue eq 'Value1'
         :type filter: str
         :param top: The number of results to return. If null is passed,
          returns all resource groups.
