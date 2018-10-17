@@ -12,22 +12,21 @@
 from msrest.serialization import Model
 
 
-class UpdatePersonFaceRequest(Model):
-    """Request to update person face data.
+class Error(Model):
+    """Error body.
 
-    :param user_data: User-provided data attached to the face. The size limit
-     is 1KB.
-    :type user_data: str
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
     """
 
-    _validation = {
-        'user_data': {'max_length': 1024},
-    }
-
     _attribute_map = {
-        'user_data': {'key': 'userData', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, user_data=None):
-        super(UpdatePersonFaceRequest, self).__init__()
-        self.user_data = user_data
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
