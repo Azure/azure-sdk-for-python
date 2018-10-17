@@ -43,6 +43,7 @@ try:
     from .managed_cluster_aad_profile_py3 import ManagedClusterAADProfile
     from .managed_cluster_py3 import ManagedCluster
     from .orchestrator_profile_py3 import OrchestratorProfile
+    from .managed_cluster_access_profile_py3 import ManagedClusterAccessProfile
     from .managed_cluster_pool_upgrade_profile_py3 import ManagedClusterPoolUpgradeProfile
     from .managed_cluster_upgrade_profile_py3 import ManagedClusterUpgradeProfile
     from .credential_result_py3 import CredentialResult
@@ -83,6 +84,7 @@ except (SyntaxError, ImportError):
     from .managed_cluster_aad_profile import ManagedClusterAADProfile
     from .managed_cluster import ManagedCluster
     from .orchestrator_profile import OrchestratorProfile
+    from .managed_cluster_access_profile import ManagedClusterAccessProfile
     from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
     from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
     from .credential_result import CredentialResult
@@ -138,6 +140,7 @@ __all__ = [
     'ManagedClusterAADProfile',
     'ManagedCluster',
     'OrchestratorProfile',
+    'ManagedClusterAccessProfile',
     'ManagedClusterPoolUpgradeProfile',
     'ManagedClusterUpgradeProfile',
     'CredentialResult',
