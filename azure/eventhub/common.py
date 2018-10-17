@@ -119,7 +119,7 @@ class EventData(object):
         """
         timestamp = self._annotations.get(EventData.PROP_TIMESTAMP, None)
         if timestamp:
-            return datetime.datetime.fromtimestamp(float(timestamp)/1000)
+            return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
 
     @property
