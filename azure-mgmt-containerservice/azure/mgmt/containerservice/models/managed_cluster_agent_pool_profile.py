@@ -90,15 +90,14 @@ class ManagedClusterAgentPoolProfile(Model):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
-    :param max_count: Maximun number of nodes for auto-scaling
+    :param max_count: Maximum number of nodes for auto-scaling
     :type max_count: int
-    :param min_count: Minimun number of nodes for auto-scaling
+    :param min_count: Minimum number of nodes for auto-scaling
     :type min_count: int
-    :param enable_auto_scaling: Wheter to enable auto-scaler
+    :param enable_auto_scaling: Whether to enable auto-scaler
     :type enable_auto_scaling: bool
     :param type: AgentPoolType represents types of agentpool. Possible values
-     include: 'VirtualMachineScaleSets', 'AvailabilitySet'. Default value:
-     "VirtualMachineScaleSets" .
+     include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     """
 
@@ -134,4 +133,4 @@ class ManagedClusterAgentPoolProfile(Model):
         self.max_count = kwargs.get('max_count', None)
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
-        self.type = kwargs.get('type', "VirtualMachineScaleSets")
+        self.type = kwargs.get('type', None)

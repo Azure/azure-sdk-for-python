@@ -90,15 +90,14 @@ class ManagedClusterAgentPoolProfile(Model):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.containerservice.models.OSType
-    :param max_count: Maximun number of nodes for auto-scaling
+    :param max_count: Maximum number of nodes for auto-scaling
     :type max_count: int
-    :param min_count: Minimun number of nodes for auto-scaling
+    :param min_count: Minimum number of nodes for auto-scaling
     :type min_count: int
-    :param enable_auto_scaling: Wheter to enable auto-scaler
+    :param enable_auto_scaling: Whether to enable auto-scaler
     :type enable_auto_scaling: bool
     :param type: AgentPoolType represents types of agentpool. Possible values
-     include: 'VirtualMachineScaleSets', 'AvailabilitySet'. Default value:
-     "VirtualMachineScaleSets" .
+     include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     """
 
@@ -122,7 +121,7 @@ class ManagedClusterAgentPoolProfile(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type="VirtualMachineScaleSets", **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
