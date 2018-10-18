@@ -9,15 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .response_base_py3 import ResponseBase
 
 
-class Response(Identifiable):
-    """Defines a response. All schemas that could be returned at the root of a
-    response should inherit from this.
+class Identifiable(ResponseBase):
+    """Defines the identity of a resource.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchResponse, ErrorResponse, Answer, Thing
+    sub-classes are: Response
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,27 +27,23 @@ class Response(Identifiable):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :ivar web_search_url: The URL To Bing's search result for this item.
-    :vartype web_search_url: str
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
-        'web_search_url': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
     }
 
     _subtype_map = {
-        '_type': {'SearchResponse': 'SearchResponse', 'ErrorResponse': 'ErrorResponse', 'Answer': 'Answer', 'Thing': 'Thing'}
+        '_type': {'Response': 'Response'}
     }
 
-    def __init__(self, **kwargs):
-        super(Response, self).__init__(**kwargs)
-        self.web_search_url = None
-        self._type = 'Response'
+    def __init__(self, **kwargs) -> None:
+        super(Identifiable, self).__init__(**kwargs)
+        self.id = None
+        self._type = 'Identifiable'
