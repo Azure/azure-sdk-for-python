@@ -16,7 +16,7 @@ class ProjectSettings(Model):
     """Represents settings associated with a project.
 
     :param domain_id: Gets or sets the id of the Domain to use with this
-     project
+     project.
     :type domain_id: str
     :param classification_type: Gets or sets the classification type of the
      project. Possible values include: 'Multiclass', 'Multilabel'

@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ImageRegionCreateEntry(Model):
-    """ImageRegionCreateEntry.
+    """Entry associating a region to an image.
 
-    :param image_id:
+    :param image_id: Id of the image.
     :type image_id: str
-    :param tag_id:
+    :param tag_id: Id of the tag associated with this region.
     :type tag_id: str
     :param left:
     :type left: float
