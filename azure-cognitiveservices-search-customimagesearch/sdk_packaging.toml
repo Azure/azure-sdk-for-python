@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-cognitiveservices-search-customimagesearch"
+package_nspkg = "azure-cognitiveservices-search-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
