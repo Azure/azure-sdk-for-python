@@ -16,6 +16,7 @@ try:
     from .sb_sku_py3 import SBSku
     from .sb_namespace_py3 import SBNamespace
     from .sb_namespace_update_parameters_py3 import SBNamespaceUpdateParameters
+    from .sb_namespace_migrate_py3 import SBNamespaceMigrate
     from .sb_authorization_rule_py3 import SBAuthorizationRule
     from .authorization_rule_properties_py3 import AuthorizationRuleProperties
     from .access_keys_py3 import AccessKeys
@@ -50,6 +51,7 @@ except (SyntaxError, ImportError):
     from .sb_sku import SBSku
     from .sb_namespace import SBNamespace
     from .sb_namespace_update_parameters import SBNamespaceUpdateParameters
+    from .sb_namespace_migrate import SBNamespaceMigrate
     from .sb_authorization_rule import SBAuthorizationRule
     from .authorization_rule_properties import AuthorizationRuleProperties
     from .access_keys import AccessKeys
@@ -93,6 +95,7 @@ from .eventhub_paged import EventhubPaged
 from .service_bus_management_client_enums import (
     SkuName,
     SkuTier,
+    NameSpaceType,
     AccessRights,
     KeyType,
     EntityStatus,
@@ -111,6 +114,7 @@ __all__ = [
     'SBSku',
     'SBNamespace',
     'SBNamespaceUpdateParameters',
+    'SBNamespaceMigrate',
     'SBAuthorizationRule',
     'AuthorizationRuleProperties',
     'AccessKeys',
@@ -153,6 +157,7 @@ __all__ = [
     'EventhubPaged',
     'SkuName',
     'SkuTier',
+    'NameSpaceType',
     'AccessRights',
     'KeyType',
     'EntityStatus',

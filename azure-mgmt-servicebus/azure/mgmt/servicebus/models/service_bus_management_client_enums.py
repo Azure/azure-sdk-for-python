@@ -26,6 +26,15 @@ class SkuTier(str, Enum):
     premium = "Premium"
 
 
+class NameSpaceType(str, Enum):
+
+    messaging = "Messaging"
+    notification_hub = "NotificationHub"
+    mixed = "Mixed"
+    event_hub = "EventHub"
+    relay = "Relay"
+
+
 class AccessRights(str, Enum):
 
     manage = "Manage"
