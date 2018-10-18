@@ -54,9 +54,9 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
+        url = self.add_term.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'term': self._serialize.url("term", term, 'str')
         }
@@ -68,13 +68,13 @@ class ListManagementTermOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.APIErrorException(self._deserialize, response)
@@ -89,6 +89,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    add_term.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'}
 
     def delete_term(
             self, list_id, term, language, custom_headers=None, raw=False, **operation_config):
@@ -111,9 +112,9 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
+        url = self.delete_term.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'term': self._serialize.url("term", term, 'str')
         }
@@ -125,13 +126,13 @@ class ListManagementTermOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.APIErrorException(self._deserialize, response)
@@ -146,6 +147,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_term.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'}
 
     def get_all_terms(
             self, list_id, language, offset=None, limit=None, custom_headers=None, raw=False, **operation_config):
@@ -171,9 +173,9 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
+        url = self.get_all_terms.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -188,13 +190,13 @@ class ListManagementTermOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -209,6 +211,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_terms.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms'}
 
     def delete_all_terms(
             self, list_id, language, custom_headers=None, raw=False, **operation_config):
@@ -230,9 +233,9 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
+        url = self.delete_all_terms.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -243,13 +246,13 @@ class ListManagementTermOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.APIErrorException(self._deserialize, response)
@@ -264,3 +267,4 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_all_terms.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms'}

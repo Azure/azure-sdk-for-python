@@ -9,4 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
+
+
+class JobListResult(Model):
+    """The list of job ids.
+
+    :param value: The job id.
+    :type value: list[str]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'Value', 'type': '[str]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(JobListResult, self).__init__(**kwargs)
+        self.value = value
