@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_object import MediaObject
+from .media_object_py3 import MediaObject
 
 
 class VideoObject(MediaObject):
