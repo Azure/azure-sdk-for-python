@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .response_py3 import Response
 
 
 class Thing(Response):
