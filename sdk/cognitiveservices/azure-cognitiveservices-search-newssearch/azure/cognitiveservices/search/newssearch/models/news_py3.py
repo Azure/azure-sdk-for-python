@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_results_answer import SearchResultsAnswer
+from .search_results_answer_py3 import SearchResultsAnswer
 
 
 class News(SearchResultsAnswer):

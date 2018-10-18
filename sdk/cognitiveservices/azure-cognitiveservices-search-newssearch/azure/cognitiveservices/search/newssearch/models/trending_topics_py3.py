@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .answer import Answer
+from .answer_py3 import Answer
 
 
 class TrendingTopics(Answer):
