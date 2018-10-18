@@ -24,6 +24,6 @@ class BatchInput(Model):
         'documents': {'key': 'documents', 'type': '[Input]'},
     }
 
-    def __init__(self, documents=None):
-        super(BatchInput, self).__init__()
-        self.documents = documents
+    def __init__(self, **kwargs):
+        super(BatchInput, self).__init__(**kwargs)
+        self.documents = kwargs.get('documents', None)

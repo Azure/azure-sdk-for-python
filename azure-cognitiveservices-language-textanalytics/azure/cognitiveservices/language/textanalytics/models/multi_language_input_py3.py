@@ -12,9 +12,12 @@
 from msrest.serialization import Model
 
 
-class Input(Model):
-    """Input.
+class MultiLanguageInput(Model):
+    """MultiLanguageInput.
 
+    :param language: This is the 2 letter ISO 639-1 representation of a
+     language. For example, use "en" for English; "es" for Spanish etc.,
+    :type language: str
     :param id: Unique, non-empty document identifier.
     :type id: str
     :param text:
@@ -22,11 +25,13 @@ class Input(Model):
     """
 
     _attribute_map = {
+        'language': {'key': 'language', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Input, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
+    def __init__(self, *, language: str=None, id: str=None, text: str=None, **kwargs) -> None:
+        super(MultiLanguageInput, self).__init__(**kwargs)
+        self.language = language
+        self.id = id
+        self.text = text

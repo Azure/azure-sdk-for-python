@@ -12,21 +12,26 @@
 from msrest.serialization import Model
 
 
-class Input(Model):
-    """Input.
+class MatchRecord(Model):
+    """MatchRecord.
 
-    :param id: Unique, non-empty document identifier.
-    :type id: str
-    :param text:
+    :param text: Entity text as appears in the request.
     :type text: str
+    :param offset: Start position (in Unicode characters) for the entity match
+     text.
+    :type offset: int
+    :param length: Length (in Unicode characters) for the entity match text.
+    :type length: int
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
+        'offset': {'key': 'offset', 'type': 'int'},
+        'length': {'key': 'length', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
-        super(Input, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        super(MatchRecord, self).__init__(**kwargs)
         self.text = kwargs.get('text', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
