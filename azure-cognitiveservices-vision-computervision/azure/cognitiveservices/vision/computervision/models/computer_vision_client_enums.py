@@ -12,14 +12,6 @@
 from enum import Enum
 
 
-class TextOperationStatusCodes(str, Enum):
-
-    not_started = "Not Started"
-    running = "Running"
-    failed = "Failed"
-    succeeded = "Succeeded"
-
-
 class Gender(str, Enum):
 
     male = "Male"
@@ -41,6 +33,14 @@ class ComputerVisionErrorCodes(str, Enum):
     internal_server_error = "InternalServerError"
     unspecified = "Unspecified"
     storage_exception = "StorageException"
+
+
+class TextOperationStatusCodes(str, Enum):
+
+    not_started = "Not Started"
+    running = "Running"
+    failed = "Failed"
+    succeeded = "Succeeded"
 
 
 class VisualFeatureTypes(str, Enum):
@@ -89,22 +89,6 @@ class TextRecognitionMode(str, Enum):
 
     handwritten = "Handwritten"
     printed = "Printed"
-
-
-class AzureRegions(str, Enum):
-
-    westus = "westus"
-    westeurope = "westeurope"
-    southeastasia = "southeastasia"
-    eastus2 = "eastus2"
-    westcentralus = "westcentralus"
-    westus2 = "westus2"
-    eastus = "eastus"
-    southcentralus = "southcentralus"
-    northeurope = "northeurope"
-    eastasia = "eastasia"
-    australiaeast = "australiaeast"
-    brazilsouth = "brazilsouth"
 
 
 class Details(str, Enum):

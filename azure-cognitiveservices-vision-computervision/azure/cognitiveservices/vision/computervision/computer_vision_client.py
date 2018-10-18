@@ -17,63 +17,53 @@ from msrest.exceptions import HttpOperationError
 from . import models
 
 
-class ComputerVisionAPIConfiguration(Configuration):
-    """Configuration for ComputerVisionAPI
+class ComputerVisionClientConfiguration(Configuration):
+    """Configuration for ComputerVisionClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.computervision.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        if azure_region is None:
-            raise ValueError("Parameter 'azure_region' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v2.0'
+        base_url = '{Endpoint}/vision/v2.0'
 
-        super(ComputerVisionAPIConfiguration, self).__init__(base_url)
+        super(ComputerVisionClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-computervision/{}'.format(VERSION))
 
-        self.azure_region = azure_region
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class ComputerVisionAPI(SDKClient):
+class ComputerVisionClient(SDKClient):
     """The Computer Vision API provides state-of-the-art algorithms to process images and return information. For example, it can be used to determine if an image contains mature content, or it can be used to find all the faces in an image.  It also has other features like estimating dominant and accent colors, categorizing the content of images, and describing an image with complete English sentences.  Additionally, it can also intelligently generate images thumbnails for displaying large images effectively.
 
     :ivar config: Configuration for client.
-    :vartype config: ComputerVisionAPIConfiguration
+    :vartype config: ComputerVisionClientConfiguration
 
-    :param azure_region: Supported Azure regions for Cognitive Services
-     endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-     'brazilsouth'
-    :type azure_region: str or
-     ~azure.cognitiveservices.vision.computervision.models.AzureRegions
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, azure_region, credentials):
+            self, endpoint, credentials):
 
-        self.config = ComputerVisionAPIConfiguration(azure_region, credentials)
-        super(ComputerVisionAPI, self).__init__(self.config.credentials, self.config)
+        self.config = ComputerVisionClientConfiguration(endpoint, credentials)
+        super(ComputerVisionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2.0'
@@ -105,7 +95,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.list_models.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -114,13 +104,13 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -190,7 +180,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -205,6 +195,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -213,9 +204,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -273,7 +263,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.generate_thumbnail.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -286,6 +276,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/octet-stream'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -294,9 +285,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=True, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -354,7 +344,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_printed_text.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -366,6 +356,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -374,9 +365,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -394,7 +384,7 @@ class ComputerVisionAPI(SDKClient):
     recognize_printed_text.metadata = {'url': '/ocr'}
 
     def describe_image(
-            self, url, max_candidates="1", language="en", custom_headers=None, raw=False, **operation_config):
+            self, url, max_candidates=1, language="en", custom_headers=None, raw=False, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -409,7 +399,7 @@ class ComputerVisionAPI(SDKClient):
         :type url: str
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
-        :type max_candidates: str
+        :type max_candidates: int
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -433,19 +423,20 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.describe_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if max_candidates is not None:
-            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -454,9 +445,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -509,7 +499,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.tag_image.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -520,6 +510,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -528,9 +519,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -585,7 +575,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_by_domain.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -597,6 +587,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -605,9 +596,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -652,7 +642,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_text.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -670,9 +660,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -709,7 +698,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.get_text_operation_result.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -719,13 +708,13 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -766,8 +755,9 @@ class ComputerVisionAPI(SDKClient):
         :param details: A string indicating which domain-specific details to
          return. Multiple values should be comma-separated. Valid visual
          feature types include:Celebrities - identifies celebrities if detected
-         in the image. Possible values include: 'Celebrities', 'Landmarks'
-        :type details: str
+         in the image.
+        :type details: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.Details]
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -794,7 +784,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -803,12 +793,13 @@ class ComputerVisionAPI(SDKClient):
         if visual_features is not None:
             query_parameters['visualFeatures'] = self._serialize.query("visual_features", visual_features, '[VisualFeatureTypes]', div=',')
         if details is not None:
-            query_parameters['details'] = self._serialize.query("details", details, 'str')
+            query_parameters['details'] = self._serialize.query("details", details, '[Details]', div=',')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -817,9 +808,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -875,7 +865,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.generate_thumbnail_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -888,6 +878,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/octet-stream'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -896,9 +887,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=True, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -959,7 +949,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_printed_text_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -971,6 +961,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -979,9 +970,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -999,7 +989,7 @@ class ComputerVisionAPI(SDKClient):
     recognize_printed_text_in_stream.metadata = {'url': '/ocr'}
 
     def describe_image_in_stream(
-            self, image, max_candidates="1", language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, max_candidates=1, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -1014,7 +1004,7 @@ class ComputerVisionAPI(SDKClient):
         :type image: Generator
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
-        :type max_candidates: str
+        :type max_candidates: int
         :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
          &quot;en&quot;.Supported languages:en - English, Default. es -
@@ -1041,19 +1031,20 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.describe_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if max_candidates is not None:
-            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+            query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1062,9 +1053,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -1120,7 +1110,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.tag_image_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1131,6 +1121,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1139,9 +1130,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -1199,7 +1189,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.analyze_image_by_domain_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1211,6 +1201,7 @@ class ComputerVisionAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1219,9 +1210,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ComputerVisionErrorException(self._deserialize, response)
@@ -1269,7 +1259,7 @@ class ComputerVisionAPI(SDKClient):
         # Construct URL
         url = self.recognize_text_in_stream.metadata['url']
         path_format_arguments = {
-            'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1287,9 +1277,8 @@ class ComputerVisionAPI(SDKClient):
         body_content = self._client.stream_upload(image, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.ComputerVisionErrorException(self._deserialize, response)

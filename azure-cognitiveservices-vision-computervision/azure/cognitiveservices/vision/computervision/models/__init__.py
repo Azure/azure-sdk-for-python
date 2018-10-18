@@ -10,10 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .word_py3 import Word
-    from .line_py3 import Line
-    from .recognition_result_py3 import RecognitionResult
-    from .text_operation_result_py3 import TextOperationResult
     from .face_rectangle_py3 import FaceRectangle
     from .celebrities_model_py3 import CelebritiesModel
     from .landmarks_model_py3 import LandmarksModel
@@ -41,11 +37,11 @@ try:
     from .tag_result_py3 import TagResult
     from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
     from .image_url_py3 import ImageUrl
+    from .word_py3 import Word
+    from .line_py3 import Line
+    from .recognition_result_py3 import RecognitionResult
+    from .text_operation_result_py3 import TextOperationResult
 except (SyntaxError, ImportError):
-    from .word import Word
-    from .line import Line
-    from .recognition_result import RecognitionResult
-    from .text_operation_result import TextOperationResult
     from .face_rectangle import FaceRectangle
     from .celebrities_model import CelebritiesModel
     from .landmarks_model import LandmarksModel
@@ -73,22 +69,21 @@ except (SyntaxError, ImportError):
     from .tag_result import TagResult
     from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
     from .image_url import ImageUrl
-from .computer_vision_api_enums import (
-    TextOperationStatusCodes,
+    from .word import Word
+    from .line import Line
+    from .recognition_result import RecognitionResult
+    from .text_operation_result import TextOperationResult
+from .computer_vision_client_enums import (
     Gender,
     ComputerVisionErrorCodes,
+    TextOperationStatusCodes,
     VisualFeatureTypes,
     OcrLanguages,
     TextRecognitionMode,
-    AzureRegions,
     Details,
 )
 
 __all__ = [
-    'Word',
-    'Line',
-    'RecognitionResult',
-    'TextOperationResult',
     'FaceRectangle',
     'CelebritiesModel',
     'LandmarksModel',
@@ -116,12 +111,15 @@ __all__ = [
     'TagResult',
     'ComputerVisionError', 'ComputerVisionErrorException',
     'ImageUrl',
-    'TextOperationStatusCodes',
+    'Word',
+    'Line',
+    'RecognitionResult',
+    'TextOperationResult',
     'Gender',
     'ComputerVisionErrorCodes',
+    'TextOperationStatusCodes',
     'VisualFeatureTypes',
     'OcrLanguages',
     'TextRecognitionMode',
-    'AzureRegions',
     'Details',
 ]
