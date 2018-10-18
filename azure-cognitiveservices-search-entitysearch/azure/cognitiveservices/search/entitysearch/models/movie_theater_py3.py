@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entertainment_business import EntertainmentBusiness
+from .entertainment_business_py3 import EntertainmentBusiness
 
 
 class MovieTheater(EntertainmentBusiness):

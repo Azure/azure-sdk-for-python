@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .civic_structure import CivicStructure
+from .civic_structure_py3 import CivicStructure
 
 
 class Airport(CivicStructure):

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .contractual_rules_attribution import ContractualRulesAttribution
+from .contractual_rules_attribution_py3 import ContractualRulesAttribution
 
 
 class ContractualRulesTextAttribution(ContractualRulesAttribution):

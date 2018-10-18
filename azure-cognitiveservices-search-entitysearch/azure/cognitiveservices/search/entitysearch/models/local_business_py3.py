@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .place import Place
+from .place_py3 import Place
 
 
 class LocalBusiness(Place):
