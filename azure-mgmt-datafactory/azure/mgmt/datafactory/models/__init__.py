@@ -116,6 +116,7 @@ try:
     from .hbase_linked_service_py3 import HBaseLinkedService
     from .greenplum_linked_service_py3 import GreenplumLinkedService
     from .google_big_query_linked_service_py3 import GoogleBigQueryLinkedService
+    from .google_ad_words_linked_service_py3 import GoogleAdWordsLinkedService
     from .eloqua_linked_service_py3 import EloquaLinkedService
     from .drill_linked_service_py3 import DrillLinkedService
     from .couchbase_linked_service_py3 import CouchbaseLinkedService
@@ -126,6 +127,7 @@ try:
     from .sap_bw_linked_service_py3 import SapBWLinkedService
     from .sftp_server_linked_service_py3 import SftpServerLinkedService
     from .ftp_server_linked_service_py3 import FtpServerLinkedService
+    from .rest_service_linked_service_py3 import RestServiceLinkedService
     from .http_linked_service_py3 import HttpLinkedService
     from .azure_search_linked_service_py3 import AzureSearchLinkedService
     from .custom_data_source_linked_service_py3 import CustomDataSourceLinkedService
@@ -152,9 +154,11 @@ try:
     from .postgre_sql_linked_service_py3 import PostgreSqlLinkedService
     from .my_sql_linked_service_py3 import MySqlLinkedService
     from .azure_my_sql_linked_service_py3 import AzureMySqlLinkedService
+    from .oracle_service_cloud_linked_service_py3 import OracleServiceCloudLinkedService
     from .oracle_linked_service_py3 import OracleLinkedService
     from .file_server_linked_service_py3 import FileServerLinkedService
     from .hd_insight_linked_service_py3 import HDInsightLinkedService
+    from .dynamics_ax_linked_service_py3 import DynamicsAXLinkedService
     from .dynamics_linked_service_py3 import DynamicsLinkedService
     from .cosmos_db_linked_service_py3 import CosmosDbLinkedService
     from .azure_key_vault_linked_service_py3 import AzureKeyVaultLinkedService
@@ -189,12 +193,14 @@ try:
     from .hbase_object_dataset_py3 import HBaseObjectDataset
     from .greenplum_table_dataset_py3 import GreenplumTableDataset
     from .google_big_query_object_dataset_py3 import GoogleBigQueryObjectDataset
+    from .google_ad_words_object_dataset_py3 import GoogleAdWordsObjectDataset
     from .eloqua_object_dataset_py3 import EloquaObjectDataset
     from .drill_table_dataset_py3 import DrillTableDataset
     from .couchbase_table_dataset_py3 import CouchbaseTableDataset
     from .concur_object_dataset_py3 import ConcurObjectDataset
     from .azure_postgre_sql_table_dataset_py3 import AzurePostgreSqlTableDataset
     from .amazon_mws_object_dataset_py3 import AmazonMWSObjectDataset
+    from .rest_service_dataset_py3 import RestServiceDataset
     from .dataset_zip_deflate_compression_py3 import DatasetZipDeflateCompression
     from .dataset_deflate_compression_py3 import DatasetDeflateCompression
     from .dataset_gzip_compression_py3 import DatasetGZipCompression
@@ -215,11 +221,13 @@ try:
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
+    from .oracle_service_cloud_object_dataset_py3 import OracleServiceCloudObjectDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
     from .odata_resource_dataset_py3 import ODataResourceDataset
     from .mongo_db_collection_dataset_py3 import MongoDbCollectionDataset
     from .file_share_dataset_py3 import FileShareDataset
     from .azure_data_lake_store_dataset_py3 import AzureDataLakeStoreDataset
+    from .dynamics_ax_resource_dataset_py3 import DynamicsAXResourceDataset
     from .dynamics_entity_dataset_py3 import DynamicsEntityDataset
     from .document_db_collection_dataset_py3 import DocumentDbCollectionDataset
     from .custom_dataset_py3 import CustomDataset
@@ -266,17 +274,20 @@ try:
     from .hbase_source_py3 import HBaseSource
     from .greenplum_source_py3 import GreenplumSource
     from .google_big_query_source_py3 import GoogleBigQuerySource
+    from .google_ad_words_source_py3 import GoogleAdWordsSource
     from .eloqua_source_py3 import EloquaSource
     from .drill_source_py3 import DrillSource
     from .couchbase_source_py3 import CouchbaseSource
     from .concur_source_py3 import ConcurSource
     from .azure_postgre_sql_source_py3 import AzurePostgreSqlSource
     from .amazon_mws_source_py3 import AmazonMWSSource
+    from .rest_service_source_py3 import RestServiceSource
     from .http_source_py3 import HttpSource
     from .azure_data_lake_store_source_py3 import AzureDataLakeStoreSource
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
+    from .oracle_service_cloud_source_py3 import OracleServiceCloudSource
     from .oracle_source_py3 import OracleSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
     from .distcp_settings_py3 import DistcpSettings
@@ -289,6 +300,7 @@ try:
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
     from .relational_source_py3 import RelationalSource
+    from .dynamics_ax_source_py3 import DynamicsAXSource
     from .dynamics_source_py3 import DynamicsSource
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
@@ -468,6 +480,7 @@ except (SyntaxError, ImportError):
     from .hbase_linked_service import HBaseLinkedService
     from .greenplum_linked_service import GreenplumLinkedService
     from .google_big_query_linked_service import GoogleBigQueryLinkedService
+    from .google_ad_words_linked_service import GoogleAdWordsLinkedService
     from .eloqua_linked_service import EloquaLinkedService
     from .drill_linked_service import DrillLinkedService
     from .couchbase_linked_service import CouchbaseLinkedService
@@ -478,6 +491,7 @@ except (SyntaxError, ImportError):
     from .sap_bw_linked_service import SapBWLinkedService
     from .sftp_server_linked_service import SftpServerLinkedService
     from .ftp_server_linked_service import FtpServerLinkedService
+    from .rest_service_linked_service import RestServiceLinkedService
     from .http_linked_service import HttpLinkedService
     from .azure_search_linked_service import AzureSearchLinkedService
     from .custom_data_source_linked_service import CustomDataSourceLinkedService
@@ -504,9 +518,11 @@ except (SyntaxError, ImportError):
     from .postgre_sql_linked_service import PostgreSqlLinkedService
     from .my_sql_linked_service import MySqlLinkedService
     from .azure_my_sql_linked_service import AzureMySqlLinkedService
+    from .oracle_service_cloud_linked_service import OracleServiceCloudLinkedService
     from .oracle_linked_service import OracleLinkedService
     from .file_server_linked_service import FileServerLinkedService
     from .hd_insight_linked_service import HDInsightLinkedService
+    from .dynamics_ax_linked_service import DynamicsAXLinkedService
     from .dynamics_linked_service import DynamicsLinkedService
     from .cosmos_db_linked_service import CosmosDbLinkedService
     from .azure_key_vault_linked_service import AzureKeyVaultLinkedService
@@ -541,12 +557,14 @@ except (SyntaxError, ImportError):
     from .hbase_object_dataset import HBaseObjectDataset
     from .greenplum_table_dataset import GreenplumTableDataset
     from .google_big_query_object_dataset import GoogleBigQueryObjectDataset
+    from .google_ad_words_object_dataset import GoogleAdWordsObjectDataset
     from .eloqua_object_dataset import EloquaObjectDataset
     from .drill_table_dataset import DrillTableDataset
     from .couchbase_table_dataset import CouchbaseTableDataset
     from .concur_object_dataset import ConcurObjectDataset
     from .azure_postgre_sql_table_dataset import AzurePostgreSqlTableDataset
     from .amazon_mws_object_dataset import AmazonMWSObjectDataset
+    from .rest_service_dataset import RestServiceDataset
     from .dataset_zip_deflate_compression import DatasetZipDeflateCompression
     from .dataset_deflate_compression import DatasetDeflateCompression
     from .dataset_gzip_compression import DatasetGZipCompression
@@ -567,11 +585,13 @@ except (SyntaxError, ImportError):
     from .salesforce_object_dataset import SalesforceObjectDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
+    from .oracle_service_cloud_object_dataset import OracleServiceCloudObjectDataset
     from .oracle_table_dataset import OracleTableDataset
     from .odata_resource_dataset import ODataResourceDataset
     from .mongo_db_collection_dataset import MongoDbCollectionDataset
     from .file_share_dataset import FileShareDataset
     from .azure_data_lake_store_dataset import AzureDataLakeStoreDataset
+    from .dynamics_ax_resource_dataset import DynamicsAXResourceDataset
     from .dynamics_entity_dataset import DynamicsEntityDataset
     from .document_db_collection_dataset import DocumentDbCollectionDataset
     from .custom_dataset import CustomDataset
@@ -618,17 +638,20 @@ except (SyntaxError, ImportError):
     from .hbase_source import HBaseSource
     from .greenplum_source import GreenplumSource
     from .google_big_query_source import GoogleBigQuerySource
+    from .google_ad_words_source import GoogleAdWordsSource
     from .eloqua_source import EloquaSource
     from .drill_source import DrillSource
     from .couchbase_source import CouchbaseSource
     from .concur_source import ConcurSource
     from .azure_postgre_sql_source import AzurePostgreSqlSource
     from .amazon_mws_source import AmazonMWSSource
+    from .rest_service_source import RestServiceSource
     from .http_source import HttpSource
     from .azure_data_lake_store_source import AzureDataLakeStoreSource
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
+    from .oracle_service_cloud_source import OracleServiceCloudSource
     from .oracle_source import OracleSource
     from .azure_my_sql_source import AzureMySqlSource
     from .distcp_settings import DistcpSettings
@@ -641,6 +664,7 @@ except (SyntaxError, ImportError):
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
     from .relational_source import RelationalSource
+    from .dynamics_ax_source import DynamicsAXSource
     from .dynamics_source import DynamicsSource
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
@@ -750,12 +774,15 @@ from .data_factory_management_client_enums import (
     HiveAuthenticationType,
     HBaseAuthenticationType,
     GoogleBigQueryAuthenticationType,
+    GoogleAdWordsAuthenticationType,
     SapHanaAuthenticationType,
     SftpAuthenticationType,
     FtpAuthenticationType,
+    RestServiceAuthenticationType,
     HttpAuthenticationType,
     MongoDbAuthenticationType,
     ODataAuthenticationType,
+    ODataAadServicePrincipalCredentialType,
     TeradataAuthenticationType,
     Db2AuthenticationType,
     SybaseAuthenticationType,
@@ -890,6 +917,7 @@ __all__ = [
     'HBaseLinkedService',
     'GreenplumLinkedService',
     'GoogleBigQueryLinkedService',
+    'GoogleAdWordsLinkedService',
     'EloquaLinkedService',
     'DrillLinkedService',
     'CouchbaseLinkedService',
@@ -900,6 +928,7 @@ __all__ = [
     'SapBWLinkedService',
     'SftpServerLinkedService',
     'FtpServerLinkedService',
+    'RestServiceLinkedService',
     'HttpLinkedService',
     'AzureSearchLinkedService',
     'CustomDataSourceLinkedService',
@@ -926,9 +955,11 @@ __all__ = [
     'PostgreSqlLinkedService',
     'MySqlLinkedService',
     'AzureMySqlLinkedService',
+    'OracleServiceCloudLinkedService',
     'OracleLinkedService',
     'FileServerLinkedService',
     'HDInsightLinkedService',
+    'DynamicsAXLinkedService',
     'DynamicsLinkedService',
     'CosmosDbLinkedService',
     'AzureKeyVaultLinkedService',
@@ -963,12 +994,14 @@ __all__ = [
     'HBaseObjectDataset',
     'GreenplumTableDataset',
     'GoogleBigQueryObjectDataset',
+    'GoogleAdWordsObjectDataset',
     'EloquaObjectDataset',
     'DrillTableDataset',
     'CouchbaseTableDataset',
     'ConcurObjectDataset',
     'AzurePostgreSqlTableDataset',
     'AmazonMWSObjectDataset',
+    'RestServiceDataset',
     'DatasetZipDeflateCompression',
     'DatasetDeflateCompression',
     'DatasetGZipCompression',
@@ -989,11 +1022,13 @@ __all__ = [
     'SalesforceObjectDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
+    'OracleServiceCloudObjectDataset',
     'OracleTableDataset',
     'ODataResourceDataset',
     'MongoDbCollectionDataset',
     'FileShareDataset',
     'AzureDataLakeStoreDataset',
+    'DynamicsAXResourceDataset',
     'DynamicsEntityDataset',
     'DocumentDbCollectionDataset',
     'CustomDataset',
@@ -1040,17 +1075,20 @@ __all__ = [
     'HBaseSource',
     'GreenplumSource',
     'GoogleBigQuerySource',
+    'GoogleAdWordsSource',
     'EloquaSource',
     'DrillSource',
     'CouchbaseSource',
     'ConcurSource',
     'AzurePostgreSqlSource',
     'AmazonMWSSource',
+    'RestServiceSource',
     'HttpSource',
     'AzureDataLakeStoreSource',
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
+    'OracleServiceCloudSource',
     'OracleSource',
     'AzureMySqlSource',
     'DistcpSettings',
@@ -1063,6 +1101,7 @@ __all__ = [
     'SapCloudForCustomerSource',
     'SalesforceSource',
     'RelationalSource',
+    'DynamicsAXSource',
     'DynamicsSource',
     'DocumentDbCollectionSource',
     'BlobSource',
@@ -1171,12 +1210,15 @@ __all__ = [
     'HiveAuthenticationType',
     'HBaseAuthenticationType',
     'GoogleBigQueryAuthenticationType',
+    'GoogleAdWordsAuthenticationType',
     'SapHanaAuthenticationType',
     'SftpAuthenticationType',
     'FtpAuthenticationType',
+    'RestServiceAuthenticationType',
     'HttpAuthenticationType',
     'MongoDbAuthenticationType',
     'ODataAuthenticationType',
+    'ODataAadServicePrincipalCredentialType',
     'TeradataAuthenticationType',
     'Db2AuthenticationType',
     'SybaseAuthenticationType',

@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class AmazonS3Dataset(Dataset):
-    """A single Amazon Simple Storage Service (S3) object or a set of S3 objects.
+class DynamicsAXResourceDataset(Dataset):
+    """The path of the Dynamics AX OData entity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -39,32 +39,15 @@ class AmazonS3Dataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param bucket_name: Required. The name of the Amazon S3 bucket. Type:
+    :param path: Required. The path of the Dynamics AX OData entity. Type:
      string (or Expression with resultType string).
-    :type bucket_name: object
-    :param key: The key of the Amazon S3 object. Type: string (or Expression
-     with resultType string).
-    :type key: object
-    :param prefix: The prefix filter for the S3 object name. Type: string (or
-     Expression with resultType string).
-    :type prefix: object
-    :param wildcard_path: The path of the S3 object with wildcard supported.
-     Type: string (or Expression with resultType string).
-    :type wildcard_path: object
-    :param version: The version for the S3 object. Type: string (or Expression
-     with resultType string).
-    :type version: object
-    :param format: The format of files.
-    :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
-    :param compression: The data compression method used for the Amazon S3
-     object.
-    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
+    :type path: str
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'bucket_name': {'required': True},
+        'path': {'required': True},
     }
 
     _attribute_map = {
@@ -76,22 +59,10 @@ class AmazonS3Dataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
-        'bucket_name': {'key': 'typeProperties.bucketName', 'type': 'object'},
-        'key': {'key': 'typeProperties.key', 'type': 'object'},
-        'prefix': {'key': 'typeProperties.prefix', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
-        'version': {'key': 'typeProperties.version', 'type': 'object'},
-        'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
-        'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
+        'path': {'key': 'typeProperties.path', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(AmazonS3Dataset, self).__init__(**kwargs)
-        self.bucket_name = kwargs.get('bucket_name', None)
-        self.key = kwargs.get('key', None)
-        self.prefix = kwargs.get('prefix', None)
-        self.wildcard_path = kwargs.get('wildcard_path', None)
-        self.version = kwargs.get('version', None)
-        self.format = kwargs.get('format', None)
-        self.compression = kwargs.get('compression', None)
-        self.type = 'AmazonS3Object'
+        super(DynamicsAXResourceDataset, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.type = 'DynamicsAXResource'
