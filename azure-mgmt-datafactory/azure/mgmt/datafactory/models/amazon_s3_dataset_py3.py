@@ -48,6 +48,9 @@ class AmazonS3Dataset(Dataset):
     :param prefix: The prefix filter for the S3 object name. Type: string (or
      Expression with resultType string).
     :type prefix: object
+    :param wildcard_path: The path of the S3 object with wildcard supported.
+     Type: string (or Expression with resultType string).
+    :type wildcard_path: object
     :param version: The version for the S3 object. Type: string (or Expression
      with resultType string).
     :type version: object
@@ -76,16 +79,18 @@ class AmazonS3Dataset(Dataset):
         'bucket_name': {'key': 'typeProperties.bucketName', 'type': 'object'},
         'key': {'key': 'typeProperties.key', 'type': 'object'},
         'prefix': {'key': 'typeProperties.prefix', 'type': 'object'},
+        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'version': {'key': 'typeProperties.version', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, bucket_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, key=None, prefix=None, version=None, format=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, bucket_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, key=None, prefix=None, wildcard_path=None, version=None, format=None, compression=None, **kwargs) -> None:
         super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.bucket_name = bucket_name
         self.key = key
         self.prefix = prefix
+        self.wildcard_path = wildcard_path
         self.version = version
         self.format = format
         self.compression = compression
