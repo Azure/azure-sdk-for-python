@@ -20,18 +20,14 @@ class ApplicationPublishObject(Model):
     :param is_staging: Indicates if the staging slot should be used, instead
      of the Production one. Default value: False .
     :type is_staging: bool
-    :param region: The target region that the application is published to.
-    :type region: str
     """
 
     _attribute_map = {
         'version_id': {'key': 'versionId', 'type': 'str'},
         'is_staging': {'key': 'isStaging', 'type': 'bool'},
-        'region': {'key': 'region', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationPublishObject, self).__init__(**kwargs)
         self.version_id = kwargs.get('version_id', None)
         self.is_staging = kwargs.get('is_staging', False)
-        self.region = kwargs.get('region', None)
