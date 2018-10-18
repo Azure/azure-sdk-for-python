@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_page import WebPage
+from .web_page_py3 import WebPage
 
 
 class CollectionPage(WebPage):
