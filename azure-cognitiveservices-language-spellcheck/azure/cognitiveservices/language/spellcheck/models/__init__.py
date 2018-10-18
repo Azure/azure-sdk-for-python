@@ -29,7 +29,7 @@ except (SyntaxError, ImportError):
     from .error import Error
     from .error_response import ErrorResponse, ErrorResponseException
     from .response_base import ResponseBase
-from .spell_check_api_enums import (
+from .spell_check_client_enums import (
     ErrorType,
     ErrorCode,
     ErrorSubCode,

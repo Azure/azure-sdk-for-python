@@ -16,8 +16,8 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class SpellCheckAPIConfiguration(Configuration):
-    """Configuration for SpellCheckAPI
+class SpellCheckClientConfiguration(Configuration):
+    """Configuration for SpellCheckClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,18 +35,18 @@ class SpellCheckAPIConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
 
-        super(SpellCheckAPIConfiguration, self).__init__(base_url)
+        super(SpellCheckClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-language-spellcheck/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class SpellCheckAPI(SDKClient):
+class SpellCheckClient(SDKClient):
     """The Spell Check API - V7 lets you check a text string for spelling and grammar errors.
 
     :ivar config: Configuration for client.
-    :vartype config: SpellCheckAPIConfiguration
+    :vartype config: SpellCheckClientConfiguration
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -57,8 +57,8 @@ class SpellCheckAPI(SDKClient):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = SpellCheckAPIConfiguration(credentials, base_url)
-        super(SpellCheckAPI, self).__init__(self.config.credentials, self.config)
+        self.config = SpellCheckClientConfiguration(credentials, base_url)
+        super(SpellCheckClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
@@ -326,6 +326,7 @@ class SpellCheckAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/x-www-form-urlencoded'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -352,9 +353,8 @@ class SpellCheckAPI(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
