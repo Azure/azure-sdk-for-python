@@ -34,6 +34,10 @@ Release History
 - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
 - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
 
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.9.1 (2018-05-24)
 ++++++++++++++++++
 
