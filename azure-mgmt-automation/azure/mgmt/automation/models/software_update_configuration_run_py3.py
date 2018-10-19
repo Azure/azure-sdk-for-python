@@ -54,6 +54,9 @@ class SoftwareUpdateConfigurationRun(Model):
     :ivar last_modified_by: lastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
+    :param tasks: software update configuration tasks triggered in this run
+    :type tasks:
+     ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTasks
     """
 
     _validation = {
@@ -87,9 +90,10 @@ class SoftwareUpdateConfigurationRun(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftareUpdateConfigurationRunTasks'},
     }
 
-    def __init__(self, *, software_update_configuration=None, **kwargs) -> None:
+    def __init__(self, *, software_update_configuration=None, tasks=None, **kwargs) -> None:
         super(SoftwareUpdateConfigurationRun, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -105,3 +109,4 @@ class SoftwareUpdateConfigurationRun(Model):
         self.created_by = None
         self.last_modified_time = None
         self.last_modified_by = None
+        self.tasks = tasks

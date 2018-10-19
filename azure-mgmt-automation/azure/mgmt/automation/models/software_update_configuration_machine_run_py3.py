@@ -63,6 +63,8 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :ivar last_modified_by: lastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
+    :param error: detailes of provisioning error
+    :type error: ~azure.mgmt.automation.models.ErrorResponse
     """
 
     _validation = {
@@ -101,9 +103,10 @@ class SoftwareUpdateConfigurationMachineRun(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, *, software_update_configuration=None, job=None, **kwargs) -> None:
+    def __init__(self, *, software_update_configuration=None, job=None, error=None, **kwargs) -> None:
         super(SoftwareUpdateConfigurationMachineRun, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -122,3 +125,4 @@ class SoftwareUpdateConfigurationMachineRun(Model):
         self.created_by = None
         self.last_modified_time = None
         self.last_modified_by = None
+        self.error = error
