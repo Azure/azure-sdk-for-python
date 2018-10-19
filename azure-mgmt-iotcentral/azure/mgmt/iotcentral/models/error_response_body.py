@@ -10,11 +10,10 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
-class ErrorDetails(Model):
-    """Error details.
+class ErrorResponseBody(Model):
+    """Details of error response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,27 +35,15 @@ class ErrorDetails(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'error.code', 'type': 'str'},
-        'message': {'key': 'error.message', 'type': 'str'},
-        'target': {'key': 'error.target', 'type': 'str'},
-        'details': {'key': 'error.details', 'type': '[ErrorResponseBody]'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
+        super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = kwargs.get('details', None)
-
-
-class ErrorDetailsException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorDetails'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorDetailsException, self).__init__(deserialize, response, 'ErrorDetails', *args)
