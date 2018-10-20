@@ -1490,11 +1490,7 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _reimage_initial(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        vm_instance_ids = None
-        if instance_ids is not None:
-            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
-
+            self, resource_group_name, vm_scale_set_name, vm_scale_set_reimage_input=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.reimage.metadata['url']
         path_format_arguments = {
@@ -1519,8 +1515,8 @@ class VirtualMachineScaleSetsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if vm_instance_ids is not None:
-            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceIDs')
+        if vm_scale_set_reimage_input is not None:
+            body_content = self._serialize.body(vm_scale_set_reimage_input, 'VirtualMachineScaleSetReimageParameters')
         else:
             body_content = None
 
@@ -1538,7 +1534,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, vm_scale_set_reimage_input=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) one or more virtual machines in
         a VM scale set.
 
@@ -1546,11 +1542,10 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-         Omitting the virtual machine scale set instance ids will result in the
-         operation being performed on all virtual machines in the virtual
-         machine scale set.
-        :type instance_ids: list[str]
+        :param vm_scale_set_reimage_input: Parameters for Reimaging VM
+         ScaleSet.
+        :type vm_scale_set_reimage_input:
+         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetReimageParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1565,7 +1560,7 @@ class VirtualMachineScaleSetsOperations(object):
         raw_result = self._reimage_initial(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
-            instance_ids=instance_ids,
+            vm_scale_set_reimage_input=vm_scale_set_reimage_input,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
