@@ -97,7 +97,9 @@ class ResourceGroupsOperations(object):
         """Creates or updates a resource group.
 
         :param resource_group_name: The name of the resource group to create
-         or update.
+         or update. Can include alphanumeric, underscore, parentheses, hyphen,
+         period (except at end), and Unicode characters that match the allowed
+         characters.
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update a
          resource group.
