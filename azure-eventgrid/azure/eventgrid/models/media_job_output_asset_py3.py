@@ -27,6 +27,8 @@ class MediaJobOutputAsset(MediaJobOutput):
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
     :type state: str or ~azure.eventgrid.models.MediaJobState
+    :param odatatype: Required. Constant filled by server.
+    :type odatatype: str
     :param asset_name: Gets the Job output asset name.
     :type asset_name: str
     """
@@ -34,6 +36,7 @@ class MediaJobOutputAsset(MediaJobOutput):
     _validation = {
         'progress': {'required': True},
         'state': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
@@ -41,9 +44,11 @@ class MediaJobOutputAsset(MediaJobOutput):
         'label': {'key': 'label', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'long'},
         'state': {'key': 'state', 'type': 'MediaJobState'},
+        'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'asset_name': {'key': 'assetName', 'type': 'str'},
     }
 
     def __init__(self, *, progress: int, state, error=None, label: str=None, asset_name: str=None, **kwargs) -> None:
         super(MediaJobOutputAsset, self).__init__(error=error, label=label, progress=progress, state=state, **kwargs)
         self.asset_name = asset_name
+        self.odatatype = '#Microsoft.Media.JobOutputAsset'
