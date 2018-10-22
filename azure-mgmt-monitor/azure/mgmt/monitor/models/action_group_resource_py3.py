@@ -68,6 +68,10 @@ class ActionGroupResource(Resource):
      are part of this action group.
     :type azure_function_receivers:
      list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
+    :param arm_role_receivers: The list of ARM role receivers that are part of
+     this action group. Roles are Azure RBAC roles and only built-in roles are
+     supported.
+    :type arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
     """
 
     _validation = {
@@ -96,9 +100,10 @@ class ActionGroupResource(Resource):
         'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
         'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
         'azure_function_receivers': {'key': 'properties.azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
+        'arm_role_receivers': {'key': 'properties.armRoleReceivers', 'type': '[ArmRoleReceiver]'},
     }
 
-    def __init__(self, *, location: str, group_short_name: str, tags=None, enabled: bool=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None, voice_receivers=None, logic_app_receivers=None, azure_function_receivers=None, **kwargs) -> None:
+    def __init__(self, *, location: str, group_short_name: str, tags=None, enabled: bool=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None, voice_receivers=None, logic_app_receivers=None, azure_function_receivers=None, arm_role_receivers=None, **kwargs) -> None:
         super(ActionGroupResource, self).__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
         self.enabled = enabled
@@ -111,3 +116,4 @@ class ActionGroupResource(Resource):
         self.voice_receivers = voice_receivers
         self.logic_app_receivers = logic_app_receivers
         self.azure_function_receivers = azure_function_receivers
+        self.arm_role_receivers = arm_role_receivers
