@@ -36,20 +36,20 @@ class SoftwareUpdateConfiguration(Model):
     :ivar provisioning_state: Provisioning state for the software update
      configuration, which only appears in the response.
     :vartype provisioning_state: str
-    :param error: detailes of provisioning error
+    :param error: Details of provisioning error
     :type error: ~azure.mgmt.automation.models.ErrorResponse
-    :ivar creation_time: Creation time of theresource, which only appears in
+    :ivar creation_time: Creation time of there source, which only appears in
      the response.
     :vartype creation_time: datetime
-    :ivar created_by: createdBy property, which only appears in the response.
+    :ivar created_by: CreatedBy property, which only appears in the response.
     :vartype created_by: str
     :ivar last_modified_time: Last time resource was modified, which only
      appears in the response.
     :vartype last_modified_time: datetime
-    :ivar last_modified_by: lastModifiedBy property, which only appears in the
+    :ivar last_modified_by: LastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
-    :param tasks: Tasks information for the Software update configuration
+    :param tasks: Tasks information for the Software update configuration.
     :type tasks: ~azure.mgmt.automation.models.TasksProperties
     """
 

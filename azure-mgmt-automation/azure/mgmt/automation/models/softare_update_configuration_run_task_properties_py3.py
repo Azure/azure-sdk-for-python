@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SoftareUpdateConfigurationRunTaskProperties(Model):
-    """task properties of the software update configuration.
+    """Task properties of the software update configuration.
 
     :param status: The status of the task.
     :type status: str

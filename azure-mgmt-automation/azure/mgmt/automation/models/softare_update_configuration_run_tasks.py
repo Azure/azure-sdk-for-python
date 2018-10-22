@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class SoftareUpdateConfigurationRunTasks(Model):
     """Software update configuration run tasks model.
 
-    :param pre_task: Pre task object
+    :param pre_task: Pre task object.
     :type pre_task:
      ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    :param post_task: Post task object
+    :param post_task: Post task object.
     :type post_task:
      ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
     """
