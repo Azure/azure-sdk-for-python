@@ -399,8 +399,8 @@ class RegisteredServersOperations(object):
 
 
     def _trigger_rollover_initial(
-            self, resource_group_name, storage_sync_service_name, server_id, certificate_data=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TriggerRolloverRequest(certificate_data=certificate_data)
+            self, resource_group_name, storage_sync_service_name, server_id, server_certificate=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.TriggerRolloverRequest(server_certificate=server_certificate)
 
         # Construct URL
         url = self.trigger_rollover.metadata['url']
@@ -447,7 +447,7 @@ class RegisteredServersOperations(object):
             return client_raw_response
 
     def trigger_rollover(
-            self, resource_group_name, storage_sync_service_name, server_id, certificate_data=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, server_id, server_certificate=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Triggers Server certificate rollover.
 
         :param resource_group_name: The name of the resource group. The name
@@ -458,8 +458,8 @@ class RegisteredServersOperations(object):
         :type storage_sync_service_name: str
         :param server_id: Server Id
         :type server_id: str
-        :param certificate_data: Certificate Data
-        :type certificate_data: str
+        :param server_certificate: Certificate Data
+        :type server_certificate: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -476,7 +476,7 @@ class RegisteredServersOperations(object):
             resource_group_name=resource_group_name,
             storage_sync_service_name=storage_sync_service_name,
             server_id=server_id,
-            certificate_data=certificate_data,
+            server_certificate=server_certificate,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
