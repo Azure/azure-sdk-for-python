@@ -68,8 +68,9 @@ class ActionGroupResource(Resource):
      are part of this action group.
     :type azure_function_receivers:
      list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
-    :param arm_role_receivers: The list of arm role receivers that are part of
-     this action group.
+    :param arm_role_receivers: The list of ARM role receivers that are part of
+     this action group. Roles are Azure RBAC roles and only built-in roles are
+     supported.
     :type arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
     """
 
