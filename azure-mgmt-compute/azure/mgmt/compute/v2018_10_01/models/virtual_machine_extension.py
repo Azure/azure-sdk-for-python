@@ -57,6 +57,9 @@ class VirtualMachineExtension(Resource):
     :param instance_view: The virtual machine extension instance view.
     :type instance_view:
      ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineExtensionInstanceView
+    :param provision_after_extensions: Collection of extension names after
+     which this extension needs to be provisioned.
+    :type provision_after_extensions: list[str]
     """
 
     _validation = {
@@ -82,6 +85,7 @@ class VirtualMachineExtension(Resource):
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
+        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -95,3 +99,4 @@ class VirtualMachineExtension(Resource):
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None
         self.instance_view = kwargs.get('instance_view', None)
+        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
