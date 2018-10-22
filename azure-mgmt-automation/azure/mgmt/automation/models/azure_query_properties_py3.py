@@ -17,20 +17,20 @@ class AzureQueryProperties(Model):
 
     :param scope: List of Subscription or Resource Group ARM Ids.
     :type scope: list[str]
-    :param location: List of locations to scope the query to.
-    :type location: list[str]
+    :param locations: List of locations to scope the query to.
+    :type locations: list[str]
     :param tag_settings: Tag settings for the VM.
     :type tag_settings: ~azure.mgmt.automation.models.TagSettingsProperties
     """
 
     _attribute_map = {
         'scope': {'key': 'scope', 'type': '[str]'},
-        'location': {'key': 'location', 'type': '[str]'},
+        'locations': {'key': 'locations', 'type': '[str]'},
         'tag_settings': {'key': 'tagSettings', 'type': 'TagSettingsProperties'},
     }
 
-    def __init__(self, *, scope=None, location=None, tag_settings=None, **kwargs) -> None:
+    def __init__(self, *, scope=None, locations=None, tag_settings=None, **kwargs) -> None:
         super(AzureQueryProperties, self).__init__(**kwargs)
         self.scope = scope
-        self.location = location
+        self.locations = locations
         self.tag_settings = tag_settings
