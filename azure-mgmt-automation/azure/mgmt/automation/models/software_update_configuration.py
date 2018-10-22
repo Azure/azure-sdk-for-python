@@ -38,7 +38,7 @@ class SoftwareUpdateConfiguration(Model):
     :vartype provisioning_state: str
     :param error: Details of provisioning error
     :type error: ~azure.mgmt.automation.models.ErrorResponse
-    :ivar creation_time: Creation time of there source, which only appears in
+    :ivar creation_time: Creation time of the resource, which only appears in
      the response.
     :vartype creation_time: datetime
     :ivar created_by: CreatedBy property, which only appears in the response.
@@ -50,7 +50,8 @@ class SoftwareUpdateConfiguration(Model):
      response.
     :vartype last_modified_by: str
     :param tasks: Tasks information for the Software update configuration.
-    :type tasks: ~azure.mgmt.automation.models.TasksProperties
+    :type tasks:
+     ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
     """
 
     _validation = {
@@ -78,7 +79,7 @@ class SoftwareUpdateConfiguration(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'TasksProperties'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationTasks'},
     }
 
     def __init__(self, **kwargs):

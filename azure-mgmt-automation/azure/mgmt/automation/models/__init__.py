@@ -85,7 +85,7 @@ try:
     from .target_properties_py3 import TargetProperties
     from .update_configuration_py3 import UpdateConfiguration
     from .task_properties_py3 import TaskProperties
-    from .tasks_properties_py3 import TasksProperties
+    from .software_update_configuration_tasks_py3 import SoftwareUpdateConfigurationTasks
     from .software_update_configuration_py3 import SoftwareUpdateConfiguration
     from .collection_item_update_configuration_py3 import CollectionItemUpdateConfiguration
     from .software_update_configuration_collection_item_py3 import SoftwareUpdateConfigurationCollectionItem
@@ -220,7 +220,7 @@ except (SyntaxError, ImportError):
     from .target_properties import TargetProperties
     from .update_configuration import UpdateConfiguration
     from .task_properties import TaskProperties
-    from .tasks_properties import TasksProperties
+    from .software_update_configuration_tasks import SoftwareUpdateConfigurationTasks
     from .software_update_configuration import SoftwareUpdateConfiguration
     from .collection_item_update_configuration import CollectionItemUpdateConfiguration
     from .software_update_configuration_collection_item import SoftwareUpdateConfigurationCollectionItem
@@ -415,7 +415,7 @@ __all__ = [
     'TargetProperties',
     'UpdateConfiguration',
     'TaskProperties',
-    'TasksProperties',
+    'SoftwareUpdateConfigurationTasks',
     'SoftwareUpdateConfiguration',
     'CollectionItemUpdateConfiguration',
     'SoftwareUpdateConfigurationCollectionItem',

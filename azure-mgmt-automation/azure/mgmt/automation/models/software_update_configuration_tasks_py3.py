@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class TasksProperties(Model):
+class SoftwareUpdateConfigurationTasks(Model):
     """Task properties of the software update configuration.
 
-    :param pre_task: Pre task object.
+    :param pre_task: Pre task properties.
     :type pre_task: ~azure.mgmt.automation.models.TaskProperties
-    :param post_task: Post task object.
+    :param post_task: Post task properties.
     :type post_task: ~azure.mgmt.automation.models.TaskProperties
     """
 
@@ -27,6 +27,6 @@ class TasksProperties(Model):
     }
 
     def __init__(self, *, pre_task=None, post_task=None, **kwargs) -> None:
-        super(TasksProperties, self).__init__(**kwargs)
+        super(SoftwareUpdateConfigurationTasks, self).__init__(**kwargs)
         self.pre_task = pre_task
         self.post_task = post_task
