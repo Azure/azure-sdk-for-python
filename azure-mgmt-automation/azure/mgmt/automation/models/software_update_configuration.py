@@ -18,18 +18,20 @@ class SoftwareUpdateConfiguration(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar name: Resource name.
     :vartype name: str
     :ivar id: Resource Id.
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
-    :param update_configuration: update specific properties for the Software
-     update configuration
+    :param update_configuration: Required. update specific properties for the
+     Software update configuration
     :type update_configuration:
      ~azure.mgmt.automation.models.UpdateConfiguration
-    :param schedule_info: Schedule information for the Software update
-     configuration
+    :param schedule_info: Required. Schedule information for the Software
+     update configuration
     :type schedule_info: ~azure.mgmt.automation.models.ScheduleProperties
     :ivar provisioning_state: Provisioning state for the software update
      configuration, which only appears in the response.
@@ -55,6 +57,8 @@ class SoftwareUpdateConfiguration(Model):
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'update_configuration': {'required': True},
+        'schedule_info': {'required': True},
         'provisioning_state': {'readonly': True},
         'creation_time': {'readonly': True},
         'created_by': {'readonly': True},
