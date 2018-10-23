@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
+from .operations.query_operations import QueryOperations
 from . import models
 
 
@@ -48,6 +48,9 @@ class LogAnalyticsDataClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: LogAnalyticsDataClientConfiguration
 
+    :ivar query: Query operations
+    :vartype query: azure.loganalytics.operations.QueryOperations
+
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
@@ -65,68 +68,5 @@ class LogAnalyticsDataClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-
-    def query(
-            self, workspace_id, body, custom_headers=None, raw=False, **operation_config):
-        """Execute an Analytics query.
-
-        Executes an Analytics query for data.
-        [Here](https://dev.loganalytics.io/documentation/Using-the-API) is an
-        example for using POST with an Analytics query.
-
-        :param workspace_id: ID of the workspace. This is Workspace ID from
-         the Properties blade in the Azure portal.
-        :type workspace_id: str
-        :param body: The Analytics query. Learn more about the [Analytics
-         query
-         syntax](https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/)
-        :type body: ~azure.loganalytics.models.QueryBody
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: QueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.loganalytics.models.QueryResults or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.loganalytics.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.query.metadata['url']
-        path_format_arguments = {
-            'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(body, 'QueryBody')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('QueryResults', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    query.metadata = {'url': '/workspaces/{workspaceId}/query'}
+        self.query = QueryOperations(
+            self._client, self.config, self._serialize, self._deserialize)
