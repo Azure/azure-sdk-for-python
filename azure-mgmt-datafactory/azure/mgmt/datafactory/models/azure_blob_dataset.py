@@ -48,10 +48,6 @@ class AzureBlobDataset(Dataset):
     :param file_name: The name of the Azure Blob. Type: string (or Expression
      with resultType string).
     :type file_name: object
-    :param wildcard_path: The whole path include file name of the Azure Blob
-     storage with wildcard supported. Type: string (or Expression with
-     resultType string).
-    :type wildcard_path: object
     :param format: The format of the Azure Blob storage.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used for the blob storage.
@@ -75,7 +71,6 @@ class AzureBlobDataset(Dataset):
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'table_root_location': {'key': 'typeProperties.tableRootLocation', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
@@ -85,7 +80,6 @@ class AzureBlobDataset(Dataset):
         self.folder_path = kwargs.get('folder_path', None)
         self.table_root_location = kwargs.get('table_root_location', None)
         self.file_name = kwargs.get('file_name', None)
-        self.wildcard_path = kwargs.get('wildcard_path', None)
         self.format = kwargs.get('format', None)
         self.compression = kwargs.get('compression', None)
         self.type = 'AzureBlob'

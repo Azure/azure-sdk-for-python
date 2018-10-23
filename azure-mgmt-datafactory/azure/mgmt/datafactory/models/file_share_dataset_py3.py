@@ -45,10 +45,6 @@ class FileShareDataset(Dataset):
     :param file_name: The name of the on-premises file system. Type: string
      (or Expression with resultType string).
     :type file_name: object
-    :param wildcard_path: The whole path include file name of the on-premises
-     file system with wildcard supported. Type: string (or Expression with
-     resultType string).
-    :type wildcard_path: object
     :param format: The format of the files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of
@@ -75,17 +71,15 @@ class FileShareDataset(Dataset):
         'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'file_filter': {'key': 'typeProperties.fileFilter', 'type': 'object'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, wildcard_path=None, format=None, file_filter=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, format=None, file_filter=None, compression=None, **kwargs) -> None:
         super(FileShareDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.folder_path = folder_path
         self.file_name = file_name
-        self.wildcard_path = wildcard_path
         self.format = format
         self.file_filter = file_filter
         self.compression = compression

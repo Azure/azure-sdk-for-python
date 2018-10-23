@@ -22,13 +22,12 @@ class CopySource(Model):
     QuickBooksSource, PrestoSource, PhoenixSource, PaypalSource, MarketoSource,
     MariaDBSource, MagentoSource, JiraSource, ImpalaSource, HubspotSource,
     HiveSource, HBaseSource, GreenplumSource, GoogleBigQuerySource,
-    GoogleAdWordsSource, EloquaSource, DrillSource, CouchbaseSource,
-    ConcurSource, AzurePostgreSqlSource, AmazonMWSSource, RestServiceSource,
-    HttpSource, AzureDataLakeStoreSource, MongoDbSource, CassandraSource,
-    WebSource, OracleServiceCloudSource, OracleSource, AzureMySqlSource,
-    HdfsSource, FileSystemSource, SqlDWSource, SqlSource, SapEccSource,
-    SapCloudForCustomerSource, SalesforceSource, RelationalSource,
-    DynamicsAXSource, DynamicsSource, DocumentDbCollectionSource, BlobSource,
+    EloquaSource, DrillSource, CouchbaseSource, ConcurSource,
+    AzurePostgreSqlSource, AmazonMWSSource, HttpSource,
+    AzureDataLakeStoreSource, MongoDbSource, CassandraSource, WebSource,
+    OracleSource, AzureMySqlSource, HdfsSource, FileSystemSource, SqlDWSource,
+    SqlSource, SapEccSource, SapCloudForCustomerSource, SalesforceSource,
+    RelationalSource, DynamicsSource, DocumentDbCollectionSource, BlobSource,
     AzureTableSource
 
     All required parameters must be populated in order to send to Azure.
@@ -59,7 +58,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'RestServiceSource': 'RestServiceSource', 'HttpSource': 'HttpSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'OracleSource': 'OracleSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlSource': 'SqlSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceSource': 'SalesforceSource', 'RelationalSource': 'RelationalSource', 'DynamicsAXSource': 'DynamicsAXSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource'}
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'OracleSource': 'OracleSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlSource': 'SqlSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceSource': 'SalesforceSource', 'RelationalSource': 'RelationalSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource'}
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, **kwargs) -> None:

@@ -48,10 +48,6 @@ class AzureBlobDataset(Dataset):
     :param file_name: The name of the Azure Blob. Type: string (or Expression
      with resultType string).
     :type file_name: object
-    :param wildcard_path: The whole path include file name of the Azure Blob
-     storage with wildcard supported. Type: string (or Expression with
-     resultType string).
-    :type wildcard_path: object
     :param format: The format of the Azure Blob storage.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used for the blob storage.
@@ -75,17 +71,15 @@ class AzureBlobDataset(Dataset):
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'table_root_location': {'key': 'typeProperties.tableRootLocation', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, folder_path=None, table_root_location=None, file_name=None, wildcard_path=None, format=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, folder_path=None, table_root_location=None, file_name=None, format=None, compression=None, **kwargs) -> None:
         super(AzureBlobDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.folder_path = folder_path
         self.table_root_location = table_root_location
         self.file_name = file_name
-        self.wildcard_path = wildcard_path
         self.format = format
         self.compression = compression
         self.type = 'AzureBlob'
