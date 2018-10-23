@@ -33,7 +33,7 @@ class TrainingApiConfiguration(Configuration):
         if api_key is None:
             raise ValueError("Parameter 'api_key' must not be None.")
         if not base_url:
-            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Training'
+            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.1/Training'
 
         super(TrainingApiConfiguration, self).__init__(base_url)
 
@@ -60,7 +60,7 @@ class TrainingApi(SDKClient):
         super(TrainingApi, self).__init__(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.0'
+        self.api_version = '2.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -1489,7 +1489,7 @@ class TrainingApi(SDKClient):
     get_projects.metadata = {'url': '/projects'}
 
     def create_project(
-            self, name, description=None, domain_id=None, custom_headers=None, raw=False, **operation_config):
+            self, name, description=None, domain_id=None, classification_type=None, custom_headers=None, raw=False, **operation_config):
         """Create a project.
 
         :param name: Name of the project
@@ -1499,6 +1499,9 @@ class TrainingApi(SDKClient):
         :param domain_id: The id of the domain to use for this project.
          Defaults to General
         :type domain_id: str
+        :param classification_type: The type of classifier to create for this
+         project. Possible values include: 'Multiclass', 'Multilabel'
+        :type classification_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1521,6 +1524,8 @@ class TrainingApi(SDKClient):
             query_parameters['description'] = self._serialize.query("description", description, 'str')
         if domain_id is not None:
             query_parameters['domainId'] = self._serialize.query("domain_id", domain_id, 'str')
+        if classification_type is not None:
+            query_parameters['classificationType'] = self._serialize.query("classification_type", classification_type, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2219,10 +2224,11 @@ class TrainingApi(SDKClient):
         :type project_id: str
         :param iteration_id: The iteration id
         :type iteration_id: str
-        :param platform: The target platform (coreml or tensorflow)
+        :param platform: The target platform (coreml or tensorflow). Possible
+         values include: 'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
         :type platform: str
         :param flavor: The flavor of the target platform (Windows, Linux, ARM,
-         or GPU)
+         or GPU). Possible values include: 'Linux', 'Windows'
         :type flavor: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

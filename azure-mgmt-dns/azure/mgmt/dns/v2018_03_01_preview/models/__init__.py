@@ -25,7 +25,10 @@ try:
     from .sub_resource_py3 import SubResource
     from .zone_py3 import Zone
     from .zone_update_py3 import ZoneUpdate
+    from .proxy_resource_py3 import ProxyResource
+    from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
+    from .tracked_resource_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from .arecord import ARecord
     from .aaaa_record import AaaaRecord
@@ -42,7 +45,10 @@ except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .zone import Zone
     from .zone_update import ZoneUpdate
+    from .proxy_resource import ProxyResource
+    from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
+    from .tracked_resource import TrackedResource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
 from .dns_management_client_enums import (
@@ -66,7 +72,10 @@ __all__ = [
     'SubResource',
     'Zone',
     'ZoneUpdate',
+    'ProxyResource',
+    'AzureEntityResource',
     'Resource',
+    'TrackedResource',
     'RecordSetPaged',
     'ZonePaged',
     'ZoneType',

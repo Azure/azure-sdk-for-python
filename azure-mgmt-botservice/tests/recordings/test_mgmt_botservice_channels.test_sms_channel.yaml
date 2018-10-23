@@ -16,7 +16,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed","name":"azurebotservicec02c12ed","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T18%3A49%3A28.0293013Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"056d9ad9-17a9-4cc7-aebb-43bf6f293a08","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af511","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a11","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
@@ -50,7 +50,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel","name":"azurebotservicec02c12ed/SmsChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"e2377294dce6f2292077ed4a9d0518214/2/2018
         6:49:32 PM\"","location":"global","properties":{"properties":{"phone":"+15153258725","accountSID":"AC421cab6999e0c8c0d1a90c6643db8f05","authToken":"507d2f4f9a832fdd042d05c500b3a88f","isValidated":true,"isEnabled":true},"etag":"W/\"e2377294dce6f2292077ed4a9d0518214/2/2018
@@ -81,7 +81,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel","name":"azurebotservicec02c12ed/SmsChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"c4d7157ef33c98d6ef63afaabc8b220a4/2/2018
         6:49:33 PM\"","location":"global","properties":{"properties":{"phone":"+15153258725","accountSID":"AC421cab6999e0c8c0d1a90c6643db8f05","authToken":"507d2f4f9a832fdd042d05c500b3a88f","isValidated":true,"isEnabled":true},"etag":"W/\"c4d7157ef33c98d6ef63afaabc8b220a4/2/2018
@@ -114,7 +114,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2018-07-12
   response:
     body: {string: ''}
     headers:
@@ -141,7 +141,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel?api-version=2018-07-12
   response:
     body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/azurebotservicec02c12ed/channels/SmsChannel''
         under resource group ''pythonsdkbotc02c12ed'' was not found."}}'}
@@ -168,7 +168,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbotc02c12ed/providers/Microsoft.BotService/botServices/azurebotservicec02c12ed?api-version=2018-07-12
   response:
     body: {string: ''}
     headers:

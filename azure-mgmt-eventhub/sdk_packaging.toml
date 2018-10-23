@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-eventhub"
+package_pprint_name = "EventHub Management"
+package_doc_id = "event-hub"
+is_stable = true

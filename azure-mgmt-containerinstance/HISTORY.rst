@@ -3,6 +3,36 @@
 Release History
 ===============
 
+1.2.1 (2018-10-16)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 1.2.0. No code change.
+
+1.2.0 (2018-10-08)
+++++++++++++++++++
+
+**Features**
+
+- Model ContainerGroup has a new parameter identity (MSI support)
+- Added operation group ServiceAssociationLinkOperations
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+1.1.0 (2018-09-06)
+++++++++++++++++++
+
+**Features**
+
+- Model LogAnalytics has a new parameter log_type
+- Model LogAnalytics has a new parameter metadata
+- Model ContainerGroup has a new parameter network_profile
+- Added operation ContainerGroupsOperations.stop
+- Added operation ContainerGroupsOperations.restart
+
 1.0.0 (2018-06-13)
 ++++++++++++++++++
 

@@ -28,7 +28,7 @@ class Blur(Model):
         'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, blur_level=None, value=None):
-        super(Blur, self).__init__()
-        self.blur_level = blur_level
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Blur, self).__init__(**kwargs)
+        self.blur_level = kwargs.get('blur_level', None)
+        self.value = kwargs.get('value', None)

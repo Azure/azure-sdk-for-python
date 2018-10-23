@@ -28,8 +28,8 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
     :vartype type: str
     :ivar time: The time the snapshot was taken.
     :vartype time: datetime
-    :ivar site_configuration_snapshot_info_id: The id of the snapshot
-    :vartype site_configuration_snapshot_info_id: int
+    :ivar snapshot_id: The id of the snapshot
+    :vartype snapshot_id: int
     """
 
     _validation = {
@@ -37,7 +37,7 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'time': {'readonly': True},
-        'site_configuration_snapshot_info_id': {'readonly': True},
+        'snapshot_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,10 +46,10 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'time': {'key': 'properties.time', 'type': 'iso-8601'},
-        'site_configuration_snapshot_info_id': {'key': 'properties.id', 'type': 'int'},
+        'snapshot_id': {'key': 'properties.snapshotId', 'type': 'int'},
     }
 
-    def __init__(self, kind=None):
-        super(SiteConfigurationSnapshotInfo, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(SiteConfigurationSnapshotInfo, self).__init__(**kwargs)
         self.time = None
-        self.site_configuration_snapshot_info_id = None
+        self.snapshot_id = None

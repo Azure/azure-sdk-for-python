@@ -84,19 +84,10 @@ class ManagedClusterAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
-     pool.
-    :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool.
-    :vartype fqdn: str
-    :param ports: Ports number array used to expose on this agent pool. The
-     default opened ports are different based on your choice of orchestrator.
-    :type ports: list[int]
-    :param storage_profile: Storage profile specifies what kind of storage
-     used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
-     choose for you based on the orchestrator choice. Possible values include:
-     'StorageAccount', 'ManagedDisks'
-    :type storage_profile: str or
+    :ivar storage_profile: Storage profile specifies what kind of storage
+     used. Defaults to ManagedDisks. Possible values include: 'StorageAccount',
+     'ManagedDisks'
+    :vartype storage_profile: str or
      ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier.
@@ -113,7 +104,7 @@ class ManagedClusterAgentPoolProfile(Model):
         'name': {'required': True},
         'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
-        'fqdn': {'readonly': True},
+        'storage_profile': {'readonly': True},
     }
 
     _attribute_map = {
@@ -121,25 +112,19 @@ class ManagedClusterAgentPoolProfile(Model):
         'count': {'key': 'count', 'type': 'int'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ports': {'key': 'ports', 'type': '[int]'},
         'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
         'max_pods': {'key': 'maxPods', 'type': 'int'},
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, ports=None, storage_profile=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
-        self.dns_prefix = dns_prefix
-        self.fqdn = None
-        self.ports = ports
-        self.storage_profile = storage_profile
+        self.storage_profile = None
         self.vnet_subnet_id = vnet_subnet_id
         self.max_pods = max_pods
         self.os_type = os_type

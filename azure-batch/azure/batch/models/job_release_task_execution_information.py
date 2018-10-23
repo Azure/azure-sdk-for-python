@@ -16,15 +16,17 @@ class JobReleaseTaskExecutionInformation(Model):
     """Contains information about the execution of a Job Release task on a compute
     node.
 
-    :param start_time: The time at which the task started running. If the task
-     has been restarted or retried, this is the most recent time at which the
-     task started running.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The time at which the task started running.
+     If the task has been restarted or retried, this is the most recent time at
+     which the task started running.
     :type start_time: datetime
     :param end_time: The time at which the Job Release task completed. This
      property is set only if the task is in the Completed state.
     :type end_time: datetime
-    :param state: The current state of the Job Release task on the compute
-     node. Possible values include: 'running', 'completed'
+    :param state: Required. The current state of the Job Release task on the
+     compute node. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.JobReleaseTaskState
     :param task_root_directory: The root directory of the Job Release task on
      the compute node. You can use this path to retrieve files created by the
@@ -74,14 +76,14 @@ class JobReleaseTaskExecutionInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, start_time, state, end_time=None, task_root_directory=None, task_root_directory_url=None, exit_code=None, container_info=None, failure_info=None, result=None):
-        super(JobReleaseTaskExecutionInformation, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.state = state
-        self.task_root_directory = task_root_directory
-        self.task_root_directory_url = task_root_directory_url
-        self.exit_code = exit_code
-        self.container_info = container_info
-        self.failure_info = failure_info
-        self.result = result
+    def __init__(self, **kwargs):
+        super(JobReleaseTaskExecutionInformation, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.state = kwargs.get('state', None)
+        self.task_root_directory = kwargs.get('task_root_directory', None)
+        self.task_root_directory_url = kwargs.get('task_root_directory_url', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.container_info = kwargs.get('container_info', None)
+        self.failure_info = kwargs.get('failure_info', None)
+        self.result = kwargs.get('result', None)

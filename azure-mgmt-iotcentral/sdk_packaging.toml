@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-iotcentral"
+package_pprint_name = "IoTCentral Management"
+package_doc_id = ""
+is_stable = false
