@@ -18,7 +18,7 @@ class SoftareUpdateConfigurationRunTasks(Model):
     :param pre_task: Pre task properties.
     :type pre_task:
      ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    :param post_task: Post task object.
+    :param post_task: Post task properties.
     :type post_task:
      ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
     """

@@ -156,7 +156,7 @@ class ProvisioningState(str, Enum):
 
 class SyncType(str, Enum):
 
-    incremental_sync = "IncrementalSync"
+    partial_sync = "PartialSync"
     full_sync = "FullSync"
 
 
