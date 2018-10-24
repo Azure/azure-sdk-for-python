@@ -17,6 +17,7 @@ try:
     from .server_properties_for_default_create_py3 import ServerPropertiesForDefaultCreate
     from .server_properties_for_restore_py3 import ServerPropertiesForRestore
     from .server_properties_for_geo_restore_py3 import ServerPropertiesForGeoRestore
+    from .server_properties_for_replica_py3 import ServerPropertiesForReplica
     from .sku_py3 import Sku
     from .server_py3 import Server
     from .server_for_create_py3 import ServerForCreate
@@ -33,6 +34,7 @@ try:
     from .performance_tier_properties_py3 import PerformanceTierProperties
     from .name_availability_request_py3 import NameAvailabilityRequest
     from .name_availability_py3 import NameAvailability
+    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
 except (SyntaxError, ImportError):
     from .proxy_resource import ProxyResource
     from .tracked_resource import TrackedResource
@@ -41,6 +43,7 @@ except (SyntaxError, ImportError):
     from .server_properties_for_default_create import ServerPropertiesForDefaultCreate
     from .server_properties_for_restore import ServerPropertiesForRestore
     from .server_properties_for_geo_restore import ServerPropertiesForGeoRestore
+    from .server_properties_for_replica import ServerPropertiesForReplica
     from .sku import Sku
     from .server import Server
     from .server_for_create import ServerForCreate
@@ -57,6 +60,7 @@ except (SyntaxError, ImportError):
     from .performance_tier_properties import PerformanceTierProperties
     from .name_availability_request import NameAvailabilityRequest
     from .name_availability import NameAvailability
+    from .server_security_alert_policy import ServerSecurityAlertPolicy
 from .server_paged import ServerPaged
 from .firewall_rule_paged import FirewallRulePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
@@ -72,6 +76,7 @@ from .my_sql_management_client_enums import (
     SkuTier,
     VirtualNetworkRuleState,
     OperationOrigin,
+    ServerSecurityAlertPolicyState,
 )
 
 __all__ = [
@@ -82,6 +87,7 @@ __all__ = [
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForRestore',
     'ServerPropertiesForGeoRestore',
+    'ServerPropertiesForReplica',
     'Sku',
     'Server',
     'ServerForCreate',
@@ -98,6 +104,7 @@ __all__ = [
     'PerformanceTierProperties',
     'NameAvailabilityRequest',
     'NameAvailability',
+    'ServerSecurityAlertPolicy',
     'ServerPaged',
     'FirewallRulePaged',
     'VirtualNetworkRulePaged',
@@ -112,4 +119,5 @@ __all__ = [
     'SkuTier',
     'VirtualNetworkRuleState',
     'OperationOrigin',
+    'ServerSecurityAlertPolicyState',
 ]

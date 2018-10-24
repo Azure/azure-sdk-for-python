@@ -295,8 +295,8 @@ from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
-from .image_paged import ImagePaged
 from .virtual_machine_paged import VirtualMachinePaged
+from .image_paged import ImagePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .upgrade_operation_historical_status_info_paged import UpgradeOperationHistoricalStatusInfoPaged
@@ -480,8 +480,8 @@ __all__ = [
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
-    'ImagePaged',
     'VirtualMachinePaged',
+    'ImagePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'UpgradeOperationHistoricalStatusInfoPaged',

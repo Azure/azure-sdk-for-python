@@ -21,7 +21,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         )
 
     def test_storage_usage(self):
-        usages = list(self.storage_client.usage.list())
+        usages = list(self.storage_client.usages.list_by_location("eastus"))
         self.assertGreater(len(usages), 0)
 
     @ResourceGroupPreparer()
