@@ -44,7 +44,7 @@ class StorageSyncManagementClientConfiguration(AzureConfiguration):
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
-            base_url = 'https://azure.microsoft.com'
+            base_url = 'https://management.azure.com'
 
         super(StorageSyncManagementClientConfiguration, self).__init__(base_url)
 
