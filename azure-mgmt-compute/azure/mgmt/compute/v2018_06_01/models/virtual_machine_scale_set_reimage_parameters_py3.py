@@ -15,14 +15,9 @@ from .virtual_machine_scale_set_vm_reimage_parameters_py3 import VirtualMachineS
 class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
-    :param os_disk: Specified whether to reimage os disk. Default value: true.
-    :type os_disk: bool
     :param temp_disk: Specified whether to reimage temp disk. Default value:
      false.
     :type temp_disk: bool
-    :param data_disks: Luns of dataDisks in the virtual machine scale set VM
-     to reimage.
-    :type data_disks: list[int]
     :param instance_ids: The virtual machine scale set instance ids. Omitting
      the virtual machine scale set instance ids will result in the operation
      being performed on all virtual machines in the virtual machine scale set.
@@ -30,12 +25,10 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
     """
 
     _attribute_map = {
-        'os_disk': {'key': 'osDisk', 'type': 'bool'},
         'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-        'data_disks': {'key': 'dataDisks', 'type': '[int]'},
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, os_disk: bool=None, temp_disk: bool=None, data_disks=None, instance_ids=None, **kwargs) -> None:
-        super(VirtualMachineScaleSetReimageParameters, self).__init__(os_disk=os_disk, temp_disk=temp_disk, data_disks=data_disks, **kwargs)
+    def __init__(self, *, temp_disk: bool=None, instance_ids=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
         self.instance_ids = instance_ids

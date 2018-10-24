@@ -15,22 +15,14 @@ from .virtual_machine_reimage_parameters import VirtualMachineReimageParameters
 class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
-    :param os_disk: Specified whether to reimage os disk. Default value: true.
-    :type os_disk: bool
     :param temp_disk: Specified whether to reimage temp disk. Default value:
      false.
     :type temp_disk: bool
-    :param data_disks: Luns of dataDisks in the virtual machine scale set VM
-     to reimage.
-    :type data_disks: list[int]
     """
 
     _attribute_map = {
-        'os_disk': {'key': 'osDisk', 'type': 'bool'},
         'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-        'data_disks': {'key': 'dataDisks', 'type': '[int]'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
-        self.data_disks = kwargs.get('data_disks', None)

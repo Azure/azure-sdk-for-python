@@ -13,21 +13,17 @@ from msrest.serialization import Model
 
 
 class VirtualMachineReimageParameters(Model):
-    """Paramaters for Reimaging Virtual Machine.
+    """Paramaters for Reimaging Virtual Machine. Default value for OSDisk : true.
 
-    :param os_disk: Specified whether to reimage os disk. Default value: true.
-    :type os_disk: bool
     :param temp_disk: Specified whether to reimage temp disk. Default value:
      false.
     :type temp_disk: bool
     """
 
     _attribute_map = {
-        'os_disk': {'key': 'osDisk', 'type': 'bool'},
         'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineReimageParameters, self).__init__(**kwargs)
-        self.os_disk = kwargs.get('os_disk', None)
         self.temp_disk = kwargs.get('temp_disk', None)

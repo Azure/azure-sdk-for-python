@@ -41,7 +41,11 @@ class VirtualMachineScaleSetVMsOperations(object):
 
 
     def _reimage_initial(
-            self, resource_group_name, vm_scale_set_name, instance_id, vm_scale_set_vm_reimage_input=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, temp_disk=None, custom_headers=None, raw=False, **operation_config):
+        vm_scale_set_vm_reimage_input = None
+        if temp_disk is not None:
+            vm_scale_set_vm_reimage_input = models.VirtualMachineScaleSetVMReimageParameters(temp_disk=temp_disk)
+
         # Construct URL
         url = self.reimage.metadata['url']
         path_format_arguments = {
@@ -86,7 +90,7 @@ class VirtualMachineScaleSetVMsOperations(object):
             return client_raw_response
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_id, vm_scale_set_vm_reimage_input=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, temp_disk=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) a specific virtual machine in a
         VM scale set.
 
@@ -96,10 +100,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
-        :param vm_scale_set_vm_reimage_input: Parameters for the Reimaging
-         Virtual machine in ScaleSet.
-        :type vm_scale_set_vm_reimage_input:
-         ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetVMReimageParameters
+        :param temp_disk: Specified whether to reimage temp disk. Default
+         value: false.
+        :type temp_disk: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -115,7 +118,7 @@ class VirtualMachineScaleSetVMsOperations(object):
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
-            vm_scale_set_vm_reimage_input=vm_scale_set_vm_reimage_input,
+            temp_disk=temp_disk,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

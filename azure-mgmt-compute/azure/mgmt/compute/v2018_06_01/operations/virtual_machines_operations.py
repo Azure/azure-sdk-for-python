@@ -1372,10 +1372,10 @@ class VirtualMachinesOperations(object):
 
 
     def _reimage_initial(
-            self, resource_group_name, vm_name, os_disk=None, temp_disk=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_name, temp_disk=None, custom_headers=None, raw=False, **operation_config):
         parameters = None
-        if os_disk is not None or temp_disk is not None:
-            parameters = models.VirtualMachineReimageParameters(os_disk=os_disk, temp_disk=temp_disk)
+        if temp_disk is not None:
+            parameters = models.VirtualMachineReimageParameters(temp_disk=temp_disk)
 
         # Construct URL
         url = self.reimage.metadata['url']
@@ -1420,7 +1420,7 @@ class VirtualMachinesOperations(object):
             return client_raw_response
 
     def reimage(
-            self, resource_group_name, vm_name, os_disk=None, temp_disk=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_name, temp_disk=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) virtual machine. This operation
         is only supported for differencing OS disks.
 
@@ -1428,9 +1428,6 @@ class VirtualMachinesOperations(object):
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
-        :param os_disk: Specified whether to reimage os disk. Default value:
-         true.
-        :type os_disk: bool
         :param temp_disk: Specified whether to reimage temp disk. Default
          value: false.
         :type temp_disk: bool
@@ -1448,7 +1445,6 @@ class VirtualMachinesOperations(object):
         raw_result = self._reimage_initial(
             resource_group_name=resource_group_name,
             vm_name=vm_name,
-            os_disk=os_disk,
             temp_disk=temp_disk,
             custom_headers=custom_headers,
             raw=True,
