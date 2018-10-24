@@ -39,18 +39,14 @@ class AzureDataLakeStoreDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param folder_path: Path to the folder in the Azure Data Lake Store. Type:
-     string (or Expression with resultType string).
+    :param folder_path: Required. Path to the folder in the Azure Data Lake
+     Store. Type: string (or Expression with resultType string).
     :type folder_path: object
     :param file_name: The name of the file in the Azure Data Lake Store. Type:
      string (or Expression with resultType string).
     :type file_name: object
     :param format: The format of the Data Lake Store.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
-    :param wildcard_path: The whole path include file name in the Azure Data
-     Lake Store with wildcard supported. Type: string (or Expression with
-     resultType string).
-    :type wildcard_path: object
     :param compression: The data compression method used for the item(s) in
      the Azure Data Lake Store.
     :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
@@ -59,6 +55,7 @@ class AzureDataLakeStoreDataset(Dataset):
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
+        'folder_path': {'required': True},
     }
 
     _attribute_map = {
@@ -73,15 +70,13 @@ class AzureDataLakeStoreDataset(Dataset):
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, format=None, wildcard_path=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, folder_path, additional_properties=None, description: str=None, structure=None, parameters=None, annotations=None, folder=None, file_name=None, format=None, compression=None, **kwargs) -> None:
         super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
-        self.wildcard_path = wildcard_path
         self.compression = compression
         self.type = 'AzureDataLakeStoreFile'

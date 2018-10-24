@@ -48,9 +48,6 @@ class AmazonS3Dataset(Dataset):
     :param prefix: The prefix filter for the S3 object name. Type: string (or
      Expression with resultType string).
     :type prefix: object
-    :param wildcard_path: The path of the S3 object with wildcard supported.
-     Type: string (or Expression with resultType string).
-    :type wildcard_path: object
     :param version: The version for the S3 object. Type: string (or Expression
      with resultType string).
     :type version: object
@@ -79,7 +76,6 @@ class AmazonS3Dataset(Dataset):
         'bucket_name': {'key': 'typeProperties.bucketName', 'type': 'object'},
         'key': {'key': 'typeProperties.key', 'type': 'object'},
         'prefix': {'key': 'typeProperties.prefix', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'version': {'key': 'typeProperties.version', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
@@ -90,7 +86,6 @@ class AmazonS3Dataset(Dataset):
         self.bucket_name = kwargs.get('bucket_name', None)
         self.key = kwargs.get('key', None)
         self.prefix = kwargs.get('prefix', None)
-        self.wildcard_path = kwargs.get('wildcard_path', None)
         self.version = kwargs.get('version', None)
         self.format = kwargs.get('format', None)
         self.compression = kwargs.get('compression', None)

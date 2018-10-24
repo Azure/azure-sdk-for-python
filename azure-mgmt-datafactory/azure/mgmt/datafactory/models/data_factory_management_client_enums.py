@@ -240,12 +240,6 @@ class GoogleBigQueryAuthenticationType(str, Enum):
     user_authentication = "UserAuthentication"
 
 
-class GoogleAdWordsAuthenticationType(str, Enum):
-
-    service_authentication = "ServiceAuthentication"
-    user_authentication = "UserAuthentication"
-
-
 class SapHanaAuthenticationType(str, Enum):
 
     basic = "Basic"
@@ -262,14 +256,6 @@ class FtpAuthenticationType(str, Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
-
-
-class RestServiceAuthenticationType(str, Enum):
-
-    anonymous = "Anonymous"
-    basic = "Basic"
-    aad_service_princial = "AadServicePrincial"
-    managed_service_identity = "ManagedServiceIdentity"
 
 
 class HttpAuthenticationType(str, Enum):
@@ -289,17 +275,8 @@ class MongoDbAuthenticationType(str, Enum):
 
 class ODataAuthenticationType(str, Enum):
 
-    anonymous = "Anonymous"
     basic = "Basic"
-    windows = "Windows"
-    aad_service_principal = "AadServicePrincipal"
-    managed_service_identity = "ManagedServiceIdentity"
-
-
-class ODataAadServicePrincipalCredentialType(str, Enum):
-
-    service_principal_key = "ServicePrincipalKey"
-    service_principal_cert = "ServicePrincipalCert"
+    anonymous = "Anonymous"
 
 
 class TeradataAuthenticationType(str, Enum):

@@ -45,10 +45,6 @@ class FileShareDataset(Dataset):
     :param file_name: The name of the on-premises file system. Type: string
      (or Expression with resultType string).
     :type file_name: object
-    :param wildcard_path: The whole path include file name of the on-premises
-     file system with wildcard supported. Type: string (or Expression with
-     resultType string).
-    :type wildcard_path: object
     :param format: The format of the files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of
@@ -75,7 +71,6 @@ class FileShareDataset(Dataset):
         'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
-        'wildcard_path': {'key': 'typeProperties.wildcardPath', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'file_filter': {'key': 'typeProperties.fileFilter', 'type': 'object'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
@@ -85,7 +80,6 @@ class FileShareDataset(Dataset):
         super(FileShareDataset, self).__init__(**kwargs)
         self.folder_path = kwargs.get('folder_path', None)
         self.file_name = kwargs.get('file_name', None)
-        self.wildcard_path = kwargs.get('wildcard_path', None)
         self.format = kwargs.get('format', None)
         self.file_filter = kwargs.get('file_filter', None)
         self.compression = kwargs.get('compression', None)
