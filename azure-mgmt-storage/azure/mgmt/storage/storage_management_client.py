@@ -163,6 +163,19 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def blob_service(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`BlobServiceOperations<azure.mgmt.storage.v2018_07_01.operations.BlobServiceOperations>`
+        """
+        api_version = self._get_api_version('blob_service')
+        if api_version == '2018-07-01':
+            from .v2018_07_01.operations import BlobServiceOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def management_policies(self):
         """Instance depends on the API version:
 

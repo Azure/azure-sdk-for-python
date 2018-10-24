@@ -55,6 +55,10 @@ try:
     from .legal_hold_py3 import LegalHold
     from .list_container_item_py3 import ListContainerItem
     from .list_container_items_py3 import ListContainerItems
+    from .cors_rule_py3 import CorsRule
+    from .cors_rules_py3 import CorsRules
+    from .delete_retention_policy_py3 import DeleteRetentionPolicy
+    from .blob_service_properties_py3 import BlobServiceProperties
     from .storage_account_management_policies_py3 import StorageAccountManagementPolicies
     from .management_policies_rules_set_parameter_py3 import ManagementPoliciesRulesSetParameter
 except (SyntaxError, ImportError):
@@ -103,6 +107,10 @@ except (SyntaxError, ImportError):
     from .legal_hold import LegalHold
     from .list_container_item import ListContainerItem
     from .list_container_items import ListContainerItems
+    from .cors_rule import CorsRule
+    from .cors_rules import CorsRules
+    from .delete_retention_policy import DeleteRetentionPolicy
+    from .blob_service_properties import BlobServiceProperties
     from .storage_account_management_policies import StorageAccountManagementPolicies
     from .management_policies_rules_set_parameter import ManagementPoliciesRulesSetParameter
 from .operation_paged import OperationPaged
@@ -184,6 +192,10 @@ __all__ = [
     'LegalHold',
     'ListContainerItem',
     'ListContainerItems',
+    'CorsRule',
+    'CorsRules',
+    'DeleteRetentionPolicy',
+    'BlobServiceProperties',
     'StorageAccountManagementPolicies',
     'ManagementPoliciesRulesSetParameter',
     'OperationPaged',
