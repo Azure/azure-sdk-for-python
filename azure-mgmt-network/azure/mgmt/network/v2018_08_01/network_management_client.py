@@ -44,6 +44,7 @@ from .operations.load_balancer_backend_address_pools_operations import LoadBalan
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
 from .operations.inbound_nat_rules_operations import InboundNatRulesOperations
 from .operations.load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalancingRulesOperations
+from .operations.load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .operations.load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .operations.load_balancer_probes_operations import LoadBalancerProbesOperations
 from .operations.network_interfaces_operations import NetworkInterfacesOperations
@@ -179,6 +180,8 @@ class NetworkManagementClient(SDKClient):
     :vartype inbound_nat_rules: azure.mgmt.network.v2018_08_01.operations.InboundNatRulesOperations
     :ivar load_balancer_load_balancing_rules: LoadBalancerLoadBalancingRules operations
     :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2018_08_01.operations.LoadBalancerLoadBalancingRulesOperations
+    :ivar load_balancer_outbound_rules: LoadBalancerOutboundRules operations
+    :vartype load_balancer_outbound_rules: azure.mgmt.network.v2018_08_01.operations.LoadBalancerOutboundRulesOperations
     :ivar load_balancer_network_interfaces: LoadBalancerNetworkInterfaces operations
     :vartype load_balancer_network_interfaces: azure.mgmt.network.v2018_08_01.operations.LoadBalancerNetworkInterfacesOperations
     :ivar load_balancer_probes: LoadBalancerProbes operations
@@ -331,6 +334,8 @@ class NetworkManagementClient(SDKClient):
         self.inbound_nat_rules = InboundNatRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_load_balancing_rules = LoadBalancerLoadBalancingRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.load_balancer_outbound_rules = LoadBalancerOutboundRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)

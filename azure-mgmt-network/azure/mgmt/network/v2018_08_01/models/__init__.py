@@ -578,6 +578,7 @@ from .backend_address_pool_paged import BackendAddressPoolPaged
 from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
 from .inbound_nat_rule_paged import InboundNatRulePaged
 from .load_balancing_rule_paged import LoadBalancingRulePaged
+from .outbound_rule_paged import OutboundRulePaged
 from .network_interface_paged import NetworkInterfacePaged
 from .probe_paged import ProbePaged
 from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
@@ -1004,6 +1005,7 @@ __all__ = [
     'FrontendIPConfigurationPaged',
     'InboundNatRulePaged',
     'LoadBalancingRulePaged',
+    'OutboundRulePaged',
     'NetworkInterfacePaged',
     'ProbePaged',
     'NetworkInterfaceIPConfigurationPaged',
