@@ -17,6 +17,8 @@ from .workflow_trigger_histories_operations import WorkflowTriggerHistoriesOpera
 from .workflow_runs_operations import WorkflowRunsOperations
 from .workflow_run_actions_operations import WorkflowRunActionsOperations
 from .workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
+from .workflow_run_action_repetitions_request_histories_operations import WorkflowRunActionRepetitionsRequestHistoriesOperations
+from .workflow_run_action_request_histories_operations import WorkflowRunActionRequestHistoriesOperations
 from .workflow_run_action_scope_repetitions_operations import WorkflowRunActionScopeRepetitionsOperations
 from .workflow_run_operations import WorkflowRunOperations
 from .integration_accounts_operations import IntegrationAccountsOperations
@@ -39,6 +41,8 @@ __all__ = [
     'WorkflowRunsOperations',
     'WorkflowRunActionsOperations',
     'WorkflowRunActionRepetitionsOperations',
+    'WorkflowRunActionRepetitionsRequestHistoriesOperations',
+    'WorkflowRunActionRequestHistoriesOperations',
     'WorkflowRunActionScopeRepetitionsOperations',
     'WorkflowRunOperations',
     'IntegrationAccountsOperations',

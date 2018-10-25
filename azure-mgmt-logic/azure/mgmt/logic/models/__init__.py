@@ -131,6 +131,10 @@ try:
     from .batch_release_criteria_py3 import BatchReleaseCriteria
     from .batch_configuration_properties_py3 import BatchConfigurationProperties
     from .batch_configuration_py3 import BatchConfiguration
+    from .request_py3 import Request
+    from .response_py3 import Response
+    from .request_history_py3 import RequestHistory
+    from .request_history_list_result_py3 import RequestHistoryListResult
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
@@ -253,6 +257,10 @@ except (SyntaxError, ImportError):
     from .batch_release_criteria import BatchReleaseCriteria
     from .batch_configuration_properties import BatchConfigurationProperties
     from .batch_configuration import BatchConfiguration
+    from .request import Request
+    from .response import Response
+    from .request_history import RequestHistory
+    from .request_history_list_result import RequestHistoryListResult
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -427,6 +435,10 @@ __all__ = [
     'BatchReleaseCriteria',
     'BatchConfigurationProperties',
     'BatchConfiguration',
+    'Request',
+    'Response',
+    'RequestHistory',
+    'RequestHistoryListResult',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
