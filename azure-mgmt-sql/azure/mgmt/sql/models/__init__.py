@@ -104,6 +104,7 @@ try:
     from .job_version_py3 import JobVersion
     from .long_term_retention_backup_py3 import LongTermRetentionBackup
     from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
+    from .managed_backup_short_term_retention_policy_py3 import ManagedBackupShortTermRetentionPolicy
     from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
     from .managed_database_py3 import ManagedDatabase
     from .managed_database_update_py3 import ManagedDatabaseUpdate
@@ -246,6 +247,7 @@ except (SyntaxError, ImportError):
     from .job_version import JobVersion
     from .long_term_retention_backup import LongTermRetentionBackup
     from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
+    from .managed_backup_short_term_retention_policy import ManagedBackupShortTermRetentionPolicy
     from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
     from .managed_database import ManagedDatabase
     from .managed_database_update import ManagedDatabaseUpdate
@@ -337,6 +339,7 @@ from .job_step_paged import JobStepPaged
 from .job_target_group_paged import JobTargetGroupPaged
 from .job_version_paged import JobVersionPaged
 from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
+from .managed_backup_short_term_retention_policy_paged import ManagedBackupShortTermRetentionPolicyPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
@@ -521,6 +524,7 @@ __all__ = [
     'JobVersion',
     'LongTermRetentionBackup',
     'BackupLongTermRetentionPolicy',
+    'ManagedBackupShortTermRetentionPolicy',
     'CompleteDatabaseRestoreDefinition',
     'ManagedDatabase',
     'ManagedDatabaseUpdate',
@@ -612,6 +616,7 @@ __all__ = [
     'JobTargetGroupPaged',
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
+    'ManagedBackupShortTermRetentionPolicyPaged',
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
