@@ -36,7 +36,7 @@ class TextAnalyticsClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/text/analytics/v2.0'
+        base_url = '{Endpoint}/text/analytics/v2.1-preview'
 
         super(TextAnalyticsClientConfiguration, self).__init__(base_url)
 
@@ -67,7 +67,7 @@ class TextAnalyticsClient(SDKClient):
         super(TextAnalyticsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v2.0'
+        self.api_version = 'v2.1-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -111,6 +111,7 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -119,9 +120,8 @@ class TextAnalyticsClient(SDKClient):
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -175,6 +175,7 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -183,9 +184,8 @@ class TextAnalyticsClient(SDKClient):
         body_content = self._serialize.body(input, 'BatchInput')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -242,6 +242,7 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -250,9 +251,8 @@ class TextAnalyticsClient(SDKClient):
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -273,9 +273,22 @@ class TextAnalyticsClient(SDKClient):
             self, documents=None, custom_headers=None, raw=False, **operation_config):
         """The API returns a list of recognized entities in a given document.
 
-        To get even more information on each recognized entity we recommend
-        using the Bing Entity Search API by querying for the recognized
-        entities names. See the <a
+        The API returns a list of recognized entities in a given document. To
+        get even more information on each recognized entity we recommend using
+        the Bing Entity Search API by querying for the recognized entities
+        names. See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
+        languages in Text Analytics API</a> for the list of enabled
+        languages.The API returns a list of known entities and general named
+        entities ("Person", "Location", "Organization" etc) in a given
+        document. Known entities are returned with Wikipedia Id and Wikipedia
+        link, and also Bing Id which can be used in Bing Entity Search API.
+        General named entities are returned with entity types. If a general
+        named entity is also a known entity, then all information regarding it
+        (Wikipedia Id, Bing Id, entity type etc) will be returned. See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking#supported-types-for-named-entity-recognition">Supported
+        Entity Types in Text Analytics API</a> for the list of supported Entity
+        Types. See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
         languages in Text Analytics API</a> for the list of enabled languages.
 
@@ -308,6 +321,7 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -316,9 +330,8 @@ class TextAnalyticsClient(SDKClient):
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
