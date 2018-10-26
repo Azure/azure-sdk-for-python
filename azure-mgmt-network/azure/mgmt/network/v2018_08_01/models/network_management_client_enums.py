@@ -272,6 +272,7 @@ class ExpressRouteCircuitSkuTier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
+    basic = "Basic"
 
 
 class ExpressRouteCircuitSkuFamily(str, Enum):
