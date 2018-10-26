@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class JobAddParameter(Model):
     """An Azure Batch job to add.
 
-    :param id: A string that uniquely identifies the job within the account.
-     The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The
-     ID is case-preserving and case-insensitive (that is, you may not have two
-     IDs within an account that differ only by case).
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the job within the
+     account. The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores, and cannot contain more than 64
+     characters. The ID is case-preserving and case-insensitive (that is, you
+     may not have two IDs within an account that differ only by case).
     :type id: str
     :param display_name: The display name for the job. The display name need
      not be unique and can contain any Unicode characters up to a maximum
@@ -64,8 +66,8 @@ class JobAddParameter(Model):
      here by specifying the same setting name with a different value.
     :type common_environment_settings:
      list[~azure.batch.models.EnvironmentSetting]
-    :param pool_info: The pool on which the Batch service runs the job's
-     tasks.
+    :param pool_info: Required. The pool on which the Batch service runs the
+     job's tasks.
     :type pool_info: ~azure.batch.models.PoolInformation
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. Note that if a job
@@ -115,18 +117,18 @@ class JobAddParameter(Model):
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
     }
 
-    def __init__(self, id, pool_info, display_name=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, uses_task_dependencies=None):
-        super(JobAddParameter, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.priority = priority
-        self.constraints = constraints
-        self.job_manager_task = job_manager_task
-        self.job_preparation_task = job_preparation_task
-        self.job_release_task = job_release_task
-        self.common_environment_settings = common_environment_settings
-        self.pool_info = pool_info
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.on_task_failure = on_task_failure
-        self.metadata = metadata
-        self.uses_task_dependencies = uses_task_dependencies
+    def __init__(self, **kwargs):
+        super(JobAddParameter, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.priority = kwargs.get('priority', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.job_manager_task = kwargs.get('job_manager_task', None)
+        self.job_preparation_task = kwargs.get('job_preparation_task', None)
+        self.job_release_task = kwargs.get('job_release_task', None)
+        self.common_environment_settings = kwargs.get('common_environment_settings', None)
+        self.pool_info = kwargs.get('pool_info', None)
+        self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
+        self.on_task_failure = kwargs.get('on_task_failure', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)

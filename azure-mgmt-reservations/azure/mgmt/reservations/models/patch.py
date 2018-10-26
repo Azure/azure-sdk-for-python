@@ -24,12 +24,15 @@ class Patch(Model):
      'NotSupported'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
+    :param name: Name of the Reservation
+    :type name: str
     """
 
     _attribute_map = {
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
+        'name': {'key': 'properties.name', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -37,3 +40,4 @@ class Patch(Model):
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
+        self.name = kwargs.get('name', None)

@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class IdentifyResult(Model):
     """Response body for identify face operation.
 
-    :param face_id: FaceId of the query face
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_id: Required. FaceId of the query face
     :type face_id: str
-    :param candidates: Identified person candidates for that face (ranked by
-     confidence). Array size should be no larger than input
+    :param candidates: Required. Identified person candidates for that face
+     (ranked by confidence). Array size should be no larger than input
      maxNumOfCandidatesReturned. If no person is identified, will return an
      empty array.
     :type candidates:
@@ -35,7 +37,7 @@ class IdentifyResult(Model):
         'candidates': {'key': 'candidates', 'type': '[IdentifyCandidate]'},
     }
 
-    def __init__(self, face_id, candidates):
-        super(IdentifyResult, self).__init__()
-        self.face_id = face_id
-        self.candidates = candidates
+    def __init__(self, **kwargs):
+        super(IdentifyResult, self).__init__(**kwargs)
+        self.face_id = kwargs.get('face_id', None)
+        self.candidates = kwargs.get('candidates', None)

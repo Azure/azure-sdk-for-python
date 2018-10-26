@@ -47,7 +47,7 @@ class CertificateEmail(ProxyOnlyResource):
         'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, kind=None, email_id=None, time_stamp=None):
-        super(CertificateEmail, self).__init__(kind=kind)
-        self.email_id = email_id
-        self.time_stamp = time_stamp
+    def __init__(self, **kwargs):
+        super(CertificateEmail, self).__init__(**kwargs)
+        self.email_id = kwargs.get('email_id', None)
+        self.time_stamp = kwargs.get('time_stamp', None)

@@ -17,8 +17,8 @@ class ServiceSku(Model):
 
     :param name: The unique name of the SKU, such as 'P3'
     :type name: str
-    :param tier: The tier of the SKU, such as 'Free', 'Basic', 'Standard', or
-     'Premium'
+    :param tier: The tier of the SKU, such as 'Basic', 'General Purpose', or
+     'Business Critical'
     :type tier: str
     :param family: The SKU family, used when the service has multiple
      performance classes within a tier, such as 'A', 'D', etc. for virtual

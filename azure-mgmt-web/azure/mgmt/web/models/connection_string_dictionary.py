@@ -45,6 +45,6 @@ class ConnectionStringDictionary(ProxyOnlyResource):
         'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
     }
 
-    def __init__(self, kind=None, properties=None):
-        super(ConnectionStringDictionary, self).__init__(kind=kind)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ConnectionStringDictionary, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

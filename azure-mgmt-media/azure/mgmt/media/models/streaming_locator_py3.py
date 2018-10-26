@@ -28,34 +28,31 @@ class StreamingLocator(ProxyResource):
     :vartype type: str
     :param asset_name: Required. Asset Name
     :type asset_name: str
-    :ivar created: Creation time of Streaming Locator
+    :ivar created: The creation time of the Streaming Locator.
     :vartype created: datetime
-    :param start_time: StartTime of Streaming Locator
+    :param start_time: The start time of the Streaming Locator.
     :type start_time: datetime
-    :param end_time: EndTime of Streaming Locator
+    :param end_time: The end time of the Streaming Locator.
     :type end_time: datetime
-    :param streaming_locator_id: StreamingLocatorId of Streaming Locator
+    :param streaming_locator_id: The StreamingLocatorId of the Streaming
+     Locator.
     :type streaming_locator_id: str
-    :param streaming_policy_name: Required. Streaming policy name used by this
-     streaming locator. Either specify the name of streaming policy you created
-     or use one of the predefined streaming polices. The predefined streaming
-     policies available are: 'Predefined_DownloadOnly',
+    :param streaming_policy_name: Required. Name of the Streaming Policy used
+     by this Streaming Locator. Either specify the name of Streaming Policy you
+     created or use one of the predefined Streaming Policies. The predefined
+     Streaming Policies available are: 'Predefined_DownloadOnly',
      'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming',
-     'Predefined_ClearKey', 'Predefined_SecureStreaming' and
-     'Predefined_SecureStreamingWithFairPlay'
+     'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
+     'Predefined_MultiDrmStreaming'
     :type streaming_policy_name: str
-    :param default_content_key_policy_name: Default ContentKeyPolicy used by
-     this Streaming Locator
+    :param default_content_key_policy_name: Name of the default
+     ContentKeyPolicy used by this Streaming Locator.
     :type default_content_key_policy_name: str
-    :param content_keys: ContentKeys used by this Streaming Locator
+    :param content_keys: The ContentKeys used by this Streaming Locator.
     :type content_keys:
      list[~azure.mgmt.media.models.StreamingLocatorContentKey]
-    :param alternative_media_id: An Alternative Media Identifier associated
-     with the StreamingLocator.  This identifier can be used to distinguish
-     different StreamingLocators for the same Asset for authorization purposes
-     in the CustomLicenseAcquisitionUrlTemplate or the
-     CustomKeyAcquisitionUrlTemplate of the StreamingPolicy specified in the
-     StreamingPolicyName field.
+    :param alternative_media_id: Alternative Media ID of this Streaming
+     Locator
     :type alternative_media_id: str
     """
 
