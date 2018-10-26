@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.signal_roperations import SignalROperations
+from .operations.usages_operations import UsagesOperations
 from . import models
 
 
@@ -62,6 +63,8 @@ class SignalRManagementClient(SDKClient):
     :vartype operations: azure.mgmt.signalr.operations.Operations
     :ivar signal_r: SignalR operations
     :vartype signal_r: azure.mgmt.signalr.operations.SignalROperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.signalr.operations.UsagesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,4 +90,6 @@ class SignalRManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.signal_r = SignalROperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)

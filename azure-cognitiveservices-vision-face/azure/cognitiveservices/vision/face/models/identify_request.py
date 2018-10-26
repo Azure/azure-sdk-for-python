@@ -15,13 +15,21 @@ from msrest.serialization import Model
 class IdentifyRequest(Model):
     """Request body for identify face operation.
 
-    :param person_group_id: PersonGroupId of the target person group, created
-     by PersonGroups.Create
-    :type person_group_id: str
-    :param face_ids: Array of query faces faceIds, created by the Face -
-     Detect. Each of the faces are identified independently. The valid number
-     of faceIds is between [1, 10].
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_ids: Required. Array of query faces faceIds, created by the
+     Face - Detect. Each of the faces are identified independently. The valid
+     number of faceIds is between [1, 10].
     :type face_ids: list[str]
+    :param person_group_id: PersonGroupId of the target person group, created
+     by PersonGroup - Create. Parameter personGroupId and largePersonGroupId
+     should not be provided at the same time.
+    :type person_group_id: str
+    :param large_person_group_id: LargePersonGroupId of the target large
+     person group, created by LargePersonGroup - Create. Parameter
+     personGroupId and largePersonGroupId should not be provided at the same
+     time.
+    :type large_person_group_id: str
     :param max_num_of_candidates_returned: The range of
      maxNumOfCandidatesReturned is between 1 and 5 (default is 1). Default
      value: 1 .
@@ -33,21 +41,24 @@ class IdentifyRequest(Model):
     """
 
     _validation = {
-        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'face_ids': {'required': True, 'max_items': 10},
+        'person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'large_person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'max_num_of_candidates_returned': {'maximum': 5, 'minimum': 1},
     }
 
     _attribute_map = {
-        'person_group_id': {'key': 'personGroupId', 'type': 'str'},
         'face_ids': {'key': 'faceIds', 'type': '[str]'},
+        'person_group_id': {'key': 'personGroupId', 'type': 'str'},
+        'large_person_group_id': {'key': 'largePersonGroupId', 'type': 'str'},
         'max_num_of_candidates_returned': {'key': 'maxNumOfCandidatesReturned', 'type': 'int'},
         'confidence_threshold': {'key': 'confidenceThreshold', 'type': 'float'},
     }
 
-    def __init__(self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None):
-        super(IdentifyRequest, self).__init__()
-        self.person_group_id = person_group_id
-        self.face_ids = face_ids
-        self.max_num_of_candidates_returned = max_num_of_candidates_returned
-        self.confidence_threshold = confidence_threshold
+    def __init__(self, **kwargs):
+        super(IdentifyRequest, self).__init__(**kwargs)
+        self.face_ids = kwargs.get('face_ids', None)
+        self.person_group_id = kwargs.get('person_group_id', None)
+        self.large_person_group_id = kwargs.get('large_person_group_id', None)
+        self.max_num_of_candidates_returned = kwargs.get('max_num_of_candidates_returned', 1)
+        self.confidence_threshold = kwargs.get('confidence_threshold', None)

@@ -36,10 +36,10 @@ class PasswordCredential(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, start_date=None, end_date=None, key_id=None, value=None):
-        super(PasswordCredential, self).__init__()
-        self.additional_properties = additional_properties
-        self.start_date = start_date
-        self.end_date = end_date
-        self.key_id = key_id
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PasswordCredential, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.start_date = kwargs.get('start_date', None)
+        self.end_date = kwargs.get('end_date', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.value = kwargs.get('value', None)
