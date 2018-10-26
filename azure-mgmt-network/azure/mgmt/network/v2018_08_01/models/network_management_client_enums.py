@@ -46,6 +46,12 @@ class RouteNextHopType(str, Enum):
     none = "None"
 
 
+class NatGatewaySkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
 class PublicIPAddressSkuName(str, Enum):
 
     basic = "Basic"
@@ -56,6 +62,11 @@ class IPVersion(str, Enum):
 
     ipv4 = "IPv4"
     ipv6 = "IPv6"
+
+
+class PublicIPPrefixSkuName(str, Enum):
+
+    standard = "Standard"
 
 
 class TransportProtocol(str, Enum):
@@ -480,11 +491,6 @@ class VerbosityLevel(str, Enum):
     normal = "Normal"
     minimum = "Minimum"
     full = "Full"
-
-
-class PublicIPPrefixSkuName(str, Enum):
-
-    standard = "Standard"
 
 
 class VirtualNetworkPeeringState(str, Enum):

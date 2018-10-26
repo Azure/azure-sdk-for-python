@@ -21,14 +21,19 @@ try:
     from .network_security_group_py3 import NetworkSecurityGroup
     from .route_py3 import Route
     from .route_table_py3 import RouteTable
-    from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
-    from .service_endpoint_policy_definition_py3 import ServiceEndpointPolicyDefinition
-    from .service_endpoint_policy_py3 import ServiceEndpointPolicy
+    from .nat_gateway_sku_py3 import NatGatewaySku
     from .public_ip_address_sku_py3 import PublicIPAddressSku
+    from .ip_configuration_py3 import IPConfiguration
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
     from .ip_tag_py3 import IpTag
     from .public_ip_address_py3 import PublicIPAddress
-    from .ip_configuration_py3 import IPConfiguration
+    from .public_ip_prefix_sku_py3 import PublicIPPrefixSku
+    from .referenced_public_ip_address_py3 import ReferencedPublicIpAddress
+    from .public_ip_prefix_py3 import PublicIPPrefix
+    from .nat_gateway_py3 import NatGateway
+    from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition_py3 import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy_py3 import ServiceEndpointPolicy
     from .ip_configuration_profile_py3 import IPConfigurationProfile
     from .resource_navigation_link_py3 import ResourceNavigationLink
     from .service_association_link_py3 import ServiceAssociationLink
@@ -222,9 +227,6 @@ try:
     from .log_specification_py3 import LogSpecification
     from .operation_properties_format_service_specification_py3 import OperationPropertiesFormatServiceSpecification
     from .operation_py3 import Operation
-    from .public_ip_prefix_sku_py3 import PublicIPPrefixSku
-    from .referenced_public_ip_address_py3 import ReferencedPublicIpAddress
-    from .public_ip_prefix_py3 import PublicIPPrefix
     from .patch_route_filter_rule_py3 import PatchRouteFilterRule
     from .patch_route_filter_py3 import PatchRouteFilter
     from .bgp_community_py3 import BGPCommunity
@@ -294,14 +296,19 @@ except (SyntaxError, ImportError):
     from .network_security_group import NetworkSecurityGroup
     from .route import Route
     from .route_table import RouteTable
-    from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
-    from .service_endpoint_policy_definition import ServiceEndpointPolicyDefinition
-    from .service_endpoint_policy import ServiceEndpointPolicy
+    from .nat_gateway_sku import NatGatewaySku
     from .public_ip_address_sku import PublicIPAddressSku
+    from .ip_configuration import IPConfiguration
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
     from .ip_tag import IpTag
     from .public_ip_address import PublicIPAddress
-    from .ip_configuration import IPConfiguration
+    from .public_ip_prefix_sku import PublicIPPrefixSku
+    from .referenced_public_ip_address import ReferencedPublicIpAddress
+    from .public_ip_prefix import PublicIPPrefix
+    from .nat_gateway import NatGateway
+    from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy import ServiceEndpointPolicy
     from .ip_configuration_profile import IPConfigurationProfile
     from .resource_navigation_link import ResourceNavigationLink
     from .service_association_link import ServiceAssociationLink
@@ -495,9 +502,6 @@ except (SyntaxError, ImportError):
     from .log_specification import LogSpecification
     from .operation_properties_format_service_specification import OperationPropertiesFormatServiceSpecification
     from .operation import Operation
-    from .public_ip_prefix_sku import PublicIPPrefixSku
-    from .referenced_public_ip_address import ReferencedPublicIpAddress
-    from .public_ip_prefix import PublicIPPrefix
     from .patch_route_filter_rule import PatchRouteFilterRule
     from .patch_route_filter import PatchRouteFilter
     from .bgp_community import BGPCommunity
@@ -622,8 +626,10 @@ from .network_management_client_enums import (
     SecurityRuleAccess,
     SecurityRuleDirection,
     RouteNextHopType,
+    NatGatewaySkuName,
     PublicIPAddressSkuName,
     IPVersion,
+    PublicIPPrefixSkuName,
     TransportProtocol,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
@@ -681,7 +687,6 @@ from .network_management_client_enums import (
     ConnectionState,
     EvaluationState,
     VerbosityLevel,
-    PublicIPPrefixSkuName,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
@@ -720,14 +725,19 @@ __all__ = [
     'NetworkSecurityGroup',
     'Route',
     'RouteTable',
-    'ServiceEndpointPropertiesFormat',
-    'ServiceEndpointPolicyDefinition',
-    'ServiceEndpointPolicy',
+    'NatGatewaySku',
     'PublicIPAddressSku',
+    'IPConfiguration',
     'PublicIPAddressDnsSettings',
     'IpTag',
     'PublicIPAddress',
-    'IPConfiguration',
+    'PublicIPPrefixSku',
+    'ReferencedPublicIpAddress',
+    'PublicIPPrefix',
+    'NatGateway',
+    'ServiceEndpointPropertiesFormat',
+    'ServiceEndpointPolicyDefinition',
+    'ServiceEndpointPolicy',
     'IPConfigurationProfile',
     'ResourceNavigationLink',
     'ServiceAssociationLink',
@@ -921,9 +931,6 @@ __all__ = [
     'LogSpecification',
     'OperationPropertiesFormatServiceSpecification',
     'Operation',
-    'PublicIPPrefixSku',
-    'ReferencedPublicIpAddress',
-    'PublicIPPrefix',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -1047,8 +1054,10 @@ __all__ = [
     'SecurityRuleAccess',
     'SecurityRuleDirection',
     'RouteNextHopType',
+    'NatGatewaySkuName',
     'PublicIPAddressSkuName',
     'IPVersion',
+    'PublicIPPrefixSkuName',
     'TransportProtocol',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
@@ -1106,7 +1115,6 @@ __all__ = [
     'ConnectionState',
     'EvaluationState',
     'VerbosityLevel',
-    'PublicIPPrefixSkuName',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',

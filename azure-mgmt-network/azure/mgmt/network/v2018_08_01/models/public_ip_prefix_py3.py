@@ -36,6 +36,8 @@ class PublicIPPrefix(Resource):
      ~azure.mgmt.network.v2018_08_01.models.IPVersion
     :param ip_tags: The list of tags associated with the public IP prefix.
     :type ip_tags: list[~azure.mgmt.network.v2018_08_01.models.IpTag]
+    :ivar nat_gateway: Nat gateway associated with this subnet.
+    :vartype nat_gateway: ~azure.mgmt.network.v2018_08_01.models.NatGateway
     :param prefix_length: The Length of the Public IP Prefix.
     :type prefix_length: int
     :param ip_prefix: The allocated Prefix
@@ -60,6 +62,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'nat_gateway': {'readonly': True},
     }
 
     _attribute_map = {
@@ -71,6 +74,7 @@ class PublicIPPrefix(Resource):
         'sku': {'key': 'sku', 'type': 'PublicIPPrefixSku'},
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'NatGateway'},
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
@@ -85,6 +89,7 @@ class PublicIPPrefix(Resource):
         self.sku = sku
         self.public_ip_address_version = public_ip_address_version
         self.ip_tags = ip_tags
+        self.nat_gateway = None
         self.prefix_length = prefix_length
         self.ip_prefix = ip_prefix
         self.public_ip_addresses = public_ip_addresses

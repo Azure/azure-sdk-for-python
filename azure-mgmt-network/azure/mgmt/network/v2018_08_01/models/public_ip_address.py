@@ -49,6 +49,8 @@ class PublicIPAddress(Resource):
      ~azure.mgmt.network.v2018_08_01.models.PublicIPAddressDnsSettings
     :param ip_tags: The list of tags associated with the public IP address.
     :type ip_tags: list[~azure.mgmt.network.v2018_08_01.models.IpTag]
+    :ivar nat_gateway: Nat gateway associated with this subnet.
+    :vartype nat_gateway: ~azure.mgmt.network.v2018_08_01.models.NatGateway
     :param ip_address: The IP address associated with the public IP address
      resource.
     :type ip_address: str
@@ -75,6 +77,7 @@ class PublicIPAddress(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'ip_configuration': {'readonly': True},
+        'nat_gateway': {'readonly': True},
     }
 
     _attribute_map = {
@@ -89,6 +92,7 @@ class PublicIPAddress(Resource):
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'NatGateway'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
@@ -106,6 +110,7 @@ class PublicIPAddress(Resource):
         self.ip_configuration = None
         self.dns_settings = kwargs.get('dns_settings', None)
         self.ip_tags = kwargs.get('ip_tags', None)
+        self.nat_gateway = None
         self.ip_address = kwargs.get('ip_address', None)
         self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
