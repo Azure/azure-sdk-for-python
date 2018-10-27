@@ -40,7 +40,7 @@ def create_venv_with_package(packages):
             "pip",
             "install",
         ]
-        pip_call += packages
+        subprocess.check_call(pip_call + ['-U', 'pip'])
         if packages:
-            subprocess.check_call(pip_call)
+            subprocess.check_call(pip_call + packages)
         yield myenv

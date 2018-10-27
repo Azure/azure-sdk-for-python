@@ -21,6 +21,9 @@ class TaskStepUpdateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -30,6 +33,7 @@ class TaskStepUpdateParameters(Model):
     }
 
     _attribute_map = {
+        'context_path': {'key': 'contextPath', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -39,4 +43,5 @@ class TaskStepUpdateParameters(Model):
 
     def __init__(self, **kwargs):
         super(TaskStepUpdateParameters, self).__init__(**kwargs)
+        self.context_path = kwargs.get('context_path', None)
         self.type = None
