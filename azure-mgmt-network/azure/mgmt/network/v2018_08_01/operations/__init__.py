@@ -35,6 +35,7 @@ from .load_balancer_backend_address_pools_operations import LoadBalancerBackendA
 from .load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
 from .inbound_nat_rules_operations import InboundNatRulesOperations
 from .load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalancingRulesOperations
+from .load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .load_balancer_probes_operations import LoadBalancerProbesOperations
 from .network_interfaces_operations import NetworkInterfacesOperations
@@ -103,6 +104,7 @@ __all__ = [
     'LoadBalancerFrontendIPConfigurationsOperations',
     'InboundNatRulesOperations',
     'LoadBalancerLoadBalancingRulesOperations',
+    'LoadBalancerOutboundRulesOperations',
     'LoadBalancerNetworkInterfacesOperations',
     'LoadBalancerProbesOperations',
     'NetworkInterfacesOperations',

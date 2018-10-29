@@ -1193,6 +1193,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def load_balancer_outbound_rules(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2018_08_01.operations.LoadBalancerOutboundRulesOperations>`
+        """
+        api_version = self._get_api_version('load_balancer_outbound_rules')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import LoadBalancerOutboundRulesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def load_balancer_probes(self):
         """Instance depends on the API version:
 
