@@ -110,6 +110,8 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
            * 2015-06-01: :mod:`v2015_06_01.models<azure.mgmt.authorization.v2015_06_01.models>`
            * 2015-07-01: :mod:`v2015_07_01.models<azure.mgmt.authorization.v2015_07_01.models>`
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.authorization.v2018_01_01_preview.models>`
+           * 2018-07-01-preview: :mod:`v2018_07_01_preview.models<azure.mgmt.authorization.v2018_07_01_preview.models>`
+           * 2018-09-01-preview: :mod:`v2018_09_01_preview.models<azure.mgmt.authorization.v2018_09_01_preview.models>`
         """
         if api_version == '2015-06-01':
             from .v2015_06_01 import models
@@ -119,6 +121,12 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
             return models
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview import models
+            return models
+        elif api_version == '2018-07-01-preview':
+            from .v2018_07_01_preview import models
+            return models
+        elif api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -136,17 +144,33 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def deny_assignments(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01-preview: :class:`DenyAssignmentsOperations<azure.mgmt.authorization.v2018_07_01_preview.operations.DenyAssignmentsOperations>`
+        """
+        api_version = self._get_api_version('deny_assignments')
+        if api_version == '2018-07-01-preview':
+            from .v2018_07_01_preview.operations import DenyAssignmentsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def permissions(self):
         """Instance depends on the API version:
 
            * 2015-07-01: :class:`PermissionsOperations<azure.mgmt.authorization.v2015_07_01.operations.PermissionsOperations>`
            * 2018-01-01-preview: :class:`PermissionsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.PermissionsOperations>`
+           * 2018-09-01-preview: :class:`PermissionsOperations<azure.mgmt.authorization.v2018_09_01_preview.operations.PermissionsOperations>`
         """
         api_version = self._get_api_version('permissions')
         if api_version == '2015-07-01':
             from .v2015_07_01.operations import PermissionsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import PermissionsOperations as OperationClass
+        elif api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import PermissionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -157,12 +181,15 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2015-07-01: :class:`ProviderOperationsMetadataOperations<azure.mgmt.authorization.v2015_07_01.operations.ProviderOperationsMetadataOperations>`
            * 2018-01-01-preview: :class:`ProviderOperationsMetadataOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.ProviderOperationsMetadataOperations>`
+           * 2018-09-01-preview: :class:`ProviderOperationsMetadataOperations<azure.mgmt.authorization.v2018_09_01_preview.operations.ProviderOperationsMetadataOperations>`
         """
         api_version = self._get_api_version('provider_operations_metadata')
         if api_version == '2015-07-01':
             from .v2015_07_01.operations import ProviderOperationsMetadataOperations as OperationClass
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ProviderOperationsMetadataOperations as OperationClass
+        elif api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import ProviderOperationsMetadataOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -173,12 +200,15 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2015-07-01: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations>`
            * 2018-01-01-preview: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.RoleAssignmentsOperations>`
+           * 2018-09-01-preview: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2018_09_01_preview.operations.RoleAssignmentsOperations>`
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '2015-07-01':
             from .v2015_07_01.operations import RoleAssignmentsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import RoleAssignmentsOperations as OperationClass
+        elif api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -189,12 +219,15 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2015-07-01: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2015_07_01.operations.RoleDefinitionsOperations>`
            * 2018-01-01-preview: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.RoleDefinitionsOperations>`
+           * 2018-09-01-preview: :class:`RoleDefinitionsOperations<azure.mgmt.authorization.v2018_09_01_preview.operations.RoleDefinitionsOperations>`
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '2015-07-01':
             from .v2015_07_01.operations import RoleDefinitionsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import RoleDefinitionsOperations as OperationClass
+        elif api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
