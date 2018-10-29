@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.52.0 (2018-10-29)
++++++++++++++++++++
+
+**Bugfix**
+
+- Add missing required_resource_access in Application
+
 0.51.1 (2018-10-16)
 +++++++++++++++++++
 
