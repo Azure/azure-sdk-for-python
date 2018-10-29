@@ -108,15 +108,15 @@ class LoadBalancerOutboundRulesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/outboundRules'}
 
     def get(
-            self, resource_group_name, load_balancer_name, load_balancing_rule_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, load_balancer_name, outbound_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets the specified load balancer outbound rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param load_balancer_name: The name of the load balancer.
         :type load_balancer_name: str
-        :param load_balancing_rule_name: The name of the outbound rule.
-        :type load_balancing_rule_name: str
+        :param outbound_rule_name: The name of the outbound rule.
+        :type outbound_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -132,7 +132,7 @@ class LoadBalancerOutboundRulesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
-            'loadBalancingRuleName': self._serialize.url("load_balancing_rule_name", load_balancing_rule_name, 'str'),
+            'outboundRuleName': self._serialize.url("outbound_rule_name", outbound_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
