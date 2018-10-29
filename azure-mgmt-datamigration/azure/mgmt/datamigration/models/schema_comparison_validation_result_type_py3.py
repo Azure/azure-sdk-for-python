@@ -15,26 +15,17 @@ from msrest.serialization import Model
 class SchemaComparisonValidationResultType(Model):
     """Description about the errors happen while performing migration validation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar object_name: Name of the object that has the difference
-    :vartype object_name: str
-    :ivar object_type: Type of the object that has the difference. e.g
+    :param object_name: Name of the object that has the difference
+    :type object_name: str
+    :param object_type: Type of the object that has the difference. e.g
      (Table/View/StoredProcedure). Possible values include: 'StoredProcedures',
      'Table', 'User', 'View', 'Function'
-    :vartype object_type: str or ~azure.mgmt.datamigration.models.ObjectType
-    :ivar update_action: Update action type with respect to target. Possible
+    :type object_type: str or ~azure.mgmt.datamigration.models.ObjectType
+    :param update_action: Update action type with respect to target. Possible
      values include: 'DeletedOnTarget', 'ChangedOnTarget', 'AddedOnTarget'
-    :vartype update_action: str or
+    :type update_action: str or
      ~azure.mgmt.datamigration.models.UpdateActionType
     """
-
-    _validation = {
-        'object_name': {'readonly': True},
-        'object_type': {'readonly': True},
-        'update_action': {'readonly': True},
-    }
 
     _attribute_map = {
         'object_name': {'key': 'objectName', 'type': 'str'},
@@ -42,8 +33,8 @@ class SchemaComparisonValidationResultType(Model):
         'update_action': {'key': 'updateAction', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, object_name: str=None, object_type=None, update_action=None, **kwargs) -> None:
         super(SchemaComparisonValidationResultType, self).__init__(**kwargs)
-        self.object_name = None
-        self.object_type = None
-        self.update_action = None
+        self.object_name = object_name
+        self.object_type = object_type
+        self.update_action = update_action

@@ -40,7 +40,8 @@ class ManagedCluster(Resource):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the master pool.
     :vartype fqdn: str
-    :param agent_pool_profiles: Properties of the agent pool.
+    :param agent_pool_profiles: Properties of the agent pool. Currently only
+     one agent pool can exist.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.ManagedClusterAgentPoolProfile]
     :param linux_profile: Profile for Linux VMs in the container service

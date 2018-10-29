@@ -18,13 +18,18 @@ class LiveEventInput(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param streaming_protocol: Required. The streaming protocol for the Live
-     Event. Possible values include: 'FragmentedMP4', 'RTMP'
+     Event.  This is specified at creation time and cannot be updated. Possible
+     values include: 'FragmentedMP4', 'RTMP'
     :type streaming_protocol: str or
      ~azure.mgmt.media.models.LiveEventInputProtocol
+    :param access_control: The access control for LiveEvent Input.
+    :type access_control: ~azure.mgmt.media.models.LiveEventInputAccessControl
     :param key_frame_interval_duration: ISO 8601 timespan duration of the key
      frame interval duration.
     :type key_frame_interval_duration: str
-    :param access_token: The access token.
+    :param access_token: A unique identifier for a stream.  This can be
+     specified at creation time but cannot be updated.  If omitted, the service
+     will generate a unique value.
     :type access_token: str
     :param endpoints: The input endpoints for the Live Event.
     :type endpoints: list[~azure.mgmt.media.models.LiveEventEndpoint]
@@ -36,6 +41,7 @@ class LiveEventInput(Model):
 
     _attribute_map = {
         'streaming_protocol': {'key': 'streamingProtocol', 'type': 'LiveEventInputProtocol'},
+        'access_control': {'key': 'accessControl', 'type': 'LiveEventInputAccessControl'},
         'key_frame_interval_duration': {'key': 'keyFrameIntervalDuration', 'type': 'str'},
         'access_token': {'key': 'accessToken', 'type': 'str'},
         'endpoints': {'key': 'endpoints', 'type': '[LiveEventEndpoint]'},
@@ -44,6 +50,7 @@ class LiveEventInput(Model):
     def __init__(self, **kwargs):
         super(LiveEventInput, self).__init__(**kwargs)
         self.streaming_protocol = kwargs.get('streaming_protocol', None)
+        self.access_control = kwargs.get('access_control', None)
         self.key_frame_interval_duration = kwargs.get('key_frame_interval_duration', None)
         self.access_token = kwargs.get('access_token', None)
         self.endpoints = kwargs.get('endpoints', None)

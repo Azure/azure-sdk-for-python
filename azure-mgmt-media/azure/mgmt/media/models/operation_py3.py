@@ -21,6 +21,10 @@ class Operation(Model):
     :type name: str
     :param display: The operation display name.
     :type display: ~azure.mgmt.media.models.OperationDisplay
+    :param origin: Origin of the operation.
+    :type origin: str
+    :param properties: Operation properties format.
+    :type properties: ~azure.mgmt.media.models.MetricProperties
     """
 
     _validation = {
@@ -30,9 +34,13 @@ class Operation(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'MetricProperties'},
     }
 
-    def __init__(self, *, name: str, display=None, **kwargs) -> None:
+    def __init__(self, *, name: str, display=None, origin: str=None, properties=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
+        self.origin = origin
+        self.properties = properties
