@@ -24,6 +24,6 @@ class FormulaPropertiesFromVm(Model):
         'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
     }
 
-    def __init__(self, lab_vm_id=None):
-        super(FormulaPropertiesFromVm, self).__init__()
-        self.lab_vm_id = lab_vm_id
+    def __init__(self, **kwargs):
+        super(FormulaPropertiesFromVm, self).__init__(**kwargs)
+        self.lab_vm_id = kwargs.get('lab_vm_id', None)

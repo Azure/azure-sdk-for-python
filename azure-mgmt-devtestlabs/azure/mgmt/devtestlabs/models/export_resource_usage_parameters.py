@@ -29,7 +29,7 @@ class ExportResourceUsageParameters(Model):
         'usage_start_date': {'key': 'usageStartDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, blob_storage_absolute_sas_uri=None, usage_start_date=None):
-        super(ExportResourceUsageParameters, self).__init__()
-        self.blob_storage_absolute_sas_uri = blob_storage_absolute_sas_uri
-        self.usage_start_date = usage_start_date
+    def __init__(self, **kwargs):
+        super(ExportResourceUsageParameters, self).__init__(**kwargs)
+        self.blob_storage_absolute_sas_uri = kwargs.get('blob_storage_absolute_sas_uri', None)
+        self.usage_start_date = kwargs.get('usage_start_date', None)

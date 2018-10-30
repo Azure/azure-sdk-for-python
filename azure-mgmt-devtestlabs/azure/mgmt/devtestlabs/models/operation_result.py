@@ -41,8 +41,8 @@ class OperationResult(Model):
         'error': {'key': 'error', 'type': 'OperationError'},
     }
 
-    def __init__(self, status=None, status_code=None, error=None):
-        super(OperationResult, self).__init__()
-        self.status = status
-        self.status_code = status_code
-        self.error = error
+    def __init__(self, **kwargs):
+        super(OperationResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.status_code = kwargs.get('status_code', None)
+        self.error = kwargs.get('error', None)

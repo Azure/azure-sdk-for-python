@@ -28,7 +28,7 @@ class PolicySetResult(Model):
         'policy_violations': {'key': 'policyViolations', 'type': '[PolicyViolation]'},
     }
 
-    def __init__(self, has_error=None, policy_violations=None):
-        super(PolicySetResult, self).__init__()
-        self.has_error = has_error
-        self.policy_violations = policy_violations
+    def __init__(self, **kwargs):
+        super(PolicySetResult, self).__init__(**kwargs)
+        self.has_error = kwargs.get('has_error', None)
+        self.policy_violations = kwargs.get('policy_violations', None)

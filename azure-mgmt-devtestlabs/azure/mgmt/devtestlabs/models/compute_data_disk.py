@@ -33,9 +33,9 @@ class ComputeDataDisk(Model):
         'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
     }
 
-    def __init__(self, name=None, disk_uri=None, managed_disk_id=None, disk_size_gi_b=None):
-        super(ComputeDataDisk, self).__init__()
-        self.name = name
-        self.disk_uri = disk_uri
-        self.managed_disk_id = managed_disk_id
-        self.disk_size_gi_b = disk_size_gi_b
+    def __init__(self, **kwargs):
+        super(ComputeDataDisk, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.disk_uri = kwargs.get('disk_uri', None)
+        self.managed_disk_id = kwargs.get('managed_disk_id', None)
+        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)

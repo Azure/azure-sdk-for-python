@@ -34,8 +34,8 @@ class DataDiskProperties(Model):
         'host_caching': {'key': 'hostCaching', 'type': 'str'},
     }
 
-    def __init__(self, attach_new_data_disk_options=None, existing_lab_disk_id=None, host_caching=None):
-        super(DataDiskProperties, self).__init__()
-        self.attach_new_data_disk_options = attach_new_data_disk_options
-        self.existing_lab_disk_id = existing_lab_disk_id
-        self.host_caching = host_caching
+    def __init__(self, **kwargs):
+        super(DataDiskProperties, self).__init__(**kwargs)
+        self.attach_new_data_disk_options = kwargs.get('attach_new_data_disk_options', None)
+        self.existing_lab_disk_id = kwargs.get('existing_lab_disk_id', None)
+        self.host_caching = kwargs.get('host_caching', None)
