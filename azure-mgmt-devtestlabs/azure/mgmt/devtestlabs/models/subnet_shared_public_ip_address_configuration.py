@@ -24,6 +24,6 @@ class SubnetSharedPublicIpAddressConfiguration(Model):
         'allowed_ports': {'key': 'allowedPorts', 'type': '[Port]'},
     }
 
-    def __init__(self, allowed_ports=None):
-        super(SubnetSharedPublicIpAddressConfiguration, self).__init__()
-        self.allowed_ports = allowed_ports
+    def __init__(self, **kwargs):
+        super(SubnetSharedPublicIpAddressConfiguration, self).__init__(**kwargs)
+        self.allowed_ports = kwargs.get('allowed_ports', None)

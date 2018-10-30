@@ -50,14 +50,14 @@ class LabResourceCostProperties(Model):
         'external_resource_id': {'key': 'externalResourceId', 'type': 'str'},
     }
 
-    def __init__(self, resourcename=None, resource_uid=None, resource_cost=None, resource_type=None, resource_owner=None, resource_pricing_tier=None, resource_status=None, resource_id=None, external_resource_id=None):
-        super(LabResourceCostProperties, self).__init__()
-        self.resourcename = resourcename
-        self.resource_uid = resource_uid
-        self.resource_cost = resource_cost
-        self.resource_type = resource_type
-        self.resource_owner = resource_owner
-        self.resource_pricing_tier = resource_pricing_tier
-        self.resource_status = resource_status
-        self.resource_id = resource_id
-        self.external_resource_id = external_resource_id
+    def __init__(self, **kwargs):
+        super(LabResourceCostProperties, self).__init__(**kwargs)
+        self.resourcename = kwargs.get('resourcename', None)
+        self.resource_uid = kwargs.get('resource_uid', None)
+        self.resource_cost = kwargs.get('resource_cost', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_owner = kwargs.get('resource_owner', None)
+        self.resource_pricing_tier = kwargs.get('resource_pricing_tier', None)
+        self.resource_status = kwargs.get('resource_status', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.external_resource_id = kwargs.get('external_resource_id', None)

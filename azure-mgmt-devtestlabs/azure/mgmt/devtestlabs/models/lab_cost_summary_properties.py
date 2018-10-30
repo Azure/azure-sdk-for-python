@@ -23,6 +23,6 @@ class LabCostSummaryProperties(Model):
         'estimated_lab_cost': {'key': 'estimatedLabCost', 'type': 'float'},
     }
 
-    def __init__(self, estimated_lab_cost=None):
-        super(LabCostSummaryProperties, self).__init__()
-        self.estimated_lab_cost = estimated_lab_cost
+    def __init__(self, **kwargs):
+        super(LabCostSummaryProperties, self).__init__(**kwargs)
+        self.estimated_lab_cost = kwargs.get('estimated_lab_cost', None)

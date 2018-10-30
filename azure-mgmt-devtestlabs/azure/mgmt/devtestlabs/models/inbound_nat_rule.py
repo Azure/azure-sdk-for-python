@@ -35,8 +35,8 @@ class InboundNatRule(Model):
         'backend_port': {'key': 'backendPort', 'type': 'int'},
     }
 
-    def __init__(self, transport_protocol=None, frontend_port=None, backend_port=None):
-        super(InboundNatRule, self).__init__()
-        self.transport_protocol = transport_protocol
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
+    def __init__(self, **kwargs):
+        super(InboundNatRule, self).__init__(**kwargs)
+        self.transport_protocol = kwargs.get('transport_protocol', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)

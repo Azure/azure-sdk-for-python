@@ -23,6 +23,6 @@ class GenerateUploadUriParameter(Model):
         'blob_name': {'key': 'blobName', 'type': 'str'},
     }
 
-    def __init__(self, blob_name=None):
-        super(GenerateUploadUriParameter, self).__init__()
-        self.blob_name = blob_name
+    def __init__(self, **kwargs):
+        super(GenerateUploadUriParameter, self).__init__(**kwargs)
+        self.blob_name = kwargs.get('blob_name', None)

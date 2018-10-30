@@ -26,7 +26,7 @@ class OperationMetadata(Model):
         'display': {'key': 'display', 'type': 'OperationMetadataDisplay'},
     }
 
-    def __init__(self, name=None, display=None):
-        super(OperationMetadata, self).__init__()
-        self.name = name
-        self.display = display
+    def __init__(self, **kwargs):
+        super(OperationMetadata, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)

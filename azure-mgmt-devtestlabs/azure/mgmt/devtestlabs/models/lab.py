@@ -44,6 +44,14 @@ class Lab(Resource):
      Premium or Standard. Default is Premium. Possible values include:
      'Standard', 'Premium'
     :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :param mandatory_artifacts_resource_ids_linux: The ordered list of
+     artifact resource IDs that should be applied on all Linux VM creations by
+     default, prior to the artifacts specified by the user.
+    :type mandatory_artifacts_resource_ids_linux: list[str]
+    :param mandatory_artifacts_resource_ids_windows: The ordered list of
+     artifact resource IDs that should be applied on all Windows VM creations
+     by default, prior to the artifacts specified by the user.
+    :type mandatory_artifacts_resource_ids_windows: list[str]
     :ivar created_date: The creation date of the lab.
     :vartype created_date: datetime
     :param premium_data_disks: The setting to enable usage of premium data
@@ -54,11 +62,37 @@ class Lab(Resource):
      allowed. Possible values include: 'Disabled', 'Enabled'
     :type premium_data_disks: str or
      ~azure.mgmt.devtestlabs.models.PremiumDataDisk
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :param environment_permission: The access rights to be granted to the user
+     when provisioning an environment. Possible values include: 'Reader',
+     'Contributor'
+    :type environment_permission: str or
+     ~azure.mgmt.devtestlabs.models.EnvironmentPermission
+    :param announcement: The properties of any lab announcement associated
+     with this lab
+    :type announcement:
+     ~azure.mgmt.devtestlabs.models.LabAnnouncementProperties
+    :param support: The properties of any lab support message associated with
+     this lab
+    :type support: ~azure.mgmt.devtestlabs.models.LabSupportProperties
+    :ivar vm_creation_resource_group: The resource group in which lab virtual
+     machines will be created in.
+    :vartype vm_creation_resource_group: str
+    :ivar public_ip_id: The public IP address for the lab's load balancer.
+    :vartype public_ip_id: str
+    :ivar load_balancer_id: The load balancer used to for lab VMs that use
+     shared IP address.
+    :vartype load_balancer_id: str
+    :ivar network_security_group_id: The Network Security Group attached to
+     the lab VMs Network interfaces to restrict open ports.
+    :vartype network_security_group_id: str
+    :param extended_properties: Extended properties of the lab used for
+     experimental features
+    :type extended_properties: dict[str, str]
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -71,6 +105,12 @@ class Lab(Resource):
         'premium_data_disk_storage_account': {'readonly': True},
         'vault_name': {'readonly': True},
         'created_date': {'readonly': True},
+        'vm_creation_resource_group': {'readonly': True},
+        'public_ip_id': {'readonly': True},
+        'load_balancer_id': {'readonly': True},
+        'network_security_group_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -85,21 +125,41 @@ class Lab(Resource):
         'premium_data_disk_storage_account': {'key': 'properties.premiumDataDiskStorageAccount', 'type': 'str'},
         'vault_name': {'key': 'properties.vaultName', 'type': 'str'},
         'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
+        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
+        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
+        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
+        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementProperties'},
+        'support': {'key': 'properties.support', 'type': 'LabSupportProperties'},
+        'vm_creation_resource_group': {'key': 'properties.vmCreationResourceGroup', 'type': 'str'},
+        'public_ip_id': {'key': 'properties.publicIpId', 'type': 'str'},
+        'load_balancer_id': {'key': 'properties.loadBalancerId', 'type': 'str'},
+        'network_security_group_id': {'key': 'properties.networkSecurityGroupId', 'type': 'str'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, lab_storage_type=None, premium_data_disks=None, provisioning_state=None, unique_identifier=None):
-        super(Lab, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Lab, self).__init__(**kwargs)
         self.default_storage_account = None
         self.default_premium_storage_account = None
         self.artifacts_storage_account = None
         self.premium_data_disk_storage_account = None
         self.vault_name = None
-        self.lab_storage_type = lab_storage_type
+        self.lab_storage_type = kwargs.get('lab_storage_type', None)
+        self.mandatory_artifacts_resource_ids_linux = kwargs.get('mandatory_artifacts_resource_ids_linux', None)
+        self.mandatory_artifacts_resource_ids_windows = kwargs.get('mandatory_artifacts_resource_ids_windows', None)
         self.created_date = None
-        self.premium_data_disks = premium_data_disks
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.premium_data_disks = kwargs.get('premium_data_disks', None)
+        self.environment_permission = kwargs.get('environment_permission', None)
+        self.announcement = kwargs.get('announcement', None)
+        self.support = kwargs.get('support', None)
+        self.vm_creation_resource_group = None
+        self.public_ip_id = None
+        self.load_balancer_id = None
+        self.network_security_group_id = None
+        self.extended_properties = kwargs.get('extended_properties', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

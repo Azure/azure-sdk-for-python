@@ -24,6 +24,6 @@ class DetachDataDiskProperties(Model):
         'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
     }
 
-    def __init__(self, existing_lab_disk_id=None):
-        super(DetachDataDiskProperties, self).__init__()
-        self.existing_lab_disk_id = existing_lab_disk_id
+    def __init__(self, **kwargs):
+        super(DetachDataDiskProperties, self).__init__(**kwargs)
+        self.existing_lab_disk_id = kwargs.get('existing_lab_disk_id', None)

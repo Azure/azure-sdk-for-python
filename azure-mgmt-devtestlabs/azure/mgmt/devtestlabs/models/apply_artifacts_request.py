@@ -24,6 +24,6 @@ class ApplyArtifactsRequest(Model):
         'artifacts': {'key': 'artifacts', 'type': '[ArtifactInstallProperties]'},
     }
 
-    def __init__(self, artifacts=None):
-        super(ApplyArtifactsRequest, self).__init__()
-        self.artifacts = artifacts
+    def __init__(self, **kwargs):
+        super(ApplyArtifactsRequest, self).__init__(**kwargs)
+        self.artifacts = kwargs.get('artifacts', None)
