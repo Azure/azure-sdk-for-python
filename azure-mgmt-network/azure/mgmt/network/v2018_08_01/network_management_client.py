@@ -35,12 +35,16 @@ from .operations.express_route_cross_connections_operations import ExpressRouteC
 from .operations.express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
 from .operations.express_route_gateways_operations import ExpressRouteGatewaysOperations
 from .operations.express_route_connections_operations import ExpressRouteConnectionsOperations
+from .operations.express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
+from .operations.express_route_ports_operations import ExpressRoutePortsOperations
+from .operations.express_route_links_operations import ExpressRouteLinksOperations
 from .operations.interface_endpoints_operations import InterfaceEndpointsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
 from .operations.inbound_nat_rules_operations import InboundNatRulesOperations
 from .operations.load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalancingRulesOperations
+from .operations.load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .operations.load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .operations.load_balancer_probes_operations import LoadBalancerProbesOperations
 from .operations.network_interfaces_operations import NetworkInterfacesOperations
@@ -158,6 +162,12 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_gateways: azure.mgmt.network.v2018_08_01.operations.ExpressRouteGatewaysOperations
     :ivar express_route_connections: ExpressRouteConnections operations
     :vartype express_route_connections: azure.mgmt.network.v2018_08_01.operations.ExpressRouteConnectionsOperations
+    :ivar express_route_ports_locations: ExpressRoutePortsLocations operations
+    :vartype express_route_ports_locations: azure.mgmt.network.v2018_08_01.operations.ExpressRoutePortsLocationsOperations
+    :ivar express_route_ports: ExpressRoutePorts operations
+    :vartype express_route_ports: azure.mgmt.network.v2018_08_01.operations.ExpressRoutePortsOperations
+    :ivar express_route_links: ExpressRouteLinks operations
+    :vartype express_route_links: azure.mgmt.network.v2018_08_01.operations.ExpressRouteLinksOperations
     :ivar interface_endpoints: InterfaceEndpoints operations
     :vartype interface_endpoints: azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations
     :ivar load_balancers: LoadBalancers operations
@@ -170,6 +180,8 @@ class NetworkManagementClient(SDKClient):
     :vartype inbound_nat_rules: azure.mgmt.network.v2018_08_01.operations.InboundNatRulesOperations
     :ivar load_balancer_load_balancing_rules: LoadBalancerLoadBalancingRules operations
     :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2018_08_01.operations.LoadBalancerLoadBalancingRulesOperations
+    :ivar load_balancer_outbound_rules: LoadBalancerOutboundRules operations
+    :vartype load_balancer_outbound_rules: azure.mgmt.network.v2018_08_01.operations.LoadBalancerOutboundRulesOperations
     :ivar load_balancer_network_interfaces: LoadBalancerNetworkInterfaces operations
     :vartype load_balancer_network_interfaces: azure.mgmt.network.v2018_08_01.operations.LoadBalancerNetworkInterfacesOperations
     :ivar load_balancer_probes: LoadBalancerProbes operations
@@ -305,6 +317,12 @@ class NetworkManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_connections = ExpressRouteConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.express_route_ports_locations = ExpressRoutePortsLocationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.express_route_ports = ExpressRoutePortsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.express_route_links = ExpressRouteLinksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.interface_endpoints = InterfaceEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
@@ -316,6 +334,8 @@ class NetworkManagementClient(SDKClient):
         self.inbound_nat_rules = InboundNatRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_load_balancing_rules = LoadBalancerLoadBalancingRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.load_balancer_outbound_rules = LoadBalancerOutboundRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
