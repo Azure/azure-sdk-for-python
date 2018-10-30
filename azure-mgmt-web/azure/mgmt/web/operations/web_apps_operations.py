@@ -7751,8 +7751,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.NetworkTrace] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -7792,7 +7793,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -7920,7 +7921,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -7950,10 +7951,12 @@ class WebAppsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns list or
+         ClientRawResponse<list> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.models.NetworkTrace]]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.models.NetworkTrace]]]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -7969,7 +7972,7 @@ class WebAppsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -8131,8 +8134,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.NetworkTrace] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -8172,7 +8176,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -18270,8 +18274,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.NetworkTrace] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -18312,7 +18317,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -18444,7 +18449,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -18476,10 +18481,12 @@ class WebAppsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns list or
+         ClientRawResponse<list> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.models.NetworkTrace]]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.models.NetworkTrace]]]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -18496,7 +18503,7 @@ class WebAppsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -18645,7 +18652,7 @@ class WebAppsOperations(object):
         return deserialized
     get_network_traces_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTrace/{operationId}'}
 
-    def get_network_trace_operation_slot_v2(
+    def get_network_trace_operation_v2_slot(
             self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
@@ -18668,13 +18675,14 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.NetworkTrace] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
-        url = self.get_network_trace_operation_slot_v2.metadata['url']
+        url = self.get_network_trace_operation_v2_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -18710,16 +18718,16 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_network_trace_operation_slot_v2.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/current/operationresults/{operationId}'}
+    get_network_trace_operation_v2_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/current/operationresults/{operationId}'}
 
-    def get_network_traces_slot_v2(
+    def get_network_traces_v2_slot(
             self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
@@ -18749,7 +18757,7 @@ class WebAppsOperations(object):
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
-        url = self.get_network_traces_slot_v2.metadata['url']
+        url = self.get_network_traces_v2_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -18790,7 +18798,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_network_traces_slot_v2.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/{operationId}'}
+    get_network_traces_v2_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/{operationId}'}
 
     def generate_new_site_publishing_password_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
@@ -21932,7 +21940,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -21964,10 +21972,12 @@ class WebAppsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns list or
+         ClientRawResponse<list> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.models.NetworkTrace]]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.models.NetworkTrace]]]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -21984,7 +21994,7 @@ class WebAppsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -24172,7 +24182,7 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[NetworkTrace]', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -24202,10 +24212,12 @@ class WebAppsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns list or
+         ClientRawResponse<list> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.models.NetworkTrace]]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.models.NetworkTrace]]]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -24221,7 +24233,7 @@ class WebAppsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('[NetworkTrace]', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
