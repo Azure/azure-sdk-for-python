@@ -52,11 +52,11 @@ class Schedule(Resource):
     :vartype created_date: datetime
     :param target_resource_id: The resource ID to which the schedule belongs
     :type target_resource_id: str
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -64,6 +64,8 @@ class Schedule(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'created_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -85,16 +87,16 @@ class Schedule(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, status=None, task_type=None, weekly_recurrence=None, daily_recurrence=None, hourly_recurrence=None, time_zone_id=None, notification_settings=None, target_resource_id=None, provisioning_state=None, unique_identifier=None):
-        super(Schedule, self).__init__(location=location, tags=tags)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
+    def __init__(self, **kwargs):
+        super(Schedule, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.task_type = kwargs.get('task_type', None)
+        self.weekly_recurrence = kwargs.get('weekly_recurrence', None)
+        self.daily_recurrence = kwargs.get('daily_recurrence', None)
+        self.hourly_recurrence = kwargs.get('hourly_recurrence', None)
+        self.time_zone_id = kwargs.get('time_zone_id', None)
+        self.notification_settings = kwargs.get('notification_settings', None)
         self.created_date = None
-        self.target_resource_id = target_resource_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

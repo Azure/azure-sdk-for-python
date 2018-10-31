@@ -26,7 +26,7 @@ class ArmTemplateInfo(Model):
         'parameters': {'key': 'parameters', 'type': 'object'},
     }
 
-    def __init__(self, template=None, parameters=None):
-        super(ArmTemplateInfo, self).__init__()
-        self.template = template
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(ArmTemplateInfo, self).__init__(**kwargs)
+        self.template = kwargs.get('template', None)
+        self.parameters = kwargs.get('parameters', None)
