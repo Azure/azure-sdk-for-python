@@ -38,9 +38,10 @@ class AlertsOperations(object):
 
     def get_all(
             self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, select=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
-        """List all the existing alerts, where the results can be selective by
-        passing multiple filter parameters including time range and sorted on
-        specific fields. .
+        """List all existing alerts, where the results can be filtered on the
+        basis of multiple parameters (e.g. time range). The results can then be
+        sorted on the basis specific fields, with the default being
+        lastModifiedDateTime. .
 
         :param target_resource: Filter by target resource( which is full ARM
          ID) Default value is select all.
@@ -51,18 +52,17 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: Filter by monitor service which generates the
+         alert instance. Default value is select all. Possible values include:
+         'Application Insights', 'ActivityLog Administrative', 'ActivityLog
+         Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
+         'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: Filter by monitor condition which is either
+         'Fired' or 'Resolved'. Default value is to select all. Possible values
+         include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
         :param severity: Filter by severity.  Defaut value is select all.
@@ -73,14 +73,14 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
-        :param alert_rule: Filter by alert rule(monitor) which fired alert
-         instance.  Default value is to select all.
+        :param alert_rule: Filter by specific alert rule.  Default value is to
+         select all.
         :type alert_rule: str
         :param smart_group_id: Filter the alerts list by the Smart Group Id.
          Default value is none.
         :type smart_group_id: str
-        :param include_context: Include context which has data contextual to
-         the monitor service. Default value is false'
+        :param include_context: Include context which has contextual data
+         specific to the monitor service. Default value is false'
         :type include_context: bool
         :param include_egress_config: Include egress config which would be
          used for displaying the content in portal.  Default value is 'false'.
@@ -272,7 +272,7 @@ class AlertsOperations(object):
 
     def change_state(
             self, alert_id, new_state, custom_headers=None, raw=False, **operation_config):
-        """Change the state of the alert.
+        """Change the state of an alert.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -334,7 +334,9 @@ class AlertsOperations(object):
 
     def get_history(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
-        """Get the history of the changes of an alert.
+        """Get the history of an alert, which captures any monitor condition
+        changes (Fired/Resolved) and alert state changes
+        (New/Acknowledged/Closed).
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -392,10 +394,12 @@ class AlertsOperations(object):
 
     def get_summary(
             self, groupby, include_smart_groups_count=None, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
-        """Summary of alerts with the count each severity.
+        """Get a summarized count of your alerts grouped by various parameters
+        (e.g. grouping by 'Severity' returns the count of alerts for each
+        severity).
 
-        :param groupby: This parameter allows the result set to be aggregated
-         by input fields. For example, groupby=severity,alertstate. Possible
+        :param groupby: This parameter allows the result set to be grouped by
+         input fields. For example, groupby=severity,alertstate. Possible
          values include: 'severity', 'alertState', 'monitorCondition',
          'monitorService', 'signalType', 'alertRule'
         :type groupby: str or
@@ -412,18 +416,17 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: Filter by monitor service which generates the
+         alert instance. Default value is select all. Possible values include:
+         'Application Insights', 'ActivityLog Administrative', 'ActivityLog
+         Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
+         'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: Filter by monitor condition which is either
+         'Fired' or 'Resolved'. Default value is to select all. Possible values
+         include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
         :param severity: Filter by severity.  Defaut value is select all.
@@ -434,8 +437,8 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
-        :param alert_rule: Filter by alert rule(monitor) which fired alert
-         instance.  Default value is to select all.
+        :param alert_rule: Filter by specific alert rule.  Default value is to
+         select all.
         :type alert_rule: str
         :param time_range: Filter by time range by below listed values.
          Default value is 1 day. Possible values include: '1h', '1d', '7d',
