@@ -90,6 +90,16 @@ class AppServicePlan(Resource):
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.web.models.ProvisioningState
+    :ivar mdm_id:
+    :vartype mdm_id: str
+    :ivar current_number_of_workers:
+    :vartype current_number_of_workers: int
+    :ivar current_worker_size:
+    :vartype current_worker_size: str
+    :ivar number_of_workers:
+    :vartype number_of_workers: int
+    :ivar worker_size:
+    :vartype worker_size: str
     :param sku:
     :type sku: ~azure.mgmt.web.models.SkuDescription
     """
@@ -106,6 +116,11 @@ class AppServicePlan(Resource):
         'number_of_sites': {'readonly': True},
         'resource_group': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'mdm_id': {'readonly': True},
+        'current_number_of_workers': {'readonly': True},
+        'current_worker_size': {'readonly': True},
+        'number_of_workers': {'readonly': True},
+        'worker_size': {'readonly': True},
     }
 
     _attribute_map = {
@@ -135,6 +150,11 @@ class AppServicePlan(Resource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'mdm_id': {'key': 'properties.mdmId', 'type': 'str'},
+        'current_number_of_workers': {'key': 'properties.currentNumberOfWorkers', 'type': 'int'},
+        'current_worker_size': {'key': 'properties.currentWorkerSize', 'type': 'str'},
+        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
+        'worker_size': {'key': 'properties.workerSize', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
@@ -160,4 +180,9 @@ class AppServicePlan(Resource):
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None
+        self.mdm_id = None
+        self.current_number_of_workers = None
+        self.current_worker_size = None
+        self.number_of_workers = None
+        self.worker_size = None
         self.sku = sku
