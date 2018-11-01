@@ -18652,7 +18652,7 @@ class WebAppsOperations(object):
         return deserialized
     get_network_traces_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTrace/{operationId}'}
 
-    def get_network_trace_operation_v2_slot(
+    def get_network_trace_operation_slot_v2(
             self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
@@ -18682,7 +18682,7 @@ class WebAppsOperations(object):
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
-        url = self.get_network_trace_operation_v2_slot.metadata['url']
+        url = self.get_network_trace_operation_slot_v2.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -18725,9 +18725,9 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_network_trace_operation_v2_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/current/operationresults/{operationId}'}
+    get_network_trace_operation_slot_v2.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/current/operationresults/{operationId}'}
 
-    def get_network_traces_v2_slot(
+    def get_network_traces_slot_v2(
             self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
@@ -18757,7 +18757,7 @@ class WebAppsOperations(object):
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
-        url = self.get_network_traces_v2_slot.metadata['url']
+        url = self.get_network_traces_slot_v2.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -18798,7 +18798,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_network_traces_v2_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/{operationId}'}
+    get_network_traces_slot_v2.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkTraces/{operationId}'}
 
     def generate_new_site_publishing_password_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
