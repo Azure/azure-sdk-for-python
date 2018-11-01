@@ -36,6 +36,10 @@ class CosmosDbLinkedService(LinkedService):
     :param connection_string: Required. The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param account_key: The Azure key vault secret reference of accountKey in
+     connection string.
+    :type account_key:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -55,11 +59,13 @@ class CosmosDbLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(CosmosDbLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.account_key = kwargs.get('account_key', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'CosmosDb'
