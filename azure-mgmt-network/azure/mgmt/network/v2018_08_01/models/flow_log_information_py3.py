@@ -29,6 +29,9 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_08_01.models.RetentionPolicyParameters
+    :param format:
+    :type format:
+     ~azure.mgmt.network.v2018_08_01.models.FlowLogFormatParameters
     :param flow_analytics_configuration:
     :type flow_analytics_configuration:
      ~azure.mgmt.network.v2018_08_01.models.TrafficAnalyticsProperties
@@ -45,13 +48,15 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
+        'format': {'key': 'properties.format', 'type': 'FlowLogFormatParameters'},
         'flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
     }
 
-    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, retention_policy=None, flow_analytics_configuration=None, **kwargs) -> None:
+    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, retention_policy=None, format=None, flow_analytics_configuration=None, **kwargs) -> None:
         super(FlowLogInformation, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.enabled = enabled
         self.retention_policy = retention_policy
+        self.format = format
         self.flow_analytics_configuration = flow_analytics_configuration

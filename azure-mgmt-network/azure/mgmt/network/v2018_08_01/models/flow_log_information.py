@@ -29,6 +29,9 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_08_01.models.RetentionPolicyParameters
+    :param format:
+    :type format:
+     ~azure.mgmt.network.v2018_08_01.models.FlowLogFormatParameters
     :param flow_analytics_configuration:
     :type flow_analytics_configuration:
      ~azure.mgmt.network.v2018_08_01.models.TrafficAnalyticsProperties
@@ -45,6 +48,7 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
+        'format': {'key': 'properties.format', 'type': 'FlowLogFormatParameters'},
         'flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
     }
 
@@ -54,4 +58,5 @@ class FlowLogInformation(Model):
         self.storage_id = kwargs.get('storage_id', None)
         self.enabled = kwargs.get('enabled', None)
         self.retention_policy = kwargs.get('retention_policy', None)
+        self.format = kwargs.get('format', None)
         self.flow_analytics_configuration = kwargs.get('flow_analytics_configuration', None)
