@@ -92,17 +92,17 @@ class AppServicePlan(Resource):
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.web.models.ProvisioningState
-    :ivar app_service_plan_kind:
+    :ivar app_service_plan_kind: Kind of resource.
     :vartype app_service_plan_kind: str
-    :ivar mdm_id:
+    :ivar mdm_id: MDM ID of the App Service plan.
     :vartype mdm_id: str
-    :ivar current_number_of_workers:
+    :ivar current_number_of_workers: Current worker count.
     :vartype current_number_of_workers: int
-    :ivar current_worker_size:
+    :ivar current_worker_size: Current worker size.
     :vartype current_worker_size: str
-    :ivar number_of_workers:
+    :ivar number_of_workers: Worker count.
     :vartype number_of_workers: int
-    :ivar worker_size:
+    :ivar worker_size: Worker size.
     :vartype worker_size: str
     :param sku:
     :type sku: ~azure.mgmt.web.models.SkuDescription
