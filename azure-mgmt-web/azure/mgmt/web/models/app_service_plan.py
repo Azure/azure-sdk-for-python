@@ -90,6 +90,8 @@ class AppServicePlan(Resource):
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.web.models.ProvisioningState
+    :ivar app_service_plan_kind:
+    :vartype app_service_plan_kind: str
     :ivar mdm_id:
     :vartype mdm_id: str
     :ivar current_number_of_workers:
@@ -116,6 +118,7 @@ class AppServicePlan(Resource):
         'number_of_sites': {'readonly': True},
         'resource_group': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'app_service_plan_kind': {'readonly': True},
         'mdm_id': {'readonly': True},
         'current_number_of_workers': {'readonly': True},
         'current_worker_size': {'readonly': True},
@@ -150,6 +153,7 @@ class AppServicePlan(Resource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'app_service_plan_kind': {'key': 'properties.kind', 'type': 'str'},
         'mdm_id': {'key': 'properties.mdmId', 'type': 'str'},
         'current_number_of_workers': {'key': 'properties.currentNumberOfWorkers', 'type': 'int'},
         'current_worker_size': {'key': 'properties.currentWorkerSize', 'type': 'str'},
@@ -180,6 +184,7 @@ class AppServicePlan(Resource):
         self.target_worker_count = kwargs.get('target_worker_count', None)
         self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None
+        self.app_service_plan_kind = None
         self.mdm_id = None
         self.current_number_of_workers = None
         self.current_worker_size = None
