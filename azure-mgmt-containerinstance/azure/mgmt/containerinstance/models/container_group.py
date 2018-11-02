@@ -71,6 +71,8 @@ class ContainerGroup(Resource):
      group.
     :type network_profile:
      ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
+    :param dns_config: The DNS config information for a container group.
+    :type dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
     """
 
     _validation = {
@@ -100,6 +102,7 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
+        'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -115,3 +118,4 @@ class ContainerGroup(Resource):
         self.instance_view = None
         self.diagnostics = kwargs.get('diagnostics', None)
         self.network_profile = kwargs.get('network_profile', None)
+        self.dns_config = kwargs.get('dns_config', None)
