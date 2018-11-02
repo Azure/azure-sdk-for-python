@@ -183,6 +183,11 @@ try:
     from .migrate_schema_sql_server_sql_db_task_output_database_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
     from .migrate_schema_sql_server_sql_db_task_output_error_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
     from .migrate_schema_sql_task_output_error_py3 import MigrateSchemaSqlTaskOutputError
+    from .mongo_db_command_input_py3 import MongoDbCommandInput
+    from .mongo_db_cancel_command_py3 import MongoDbCancelCommand
+    from .mongo_db_finish_command_input_py3 import MongoDbFinishCommandInput
+    from .mongo_db_finish_command_py3 import MongoDbFinishCommand
+    from .mongo_db_restart_command_py3 import MongoDbRestartCommand
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
@@ -369,6 +374,11 @@ except (SyntaxError, ImportError):
     from .migrate_schema_sql_server_sql_db_task_output_database_level import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
     from .migrate_schema_sql_server_sql_db_task_output_error import MigrateSchemaSqlServerSqlDbTaskOutputError
     from .migrate_schema_sql_task_output_error import MigrateSchemaSqlTaskOutputError
+    from .mongo_db_command_input import MongoDbCommandInput
+    from .mongo_db_cancel_command import MongoDbCancelCommand
+    from .mongo_db_finish_command_input import MongoDbFinishCommandInput
+    from .mongo_db_finish_command import MongoDbFinishCommand
+    from .mongo_db_restart_command import MongoDbRestartCommand
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
@@ -606,6 +616,11 @@ __all__ = [
     'MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel',
     'MigrateSchemaSqlServerSqlDbTaskOutputError',
     'MigrateSchemaSqlTaskOutputError',
+    'MongoDbCommandInput',
+    'MongoDbCancelCommand',
+    'MongoDbFinishCommandInput',
+    'MongoDbFinishCommand',
+    'MongoDbRestartCommand',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',
