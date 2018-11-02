@@ -42,8 +42,9 @@ class AzureTableStorageLinkedService(LinkedService):
     :type account_key:
      ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
-     exclusive with connectionString property.
-    :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
+     exclusive with connectionString property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :type sas_uri: object
     :param sas_token: The Azure key vault secret reference of sasToken in sas
      uri.
     :type sas_token:
@@ -67,7 +68,7 @@ class AzureTableStorageLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
-        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
+        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'object'},
         'sas_token': {'key': 'typeProperties.sasToken', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
