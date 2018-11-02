@@ -21,15 +21,6 @@ class QnAMakerClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param environment: Specifies whether environment is Test or Prod.
-     Possible values include: 'Prod', 'Test'
-    :type environment: str
-    :param kb_id: Knowledgebase id.
-    :type kb_id: str
-    :param operation_id: Operation id.
-    :type operation_id: str
-    :param key_type: type of Key
-    :type key_type: str
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
@@ -39,16 +30,8 @@ class QnAMakerClientConfiguration(Configuration):
     """
 
     def __init__(
-            self, environment, kb_id, operation_id, key_type, endpoint, credentials):
+            self, endpoint, credentials):
 
-        if environment is None:
-            raise ValueError("Parameter 'environment' must not be None.")
-        if kb_id is None:
-            raise ValueError("Parameter 'kb_id' must not be None.")
-        if operation_id is None:
-            raise ValueError("Parameter 'operation_id' must not be None.")
-        if key_type is None:
-            raise ValueError("Parameter 'key_type' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
@@ -59,10 +42,6 @@ class QnAMakerClientConfiguration(Configuration):
 
         self.add_user_agent('azure-cognitiveservices-qnamaker/{}'.format(VERSION))
 
-        self.environment = environment
-        self.kb_id = kb_id
-        self.operation_id = operation_id
-        self.key_type = key_type
         self.endpoint = endpoint
         self.credentials = credentials
 
@@ -73,15 +52,6 @@ class QnAMakerClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: QnAMakerClientConfiguration
 
-    :param environment: Specifies whether environment is Test or Prod.
-     Possible values include: 'Prod', 'Test'
-    :type environment: str
-    :param kb_id: Knowledgebase id.
-    :type kb_id: str
-    :param operation_id: Operation id.
-    :type operation_id: str
-    :param key_type: type of Key
-    :type key_type: str
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
@@ -91,9 +61,9 @@ class QnAMakerClient(SDKClient):
     """
 
     def __init__(
-            self, environment, kb_id, operation_id, key_type, endpoint, credentials):
+            self, endpoint, credentials):
 
-        self.config = QnAMakerClientConfiguration(environment, kb_id, operation_id, key_type, endpoint, credentials)
+        self.config = QnAMakerClientConfiguration(endpoint, credentials)
         super(QnAMakerClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -153,9 +123,11 @@ class QnAMakerClient(SDKClient):
     get_endpoint_keys.metadata = {'url': '/endpointkeys'}
 
     def refresh_endpoint_keys(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, key_type, custom_headers=None, raw=False, **operation_config):
         """Re-generates an endpoint key.
 
+        :param key_type: type of Key
+        :type key_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -171,7 +143,7 @@ class QnAMakerClient(SDKClient):
         url = self.refresh_endpoint_keys.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'keyType': self._serialize.url("self.config.key_type", self.config.key_type, 'str')
+            'keyType': self._serialize.url("key_type", key_type, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -354,9 +326,11 @@ class QnAMakerClient(SDKClient):
     get_knowledgebasesforuser.metadata = {'url': '/knowledgebases'}
 
     def get_operation_details(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets details of a specific long running operation.
 
+        :param operation_id: Operation id.
+        :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -372,7 +346,7 @@ class QnAMakerClient(SDKClient):
         url = self.get_operation_details.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'operationId': self._serialize.url("self.config.operation_id", self.config.operation_id, 'str')
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -410,9 +384,11 @@ class QnAMakerClient(SDKClient):
     get_operation_details.metadata = {'url': '/operations/{operationId}'}
 
     def get_knowledgebase_details(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, custom_headers=None, raw=False, **operation_config):
         """Gets details of a specific knowledgebase.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -428,7 +404,7 @@ class QnAMakerClient(SDKClient):
         url = self.get_knowledgebase_details.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -461,9 +437,11 @@ class QnAMakerClient(SDKClient):
     get_knowledgebase_details.metadata = {'url': '/knowledgebases/{kbId}'}
 
     def delete_knowledgebase(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, custom_headers=None, raw=False, **operation_config):
         """Deletes the knowledgebase and all its data.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -478,7 +456,7 @@ class QnAMakerClient(SDKClient):
         url = self.delete_knowledgebase.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -503,10 +481,12 @@ class QnAMakerClient(SDKClient):
     delete_knowledgebase.metadata = {'url': '/knowledgebases/{kbId}'}
 
     def publish_knowledgebase(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, custom_headers=None, raw=False, **operation_config):
         """Publishes all changes in test index of a knowledgebase to its prod
         index.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -521,7 +501,7 @@ class QnAMakerClient(SDKClient):
         url = self.publish_knowledgebase.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -546,9 +526,11 @@ class QnAMakerClient(SDKClient):
     publish_knowledgebase.metadata = {'url': '/knowledgebases/{kbId}'}
 
     def replace_knowledgebase(
-            self, qn_alist, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, qn_alist, custom_headers=None, raw=False, **operation_config):
         """Replace knowledgebase contents.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
         :param qn_alist: List of Q-A (QnADTO) to be added to the
          knowledgebase. Q-A Ids are assigned by the service and should be
          omitted.
@@ -569,7 +551,7 @@ class QnAMakerClient(SDKClient):
         url = self.replace_knowledgebase.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -598,9 +580,11 @@ class QnAMakerClient(SDKClient):
     replace_knowledgebase.metadata = {'url': '/knowledgebases/{kbId}'}
 
     def update_knowledgebase(
-            self, update_kb, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, update_kb, custom_headers=None, raw=False, **operation_config):
         """Asynchronous operation to modify a knowledgebase.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
         :param update_kb: Post body of the request.
         :type update_kb:
          ~azure.cognitiveservices.qnamaker.models.UpdateKbOperationDTO
@@ -619,7 +603,7 @@ class QnAMakerClient(SDKClient):
         url = self.update_knowledgebase.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -718,9 +702,14 @@ class QnAMakerClient(SDKClient):
     create_knowledgebase.metadata = {'url': '/knowledgebases/create'}
 
     def download_knowledgebase(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, kb_id, environment, custom_headers=None, raw=False, **operation_config):
         """Download the knowledgebase.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
+        :param environment: Specifies whether environment is Test or Prod.
+         Possible values include: 'Prod', 'Test'
+        :type environment: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -736,8 +725,8 @@ class QnAMakerClient(SDKClient):
         url = self.download_knowledgebase.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'kbId': self._serialize.url("self.config.kb_id", self.config.kb_id, 'str'),
-            'environment': self._serialize.url("self.config.environment", self.config.environment, 'str')
+            'kbId': self._serialize.url("kb_id", kb_id, 'str'),
+            'environment': self._serialize.url("environment", environment, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
