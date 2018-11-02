@@ -78,11 +78,12 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2018-01-01-preview'
+    DEFAULT_API_VERSION='2018-09-01-preview'
     _PROFILE_TAG = "azure.mgmt.authorization.AuthorizationManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             'classic_administrators': '2015-06-01',
+            'deny_assignments': '2018-07-01-preview',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
