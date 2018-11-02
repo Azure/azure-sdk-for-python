@@ -39,7 +39,7 @@ class DeleteActivity(ExecutionActivity):
      deleted recursively. Default is true. Type: boolean (or Expression with
      resultType boolean).
     :type recursive: bool
-    :param dataset: Delete activity dataset reference.
+    :param dataset: Required. Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
@@ -47,6 +47,7 @@ class DeleteActivity(ExecutionActivity):
         'name': {'required': True},
         'type': {'required': True},
         'recursive': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {

@@ -39,7 +39,7 @@ class DeleteActivity(ExecutionActivity):
      deleted recursively. Default is true. Type: boolean (or Expression with
      resultType boolean).
     :type recursive: bool
-    :param dataset: Delete activity dataset reference.
+    :param dataset: Required. Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
@@ -47,6 +47,7 @@ class DeleteActivity(ExecutionActivity):
         'name': {'required': True},
         'type': {'required': True},
         'recursive': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {
@@ -62,7 +63,7 @@ class DeleteActivity(ExecutionActivity):
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, *, name: str, recursive: bool, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, dataset=None, **kwargs) -> None:
+    def __init__(self, *, name: str, recursive: bool, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, **kwargs) -> None:
         super(DeleteActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.recursive = recursive
         self.dataset = dataset
