@@ -28,6 +28,11 @@ class CopyProgress(Model):
     :ivar total_bytes_to_process: Total amount of data to be processed by the
      job.
     :vartype total_bytes_to_process: long
+    :ivar files_processed: Number of files processed by the job as of now.
+    :vartype files_processed: long
+    :ivar total_files_to_process: Total number of files to be processed by the
+     job.
+    :vartype total_files_to_process: long
     """
 
     _validation = {
@@ -35,6 +40,8 @@ class CopyProgress(Model):
         'account_id': {'readonly': True},
         'bytes_sent_to_cloud': {'readonly': True},
         'total_bytes_to_process': {'readonly': True},
+        'files_processed': {'readonly': True},
+        'total_files_to_process': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,6 +49,8 @@ class CopyProgress(Model):
         'account_id': {'key': 'accountId', 'type': 'str'},
         'bytes_sent_to_cloud': {'key': 'bytesSentToCloud', 'type': 'long'},
         'total_bytes_to_process': {'key': 'totalBytesToProcess', 'type': 'long'},
+        'files_processed': {'key': 'filesProcessed', 'type': 'long'},
+        'total_files_to_process': {'key': 'totalFilesToProcess', 'type': 'long'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -50,3 +59,5 @@ class CopyProgress(Model):
         self.account_id = None
         self.bytes_sent_to_cloud = None
         self.total_bytes_to_process = None
+        self.files_processed = None
+        self.total_files_to_process = None

@@ -21,7 +21,7 @@ class ShareCredentialDetails(Model):
     :ivar share_name: Name of the share.
     :vartype share_name: str
     :ivar share_type: Type of the share. Possible values include:
-     'UnknownType', 'HCS', 'BlockBlob', 'PageBlob', 'AzureFile'
+     'UnknownType', 'HCS', 'BlockBlob', 'PageBlob', 'AzureFile', 'ManagedDisk'
     :vartype share_type: str or
      ~azure.mgmt.databox.models.ShareDestinationFormatType
     :ivar user_name: User name for the share.

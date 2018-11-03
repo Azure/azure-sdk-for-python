@@ -19,6 +19,7 @@ class ShareDestinationFormatType(str, Enum):
     block_blob = "BlockBlob"  #: Azure storage block blob format.
     page_blob = "PageBlob"  #: Azure storage page blob format.
     azure_file = "AzureFile"  #: Azure storage file format.
+    managed_disk = "ManagedDisk"  #: Azure Compute Disk.
 
 
 class AccessProtocol(str, Enum):
@@ -52,9 +53,10 @@ class SkuDisabledReason(str, Enum):
 
     none = "None"  #: SKU is not disabled.
     country = "Country"  #: SKU is not available in the requested country.
-    region = "Region"  #: SKU is not available to push data to the requested storage account region.
+    region = "Region"  #: SKU is not available to push data to the requested Azure region.
     feature = "Feature"  #: Required features are not enabled for the SKU.
     offer_type = "OfferType"  #: Subscription does not have required offer types for the SKU.
+    no_subscription_info = "NoSubscriptionInfo"  #: Subscription has not registered to Microsoft.DataBox and Service does not have the subscription notification.
 
 
 class NotificationStageName(str, Enum):
