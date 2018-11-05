@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.1.0"
+from msrest.paging import Paged
 
+
+class ProjectFilePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ProjectFile <azure.mgmt.datamigration.models.ProjectFile>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProjectFile]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProjectFilePaged, self).__init__(*args, **kwargs)

@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .command_properties_py3 import CommandProperties
 
 
-class CommandProperties(Model):
-    """Base class for all types of DMS command properties. If command is not
-    supported by current client, this object is returned.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MigrateSyncCompleteCommandProperties,
-    MongoDbCancelCommand, MongoDbFinishCommand, MongoDbRestartCommand
+class MongoDbCancelCommand(CommandProperties):
+    """Properties for the command that cancels a migration in whole or in part.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -33,6 +28,8 @@ class CommandProperties(Model):
     :vartype state: str or ~azure.mgmt.datamigration.models.CommandState
     :param command_type: Required. Constant filled by server.
     :type command_type: str
+    :param input: Command input
+    :type input: ~azure.mgmt.datamigration.models.MongoDbCommandInput
     """
 
     _validation = {
@@ -45,14 +42,10 @@ class CommandProperties(Model):
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
         'command_type': {'key': 'commandType', 'type': 'str'},
+        'input': {'key': 'input', 'type': 'MongoDbCommandInput'},
     }
 
-    _subtype_map = {
-        'command_type': {'Migrate.Sync.Complete.Database': 'MigrateSyncCompleteCommandProperties', 'cancel': 'MongoDbCancelCommand', 'finish': 'MongoDbFinishCommand', 'restart': 'MongoDbRestartCommand'}
-    }
-
-    def __init__(self, **kwargs):
-        super(CommandProperties, self).__init__(**kwargs)
-        self.errors = None
-        self.state = None
-        self.command_type = None
+    def __init__(self, *, input=None, **kwargs) -> None:
+        super(MongoDbCancelCommand, self).__init__(**kwargs)
+        self.input = input
+        self.command_type = 'cancel'
