@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .connection_info import ConnectionInfo
 
 
-class ConnectionInfo(Model):
-    """Defines the connection properties of a server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: PostgreSqlConnectionInfo, MySqlConnectionInfo,
-    MongoDbConnectionInfo, SqlConnectionInfo
+class MongoDbConnectionInfo(ConnectionInfo):
+    """Describes a connection to a MongoDB data source.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,24 +23,25 @@ class ConnectionInfo(Model):
     :type password: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param connection_string: Required. A MongoDB connection string or blob
+     container URL. The user name and password can be specified here or in the
+     userName and password properties
+    :type connection_string: str
     """
 
     _validation = {
         'type': {'required': True},
+        'connection_string': {'required': True},
     }
 
     _attribute_map = {
         'user_name': {'key': 'userName', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'MongoDbConnectionInfo': 'MongoDbConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ConnectionInfo, self).__init__(**kwargs)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.type = None
+        super(MongoDbConnectionInfo, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.type = 'MongoDbConnectionInfo'
