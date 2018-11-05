@@ -35,10 +35,10 @@ class DeleteActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param recursive: Required. If true, files under the folder path will be
-     deleted recursively. Default is true. Type: boolean (or Expression with
-     resultType boolean).
-    :type recursive: bool
+    :param recursive: If true, files under the folder path will be deleted
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
     :param dataset: Required. Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
@@ -46,7 +46,6 @@ class DeleteActivity(ExecutionActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'recursive': {'required': True},
         'dataset': {'required': True},
     }
 
@@ -59,7 +58,7 @@ class DeleteActivity(ExecutionActivity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
-        'recursive': {'key': 'typeProperties.recursive', 'type': 'bool'},
+        'recursive': {'key': 'typeProperties.recursive', 'type': 'object'},
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
