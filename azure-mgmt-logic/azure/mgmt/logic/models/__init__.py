@@ -134,7 +134,6 @@ try:
     from .request_py3 import Request
     from .response_py3 import Response
     from .request_history_py3 import RequestHistory
-    from .request_history_list_result_py3 import RequestHistoryListResult
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
@@ -260,7 +259,6 @@ except (SyntaxError, ImportError):
     from .request import Request
     from .response import Response
     from .request_history import RequestHistory
-    from .request_history_list_result import RequestHistoryListResult
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -269,6 +267,7 @@ from .workflow_run_paged import WorkflowRunPaged
 from .workflow_run_action_paged import WorkflowRunActionPaged
 from .expression_root_paged import ExpressionRootPaged
 from .workflow_run_action_repetition_definition_paged import WorkflowRunActionRepetitionDefinitionPaged
+from .request_history_paged import RequestHistoryPaged
 from .integration_account_paged import IntegrationAccountPaged
 from .key_vault_key_paged import KeyVaultKeyPaged
 from .assembly_definition_paged import AssemblyDefinitionPaged
@@ -438,7 +437,6 @@ __all__ = [
     'Request',
     'Response',
     'RequestHistory',
-    'RequestHistoryListResult',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -447,6 +445,7 @@ __all__ = [
     'WorkflowRunActionPaged',
     'ExpressionRootPaged',
     'WorkflowRunActionRepetitionDefinitionPaged',
+    'RequestHistoryPaged',
     'IntegrationAccountPaged',
     'KeyVaultKeyPaged',
     'AssemblyDefinitionPaged',
