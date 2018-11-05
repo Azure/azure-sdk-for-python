@@ -30,6 +30,16 @@ class ConnectionStateSnapshot(Model):
      values include: 'NotStarted', 'InProgress', 'Completed'
     :type evaluation_state: str or
      ~azure.mgmt.network.v2018_06_01.models.EvaluationState
+    :param avg_latency_in_ms: Average latency in ms.
+    :type avg_latency_in_ms: int
+    :param min_latency_in_ms: Minimum latency in ms.
+    :type min_latency_in_ms: int
+    :param max_latency_in_ms: Maximum latency in ms.
+    :type max_latency_in_ms: int
+    :param probes_sent: The number of sent probes.
+    :type probes_sent: int
+    :param probes_failed: The number of failed probes.
+    :type probes_failed: int
     :ivar hops: List of hops between the source and the destination.
     :vartype hops:
      list[~azure.mgmt.network.v2018_06_01.models.ConnectivityHop]
@@ -44,6 +54,11 @@ class ConnectionStateSnapshot(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'evaluation_state': {'key': 'evaluationState', 'type': 'str'},
+        'avg_latency_in_ms': {'key': 'avgLatencyInMs', 'type': 'int'},
+        'min_latency_in_ms': {'key': 'minLatencyInMs', 'type': 'int'},
+        'max_latency_in_ms': {'key': 'maxLatencyInMs', 'type': 'int'},
+        'probes_sent': {'key': 'probesSent', 'type': 'int'},
+        'probes_failed': {'key': 'probesFailed', 'type': 'int'},
         'hops': {'key': 'hops', 'type': '[ConnectivityHop]'},
     }
 
@@ -53,4 +68,9 @@ class ConnectionStateSnapshot(Model):
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
         self.evaluation_state = kwargs.get('evaluation_state', None)
+        self.avg_latency_in_ms = kwargs.get('avg_latency_in_ms', None)
+        self.min_latency_in_ms = kwargs.get('min_latency_in_ms', None)
+        self.max_latency_in_ms = kwargs.get('max_latency_in_ms', None)
+        self.probes_sent = kwargs.get('probes_sent', None)
+        self.probes_failed = kwargs.get('probes_failed', None)
         self.hops = None

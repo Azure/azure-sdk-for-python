@@ -54,6 +54,9 @@ class SignalRResource(TrackedResource):
     :ivar server_port: The publicly accessibly port of the SignalR service
      which is designed for customer server side usage.
     :vartype server_port: int
+    :param version: Version of the SignalR resource. Probably you need the
+     same or higher version of client SDKs.
+    :type version: str
     """
 
     _validation = {
@@ -80,6 +83,7 @@ class SignalRResource(TrackedResource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'public_port': {'key': 'properties.publicPort', 'type': 'int'},
         'server_port': {'key': 'properties.serverPort', 'type': 'int'},
+        'version': {'key': 'properties.version', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -91,3 +95,4 @@ class SignalRResource(TrackedResource):
         self.host_name = None
         self.public_port = None
         self.server_port = None
+        self.version = kwargs.get('version', None)
