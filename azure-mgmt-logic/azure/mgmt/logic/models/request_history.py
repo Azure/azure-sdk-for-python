@@ -28,14 +28,8 @@ class RequestHistory(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :param start_time: The time the request started.
-    :type start_time: datetime
-    :param end_time: The time the request ended.
-    :type end_time: datetime
-    :param request: The request.
-    :type request: ~azure.mgmt.logic.models.Request
-    :param response: The response.
-    :type response: ~azure.mgmt.logic.models.Response
+    :param properties: The request history properties.
+    :type properties: ~azure.mgmt.logic.models.RequestHistoryProperties
     """
 
     _validation = {
@@ -50,15 +44,9 @@ class RequestHistory(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'request': {'key': 'request', 'type': 'Request'},
-        'response': {'key': 'response', 'type': 'Response'},
+        'properties': {'key': 'properties', 'type': 'RequestHistoryProperties'},
     }
 
     def __init__(self, **kwargs):
         super(RequestHistory, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.request = kwargs.get('request', None)
-        self.response = kwargs.get('response', None)
+        self.properties = kwargs.get('properties', None)

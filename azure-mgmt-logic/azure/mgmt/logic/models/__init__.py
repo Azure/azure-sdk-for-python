@@ -133,6 +133,7 @@ try:
     from .batch_configuration_py3 import BatchConfiguration
     from .request_py3 import Request
     from .response_py3 import Response
+    from .request_history_properties_py3 import RequestHistoryProperties
     from .request_history_py3 import RequestHistory
 except (SyntaxError, ImportError):
     from .resource import Resource
@@ -258,6 +259,7 @@ except (SyntaxError, ImportError):
     from .batch_configuration import BatchConfiguration
     from .request import Request
     from .response import Response
+    from .request_history_properties import RequestHistoryProperties
     from .request_history import RequestHistory
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
@@ -436,6 +438,7 @@ __all__ = [
     'BatchConfiguration',
     'Request',
     'Response',
+    'RequestHistoryProperties',
     'RequestHistory',
     'WorkflowPaged',
     'WorkflowVersionPaged',
