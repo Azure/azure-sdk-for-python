@@ -10,23 +10,38 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .project_file_properties_py3 import ProjectFileProperties
+    from .project_file_py3 import ProjectFile
     from .odata_error_py3 import ODataError
     from .reportable_exception_py3 import ReportableException
     from .migrate_sync_complete_command_output_py3 import MigrateSyncCompleteCommandOutput
     from .migrate_sync_complete_command_input_py3 import MigrateSyncCompleteCommandInput
     from .migrate_sync_complete_command_properties_py3 import MigrateSyncCompleteCommandProperties
     from .command_properties_py3 import CommandProperties
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
     from .get_tde_certificates_sql_task_output_py3 import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input_py3 import SelectedCertificateInput
     from .file_share_py3 import FileShare
     from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
     from .my_sql_connection_info_py3 import MySqlConnectionInfo
+    from .mongo_db_connection_info_py3 import MongoDbConnectionInfo
     from .connection_info_py3 import ConnectionInfo
     from .sql_connection_info_py3 import SqlConnectionInfo
     from .get_tde_certificates_sql_task_input_py3 import GetTdeCertificatesSqlTaskInput
     from .get_tde_certificates_sql_task_properties_py3 import GetTdeCertificatesSqlTaskProperties
+    from .mongo_db_error_py3 import MongoDbError
+    from .mongo_db_collection_progress_py3 import MongoDbCollectionProgress
+    from .mongo_db_database_progress_py3 import MongoDbDatabaseProgress
+    from .mongo_db_progress_py3 import MongoDbProgress
+    from .mongo_db_migration_progress_py3 import MongoDbMigrationProgress
+    from .mongo_db_throttling_settings_py3 import MongoDbThrottlingSettings
+    from .mongo_db_shard_key_field_py3 import MongoDbShardKeyField
+    from .mongo_db_shard_key_setting_py3 import MongoDbShardKeySetting
+    from .mongo_db_collection_settings_py3 import MongoDbCollectionSettings
+    from .mongo_db_database_settings_py3 import MongoDbDatabaseSettings
+    from .mongo_db_migration_settings_py3 import MongoDbMigrationSettings
+    from .validate_mongo_db_task_properties_py3 import ValidateMongoDbTaskProperties
     from .database_backup_info_py3 import DatabaseBackupInfo
     from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share_py3 import BlobShare
@@ -97,6 +112,7 @@ try:
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties_py3 import MigrateSqlServerSqlMITaskProperties
+    from .migrate_mongo_db_task_properties_py3 import MigrateMongoDbTaskProperties
     from .connect_to_target_azure_db_for_my_sql_task_output_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input_py3 import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
@@ -125,6 +141,12 @@ try:
     from .connect_to_source_sql_server_task_input_py3 import ConnectToSourceSqlServerTaskInput
     from .connect_to_source_sql_server_sync_task_properties_py3 import ConnectToSourceSqlServerSyncTaskProperties
     from .connect_to_source_sql_server_task_properties_py3 import ConnectToSourceSqlServerTaskProperties
+    from .mongo_db_shard_key_info_py3 import MongoDbShardKeyInfo
+    from .mongo_db_collection_info_py3 import MongoDbCollectionInfo
+    from .mongo_db_object_info_py3 import MongoDbObjectInfo
+    from .mongo_db_database_info_py3 import MongoDbDatabaseInfo
+    from .mongo_db_cluster_info_py3 import MongoDbClusterInfo
+    from .connect_to_mongo_db_task_properties_py3 import ConnectToMongoDbTaskProperties
     from .project_task_properties_py3 import ProjectTaskProperties
     from .project_task_py3 import ProjectTask
     from .service_sku_py3 import ServiceSku
@@ -133,6 +155,7 @@ try:
     from .database_info_py3 import DatabaseInfo
     from .project_py3 import Project
     from .api_error_py3 import ApiError, ApiErrorException
+    from .file_storage_info_py3 import FileStorageInfo
     from .service_operation_display_py3 import ServiceOperationDisplay
     from .service_operation_py3 import ServiceOperation
     from .quota_name_py3 import QuotaName
@@ -160,6 +183,11 @@ try:
     from .migrate_schema_sql_server_sql_db_task_output_database_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
     from .migrate_schema_sql_server_sql_db_task_output_error_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
     from .migrate_schema_sql_task_output_error_py3 import MigrateSchemaSqlTaskOutputError
+    from .mongo_db_command_input_py3 import MongoDbCommandInput
+    from .mongo_db_cancel_command_py3 import MongoDbCancelCommand
+    from .mongo_db_finish_command_input_py3 import MongoDbFinishCommandInput
+    from .mongo_db_finish_command_py3 import MongoDbFinishCommand
+    from .mongo_db_restart_command_py3 import MongoDbRestartCommand
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
@@ -173,23 +201,38 @@ try:
     from .database_file_input_py3 import DatabaseFileInput
     from .migrate_sql_server_sql_server_database_input_py3 import MigrateSqlServerSqlServerDatabaseInput
 except (SyntaxError, ImportError):
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .project_file_properties import ProjectFileProperties
+    from .project_file import ProjectFile
     from .odata_error import ODataError
     from .reportable_exception import ReportableException
     from .migrate_sync_complete_command_output import MigrateSyncCompleteCommandOutput
     from .migrate_sync_complete_command_input import MigrateSyncCompleteCommandInput
     from .migrate_sync_complete_command_properties import MigrateSyncCompleteCommandProperties
     from .command_properties import CommandProperties
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
     from .get_tde_certificates_sql_task_output import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input import SelectedCertificateInput
     from .file_share import FileShare
     from .postgre_sql_connection_info import PostgreSqlConnectionInfo
     from .my_sql_connection_info import MySqlConnectionInfo
+    from .mongo_db_connection_info import MongoDbConnectionInfo
     from .connection_info import ConnectionInfo
     from .sql_connection_info import SqlConnectionInfo
     from .get_tde_certificates_sql_task_input import GetTdeCertificatesSqlTaskInput
     from .get_tde_certificates_sql_task_properties import GetTdeCertificatesSqlTaskProperties
+    from .mongo_db_error import MongoDbError
+    from .mongo_db_collection_progress import MongoDbCollectionProgress
+    from .mongo_db_database_progress import MongoDbDatabaseProgress
+    from .mongo_db_progress import MongoDbProgress
+    from .mongo_db_migration_progress import MongoDbMigrationProgress
+    from .mongo_db_throttling_settings import MongoDbThrottlingSettings
+    from .mongo_db_shard_key_field import MongoDbShardKeyField
+    from .mongo_db_shard_key_setting import MongoDbShardKeySetting
+    from .mongo_db_collection_settings import MongoDbCollectionSettings
+    from .mongo_db_database_settings import MongoDbDatabaseSettings
+    from .mongo_db_migration_settings import MongoDbMigrationSettings
+    from .validate_mongo_db_task_properties import ValidateMongoDbTaskProperties
     from .database_backup_info import DatabaseBackupInfo
     from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share import BlobShare
@@ -260,6 +303,7 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
     from .migrate_sql_server_sql_mi_task_properties import MigrateSqlServerSqlMITaskProperties
+    from .migrate_mongo_db_task_properties import MigrateMongoDbTaskProperties
     from .connect_to_target_azure_db_for_my_sql_task_output import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties import ConnectToTargetAzureDbForMySqlTaskProperties
@@ -288,6 +332,12 @@ except (SyntaxError, ImportError):
     from .connect_to_source_sql_server_task_input import ConnectToSourceSqlServerTaskInput
     from .connect_to_source_sql_server_sync_task_properties import ConnectToSourceSqlServerSyncTaskProperties
     from .connect_to_source_sql_server_task_properties import ConnectToSourceSqlServerTaskProperties
+    from .mongo_db_shard_key_info import MongoDbShardKeyInfo
+    from .mongo_db_collection_info import MongoDbCollectionInfo
+    from .mongo_db_object_info import MongoDbObjectInfo
+    from .mongo_db_database_info import MongoDbDatabaseInfo
+    from .mongo_db_cluster_info import MongoDbClusterInfo
+    from .connect_to_mongo_db_task_properties import ConnectToMongoDbTaskProperties
     from .project_task_properties import ProjectTaskProperties
     from .project_task import ProjectTask
     from .service_sku import ServiceSku
@@ -296,6 +346,7 @@ except (SyntaxError, ImportError):
     from .database_info import DatabaseInfo
     from .project import Project
     from .api_error import ApiError, ApiErrorException
+    from .file_storage_info import FileStorageInfo
     from .service_operation_display import ServiceOperationDisplay
     from .service_operation import ServiceOperation
     from .quota_name import QuotaName
@@ -323,6 +374,11 @@ except (SyntaxError, ImportError):
     from .migrate_schema_sql_server_sql_db_task_output_database_level import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
     from .migrate_schema_sql_server_sql_db_task_output_error import MigrateSchemaSqlServerSqlDbTaskOutputError
     from .migrate_schema_sql_task_output_error import MigrateSchemaSqlTaskOutputError
+    from .mongo_db_command_input import MongoDbCommandInput
+    from .mongo_db_cancel_command import MongoDbCancelCommand
+    from .mongo_db_finish_command_input import MongoDbFinishCommandInput
+    from .mongo_db_finish_command import MongoDbFinishCommand
+    from .mongo_db_restart_command import MongoDbRestartCommand
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
@@ -342,10 +398,15 @@ from .project_task_paged import ProjectTaskPaged
 from .project_paged import ProjectPaged
 from .quota_paged import QuotaPaged
 from .service_operation_paged import ServiceOperationPaged
+from .project_file_paged import ProjectFilePaged
 from .data_migration_service_client_enums import (
     CommandState,
     SqlSourcePlatform,
     AuthenticationType,
+    MongoDbErrorType,
+    MongoDbMigrationState,
+    MongoDbShardKeyOrder,
+    MongoDbReplication,
     BackupType,
     BackupMode,
     SyncTableMigrationState,
@@ -363,6 +424,7 @@ from .data_migration_service_client_enums import (
     DatabaseCompatLevel,
     DatabaseFileType,
     ServerLevelPermissionsGroup,
+    MongoDbClusterType,
     TaskState,
     ServiceProvisioningState,
     ProjectTargetPlatform,
@@ -381,23 +443,38 @@ from .data_migration_service_client_enums import (
 )
 
 __all__ = [
+    'TrackedResource',
+    'Resource',
+    'ProjectFileProperties',
+    'ProjectFile',
     'ODataError',
     'ReportableException',
     'MigrateSyncCompleteCommandOutput',
     'MigrateSyncCompleteCommandInput',
     'MigrateSyncCompleteCommandProperties',
     'CommandProperties',
-    'TrackedResource',
-    'Resource',
     'GetTdeCertificatesSqlTaskOutput',
     'SelectedCertificateInput',
     'FileShare',
     'PostgreSqlConnectionInfo',
     'MySqlConnectionInfo',
+    'MongoDbConnectionInfo',
     'ConnectionInfo',
     'SqlConnectionInfo',
     'GetTdeCertificatesSqlTaskInput',
     'GetTdeCertificatesSqlTaskProperties',
+    'MongoDbError',
+    'MongoDbCollectionProgress',
+    'MongoDbDatabaseProgress',
+    'MongoDbProgress',
+    'MongoDbMigrationProgress',
+    'MongoDbThrottlingSettings',
+    'MongoDbShardKeyField',
+    'MongoDbShardKeySetting',
+    'MongoDbCollectionSettings',
+    'MongoDbDatabaseSettings',
+    'MongoDbMigrationSettings',
+    'ValidateMongoDbTaskProperties',
     'DatabaseBackupInfo',
     'ValidateMigrationInputSqlServerSqlMITaskOutput',
     'BlobShare',
@@ -468,6 +545,7 @@ __all__ = [
     'MigrateSqlServerSqlMITaskOutput',
     'MigrateSqlServerSqlMITaskInput',
     'MigrateSqlServerSqlMITaskProperties',
+    'MigrateMongoDbTaskProperties',
     'ConnectToTargetAzureDbForMySqlTaskOutput',
     'ConnectToTargetAzureDbForMySqlTaskInput',
     'ConnectToTargetAzureDbForMySqlTaskProperties',
@@ -496,6 +574,12 @@ __all__ = [
     'ConnectToSourceSqlServerTaskInput',
     'ConnectToSourceSqlServerSyncTaskProperties',
     'ConnectToSourceSqlServerTaskProperties',
+    'MongoDbShardKeyInfo',
+    'MongoDbCollectionInfo',
+    'MongoDbObjectInfo',
+    'MongoDbDatabaseInfo',
+    'MongoDbClusterInfo',
+    'ConnectToMongoDbTaskProperties',
     'ProjectTaskProperties',
     'ProjectTask',
     'ServiceSku',
@@ -504,6 +588,7 @@ __all__ = [
     'DatabaseInfo',
     'Project',
     'ApiError', 'ApiErrorException',
+    'FileStorageInfo',
     'ServiceOperationDisplay',
     'ServiceOperation',
     'QuotaName',
@@ -531,6 +616,11 @@ __all__ = [
     'MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel',
     'MigrateSchemaSqlServerSqlDbTaskOutputError',
     'MigrateSchemaSqlTaskOutputError',
+    'MongoDbCommandInput',
+    'MongoDbCancelCommand',
+    'MongoDbFinishCommandInput',
+    'MongoDbFinishCommand',
+    'MongoDbRestartCommand',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',
@@ -550,9 +640,14 @@ __all__ = [
     'ProjectPaged',
     'QuotaPaged',
     'ServiceOperationPaged',
+    'ProjectFilePaged',
     'CommandState',
     'SqlSourcePlatform',
     'AuthenticationType',
+    'MongoDbErrorType',
+    'MongoDbMigrationState',
+    'MongoDbShardKeyOrder',
+    'MongoDbReplication',
     'BackupType',
     'BackupMode',
     'SyncTableMigrationState',
@@ -570,6 +665,7 @@ __all__ = [
     'DatabaseCompatLevel',
     'DatabaseFileType',
     'ServerLevelPermissionsGroup',
+    'MongoDbClusterType',
     'TaskState',
     'ServiceProvisioningState',
     'ProjectTargetPlatform',
