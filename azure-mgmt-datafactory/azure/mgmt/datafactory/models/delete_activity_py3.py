@@ -9,21 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .execution_activity_py3 import ExecutionActivity
 
 
-class ExecutionActivity(Activity):
-    """Base class for all execution activities.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatabricksSparkPythonActivity, DatabricksSparkJarActivity,
-    DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
-    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
-    GetMetadataActivity, WebActivity, LookupActivity, DeleteActivity,
-    SqlServerStoredProcedureActivity, CustomActivity,
-    ExecuteSSISPackageActivity, HDInsightSparkActivity,
-    HDInsightStreamingActivity, HDInsightMapReduceActivity,
-    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+class DeleteActivity(ExecutionActivity):
+    """Delete activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -45,11 +35,18 @@ class ExecutionActivity(Activity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param recursive: If true, files under the folder path will be deleted
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param dataset: Required. Delete activity dataset reference.
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {
@@ -61,14 +58,12 @@ class ExecutionActivity(Activity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'recursive': {'key': 'typeProperties.recursive', 'type': 'object'},
+        'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
-    _subtype_map = {
-        'type': {'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
-    }
-
-    def __init__(self, **kwargs):
-        super(ExecutionActivity, self).__init__(**kwargs)
-        self.linked_service_name = kwargs.get('linked_service_name', None)
-        self.policy = kwargs.get('policy', None)
-        self.type = 'Execution'
+    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, recursive=None, **kwargs) -> None:
+        super(DeleteActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+        self.recursive = recursive
+        self.dataset = dataset
+        self.type = 'Delete'
