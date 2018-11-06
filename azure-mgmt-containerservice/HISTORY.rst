@@ -3,6 +3,21 @@
 Release History
 ===============
 
+4.2.2 (2018-08-09)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix invalid definition of CredentialResult
+
+4.2.1 (2018-08-08)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid regexp
+- Fix invalid definition of CredentialResult
+
 4.2.0 (2018-07-30)
 ++++++++++++++++++
 

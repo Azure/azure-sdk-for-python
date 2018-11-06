@@ -34,9 +34,9 @@ class AddressResponse(Model):
         'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
     }
 
-    def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None):
-        super(AddressResponse, self).__init__()
-        self.service_ip_address = service_ip_address
-        self.internal_ip_address = internal_ip_address
-        self.outbound_ip_addresses = outbound_ip_addresses
-        self.vip_mappings = vip_mappings
+    def __init__(self, **kwargs):
+        super(AddressResponse, self).__init__(**kwargs)
+        self.service_ip_address = kwargs.get('service_ip_address', None)
+        self.internal_ip_address = kwargs.get('internal_ip_address', None)
+        self.outbound_ip_addresses = kwargs.get('outbound_ip_addresses', None)
+        self.vip_mappings = kwargs.get('vip_mappings', None)

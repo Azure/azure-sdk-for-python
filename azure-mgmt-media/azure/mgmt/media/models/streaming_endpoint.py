@@ -18,6 +18,8 @@ class StreamingEndpoint(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -30,9 +32,12 @@ class StreamingEndpoint(TrackedResource):
     :type location: str
     :param description: The StreamingEndpoint description.
     :type description: str
-    :param scale_units: The number of scale units.
+    :param scale_units: Required. The number of scale units.  Use the Scale
+     operation to adjust this value.
     :type scale_units: int
-    :param availability_set_name: AvailabilitySet name
+    :param availability_set_name: The name of the AvailabilitySet used with
+     this StreamingEndpoint for high availability streaming.  This value can
+     only be set at creation time.
     :type availability_set_name: str
     :param access_control: The access control definition of the
      StreamingEndpoint.
@@ -73,6 +78,7 @@ class StreamingEndpoint(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'scale_units': {'required': True},
         'host_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},

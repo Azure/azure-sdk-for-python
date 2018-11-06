@@ -15,6 +15,7 @@ try:
     from .container_state_py3 import ContainerState
     from .event_py3 import Event
     from .container_properties_instance_view_py3 import ContainerPropertiesInstanceView
+    from .gpu_resource_py3 import GpuResource
     from .resource_requests_py3 import ResourceRequests
     from .resource_limits_py3 import ResourceLimits
     from .resource_requirements_py3 import ResourceRequirements
@@ -26,12 +27,16 @@ try:
     from .azure_file_volume_py3 import AzureFileVolume
     from .git_repo_volume_py3 import GitRepoVolume
     from .volume_py3 import Volume
+    from .container_group_identity_user_assigned_identities_value_py3 import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from .container_group_identity_py3 import ContainerGroupIdentity
     from .image_registry_credential_py3 import ImageRegistryCredential
     from .port_py3 import Port
     from .ip_address_py3 import IpAddress
     from .container_group_properties_instance_view_py3 import ContainerGroupPropertiesInstanceView
     from .log_analytics_py3 import LogAnalytics
     from .container_group_diagnostics_py3 import ContainerGroupDiagnostics
+    from .container_group_network_profile_py3 import ContainerGroupNetworkProfile
+    from .dns_configuration_py3 import DnsConfiguration
     from .container_group_py3 import ContainerGroup
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -50,6 +55,7 @@ except (SyntaxError, ImportError):
     from .container_state import ContainerState
     from .event import Event
     from .container_properties_instance_view import ContainerPropertiesInstanceView
+    from .gpu_resource import GpuResource
     from .resource_requests import ResourceRequests
     from .resource_limits import ResourceLimits
     from .resource_requirements import ResourceRequirements
@@ -61,12 +67,16 @@ except (SyntaxError, ImportError):
     from .azure_file_volume import AzureFileVolume
     from .git_repo_volume import GitRepoVolume
     from .volume import Volume
+    from .container_group_identity_user_assigned_identities_value import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from .container_group_identity import ContainerGroupIdentity
     from .image_registry_credential import ImageRegistryCredential
     from .port import Port
     from .ip_address import IpAddress
     from .container_group_properties_instance_view import ContainerGroupPropertiesInstanceView
     from .log_analytics import LogAnalytics
     from .container_group_diagnostics import ContainerGroupDiagnostics
+    from .container_group_network_profile import ContainerGroupNetworkProfile
+    from .dns_configuration import DnsConfiguration
     from .container_group import ContainerGroup
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -82,9 +92,13 @@ except (SyntaxError, ImportError):
 from .container_group_paged import ContainerGroupPaged
 from .container_instance_management_client_enums import (
     ContainerNetworkProtocol,
+    GpuSku,
+    ResourceIdentityType,
     ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
+    ContainerGroupIpAddressType,
     OperatingSystemTypes,
+    LogAnalyticsLogType,
     ContainerInstanceOperationsOrigin,
 )
 
@@ -94,6 +108,7 @@ __all__ = [
     'ContainerState',
     'Event',
     'ContainerPropertiesInstanceView',
+    'GpuResource',
     'ResourceRequests',
     'ResourceLimits',
     'ResourceRequirements',
@@ -105,12 +120,16 @@ __all__ = [
     'AzureFileVolume',
     'GitRepoVolume',
     'Volume',
+    'ContainerGroupIdentityUserAssignedIdentitiesValue',
+    'ContainerGroupIdentity',
     'ImageRegistryCredential',
     'Port',
     'IpAddress',
     'ContainerGroupPropertiesInstanceView',
     'LogAnalytics',
     'ContainerGroupDiagnostics',
+    'ContainerGroupNetworkProfile',
+    'DnsConfiguration',
     'ContainerGroup',
     'OperationDisplay',
     'Operation',
@@ -125,8 +144,12 @@ __all__ = [
     'Resource',
     'ContainerGroupPaged',
     'ContainerNetworkProtocol',
+    'GpuSku',
+    'ResourceIdentityType',
     'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',
+    'ContainerGroupIpAddressType',
     'OperatingSystemTypes',
+    'LogAnalyticsLogType',
     'ContainerInstanceOperationsOrigin',
 ]

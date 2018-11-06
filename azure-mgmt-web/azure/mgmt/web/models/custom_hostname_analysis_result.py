@@ -90,16 +90,16 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, kind=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
-        super(CustomHostnameAnalysisResult, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(CustomHostnameAnalysisResult, self).__init__(**kwargs)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None
         self.has_conflict_on_scale_unit = None
         self.has_conflict_across_subscription = None
         self.conflicting_app_resource_id = None
-        self.c_name_records = c_name_records
-        self.txt_records = txt_records
-        self.a_records = a_records
-        self.alternate_cname_records = alternate_cname_records
-        self.alternate_txt_records = alternate_txt_records
+        self.c_name_records = kwargs.get('c_name_records', None)
+        self.txt_records = kwargs.get('txt_records', None)
+        self.a_records = kwargs.get('a_records', None)
+        self.alternate_cname_records = kwargs.get('alternate_cname_records', None)
+        self.alternate_txt_records = kwargs.get('alternate_txt_records', None)

@@ -46,6 +46,10 @@ class VirtualMachine(Resource):
      machine disks.
     :type storage_profile:
      ~azure.mgmt.compute.v2018_06_01.models.StorageProfile
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the virtual machine.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2018_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual
      machine.
     :type os_profile: ~azure.mgmt.compute.v2018_06_01.models.OSProfile
@@ -119,6 +123,7 @@ class VirtualMachine(Resource):
         'plan': {'key': 'plan', 'type': 'Plan'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
@@ -132,11 +137,12 @@ class VirtualMachine(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
+        self.additional_capabilities = additional_capabilities
         self.os_profile = os_profile
         self.network_profile = network_profile
         self.diagnostics_profile = diagnostics_profile
