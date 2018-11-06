@@ -23,6 +23,12 @@ class FileTaskStep(TaskStepProperties):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageDependency]
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param task_file_path: Required. The task template/definition file path
@@ -35,11 +41,6 @@ class FileTaskStep(TaskStepProperties):
      when running a task.
     :type values:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.SetValue]
-    :param context_path: The URL(absolute or relative) of the source context
-     for the build task.
-     If it is relative, the context will be relative to the source repository
-     URL of the build task.
-    :type context_path: str
     """
 
     _validation = {
@@ -50,17 +51,17 @@ class FileTaskStep(TaskStepProperties):
 
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
+        'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
         'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},
         'values': {'key': 'values', 'type': '[SetValue]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
     }
 
-    def __init__(self, *, task_file_path: str, values_file_path: str=None, values=None, context_path: str=None, **kwargs) -> None:
-        super(FileTaskStep, self).__init__(**kwargs)
+    def __init__(self, *, task_file_path: str, context_path: str=None, context_access_token: str=None, values_file_path: str=None, values=None, **kwargs) -> None:
+        super(FileTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
         self.values = values
-        self.context_path = context_path
         self.type = 'FileTask'

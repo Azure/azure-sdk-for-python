@@ -113,5 +113,6 @@ class BatchServiceClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.compute_node = ComputeNodeOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        
-        patch_client(self)
+
+
+patch_client()

@@ -21,8 +21,8 @@ class BaseImageTrigger(Model):
      base image dependency updates. Possible values include: 'All', 'Runtime'
     :type base_image_trigger_type: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageTriggerType
-    :param status: The current status of build trigger. Possible values
-     include: 'Disabled', 'Enabled'
+    :param status: The current status of trigger. Possible values include:
+     'Disabled', 'Enabled'
     :type status: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerStatus
     :param name: Required. The name of the trigger.
