@@ -37,9 +37,18 @@ class AzureStorageLinkedService(LinkedService):
      with sasUri property. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param account_key: The Azure key vault secret reference of accountKey in
+     connection string.
+    :type account_key:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
-     exclusive with connectionString property.
-    :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
+     exclusive with connectionString property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :type sas_uri: object
+    :param sas_token: The Azure key vault secret reference of sasToken in sas
+     uri.
+    :type sas_token:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -58,13 +67,17 @@ class AzureStorageLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
+        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
+        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'object'},
+        'sas_token': {'key': 'typeProperties.sasToken', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AzureStorageLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.account_key = kwargs.get('account_key', None)
         self.sas_uri = kwargs.get('sas_uri', None)
+        self.sas_token = kwargs.get('sas_token', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureStorage'

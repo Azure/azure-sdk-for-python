@@ -39,6 +39,7 @@ try:
     from .activity_dependency_py3 import ActivityDependency
     from .user_property_py3 import UserProperty
     from .activity_py3 import Activity
+    from .variable_specification_py3 import VariableSpecification
     from .pipeline_folder_py3 import PipelineFolder
     from .pipeline_resource_py3 import PipelineResource
     from .trigger_py3 import Trigger
@@ -49,8 +50,8 @@ try:
     from .factory_repo_update_py3 import FactoryRepoUpdate
     from .git_hub_access_token_request_py3 import GitHubAccessTokenRequest
     from .git_hub_access_token_response_py3 import GitHubAccessTokenResponse
-    from .data_plane_read_only_token_request_py3 import DataPlaneReadOnlyTokenRequest
-    from .data_plane_read_only_token_response_py3 import DataPlaneReadOnlyTokenResponse
+    from .user_access_policy_py3 import UserAccessPolicy
+    from .access_policy_response_py3 import AccessPolicyResponse
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
@@ -65,6 +66,9 @@ try:
     from .activity_runs_query_response_py3 import ActivityRunsQueryResponse
     from .trigger_run_py3 import TriggerRun
     from .trigger_runs_query_response_py3 import TriggerRunsQueryResponse
+    from .rerun_tumbling_window_trigger_action_parameters_py3 import RerunTumblingWindowTriggerActionParameters
+    from .rerun_tumbling_window_trigger_py3 import RerunTumblingWindowTrigger
+    from .rerun_trigger_resource_py3 import RerunTriggerResource
     from .operation_display_py3 import OperationDisplay
     from .operation_log_specification_py3 import OperationLogSpecification
     from .operation_metric_availability_py3 import OperationMetricAvailability
@@ -72,9 +76,24 @@ try:
     from .operation_metric_specification_py3 import OperationMetricSpecification
     from .operation_service_specification_py3 import OperationServiceSpecification
     from .operation_py3 import Operation
+    from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
+    from .trigger_reference_py3 import TriggerReference
+    from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
+    from .trigger_dependency_reference_py3 import TriggerDependencyReference
+    from .dependency_reference_py3 import DependencyReference
+    from .retry_policy_py3 import RetryPolicy
+    from .tumbling_window_trigger_py3 import TumblingWindowTrigger
+    from .blob_events_trigger_py3 import BlobEventsTrigger
+    from .blob_trigger_py3 import BlobTrigger
+    from .recurrence_schedule_occurrence_py3 import RecurrenceScheduleOccurrence
+    from .recurrence_schedule_py3 import RecurrenceSchedule
+    from .schedule_trigger_recurrence_py3 import ScheduleTriggerRecurrence
+    from .schedule_trigger_py3 import ScheduleTrigger
+    from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
+    from .script_action_py3 import ScriptAction
     from .hd_insight_on_demand_linked_service_py3 import HDInsightOnDemandLinkedService
     from .salesforce_marketing_cloud_linked_service_py3 import SalesforceMarketingCloudLinkedService
     from .netezza_linked_service_py3 import NetezzaLinkedService
@@ -212,20 +231,6 @@ try:
     from .azure_table_dataset_py3 import AzureTableDataset
     from .azure_blob_dataset_py3 import AzureBlobDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
-    from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
-    from .trigger_reference_py3 import TriggerReference
-    from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
-    from .trigger_dependency_reference_py3 import TriggerDependencyReference
-    from .dependency_reference_py3 import DependencyReference
-    from .retry_policy_py3 import RetryPolicy
-    from .tumbling_window_trigger_py3 import TumblingWindowTrigger
-    from .blob_events_trigger_py3 import BlobEventsTrigger
-    from .blob_trigger_py3 import BlobTrigger
-    from .recurrence_schedule_occurrence_py3 import RecurrenceScheduleOccurrence
-    from .recurrence_schedule_py3 import RecurrenceSchedule
-    from .schedule_trigger_recurrence_py3 import ScheduleTriggerRecurrence
-    from .schedule_trigger_py3 import ScheduleTrigger
-    from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .activity_policy_py3 import ActivityPolicy
     from .databricks_spark_python_activity_py3 import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity_py3 import DatabricksSparkJarActivity
@@ -292,6 +297,7 @@ try:
     from .azure_table_source_py3 import AzureTableSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
+    from .delete_activity_py3 import DeleteActivity
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object_py3 import CustomActivityReferenceObject
     from .custom_activity_py3 import CustomActivity
@@ -326,6 +332,8 @@ try:
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
     from .execution_activity_py3 import ExecutionActivity
+    from .append_variable_activity_py3 import AppendVariableActivity
+    from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
@@ -386,6 +394,7 @@ except (SyntaxError, ImportError):
     from .activity_dependency import ActivityDependency
     from .user_property import UserProperty
     from .activity import Activity
+    from .variable_specification import VariableSpecification
     from .pipeline_folder import PipelineFolder
     from .pipeline_resource import PipelineResource
     from .trigger import Trigger
@@ -396,8 +405,8 @@ except (SyntaxError, ImportError):
     from .factory_repo_update import FactoryRepoUpdate
     from .git_hub_access_token_request import GitHubAccessTokenRequest
     from .git_hub_access_token_response import GitHubAccessTokenResponse
-    from .data_plane_read_only_token_request import DataPlaneReadOnlyTokenRequest
-    from .data_plane_read_only_token_response import DataPlaneReadOnlyTokenResponse
+    from .user_access_policy import UserAccessPolicy
+    from .access_policy_response import AccessPolicyResponse
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
@@ -412,6 +421,9 @@ except (SyntaxError, ImportError):
     from .activity_runs_query_response import ActivityRunsQueryResponse
     from .trigger_run import TriggerRun
     from .trigger_runs_query_response import TriggerRunsQueryResponse
+    from .rerun_tumbling_window_trigger_action_parameters import RerunTumblingWindowTriggerActionParameters
+    from .rerun_tumbling_window_trigger import RerunTumblingWindowTrigger
+    from .rerun_trigger_resource import RerunTriggerResource
     from .operation_display import OperationDisplay
     from .operation_log_specification import OperationLogSpecification
     from .operation_metric_availability import OperationMetricAvailability
@@ -419,9 +431,24 @@ except (SyntaxError, ImportError):
     from .operation_metric_specification import OperationMetricSpecification
     from .operation_service_specification import OperationServiceSpecification
     from .operation import Operation
+    from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
+    from .trigger_reference import TriggerReference
+    from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
+    from .trigger_dependency_reference import TriggerDependencyReference
+    from .dependency_reference import DependencyReference
+    from .retry_policy import RetryPolicy
+    from .tumbling_window_trigger import TumblingWindowTrigger
+    from .blob_events_trigger import BlobEventsTrigger
+    from .blob_trigger import BlobTrigger
+    from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
+    from .recurrence_schedule import RecurrenceSchedule
+    from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
+    from .schedule_trigger import ScheduleTrigger
+    from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
+    from .script_action import ScriptAction
     from .hd_insight_on_demand_linked_service import HDInsightOnDemandLinkedService
     from .salesforce_marketing_cloud_linked_service import SalesforceMarketingCloudLinkedService
     from .netezza_linked_service import NetezzaLinkedService
@@ -559,20 +586,6 @@ except (SyntaxError, ImportError):
     from .azure_table_dataset import AzureTableDataset
     from .azure_blob_dataset import AzureBlobDataset
     from .amazon_s3_dataset import AmazonS3Dataset
-    from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
-    from .trigger_reference import TriggerReference
-    from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
-    from .trigger_dependency_reference import TriggerDependencyReference
-    from .dependency_reference import DependencyReference
-    from .retry_policy import RetryPolicy
-    from .tumbling_window_trigger import TumblingWindowTrigger
-    from .blob_events_trigger import BlobEventsTrigger
-    from .blob_trigger import BlobTrigger
-    from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
-    from .recurrence_schedule import RecurrenceSchedule
-    from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
-    from .schedule_trigger import ScheduleTrigger
-    from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .activity_policy import ActivityPolicy
     from .databricks_spark_python_activity import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity import DatabricksSparkJarActivity
@@ -639,6 +652,7 @@ except (SyntaxError, ImportError):
     from .azure_table_source import AzureTableSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
+    from .delete_activity import DeleteActivity
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object import CustomActivityReferenceObject
     from .custom_activity import CustomActivity
@@ -673,6 +687,8 @@ except (SyntaxError, ImportError):
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
     from .execution_activity import ExecutionActivity
+    from .append_variable_activity import AppendVariableActivity
+    from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
@@ -710,17 +726,24 @@ from .linked_service_resource_paged import LinkedServiceResourcePaged
 from .dataset_resource_paged import DatasetResourcePaged
 from .pipeline_resource_paged import PipelineResourcePaged
 from .trigger_resource_paged import TriggerResourcePaged
+from .rerun_trigger_resource_paged import RerunTriggerResourcePaged
 from .data_factory_management_client_enums import (
     IntegrationRuntimeState,
     IntegrationRuntimeAutoUpdate,
     ParameterType,
     DependencyCondition,
+    VariableType,
     TriggerRuntimeState,
     RunQueryFilterOperand,
     RunQueryFilterOperator,
     RunQueryOrderByField,
     RunQueryOrder,
     TriggerRunStatus,
+    TumblingWindowFrequency,
+    BlobEventTypes,
+    DayOfWeek,
+    DaysOfWeek,
+    RecurrenceFrequency,
     SparkServerType,
     SparkThriftTransportProtocol,
     SparkAuthenticationType,
@@ -744,11 +767,6 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DatasetCompressionLevel,
     JsonFormatFilePattern,
-    TumblingWindowFrequency,
-    BlobEventTypes,
-    DayOfWeek,
-    DaysOfWeek,
-    RecurrenceFrequency,
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
@@ -801,6 +819,7 @@ __all__ = [
     'ActivityDependency',
     'UserProperty',
     'Activity',
+    'VariableSpecification',
     'PipelineFolder',
     'PipelineResource',
     'Trigger',
@@ -811,8 +830,8 @@ __all__ = [
     'FactoryRepoUpdate',
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
-    'DataPlaneReadOnlyTokenRequest',
-    'DataPlaneReadOnlyTokenResponse',
+    'UserAccessPolicy',
+    'AccessPolicyResponse',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',
@@ -827,6 +846,9 @@ __all__ = [
     'ActivityRunsQueryResponse',
     'TriggerRun',
     'TriggerRunsQueryResponse',
+    'RerunTumblingWindowTriggerActionParameters',
+    'RerunTumblingWindowTrigger',
+    'RerunTriggerResource',
     'OperationDisplay',
     'OperationLogSpecification',
     'OperationMetricAvailability',
@@ -834,9 +856,24 @@ __all__ = [
     'OperationMetricSpecification',
     'OperationServiceSpecification',
     'Operation',
+    'SelfDependencyTumblingWindowTriggerReference',
+    'TriggerReference',
+    'TumblingWindowTriggerDependencyReference',
+    'TriggerDependencyReference',
+    'DependencyReference',
+    'RetryPolicy',
+    'TumblingWindowTrigger',
+    'BlobEventsTrigger',
+    'BlobTrigger',
+    'RecurrenceScheduleOccurrence',
+    'RecurrenceSchedule',
+    'ScheduleTriggerRecurrence',
+    'ScheduleTrigger',
+    'MultiplePipelineTrigger',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
+    'ScriptAction',
     'HDInsightOnDemandLinkedService',
     'SalesforceMarketingCloudLinkedService',
     'NetezzaLinkedService',
@@ -974,20 +1011,6 @@ __all__ = [
     'AzureTableDataset',
     'AzureBlobDataset',
     'AmazonS3Dataset',
-    'SelfDependencyTumblingWindowTriggerReference',
-    'TriggerReference',
-    'TumblingWindowTriggerDependencyReference',
-    'TriggerDependencyReference',
-    'DependencyReference',
-    'RetryPolicy',
-    'TumblingWindowTrigger',
-    'BlobEventsTrigger',
-    'BlobTrigger',
-    'RecurrenceScheduleOccurrence',
-    'RecurrenceSchedule',
-    'ScheduleTriggerRecurrence',
-    'ScheduleTrigger',
-    'MultiplePipelineTrigger',
     'ActivityPolicy',
     'DatabricksSparkPythonActivity',
     'DatabricksSparkJarActivity',
@@ -1054,6 +1077,7 @@ __all__ = [
     'AzureTableSource',
     'CopySource',
     'LookupActivity',
+    'DeleteActivity',
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',
     'CustomActivity',
@@ -1088,6 +1112,8 @@ __all__ = [
     'CopySink',
     'CopyActivity',
     'ExecutionActivity',
+    'AppendVariableActivity',
+    'SetVariableActivity',
     'FilterActivity',
     'UntilActivity',
     'WaitActivity',
@@ -1125,16 +1151,23 @@ __all__ = [
     'DatasetResourcePaged',
     'PipelineResourcePaged',
     'TriggerResourcePaged',
+    'RerunTriggerResourcePaged',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
     'DependencyCondition',
+    'VariableType',
     'TriggerRuntimeState',
     'RunQueryFilterOperand',
     'RunQueryFilterOperator',
     'RunQueryOrderByField',
     'RunQueryOrder',
     'TriggerRunStatus',
+    'TumblingWindowFrequency',
+    'BlobEventTypes',
+    'DayOfWeek',
+    'DaysOfWeek',
+    'RecurrenceFrequency',
     'SparkServerType',
     'SparkThriftTransportProtocol',
     'SparkAuthenticationType',
@@ -1158,11 +1191,6 @@ __all__ = [
     'SybaseAuthenticationType',
     'DatasetCompressionLevel',
     'JsonFormatFilePattern',
-    'TumblingWindowFrequency',
-    'BlobEventTypes',
-    'DayOfWeek',
-    'DaysOfWeek',
-    'RecurrenceFrequency',
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',

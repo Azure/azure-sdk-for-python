@@ -51,6 +51,13 @@ class DependencyCondition(str, Enum):
     completed = "Completed"
 
 
+class VariableType(str, Enum):
+
+    string = "String"
+    bool_enum = "Bool"
+    array = "Array"
+
+
 class TriggerRuntimeState(str, Enum):
 
     started = "Started"
@@ -104,6 +111,51 @@ class TriggerRunStatus(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     inprogress = "Inprogress"
+
+
+class TumblingWindowFrequency(str, Enum):
+
+    minute = "Minute"
+    hour = "Hour"
+
+
+class BlobEventTypes(str, Enum):
+
+    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
+    microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
+
+
+class DayOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class DaysOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class RecurrenceFrequency(str, Enum):
+
+    not_specified = "NotSpecified"
+    minute = "Minute"
+    hour = "Hour"
+    day = "Day"
+    week = "Week"
+    month = "Month"
+    year = "Year"
 
 
 class SparkServerType(str, Enum):
@@ -254,51 +306,6 @@ class JsonFormatFilePattern(str, Enum):
 
     set_of_objects = "setOfObjects"
     array_of_objects = "arrayOfObjects"
-
-
-class TumblingWindowFrequency(str, Enum):
-
-    minute = "Minute"
-    hour = "Hour"
-
-
-class BlobEventTypes(str, Enum):
-
-    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
-    microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
-
-
-class DayOfWeek(str, Enum):
-
-    sunday = "Sunday"
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-
-
-class DaysOfWeek(str, Enum):
-
-    sunday = "Sunday"
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-
-
-class RecurrenceFrequency(str, Enum):
-
-    not_specified = "NotSpecified"
-    minute = "Minute"
-    hour = "Hour"
-    day = "Day"
-    week = "Week"
-    month = "Month"
-    year = "Year"
 
 
 class WebActivityMethod(str, Enum):

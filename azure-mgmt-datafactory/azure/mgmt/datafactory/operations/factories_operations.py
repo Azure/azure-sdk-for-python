@@ -575,36 +575,28 @@ class FactoriesOperations(object):
         return deserialized
     get_git_hub_access_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getGitHubAccessToken'}
 
-    def get_data_plane_read_only_token(
-            self, resource_group_name, factory_name, start_time=None, expire_time=None, custom_headers=None, raw=False, **operation_config):
-        """Get Data Plane read only token.
+    def get_data_plane_access(
+            self, resource_group_name, factory_name, policy, custom_headers=None, raw=False, **operation_config):
+        """Get Data Plane access.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param start_time: Start time for the token. If not specified the
-         current time will be used.
-        :type start_time: str
-        :param expire_time: Expiration time for the token. Maximum duration
-         for the token is eight hours and by default the token will expire in
-         eight hours.
-        :type expire_time: str
+        :param policy: Data Plane user access policy definition.
+        :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataPlaneReadOnlyTokenResponse or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.datafactory.models.DataPlaneReadOnlyTokenResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: AccessPolicyResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        data_plane_read_only_token_request = models.DataPlaneReadOnlyTokenRequest(start_time=start_time, expire_time=expire_time)
-
         # Construct URL
-        url = self.get_data_plane_read_only_token.metadata['url']
+        url = self.get_data_plane_access.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -628,7 +620,7 @@ class FactoriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(data_plane_read_only_token_request, 'DataPlaneReadOnlyTokenRequest')
+        body_content = self._serialize.body(policy, 'UserAccessPolicy')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -642,11 +634,11 @@ class FactoriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataPlaneReadOnlyTokenResponse', response)
+            deserialized = self._deserialize('AccessPolicyResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_data_plane_read_only_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getDataPlaneReadOnlyToken'}
+    get_data_plane_access.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getDataPlaneAccess'}

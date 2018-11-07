@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .execution_activity import ExecutionActivity
 
 
-class ControlActivity(Activity):
-    """Base class for all control activities like IfCondition, ForEach , Until.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, SetVariableActivity,
-    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
-    IfConditionActivity, ExecutePipelineActivity
+class DeleteActivity(ExecutionActivity):
+    """Delete activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,11 +30,23 @@ class ControlActivity(Activity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param recursive: If true, files under the folder path will be deleted
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param dataset: Required. Delete activity dataset reference.
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {
@@ -49,12 +56,14 @@ class ControlActivity(Activity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'recursive': {'key': 'typeProperties.recursive', 'type': 'object'},
+        'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
     def __init__(self, **kwargs):
-        super(ControlActivity, self).__init__(**kwargs)
-        self.type = 'Container'
+        super(DeleteActivity, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.type = 'Delete'

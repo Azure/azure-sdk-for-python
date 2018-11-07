@@ -12,16 +12,11 @@
 from msrest.serialization import Model
 
 
-class DataPlaneReadOnlyTokenResponse(Model):
+class AccessPolicyResponse(Model):
     """Get Data Plane read only token response definition.
 
-    :param start_time: Start time for the token. If not specified the current
-     time will be used.
-    :type start_time: str
-    :param expire_time: Expiration time for the token. Maximum duration for
-     the token is eight hours and by default the token will expire in eight
-     hours.
-    :type expire_time: str
+    :param policy: The user access policy.
+    :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy
     :param access_token: Data Plane read only access token.
     :type access_token: str
     :param data_plane_url: Data Plane service base URL.
@@ -29,15 +24,13 @@ class DataPlaneReadOnlyTokenResponse(Model):
     """
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'expire_time': {'key': 'expireTime', 'type': 'str'},
+        'policy': {'key': 'policy', 'type': 'UserAccessPolicy'},
         'access_token': {'key': 'accessToken', 'type': 'str'},
         'data_plane_url': {'key': 'dataPlaneUrl', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(DataPlaneReadOnlyTokenResponse, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.expire_time = kwargs.get('expire_time', None)
+        super(AccessPolicyResponse, self).__init__(**kwargs)
+        self.policy = kwargs.get('policy', None)
         self.access_token = kwargs.get('access_token', None)
         self.data_plane_url = kwargs.get('data_plane_url', None)
