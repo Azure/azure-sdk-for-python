@@ -37,9 +37,13 @@ class InvoiceOperations(object):
         self.config = config
 
     def pricesheet(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
         """Get pricesheet data for invoice id (invoiceName).
 
+        :param billing_account_id: Azure Billing Account ID.
+        :type billing_account_id: str
+        :param invoice_name: The name of an invoice resource.
+        :type invoice_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -53,8 +57,8 @@ class InvoiceOperations(object):
         # Construct URL
         url = self.pricesheet.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str'),
-            'invoiceName': self._serialize.url("self.config.invoice_name", self.config.invoice_name, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+            'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
