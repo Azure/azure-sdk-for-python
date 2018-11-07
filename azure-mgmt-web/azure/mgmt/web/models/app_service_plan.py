@@ -32,8 +32,6 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param app_service_plan_name: Name for the App Service plan.
-    :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -135,7 +133,6 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -167,7 +164,6 @@ class AppServicePlan(Resource):
 
     def __init__(self, **kwargs):
         super(AppServicePlan, self).__init__(**kwargs)
-        self.app_service_plan_name = kwargs.get('app_service_plan_name', None)
         self.worker_tier_name = kwargs.get('worker_tier_name', None)
         self.status = None
         self.subscription = None
