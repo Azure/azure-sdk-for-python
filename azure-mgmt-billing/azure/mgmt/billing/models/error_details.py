@@ -38,8 +38,8 @@ class ErrorDetails(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ErrorDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None

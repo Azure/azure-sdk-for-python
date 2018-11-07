@@ -21,7 +21,7 @@ class PriceSheetProperties(Model):
     :ivar billing_period_id: The id of the billing period resource that the
      usage belongs to.
     :vartype billing_period_id: str
-    :ivar meter_id: The meter id
+    :ivar meter_id: The meter id (GUID)
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
@@ -36,6 +36,8 @@ class PriceSheetProperties(Model):
     :vartype unit_price: decimal.Decimal
     :ivar currency_code: Currency Code
     :vartype currency_code: str
+    :ivar offer_id: Offer Id
+    :vartype offer_id: str
     """
 
     _validation = {
@@ -47,6 +49,7 @@ class PriceSheetProperties(Model):
         'part_number': {'readonly': True},
         'unit_price': {'readonly': True},
         'currency_code': {'readonly': True},
+        'offer_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,10 +61,11 @@ class PriceSheetProperties(Model):
         'part_number': {'key': 'partNumber', 'type': 'str'},
         'unit_price': {'key': 'unitPrice', 'type': 'decimal'},
         'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'offer_id': {'key': 'offerId', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PriceSheetProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(PriceSheetProperties, self).__init__(**kwargs)
         self.billing_period_id = None
         self.meter_id = None
         self.meter_details = None
@@ -70,3 +74,4 @@ class PriceSheetProperties(Model):
         self.part_number = None
         self.unit_price = None
         self.currency_code = None
+        self.offer_id = None

@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
+from .operations.invoice_operations import InvoiceOperations
 from .operations.operations import Operations
 from . import models
 
@@ -30,16 +31,24 @@ class BillingManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param billing_account_id: Azure Billing Account ID.
+    :type billing_account_id: str
+    :param invoice_name: Invoice Name.
+    :type invoice_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, billing_account_id, invoice_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if billing_account_id is None:
+            raise ValueError("Parameter 'billing_account_id' must not be None.")
+        if invoice_name is None:
+            raise ValueError("Parameter 'invoice_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -50,9 +59,11 @@ class BillingManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.billing_account_id = billing_account_id
+        self.invoice_name = invoice_name
 
 
-class BillingManagementClient(object):
+class BillingManagementClient(SDKClient):
     """Billing client provides access to billing resources for Azure subscriptions.
 
     :ivar config: Configuration for client.
@@ -64,6 +75,8 @@ class BillingManagementClient(object):
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
+    :ivar invoice: Invoice operations
+    :vartype invoice: azure.mgmt.billing.operations.InvoiceOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
 
@@ -72,14 +85,18 @@ class BillingManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param billing_account_id: Azure Billing Account ID.
+    :type billing_account_id: str
+    :param invoice_name: Invoice Name.
+    :type invoice_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, billing_account_id, invoice_name, base_url=None):
 
-        self.config = BillingManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = BillingManagementClientConfiguration(credentials, subscription_id, billing_account_id, invoice_name, base_url)
+        super(BillingManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01-preview'
@@ -91,6 +108,8 @@ class BillingManagementClient(object):
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice = InvoiceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
