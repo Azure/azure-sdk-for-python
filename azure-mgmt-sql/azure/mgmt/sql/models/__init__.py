@@ -331,6 +331,7 @@ from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
+from .database_vulnerability_assessment_paged import DatabaseVulnerabilityAssessmentPaged
 from .job_agent_paged import JobAgentPaged
 from .job_credential_paged import JobCredentialPaged
 from .job_execution_paged import JobExecutionPaged
@@ -608,6 +609,7 @@ __all__ = [
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
+    'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
     'JobExecutionPaged',
