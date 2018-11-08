@@ -24,6 +24,12 @@ class RoleAssignmentCreateParameters(Model):
      maps to the ID inside the Active Directory. It can point to a user,
      service principal, or security group.
     :type principal_id: str
+    :param principal_type: The principal type of the assigned principal ID.
+     Possible values include: 'User', 'Group', 'ServicePrincipal', 'Unknown',
+     'DirectoryRoleTemplate', 'ForeignGroup', 'Application', 'MSI',
+     'DirectoryObjectOrGroup', 'Everyone'
+    :type principal_type: str or
+     ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
     :param can_delegate: The delgation flag used for creating a role
      assignment
     :type can_delegate: bool
@@ -37,6 +43,7 @@ class RoleAssignmentCreateParameters(Model):
     _attribute_map = {
         'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
         'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
         'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
@@ -44,4 +51,5 @@ class RoleAssignmentCreateParameters(Model):
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
         self.role_definition_id = kwargs.get('role_definition_id', None)
         self.principal_id = kwargs.get('principal_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
         self.can_delegate = kwargs.get('can_delegate', None)
