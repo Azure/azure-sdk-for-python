@@ -39,10 +39,10 @@ class InvoicePricesheetsOperations(object):
         self.config = config
 
 
-    def _post_initial(
+    def _download_initial(
             self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.post.metadata['url']
+        url = self.download.metadata['url']
         path_format_arguments = {
             'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
             'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
@@ -89,7 +89,7 @@ class InvoicePricesheetsOperations(object):
 
         return deserialized
 
-    def post(
+    def download(
             self, billing_account_id, invoice_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get pricesheet data for invoice id (invoiceName).
 
@@ -111,7 +111,7 @@ class InvoicePricesheetsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        raw_result = self._post_initial(
+        raw_result = self._download_initial(
             billing_account_id=billing_account_id,
             invoice_name=invoice_name,
             custom_headers=custom_headers,
@@ -142,4 +142,4 @@ class InvoicePricesheetsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    post.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheets/default/download'}
+    download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheets/default/download'}
