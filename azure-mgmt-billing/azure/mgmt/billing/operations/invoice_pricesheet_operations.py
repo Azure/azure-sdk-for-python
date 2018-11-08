@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -36,26 +38,11 @@ class InvoicePricesheetOperations(object):
 
         self.config = config
 
-    def get(
-            self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
-        """Get pricesheet data for invoice id (invoiceName).
 
-        :param billing_account_id: Azure Billing Account ID.
-        :type billing_account_id: str
-        :param invoice_name: The name of an invoice resource.
-        :type invoice_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
-        """
+    def _post_initial(
+            self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.post.metadata['url']
         path_format_arguments = {
             'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
             'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
@@ -68,6 +55,7 @@ class InvoicePricesheetOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -76,19 +64,82 @@ class InvoicePricesheetOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DownloadUrl', response)
+            header_dict = {
                 'Location': 'str',
                 'Retry-After': 'str',
                 'Azure-AsyncOperation': 'str',
                 'OData-EntityId': 'str',
-            })
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheet/download'}
+
+        return deserialized
+
+    def post(
+            self, billing_account_id, invoice_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Get pricesheet data for invoice id (invoiceName).
+
+        :param billing_account_id: Azure Billing Account ID.
+        :type billing_account_id: str
+        :param invoice_name: The name of an invoice resource.
+        :type invoice_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns DownloadUrl or
+         ClientRawResponse<DownloadUrl> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.billing.models.DownloadUrl]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.billing.models.DownloadUrl]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
+        """
+        raw_result = self._post_initial(
+            billing_account_id=billing_account_id,
+            invoice_name=invoice_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+                'Azure-AsyncOperation': 'str',
+                'OData-EntityId': 'str',
+            }
+            deserialized = self._deserialize('DownloadUrl', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    post.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheets/default/download'}

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DownloadUrl(Model):
-    """A secure URL that can be used to download a PDF invoice until the URL
+    """A secure URL that can be used to download a an entity until the URL
     expires.
 
     Variables are only populated by the server, and will be ignored when
