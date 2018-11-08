@@ -3,6 +3,31 @@
 Release History
 ===============
 
+2.3.0 (2018-11-07)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter exclusions
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter file_upload_limit_in_mb
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter max_request_body_size_in_kb
+- Model ApplicationGatewayHttpListener has a new parameter custom_error_configurations
+- Model ExpressRouteCircuit has a new parameter bandwidth_in_gbps
+- Model ExpressRouteCircuit has a new parameter stag
+- Model ExpressRouteCircuit has a new parameter express_route_port
+- Model EvaluatedNetworkSecurityGroup has a new parameter applied_to
+- Model NetworkConfigurationDiagnosticResult has a new parameter profile
+- Model ApplicationGateway has a new parameter custom_error_configurations
+- Added operation group LoadBalancerOutboundRulesOperations
+- Added operation group ExpressRouteLinksOperations
+- Added operation group ExpressRoutePortsOperations
+- Added operation group ExpressRoutePortsLocationsOperations
+
+**Breaking changes**
+
+- Model NetworkConfigurationDiagnosticResult no longer has parameter traffic_query
+- Operation NetworkWatchersOperations.get_network_configuration_diagnostic has a new signature (no longer takes target_resource_id, queries, but a NetworkConfigurationDiagnosticParameters instance)
+
 2.2.1 (2018-09-14)
 ++++++++++++++++++
 
