@@ -56,8 +56,8 @@ class ManagedInstance(TrackedResource):
     :type v_cores: int
     :param storage_size_in_gb: The maximum storage size in GB.
     :type storage_size_in_gb: int
-    :ivar collation: Collation of the managed instance.
-    :vartype collation: str
+    :param collation: Collation of the managed instance.
+    :type collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
     :vartype dns_zone: str
     :param dns_zone_partner: The resource id of another managed instance whose
@@ -72,7 +72,6 @@ class ManagedInstance(TrackedResource):
         'location': {'required': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
-        'collation': {'readonly': True},
         'dns_zone': {'readonly': True},
     }
 
@@ -109,6 +108,6 @@ class ManagedInstance(TrackedResource):
         self.license_type = kwargs.get('license_type', None)
         self.v_cores = kwargs.get('v_cores', None)
         self.storage_size_in_gb = kwargs.get('storage_size_in_gb', None)
-        self.collation = None
+        self.collation = kwargs.get('collation', None)
         self.dns_zone = None
         self.dns_zone_partner = kwargs.get('dns_zone_partner', None)
