@@ -544,3 +544,5 @@ class SkuName(str, Enum):
     dynamic = "Dynamic"
     isolated = "Isolated"
     premium_v2 = "PremiumV2"
+    elastic_premium = "ElasticPremium"
+    elastic_isolated = "ElasticIsolated"

@@ -42,6 +42,8 @@ class VnetInfo(ProxyOnlyResource):
     :param dns_servers: DNS servers to be used by this Virtual Network. This
      should be a comma-separated list of IP addresses.
     :type dns_servers: str
+    :param is_swift: Flag that is used to denote if this is VNET injection
+    :type is_swift: bool
     """
 
     _validation = {
@@ -64,6 +66,7 @@ class VnetInfo(ProxyOnlyResource):
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
         'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
         'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
+        'is_swift': {'key': 'properties.isSwift', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -74,3 +77,4 @@ class VnetInfo(ProxyOnlyResource):
         self.routes = None
         self.resync_required = None
         self.dns_servers = kwargs.get('dns_servers', None)
+        self.is_swift = kwargs.get('is_swift', None)

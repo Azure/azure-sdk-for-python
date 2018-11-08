@@ -45,6 +45,9 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
      will be ignored when recovering to a target web app.
      This setting is only necessary when RecoverConfiguration is enabled.
     :type ignore_conflicting_host_names: bool
+    :param use_dr_secondary: If true, the snapshot is retrieved from
+     DRSecondary endpoint.
+    :type use_dr_secondary: bool
     """
 
     _validation = {
@@ -64,12 +67,14 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
         'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
         'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
         'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
+        'use_dr_secondary': {'key': 'properties.useDRSecondary', 'type': 'bool'},
     }
 
-    def __init__(self, *, overwrite: bool, kind: str=None, snapshot_time: str=None, recovery_source=None, recover_configuration: bool=None, ignore_conflicting_host_names: bool=None, **kwargs) -> None:
+    def __init__(self, *, overwrite: bool, kind: str=None, snapshot_time: str=None, recovery_source=None, recover_configuration: bool=None, ignore_conflicting_host_names: bool=None, use_dr_secondary: bool=None, **kwargs) -> None:
         super(SnapshotRestoreRequest, self).__init__(kind=kind, **kwargs)
         self.snapshot_time = snapshot_time
         self.recovery_source = recovery_source
         self.overwrite = overwrite
         self.recover_configuration = recover_configuration
         self.ignore_conflicting_host_names = ignore_conflicting_host_names
+        self.use_dr_secondary = use_dr_secondary
