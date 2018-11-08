@@ -12,19 +12,21 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
-    """ManagedDatabaseVulnerabilityAssessmentsOperations operations.
+class ManagedBackupShortTermRetentionPoliciesOperations(object):
+    """ManagedBackupShortTermRetentionPoliciesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar vulnerability_assessment_name: The name of the vulnerability assessment. Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2017-10-01-preview".
+    :ivar policy_name: The policy name. Constant value: "default".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
     """
 
     models = models
@@ -34,14 +36,14 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.vulnerability_assessment_name = "default"
-        self.api_version = "2017-10-01-preview"
+        self.policy_name = "default"
+        self.api_version = "2017-03-01-preview"
 
         self.config = config
 
     def get(
             self, resource_group_name, managed_instance_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the database's vulnerability assessment.
+        """Gets a managed database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -49,18 +51,17 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param database_name: The name of the database for which the
-         vulnerability assessment is defined.
+        :param database_name: The name of the database.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseVulnerabilityAssessment or ClientRawResponse if
+        :return: ManagedBackupShortTermRetentionPolicy or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -69,7 +70,7 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'vulnerabilityAssessmentName': self._serialize.url("self.vulnerability_assessment_name", self.vulnerability_assessment_name, 'str'),
+            'policyName': self._serialize.url("self.policy_name", self.policy_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -100,49 +101,27 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseVulnerabilityAssessment', response)
+            deserialized = self._deserialize('ManagedBackupShortTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/vulnerabilityAssessments/{vulnerabilityAssessmentName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/backupShortTermRetentionPolicies/{policyName}'}
 
-    def create_or_update(
-            self, resource_group_name, managed_instance_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the database's vulnerability assessment.
 
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param database_name: The name of the database for which the
-         vulnerability assessment is defined.
-        :type database_name: str
-        :param parameters: The requested resource.
-        :type parameters:
-         ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DatabaseVulnerabilityAssessment or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, managed_instance_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ManagedBackupShortTermRetentionPolicy(retention_days=retention_days)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'vulnerabilityAssessmentName': self._serialize.url("self.vulnerability_assessment_name", self.vulnerability_assessment_name, 'str'),
+            'policyName': self._serialize.url("self.policy_name", self.policy_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -163,13 +142,13 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DatabaseVulnerabilityAssessment')
+        body_content = self._serialize.body(parameters, 'ManagedBackupShortTermRetentionPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -177,20 +156,17 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseVulnerabilityAssessment', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('DatabaseVulnerabilityAssessment', response)
+            deserialized = self._deserialize('ManagedBackupShortTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/vulnerabilityAssessments/{vulnerabilityAssessmentName}'}
 
-    def delete(
-            self, resource_group_name, managed_instance_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Removes the database's vulnerability assessment.
+    def create_or_update(
+            self, resource_group_name, managed_instance_name, database_name, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates a managed database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -198,25 +174,65 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param database_name: The name of the database for which the
-         vulnerability assessment is defined.
+        :param database_name: The name of the database.
         :type database_name: str
+        :param retention_days: The backup retention period in days. This is
+         how many days Point-in-Time Restore will be supported.
+        :type retention_days: int
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         ManagedBackupShortTermRetentionPolicy or
+         ClientRawResponse<ManagedBackupShortTermRetentionPolicy> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            database_name=database_name,
+            retention_days=retention_days,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ManagedBackupShortTermRetentionPolicy', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/backupShortTermRetentionPolicies/{policyName}'}
+
+
+    def _update_initial(
+            self, resource_group_name, managed_instance_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ManagedBackupShortTermRetentionPolicy(retention_days=retention_days)
+
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'vulnerabilityAssessmentName': self._serialize.url("self.vulnerability_assessment_name", self.vulnerability_assessment_name, 'str'),
+            'policyName': self._serialize.url("self.policy_name", self.policy_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -227,6 +243,8 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -234,23 +252,32 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ManagedBackupShortTermRetentionPolicy')
+
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/vulnerabilityAssessments/{vulnerabilityAssessmentName}'}
+        deserialized = None
 
-    def list_by_database(
-            self, resource_group_name, managed_instance_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the vulnerability assessments of a managed database.
+        if response.status_code == 200:
+            deserialized = self._deserialize('ManagedBackupShortTermRetentionPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, managed_instance_name, database_name, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates a managed database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -258,17 +285,74 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param database_name: The name of the database for which the
-         vulnerability assessment is defined.
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param retention_days: The backup retention period in days. This is
+         how many days Point-in-Time Restore will be supported.
+        :type retention_days: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         ManagedBackupShortTermRetentionPolicy or
+         ClientRawResponse<ManagedBackupShortTermRetentionPolicy> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            database_name=database_name,
+            retention_days=retention_days,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ManagedBackupShortTermRetentionPolicy', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/backupShortTermRetentionPolicies/{policyName}'}
+
+    def list_by_database(
+            self, resource_group_name, managed_instance_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a managed database's short term retention policy list.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param database_name: The name of the database.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DatabaseVulnerabilityAssessment
+        :return: An iterator like instance of
+         ManagedBackupShortTermRetentionPolicy
         :rtype:
-         ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentPaged[~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment]
+         ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicyPaged[~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -314,12 +398,12 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabaseVulnerabilityAssessmentPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ManagedBackupShortTermRetentionPolicyPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabaseVulnerabilityAssessmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ManagedBackupShortTermRetentionPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/vulnerabilityAssessments'}
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/backupShortTermRetentionPolicies'}
