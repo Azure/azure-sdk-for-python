@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class InvoicePricesheetOperations(object):
-    """InvoicePricesheetOperations operations.
+class InvoicePricesheetsOperations(object):
+    """InvoicePricesheetsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
