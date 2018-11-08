@@ -17,8 +17,9 @@ class ExpressRouteCircuitSku(Model):
 
     :param name: The name of the SKU.
     :type name: str
-    :param tier: The tier of the SKU. Possible values are 'Standard' and
-     'Premium'. Possible values include: 'Standard', 'Premium'
+    :param tier: The tier of the SKU. Possible values are 'Standard',
+     'Premium' or 'Basic'. Possible values include: 'Standard', 'Premium',
+     'Basic'
     :type tier: str or
      ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitSkuTier
     :param family: The family of the SKU. Possible values are: 'UnlimitedData'

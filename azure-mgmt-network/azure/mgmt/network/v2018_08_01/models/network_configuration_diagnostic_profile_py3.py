@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class TrafficQuery(Model):
+class NetworkConfigurationDiagnosticProfile(Model):
     """Parameters to compare with network configuration.
 
     All required parameters must be populated in order to send to Azure.
@@ -52,10 +52,10 @@ class TrafficQuery(Model):
         'destination_port': {'key': 'destinationPort', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrafficQuery, self).__init__(**kwargs)
-        self.direction = kwargs.get('direction', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.source = kwargs.get('source', None)
-        self.destination = kwargs.get('destination', None)
-        self.destination_port = kwargs.get('destination_port', None)
+    def __init__(self, *, direction, protocol: str, source: str, destination: str, destination_port: str, **kwargs) -> None:
+        super(NetworkConfigurationDiagnosticProfile, self).__init__(**kwargs)
+        self.direction = direction
+        self.protocol = protocol
+        self.source = source
+        self.destination = destination
+        self.destination_port = destination_port
