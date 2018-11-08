@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
+from .operations.invoice_pricesheet_operations import InvoicePricesheetOperations
 from .operations.operations import Operations
 from . import models
 
@@ -64,6 +65,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
+    :ivar invoice_pricesheet: InvoicePricesheet operations
+    :vartype invoice_pricesheet: azure.mgmt.billing.operations.InvoicePricesheetOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
 
@@ -91,6 +94,8 @@ class BillingManagementClient(SDKClient):
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_pricesheet = InvoicePricesheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -130,63 +130,6 @@ class InvoicesOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices'}
 
-    def pricesheet(
-            self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
-        """Get pricesheet data for invoice id (invoiceName).
-
-        :param billing_account_id: Azure Billing Account ID.
-        :type billing_account_id: str
-        :param invoice_name: The name of an invoice resource.
-        :type invoice_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.pricesheet.metadata['url']
-        path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'Location': 'str',
-                'Retry-After': 'str',
-                'Azure-AsyncOperation': 'str',
-                'OData-EntityId': 'str',
-            })
-            return client_raw_response
-    pricesheet.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheet/download'}
-
     def get(
             self, invoice_name, custom_headers=None, raw=False, **operation_config):
         """Gets a named invoice resource. When getting a single invoice, the
