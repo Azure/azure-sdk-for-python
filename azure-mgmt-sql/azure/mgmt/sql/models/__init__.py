@@ -152,6 +152,8 @@ try:
     from .tde_certificate_py3 import TdeCertificate
     from .managed_instance_key_py3 import ManagedInstanceKey
     from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
+    from .managed_instance_vulnerability_assessment_py3 import ManagedInstanceVulnerabilityAssessment
+    from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -295,6 +297,8 @@ except (SyntaxError, ImportError):
     from .tde_certificate import TdeCertificate
     from .managed_instance_key import ManagedInstanceKey
     from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
+    from .managed_instance_vulnerability_assessment import ManagedInstanceVulnerabilityAssessment
+    from .server_vulnerability_assessment import ServerVulnerabilityAssessment
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -351,6 +355,8 @@ from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
 from .managed_instance_key_paged import ManagedInstanceKeyPaged
 from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
+from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
+from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -573,6 +579,8 @@ __all__ = [
     'TdeCertificate',
     'ManagedInstanceKey',
     'ManagedInstanceEncryptionProtector',
+    'ManagedInstanceVulnerabilityAssessment',
+    'ServerVulnerabilityAssessment',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -629,6 +637,8 @@ __all__ = [
     'BackupShortTermRetentionPolicyPaged',
     'ManagedInstanceKeyPaged',
     'ManagedInstanceEncryptionProtectorPaged',
+    'ManagedInstanceVulnerabilityAssessmentPaged',
+    'ServerVulnerabilityAssessmentPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',

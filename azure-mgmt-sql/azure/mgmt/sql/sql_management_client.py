@@ -83,6 +83,8 @@ from .operations.tde_certificates_operations import TdeCertificatesOperations
 from .operations.managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .operations.managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .operations.managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .operations.managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
+from .operations.server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from . import models
 
 
@@ -265,6 +267,10 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instance_keys: azure.mgmt.sql.operations.ManagedInstanceKeysOperations
     :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectors operations
     :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
+    :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessments operations
+    :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
+    :ivar server_vulnerability_assessments: ServerVulnerabilityAssessments operations
+    :vartype server_vulnerability_assessments: azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -424,4 +430,8 @@ class SqlManagementClient(SDKClient):
         self.managed_instance_keys = ManagedInstanceKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
