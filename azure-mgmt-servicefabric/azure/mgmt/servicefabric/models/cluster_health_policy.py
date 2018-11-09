@@ -36,6 +36,7 @@ class ClusterHealthPolicy(Model):
         'max_percent_unhealthy_applications': {'key': 'maxPercentUnhealthyApplications', 'type': 'int'},
     }
 
-    def __init__(self, max_percent_unhealthy_nodes=None, max_percent_unhealthy_applications=None):
-        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
+    def __init__(self, **kwargs):
+        super(ClusterHealthPolicy, self).__init__(**kwargs)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', None)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', None)

@@ -50,7 +50,7 @@ class HybridConnectionLimits(ProxyOnlyResource):
         'maximum': {'key': 'properties.maximum', 'type': 'int'},
     }
 
-    def __init__(self, kind=None):
-        super(HybridConnectionLimits, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(HybridConnectionLimits, self).__init__(**kwargs)
         self.current = None
         self.maximum = None

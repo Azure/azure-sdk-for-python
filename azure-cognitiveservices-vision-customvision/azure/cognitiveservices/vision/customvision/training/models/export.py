@@ -30,6 +30,8 @@ class Export(Model):
     :ivar flavor: Possible values include: 'Linux', 'Windows'
     :vartype flavor: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
+    :ivar newer_version_available:
+    :vartype newer_version_available: bool
     """
 
     _validation = {
@@ -37,6 +39,7 @@ class Export(Model):
         'status': {'readonly': True},
         'download_uri': {'readonly': True},
         'flavor': {'readonly': True},
+        'newer_version_available': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,6 +47,7 @@ class Export(Model):
         'status': {'key': 'status', 'type': 'str'},
         'download_uri': {'key': 'downloadUri', 'type': 'str'},
         'flavor': {'key': 'flavor', 'type': 'str'},
+        'newer_version_available': {'key': 'newerVersionAvailable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -52,3 +56,4 @@ class Export(Model):
         self.status = None
         self.download_uri = None
         self.flavor = None
+        self.newer_version_available = None

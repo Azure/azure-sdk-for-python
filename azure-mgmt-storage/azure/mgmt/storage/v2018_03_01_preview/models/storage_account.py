@@ -100,6 +100,9 @@ class StorageAccount(TrackedResource):
     :ivar network_rule_set: Network rule set
     :vartype network_rule_set:
      ~azure.mgmt.storage.v2018_03_01_preview.models.NetworkRuleSet
+    :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
+     true. Default value: False .
+    :type is_hns_enabled: bool
     """
 
     _validation = {
@@ -147,6 +150,7 @@ class StorageAccount(TrackedResource):
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -168,3 +172,4 @@ class StorageAccount(TrackedResource):
         self.access_tier = None
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)
         self.network_rule_set = None
+        self.is_hns_enabled = kwargs.get('is_hns_enabled', False)

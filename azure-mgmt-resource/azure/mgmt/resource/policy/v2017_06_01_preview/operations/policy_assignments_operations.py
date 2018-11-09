@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 import uuid
-import warnings
 from msrest.pipeline import ClientRawResponse
 
 from .. import models
@@ -309,9 +308,6 @@ class PolicyAssignmentsOperations(object):
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets policy assignments for a resource.
 
-        .. warning::
-           This method is deprecated
-
         :param resource_group_name: The name of the resource group containing
          the resource. The name is case insensitive.
         :type resource_group_name: str
@@ -338,7 +334,6 @@ class PolicyAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
-        warnings.warn("Method list_for_resource is deprecated", DeprecationWarning)
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:

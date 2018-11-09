@@ -42,6 +42,6 @@ class TrustedIdProvider(SubResource):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(TrustedIdProvider, self).__init__()
+    def __init__(self, **kwargs):
+        super(TrustedIdProvider, self).__init__(**kwargs)
         self.id_provider = None

@@ -19,6 +19,7 @@ from .operations.tasks_operations import TasksOperations
 from .operations.projects_operations import ProjectsOperations
 from .operations.usages_operations import UsagesOperations
 from .operations.operations import Operations
+from .operations.files_operations import FilesOperations
 from . import models
 
 
@@ -72,6 +73,8 @@ class DataMigrationServiceClient(SDKClient):
     :vartype usages: azure.mgmt.datamigration.operations.UsagesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datamigration.operations.Operations
+    :ivar files: Files operations
+    :vartype files: azure.mgmt.datamigration.operations.FilesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,7 +91,6 @@ class DataMigrationServiceClient(SDKClient):
         super(DataMigrationServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-31-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -103,4 +105,6 @@ class DataMigrationServiceClient(SDKClient):
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.files = FilesOperations(
             self._client, self.config, self._serialize, self._deserialize)

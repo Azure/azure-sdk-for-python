@@ -47,8 +47,8 @@ class ConnectToTargetSqlMITaskOutput(Model):
         'id': {'key': 'id', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
         'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
-        'logins': {'key': 'Logins', 'type': '[str]'},
-        'agent_jobs': {'key': 'AgentJobs', 'type': '[str]'},
+        'logins': {'key': 'logins', 'type': '[str]'},
+        'agent_jobs': {'key': 'agentJobs', 'type': '[str]'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 

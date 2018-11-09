@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image import Image
+from .image_py3 import Image
 
 
 class JpgImage(Image):

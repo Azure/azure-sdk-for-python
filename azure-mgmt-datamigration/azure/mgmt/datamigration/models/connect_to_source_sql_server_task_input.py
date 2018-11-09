@@ -23,7 +23,8 @@ class ConnectToSourceSqlServerTaskInput(Model):
     :type source_connection_info:
      ~azure.mgmt.datamigration.models.SqlConnectionInfo
     :param check_permissions_group: Permission group for validations. Possible
-     values include: 'Default', 'MigrationFromSqlServerToAzureDB'
+     values include: 'Default', 'MigrationFromSqlServerToAzureDB',
+     'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToAzureDBForMySQL'
     :type check_permissions_group: str or
      ~azure.mgmt.datamigration.models.ServerLevelPermissionsGroup
     :param collect_logins: Flag for whether to collect logins from source
@@ -32,6 +33,9 @@ class ConnectToSourceSqlServerTaskInput(Model):
     :param collect_agent_jobs: Flag for whether to collect agent jobs from
      source server. Default value: False .
     :type collect_agent_jobs: bool
+    :param collect_tde_certificate_info: Flag for whether to collect TDE
+     Certificate names from source server. Default value: False .
+    :type collect_tde_certificate_info: bool
     """
 
     _validation = {
@@ -41,8 +45,9 @@ class ConnectToSourceSqlServerTaskInput(Model):
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
         'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'str'},
-        'collect_logins': {'key': 'CollectLogins', 'type': 'bool'},
-        'collect_agent_jobs': {'key': 'CollectAgentJobs', 'type': 'bool'},
+        'collect_logins': {'key': 'collectLogins', 'type': 'bool'},
+        'collect_agent_jobs': {'key': 'collectAgentJobs', 'type': 'bool'},
+        'collect_tde_certificate_info': {'key': 'collectTdeCertificateInfo', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -51,3 +56,4 @@ class ConnectToSourceSqlServerTaskInput(Model):
         self.check_permissions_group = kwargs.get('check_permissions_group', None)
         self.collect_logins = kwargs.get('collect_logins', False)
         self.collect_agent_jobs = kwargs.get('collect_agent_jobs', False)
+        self.collect_tde_certificate_info = kwargs.get('collect_tde_certificate_info', False)

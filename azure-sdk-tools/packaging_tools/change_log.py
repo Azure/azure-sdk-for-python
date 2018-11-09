@@ -75,7 +75,11 @@ class ChangeLog:
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new model?
-        _, mtype, model_name, *remaining_path = path
+        _, mtype, *remaining_path = path
+        if not remaining_path:
+            # Seen once in Network, because exceptions were added. Bypass
+            return
+        model_name, *remaining_path = remaining_path
         if not remaining_path:
             # A new model or a model deletion is not very interesting by itself
             # since it usually means that there is a new operation
@@ -146,46 +150,52 @@ def build_change_log(old_report, new_report):
 
     return change_log
 
+def get_report_from_parameter(input_parameter):
+    if ":" in input_parameter:
+        package_name, version = input_parameter.split(":")
+        from .code_report import main
+        result = main(
+            package_name,
+            version=version if version not in ["pypi", "latest"] else None,
+            last_pypi=version == "pypi"
+        )
+        if not result:
+            raise ValueError("Was not able to build a report")
+        if len(result) == 1:
+            with open(result[0], "r") as fd:
+                return json.load(fd)
+
+        raise NotImplementedError("Multi-api changelog not yet implemented")
+
+    with open(input_parameter, "r") as fd:
+        return json.load(fd)
+
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
         description='ChangeLog computation',
-        formatter_class=argparse.RawTextHelpFormatter,
-        epilog="Package Name and Package Print are mutually exclusive and at least one must be provided"
     )
-    parser.add_argument('base_input',
-                        help='Input base fingerprint')
-    parser.add_argument('--package-name', '-n',
-                        dest='package_name',
-                        help='Package name to test. Must be importable.')
-    parser.add_argument('--package-print', '-p',
-                        dest='package_print',
-                        help='Package name to test. Must be importable.')
+    parser.add_argument('base',
+                        help='Base. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version')
+    parser.add_argument('latest',
+                        help='Latest. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version')
+
     parser.add_argument("--debug",
                         dest="debug", action="store_true",
                         help="Verbosity in DEBUG mode")
 
     args = parser.parse_args()
 
-    main_logger = logging.getLogger()
-    logging.basicConfig()
-    main_logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    if args.package_name:
-        raise NotImplementedError("FIXME")
+    old_report = get_report_from_parameter(args.base)
+    new_report = get_report_from_parameter(args.latest)
 
-    if args.package_print:
-        with open(args.package_print) as fd:
-            new_report = json.load(fd)
-
-    with open(args.base_input) as fd:
-        old_report = json.load(fd)
-
-    result = diff(old_report, new_report)
-    with open("result.json", "w") as fd:
-        json.dump(result, fd)
+    # result = diff(old_report, new_report)
+    # with open("result.json", "w") as fd:
+    #     json.dump(result, fd)
 
     change_log = build_change_log(old_report, new_report)
     print(change_log.build_md())

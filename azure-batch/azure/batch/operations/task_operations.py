@@ -22,7 +22,7 @@ class TaskOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-03-01.6.1".
+    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class TaskOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01.6.1"
+        self.api_version = "2018-08-01.7.0"
 
         self.config = config
 
@@ -107,9 +107,8 @@ class TaskOperations(object):
         body_content = self._serialize.body(task, 'TaskAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -204,7 +203,7 @@ class TaskOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -219,9 +218,8 @@ class TaskOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -263,11 +261,12 @@ class TaskOperations(object):
         :param job_id: The ID of the job to which the task collection is to be
          added.
         :type job_id: str
-        :param value: The collection of tasks to add. The total serialized
-         size of this collection must be less than 4MB. If it is greater than
-         4MB (for example if each task has 100's of resource files or
-         environment variables), the request will fail with code
-         'RequestBodyTooLarge' and should be retried again with fewer tasks.
+        :param value: The collection of tasks to add. The maximum count of
+         tasks is 100. The total serialized size of this collection must be
+         less than 1MB. If it is greater than 1MB (for example if each task has
+         100's of resource files or environment variables), the request will
+         fail with code 'RequestBodyTooLarge' and should be retried again with
+         fewer tasks.
         :type value: list[~azure.batch.models.TaskAddParameter]
         :param task_add_collection_options: Additional parameters for the
          operation
@@ -313,6 +312,7 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
@@ -331,9 +331,8 @@ class TaskOperations(object):
         body_content = self._serialize.body(task_collection, 'TaskAddCollectionParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -423,7 +422,6 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -446,8 +444,8 @@ class TaskOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -537,7 +535,7 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -560,8 +558,8 @@ class TaskOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -588,20 +586,20 @@ class TaskOperations(object):
     get.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}'}
 
     def update(
-            self, job_id, task_id, task_update_options=None, constraints=None, custom_headers=None, raw=False, **operation_config):
+            self, job_id, task_id, constraints=None, task_update_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified task.
 
         :param job_id: The ID of the job containing the task.
         :type job_id: str
         :param task_id: The ID of the task to update.
         :type task_id: str
-        :param task_update_options: Additional parameters for the operation
-        :type task_update_options: ~azure.batch.models.TaskUpdateOptions
         :param constraints: Constraints that apply to this task. If omitted,
          the task is given the default constraints. For multi-instance tasks,
          updating the retention time applies only to the primary task and not
          subtasks.
         :type constraints: ~azure.batch.models.TaskConstraints
+        :param task_update_options: Additional parameters for the operation
+        :type task_update_options: ~azure.batch.models.TaskUpdateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -680,9 +678,8 @@ class TaskOperations(object):
         body_content = self._serialize.body(task_update_parameter, 'TaskUpdateParameter')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -760,7 +757,7 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -775,8 +772,8 @@ class TaskOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -867,7 +864,6 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -890,8 +886,8 @@ class TaskOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -981,7 +977,6 @@ class TaskOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1004,8 +999,8 @@ class TaskOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)

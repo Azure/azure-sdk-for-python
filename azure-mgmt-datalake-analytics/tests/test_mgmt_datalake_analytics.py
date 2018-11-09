@@ -73,6 +73,13 @@ CREATE TABLE {0}.dbo.{1}
 
 ALTER TABLE {0}.dbo.{1} ADD IF NOT EXISTS PARTITION (1);
 
+INSERT INTO {0}.dbo.{1}
+(UserId, Start, Region, Query, Duration, Urls, ClickedUrls)
+ON INTEGRITY VIOLATION MOVE TO PARTITION (1)
+VALUES
+(1, new DateTime(2018, 04, 25), "US", @"fake query", 34, "http://url1.fake.com", "http://clickedUrl1.fake.com"),
+(1, new DateTime(2018, 04, 26), "EN", @"fake query", 23, "http://url2.fake.com", "http://clickedUrl2.fake.com");
+
 DROP FUNCTION IF EXISTS {0}.dbo.{2};
 
 CREATE FUNCTION {0}.dbo.{2}()
@@ -169,6 +176,22 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.run_id_2 = str(uuid.uuid1())
             self.run_id_3 = str(uuid.uuid1())
             self.principal_id = str(uuid.uuid1())
+
+            real_to_fake_dict = {
+                self.cancel_id: self._fake_settings.ADLA_JOB_ID,
+                self.run_id:  self._fake_settings.ADLA_JOB_ID,
+                self.catalog_id:  self._fake_settings.ADLA_JOB_ID,
+                self.cred_create_id: self._fake_settings.ADLA_JOB_ID,
+                self.cred_drop_id: self._fake_settings.ADLA_JOB_ID,
+                self.pipeline_id: self._fake_settings.ADLA_JOB_ID,
+                self.recurrence_id: self._fake_settings.ADLA_JOB_ID,
+                self.run_id_2: self._fake_settings.ADLA_JOB_ID,
+                self.run_id_3: self._fake_settings.ADLA_JOB_ID,
+                self.principal_id: self._fake_settings.ADLA_JOB_ID
+            }
+
+            for key in real_to_fake_dict:
+                self.scrubber.register_name_pair(key, real_to_fake_dict[key])
 
     def run_prereqs(self, resource_group, location, create_job_acct = False, create_catalog = False):
 
@@ -429,6 +452,17 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNone(table_match[0].external_table)
         self.assertIsNone(table_match[0].distribution_info)
 
+        # get the preview of the specific table
+        specific_table_preview = self.adla_catalog_client.catalog.preview_table(self.job_account_name, self.db_name, self.schema_name, self.table_name)
+        self.assertGreater(specific_table_preview.total_row_count, 0)
+        self.assertGreater(specific_table_preview.total_column_count, 0)
+        self.assertIsNotNone(specific_table_preview.rows)
+        self.assertGreater(len(specific_table_preview.rows), 0)
+        self.assertIsNotNone(specific_table_preview.schema)
+        self.assertGreater(len(specific_table_preview.schema), 0)
+        self.assertIsNotNone(specific_table_preview.schema[0].name)
+        self.assertIsNotNone(specific_table_preview.schema[0].type)
+
         # get specific table
         specific_table = self.adla_catalog_client.catalog.get_table(self.job_account_name, self.db_name, self.schema_name, self.table_name)
         self.assertEqual(specific_table.name, table_match[0].name)
@@ -484,6 +518,22 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         partition_to_get = partition_list[0]
         specific_partition= self.adla_catalog_client.catalog.get_table_partition(self.job_account_name, self.db_name, self.schema_name, self.table_name, partition_to_get.name)
         self.assertEqual(specific_partition.name, partition_to_get.name)
+
+        # get the preview of the specific partition
+        specific_partition_preview = self.adla_catalog_client.catalog.preview_table_partition(self.job_account_name, self.db_name, self.schema_name, self.table_name, partition_to_get.name)
+        self.assertGreater(specific_partition_preview.total_row_count, 0)
+        self.assertGreater(specific_partition_preview.total_column_count, 0)
+        self.assertIsNotNone(specific_partition_preview.rows)
+        self.assertGreater(len(specific_partition_preview.rows), 0)
+        self.assertIsNotNone(specific_partition_preview.schema)
+        self.assertGreater(len(specific_partition_preview.schema), 0)
+        self.assertIsNotNone(specific_partition_preview.schema[0].name)
+        self.assertIsNotNone(specific_partition_preview.schema[0].type)
+
+        # get the table fragment list
+        fragment_list = list(self.adla_catalog_client.catalog.list_table_fragments(self.job_account_name, self.db_name, self.schema_name, self.table_name))
+        self.assertIsNotNone(fragment_list)
+        self.assertGreater(len(fragment_list), 0)
 
         # get all the types
         type_list = list(self.adla_catalog_client.catalog.list_types(self.job_account_name, self.db_name, self.schema_name))

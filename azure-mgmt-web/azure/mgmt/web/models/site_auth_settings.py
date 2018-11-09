@@ -90,6 +90,9 @@ class SiteAuthSettings(ProxyOnlyResource):
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html
     :type issuer: str
+    :param validate_issuer: Gets a value indicating whether the issuer should
+     be a valid HTTPS url and be validated as such.
+    :type validate_issuer: bool
     :param allowed_audiences: Allowed audience values to consider when
      validating JWTs issued by
      Azure Active Directory. Note that the <code>ClientID</code> value is
@@ -188,6 +191,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'validate_issuer': {'key': 'properties.validateIssuer', 'type': 'bool'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
         'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
         'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
@@ -203,28 +207,29 @@ class SiteAuthSettings(ProxyOnlyResource):
         'microsoft_account_oauth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
     }
 
-    def __init__(self, kind=None, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
-        super(SiteAuthSettings, self).__init__(kind=kind)
-        self.enabled = enabled
-        self.runtime_version = runtime_version
-        self.unauthenticated_client_action = unauthenticated_client_action
-        self.token_store_enabled = token_store_enabled
-        self.allowed_external_redirect_urls = allowed_external_redirect_urls
-        self.default_provider = default_provider
-        self.token_refresh_extension_hours = token_refresh_extension_hours
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.issuer = issuer
-        self.allowed_audiences = allowed_audiences
-        self.additional_login_params = additional_login_params
-        self.google_client_id = google_client_id
-        self.google_client_secret = google_client_secret
-        self.google_oauth_scopes = google_oauth_scopes
-        self.facebook_app_id = facebook_app_id
-        self.facebook_app_secret = facebook_app_secret
-        self.facebook_oauth_scopes = facebook_oauth_scopes
-        self.twitter_consumer_key = twitter_consumer_key
-        self.twitter_consumer_secret = twitter_consumer_secret
-        self.microsoft_account_client_id = microsoft_account_client_id
-        self.microsoft_account_client_secret = microsoft_account_client_secret
-        self.microsoft_account_oauth_scopes = microsoft_account_oauth_scopes
+    def __init__(self, **kwargs):
+        super(SiteAuthSettings, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.unauthenticated_client_action = kwargs.get('unauthenticated_client_action', None)
+        self.token_store_enabled = kwargs.get('token_store_enabled', None)
+        self.allowed_external_redirect_urls = kwargs.get('allowed_external_redirect_urls', None)
+        self.default_provider = kwargs.get('default_provider', None)
+        self.token_refresh_extension_hours = kwargs.get('token_refresh_extension_hours', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.issuer = kwargs.get('issuer', None)
+        self.validate_issuer = kwargs.get('validate_issuer', None)
+        self.allowed_audiences = kwargs.get('allowed_audiences', None)
+        self.additional_login_params = kwargs.get('additional_login_params', None)
+        self.google_client_id = kwargs.get('google_client_id', None)
+        self.google_client_secret = kwargs.get('google_client_secret', None)
+        self.google_oauth_scopes = kwargs.get('google_oauth_scopes', None)
+        self.facebook_app_id = kwargs.get('facebook_app_id', None)
+        self.facebook_app_secret = kwargs.get('facebook_app_secret', None)
+        self.facebook_oauth_scopes = kwargs.get('facebook_oauth_scopes', None)
+        self.twitter_consumer_key = kwargs.get('twitter_consumer_key', None)
+        self.twitter_consumer_secret = kwargs.get('twitter_consumer_secret', None)
+        self.microsoft_account_client_id = kwargs.get('microsoft_account_client_id', None)
+        self.microsoft_account_client_secret = kwargs.get('microsoft_account_client_secret', None)
+        self.microsoft_account_oauth_scopes = kwargs.get('microsoft_account_oauth_scopes', None)
