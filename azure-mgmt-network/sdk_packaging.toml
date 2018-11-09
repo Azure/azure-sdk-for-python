@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-network"
+package_pprint_name = "Network Management"
+package_doc_id = "network"
+is_stable = true
+is_arm = true

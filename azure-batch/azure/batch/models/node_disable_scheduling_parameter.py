@@ -27,6 +27,6 @@ class NodeDisableSchedulingParameter(Model):
         'node_disable_scheduling_option': {'key': 'nodeDisableSchedulingOption', 'type': 'DisableComputeNodeSchedulingOption'},
     }
 
-    def __init__(self, node_disable_scheduling_option=None):
-        super(NodeDisableSchedulingParameter, self).__init__()
-        self.node_disable_scheduling_option = node_disable_scheduling_option
+    def __init__(self, **kwargs):
+        super(NodeDisableSchedulingParameter, self).__init__(**kwargs)
+        self.node_disable_scheduling_option = kwargs.get('node_disable_scheduling_option', None)

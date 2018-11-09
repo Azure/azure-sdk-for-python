@@ -23,7 +23,7 @@ class PredictionQueryToken(Model):
     :type max_count: int
     :param order_by: Possible values include: 'Newest', 'Oldest', 'Suggested'
     :type order_by: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.enum
+     ~azure.cognitiveservices.vision.customvision.training.models.OrderBy
     :param tags:
     :type tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryTag]
@@ -38,15 +38,15 @@ class PredictionQueryToken(Model):
     """
 
     _attribute_map = {
-        'session': {'key': 'Session', 'type': 'str'},
-        'continuation': {'key': 'Continuation', 'type': 'str'},
-        'max_count': {'key': 'MaxCount', 'type': 'int'},
-        'order_by': {'key': 'OrderBy', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': '[PredictionQueryTag]'},
-        'iteration_id': {'key': 'IterationId', 'type': 'str'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'EndTime', 'type': 'iso-8601'},
-        'application': {'key': 'Application', 'type': 'str'},
+        'session': {'key': 'session', 'type': 'str'},
+        'continuation': {'key': 'continuation', 'type': 'str'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'order_by': {'key': 'orderBy', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '[PredictionQueryTag]'},
+        'iteration_id': {'key': 'iterationId', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'application': {'key': 'application', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

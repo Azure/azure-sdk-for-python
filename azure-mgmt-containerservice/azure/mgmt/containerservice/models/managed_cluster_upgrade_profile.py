@@ -18,18 +18,20 @@ class ManagedClusterUpgradeProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Id of upgrade profile.
     :vartype id: str
     :ivar name: Name of upgrade profile.
     :vartype name: str
     :ivar type: Type of upgrade profile.
     :vartype type: str
-    :param control_plane_profile: The list of available upgrade versions for
-     the control plane.
+    :param control_plane_profile: Required. The list of available upgrade
+     versions for the control plane.
     :type control_plane_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile
-    :param agent_pool_profiles: The list of available upgrade versions for
-     agent pools.
+    :param agent_pool_profiles: Required. The list of available upgrade
+     versions for agent pools.
     :type agent_pool_profiles:
      list[~azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile]
     """
@@ -50,10 +52,10 @@ class ManagedClusterUpgradeProfile(Model):
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterPoolUpgradeProfile]'},
     }
 
-    def __init__(self, control_plane_profile, agent_pool_profiles):
-        super(ManagedClusterUpgradeProfile, self).__init__()
+    def __init__(self, **kwargs):
+        super(ManagedClusterUpgradeProfile, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.control_plane_profile = control_plane_profile
-        self.agent_pool_profiles = agent_pool_profiles
+        self.control_plane_profile = kwargs.get('control_plane_profile', None)
+        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)

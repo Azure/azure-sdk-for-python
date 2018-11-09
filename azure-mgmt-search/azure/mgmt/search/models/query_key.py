@@ -35,6 +35,7 @@ class QueryKey(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(QueryKey, self).__init__(**kwargs)
         self.name = None
         self.key = None

@@ -308,7 +308,7 @@ class WebOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.websearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/search'
+        url = self.search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -374,3 +374,4 @@ class WebOperations(object):
             return client_raw_response
 
         return deserialized
+    search.metadata = {'url': '/search'}

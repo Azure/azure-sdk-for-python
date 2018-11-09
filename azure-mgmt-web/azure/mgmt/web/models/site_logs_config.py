@@ -53,9 +53,9 @@ class SiteLogsConfig(ProxyOnlyResource):
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, kind=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
-        super(SiteLogsConfig, self).__init__(kind=kind)
-        self.application_logs = application_logs
-        self.http_logs = http_logs
-        self.failed_requests_tracing = failed_requests_tracing
-        self.detailed_error_messages = detailed_error_messages
+    def __init__(self, **kwargs):
+        super(SiteLogsConfig, self).__init__(**kwargs)
+        self.application_logs = kwargs.get('application_logs', None)
+        self.http_logs = kwargs.get('http_logs', None)
+        self.failed_requests_tracing = kwargs.get('failed_requests_tracing', None)
+        self.detailed_error_messages = kwargs.get('detailed_error_messages', None)

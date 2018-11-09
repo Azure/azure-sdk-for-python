@@ -27,7 +27,7 @@ class IntegrationAccountSession(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -55,8 +55,8 @@ class IntegrationAccountSession(Resource):
         'content': {'key': 'properties.content', 'type': 'object'},
     }
 
-    def __init__(self, location=None, tags=None, content=None):
-        super(IntegrationAccountSession, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(IntegrationAccountSession, self).__init__(**kwargs)
         self.created_time = None
         self.changed_time = None
-        self.content = content
+        self.content = kwargs.get('content', None)

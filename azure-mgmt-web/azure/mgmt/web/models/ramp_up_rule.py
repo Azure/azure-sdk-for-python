@@ -60,13 +60,13 @@ class RampUpRule(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, action_host_name=None, reroute_percentage=None, change_step=None, change_interval_in_minutes=None, min_reroute_percentage=None, max_reroute_percentage=None, change_decision_callback_url=None, name=None):
-        super(RampUpRule, self).__init__()
-        self.action_host_name = action_host_name
-        self.reroute_percentage = reroute_percentage
-        self.change_step = change_step
-        self.change_interval_in_minutes = change_interval_in_minutes
-        self.min_reroute_percentage = min_reroute_percentage
-        self.max_reroute_percentage = max_reroute_percentage
-        self.change_decision_callback_url = change_decision_callback_url
-        self.name = name
+    def __init__(self, **kwargs):
+        super(RampUpRule, self).__init__(**kwargs)
+        self.action_host_name = kwargs.get('action_host_name', None)
+        self.reroute_percentage = kwargs.get('reroute_percentage', None)
+        self.change_step = kwargs.get('change_step', None)
+        self.change_interval_in_minutes = kwargs.get('change_interval_in_minutes', None)
+        self.min_reroute_percentage = kwargs.get('min_reroute_percentage', None)
+        self.max_reroute_percentage = kwargs.get('max_reroute_percentage', None)
+        self.change_decision_callback_url = kwargs.get('change_decision_callback_url', None)
+        self.name = kwargs.get('name', None)

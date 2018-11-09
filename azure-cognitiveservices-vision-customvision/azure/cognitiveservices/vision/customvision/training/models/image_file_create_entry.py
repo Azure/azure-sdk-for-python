@@ -21,12 +21,16 @@ class ImageFileCreateEntry(Model):
     :type contents: bytearray
     :param tag_ids:
     :type tag_ids: list[str]
+    :param regions:
+    :type regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.Region]
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'contents': {'key': 'Contents', 'type': 'bytearray'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'contents': {'key': 'contents', 'type': 'bytearray'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
+        'regions': {'key': 'regions', 'type': '[Region]'},
     }
 
     def __init__(self, **kwargs):
@@ -34,3 +38,4 @@ class ImageFileCreateEntry(Model):
         self.name = kwargs.get('name', None)
         self.contents = kwargs.get('contents', None)
         self.tag_ids = kwargs.get('tag_ids', None)
+        self.regions = kwargs.get('regions', None)

@@ -11,15 +11,18 @@
 
 try:
     from .image_url_py3 import ImageUrl
-    from .image_tag_prediction_model_py3 import ImageTagPredictionModel
-    from .image_prediction_result_model_py3 import ImagePredictionResultModel
+    from .bounding_box_py3 import BoundingBox
+    from .prediction_py3 import Prediction
+    from .image_prediction_py3 import ImagePrediction
 except (SyntaxError, ImportError):
     from .image_url import ImageUrl
-    from .image_tag_prediction_model import ImageTagPredictionModel
-    from .image_prediction_result_model import ImagePredictionResultModel
+    from .bounding_box import BoundingBox
+    from .prediction import Prediction
+    from .image_prediction import ImagePrediction
 
 __all__ = [
     'ImageUrl',
-    'ImageTagPredictionModel',
-    'ImagePredictionResultModel',
+    'BoundingBox',
+    'Prediction',
+    'ImagePrediction',
 ]

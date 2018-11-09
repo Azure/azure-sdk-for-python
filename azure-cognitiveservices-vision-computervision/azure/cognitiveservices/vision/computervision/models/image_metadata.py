@@ -29,8 +29,8 @@ class ImageMetadata(Model):
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, width=None, height=None, format=None):
-        super(ImageMetadata, self).__init__()
-        self.width = width
-        self.height = height
-        self.format = format
+    def __init__(self, **kwargs):
+        super(ImageMetadata, self).__init__(**kwargs)
+        self.width = kwargs.get('width', None)
+        self.height = kwargs.get('height', None)
+        self.format = kwargs.get('format', None)

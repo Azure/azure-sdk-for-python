@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class WorkflowVersionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -50,15 +52,16 @@ class WorkflowVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowVersionPaged
-         <azure.mgmt.logic.models.WorkflowVersionPaged>`
+        :return: An iterator like instance of WorkflowVersion
+        :rtype:
+         ~azure.mgmt.logic.models.WorkflowVersionPaged[~azure.mgmt.logic.models.WorkflowVersion]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -89,7 +92,7 @@ class WorkflowVersionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -107,6 +110,7 @@ class WorkflowVersionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions'}
 
     def get(
             self, resource_group_name, workflow_name, version_id, custom_headers=None, raw=False, **operation_config):
@@ -123,14 +127,13 @@ class WorkflowVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowVersion
-         <azure.mgmt.logic.models.WorkflowVersion>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkflowVersion or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.WorkflowVersion or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -155,7 +158,7 @@ class WorkflowVersionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -172,10 +175,11 @@ class WorkflowVersionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}'}
 
     def list_callback_url(
             self, resource_group_name, workflow_name, version_id, trigger_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the callback URL for a trigger of a workflow version.
+        """Get the callback url for a trigger of a workflow version.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -189,17 +193,15 @@ class WorkflowVersionsOperations(object):
         :type not_after: datetime
         :param key_type: The key type. Possible values include:
          'NotSpecified', 'Primary', 'Secondary'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.logic.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.logic.models.KeyType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowTriggerCallbackUrl
-         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkflowTriggerCallbackUrl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -207,7 +209,7 @@ class WorkflowVersionsOperations(object):
             parameters = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}/triggers/{triggerName}/listCallbackUrl'
+        url = self.list_callback_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -240,7 +242,7 @@ class WorkflowVersionsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -257,3 +259,4 @@ class WorkflowVersionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}/triggers/{triggerName}/listCallbackUrl'}

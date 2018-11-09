@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class StorageAccount(Model):
     """Describes a storage account connection.
 
-    :param id: The Azure Resource Manager ID of the storage account resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The Azure Resource Manager ID of the storage account
+     resource.
     :type id: str
-    :param key: The storage account key.
+    :param key: Required. The storage account key.
     :type key: str
     """
 
@@ -31,6 +34,7 @@ class StorageAccount(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, id, key):
-        self.id = id
-        self.key = key
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.key = kwargs.get('key', None)

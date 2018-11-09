@@ -18,8 +18,7 @@ class RawCertificateData(Model):
     :param auth_type: Specifies the authentication type. Possible values
      include: 'Invalid', 'ACS', 'AAD', 'AccessControlService',
      'AzureActiveDirectory'
-    :type auth_type: str or :class:`AuthType
-     <azure.mgmt.recoveryservices.models.AuthType>`
+    :type auth_type: str or ~azure.mgmt.recoveryservices.models.AuthType
     :param certificate: The base64 encoded certificate raw data string
     :type certificate: bytearray
     """
@@ -29,6 +28,7 @@ class RawCertificateData(Model):
         'certificate': {'key': 'certificate', 'type': 'bytearray'},
     }
 
-    def __init__(self, auth_type=None, certificate=None):
-        self.auth_type = auth_type
-        self.certificate = certificate
+    def __init__(self, **kwargs):
+        super(RawCertificateData, self).__init__(**kwargs)
+        self.auth_type = kwargs.get('auth_type', None)
+        self.certificate = kwargs.get('certificate', None)

@@ -48,6 +48,9 @@ class EHNamespace(TrackedResource):
      AutoInflate is enabled, vaule should be within 0 to 20 throughput units. (
      '0' if AutoInflateEnabled = true)
     :type maximum_throughput_units: int
+    :param kafka_enabled: Value that indicates whether Kafka is enabled for
+     eventhub namespace.
+    :type kafka_enabled: bool
     """
 
     _validation = {
@@ -76,15 +79,17 @@ class EHNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'is_auto_inflate_enabled': {'key': 'properties.isAutoInflateEnabled', 'type': 'bool'},
         'maximum_throughput_units': {'key': 'properties.maximumThroughputUnits', 'type': 'int'},
+        'kafka_enabled': {'key': 'properties.kafkaEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, is_auto_inflate_enabled=None, maximum_throughput_units=None):
-        super(EHNamespace, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(EHNamespace, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
-        self.is_auto_inflate_enabled = is_auto_inflate_enabled
-        self.maximum_throughput_units = maximum_throughput_units
+        self.is_auto_inflate_enabled = kwargs.get('is_auto_inflate_enabled', None)
+        self.maximum_throughput_units = kwargs.get('maximum_throughput_units', None)
+        self.kafka_enabled = kwargs.get('kafka_enabled', None)

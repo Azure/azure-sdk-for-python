@@ -30,12 +30,17 @@ class UpgradePolicy(Model):
      applied to scale set instances in a rolling fashion when a newer version
      of the image becomes available.
     :type automatic_os_upgrade: bool
+    :param auto_os_upgrade_policy: Configuration parameters used for
+     performing automatic OS Upgrade.
+    :type auto_os_upgrade_policy:
+     ~azure.mgmt.compute.v2017_12_01.models.AutoOSUpgradePolicy
     """
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'UpgradeMode'},
         'rolling_upgrade_policy': {'key': 'rollingUpgradePolicy', 'type': 'RollingUpgradePolicy'},
         'automatic_os_upgrade': {'key': 'automaticOSUpgrade', 'type': 'bool'},
+        'auto_os_upgrade_policy': {'key': 'autoOSUpgradePolicy', 'type': 'AutoOSUpgradePolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -43,3 +48,4 @@ class UpgradePolicy(Model):
         self.mode = kwargs.get('mode', None)
         self.rolling_upgrade_policy = kwargs.get('rolling_upgrade_policy', None)
         self.automatic_os_upgrade = kwargs.get('automatic_os_upgrade', None)
+        self.auto_os_upgrade_policy = kwargs.get('auto_os_upgrade_policy', None)

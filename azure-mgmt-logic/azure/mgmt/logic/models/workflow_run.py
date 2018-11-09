@@ -20,6 +20,8 @@ class WorkflowRun(SubResource):
 
     :ivar id: The resource id.
     :vartype id: str
+    :ivar wait_end_time: Gets the wait end time.
+    :vartype wait_end_time: datetime
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
@@ -27,8 +29,7 @@ class WorkflowRun(SubResource):
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
-    :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
@@ -36,19 +37,16 @@ class WorkflowRun(SubResource):
     :ivar correlation_id: Gets the correlation id.
     :vartype correlation_id: str
     :param correlation: The run correlation.
-    :type correlation: :class:`Correlation
-     <azure.mgmt.logic.models.Correlation>`
+    :type correlation: ~azure.mgmt.logic.models.Correlation
     :ivar workflow: Gets the reference to workflow version.
-    :vartype workflow: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :vartype workflow: ~azure.mgmt.logic.models.ResourceReference
     :ivar trigger: Gets the fired trigger.
-    :vartype trigger: :class:`WorkflowRunTrigger
-     <azure.mgmt.logic.models.WorkflowRunTrigger>`
+    :vartype trigger: ~azure.mgmt.logic.models.WorkflowRunTrigger
     :ivar outputs: Gets the outputs.
-    :vartype outputs: dict
+    :vartype outputs: dict[str,
+     ~azure.mgmt.logic.models.WorkflowOutputParameter]
     :ivar response: Gets the response of the flow run.
-    :vartype response: :class:`WorkflowRunTrigger
-     <azure.mgmt.logic.models.WorkflowRunTrigger>`
+    :vartype response: ~azure.mgmt.logic.models.WorkflowRunTrigger
     :ivar name: Gets the workflow run name.
     :vartype name: str
     :ivar type: Gets the workflow run type.
@@ -57,6 +55,7 @@ class WorkflowRun(SubResource):
 
     _validation = {
         'id': {'readonly': True},
+        'wait_end_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'status': {'readonly': True},
@@ -73,6 +72,7 @@ class WorkflowRun(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'wait_end_time': {'key': 'properties.waitEndTime', 'type': 'iso-8601'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
@@ -88,15 +88,16 @@ class WorkflowRun(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, correlation=None):
-        super(WorkflowRun, self).__init__()
+    def __init__(self, **kwargs):
+        super(WorkflowRun, self).__init__(**kwargs)
+        self.wait_end_time = None
         self.start_time = None
         self.end_time = None
         self.status = None
         self.code = None
         self.error = None
         self.correlation_id = None
-        self.correlation = correlation
+        self.correlation = kwargs.get('correlation', None)
         self.workflow = None
         self.trigger = None
         self.outputs = None

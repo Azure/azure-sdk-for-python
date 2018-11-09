@@ -3,6 +3,16 @@
 Release History
 ===============
 
+1.2.0 (2018-08-28)
+++++++++++++++++++
+
+- Event Schemas for new events (IotHub DeviceConnected and DeviceDisconnected events, Resource events related to actions), and breaking changes to the schema for IotHub DeviceCreated event and IotHub DeviceDeleted event.
+
+1.1.0 (2018-05-24)
+++++++++++++++++++
+
+- Event Schemas for EventGrid subscription validation event, Azure Media events, and ServiceBus events.
+
 1.0.0 (2018-04-26)
 ++++++++++++++++++
 

@@ -18,21 +18,19 @@ class ImageAnalysis(Model):
     :param categories: An array indicating identified categories.
     :type categories:
      list[~azure.cognitiveservices.vision.computervision.models.Category]
-    :param adult: A property scoring on whether the image is adult-oriented
-     and/or racy.
+    :param adult:
     :type adult:
      ~azure.cognitiveservices.vision.computervision.models.AdultInfo
-    :param color: A property scoring on color spectrums.
+    :param color:
     :type color:
      ~azure.cognitiveservices.vision.computervision.models.ColorInfo
-    :param image_type: A property indicating type of image (whether it's
-     clipart or line drawing)
+    :param image_type:
     :type image_type:
      ~azure.cognitiveservices.vision.computervision.models.ImageType
     :param tags: A list of tags with confidence level.
     :type tags:
      list[~azure.cognitiveservices.vision.computervision.models.ImageTag]
-    :param description: Description of the image.
+    :param description:
     :type description:
      ~azure.cognitiveservices.vision.computervision.models.ImageDescriptionDetails
     :param faces: An array of possible faces within the image.
@@ -40,7 +38,7 @@ class ImageAnalysis(Model):
      list[~azure.cognitiveservices.vision.computervision.models.FaceDescription]
     :param request_id: Id of the request for tracking purposes.
     :type request_id: str
-    :param metadata: Image metadata
+    :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
     """
@@ -57,14 +55,14 @@ class ImageAnalysis(Model):
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, request_id=None, metadata=None):
-        super(ImageAnalysis, self).__init__()
-        self.categories = categories
-        self.adult = adult
-        self.color = color
-        self.image_type = image_type
-        self.tags = tags
-        self.description = description
-        self.faces = faces
-        self.request_id = request_id
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(ImageAnalysis, self).__init__(**kwargs)
+        self.categories = kwargs.get('categories', None)
+        self.adult = kwargs.get('adult', None)
+        self.color = kwargs.get('color', None)
+        self.image_type = kwargs.get('image_type', None)
+        self.tags = kwargs.get('tags', None)
+        self.description = kwargs.get('description', None)
+        self.faces = kwargs.get('faces', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.metadata = kwargs.get('metadata', None)

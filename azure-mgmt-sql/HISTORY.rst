@@ -3,6 +3,64 @@
 Release History
 ===============
 
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
+0.10.0 (2018-10-18)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseVulnerabilityAssessment has a new parameter storage_account_access_key
+- Model ManagedInstanceUpdate has a new parameter dns_zone_partner
+- Model ManagedInstanceUpdate has a new parameter collation
+- Model ManagedInstanceUpdate has a new parameter dns_zone
+- Model ManagedInstance has a new parameter dns_zone_partner
+- Model ManagedInstance has a new parameter collation
+- Model ManagedInstance has a new parameter dns_zone
+- Added operation BackupShortTermRetentionPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseVulnerabilityAssessmentsOperations
+- Added operation group ExtendedDatabaseBlobAuditingPoliciesOperations
+- Added operation group TdeCertificatesOperations
+- Added operation group ManagedInstanceKeysOperations
+- Added operation group ServerBlobAuditingPoliciesOperations
+- Added operation group ManagedInstanceEncryptionProtectorsOperations
+- Added operation group ExtendedServerBlobAuditingPoliciesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentScansOperations
+- Added operation group ManagedInstanceTdeCertificatesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+
+**Breaking changes**
+
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+0.9.1 (2018-05-24)
+++++++++++++++++++
+
+**Features**
+
+- Managed instances, databases, and failover groups
+- Vulnerability assessments
+- Backup short term retention policies
+- Elastic Jobs
+
 0.9.0 (2018-04-25)
 ++++++++++++++++++
 
@@ -24,7 +82,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -40,7 +98,7 @@ This version uses a next-generation code generator that *might* introduce breaki
    * ElasticPool.sku has replaced ElasticPool.dtu. Elastic pool scale can be set by setting Sku.name to the requested sku name (e.g. StandardPool, PremiumPool, or GP_Gen4) and setting Sku.capacity to the scale measured in DTU or vCores.
    * ElasticPool.per_database_settings has replaced ElasticPool.database_dtu_min and ElasticPool.database_dtu_max.
 - Database.max_size_bytes is now an integer instead of string.
-- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions. 
+- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions.
 
 **Features**
 
@@ -49,7 +107,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   * Removed support for managing Vaults used for Long Term Retention V1
   * Changed BackupLongTermRetentionPolicy class, removing the Long Term Retention V1 properties and adding the Long Term Retention V2 properties
-  * Removed BackupLongTermRetentionPolicyState 
+  * Removed BackupLongTermRetentionPolicyState
 
 0.8.6 (2018-03-22)
 ++++++++++++++++++
@@ -103,16 +161,16 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 **Disclaimer**
 
-We were using a slightly unorthodox convention for some operation ids. 
-Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..) 
+We were using a slightly unorthodox convention for some operation ids.
+Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..)
 instead of the flattened ARM standard client.database_blob_auditing_policies.get(...).
 
-This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs. 
-For example if we wanted to implement listing db audit policies by server, continuing the current convention would be 
+This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs.
+For example if we wanted to implement listing db audit policies by server, continuing the current convention would be
 client.databases.list_blob_auditing_policies_by_server(..) which makes much less sense than the ARM standard which would beclient.database_blob_auditing_policies.list_by_server(...)`.
 
-In order to resolve this and provide a good path moving forward, 
-we have renamed the inconsistent operations to follow the ARM standard. 
+In order to resolve this and provide a good path moving forward,
+we have renamed the inconsistent operations to follow the ARM standard.
 This is an unfortunate breaking change, but it's best to do now while the SDK is still in preview and since most of these operations were only recently added.
 
 **Breaking changes**

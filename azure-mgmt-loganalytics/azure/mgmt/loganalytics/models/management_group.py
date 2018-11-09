@@ -49,12 +49,13 @@ class ManagementGroup(Model):
         'sku': {'key': 'properties.sku', 'type': 'str'},
     }
 
-    def __init__(self, server_count=None, is_gateway=None, name=None, id=None, created=None, data_received=None, version=None, sku=None):
-        self.server_count = server_count
-        self.is_gateway = is_gateway
-        self.name = name
-        self.id = id
-        self.created = created
-        self.data_received = data_received
-        self.version = version
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(ManagementGroup, self).__init__(**kwargs)
+        self.server_count = kwargs.get('server_count', None)
+        self.is_gateway = kwargs.get('is_gateway', None)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.created = kwargs.get('created', None)
+        self.data_received = kwargs.get('data_received', None)
+        self.version = kwargs.get('version', None)
+        self.sku = kwargs.get('sku', None)

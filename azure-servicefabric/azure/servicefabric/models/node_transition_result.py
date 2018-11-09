@@ -29,7 +29,7 @@ class NodeTransitionResult(Model):
         'node_result': {'key': 'NodeResult', 'type': 'NodeResult'},
     }
 
-    def __init__(self, error_code=None, node_result=None):
-        super(NodeTransitionResult, self).__init__()
-        self.error_code = error_code
-        self.node_result = node_result
+    def __init__(self, **kwargs):
+        super(NodeTransitionResult, self).__init__(**kwargs)
+        self.error_code = kwargs.get('error_code', None)
+        self.node_result = kwargs.get('node_result', None)

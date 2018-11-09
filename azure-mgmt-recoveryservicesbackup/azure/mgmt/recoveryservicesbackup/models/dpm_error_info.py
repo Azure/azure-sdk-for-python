@@ -19,7 +19,7 @@ class DpmErrorInfo(Model):
     :type error_string: str
     :param recommendations: List of localized recommendations for above error
      code.
-    :type recommendations: list of str
+    :type recommendations: list[str]
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class DpmErrorInfo(Model):
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, error_string=None, recommendations=None):
-        self.error_string = error_string
-        self.recommendations = recommendations
+    def __init__(self, **kwargs):
+        super(DpmErrorInfo, self).__init__(**kwargs)
+        self.error_string = kwargs.get('error_string', None)
+        self.recommendations = kwargs.get('recommendations', None)

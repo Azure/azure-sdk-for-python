@@ -20,21 +20,26 @@ class ImageTag(Model):
 
     :ivar tag_id:
     :vartype tag_id: str
+    :ivar tag_name:
+    :vartype tag_name: str
     :ivar created:
     :vartype created: datetime
     """
 
     _validation = {
         'tag_id': {'readonly': True},
+        'tag_name': {'readonly': True},
         'created': {'readonly': True},
     }
 
     _attribute_map = {
-        'tag_id': {'key': 'TagId', 'type': 'str'},
-        'created': {'key': 'Created', 'type': 'iso-8601'},
+        'tag_id': {'key': 'tagId', 'type': 'str'},
+        'tag_name': {'key': 'tagName', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(ImageTag, self).__init__(**kwargs)
         self.tag_id = None
+        self.tag_name = None
         self.created = None

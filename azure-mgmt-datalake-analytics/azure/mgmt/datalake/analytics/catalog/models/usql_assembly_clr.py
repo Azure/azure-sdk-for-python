@@ -35,8 +35,8 @@ class USqlAssemblyClr(CatalogItem):
         'clr_name': {'key': 'clrName', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, name=None, clr_name=None):
-        super(USqlAssemblyClr, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.name = name
-        self.clr_name = clr_name
+    def __init__(self, **kwargs):
+        super(USqlAssemblyClr, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.name = kwargs.get('name', None)
+        self.clr_name = kwargs.get('clr_name', None)

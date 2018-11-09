@@ -33,16 +33,6 @@ class OutputDirectory(Model):
      pathPrefix, jobOutputDirectoryPathSegment (reported by get job) and
      pathSuffix.
     :type path_suffix: str
-    :param type: An enumeration, which specifies the type of job output
-     directory. Default value is Custom. The possible values are Model, Logs,
-     Summary, and Custom. Users can use multiple enums for a single directory.
-     Eg. outPutType='Model,Logs, Summary'. Possible values include: 'model',
-     'logs', 'summary', 'custom'. Default value: "custom" .
-    :type type: str or ~azure.mgmt.batchai.models.OutputType
-    :param create_new: True to create new directory. Default is true. If
-     false, then the directory is not created and can be any directory path
-     that the user specifies. Default value: True .
-    :type create_new: bool
     """
 
     _validation = {
@@ -54,14 +44,10 @@ class OutputDirectory(Model):
         'id': {'key': 'id', 'type': 'str'},
         'path_prefix': {'key': 'pathPrefix', 'type': 'str'},
         'path_suffix': {'key': 'pathSuffix', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'create_new': {'key': 'createNew', 'type': 'bool'},
     }
 
-    def __init__(self, *, id: str, path_prefix: str, path_suffix: str=None, type="custom", create_new: bool=True, **kwargs) -> None:
+    def __init__(self, *, id: str, path_prefix: str, path_suffix: str=None, **kwargs) -> None:
         super(OutputDirectory, self).__init__(**kwargs)
         self.id = id
         self.path_prefix = path_prefix
         self.path_suffix = path_suffix
-        self.type = type
-        self.create_new = create_new

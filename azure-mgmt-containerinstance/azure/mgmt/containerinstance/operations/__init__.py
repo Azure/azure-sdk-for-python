@@ -12,13 +12,13 @@
 from .container_groups_operations import ContainerGroupsOperations
 from .operations import Operations
 from .container_group_usage_operations import ContainerGroupUsageOperations
-from .container_logs_operations import ContainerLogsOperations
-from .start_container_operations import StartContainerOperations
+from .container_operations import ContainerOperations
+from .service_association_link_operations import ServiceAssociationLinkOperations
 
 __all__ = [
     'ContainerGroupsOperations',
     'Operations',
     'ContainerGroupUsageOperations',
-    'ContainerLogsOperations',
-    'StartContainerOperations',
+    'ContainerOperations',
+    'ServiceAssociationLinkOperations',
 ]

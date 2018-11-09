@@ -18,11 +18,13 @@ class SpellCheck(Answer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :param flagged_tokens:
+    :param flagged_tokens: Required.
     :type flagged_tokens:
      list[~azure.cognitiveservices.language.spellcheck.models.SpellingFlaggedToken]
     """
@@ -39,7 +41,7 @@ class SpellCheck(Answer):
         'flagged_tokens': {'key': 'flaggedTokens', 'type': '[SpellingFlaggedToken]'},
     }
 
-    def __init__(self, flagged_tokens):
-        super(SpellCheck, self).__init__()
-        self.flagged_tokens = flagged_tokens
+    def __init__(self, **kwargs):
+        super(SpellCheck, self).__init__(**kwargs)
+        self.flagged_tokens = kwargs.get('flagged_tokens', None)
         self._type = 'SpellCheck'

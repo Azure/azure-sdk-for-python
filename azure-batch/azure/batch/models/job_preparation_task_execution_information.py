@@ -16,15 +16,17 @@ class JobPreparationTaskExecutionInformation(Model):
     """Contains information about the execution of a Job Preparation task on a
     compute node.
 
-    :param start_time: The time at which the task started running. If the task
-     has been restarted or retried, this is the most recent time at which the
-     task started running.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The time at which the task started running.
+     If the task has been restarted or retried, this is the most recent time at
+     which the task started running.
     :type start_time: datetime
     :param end_time: The time at which the Job Preparation task completed.
      This property is set only if the task is in the Completed state.
     :type end_time: datetime
-    :param state: The current state of the Job Preparation task on the compute
-     node. Possible values include: 'running', 'completed'
+    :param state: Required. The current state of the Job Preparation task on
+     the compute node. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.JobPreparationTaskState
     :param task_root_directory: The root directory of the Job Preparation task
      on the compute node. You can use this path to retrieve files created by
@@ -51,14 +53,14 @@ class JobPreparationTaskExecutionInformation(Model):
      property is set only if the task is in the completed state and encountered
      a failure.
     :type failure_info: ~azure.batch.models.TaskFailureInformation
-    :param retry_count: The number of times the task has been retried by the
-     Batch service. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the task could not be run) and file upload errors
-     are not retried. The Batch service will retry the task up to the limit
-     specified by the constraints. Task application failures (non-zero exit
+    :param retry_count: Required. The number of times the task has been
+     retried by the Batch service. Task application failures (non-zero exit
      code) are retried, pre-processing errors (the task could not be run) and
      file upload errors are not retried. The Batch service will retry the task
-     up to the limit specified by the constraints.
+     up to the limit specified by the constraints. Task application failures
+     (non-zero exit code) are retried, pre-processing errors (the task could
+     not be run) and file upload errors are not retried. The Batch service will
+     retry the task up to the limit specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the Job
      Preparation task started running. This property is set only if the task
@@ -94,16 +96,16 @@ class JobPreparationTaskExecutionInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, start_time, state, retry_count, end_time=None, task_root_directory=None, task_root_directory_url=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, result=None):
-        super(JobPreparationTaskExecutionInformation, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.state = state
-        self.task_root_directory = task_root_directory
-        self.task_root_directory_url = task_root_directory_url
-        self.exit_code = exit_code
-        self.container_info = container_info
-        self.failure_info = failure_info
-        self.retry_count = retry_count
-        self.last_retry_time = last_retry_time
-        self.result = result
+    def __init__(self, **kwargs):
+        super(JobPreparationTaskExecutionInformation, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.state = kwargs.get('state', None)
+        self.task_root_directory = kwargs.get('task_root_directory', None)
+        self.task_root_directory_url = kwargs.get('task_root_directory_url', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.container_info = kwargs.get('container_info', None)
+        self.failure_info = kwargs.get('failure_info', None)
+        self.retry_count = kwargs.get('retry_count', None)
+        self.last_retry_time = kwargs.get('last_retry_time', None)
+        self.result = kwargs.get('result', None)

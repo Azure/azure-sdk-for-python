@@ -16,7 +16,9 @@ class SecondaryIdleReplicatorStatus(SecondaryReplicatorStatus):
     """Status of the secondary replicator when it is in idle mode and is being
     built by the primary.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param replication_queue_status: Details about the replication queue on
      the secondary replicator.
@@ -49,6 +51,16 @@ class SecondaryIdleReplicatorStatus(SecondaryReplicatorStatus):
         'kind': {'required': True},
     }
 
-    def __init__(self, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None):
-        super(SecondaryIdleReplicatorStatus, self).__init__(replication_queue_status=replication_queue_status, last_replication_operation_received_time_utc=last_replication_operation_received_time_utc, is_in_build=is_in_build, copy_queue_status=copy_queue_status, last_copy_operation_received_time_utc=last_copy_operation_received_time_utc, last_acknowledgement_sent_time_utc=last_acknowledgement_sent_time_utc)
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
+        'last_replication_operation_received_time_utc': {'key': 'LastReplicationOperationReceivedTimeUtc', 'type': 'iso-8601'},
+        'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
+        'copy_queue_status': {'key': 'CopyQueueStatus', 'type': 'ReplicatorQueueStatus'},
+        'last_copy_operation_received_time_utc': {'key': 'LastCopyOperationReceivedTimeUtc', 'type': 'iso-8601'},
+        'last_acknowledgement_sent_time_utc': {'key': 'LastAcknowledgementSentTimeUtc', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecondaryIdleReplicatorStatus, self).__init__(**kwargs)
         self.kind = 'IdleSecondary'
