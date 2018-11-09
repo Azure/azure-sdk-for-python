@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .audio import Audio
+from .audio_py3 import Audio
 
 
 class AacAudio(Audio):

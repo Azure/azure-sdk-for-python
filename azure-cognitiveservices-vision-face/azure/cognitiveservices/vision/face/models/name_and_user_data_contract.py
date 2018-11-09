@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class NameAndUserDataContract(Model):
     """A combination of user defined name and user specified data for the person,
-    personGroup, and faceList.
+    largePersonGroup/personGroup, and largeFaceList/faceList.
 
     :param name: User defined name, maximum length is 128.
     :type name: str
@@ -32,7 +32,7 @@ class NameAndUserDataContract(Model):
         'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, name=None, user_data=None):
-        super(NameAndUserDataContract, self).__init__()
-        self.name = name
-        self.user_data = user_data
+    def __init__(self, **kwargs):
+        super(NameAndUserDataContract, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.user_data = kwargs.get('user_data', None)

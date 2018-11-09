@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-signalr"
+package_pprint_name = "SignalR"
+package_doc_id = ""
+is_stable = false
+is_arm = true

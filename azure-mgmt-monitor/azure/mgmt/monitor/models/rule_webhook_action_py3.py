@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .rule_action import RuleAction
+from .rule_action_py3 import RuleAction
 
 
 class RuleWebhookAction(RuleAction):

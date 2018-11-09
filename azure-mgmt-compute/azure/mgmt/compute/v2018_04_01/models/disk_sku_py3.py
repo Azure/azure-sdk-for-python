@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class DiskSku(Model):
-    """The disks sku name. Can be Standard_LRS or Premium_LRS.
+    """The disks sku name. Can be Standard_LRS, Premium_LRS, or StandardSSD_LRS.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param name: The sku name. Possible values include: 'Standard_LRS',
-     'Premium_LRS'
+     'Premium_LRS', 'StandardSSD_LRS'
     :type name: str or
      ~azure.mgmt.compute.v2018_04_01.models.StorageAccountTypes
     :ivar tier: The sku tier. Default value: "Standard" .

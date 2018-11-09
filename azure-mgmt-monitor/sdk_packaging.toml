@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-monitor"
+package_pprint_name = "Monitor"
+package_doc_id = "monitoring"
+is_stable = false

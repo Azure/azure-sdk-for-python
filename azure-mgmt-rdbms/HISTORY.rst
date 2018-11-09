@@ -3,6 +3,53 @@
 Release History
 ===============
 
+1.5.0 (2018-10-30)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group VirtualNetworkRulesOperations for MariaDB
+
+1.4.1 (2018-10-16)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 1.4.0. No code change.
+
+1.4.0 (2018-10-11)
+++++++++++++++++++
+
+**Features**
+
+- Model Server has a new parameter replication_role
+- Model Server has a new parameter master_server_id
+- Model Server has a new parameter replica_capacity
+- Model ServerUpdateParameters has a new parameter replication_role
+- Added operation group ReplicasOperations
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+1.3.0 (2018-09-13)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group ServerSecurityAlertPoliciesOperations (MySQL only)
+- Added support for PostregreSQL 10.x
+- Added support for MariaDB (public preview)
+
+1.2.0 (2018-05-30)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group VirtualNetworkRulesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations (PostgreSQL only)
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
 1.1.1 (2018-04-17)
 ++++++++++++++++++
 
@@ -39,7 +86,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

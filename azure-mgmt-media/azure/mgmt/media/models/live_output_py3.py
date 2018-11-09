@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class LiveOutput(ProxyResource):
@@ -34,7 +34,8 @@ class LiveOutput(ProxyResource):
      archive window length. This is duration that customer want to retain the
      recorded content.
     :type archive_window_length: timedelta
-    :param manifest_name: The manifest file name.
+    :param manifest_name: The manifest file name.  If not provided, the
+     service will generate one automatically.
     :type manifest_name: str
     :param hls: The HLS configuration.
     :type hls: ~azure.mgmt.media.models.Hls

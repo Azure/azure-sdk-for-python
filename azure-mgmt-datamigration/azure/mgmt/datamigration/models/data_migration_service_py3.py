@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class DataMigrationService(TrackedResource):
-    """A Data Migration Service resource.
+    """A Database Migration Service resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

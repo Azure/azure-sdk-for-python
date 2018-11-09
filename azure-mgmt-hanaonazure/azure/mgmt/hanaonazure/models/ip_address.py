@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IpAddress(Model):
-    """IpAddress.
+    """Specifies the IP address of the network interaface.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,6 +30,6 @@ class IpAddress(Model):
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(IpAddress, self).__init__()
+    def __init__(self, **kwargs):
+        super(IpAddress, self).__init__(**kwargs)
         self.ip_address = None

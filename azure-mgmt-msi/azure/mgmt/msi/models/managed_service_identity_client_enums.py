@@ -12,6 +12,6 @@
 from enum import Enum
 
 
-class UserAssignedIdentities(Enum):
+class UserAssignedIdentities(str, Enum):
 
     microsoft_managed_identityuser_assigned_identities = "Microsoft.ManagedIdentity/userAssignedIdentities"

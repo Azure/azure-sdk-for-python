@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class DatabaseSecurityAlertPolicy(ProxyResource):
@@ -36,7 +36,8 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies the semicolon-separated list of alerts
      that are disabled, or empty string to disable no alerts. Possible values:
-     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly; Usage_Anomaly.
+     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly;
+     Data_Exfiltration; Unsafe_Action.
     :type disabled_alerts: str
     :param email_addresses: Specifies the semicolon-separated list of e-mail
      addresses to which the alert is sent.

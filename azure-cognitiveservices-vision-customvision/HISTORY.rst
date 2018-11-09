@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.3.0 (2018-07-12)
+++++++++++++++++++
+
+**Features**
+
+-	Added ability to create Multilabel or Multiclass image classification projects
+-	Fixes and improvements to Docker container export and export pipeline to know when a newer version is available
+
 0.2.0 (2018-05-07)
 ++++++++++++++++++
 
