@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class InvoicePricesheetsOperations(object):
-    """InvoicePricesheetsOperations operations.
+class InvoicePricesheetOperations(object):
+    """InvoicePricesheetOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -142,4 +142,4 @@ class InvoicePricesheetsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheets/default/download'}
+    download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheet/default/download'}
