@@ -365,7 +365,7 @@ class ApiIssueOperations(object):
          Management service instance.
         :type issue_id: str
         :param parameters: Update parameters.
-        :type parameters: ~azure.mgmt.apimanagement.models.IssueContract
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueUpdateContract
         :param if_match: ETag of the Issue Entity. ETag should match the
          current entity state from the header response of the GET request or it
          should be * for unconditional update.
@@ -375,9 +375,8 @@ class ApiIssueOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IssueContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.IssueContract or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -398,7 +397,6 @@ class ApiIssueOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -410,27 +408,18 @@ class ApiIssueOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'IssueContract')
+        body_content = self._serialize.body(parameters, 'IssueUpdateContract')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('IssueContract', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('IssueContract', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def delete(
