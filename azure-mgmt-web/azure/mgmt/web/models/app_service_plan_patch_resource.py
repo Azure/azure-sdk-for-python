@@ -50,6 +50,9 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
      If <code>false</code>, apps assigned to this App Service plan will scale
      to all instances of the plan. Default value: False .
     :type per_site_scaling: bool
+    :param maximum_elastic_worker_count: Maximum number of total workers
+     allowed for this ElasticScaleEnabled App Service Plan
+    :type maximum_elastic_worker_count: int
     :ivar number_of_sites: Number of apps assigned to this App Service plan.
     :vartype number_of_sites: int
     :param is_spot: If <code>true</code>, this App Service Plan owns spot
@@ -109,6 +112,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int'},
         'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
         'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool'},
+        'maximum_elastic_worker_count': {'key': 'properties.maximumElasticWorkerCount', 'type': 'int'},
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'spot_expiration_time': {'key': 'properties.spotExpirationTime', 'type': 'iso-8601'},
@@ -132,6 +136,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self.maximum_number_of_workers = None
         self.geo_region = None
         self.per_site_scaling = kwargs.get('per_site_scaling', False)
+        self.maximum_elastic_worker_count = kwargs.get('maximum_elastic_worker_count', None)
         self.number_of_sites = None
         self.is_spot = kwargs.get('is_spot', None)
         self.spot_expiration_time = kwargs.get('spot_expiration_time', None)
