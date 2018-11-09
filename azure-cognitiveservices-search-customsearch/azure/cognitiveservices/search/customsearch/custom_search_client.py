@@ -16,8 +16,8 @@ from .operations.custom_instance_operations import CustomInstanceOperations
 from . import models
 
 
-class CustomSearchAPIConfiguration(Configuration):
-    """Configuration for CustomSearchAPI
+class CustomSearchClientConfiguration(Configuration):
+    """Configuration for CustomSearchClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,18 +35,18 @@ class CustomSearchAPIConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.cognitive.microsoft.com/bingcustomsearch/v7.0'
 
-        super(CustomSearchAPIConfiguration, self).__init__(base_url)
+        super(CustomSearchClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-search-customsearch/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class CustomSearchAPI(SDKClient):
+class CustomSearchClient(SDKClient):
     """The Bing Custom Search API lets you send a search query to Bing and get back search results customized to meet your custom search definition.
 
     :ivar config: Configuration for client.
-    :vartype config: CustomSearchAPIConfiguration
+    :vartype config: CustomSearchClientConfiguration
 
     :ivar custom_instance: CustomInstance operations
     :vartype custom_instance: azure.cognitiveservices.search.customsearch.operations.CustomInstanceOperations
@@ -60,8 +60,8 @@ class CustomSearchAPI(SDKClient):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = CustomSearchAPIConfiguration(credentials, base_url)
-        super(CustomSearchAPI, self).__init__(self.config.credentials, self.config)
+        self.config = CustomSearchClientConfiguration(credentials, base_url)
+        super(CustomSearchClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
