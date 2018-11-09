@@ -42,7 +42,7 @@ class CustomInstanceOperations(object):
 
         :param custom_config: The identifier for the custom search
          configuration
-        :type custom_config: long
+        :type custom_config: str
         :param query: The user's search query term. The term may not be empty.
          The term may contain Bing Advanced Operators. For example, to limit
          results to a specific domain, use the site: operator.
@@ -262,7 +262,7 @@ class CustomInstanceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['customConfig'] = self._serialize.query("custom_config", custom_config, 'long', minimum=0)
+        query_parameters['customConfig'] = self._serialize.query("custom_config", custom_config, 'str')
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
         if count is not None:
@@ -283,7 +283,7 @@ class CustomInstanceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
@@ -299,8 +299,8 @@ class CustomInstanceOperations(object):
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
