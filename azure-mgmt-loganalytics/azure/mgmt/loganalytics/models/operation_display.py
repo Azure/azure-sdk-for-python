@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """Display metadata associated with the operation.
 
-    :param provider: Service provider: Microsoft OperationsManagement.
+    :param provider: Service provider: OperationalInsights.
     :type provider: str
     :param resource: Resource on which the operation is performed etc.
     :type resource: str
