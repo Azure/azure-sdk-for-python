@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-sql"
+package_pprint_name = "SQL Management"
+package_doc_id = "sql"
+is_stable = false

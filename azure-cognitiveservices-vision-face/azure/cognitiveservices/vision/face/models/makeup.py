@@ -28,7 +28,7 @@ class Makeup(Model):
         'lip_makeup': {'key': 'lipMakeup', 'type': 'bool'},
     }
 
-    def __init__(self, eye_makeup=None, lip_makeup=None):
-        super(Makeup, self).__init__()
-        self.eye_makeup = eye_makeup
-        self.lip_makeup = lip_makeup
+    def __init__(self, **kwargs):
+        super(Makeup, self).__init__(**kwargs)
+        self.eye_makeup = kwargs.get('eye_makeup', None)
+        self.lip_makeup = kwargs.get('lip_makeup', None)

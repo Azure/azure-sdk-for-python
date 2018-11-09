@@ -18,11 +18,14 @@ class CheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The Data Lake Analytics name to check availability for.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The Data Lake Analytics name to check availability
+     for.
     :type name: str
-    :ivar type: The resource type. Note: This should not be set by the user,
-     as the constant value is Microsoft.DataLakeAnalytics/accounts. Default
-     value: "Microsoft.DataLakeAnalytics/accounts" .
+    :ivar type: Required. The resource type. Note: This should not be set by
+     the user, as the constant value is Microsoft.DataLakeAnalytics/accounts.
+     Default value: "Microsoft.DataLakeAnalytics/accounts" .
     :vartype type: str
     """
 
@@ -38,6 +41,6 @@ class CheckNameAvailabilityParameters(Model):
 
     type = "Microsoft.DataLakeAnalytics/accounts"
 
-    def __init__(self, name):
-        super(CheckNameAvailabilityParameters, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

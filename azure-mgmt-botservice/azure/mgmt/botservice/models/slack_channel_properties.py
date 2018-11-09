@@ -18,11 +18,16 @@ class SlackChannelProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param client_id: The Slack client id
+    All required parameters must be populated in order to send to Azure.
+
+    :param client_id: Required. The Slack client id
     :type client_id: str
-    :param client_secret: The Slack client secret
+    :param client_secret: Required. The Slack client secret. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type client_secret: str
-    :param verification_token: The Slack verification token
+    :param verification_token: Required. The Slack verification token. Value
+     only returned through POST to the action Channel List API, otherwise
+     empty.
     :type verification_token: str
     :param landing_page_url: The Slack landing page Url
     :type landing_page_url: str
@@ -35,7 +40,7 @@ class SlackChannelProperties(Model):
     :vartype register_before_oauth_flow: bool
     :ivar is_validated: Whether this channel is validated for the bot
     :vartype is_validated: bool
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -62,13 +67,14 @@ class SlackChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, client_id, client_secret, verification_token, is_enabled, landing_page_url=None):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.verification_token = verification_token
-        self.landing_page_url = landing_page_url
+    def __init__(self, **kwargs):
+        super(SlackChannelProperties, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.verification_token = kwargs.get('verification_token', None)
+        self.landing_page_url = kwargs.get('landing_page_url', None)
         self.redirect_action = None
         self.last_submission_id = None
         self.register_before_oauth_flow = None
         self.is_validated = None
-        self.is_enabled = is_enabled
+        self.is_enabled = kwargs.get('is_enabled', None)

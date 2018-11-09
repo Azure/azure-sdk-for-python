@@ -21,7 +21,9 @@ class CreativeWork(Thing):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -80,8 +82,8 @@ class CreativeWork(Thing):
         '_type': {'WebPage': 'WebPage', 'MediaObject': 'MediaObject', 'Article': 'Article'}
     }
 
-    def __init__(self):
-        super(CreativeWork, self).__init__()
+    def __init__(self, **kwargs):
+        super(CreativeWork, self).__init__(**kwargs)
         self.thumbnail_url = None
         self.provider = None
         self.text = None

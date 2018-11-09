@@ -26,7 +26,7 @@ class ContainerExecRequestTerminalSize(Model):
         'cols': {'key': 'cols', 'type': 'int'},
     }
 
-    def __init__(self, rows=None, cols=None):
-        super(ContainerExecRequestTerminalSize, self).__init__()
-        self.rows = rows
-        self.cols = cols
+    def __init__(self, **kwargs):
+        super(ContainerExecRequestTerminalSize, self).__init__(**kwargs)
+        self.rows = kwargs.get('rows', None)
+        self.cols = kwargs.get('cols', None)

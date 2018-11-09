@@ -18,7 +18,9 @@ class Images(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -38,8 +40,8 @@ class Images(SearchResultsAnswer):
     :vartype is_family_friendly: bool
     :ivar next_offset:
     :vartype next_offset: int
-    :param value: A list of image objects that are relevant to the query. If
-     there are no results, the List is empty.
+    :param value: Required. A list of image objects that are relevant to the
+     query. If there are no results, the List is empty.
     :type value:
      list[~azure.cognitiveservices.search.websearch.models.ImageObject]
     :ivar query_expansions:
@@ -83,10 +85,10 @@ class Images(SearchResultsAnswer):
         'related_searches': {'key': 'relatedSearches', 'type': '[Query]'},
     }
 
-    def __init__(self, value):
-        super(Images, self).__init__()
+    def __init__(self, **kwargs):
+        super(Images, self).__init__(**kwargs)
         self.next_offset = None
-        self.value = value
+        self.value = kwargs.get('value', None)
         self.query_expansions = None
         self.similar_terms = None
         self.related_searches = None

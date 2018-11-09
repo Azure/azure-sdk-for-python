@@ -18,10 +18,12 @@ class ContractualRulesLinkAttribution(ContractualRulesAttribution):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field
@@ -29,10 +31,10 @@ class ContractualRulesLinkAttribution(ContractualRulesAttribution):
      proximity. If false, or this field does not exist, the contents may be
      placed at the caller's discretion.
     :vartype must_be_close_to_content: bool
-    :param text: The attribution text.
+    :param text: Required. The attribution text.
     :type text: str
-    :param url: The URL to the provider's website. Use text and URL to create
-     the hyperlink.
+    :param url: Required. The URL to the provider's website. Use text and URL
+     to create the hyperlink.
     :type url: str
     :ivar optional_for_list_display: Indicates whether this provider's
      attribution is optional.
@@ -57,9 +59,9 @@ class ContractualRulesLinkAttribution(ContractualRulesAttribution):
         'optional_for_list_display': {'key': 'optionalForListDisplay', 'type': 'bool'},
     }
 
-    def __init__(self, text, url):
-        super(ContractualRulesLinkAttribution, self).__init__()
-        self.text = text
-        self.url = url
+    def __init__(self, **kwargs):
+        super(ContractualRulesLinkAttribution, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.url = kwargs.get('url', None)
         self.optional_for_list_display = None
         self._type = 'ContractualRules/LinkAttribution'

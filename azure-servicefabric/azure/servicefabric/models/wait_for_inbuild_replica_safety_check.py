@@ -18,7 +18,9 @@ class WaitForInbuildReplicaSafetyCheck(PartitionSafetyCheck):
     providing data for building another replica. Bring the node down will abort
     this copy operation which are typically expensive involving data movements.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
@@ -29,6 +31,11 @@ class WaitForInbuildReplicaSafetyCheck(PartitionSafetyCheck):
         'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(WaitForInbuildReplicaSafetyCheck, self).__init__(partition_id=partition_id)
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WaitForInbuildReplicaSafetyCheck, self).__init__(**kwargs)
         self.kind = 'WaitForInbuildReplica'

@@ -19,7 +19,7 @@ class CodePackageEntryPoint(Model):
     :param entry_point_location: The location of entry point executable on the
      node.
     :type entry_point_location: str
-    :param process_id: The process id of the entry point.
+    :param process_id: The process ID of the entry point.
     :type process_id: str
     :param run_as_user_name: The user name under which entry point executable
      is run on the node.
@@ -35,7 +35,7 @@ class CodePackageEntryPoint(Model):
     :param next_activation_time: The time (in UTC) when the entry point
      executable will be run next.
     :type next_activation_time: datetime
-    :param instance_id: The instance id for current running entry point. For a
+    :param instance_id: The instance ID for current running entry point. For a
      code package setup entry point (if specified) runs first and after it
      finishes main entry point is started. Each time entry point executable is
      run, its instance id will change.
@@ -52,12 +52,12 @@ class CodePackageEntryPoint(Model):
         'instance_id': {'key': 'InstanceId', 'type': 'str'},
     }
 
-    def __init__(self, entry_point_location=None, process_id=None, run_as_user_name=None, code_package_entry_point_statistics=None, status=None, next_activation_time=None, instance_id=None):
-        super(CodePackageEntryPoint, self).__init__()
-        self.entry_point_location = entry_point_location
-        self.process_id = process_id
-        self.run_as_user_name = run_as_user_name
-        self.code_package_entry_point_statistics = code_package_entry_point_statistics
-        self.status = status
-        self.next_activation_time = next_activation_time
-        self.instance_id = instance_id
+    def __init__(self, **kwargs):
+        super(CodePackageEntryPoint, self).__init__(**kwargs)
+        self.entry_point_location = kwargs.get('entry_point_location', None)
+        self.process_id = kwargs.get('process_id', None)
+        self.run_as_user_name = kwargs.get('run_as_user_name', None)
+        self.code_package_entry_point_statistics = kwargs.get('code_package_entry_point_statistics', None)
+        self.status = kwargs.get('status', None)
+        self.next_activation_time = kwargs.get('next_activation_time', None)
+        self.instance_id = kwargs.get('instance_id', None)

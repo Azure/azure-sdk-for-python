@@ -17,34 +17,33 @@ class WorkflowTriggerRecurrence(Model):
 
     :param frequency: The frequency. Possible values include: 'NotSpecified',
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.logic.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.logic.models.RecurrenceFrequency
     :param interval: The interval.
     :type interval: int
     :param start_time: The start time.
-    :type start_time: datetime
+    :type start_time: str
     :param end_time: The end time.
-    :type end_time: datetime
+    :type end_time: str
     :param time_zone: The time zone.
     :type time_zone: str
     :param schedule: The recurrence schedule.
-    :type schedule: :class:`RecurrenceSchedule
-     <azure.mgmt.logic.models.RecurrenceSchedule>`
+    :type schedule: ~azure.mgmt.logic.models.RecurrenceSchedule
     """
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'interval': {'key': 'interval', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
     }
 
-    def __init__(self, frequency=None, interval=None, start_time=None, end_time=None, time_zone=None, schedule=None):
-        self.frequency = frequency
-        self.interval = interval
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_zone = time_zone
-        self.schedule = schedule
+    def __init__(self, **kwargs):
+        super(WorkflowTriggerRecurrence, self).__init__(**kwargs)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.schedule = kwargs.get('schedule', None)

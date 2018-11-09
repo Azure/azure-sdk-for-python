@@ -18,7 +18,9 @@ class TimeZone(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -36,15 +38,15 @@ class TimeZone(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param primary_city_time: The data and time, in UTC, of the geographic
-     location specified in the query. If the query specified a specific
-     geographic location (for example, a city), this object contains the name
-     of the geographic location and the current date and time of the location,
-     in UTC. If the query specified a general geographic location, such as a
-     state or country, this object contains the date and time of the primary
-     city or state found in the specified state or country. If the location
-     contains additional time zones, the otherCityTimes field contains the data
-     and time of cities or states located in the other time zones.
+    :param primary_city_time: Required. The data and time, in UTC, of the
+     geographic location specified in the query. If the query specified a
+     specific geographic location (for example, a city), this object contains
+     the name of the geographic location and the current date and time of the
+     location, in UTC. If the query specified a general geographic location,
+     such as a state or country, this object contains the date and time of the
+     primary city or state found in the specified state or country. If the
+     location contains additional time zones, the otherCityTimes field contains
+     the data and time of cities or states located in the other time zones.
     :type primary_city_time:
      ~azure.cognitiveservices.search.websearch.models.TimeZoneTimeZoneInformation
     :ivar other_city_times: A list of dates and times of nearby time zones.
@@ -76,8 +78,8 @@ class TimeZone(SearchResultsAnswer):
         'other_city_times': {'key': 'otherCityTimes', 'type': '[TimeZoneTimeZoneInformation]'},
     }
 
-    def __init__(self, primary_city_time):
-        super(TimeZone, self).__init__()
-        self.primary_city_time = primary_city_time
+    def __init__(self, **kwargs):
+        super(TimeZone, self).__init__(**kwargs)
+        self.primary_city_time = kwargs.get('primary_city_time', None)
         self.other_city_times = None
         self._type = 'TimeZone'

@@ -31,8 +31,8 @@ class RegistryCredential(Model):
         'password_encrypted': {'key': 'PasswordEncrypted', 'type': 'bool'},
     }
 
-    def __init__(self, registry_user_name=None, registry_password=None, password_encrypted=None):
-        super(RegistryCredential, self).__init__()
-        self.registry_user_name = registry_user_name
-        self.registry_password = registry_password
-        self.password_encrypted = password_encrypted
+    def __init__(self, **kwargs):
+        super(RegistryCredential, self).__init__(**kwargs)
+        self.registry_user_name = kwargs.get('registry_user_name', None)
+        self.registry_password = kwargs.get('registry_password', None)
+        self.password_encrypted = kwargs.get('password_encrypted', None)

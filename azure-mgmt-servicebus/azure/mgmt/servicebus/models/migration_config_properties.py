@@ -28,12 +28,19 @@ class MigrationConfigProperties(Resource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of Migration Configuration
     :vartype provisioning_state: str
+    :ivar pending_replication_operations_count: Number of entities pending to
+     be replicated.
+    :vartype pending_replication_operations_count: long
     :param target_namespace: Required. Existing premium Namespace ARM Id name
      which has no entities, will be used for migration
     :type target_namespace: str
     :param post_migration_name: Required. Name to access Standard Namespace
      after migration
     :type post_migration_name: str
+    :ivar migration_state: State in which Standard to Premium Migration is,
+     possible values : Unknown, Reverting, Completing, Initiating, Syncing,
+     Active
+    :vartype migration_state: str
     """
 
     _validation = {
@@ -41,8 +48,10 @@ class MigrationConfigProperties(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
         'target_namespace': {'required': True},
         'post_migration_name': {'required': True},
+        'migration_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,12 +59,16 @@ class MigrationConfigProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
+        'migration_state': {'key': 'properties.migrationState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(MigrationConfigProperties, self).__init__(**kwargs)
         self.provisioning_state = None
+        self.pending_replication_operations_count = None
         self.target_namespace = kwargs.get('target_namespace', None)
         self.post_migration_name = kwargs.get('post_migration_name', None)
+        self.migration_state = None

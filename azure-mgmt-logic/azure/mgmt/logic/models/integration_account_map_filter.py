@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class IntegrationAccountMapFilter(Model):
     """The integration account map filter for odata query.
 
-    :param map_type: The map type of integration account map. Possible values
-     include: 'NotSpecified', 'Xslt'
-    :type map_type: str or :class:`MapType <azure.mgmt.logic.models.MapType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param map_type: Required. The map type of integration account map.
+     Possible values include: 'NotSpecified', 'Xslt'
+    :type map_type: str or ~azure.mgmt.logic.models.MapType
     """
 
     _validation = {
@@ -28,5 +30,6 @@ class IntegrationAccountMapFilter(Model):
         'map_type': {'key': 'mapType', 'type': 'MapType'},
     }
 
-    def __init__(self, map_type):
-        self.map_type = map_type
+    def __init__(self, **kwargs):
+        super(IntegrationAccountMapFilter, self).__init__(**kwargs)
+        self.map_type = kwargs.get('map_type', None)

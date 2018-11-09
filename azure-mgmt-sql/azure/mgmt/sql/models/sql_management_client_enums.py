@@ -264,12 +264,6 @@ class TransparentDataEncryptionActivityStatus(str, Enum):
     decrypting = "Decrypting"
 
 
-class BlobAuditingPolicyState(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
@@ -326,15 +320,15 @@ class FailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
-
-
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
 
 
 class SyncAgentState(str, Enum):
@@ -409,6 +403,102 @@ class VirtualNetworkRuleState(str, Enum):
     ready = "Ready"
     deleting = "Deleting"
     unknown = "Unknown"
+
+
+class BlobAuditingPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class JobAgentState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    updating = "Updating"
+    deleting = "Deleting"
+    disabled = "Disabled"
+
+
+class JobExecutionLifecycle(str, Enum):
+
+    created = "Created"
+    in_progress = "InProgress"
+    waiting_for_child_job_executions = "WaitingForChildJobExecutions"
+    waiting_for_retry = "WaitingForRetry"
+    succeeded = "Succeeded"
+    succeeded_with_skipped = "SucceededWithSkipped"
+    failed = "Failed"
+    timed_out = "TimedOut"
+    canceled = "Canceled"
+    skipped = "Skipped"
+
+
+class ProvisioningState(str, Enum):
+
+    created = "Created"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
+class JobTargetType(str, Enum):
+
+    target_group = "TargetGroup"
+    sql_database = "SqlDatabase"
+    sql_elastic_pool = "SqlElasticPool"
+    sql_shard_map = "SqlShardMap"
+    sql_server = "SqlServer"
+
+
+class JobScheduleType(str, Enum):
+
+    once = "Once"
+    recurring = "Recurring"
+
+
+class JobStepActionType(str, Enum):
+
+    tsql = "TSql"
+
+
+class JobStepActionSource(str, Enum):
+
+    inline = "Inline"
+
+
+class JobStepOutputType(str, Enum):
+
+    sql_database = "SqlDatabase"
+
+
+class JobTargetGroupMembershipType(str, Enum):
+
+    include = "Include"
+    exclude = "Exclude"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+
+
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
 
 
 class AutomaticTuningServerMode(str, Enum):
@@ -515,12 +605,6 @@ class DatabaseStatus(str, Enum):
     scaling = "Scaling"
 
 
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
 class DatabaseLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
@@ -546,11 +630,37 @@ class ElasticPoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class VulnerabilityAssessmentScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
+
+
+class InstanceFailoverGroupReplicationRole(str, Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+
+
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"
     live = "Live"
     deleted = "Deleted"
+
+
+class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
+
+    master = "master"
+    default = "default"
 
 
 class CapabilityGroup(str, Enum):

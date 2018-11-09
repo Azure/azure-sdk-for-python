@@ -17,7 +17,9 @@ class EventSubscriptionDestination(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: WebHookEventSubscriptionDestination,
-    EventHubEventSubscriptionDestination
+    EventHubEventSubscriptionDestination,
+    StorageQueueEventSubscriptionDestination,
+    HybridConnectionEventSubscriptionDestination
 
     All required parameters must be populated in order to send to Azure.
 
@@ -34,7 +36,7 @@ class EventSubscriptionDestination(Model):
     }
 
     _subtype_map = {
-        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination'}
+        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination'}
     }
 
     def __init__(self, **kwargs):

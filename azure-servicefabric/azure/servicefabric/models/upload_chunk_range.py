@@ -28,7 +28,7 @@ class UploadChunkRange(Model):
         'end_position': {'key': 'EndPosition', 'type': 'str'},
     }
 
-    def __init__(self, start_position=None, end_position=None):
-        super(UploadChunkRange, self).__init__()
-        self.start_position = start_position
-        self.end_position = end_position
+    def __init__(self, **kwargs):
+        super(UploadChunkRange, self).__init__(**kwargs)
+        self.start_position = kwargs.get('start_position', None)
+        self.end_position = kwargs.get('end_position', None)

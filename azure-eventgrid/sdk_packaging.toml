@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-eventgrid"
+package_pprint_name = "Event Grid"
+package_doc_id = "event-grid"
+is_stable = true
+is_arm = false

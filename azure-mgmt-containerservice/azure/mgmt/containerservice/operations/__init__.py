@@ -10,9 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .container_services_operations import ContainerServicesOperations
+from .operations import Operations
 from .managed_clusters_operations import ManagedClustersOperations
 
 __all__ = [
     'ContainerServicesOperations',
+    'Operations',
     'ManagedClustersOperations',
 ]

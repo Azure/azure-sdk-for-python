@@ -21,7 +21,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         )
 
     def test_storage_usage(self):
-        usages = list(self.storage_client.usage.list())
+        usages = list(self.storage_client.usages.list_by_location("eastus"))
         self.assertGreater(len(usages), 0)
 
     @ResourceGroupPreparer()
@@ -36,7 +36,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertFalse(result_check.message)
 
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location,
         )
@@ -93,15 +93,14 @@ class MgmtStorageTest(AzureMgmtTestCase):
             resource_group.name,
             account_name,
             azure.mgmt.storage.models.StorageAccountUpdateParameters(
-                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
+                sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_grs)
             )
         )
-
-        # should there be a test of the update operation?
 
         self.storage_client.storage_accounts.delete(
             resource_group.name,
             account_name,
+            polling=False
         )
 
 #------------------------------------------------------------------------------

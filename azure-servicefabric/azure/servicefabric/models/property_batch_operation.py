@@ -22,9 +22,11 @@ class PropertyBatchOperation(Model):
     DeletePropertyBatchOperation, GetPropertyBatchOperation,
     PutPropertyBatchOperation
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -42,7 +44,7 @@ class PropertyBatchOperation(Model):
         'kind': {'CheckExists': 'CheckExistsPropertyBatchOperation', 'CheckSequence': 'CheckSequencePropertyBatchOperation', 'CheckValue': 'CheckValuePropertyBatchOperation', 'Delete': 'DeletePropertyBatchOperation', 'Get': 'GetPropertyBatchOperation', 'Put': 'PutPropertyBatchOperation'}
     }
 
-    def __init__(self, property_name):
-        super(PropertyBatchOperation, self).__init__()
-        self.property_name = property_name
+    def __init__(self, **kwargs):
+        super(PropertyBatchOperation, self).__init__(**kwargs)
+        self.property_name = kwargs.get('property_name', None)
         self.kind = None

@@ -48,12 +48,13 @@ class BackupEngineExtendedInfo(Model):
         'azure_protected_instances': {'key': 'azureProtectedInstances', 'type': 'int'},
     }
 
-    def __init__(self, database_name=None, protected_items_count=None, protected_servers_count=None, disk_count=None, used_disk_space=None, available_disk_space=None, refreshed_at=None, azure_protected_instances=None):
-        self.database_name = database_name
-        self.protected_items_count = protected_items_count
-        self.protected_servers_count = protected_servers_count
-        self.disk_count = disk_count
-        self.used_disk_space = used_disk_space
-        self.available_disk_space = available_disk_space
-        self.refreshed_at = refreshed_at
-        self.azure_protected_instances = azure_protected_instances
+    def __init__(self, **kwargs):
+        super(BackupEngineExtendedInfo, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.protected_items_count = kwargs.get('protected_items_count', None)
+        self.protected_servers_count = kwargs.get('protected_servers_count', None)
+        self.disk_count = kwargs.get('disk_count', None)
+        self.used_disk_space = kwargs.get('used_disk_space', None)
+        self.available_disk_space = kwargs.get('available_disk_space', None)
+        self.refreshed_at = kwargs.get('refreshed_at', None)
+        self.azure_protected_instances = kwargs.get('azure_protected_instances', None)

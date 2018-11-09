@@ -15,10 +15,15 @@ from msrest.serialization import Model
 class ResourceRequests(Model):
     """The resource requests.
 
-    :param memory_in_gb: The memory request in GB of this container instance.
+    All required parameters must be populated in order to send to Azure.
+
+    :param memory_in_gb: Required. The memory request in GB of this container
+     instance.
     :type memory_in_gb: float
-    :param cpu: The CPU request of this container instance.
+    :param cpu: Required. The CPU request of this container instance.
     :type cpu: float
+    :param gpu: The GPU request of this container instance.
+    :type gpu: ~azure.mgmt.containerinstance.models.GpuResource
     """
 
     _validation = {
@@ -29,9 +34,11 @@ class ResourceRequests(Model):
     _attribute_map = {
         'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
         'cpu': {'key': 'cpu', 'type': 'float'},
+        'gpu': {'key': 'gpu', 'type': 'GpuResource'},
     }
 
-    def __init__(self, memory_in_gb, cpu):
-        super(ResourceRequests, self).__init__()
-        self.memory_in_gb = memory_in_gb
-        self.cpu = cpu
+    def __init__(self, **kwargs):
+        super(ResourceRequests, self).__init__(**kwargs)
+        self.memory_in_gb = kwargs.get('memory_in_gb', None)
+        self.cpu = kwargs.get('cpu', None)
+        self.gpu = kwargs.get('gpu', None)

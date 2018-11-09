@@ -16,14 +16,14 @@ class ClientDiscoveryForServiceSpecification(Model):
     """Class to represent shoebox service specification in json client discovery.
 
     :param log_specifications: List of log specifications of this operation.
-    :type log_specifications: list of
-     :class:`ClientDiscoveryForLogSpecification
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryForLogSpecification>`
+    :type log_specifications:
+     list[~azure.mgmt.recoveryservices.models.ClientDiscoveryForLogSpecification]
     """
 
     _attribute_map = {
         'log_specifications': {'key': 'logSpecifications', 'type': '[ClientDiscoveryForLogSpecification]'},
     }
 
-    def __init__(self, log_specifications=None):
-        self.log_specifications = log_specifications
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryForServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = kwargs.get('log_specifications', None)

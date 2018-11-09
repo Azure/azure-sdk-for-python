@@ -18,10 +18,10 @@ class JobPipelineRunInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar run_id: the run identifier of an instance of pipeline executions (a
+    :ivar run_id: The run identifier of an instance of pipeline executions (a
      GUID).
     :vartype run_id: str
-    :ivar last_submit_time: the time this instance was last submitted.
+    :ivar last_submit_time: The time this instance was last submitted.
     :vartype last_submit_time: datetime
     """
 
@@ -35,7 +35,7 @@ class JobPipelineRunInformation(Model):
         'last_submit_time': {'key': 'lastSubmitTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(JobPipelineRunInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobPipelineRunInformation, self).__init__(**kwargs)
         self.run_id = None
         self.last_submit_time = None

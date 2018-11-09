@@ -9,18 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
-from .check_name_availability_result import CheckNameAvailabilityResult
-from .storage_account_create_parameters import StorageAccountCreateParameters
-from .endpoints import Endpoints
-from .custom_domain import CustomDomain
-from .storage_account import StorageAccount
-from .storage_account_keys import StorageAccountKeys
-from .storage_account_update_parameters import StorageAccountUpdateParameters
-from .storage_account_regenerate_key_parameters import StorageAccountRegenerateKeyParameters
-from .usage_name import UsageName
-from .usage import Usage
-from .resource import Resource
+try:
+    from .storage_account_check_name_availability_parameters_py3 import StorageAccountCheckNameAvailabilityParameters
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .storage_account_create_parameters_py3 import StorageAccountCreateParameters
+    from .endpoints_py3 import Endpoints
+    from .custom_domain_py3 import CustomDomain
+    from .storage_account_py3 import StorageAccount
+    from .storage_account_keys_py3 import StorageAccountKeys
+    from .storage_account_update_parameters_py3 import StorageAccountUpdateParameters
+    from .storage_account_regenerate_key_parameters_py3 import StorageAccountRegenerateKeyParameters
+    from .usage_name_py3 import UsageName
+    from .usage_py3 import Usage
+    from .resource_py3 import Resource
+except (SyntaxError, ImportError):
+    from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
+    from .check_name_availability_result import CheckNameAvailabilityResult
+    from .storage_account_create_parameters import StorageAccountCreateParameters
+    from .endpoints import Endpoints
+    from .custom_domain import CustomDomain
+    from .storage_account import StorageAccount
+    from .storage_account_keys import StorageAccountKeys
+    from .storage_account_update_parameters import StorageAccountUpdateParameters
+    from .storage_account_regenerate_key_parameters import StorageAccountRegenerateKeyParameters
+    from .usage_name import UsageName
+    from .usage import Usage
+    from .resource import Resource
 from .storage_account_paged import StorageAccountPaged
 from .usage_paged import UsagePaged
 from .storage_management_client_enums import (

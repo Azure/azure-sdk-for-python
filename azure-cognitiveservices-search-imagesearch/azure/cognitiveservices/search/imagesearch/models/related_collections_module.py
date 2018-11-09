@@ -31,6 +31,6 @@ class RelatedCollectionsModule(Model):
         'value': {'key': 'value', 'type': '[ImageGallery]'},
     }
 
-    def __init__(self):
-        super(RelatedCollectionsModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(RelatedCollectionsModule, self).__init__(**kwargs)
         self.value = None

@@ -18,11 +18,14 @@ class IpAddress(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param ports: The list of ports exposed on the container group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param ports: Required. The list of ports exposed on the container group.
     :type ports: list[~azure.mgmt.containerinstance.models.Port]
-    :ivar type: Specifies if the IP is exposed to the public internet. Default
-     value: "Public" .
-    :vartype type: str
+    :param type: Required. Specifies if the IP is exposed to the public
+     internet or private VNET. Possible values include: 'Public', 'Private'
+    :type type: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupIpAddressType
     :param ip: The IP exposed to the public internet.
     :type ip: str
     :param dns_name_label: The Dns name label for the IP.
@@ -33,7 +36,7 @@ class IpAddress(Model):
 
     _validation = {
         'ports': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'fqdn': {'readonly': True},
     }
 
@@ -45,11 +48,10 @@ class IpAddress(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    type = "Public"
-
-    def __init__(self, ports, ip=None, dns_name_label=None):
-        super(IpAddress, self).__init__()
-        self.ports = ports
-        self.ip = ip
-        self.dns_name_label = dns_name_label
+    def __init__(self, **kwargs):
+        super(IpAddress, self).__init__(**kwargs)
+        self.ports = kwargs.get('ports', None)
+        self.type = kwargs.get('type', None)
+        self.ip = kwargs.get('ip', None)
+        self.dns_name_label = kwargs.get('dns_name_label', None)
         self.fqdn = None
