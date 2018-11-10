@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class UserCreateParameters(Model):
     """User create details.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param state: Account state. Specifies whether the user is active or not.
@@ -28,8 +25,8 @@ class UserCreateParameters(Model):
     :type state: str or ~azure.mgmt.apimanagement.models.UserState
     :param note: Optional note about a user set by the administrator.
     :type note: str
-    :ivar identities: Collection of user identities.
-    :vartype identities:
+    :param identities: Collection of user identities.
+    :type identities:
      list[~azure.mgmt.apimanagement.models.UserIdentityContract]
     :param email: Required. Email address. Must not be empty and must be
      unique within the service instance.
@@ -48,7 +45,6 @@ class UserCreateParameters(Model):
     """
 
     _validation = {
-        'identities': {'readonly': True},
         'email': {'required': True, 'max_length': 254, 'min_length': 1},
         'first_name': {'required': True, 'max_length': 100, 'min_length': 1},
         'last_name': {'required': True, 'max_length': 100, 'min_length': 1},
@@ -69,7 +65,7 @@ class UserCreateParameters(Model):
         super(UserCreateParameters, self).__init__(**kwargs)
         self.state = kwargs.get('state', "active")
         self.note = kwargs.get('note', None)
-        self.identities = None
+        self.identities = kwargs.get('identities', None)
         self.email = kwargs.get('email', None)
         self.first_name = kwargs.get('first_name', None)
         self.last_name = kwargs.get('last_name', None)

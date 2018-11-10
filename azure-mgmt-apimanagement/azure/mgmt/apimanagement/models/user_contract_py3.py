@@ -32,8 +32,8 @@ class UserContract(Resource):
     :type state: str or ~azure.mgmt.apimanagement.models.UserState
     :param note: Optional note about a user set by the administrator.
     :type note: str
-    :ivar identities: Collection of user identities.
-    :vartype identities:
+    :param identities: Collection of user identities.
+    :type identities:
      list[~azure.mgmt.apimanagement.models.UserIdentityContract]
     :param first_name: First name.
     :type first_name: str
@@ -54,7 +54,6 @@ class UserContract(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'identities': {'readonly': True},
         'groups': {'readonly': True},
     }
 
@@ -72,11 +71,11 @@ class UserContract(Resource):
         'groups': {'key': 'properties.groups', 'type': '[GroupContractProperties]'},
     }
 
-    def __init__(self, *, state="active", note: str=None, first_name: str=None, last_name: str=None, email: str=None, registration_date=None, **kwargs) -> None:
+    def __init__(self, *, state="active", note: str=None, identities=None, first_name: str=None, last_name: str=None, email: str=None, registration_date=None, **kwargs) -> None:
         super(UserContract, self).__init__(**kwargs)
         self.state = state
         self.note = note
-        self.identities = None
+        self.identities = identities
         self.first_name = first_name
         self.last_name = last_name
         self.email = email

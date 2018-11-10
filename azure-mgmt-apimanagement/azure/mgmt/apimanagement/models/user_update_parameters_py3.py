@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class UserUpdateParameters(Model):
     """User update parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param state: Account state. Specifies whether the user is active or not.
      Blocked users are unable to sign into the developer portal or call any
      APIs of subscribed products. Default state is Active. Possible values
@@ -26,8 +23,8 @@ class UserUpdateParameters(Model):
     :type state: str or ~azure.mgmt.apimanagement.models.UserState
     :param note: Optional note about a user set by the administrator.
     :type note: str
-    :ivar identities: Collection of user identities.
-    :vartype identities:
+    :param identities: Collection of user identities.
+    :type identities:
      list[~azure.mgmt.apimanagement.models.UserIdentityContract]
     :param email: Email address. Must not be empty and must be unique within
      the service instance.
@@ -41,7 +38,6 @@ class UserUpdateParameters(Model):
     """
 
     _validation = {
-        'identities': {'readonly': True},
         'email': {'max_length': 254, 'min_length': 1},
         'first_name': {'max_length': 100, 'min_length': 1},
         'last_name': {'max_length': 100, 'min_length': 1},
@@ -57,11 +53,11 @@ class UserUpdateParameters(Model):
         'last_name': {'key': 'properties.lastName', 'type': 'str'},
     }
 
-    def __init__(self, *, state="active", note: str=None, email: str=None, password: str=None, first_name: str=None, last_name: str=None, **kwargs) -> None:
+    def __init__(self, *, state="active", note: str=None, identities=None, email: str=None, password: str=None, first_name: str=None, last_name: str=None, **kwargs) -> None:
         super(UserUpdateParameters, self).__init__(**kwargs)
         self.state = state
         self.note = note
-        self.identities = None
+        self.identities = identities
         self.email = email
         self.password = password
         self.first_name = first_name
