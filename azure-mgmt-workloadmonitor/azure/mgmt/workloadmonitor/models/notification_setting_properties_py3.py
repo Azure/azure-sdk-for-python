@@ -28,7 +28,7 @@ class NotificationSettingProperties(Model):
     }
 
     _attribute_map = {
-        'action_group_resource_ids': {'key': 'ActionGroupResourceIds', 'type': '[str]'},
+        'action_group_resource_ids': {'key': 'actionGroupResourceIds', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs) -> None:

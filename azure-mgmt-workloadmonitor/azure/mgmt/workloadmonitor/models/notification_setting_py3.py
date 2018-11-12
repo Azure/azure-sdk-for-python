@@ -46,7 +46,7 @@ class NotificationSetting(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'action_group_resource_ids': {'key': 'properties.ActionGroupResourceIds', 'type': '[str]'},
+        'action_group_resource_ids': {'key': 'properties.actionGroupResourceIds', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs) -> None:
