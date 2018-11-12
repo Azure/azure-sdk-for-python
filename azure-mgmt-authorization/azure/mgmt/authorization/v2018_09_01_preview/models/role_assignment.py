@@ -12,36 +12,50 @@
 from msrest.serialization import Model
 
 
-class RoleAssignmentCreateParameters(Model):
-    """Role assignment create parameters.
+class RoleAssignment(Model):
+    """Role Assignments.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param role_definition_id: Required. The role definition ID used in the
-     role assignment.
+    :ivar id: The role assignment ID.
+    :vartype id: str
+    :ivar name: The role assignment name.
+    :vartype name: str
+    :ivar type: The role assignment type.
+    :vartype type: str
+    :param scope: The role assignment scope.
+    :type scope: str
+    :param role_definition_id: The role definition ID.
     :type role_definition_id: str
-    :param principal_id: Required. The principal ID assigned to the role. This
-     maps to the ID inside the Active Directory. It can point to a user,
-     service principal, or security group.
+    :param principal_id: The principal ID.
     :type principal_id: str
-    :param can_delegate: The delgation flag used for creating a role
-     assignment
+    :param can_delegate: The Delegation flag for the roleassignment
     :type can_delegate: bool
     """
 
     _validation = {
-        'role_definition_id': {'required': True},
-        'principal_id': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
         'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
         'principal_id': {'key': 'properties.principalId', 'type': 'str'},
         'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
-        super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
+        super(RoleAssignment, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.scope = kwargs.get('scope', None)
         self.role_definition_id = kwargs.get('role_definition_id', None)
         self.principal_id = kwargs.get('principal_id', None)
         self.can_delegate = kwargs.get('can_delegate', None)

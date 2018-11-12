@@ -9,14 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .permissions_operations import PermissionsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from enum import Enum
 
-__all__ = [
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'PermissionsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class PrincipalType(str, Enum):
+
+    user = "User"
+    group = "Group"
+    service_principal = "ServicePrincipal"
+    unknown = "Unknown"
+    directory_role_template = "DirectoryRoleTemplate"
+    foreign_group = "ForeignGroup"
+    application = "Application"
+    msi = "MSI"
+    directory_object_or_group = "DirectoryObjectOrGroup"
+    everyone = "Everyone"
