@@ -28,8 +28,9 @@ class NotificationSetting(ProxyResource):
     :vartype type: str
     :ivar etag: For optimistic concurrency control.
     :vartype etag: str
-    :ivar action_groups: List of action group resource ids to be notified
-    :vartype action_groups: list[str]
+    :ivar action_group_resource_ids: List of action group resource ids to be
+     notified
+    :vartype action_group_resource_ids: list[str]
     """
 
     _validation = {
@@ -37,7 +38,7 @@ class NotificationSetting(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'action_groups': {'readonly': True},
+        'action_group_resource_ids': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,10 +46,10 @@ class NotificationSetting(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'action_groups': {'key': 'properties.actionGroups', 'type': '[str]'},
+        'action_group_resource_ids': {'key': 'properties.ActionGroupResourceIds', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(NotificationSetting, self).__init__(**kwargs)
         self.etag = None
-        self.action_groups = None
+        self.action_group_resource_ids = None

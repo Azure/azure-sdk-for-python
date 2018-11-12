@@ -15,7 +15,9 @@ try:
     from .component_py3 import Component
     from .health_state_change_py3 import HealthStateChange
     from .monitor_instance_py3 import MonitorInstance
+    from .notification_setting_properties_py3 import NotificationSettingProperties
     from .notification_setting_py3 import NotificationSetting
+    from .notification_settings_collection_py3 import NotificationSettingsCollection
     from .operation_properties_py3 import OperationProperties
     from .operation_py3 import Operation
     from .error_field_contract_py3 import ErrorFieldContract
@@ -30,7 +32,9 @@ except (SyntaxError, ImportError):
     from .component import Component
     from .health_state_change import HealthStateChange
     from .monitor_instance import MonitorInstance
+    from .notification_setting_properties import NotificationSettingProperties
     from .notification_setting import NotificationSetting
+    from .notification_settings_collection import NotificationSettingsCollection
     from .operation_properties import OperationProperties
     from .operation import Operation
     from .error_field_contract import ErrorFieldContract
@@ -61,7 +65,9 @@ __all__ = [
     'Component',
     'HealthStateChange',
     'MonitorInstance',
+    'NotificationSettingProperties',
     'NotificationSetting',
+    'NotificationSettingsCollection',
     'OperationProperties',
     'Operation',
     'ErrorFieldContract',
