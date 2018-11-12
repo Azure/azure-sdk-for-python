@@ -23,7 +23,7 @@ class RoleAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-01-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-09-01-preview".
     """
 
     models = models
@@ -33,7 +33,7 @@ class RoleAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2018-09-01-preview"
 
         self.config = config
 
@@ -65,7 +65,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment]
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -143,7 +143,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment]
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -215,7 +215,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -279,7 +279,7 @@ class RoleAssignmentsOperations(object):
         :type role_assignment_name: str
         :param parameters: Parameters for the role assignment.
         :type parameters:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentCreateParameters
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -287,7 +287,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -353,7 +353,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -413,7 +413,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -467,7 +467,7 @@ class RoleAssignmentsOperations(object):
         :type role_id: str
         :param parameters: Parameters for the role assignment.
         :type parameters:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentCreateParameters
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -475,7 +475,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -538,7 +538,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RoleAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -600,7 +600,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment]
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -673,7 +673,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RoleAssignment
         :rtype:
-         ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment]
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignmentPaged[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -13,10 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
 from .operations.role_assignments_operations import RoleAssignmentsOperations
-from .operations.permissions_operations import PermissionsOperations
-from .operations.role_definitions_operations import RoleDefinitionsOperations
 from . import models
 
 
@@ -53,19 +50,13 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
 
 class AuthorizationManagementClient(SDKClient):
-    """AuthorizationManagementClient
+    """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role assignments. A role assignment grants access to Azure Active Directory users.
 
     :ivar config: Configuration for client.
     :vartype config: AuthorizationManagementClientConfiguration
 
-    :ivar provider_operations_metadata: ProviderOperationsMetadata operations
-    :vartype provider_operations_metadata: azure.mgmt.authorization.v2018_01_01_preview.operations.ProviderOperationsMetadataOperations
     :ivar role_assignments: RoleAssignments operations
-    :vartype role_assignments: azure.mgmt.authorization.v2018_01_01_preview.operations.RoleAssignmentsOperations
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.mgmt.authorization.v2018_01_01_preview.operations.PermissionsOperations
-    :ivar role_definitions: RoleDefinitions operations
-    :vartype role_definitions: azure.mgmt.authorization.v2018_01_01_preview.operations.RoleDefinitionsOperations
+    :vartype role_assignments: azure.mgmt.authorization.v2018_09_01_preview.operations.RoleAssignmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,15 +73,9 @@ class AuthorizationManagementClient(SDKClient):
         super(AuthorizationManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-01-01-preview'
+        self.api_version = '2018-09-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.provider_operations_metadata = ProviderOperationsMetadataOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.role_assignments = RoleAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.permissions = PermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.role_definitions = RoleDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
