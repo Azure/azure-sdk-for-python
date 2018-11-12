@@ -57,9 +57,9 @@ class NotificationSettingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of NotificationSetting
+        :return: An iterator like instance of None
         :rtype:
-         ~azure.mgmt.workloadmonitor.models.NotificationSettingPaged[~azure.mgmt.workloadmonitor.models.NotificationSetting]
+         ~azure.mgmt.workloadmonitor.models.NotificationSettingsCollection[None]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.workloadmonitor.models.ErrorResponseException>`
         """
@@ -107,11 +107,11 @@ class NotificationSettingsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.NotificationSettingPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.NotificationSettingsCollection(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.NotificationSettingPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.NotificationSettingsCollection(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -172,7 +172,7 @@ class NotificationSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'NotificationSettingProperties')
+        body_content = self._serialize.body(body, 'NotificationSetting')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

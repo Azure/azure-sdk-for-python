@@ -15,22 +15,14 @@ from msrest.serialization import Model
 class NotificationSettingsCollection(Model):
     """Model for collection of notificationSettings.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: Collection of components.
-    :vartype value:
-     list[~azure.mgmt.workloadmonitor.models.NotificationSetting]
+    :param properties:
+    :type properties: ~azure.mgmt.workloadmonitor.models.NotificationSetting
     """
 
-    _validation = {
-        'value': {'readonly': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NotificationSetting]'},
+        'properties': {'key': 'properties', 'type': 'NotificationSetting'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(NotificationSettingsCollection, self).__init__(**kwargs)
-        self.value = None
+        self.properties = properties

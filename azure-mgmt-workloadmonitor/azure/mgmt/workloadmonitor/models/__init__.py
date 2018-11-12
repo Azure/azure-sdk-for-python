@@ -15,7 +15,6 @@ try:
     from .component_py3 import Component
     from .health_state_change_py3 import HealthStateChange
     from .monitor_instance_py3 import MonitorInstance
-    from .notification_setting_properties_py3 import NotificationSettingProperties
     from .notification_setting_py3 import NotificationSetting
     from .notification_settings_collection_py3 import NotificationSettingsCollection
     from .operation_properties_py3 import OperationProperties
@@ -32,7 +31,6 @@ except (SyntaxError, ImportError):
     from .component import Component
     from .health_state_change import HealthStateChange
     from .monitor_instance import MonitorInstance
-    from .notification_setting_properties import NotificationSettingProperties
     from .notification_setting import NotificationSetting
     from .notification_settings_collection import NotificationSettingsCollection
     from .operation_properties import OperationProperties
@@ -46,7 +44,6 @@ except (SyntaxError, ImportError):
 from .monitor_paged import MonitorPaged
 from .component_paged import ComponentPaged
 from .monitor_instance_paged import MonitorInstancePaged
-from .notification_setting_paged import NotificationSettingPaged
 from .operation_paged import OperationPaged
 from .workload_monitor_api_enums import (
     MonitorType,
@@ -65,7 +62,6 @@ __all__ = [
     'Component',
     'HealthStateChange',
     'MonitorInstance',
-    'NotificationSettingProperties',
     'NotificationSetting',
     'NotificationSettingsCollection',
     'OperationProperties',
@@ -79,7 +75,6 @@ __all__ = [
     'MonitorPaged',
     'ComponentPaged',
     'MonitorInstancePaged',
-    'NotificationSettingPaged',
     'OperationPaged',
     'MonitorType',
     'MonitorCategory',
