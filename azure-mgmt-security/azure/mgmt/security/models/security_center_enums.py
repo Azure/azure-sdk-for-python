@@ -81,3 +81,9 @@ class ExternalSecuritySolutionKind(str, Enum):
     cef = "CEF"
     ata = "ATA"
     aad = "AAD"
+
+
+class ConnectionType(str, Enum):
+
+    internal = "Internal"
+    external = "External"

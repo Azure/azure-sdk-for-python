@@ -60,6 +60,9 @@ try:
     from .external_security_solution_kind1_py3 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties_py3 import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1_py3 import AadConnectivityState1
+    from .connected_resource_py3 import ConnectedResource
+    from .connectable_resource_py3 import ConnectableResource
+    from .allowed_connections_resource_py3 import AllowedConnectionsResource
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .kind import Kind
@@ -111,6 +114,9 @@ except (SyntaxError, ImportError):
     from .external_security_solution_kind1 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1 import AadConnectivityState1
+    from .connected_resource import ConnectedResource
+    from .connectable_resource import ConnectableResource
+    from .allowed_connections_resource import AllowedConnectionsResource
 from .pricing_paged import PricingPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
@@ -126,6 +132,7 @@ from .discovered_security_solution_paged import DiscoveredSecuritySolutionPaged
 from .jit_network_access_policy_paged import JitNetworkAccessPolicyPaged
 from .external_security_solution_paged import ExternalSecuritySolutionPaged
 from .topology_resource_paged import TopologyResourcePaged
+from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
@@ -138,6 +145,7 @@ from .security_center_enums import (
     StatusReason,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
+    ConnectionType,
 )
 
 __all__ = [
@@ -191,6 +199,9 @@ __all__ = [
     'ExternalSecuritySolutionKind1',
     'ExternalSecuritySolutionProperties',
     'AadConnectivityState1',
+    'ConnectedResource',
+    'ConnectableResource',
+    'AllowedConnectionsResource',
     'PricingPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
@@ -206,6 +217,7 @@ __all__ = [
     'JitNetworkAccessPolicyPaged',
     'ExternalSecuritySolutionPaged',
     'TopologyResourcePaged',
+    'AllowedConnectionsResourcePaged',
     'AlertNotifications',
     'AlertsToAdmins',
     'PricingTier',
@@ -217,4 +229,5 @@ __all__ = [
     'StatusReason',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
+    'ConnectionType',
 ]
