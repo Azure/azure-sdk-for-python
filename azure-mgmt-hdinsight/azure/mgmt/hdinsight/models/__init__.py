@@ -24,6 +24,7 @@ try:
     from .compute_profile_py3 import ComputeProfile
     from .storage_account_py3 import StorageAccount
     from .storage_profile_py3 import StorageProfile
+    from .disk_encryption_properties_py3 import DiskEncryptionProperties
     from .cluster_create_properties_py3 import ClusterCreateProperties
     from .cluster_identity_user_assigned_identities_value_py3 import ClusterIdentityUserAssignedIdentitiesValue
     from .cluster_identity_py3 import ClusterIdentity
@@ -41,6 +42,7 @@ try:
     from .runtime_script_action_detail_py3 import RuntimeScriptActionDetail
     from .cluster_list_runtime_script_action_detail_result_py3 import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters_py3 import ClusterResizeParameters
+    from .cluster_disk_encryption_parameters_py3 import ClusterDiskEncryptionParameters
     from .operation_resource_py3 import OperationResource
     from .resource_py3 import Resource
     from .tracked_resource_py3 import TrackedResource
@@ -74,6 +76,7 @@ except (SyntaxError, ImportError):
     from .compute_profile import ComputeProfile
     from .storage_account import StorageAccount
     from .storage_profile import StorageProfile
+    from .disk_encryption_properties import DiskEncryptionProperties
     from .cluster_create_properties import ClusterCreateProperties
     from .cluster_identity_user_assigned_identities_value import ClusterIdentityUserAssignedIdentitiesValue
     from .cluster_identity import ClusterIdentity
@@ -91,6 +94,7 @@ except (SyntaxError, ImportError):
     from .runtime_script_action_detail import RuntimeScriptActionDetail
     from .cluster_list_runtime_script_action_detail_result import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters import ClusterResizeParameters
+    from .cluster_disk_encryption_parameters import ClusterDiskEncryptionParameters
     from .operation_resource import OperationResource
     from .resource import Resource
     from .tracked_resource import TrackedResource
@@ -117,6 +121,7 @@ from .hd_insight_management_client_enums import (
     DirectoryType,
     OSType,
     Tier,
+    JsonWebKeyEncryptionAlgorithm,
     ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
@@ -137,6 +142,7 @@ __all__ = [
     'ComputeProfile',
     'StorageAccount',
     'StorageProfile',
+    'DiskEncryptionProperties',
     'ClusterCreateProperties',
     'ClusterIdentityUserAssignedIdentitiesValue',
     'ClusterIdentity',
@@ -154,6 +160,7 @@ __all__ = [
     'RuntimeScriptActionDetail',
     'ClusterListRuntimeScriptActionDetailResult',
     'ClusterResizeParameters',
+    'ClusterDiskEncryptionParameters',
     'OperationResource',
     'Resource',
     'TrackedResource',
@@ -179,6 +186,7 @@ __all__ = [
     'DirectoryType',
     'OSType',
     'Tier',
+    'JsonWebKeyEncryptionAlgorithm',
     'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
