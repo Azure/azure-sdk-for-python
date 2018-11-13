@@ -36,6 +36,14 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     :type request_body_check: bool
     :param max_request_body_size: Maxium request body size for WAF.
     :type max_request_body_size: int
+    :param max_request_body_size_in_kb: Maxium request body size in Kb for
+     WAF.
+    :type max_request_body_size_in_kb: int
+    :param file_upload_limit_in_mb: Maxium file upload size in Mb for WAF.
+    :type file_upload_limit_in_mb: int
+    :param exclusions: The exclusion list.
+    :type exclusions:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayFirewallExclusion]
     """
 
     _validation = {
@@ -44,6 +52,8 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'rule_set_type': {'required': True},
         'rule_set_version': {'required': True},
         'max_request_body_size': {'maximum': 128, 'minimum': 8},
+        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
+        'file_upload_limit_in_mb': {'maximum': 500, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -54,9 +64,12 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'disabled_rule_groups': {'key': 'disabledRuleGroups', 'type': '[ApplicationGatewayFirewallDisabledRuleGroup]'},
         'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
         'max_request_body_size': {'key': 'maxRequestBodySize', 'type': 'int'},
+        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
+        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
+        'exclusions': {'key': 'exclusions', 'type': '[ApplicationGatewayFirewallExclusion]'},
     }
 
-    def __init__(self, *, enabled: bool, firewall_mode, rule_set_type: str, rule_set_version: str, disabled_rule_groups=None, request_body_check: bool=None, max_request_body_size: int=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool, firewall_mode, rule_set_type: str, rule_set_version: str, disabled_rule_groups=None, request_body_check: bool=None, max_request_body_size: int=None, max_request_body_size_in_kb: int=None, file_upload_limit_in_mb: int=None, exclusions=None, **kwargs) -> None:
         super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__(**kwargs)
         self.enabled = enabled
         self.firewall_mode = firewall_mode
@@ -65,3 +78,6 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         self.disabled_rule_groups = disabled_rule_groups
         self.request_body_check = request_body_check
         self.max_request_body_size = max_request_body_size
+        self.max_request_body_size_in_kb = max_request_body_size_in_kb
+        self.file_upload_limit_in_mb = file_upload_limit_in_mb
+        self.exclusions = exclusions

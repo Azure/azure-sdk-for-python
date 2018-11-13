@@ -16,19 +16,20 @@ class NetworkConfigurationDiagnosticResult(Model):
     """Network configuration diagnostic result corresponded to provided traffic
     query.
 
-    :param traffic_query:
-    :type traffic_query: ~azure.mgmt.network.v2018_08_01.models.TrafficQuery
+    :param profile:
+    :type profile:
+     ~azure.mgmt.network.v2018_08_01.models.NetworkConfigurationDiagnosticProfile
     :param network_security_group_result:
     :type network_security_group_result:
      ~azure.mgmt.network.v2018_08_01.models.NetworkSecurityGroupResult
     """
 
     _attribute_map = {
-        'traffic_query': {'key': 'trafficQuery', 'type': 'TrafficQuery'},
+        'profile': {'key': 'profile', 'type': 'NetworkConfigurationDiagnosticProfile'},
         'network_security_group_result': {'key': 'networkSecurityGroupResult', 'type': 'NetworkSecurityGroupResult'},
     }
 
-    def __init__(self, *, traffic_query=None, network_security_group_result=None, **kwargs) -> None:
+    def __init__(self, *, profile=None, network_security_group_result=None, **kwargs) -> None:
         super(NetworkConfigurationDiagnosticResult, self).__init__(**kwargs)
-        self.traffic_query = traffic_query
+        self.profile = profile
         self.network_security_group_result = network_security_group_result

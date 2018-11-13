@@ -45,7 +45,7 @@ class SuppressionContract(Resource):
         'ttl': {'key': 'properties.ttl', 'type': 'str'},
     }
 
-    def __init__(self, suppression_id=None, ttl=None):
-        super(SuppressionContract, self).__init__()
-        self.suppression_id = suppression_id
-        self.ttl = ttl
+    def __init__(self, **kwargs):
+        super(SuppressionContract, self).__init__(**kwargs)
+        self.suppression_id = kwargs.get('suppression_id', None)
+        self.ttl = kwargs.get('ttl', None)

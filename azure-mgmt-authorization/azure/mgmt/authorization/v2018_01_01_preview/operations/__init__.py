@@ -10,13 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .permissions_operations import PermissionsOperations
 from .role_assignments_operations import RoleAssignmentsOperations
+from .permissions_operations import PermissionsOperations
 from .role_definitions_operations import RoleDefinitionsOperations
 
 __all__ = [
     'ProviderOperationsMetadataOperations',
-    'PermissionsOperations',
     'RoleAssignmentsOperations',
+    'PermissionsOperations',
     'RoleDefinitionsOperations',
 ]

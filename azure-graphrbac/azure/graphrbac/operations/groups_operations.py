@@ -745,3 +745,56 @@ class GroupsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     add_owner.metadata = {'url': '/{tenantID}/groups/{objectId}/$links/owners'}
+
+    def remove_owner(
+            self, object_id, owner_object_id, custom_headers=None, raw=False, **operation_config):
+        """Remove a member from owners.
+
+        :param object_id: The object ID of the group from which to remove the
+         owner.
+        :type object_id: str
+        :param owner_object_id: Owner object id
+        :type owner_object_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = self.remove_owner.metadata['url']
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
+            'ownerObjectId': self._serialize.url("owner_object_id", owner_object_id, 'str'),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_owner.metadata = {'url': '/{tenantID}/groups/{objectId}/$links/owners/{ownerObjectId}'}

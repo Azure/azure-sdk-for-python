@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TriggerProperties(Model):
-    """The properties of a build trigger.
+    """The properties of a trigger.
 
     :param source_triggers: The collection of triggers based on source code
      repository.

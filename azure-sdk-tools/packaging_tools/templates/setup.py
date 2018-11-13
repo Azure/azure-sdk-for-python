@@ -79,7 +79,9 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
+        {%- if need_msrestazure %}
         'msrestazure>=0.4.32,<2.0.0',
+        {%- endif %}
         'azure-common~=1.1',
     ],
     extras_require={
