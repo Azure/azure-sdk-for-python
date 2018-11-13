@@ -271,7 +271,7 @@ class StorageAccountsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'}
 
     def get_properties(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Returns the properties for the specified storage account including but
         not limited to name, SKU name, location, and account status. The
         ListKeys operation should be used to retrieve storage keys.
@@ -283,6 +283,12 @@ class StorageAccountsOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
+        :param expand: May be used to expand the properties within account's
+         properties. By default, data is not included when fecthing properties.
+         Currently we only support geoReplicationStats. Possible values
+         include: 'geoReplicationStats'
+        :type expand: str or
+         ~azure.mgmt.storage.v2018_07_01.models.StorageAccountExpand
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -305,6 +311,8 @@ class StorageAccountsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'StorageAccountExpand')
 
         # Construct headers
         header_parameters = {}
