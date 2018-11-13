@@ -38,9 +38,9 @@ class SmartGroupsOperations(object):
 
     def get_all(
             self, target_resource=None, target_resource_group=None, target_resource_type=None, monitor_service=None, monitor_condition=None, severity=None, smart_group_state=None, time_range=None, page_count=None, sort_by=None, sort_order=None, custom_headers=None, raw=False, **operation_config):
-        """Get all smartGroups within the subscription.
+        """Get all Smart Groups within a specified subscription.
 
-        List all the smartGroups within the specified subscription. .
+        List all the Smart Groups within a specified subscription. .
 
         :param target_resource: Filter by target resource( which is full ARM
          ID) Default value is select all.
@@ -51,18 +51,17 @@ class SmartGroupsOperations(object):
         :param target_resource_type: Filter by target resource type. Default
          value is select all.
         :type target_resource_type: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: Filter by monitor service which generates the
+         alert instance. Default value is select all. Possible values include:
+         'Application Insights', 'ActivityLog Administrative', 'ActivityLog
+         Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
+         'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: Filter by monitor condition which is either
+         'Fired' or 'Resolved'. Default value is to select all. Possible values
+         include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
         :param severity: Filter by severity.  Defaut value is select all.
@@ -82,7 +81,7 @@ class SmartGroupsOperations(object):
          "includeContent"  filter is selected, maximum value allowed is 25.
          Default value is 25.
         :type page_count: int
-        :param sort_by: Sort the query results by input field  Default value
+        :param sort_by: Sort the query results by input field. Default value
          is sort by 'lastModifiedDateTime'. Possible values include:
          'alertsCount', 'state', 'severity', 'startDateTime',
          'lastModifiedDateTime'
@@ -167,9 +166,9 @@ class SmartGroupsOperations(object):
 
     def get_by_id(
             self, smart_group_id, custom_headers=None, raw=False, **operation_config):
-        """Get information of smart alerts group.
+        """Get information related to a specific Smart Group.
 
-        Get details of smart group.
+        Get information related to a specific Smart Group.
 
         :param smart_group_id: Smart group unique id.
         :type smart_group_id: str
@@ -232,8 +231,7 @@ class SmartGroupsOperations(object):
 
     def change_state(
             self, smart_group_id, new_state, custom_headers=None, raw=False, **operation_config):
-        """Change the state from unresolved to resolved and all the alerts within
-        the smart group will also be resolved.
+        """Change the state of a Smart Group.
 
         :param smart_group_id: Smart group unique id.
         :type smart_group_id: str
@@ -300,7 +298,8 @@ class SmartGroupsOperations(object):
 
     def get_history(
             self, smart_group_id, custom_headers=None, raw=False, **operation_config):
-        """Get the history of the changes of smart group.
+        """Get the history a smart group, which captures any Smart Group state
+        changes (New/Acknowledged/Closed) .
 
         :param smart_group_id: Smart group unique id.
         :type smart_group_id: str
