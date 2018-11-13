@@ -91,7 +91,7 @@ class SubscriptionOperationOperations(object):
             deserialized = self._deserialize('SubscriptionCreationResult', response)
             header_dict = {
                 'Location': 'str',
-                'Retry-After': 'str',
+                'Retry-After': 'int',
             }
 
         if raw:

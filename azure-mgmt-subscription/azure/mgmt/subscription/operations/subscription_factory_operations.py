@@ -40,12 +40,12 @@ class SubscriptionFactoryOperations(object):
 
 
     def _create_subscription_initial(
-            self, billing_account_id, invoice_section_id, body, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, body, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_subscription.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -81,7 +81,7 @@ class SubscriptionFactoryOperations(object):
             deserialized = self._deserialize('SubscriptionCreationResult', response)
             header_dict = {
                 'Location': 'str',
-                'Retry-After': 'str',
+                'Retry-After': 'int',
             }
 
         if raw:
@@ -92,14 +92,14 @@ class SubscriptionFactoryOperations(object):
         return deserialized
 
     def create_subscription(
-            self, billing_account_id, invoice_section_id, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_section_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates an Azure subscription.
 
-        :param billing_account_id: The id of the commerce root billing
+        :param billing_account_name: The name of the commerce root billing
          account.
-        :type billing_account_id: str
-        :param invoice_section_id: The id of the invoice section.
-        :type invoice_section_id: str
+        :type billing_account_name: str
+        :param invoice_section_name: The name of the invoice section.
+        :type invoice_section_name: str
         :param body: The subscription creation parameters.
         :type body:
          ~azure.mgmt.subscription.models.SubscriptionCreationParameters
@@ -119,8 +119,8 @@ class SubscriptionFactoryOperations(object):
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
         raw_result = self._create_subscription_initial(
-            billing_account_id=billing_account_id,
-            invoice_section_id=invoice_section_id,
+            billing_account_name=billing_account_name,
+            invoice_section_name=invoice_section_name,
             body=body,
             custom_headers=custom_headers,
             raw=True,
@@ -130,7 +130,7 @@ class SubscriptionFactoryOperations(object):
         def get_long_running_output(response):
             header_dict = {
                 'Location': 'str',
-                'Retry-After': 'str',
+                'Retry-After': 'int',
             }
             deserialized = self._deserialize('SubscriptionCreationResult', response)
 
@@ -148,4 +148,4 @@ class SubscriptionFactoryOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_subscription.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/providers/Microsoft.Subscription/createSubscription'}
+    create_subscription.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Subscription/createSubscription'}
