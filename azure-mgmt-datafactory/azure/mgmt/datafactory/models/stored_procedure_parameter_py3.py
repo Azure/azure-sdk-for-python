@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class StoredProcedureParameter(Model):
     """SQL stored procedure parameter.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. Stored procedure parameter value. Type: string (or
+    :param value: Stored procedure parameter value. Type: string (or
      Expression with resultType string).
     :type value: object
     :param type: Stored procedure parameter type. Possible values include:
@@ -26,16 +24,12 @@ class StoredProcedureParameter(Model):
      ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
 
-    _validation = {
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'value': {'key': 'value', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, value, type=None, **kwargs) -> None:
+    def __init__(self, *, value=None, type=None, **kwargs) -> None:
         super(StoredProcedureParameter, self).__init__(**kwargs)
         self.value = value
         self.type = type
