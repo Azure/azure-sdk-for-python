@@ -48,6 +48,9 @@ class ProjectTaskProperties(Model):
     :ivar commands: Array of command properties.
     :vartype commands:
      list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     """
@@ -63,6 +66,7 @@ class ProjectTaskProperties(Model):
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
         'task_type': {'key': 'taskType', 'type': 'str'},
     }
 
@@ -75,4 +79,5 @@ class ProjectTaskProperties(Model):
         self.errors = None
         self.state = None
         self.commands = None
+        self.client_data = kwargs.get('client_data', None)
         self.task_type = None
