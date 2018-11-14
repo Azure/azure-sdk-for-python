@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class IssueContract(Resource):
-    """Issue Contract details.
+class IssueUpdateContract(Model):
+    """Issue update Parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type for API Management resource.
-    :vartype type: str
     :param created_date: Date and time when the issue was created.
     :type created_date: datetime
     :param state: Status of the issue. Possible values include: 'proposed',
@@ -34,28 +23,15 @@ class IssueContract(Resource):
     :param api_id: A resource identifier for the API the issue was created
      for.
     :type api_id: str
-    :param title: Required. The issue title.
+    :param title: The issue title.
     :type title: str
-    :param description: Required. Text describing the issue.
+    :param description: Text describing the issue.
     :type description: str
-    :param user_id: Required. A resource identifier for the user created the
-     issue.
+    :param user_id: A resource identifier for the user created the issue.
     :type user_id: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'title': {'required': True},
-        'description': {'required': True},
-        'user_id': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'api_id': {'key': 'properties.apiId', 'type': 'str'},
@@ -65,7 +41,7 @@ class IssueContract(Resource):
     }
 
     def __init__(self, **kwargs):
-        super(IssueContract, self).__init__(**kwargs)
+        super(IssueUpdateContract, self).__init__(**kwargs)
         self.created_date = kwargs.get('created_date', None)
         self.state = kwargs.get('state', None)
         self.api_id = kwargs.get('api_id', None)

@@ -43,6 +43,8 @@ try:
     from .operation_update_contract_py3 import OperationUpdateContract
     from .schema_contract_py3 import SchemaContract
     from .issue_contract_py3 import IssueContract
+    from .issue_update_contract_py3 import IssueUpdateContract
+    from .issue_contract_base_properties_py3 import IssueContractBaseProperties
     from .issue_comment_contract_py3 import IssueCommentContract
     from .issue_attachment_contract_py3 import IssueAttachmentContract
     from .logger_contract_py3 import LoggerContract
@@ -189,6 +191,8 @@ except (SyntaxError, ImportError):
     from .operation_update_contract import OperationUpdateContract
     from .schema_contract import SchemaContract
     from .issue_contract import IssueContract
+    from .issue_update_contract import IssueUpdateContract
+    from .issue_contract_base_properties import IssueContractBaseProperties
     from .issue_comment_contract import IssueCommentContract
     from .issue_attachment_contract import IssueAttachmentContract
     from .logger_contract import LoggerContract
@@ -401,6 +405,8 @@ __all__ = [
     'OperationUpdateContract',
     'SchemaContract',
     'IssueContract',
+    'IssueUpdateContract',
+    'IssueContractBaseProperties',
     'IssueCommentContract',
     'IssueAttachmentContract',
     'LoggerContract',

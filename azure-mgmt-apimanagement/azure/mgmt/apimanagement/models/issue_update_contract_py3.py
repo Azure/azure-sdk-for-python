@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from msrest.serialization import Model
 
 
-class IssueContract(Resource):
-    """Issue Contract details.
+class IssueUpdateContract(Model):
+    """Issue update Parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type for API Management resource.
-    :vartype type: str
     :param created_date: Date and time when the issue was created.
     :type created_date: datetime
     :param state: Status of the issue. Possible values include: 'proposed',
@@ -34,28 +23,15 @@ class IssueContract(Resource):
     :param api_id: A resource identifier for the API the issue was created
      for.
     :type api_id: str
-    :param title: Required. The issue title.
+    :param title: The issue title.
     :type title: str
-    :param description: Required. Text describing the issue.
+    :param description: Text describing the issue.
     :type description: str
-    :param user_id: Required. A resource identifier for the user created the
-     issue.
+    :param user_id: A resource identifier for the user created the issue.
     :type user_id: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'title': {'required': True},
-        'description': {'required': True},
-        'user_id': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'api_id': {'key': 'properties.apiId', 'type': 'str'},
@@ -64,8 +40,8 @@ class IssueContract(Resource):
         'user_id': {'key': 'properties.userId', 'type': 'str'},
     }
 
-    def __init__(self, *, title: str, description: str, user_id: str, created_date=None, state=None, api_id: str=None, **kwargs) -> None:
-        super(IssueContract, self).__init__(**kwargs)
+    def __init__(self, *, created_date=None, state=None, api_id: str=None, title: str=None, description: str=None, user_id: str=None, **kwargs) -> None:
+        super(IssueUpdateContract, self).__init__(**kwargs)
         self.created_date = created_date
         self.state = state
         self.api_id = api_id
