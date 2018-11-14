@@ -29,6 +29,7 @@ from .authorization_server_operations import AuthorizationServerOperations
 from .backend_operations import BackendOperations
 from .certificate_operations import CertificateOperations
 from .api_management_operations import ApiManagementOperations
+from .api_management_service_skus_operations import ApiManagementServiceSkusOperations
 from .api_management_service_operations import ApiManagementServiceOperations
 from .diagnostic_operations import DiagnosticOperations
 from .diagnostic_logger_operations import DiagnosticLoggerOperations
@@ -90,6 +91,7 @@ __all__ = [
     'BackendOperations',
     'CertificateOperations',
     'ApiManagementOperations',
+    'ApiManagementServiceSkusOperations',
     'ApiManagementServiceOperations',
     'DiagnosticOperations',
     'DiagnosticLoggerOperations',

@@ -33,6 +33,7 @@ from .operations.authorization_server_operations import AuthorizationServerOpera
 from .operations.backend_operations import BackendOperations
 from .operations.certificate_operations import CertificateOperations
 from .operations.api_management_operations import ApiManagementOperations
+from .operations.api_management_service_skus_operations import ApiManagementServiceSkusOperations
 from .operations.api_management_service_operations import ApiManagementServiceOperations
 from .operations.diagnostic_operations import DiagnosticOperations
 from .operations.diagnostic_logger_operations import DiagnosticLoggerOperations
@@ -155,6 +156,8 @@ class ApiManagementClient(SDKClient):
     :vartype certificate: azure.mgmt.apimanagement.operations.CertificateOperations
     :ivar api_management_operations: ApiManagementOperations operations
     :vartype api_management_operations: azure.mgmt.apimanagement.operations.ApiManagementOperations
+    :ivar api_management_service_skus: ApiManagementServiceSkus operations
+    :vartype api_management_service_skus: azure.mgmt.apimanagement.operations.ApiManagementServiceSkusOperations
     :ivar api_management_service: ApiManagementService operations
     :vartype api_management_service: azure.mgmt.apimanagement.operations.ApiManagementServiceOperations
     :ivar diagnostic: Diagnostic operations
@@ -294,6 +297,8 @@ class ApiManagementClient(SDKClient):
         self.certificate = CertificateOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_management_operations = ApiManagementOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_management_service_skus = ApiManagementServiceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_management_service = ApiManagementServiceOperations(
             self._client, self.config, self._serialize, self._deserialize)
