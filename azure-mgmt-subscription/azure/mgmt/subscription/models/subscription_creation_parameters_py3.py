@@ -22,6 +22,8 @@ class SubscriptionCreationParameters(Model):
     :type billing_profile_id: str
     :param sku_id: The commerce id of the sku.
     :type sku_id: str
+    :param cost_center: optional customer cost center
+    :type cost_center: str
     :param owner: rbac owner of the subscription
     :type owner: ~azure.mgmt.subscription.models.AdPrincipal
     :param additional_parameters: Additional, untyped parameters to support
@@ -33,14 +35,16 @@ class SubscriptionCreationParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
+        'cost_center': {'key': 'costCenter', 'type': 'str'},
         'owner': {'key': 'owner', 'type': 'AdPrincipal'},
         'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
     }
 
-    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, sku_id: str=None, owner=None, additional_parameters=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, sku_id: str=None, cost_center: str=None, owner=None, additional_parameters=None, **kwargs) -> None:
         super(SubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = display_name
         self.billing_profile_id = billing_profile_id
         self.sku_id = sku_id
+        self.cost_center = cost_center
         self.owner = owner
         self.additional_parameters = additional_parameters
