@@ -152,6 +152,7 @@ try:
     from .user_token_parameters_py3 import UserTokenParameters
     from .user_token_result_py3 import UserTokenResult
     from .user_update_parameters_py3 import UserUpdateParameters
+    from .current_user_identity_py3 import CurrentUserIdentity
     from .api_version_set_contract_py3 import ApiVersionSetContract
     from .api_version_set_entity_base_py3 import ApiVersionSetEntityBase
     from .api_version_set_update_parameters_py3 import ApiVersionSetUpdateParameters
@@ -298,6 +299,7 @@ except (SyntaxError, ImportError):
     from .user_token_parameters import UserTokenParameters
     from .user_token_result import UserTokenResult
     from .user_update_parameters import UserUpdateParameters
+    from .current_user_identity import CurrentUserIdentity
     from .api_version_set_contract import ApiVersionSetContract
     from .api_version_set_entity_base import ApiVersionSetEntityBase
     from .api_version_set_update_parameters import ApiVersionSetUpdateParameters
@@ -510,6 +512,7 @@ __all__ = [
     'UserTokenParameters',
     'UserTokenResult',
     'UserUpdateParameters',
+    'CurrentUserIdentity',
     'ApiVersionSetContract',
     'ApiVersionSetEntityBase',
     'ApiVersionSetUpdateParameters',
