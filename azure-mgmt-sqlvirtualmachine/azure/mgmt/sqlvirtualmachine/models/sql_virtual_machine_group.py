@@ -33,30 +33,27 @@ class SqlVirtualMachineGroup(TrackedResource):
     :ivar provisioning_state: Provisioning state to track the aysnc operation
      status.
     :vartype provisioning_state: str
-    :param sql_image_offer: SQL image offer.
+    :param sql_image_offer: SQL image offer. Examples may include
+     SQL2016-WS2016, SQL2017-WS2016.
     :type sql_image_offer: str
     :param sql_image_sku: SQL image sku. Possible values include: 'Developer',
      'Express', 'Standard', 'Enterprise', 'Web'
     :type sql_image_sku: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
-    :ivar scale_type: Scale type: HA or ReadOnly. Possible values include:
-     'HA'
+    :ivar scale_type: Scale type. Possible values include: 'HA'
     :vartype scale_type: str or ~azure.mgmt.sqlvirtualmachine.models.ScaleType
-    :ivar cluster_manager_type: Type of the cluster manager: Windows Server
-     Failover Cluster (WSFC) | NONE, implied by the scale type of the group and
-     the OS type. Possible values include: 'WSFC'
+    :ivar cluster_manager_type: Type of cluster manager: Windows Server
+     Failover Cluster (WSFC), implied by the scale type of the group and the OS
+     type. Possible values include: 'WSFC'
     :vartype cluster_manager_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.ClusterManagerType
     :ivar cluster_configuration: Cluster type. Possible values include:
      'Domainful'
     :vartype cluster_configuration: str or
      ~azure.mgmt.sqlvirtualmachine.models.ClusterConfiguration
-    :param wsfc_domain_profile: Cluster AD domain profile.
+    :param wsfc_domain_profile: Cluster Active Directory domain profile.
     :type wsfc_domain_profile:
-     ~azure.mgmt.sqlvirtualmachine.models.WSFCDomainProfile
-    :param domainless_profile: Cluster domainless profile.
-    :type domainless_profile:
-     ~azure.mgmt.sqlvirtualmachine.models.DomainlessProfile
+     ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainProfile
     """
 
     _validation = {
@@ -82,8 +79,7 @@ class SqlVirtualMachineGroup(TrackedResource):
         'scale_type': {'key': 'properties.scaleType', 'type': 'str'},
         'cluster_manager_type': {'key': 'properties.clusterManagerType', 'type': 'str'},
         'cluster_configuration': {'key': 'properties.clusterConfiguration', 'type': 'str'},
-        'wsfc_domain_profile': {'key': 'properties.wsfcDomainProfile', 'type': 'WSFCDomainProfile'},
-        'domainless_profile': {'key': 'properties.domainlessProfile', 'type': 'DomainlessProfile'},
+        'wsfc_domain_profile': {'key': 'properties.wsfcDomainProfile', 'type': 'WsfcDomainProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -95,4 +91,3 @@ class SqlVirtualMachineGroup(TrackedResource):
         self.cluster_manager_type = None
         self.cluster_configuration = None
         self.wsfc_domain_profile = kwargs.get('wsfc_domain_profile', None)
-        self.domainless_profile = kwargs.get('domainless_profile', None)

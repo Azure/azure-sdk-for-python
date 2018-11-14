@@ -53,6 +53,17 @@ class SqlServerLicenseType(str, Enum):
     ahub = "AHUB"
 
 
+class DayOfWeek(str, Enum):
+
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+    sunday = "Sunday"
+
+
 class BackupScheduleType(str, Enum):
 
     manual = "Manual"

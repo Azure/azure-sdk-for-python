@@ -163,7 +163,7 @@ class AvailabilityGroupListenersOperations(object):
 
     def create_or_update(
             self, resource_group_name, sql_virtual_machine_group_name, availability_group_listener_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or Updates an availability group listener.
+        """Creates or updates an availability group listener.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource

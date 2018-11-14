@@ -38,7 +38,8 @@ class SqlVirtualMachine(TrackedResource):
     :ivar provisioning_state: Provisioning state to track the aysnc operation
      status.
     :vartype provisioning_state: str
-    :ivar sql_image_offer: SQL image offer.
+    :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
+     SQL2017-WS2016.
     :vartype sql_image_offer: str
     :param sql_server_license_type: SQL Server license type. Possible values
      include: 'PAYG', 'AHUB'
@@ -49,16 +50,12 @@ class SqlVirtualMachine(TrackedResource):
     :vartype sql_image_sku: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
     :param sql_virtual_machine_group_resource_id: ARM resource id of the SQL
-     virtual machine group this SQL virtual machine is part of.
+     virtual machine group this SQL virtual machine is or will be part of.
     :type sql_virtual_machine_group_resource_id: str
     :param wsfc_domain_credentials: Domain credentials for setting up Windows
      Server Failover Cluster for SQL availability group.
     :type wsfc_domain_credentials:
-     ~azure.mgmt.sqlvirtualmachine.models.WSFCDomainCredentials
-    :param auto_telemetry_settings: Auto telemetry settings for SQL virtual
-     machine.
-    :type auto_telemetry_settings:
-     ~azure.mgmt.sqlvirtualmachine.models.AutoTelemetrySettings
+     ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainCredentials
     :param auto_patching_settings: Auto patching settings for applying
      critical security updates to SQL virtual machine.
     :type auto_patching_settings:
@@ -98,8 +95,7 @@ class SqlVirtualMachine(TrackedResource):
         'sql_server_license_type': {'key': 'properties.sqlServerLicenseType', 'type': 'str'},
         'sql_image_sku': {'key': 'properties.sqlImageSku', 'type': 'str'},
         'sql_virtual_machine_group_resource_id': {'key': 'properties.sqlVirtualMachineGroupResourceId', 'type': 'str'},
-        'wsfc_domain_credentials': {'key': 'properties.wsfcDomainCredentials', 'type': 'WSFCDomainCredentials'},
-        'auto_telemetry_settings': {'key': 'properties.autoTelemetrySettings', 'type': 'AutoTelemetrySettings'},
+        'wsfc_domain_credentials': {'key': 'properties.wsfcDomainCredentials', 'type': 'WsfcDomainCredentials'},
         'auto_patching_settings': {'key': 'properties.autoPatchingSettings', 'type': 'AutoPatchingSettings'},
         'auto_backup_settings': {'key': 'properties.autoBackupSettings', 'type': 'AutoBackupSettings'},
         'key_vault_credential_settings': {'key': 'properties.keyVaultCredentialSettings', 'type': 'KeyVaultCredentialSettings'},
@@ -116,7 +112,6 @@ class SqlVirtualMachine(TrackedResource):
         self.sql_image_sku = None
         self.sql_virtual_machine_group_resource_id = kwargs.get('sql_virtual_machine_group_resource_id', None)
         self.wsfc_domain_credentials = kwargs.get('wsfc_domain_credentials', None)
-        self.auto_telemetry_settings = kwargs.get('auto_telemetry_settings', None)
         self.auto_patching_settings = kwargs.get('auto_patching_settings', None)
         self.auto_backup_settings = kwargs.get('auto_backup_settings', None)
         self.key_vault_credential_settings = kwargs.get('key_vault_credential_settings', None)

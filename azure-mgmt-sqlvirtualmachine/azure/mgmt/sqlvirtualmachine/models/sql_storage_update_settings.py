@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class SQLStorageUpdateSettings(Model):
-    """SQL disk storage setting.
+class SqlStorageUpdateSettings(Model):
+    """Set disk storage settings for SQL Server.
 
     :param disk_count: Virtual machine disk count.
     :type disk_count: int
@@ -29,6 +29,6 @@ class SQLStorageUpdateSettings(Model):
     }
 
     def __init__(self, **kwargs):
-        super(SQLStorageUpdateSettings, self).__init__(**kwargs)
+        super(SqlStorageUpdateSettings, self).__init__(**kwargs)
         self.disk_count = kwargs.get('disk_count', None)
         self.disk_configuration_type = kwargs.get('disk_configuration_type', None)

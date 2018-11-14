@@ -158,7 +158,7 @@ class SqlVirtualMachineGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, sql_virtual_machine_group_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or Updates a SQL virtual machine group.
+        """Creates or updates a SQL virtual machine group.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
@@ -399,7 +399,7 @@ class SqlVirtualMachineGroupsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the SQL virtual machine groups in a resource group.
+        """Gets all SQL virtual machine groups in a resource group.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource

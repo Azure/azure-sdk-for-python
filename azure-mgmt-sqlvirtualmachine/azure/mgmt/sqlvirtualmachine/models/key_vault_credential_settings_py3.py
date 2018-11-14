@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class KeyVaultCredentialSettings(Model):
-    """Keyvault credential settings.
+    """Configure your SQL virtual machine to be able to connect to the Azure Key
+    Vault service.
 
-    :param enable: Enable or disable keyvault credential setting.
+    :param enable: Enable or disable key vault credential setting.
     :type enable: bool
     :param credential_name: Credential name.
     :type credential_name: str

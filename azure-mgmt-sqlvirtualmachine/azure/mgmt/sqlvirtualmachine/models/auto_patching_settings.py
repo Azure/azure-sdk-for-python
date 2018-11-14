@@ -13,14 +13,16 @@ from msrest.serialization import Model
 
 
 class AutoPatchingSettings(Model):
-    """Auto patching settings.
+    """Set a patching window during which Windows and SQL patches will be applied.
 
     :param enable: Enable or disable autopatching on SQL virtual machine.
     :type enable: bool
-    :param day_of_week: Day of week to apply the patch on.
-    :type day_of_week: str
+    :param day_of_week: Day of week to apply the patch on. Possible values
+     include: 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+     'Saturday', 'Sunday'
+    :type day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
     :param maintenance_window_starting_hour: Hour of the day when patching is
-     initiated.
+     initiated. Local VM time.
     :type maintenance_window_starting_hour: int
     :param maintenance_window_duration: Duration of patching.
     :type maintenance_window_duration: int
@@ -28,7 +30,7 @@ class AutoPatchingSettings(Model):
 
     _attribute_map = {
         'enable': {'key': 'enable', 'type': 'bool'},
-        'day_of_week': {'key': 'dayOfWeek', 'type': 'str'},
+        'day_of_week': {'key': 'dayOfWeek', 'type': 'DayOfWeek'},
         'maintenance_window_starting_hour': {'key': 'maintenanceWindowStartingHour', 'type': 'int'},
         'maintenance_window_duration': {'key': 'maintenanceWindowDuration', 'type': 'int'},
     }

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AutoBackupSettings(Model):
-    """Auto backup settings.
+    """Configure backups for databases in your SQL virtual machine.
 
     :param enable: Enable or disable autobackup on SQL virtual machine.
     :type enable: bool

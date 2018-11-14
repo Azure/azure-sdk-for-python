@@ -17,20 +17,18 @@ try:
     from .availability_group_listener_py3 import AvailabilityGroupListener
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .wsfc_domain_profile_py3 import WSFCDomainProfile
-    from .domainless_profile_py3 import DomainlessProfile
+    from .wsfc_domain_profile_py3 import WsfcDomainProfile
     from .tracked_resource_py3 import TrackedResource
     from .sql_virtual_machine_group_py3 import SqlVirtualMachineGroup
     from .sql_virtual_machine_group_update_py3 import SqlVirtualMachineGroupUpdate
     from .resource_identity_py3 import ResourceIdentity
-    from .wsfc_domain_credentials_py3 import WSFCDomainCredentials
-    from .auto_telemetry_settings_py3 import AutoTelemetrySettings
+    from .wsfc_domain_credentials_py3 import WsfcDomainCredentials
     from .auto_patching_settings_py3 import AutoPatchingSettings
     from .auto_backup_settings_py3 import AutoBackupSettings
     from .key_vault_credential_settings_py3 import KeyVaultCredentialSettings
-    from .sql_connectivity_update_settings_py3 import SQLConnectivityUpdateSettings
-    from .sql_workload_type_update_settings_py3 import SQLWorkloadTypeUpdateSettings
-    from .sql_storage_update_settings_py3 import SQLStorageUpdateSettings
+    from .sql_connectivity_update_settings_py3 import SqlConnectivityUpdateSettings
+    from .sql_workload_type_update_settings_py3 import SqlWorkloadTypeUpdateSettings
+    from .sql_storage_update_settings_py3 import SqlStorageUpdateSettings
     from .additional_features_server_configurations_py3 import AdditionalFeaturesServerConfigurations
     from .server_configurations_management_settings_py3 import ServerConfigurationsManagementSettings
     from .sql_virtual_machine_py3 import SqlVirtualMachine
@@ -43,20 +41,18 @@ except (SyntaxError, ImportError):
     from .availability_group_listener import AvailabilityGroupListener
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .wsfc_domain_profile import WSFCDomainProfile
-    from .domainless_profile import DomainlessProfile
+    from .wsfc_domain_profile import WsfcDomainProfile
     from .tracked_resource import TrackedResource
     from .sql_virtual_machine_group import SqlVirtualMachineGroup
     from .sql_virtual_machine_group_update import SqlVirtualMachineGroupUpdate
     from .resource_identity import ResourceIdentity
-    from .wsfc_domain_credentials import WSFCDomainCredentials
-    from .auto_telemetry_settings import AutoTelemetrySettings
+    from .wsfc_domain_credentials import WsfcDomainCredentials
     from .auto_patching_settings import AutoPatchingSettings
     from .auto_backup_settings import AutoBackupSettings
     from .key_vault_credential_settings import KeyVaultCredentialSettings
-    from .sql_connectivity_update_settings import SQLConnectivityUpdateSettings
-    from .sql_workload_type_update_settings import SQLWorkloadTypeUpdateSettings
-    from .sql_storage_update_settings import SQLStorageUpdateSettings
+    from .sql_connectivity_update_settings import SqlConnectivityUpdateSettings
+    from .sql_workload_type_update_settings import SqlWorkloadTypeUpdateSettings
+    from .sql_storage_update_settings import SqlStorageUpdateSettings
     from .additional_features_server_configurations import AdditionalFeaturesServerConfigurations
     from .server_configurations_management_settings import ServerConfigurationsManagementSettings
     from .sql_virtual_machine import SqlVirtualMachine
@@ -73,6 +69,7 @@ from .sql_virtual_machine_management_client_enums import (
     ClusterConfiguration,
     IdentityType,
     SqlServerLicenseType,
+    DayOfWeek,
     BackupScheduleType,
     FullBackupFrequencyType,
     ConnectivityType,
@@ -88,20 +85,18 @@ __all__ = [
     'AvailabilityGroupListener',
     'OperationDisplay',
     'Operation',
-    'WSFCDomainProfile',
-    'DomainlessProfile',
+    'WsfcDomainProfile',
     'TrackedResource',
     'SqlVirtualMachineGroup',
     'SqlVirtualMachineGroupUpdate',
     'ResourceIdentity',
-    'WSFCDomainCredentials',
-    'AutoTelemetrySettings',
+    'WsfcDomainCredentials',
     'AutoPatchingSettings',
     'AutoBackupSettings',
     'KeyVaultCredentialSettings',
-    'SQLConnectivityUpdateSettings',
-    'SQLWorkloadTypeUpdateSettings',
-    'SQLStorageUpdateSettings',
+    'SqlConnectivityUpdateSettings',
+    'SqlWorkloadTypeUpdateSettings',
+    'SqlStorageUpdateSettings',
     'AdditionalFeaturesServerConfigurations',
     'ServerConfigurationsManagementSettings',
     'SqlVirtualMachine',
@@ -117,6 +112,7 @@ __all__ = [
     'ClusterConfiguration',
     'IdentityType',
     'SqlServerLicenseType',
+    'DayOfWeek',
     'BackupScheduleType',
     'FullBackupFrequencyType',
     'ConnectivityType',

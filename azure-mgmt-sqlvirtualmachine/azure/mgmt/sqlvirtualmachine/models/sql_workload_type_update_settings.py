@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class SQLWorkloadTypeUpdateSettings(Model):
-    """SQL workload type update settings.
+class SqlWorkloadTypeUpdateSettings(Model):
+    """Set workload type to optimize storage for SQL Server.
 
     :param sql_workload_type: SQL Server workload type. Possible values
      include: 'GENERAL', 'OLTP', 'DW'
@@ -26,5 +26,5 @@ class SQLWorkloadTypeUpdateSettings(Model):
     }
 
     def __init__(self, **kwargs):
-        super(SQLWorkloadTypeUpdateSettings, self).__init__(**kwargs)
+        super(SqlWorkloadTypeUpdateSettings, self).__init__(**kwargs)
         self.sql_workload_type = kwargs.get('sql_workload_type', None)

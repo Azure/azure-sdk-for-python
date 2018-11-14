@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class WSFCDomainCredentials(Model):
+class WsfcDomainCredentials(Model):
     """Domain credentials for setting up Windows Server Failover Cluster for SQL
     availability group.
 
@@ -33,7 +33,7 @@ class WSFCDomainCredentials(Model):
     }
 
     def __init__(self, **kwargs):
-        super(WSFCDomainCredentials, self).__init__(**kwargs)
+        super(WsfcDomainCredentials, self).__init__(**kwargs)
         self.cluster_bootstrap_account_password = kwargs.get('cluster_bootstrap_account_password', None)
         self.cluster_operator_account_password = kwargs.get('cluster_operator_account_password', None)
         self.sql_service_account_password = kwargs.get('sql_service_account_password', None)

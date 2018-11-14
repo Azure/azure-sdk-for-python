@@ -12,12 +12,14 @@
 from msrest.serialization import Model
 
 
-class WSFCDomainProfile(Model):
-    """The Active Directory domain profile.
+class WsfcDomainProfile(Model):
+    """Active Directory account details to operate Windows Server Failover
+    Cluster.
 
     :param domain_fqdn: Fully qualified name of the domain.
     :type domain_fqdn: str
-    :param ou_path: OU path in which the nodes and cluster will be present.
+    :param ou_path: Organizational Unit path in which the nodes and cluster
+     will be present.
     :type ou_path: str
     :param cluster_bootstrap_account: Account name used for creating cluster
      (at minimum needs permissions to 'Create Computer Objects' in domain).
@@ -51,7 +53,7 @@ class WSFCDomainProfile(Model):
     }
 
     def __init__(self, **kwargs):
-        super(WSFCDomainProfile, self).__init__(**kwargs)
+        super(WsfcDomainProfile, self).__init__(**kwargs)
         self.domain_fqdn = kwargs.get('domain_fqdn', None)
         self.ou_path = kwargs.get('ou_path', None)
         self.cluster_bootstrap_account = kwargs.get('cluster_bootstrap_account', None)

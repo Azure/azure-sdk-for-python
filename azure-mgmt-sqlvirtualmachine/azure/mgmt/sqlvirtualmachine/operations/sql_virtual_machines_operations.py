@@ -161,7 +161,7 @@ class SqlVirtualMachinesOperations(object):
 
     def create_or_update(
             self, resource_group_name, sql_virtual_machine_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or Updates a SQL virtual machine.
+        """Creates or updates a SQL virtual machine.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
@@ -468,7 +468,7 @@ class SqlVirtualMachinesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the SQL virtual machines in a subscription.
+        """Gets all SQL virtual machines in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

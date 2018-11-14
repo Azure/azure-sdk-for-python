@@ -27,7 +27,7 @@ class AvailabilityGroupListener(ProxyResource):
     :ivar provisioning_state: Provisioning state to track the aysnc operation
      status.
     :vartype provisioning_state: str
-    :param availability_group_name: Name of the availability group listener.
+    :param availability_group_name: Name of the availability group.
     :type availability_group_name: str
     :param load_balancer_configurations: List of load balancer configurations
      for an availability group listener.

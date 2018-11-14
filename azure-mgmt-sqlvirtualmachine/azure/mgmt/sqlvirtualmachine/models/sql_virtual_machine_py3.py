@@ -38,7 +38,8 @@ class SqlVirtualMachine(TrackedResource):
     :ivar provisioning_state: Provisioning state to track the aysnc operation
      status.
     :vartype provisioning_state: str
-    :ivar sql_image_offer: SQL image offer.
+    :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
+     SQL2017-WS2016.
     :vartype sql_image_offer: str
     :param sql_server_license_type: SQL Server license type. Possible values
      include: 'PAYG', 'AHUB'
@@ -49,16 +50,12 @@ class SqlVirtualMachine(TrackedResource):
     :vartype sql_image_sku: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
     :param sql_virtual_machine_group_resource_id: ARM resource id of the SQL
-     virtual machine group this SQL virtual machine is part of.
+     virtual machine group this SQL virtual machine is or will be part of.
     :type sql_virtual_machine_group_resource_id: str
     :param wsfc_domain_credentials: Domain credentials for setting up Windows
      Server Failover Cluster for SQL availability group.
     :type wsfc_domain_credentials:
-     ~azure.mgmt.sqlvirtualmachine.models.WSFCDomainCredentials
-    :param auto_telemetry_settings: Auto telemetry settings for SQL virtual
-     machine.
-    :type auto_telemetry_settings:
-     ~azure.mgmt.sqlvirtualmachine.models.AutoTelemetrySettings
+     ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainCredentials
     :param auto_patching_settings: Auto patching settings for applying
      critical security updates to SQL virtual machine.
     :type auto_patching_settings:
@@ -98,15 +95,14 @@ class SqlVirtualMachine(TrackedResource):
         'sql_server_license_type': {'key': 'properties.sqlServerLicenseType', 'type': 'str'},
         'sql_image_sku': {'key': 'properties.sqlImageSku', 'type': 'str'},
         'sql_virtual_machine_group_resource_id': {'key': 'properties.sqlVirtualMachineGroupResourceId', 'type': 'str'},
-        'wsfc_domain_credentials': {'key': 'properties.wsfcDomainCredentials', 'type': 'WSFCDomainCredentials'},
-        'auto_telemetry_settings': {'key': 'properties.autoTelemetrySettings', 'type': 'AutoTelemetrySettings'},
+        'wsfc_domain_credentials': {'key': 'properties.wsfcDomainCredentials', 'type': 'WsfcDomainCredentials'},
         'auto_patching_settings': {'key': 'properties.autoPatchingSettings', 'type': 'AutoPatchingSettings'},
         'auto_backup_settings': {'key': 'properties.autoBackupSettings', 'type': 'AutoBackupSettings'},
         'key_vault_credential_settings': {'key': 'properties.keyVaultCredentialSettings', 'type': 'KeyVaultCredentialSettings'},
         'server_configurations_management_settings': {'key': 'properties.serverConfigurationsManagementSettings', 'type': 'ServerConfigurationsManagementSettings'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, virtual_machine_resource_id: str=None, sql_server_license_type=None, sql_virtual_machine_group_resource_id: str=None, wsfc_domain_credentials=None, auto_telemetry_settings=None, auto_patching_settings=None, auto_backup_settings=None, key_vault_credential_settings=None, server_configurations_management_settings=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, virtual_machine_resource_id: str=None, sql_server_license_type=None, sql_virtual_machine_group_resource_id: str=None, wsfc_domain_credentials=None, auto_patching_settings=None, auto_backup_settings=None, key_vault_credential_settings=None, server_configurations_management_settings=None, **kwargs) -> None:
         super(SqlVirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.virtual_machine_resource_id = virtual_machine_resource_id
@@ -116,7 +112,6 @@ class SqlVirtualMachine(TrackedResource):
         self.sql_image_sku = None
         self.sql_virtual_machine_group_resource_id = sql_virtual_machine_group_resource_id
         self.wsfc_domain_credentials = wsfc_domain_credentials
-        self.auto_telemetry_settings = auto_telemetry_settings
         self.auto_patching_settings = auto_patching_settings
         self.auto_backup_settings = auto_backup_settings
         self.key_vault_credential_settings = key_vault_credential_settings

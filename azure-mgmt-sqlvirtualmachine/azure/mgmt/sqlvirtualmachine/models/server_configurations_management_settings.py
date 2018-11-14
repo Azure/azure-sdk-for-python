@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class ServerConfigurationsManagementSettings(Model):
-    """Server configuration management settings.
+    """Set the connectivity, storage and workload settings.
 
     :param sql_connectivity_update_settings: SQL connectivity type settings.
     :type sql_connectivity_update_settings:
-     ~azure.mgmt.sqlvirtualmachine.models.SQLConnectivityUpdateSettings
+     ~azure.mgmt.sqlvirtualmachine.models.SqlConnectivityUpdateSettings
     :param sql_workload_type_update_settings: SQL workload type settings.
     :type sql_workload_type_update_settings:
-     ~azure.mgmt.sqlvirtualmachine.models.SQLWorkloadTypeUpdateSettings
+     ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadTypeUpdateSettings
     :param sql_storage_update_settings: SQL storage update settings.
     :type sql_storage_update_settings:
-     ~azure.mgmt.sqlvirtualmachine.models.SQLStorageUpdateSettings
+     ~azure.mgmt.sqlvirtualmachine.models.SqlStorageUpdateSettings
     :param additional_features_server_configurations: Additional SQL feature
      settings.
     :type additional_features_server_configurations:
@@ -31,9 +31,9 @@ class ServerConfigurationsManagementSettings(Model):
     """
 
     _attribute_map = {
-        'sql_connectivity_update_settings': {'key': 'sqlConnectivityUpdateSettings', 'type': 'SQLConnectivityUpdateSettings'},
-        'sql_workload_type_update_settings': {'key': 'sqlWorkloadTypeUpdateSettings', 'type': 'SQLWorkloadTypeUpdateSettings'},
-        'sql_storage_update_settings': {'key': 'sqlStorageUpdateSettings', 'type': 'SQLStorageUpdateSettings'},
+        'sql_connectivity_update_settings': {'key': 'sqlConnectivityUpdateSettings', 'type': 'SqlConnectivityUpdateSettings'},
+        'sql_workload_type_update_settings': {'key': 'sqlWorkloadTypeUpdateSettings', 'type': 'SqlWorkloadTypeUpdateSettings'},
+        'sql_storage_update_settings': {'key': 'sqlStorageUpdateSettings', 'type': 'SqlStorageUpdateSettings'},
         'additional_features_server_configurations': {'key': 'additionalFeaturesServerConfigurations', 'type': 'AdditionalFeaturesServerConfigurations'},
     }
 

@@ -12,10 +12,10 @@
 from msrest.serialization import Model
 
 
-class SQLConnectivityUpdateSettings(Model):
-    """SQL connectivity update settings.
+class SqlConnectivityUpdateSettings(Model):
+    """Set the access level and network port settings for SQL Server.
 
-    :param connectivity_type: SQL Server conectivity option. Possible values
+    :param connectivity_type: SQL Server connectivity option. Possible values
      include: 'LOCAL', 'PRIVATE', 'PUBLIC'
     :type connectivity_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.ConnectivityType
@@ -35,7 +35,7 @@ class SQLConnectivityUpdateSettings(Model):
     }
 
     def __init__(self, **kwargs):
-        super(SQLConnectivityUpdateSettings, self).__init__(**kwargs)
+        super(SqlConnectivityUpdateSettings, self).__init__(**kwargs)
         self.connectivity_type = kwargs.get('connectivity_type', None)
         self.port = kwargs.get('port', None)
         self.sql_auth_update_user_name = kwargs.get('sql_auth_update_user_name', None)
