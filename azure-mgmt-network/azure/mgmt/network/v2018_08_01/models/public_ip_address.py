@@ -47,6 +47,9 @@ class PublicIPAddress(Resource):
      IP address.
     :type dns_settings:
      ~azure.mgmt.network.v2018_08_01.models.PublicIPAddressDnsSettings
+    :param ddos_settings: The DDoS protection custom policy associated with
+     the public IP address.
+    :type ddos_settings: ~azure.mgmt.network.v2018_08_01.models.DdoSSettings
     :param ip_tags: The list of tags associated with the public IP address.
     :type ip_tags: list[~azure.mgmt.network.v2018_08_01.models.IpTag]
     :param ip_address: The IP address associated with the public IP address
@@ -88,6 +91,7 @@ class PublicIPAddress(Resource):
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
+        'ddos_settings': {'key': 'properties.ddosSettings', 'type': 'DdoSSettings'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
@@ -105,6 +109,7 @@ class PublicIPAddress(Resource):
         self.public_ip_address_version = kwargs.get('public_ip_address_version', None)
         self.ip_configuration = None
         self.dns_settings = kwargs.get('dns_settings', None)
+        self.ddos_settings = kwargs.get('ddos_settings', None)
         self.ip_tags = kwargs.get('ip_tags', None)
         self.ip_address = kwargs.get('ip_address', None)
         self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
