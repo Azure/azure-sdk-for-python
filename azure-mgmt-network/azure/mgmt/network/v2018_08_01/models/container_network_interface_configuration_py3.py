@@ -27,7 +27,7 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
     :param container_network_interfaces: A list of container network
      interfaces created from this container network interface configuration.
     :type container_network_interfaces:
-     list[~azure.mgmt.network.v2018_08_01.models.ContainerNetworkInterface]
+     list[~azure.mgmt.network.v2018_08_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     :param name: The name of the resource. This name can be used to access the
@@ -48,7 +48,7 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfigurationProfile]'},
-        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
+        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
