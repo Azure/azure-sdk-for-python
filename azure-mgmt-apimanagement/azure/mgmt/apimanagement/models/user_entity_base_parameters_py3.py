@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class UserEntityBaseParameters(Model):
     """User Entity Base Parameters set.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param state: Account state. Specifies whether the user is active or not.
      Blocked users are unable to sign into the developer portal or call any
      APIs of subscribed products. Default state is Active. Possible values
@@ -26,14 +23,10 @@ class UserEntityBaseParameters(Model):
     :type state: str or ~azure.mgmt.apimanagement.models.UserState
     :param note: Optional note about a user set by the administrator.
     :type note: str
-    :ivar identities: Collection of user identities.
-    :vartype identities:
+    :param identities: Collection of user identities.
+    :type identities:
      list[~azure.mgmt.apimanagement.models.UserIdentityContract]
     """
-
-    _validation = {
-        'identities': {'readonly': True},
-    }
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},
@@ -41,8 +34,8 @@ class UserEntityBaseParameters(Model):
         'identities': {'key': 'identities', 'type': '[UserIdentityContract]'},
     }
 
-    def __init__(self, *, state="active", note: str=None, **kwargs) -> None:
+    def __init__(self, *, state="active", note: str=None, identities=None, **kwargs) -> None:
         super(UserEntityBaseParameters, self).__init__(**kwargs)
         self.state = state
         self.note = note
-        self.identities = None
+        self.identities = identities
