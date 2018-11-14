@@ -105,6 +105,9 @@ class StorageAccount(TrackedResource):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
     :type is_hns_enabled: bool
+    :ivar failover_in_progress: If the failover is in progress, the value will
+     be true, otherwise, it will be null.
+    :vartype failover_in_progress: bool
     """
 
     _validation = {
@@ -127,6 +130,7 @@ class StorageAccount(TrackedResource):
         'encryption': {'readonly': True},
         'access_tier': {'readonly': True},
         'network_rule_set': {'readonly': True},
+        'failover_in_progress': {'readonly': True},
     }
 
     _attribute_map = {
@@ -154,6 +158,7 @@ class StorageAccount(TrackedResource):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
+        'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -177,3 +182,4 @@ class StorageAccount(TrackedResource):
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = None
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
+        self.failover_in_progress = None
