@@ -1,3 +1,9 @@
+## Changes in 3.0.2 : ##
+
+- Added Support for MultiPolygon Datatype
+- Bug Fix in Session Read Retry Policy
+- Bug Fix for Incorrect padding issues while decoding base 64 strings
+
 ## Changes in 3.0.1 : ##
 
 - Bug fix in LocationCache

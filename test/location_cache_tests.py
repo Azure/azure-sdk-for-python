@@ -40,16 +40,18 @@ class LocationCacheTest(unittest.TestCase):
                             "location4": LOCATION_4_ENDPOINT}
 
     def mock_create_db_with_flag_enabled(self, url_connection = None):
-        return self.create_database_account(True)
+        self.database_account = self.create_database_account(True)
+        return self.database_account
 
     def mock_create_db_with_flag_disabled(self, url_connection = None):
-        return self.create_database_account(False)
+        self.database_account = self.create_database_account(False)
+        return self.database_account
 
     def create_spy_client(self, use_multiple_write_locations, enable_endpoint_discovery, is_preferred_locations_list_empty):
-        preferred_locations = ["location1", "location2", "location3"]
+        self.preferred_locations = ["location1", "location2", "location3", "location4"]
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.DisableSSLVerification = True
-        connectionPolicy.PreferredLocations = [] if is_preferred_locations_list_empty else preferred_locations
+        connectionPolicy.PreferredLocations = [] if is_preferred_locations_list_empty else self.preferred_locations
         connectionPolicy.EnableEndpointDiscovery = enable_endpoint_discovery
         connectionPolicy.UseMultipleWriteLocations = use_multiple_write_locations
 
@@ -92,6 +94,67 @@ class LocationCacheTest(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
+        self.counter += 1
+        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+
+    def test_validate_retry_on_session_not_availabe_with_endpoint_discovery_enabled(self):
+        # sequence of chosen endpoints: 
+        #     1. Single region, No Preferred Location: 
+        #        location1 (default) -> location1 (no preferred location, hence default)
+        #     2. Single Region, Preferred Locations present:
+        #        location1 (1st preferred location) -> location1 (1st location in DBA's WriteLocation)
+        #     3. MultiRegion, Preferred Regions present:
+        #        location1 (1st preferred location Read Location) -> location1 (1st location in DBA's WriteLocation) ->
+        #        location2 (2nd preferred location Read Location)-> location4 (3rd preferred location Read Location)
+        #self.validate_retry_on_session_not_availabe(True, False)
+        #self.validate_retry_on_session_not_availabe(False, False)
+        self.validate_retry_on_session_not_availabe(False, True)
+
+    def validate_retry_on_session_not_availabe(self, is_preferred_locations_list_empty, use_multiple_write_locations):
+        self.counter = 0
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureTwice
+        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
+        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
+
+        enable_endpoint_discovery = True
+        self.is_preferred_locations_list_empty = is_preferred_locations_list_empty
+        self.use_multiple_write_locations = use_multiple_write_locations
+        client = self.create_spy_client(use_multiple_write_locations, enable_endpoint_discovery, is_preferred_locations_list_empty)
+
+        try:
+            client.ReadItem("dbs/mydb/colls/mycoll/docs/1")
+        except errors.HTTPFailure as e:
+            # not retried
+            self.assertEqual(self.counter, 4 if use_multiple_write_locations else 2)
+            self.counter = 0
+            self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
+            self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
+
+        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+
+    def _MockExecuteFunctionSessionReadFailureTwice(self, function, *args, **kwargs):
+        request = args[1]
+        if self.counter == 0:
+            if not self.use_multiple_write_locations:
+                expected_endpoint = self.database_account.WritableLocations[0]['databaseAccountEndpoint'] if self.is_preferred_locations_list_empty else self.preferred_locations[0]
+            else:
+                expected_endpoint = self.endpoint_by_location[self.preferred_locations[0]]
+            self.assertFalse(request.should_clear_session_token_on_session_read_failure)
+        elif self.counter == 1:
+            expected_endpoint = self.database_account.WritableLocations[0]['databaseAccountEndpoint']
+            if not self.use_multiple_write_locations:
+                self.assertTrue(request.should_clear_session_token_on_session_read_failure)
+            else:
+                self.assertFalse(request.should_clear_session_token_on_session_read_failure)
+        elif self.counter == 2:
+            expected_endpoint = self.endpoint_by_location[self.preferred_locations[1]]
+            self.assertFalse(request.should_clear_session_token_on_session_read_failure)
+        elif self.counter == 3:
+            expected_endpoint = self.database_account.ReadableLocations[2]['databaseAccountEndpoint']
+            self.assertTrue(request.should_clear_session_token_on_session_read_failure)
+        self.assertEqual(expected_endpoint, request.location_endpoint_to_route)
         self.counter += 1
         raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
 

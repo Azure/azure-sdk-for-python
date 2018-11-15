@@ -584,7 +584,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
            }
         }
         
-        collection_options = { 'offerThroughput': 10100 }
+        collection_options = { 'offerThroughput': 30000 }
 
         created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
                                 collection_definition, 

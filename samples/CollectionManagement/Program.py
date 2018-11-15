@@ -21,6 +21,7 @@ import samples.Shared.config as cfg
 #    2.1 - Basic Create
 #    2.2 - Create collection with custom IndexPolicy
 #    2.3 - Create collection with offer throughput set
+#    2.4 - Create collection with unique key
 #
 # 3. Manage Collection Offer Throughput
 #    3.1 - Get Collection performance tier

@@ -75,9 +75,9 @@ class _SessionRetryPolicy(object):
         else:
             if self.can_use_multiple_write_locations:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                    endpoints = self.global_endpoint_manager.get_ordered_read_endpoints
+                    endpoints = self.global_endpoint_manager.get_ordered_read_endpoints()
                 else:
-                    endpoints = self.global_endpoint_manager.get_ordered_write_endpoints
+                    endpoints = self.global_endpoint_manager.get_ordered_write_endpoints()
 
                 if self.session_token_retry_count > len(endpoints):
                     # When use multiple write locations is true and the request has been tried 
@@ -91,7 +91,7 @@ class _SessionRetryPolicy(object):
                     # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
                     # This enables marking the endpoint unavailability on endpoint failover/unreachability
                     self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-                    self.request.route_to_location = self.location_endpoint
+                    self.request.route_to_location(self.location_endpoint)
                     return True
             else:
                 if self.session_token_retry_count > self._max_retry_attempt_count:
@@ -106,6 +106,6 @@ class _SessionRetryPolicy(object):
                     # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
                     # This enables marking the endpoint unavailability on endpoint failover/unreachability
                     self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-                    self.request.route_to_location = self.location_endpoint
+                    self.request.route_to_location(self.location_endpoint)
                     return True
 

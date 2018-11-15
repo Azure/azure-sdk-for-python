@@ -95,7 +95,7 @@ class LocationCache(object):
             return request.location_endpoint_to_route
 
         location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
-        use_preferred_locations = request.use_preferred_locations if request.use_preferred_locations else True
+        use_preferred_locations = request.use_preferred_locations if request.use_preferred_locations is not None else True
 
         if (not use_preferred_locations or (documents._OperationType.IsWriteOperation(request.operation_type)
                                             and not self.can_use_multiple_write_locations_for_request(request))):
