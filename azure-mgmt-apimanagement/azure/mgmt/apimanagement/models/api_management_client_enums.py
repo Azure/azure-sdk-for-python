@@ -123,9 +123,9 @@ class SkuType(str, Enum):
 
 class ResourceSkuCapacityScaleType(str, Enum):
 
-    automatic = "Automatic"
-    manual = "Manual"
-    none = "None"
+    automatic = "automatic"
+    manual = "manual"
+    none = "none"
 
 
 class HostnameType(str, Enum):

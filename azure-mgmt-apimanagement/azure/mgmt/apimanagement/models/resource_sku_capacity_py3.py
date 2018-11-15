@@ -19,13 +19,13 @@ class ResourceSkuCapacity(Model):
     sending a request.
 
     :ivar minimum: The minimum capacity.
-    :vartype minimum: long
+    :vartype minimum: int
     :ivar maximum: The maximum capacity that can be set.
-    :vartype maximum: long
+    :vartype maximum: int
     :ivar default: The default capacity.
-    :vartype default: long
+    :vartype default: int
     :ivar scale_type: The scale type applicable to the sku. Possible values
-     include: 'Automatic', 'Manual', 'None'
+     include: 'automatic', 'manual', 'none'
     :vartype scale_type: str or
      ~azure.mgmt.apimanagement.models.ResourceSkuCapacityScaleType
     """
@@ -38,9 +38,9 @@ class ResourceSkuCapacity(Model):
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'long'},
-        'maximum': {'key': 'maximum', 'type': 'long'},
-        'default': {'key': 'default', 'type': 'long'},
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
         'scale_type': {'key': 'scaleType', 'type': 'ResourceSkuCapacityScaleType'},
     }
 
