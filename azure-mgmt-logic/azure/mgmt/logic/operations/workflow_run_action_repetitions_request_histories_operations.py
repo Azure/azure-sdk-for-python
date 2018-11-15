@@ -59,7 +59,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations(object):
         :rtype:
          ~azure.mgmt.logic.models.RequestHistoryPaged[~azure.mgmt.logic.models.RequestHistory]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.logic.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -99,7 +99,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -139,7 +139,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations(object):
         :rtype: ~azure.mgmt.logic.models.RequestHistory or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.logic.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -173,7 +173,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

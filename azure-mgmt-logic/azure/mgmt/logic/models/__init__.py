@@ -135,8 +135,6 @@ try:
     from .response_py3 import Response
     from .request_history_properties_py3 import RequestHistoryProperties
     from .request_history_py3 import RequestHistory
-    from .api_error_body_py3 import ApiErrorBody
-    from .api_error_py3 import ApiError, ApiErrorException
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
@@ -263,8 +261,6 @@ except (SyntaxError, ImportError):
     from .response import Response
     from .request_history_properties import RequestHistoryProperties
     from .request_history import RequestHistory
-    from .api_error_body import ApiErrorBody
-    from .api_error import ApiError, ApiErrorException
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -444,8 +440,6 @@ __all__ = [
     'Response',
     'RequestHistoryProperties',
     'RequestHistory',
-    'ApiErrorBody',
-    'ApiError', 'ApiErrorException',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
