@@ -57,9 +57,9 @@ class Invoice(Resource):
         'billing_period_ids': {'key': 'properties.billingPeriodIds', 'type': '[str]'},
     }
 
-    def __init__(self, download_url=None):
-        super(Invoice, self).__init__()
-        self.download_url = download_url
+    def __init__(self, **kwargs):
+        super(Invoice, self).__init__(**kwargs)
+        self.download_url = kwargs.get('download_url', None)
         self.invoice_period_start_date = None
         self.invoice_period_end_date = None
         self.billing_period_ids = None

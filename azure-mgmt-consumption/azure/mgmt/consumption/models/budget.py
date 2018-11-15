@@ -18,6 +18,8 @@ class Budget(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -28,20 +30,21 @@ class Budget(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param category: The category of the budget, whether the budget tracks
-     cost or usage. Possible values include: 'Cost', 'Usage'
+    :param category: Required. The category of the budget, whether the budget
+     tracks cost or usage. Possible values include: 'Cost', 'Usage'
     :type category: str or ~azure.mgmt.consumption.models.CategoryType
-    :param amount: The total amount of cost to track with the budget
+    :param amount: Required. The total amount of cost to track with the budget
     :type amount: decimal.Decimal
-    :param time_grain: The time covered by a budget. Tracking of the amount
-     will be reset based on the time grain. Possible values include: 'Monthly',
-     'Quarterly', 'Annually'
+    :param time_grain: Required. The time covered by a budget. Tracking of the
+     amount will be reset based on the time grain. Possible values include:
+     'Monthly', 'Quarterly', 'Annually'
     :type time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
-    :param time_period: Has start and end date of the budget. The start date
-     must be first of the month and should be less than the end date. Budget
-     start date must be on or after June 1, 2017. Future start date should not
-     be more than three months. Past start date should  be selected within the
-     timegrain preiod. There are no restrictions on the end date.
+    :param time_period: Required. Has start and end date of the budget. The
+     start date must be first of the month and should be less than the end
+     date. Budget start date must be on or after June 1, 2017. Future start
+     date should not be more than three months. Past start date should  be
+     selected within the timegrain preiod. There are no restrictions on the end
+     date.
     :type time_period: ~azure.mgmt.consumption.models.BudgetTimePeriod
     :param filters: May be used to filter budgets by resource group, resource,
      or meter.
@@ -80,12 +83,12 @@ class Budget(ProxyResource):
         'notifications': {'key': 'properties.notifications', 'type': '{Notification}'},
     }
 
-    def __init__(self, category, amount, time_grain, time_period, e_tag=None, filters=None, notifications=None):
-        super(Budget, self).__init__(e_tag=e_tag)
-        self.category = category
-        self.amount = amount
-        self.time_grain = time_grain
-        self.time_period = time_period
-        self.filters = filters
+    def __init__(self, **kwargs):
+        super(Budget, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.amount = kwargs.get('amount', None)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.time_period = kwargs.get('time_period', None)
+        self.filters = kwargs.get('filters', None)
         self.current_spend = None
-        self.notifications = notifications
+        self.notifications = kwargs.get('notifications', None)

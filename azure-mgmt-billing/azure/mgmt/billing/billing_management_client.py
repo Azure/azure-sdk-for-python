@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
+from .operations.invoice_pricesheet_operations import InvoicePricesheetOperations
 from .operations.operations import Operations
 from . import models
 
@@ -52,7 +53,7 @@ class BillingManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class BillingManagementClient(object):
+class BillingManagementClient(SDKClient):
     """Billing client provides access to billing resources for Azure subscriptions.
 
     :ivar config: Configuration for client.
@@ -64,6 +65,8 @@ class BillingManagementClient(object):
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
+    :ivar invoice_pricesheet: InvoicePricesheet operations
+    :vartype invoice_pricesheet: azure.mgmt.billing.operations.InvoicePricesheetOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
 
@@ -79,7 +82,7 @@ class BillingManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = BillingManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(BillingManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01-preview'
@@ -91,6 +94,8 @@ class BillingManagementClient(object):
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_pricesheet = InvoicePricesheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

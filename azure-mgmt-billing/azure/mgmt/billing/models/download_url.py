@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DownloadUrl(Model):
-    """A secure URL that can be used to download a PDF invoice until the URL
+    """A secure URL that can be used to download a an entity until the URL
     expires.
 
     Variables are only populated by the server, and will be ignored when
@@ -35,7 +35,7 @@ class DownloadUrl(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DownloadUrl, self).__init__()
+    def __init__(self, **kwargs):
+        super(DownloadUrl, self).__init__(**kwargs)
         self.expiry_time = None
         self.url = None
