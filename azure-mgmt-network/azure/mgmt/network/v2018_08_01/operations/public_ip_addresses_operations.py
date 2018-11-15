@@ -40,7 +40,7 @@ class PublicIPAddressesOperations(object):
 
     def _delete_initial(
             self, resource_group_name, public_ip_address_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         # Construct URL
         url = self.delete.metadata['url']
@@ -138,7 +138,7 @@ class PublicIPAddressesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -189,7 +189,7 @@ class PublicIPAddressesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, public_ip_address_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -297,7 +297,7 @@ class PublicIPAddressesOperations(object):
             self, resource_group_name, public_ip_address_name, tags=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.TagsObject(tags=tags)
 
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         # Construct URL
         url = self.update_tags.metadata['url']
@@ -410,7 +410,7 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_08_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_08_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -478,7 +478,7 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_08_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_08_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-10-01"
+        api_version = "2018-08-01"
 
         def internal_paging(next_link=None, raw=False):
 

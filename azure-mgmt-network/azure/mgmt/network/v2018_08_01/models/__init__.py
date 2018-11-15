@@ -26,7 +26,6 @@ try:
     from .service_endpoint_policy_py3 import ServiceEndpointPolicy
     from .public_ip_address_sku_py3 import PublicIPAddressSku
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
-    from .ddo_ssettings_py3 import DdoSSettings
     from .ip_tag_py3 import IpTag
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
@@ -300,7 +299,6 @@ except (SyntaxError, ImportError):
     from .service_endpoint_policy import ServiceEndpointPolicy
     from .public_ip_address_sku import PublicIPAddressSku
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-    from .ddo_ssettings import DdoSSettings
     from .ip_tag import IpTag
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
@@ -728,7 +726,6 @@ __all__ = [
     'ServiceEndpointPolicy',
     'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
-    'DdoSSettings',
     'IpTag',
     'PublicIPAddress',
     'IPConfiguration',
