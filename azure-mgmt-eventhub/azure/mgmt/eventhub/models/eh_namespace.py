@@ -48,6 +48,9 @@ class EHNamespace(TrackedResource):
      AutoInflate is enabled, vaule should be within 0 to 20 throughput units. (
      '0' if AutoInflateEnabled = true)
     :type maximum_throughput_units: int
+    :param kafka_enabled: Value that indicates whether Kafka is enabled for
+     eventhub namespace.
+    :type kafka_enabled: bool
     """
 
     _validation = {
@@ -76,6 +79,7 @@ class EHNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'is_auto_inflate_enabled': {'key': 'properties.isAutoInflateEnabled', 'type': 'bool'},
         'maximum_throughput_units': {'key': 'properties.maximumThroughputUnits', 'type': 'int'},
+        'kafka_enabled': {'key': 'properties.kafkaEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -88,3 +92,4 @@ class EHNamespace(TrackedResource):
         self.metric_id = None
         self.is_auto_inflate_enabled = kwargs.get('is_auto_inflate_enabled', None)
         self.maximum_throughput_units = kwargs.get('maximum_throughput_units', None)
+        self.kafka_enabled = kwargs.get('kafka_enabled', None)

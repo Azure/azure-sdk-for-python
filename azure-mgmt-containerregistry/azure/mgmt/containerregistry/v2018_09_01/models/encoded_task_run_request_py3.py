@@ -32,15 +32,20 @@ class EncodedTaskRunRequest(RunRequest):
      when running a task.
     :type values:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.SetValue]
-    :param timeout: Build timeout in seconds. Default value: 3600 .
+    :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
-    :param platform: Required. The platform properties against which the build
-     will happen.
+    :param platform: Required. The platform properties against which the run
+     has to happen.
     :type platform:
      ~azure.mgmt.containerregistry.v2018_09_01.models.PlatformProperties
-    :param agent_configuration: The machine configuration of the build agent.
+    :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
+    :param source_location: The URL(absolute or relative) of the source
+     context. It can be an URL to a tar or git repoistory.
+     If it is relative URL, the relative path should be obtained from calling
+     listBuildSourceUploadUrl API.
+    :type source_location: str
     """
 
     _validation = {
@@ -59,9 +64,10 @@ class EncodedTaskRunRequest(RunRequest):
         'timeout': {'key': 'timeout', 'type': 'int'},
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
+        'source_location': {'key': 'sourceLocation', 'type': 'str'},
     }
 
-    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, **kwargs) -> None:
+    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, **kwargs) -> None:
         super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
@@ -69,4 +75,5 @@ class EncodedTaskRunRequest(RunRequest):
         self.timeout = timeout
         self.platform = platform
         self.agent_configuration = agent_configuration
+        self.source_location = source_location
         self.type = 'EncodedTaskRunRequest'

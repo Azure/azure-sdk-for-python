@@ -71,6 +71,8 @@ class ContainerGroup(Resource):
      group.
     :type network_profile:
      ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
+    :param dns_config: The DNS config information for a container group.
+    :type dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
     """
 
     _validation = {
@@ -100,9 +102,10 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
+        'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
     }
 
-    def __init__(self, *, containers, os_type, location: str=None, tags=None, identity=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, diagnostics=None, network_profile=None, **kwargs) -> None:
+    def __init__(self, *, containers, os_type, location: str=None, tags=None, identity=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, diagnostics=None, network_profile=None, dns_config=None, **kwargs) -> None:
         super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
@@ -115,3 +118,4 @@ class ContainerGroup(Resource):
         self.instance_view = None
         self.diagnostics = diagnostics
         self.network_profile = network_profile
+        self.dns_config = dns_config
