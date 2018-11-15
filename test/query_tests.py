@@ -55,7 +55,7 @@ class QueryTest(unittest.TestCase):
     def test_query_change_feed(self):
         testCollectionName = 'testCollection ' + str(uuid.uuid4())
         collection_definition = { 'id': testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
-        collection_options = { 'offerThroughput': 10100 }
+        collection_options = { 'offerThroughput': 30000 }
         created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
 
         collection_link = created_collection['_self']

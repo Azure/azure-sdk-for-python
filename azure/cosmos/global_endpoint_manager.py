@@ -91,13 +91,11 @@ class _GlobalEndpointManager(object):
 
     def _refresh_endpoint_list_private(self, database_account = None):
         if database_account :
-            #logger.debug("Refreshing endpoints list")
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
 
         if self.location_cache.should_refresh_endpoints() and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             if not database_account:
-                #logger.debug("Refreshing endpoints list")
                 database_account = self._GetDatabaseAccount()
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()

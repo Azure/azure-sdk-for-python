@@ -57,6 +57,7 @@
     <Compile Include="azure\cosmos\utils.py" />
     <Compile Include="azure\cosmos\vector_session_token.py" />
     <Compile Include="setup.py" />
+    <Compile Include="test\base_unit_tests.py" />
     <Compile Include="test\crud_tests.py" />
     <Compile Include="test\encoding_tests.py" />
     <Compile Include="test\location_cache_tests.py" />

@@ -180,12 +180,15 @@ class DataType(object):
         Represents a line string data type.
     :ivar str Polygon:
         Represents a polygon data type.
+    :ivar str MultiPolygon:
+        Represents a multi-polygon data type.
     """
     Number = 'Number'
     String = 'String'
     Point = 'Point'
     LineString = 'LineString'
     Polygon = 'Polygon'
+    MultiPolygon = 'MultiPolygon'
 
 
 class IndexingDirective(object):
