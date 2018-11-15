@@ -12,13 +12,11 @@
 from .enrollment_accounts_operations import EnrollmentAccountsOperations
 from .billing_periods_operations import BillingPeriodsOperations
 from .invoices_operations import InvoicesOperations
-from .invoice_pricesheet_operations import InvoicePricesheetOperations
 from .operations import Operations
 
 __all__ = [
     'EnrollmentAccountsOperations',
     'BillingPeriodsOperations',
     'InvoicesOperations',
-    'InvoicePricesheetOperations',
     'Operations',
 ]
