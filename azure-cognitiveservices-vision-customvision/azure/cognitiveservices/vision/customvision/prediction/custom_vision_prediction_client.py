@@ -17,47 +17,51 @@ from msrest.exceptions import HttpOperationError
 from . import models
 
 
-class PredictionEndpointConfiguration(Configuration):
-    """Configuration for PredictionEndpoint
+class CustomVisionPredictionClientConfiguration(Configuration):
+    """Configuration for CustomVisionPredictionClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param api_key:
     :type api_key: str
-    :param str base_url: Service URL
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     """
 
     def __init__(
-            self, api_key, base_url=None):
+            self, api_key, endpoint):
 
         if api_key is None:
             raise ValueError("Parameter 'api_key' must not be None.")
-        if not base_url:
-            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Prediction'
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+        base_url = '{Endpoint}/customvision/v2.0/Prediction'
 
-        super(PredictionEndpointConfiguration, self).__init__(base_url)
+        super(CustomVisionPredictionClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-customvision/{}'.format(VERSION))
 
         self.api_key = api_key
+        self.endpoint = endpoint
 
 
-class PredictionEndpoint(SDKClient):
-    """PredictionEndpoint
+class CustomVisionPredictionClient(SDKClient):
+    """CustomVisionPredictionClient
 
     :ivar config: Configuration for client.
-    :vartype config: PredictionEndpointConfiguration
+    :vartype config: CustomVisionPredictionClientConfiguration
 
     :param api_key:
     :type api_key: str
-    :param str base_url: Service URL
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     """
 
     def __init__(
-            self, api_key, base_url=None):
+            self, api_key, endpoint):
 
-        self.config = PredictionEndpointConfiguration(api_key, base_url)
-        super(PredictionEndpoint, self).__init__(None, self.config)
+        self.config = CustomVisionPredictionClientConfiguration(api_key, endpoint)
+        super(CustomVisionPredictionClient, self).__init__(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2.0'
@@ -97,6 +101,7 @@ class PredictionEndpoint(SDKClient):
         # Construct URL
         url = self.predict_image_url.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -110,6 +115,7 @@ class PredictionEndpoint(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -119,9 +125,8 @@ class PredictionEndpoint(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -168,6 +173,7 @@ class PredictionEndpoint(SDKClient):
         # Construct URL
         url = self.predict_image.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -181,6 +187,7 @@ class PredictionEndpoint(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -192,9 +199,8 @@ class PredictionEndpoint(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -243,6 +249,7 @@ class PredictionEndpoint(SDKClient):
         # Construct URL
         url = self.predict_image_url_with_no_store.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -256,6 +263,7 @@ class PredictionEndpoint(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -265,9 +273,8 @@ class PredictionEndpoint(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -314,6 +321,7 @@ class PredictionEndpoint(SDKClient):
         # Construct URL
         url = self.predict_image_with_no_store.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -327,6 +335,7 @@ class PredictionEndpoint(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -338,9 +347,8 @@ class PredictionEndpoint(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)

@@ -22,16 +22,16 @@ class TagPerformance(Model):
     :vartype id: str
     :ivar name:
     :vartype name: str
-    :ivar precision: Gets the precision
+    :ivar precision: Gets the precision.
     :vartype precision: float
     :ivar precision_std_deviation: Gets the standard deviation for the
-     precision
+     precision.
     :vartype precision_std_deviation: float
-    :ivar recall: Gets the recall
+    :ivar recall: Gets the recall.
     :vartype recall: float
-    :ivar recall_std_deviation: Gets the standard deviation for the recall
+    :ivar recall_std_deviation: Gets the standard deviation for the recall.
     :vartype recall_std_deviation: float
-    :ivar average_precision: Gets the average precision when applicable
+    :ivar average_precision: Gets the average precision when applicable.
     :vartype average_precision: float
     """
 
