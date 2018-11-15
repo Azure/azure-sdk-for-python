@@ -105,6 +105,9 @@ class StorageAccount(TrackedResource):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
     :type is_hns_enabled: bool
+    :ivar geo_replication_stats: Geo Replication Stats
+    :vartype geo_replication_stats:
+     ~azure.mgmt.storage.v2018_07_01.models.GeoReplicationStats
     :ivar failover_in_progress: If the failover is in progress, the value will
      be true, otherwise, it will be null.
     :vartype failover_in_progress: bool
@@ -130,6 +133,7 @@ class StorageAccount(TrackedResource):
         'encryption': {'readonly': True},
         'access_tier': {'readonly': True},
         'network_rule_set': {'readonly': True},
+        'geo_replication_stats': {'readonly': True},
         'failover_in_progress': {'readonly': True},
     }
 
@@ -158,6 +162,7 @@ class StorageAccount(TrackedResource):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
+        'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
     }
 
@@ -182,4 +187,5 @@ class StorageAccount(TrackedResource):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = None
         self.is_hns_enabled = is_hns_enabled
+        self.geo_replication_stats = None
         self.failover_in_progress = None

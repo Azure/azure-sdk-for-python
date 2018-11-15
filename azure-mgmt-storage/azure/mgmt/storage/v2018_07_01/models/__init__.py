@@ -31,6 +31,7 @@ try:
     from .identity_py3 import Identity
     from .storage_account_create_parameters_py3 import StorageAccountCreateParameters
     from .endpoints_py3 import Endpoints
+    from .geo_replication_stats_py3 import GeoReplicationStats
     from .storage_account_py3 import StorageAccount
     from .storage_account_key_py3 import StorageAccountKey
     from .storage_account_list_keys_result_py3 import StorageAccountListKeysResult
@@ -83,6 +84,7 @@ except (SyntaxError, ImportError):
     from .identity import Identity
     from .storage_account_create_parameters import StorageAccountCreateParameters
     from .endpoints import Endpoints
+    from .geo_replication_stats import GeoReplicationStats
     from .storage_account import StorageAccount
     from .storage_account_key import StorageAccountKey
     from .storage_account_list_keys_result import StorageAccountListKeysResult
@@ -129,6 +131,7 @@ from .storage_management_client_enums import (
     Bypass,
     DefaultAction,
     AccessTier,
+    GeoReplicationStatus,
     ProvisioningState,
     AccountStatus,
     KeyPermission,
@@ -144,6 +147,7 @@ from .storage_management_client_enums import (
     LeaseDuration,
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
+    StorageAccountExpand,
 )
 
 __all__ = [
@@ -168,6 +172,7 @@ __all__ = [
     'Identity',
     'StorageAccountCreateParameters',
     'Endpoints',
+    'GeoReplicationStats',
     'StorageAccount',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
@@ -213,6 +218,7 @@ __all__ = [
     'Bypass',
     'DefaultAction',
     'AccessTier',
+    'GeoReplicationStatus',
     'ProvisioningState',
     'AccountStatus',
     'KeyPermission',
@@ -228,4 +234,5 @@ __all__ = [
     'LeaseDuration',
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
+    'StorageAccountExpand',
 ]
