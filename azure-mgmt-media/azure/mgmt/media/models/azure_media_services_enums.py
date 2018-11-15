@@ -282,6 +282,7 @@ class LiveEventEncodingType(str, Enum):
 
     none = "None"
     basic = "Basic"
+    standard = "Standard"
 
 
 class LiveEventResourceState(str, Enum):

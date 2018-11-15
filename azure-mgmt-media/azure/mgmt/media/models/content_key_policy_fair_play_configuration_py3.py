@@ -52,7 +52,7 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         'ask': {'key': 'ask', 'type': 'bytearray'},
         'fair_play_pfx_password': {'key': 'fairPlayPfxPassword', 'type': 'str'},
         'fair_play_pfx': {'key': 'fairPlayPfx', 'type': 'str'},
-        'rental_and_lease_key_type': {'key': 'rentalAndLeaseKeyType', 'type': 'ContentKeyPolicyFairPlayRentalAndLeaseKeyType'},
+        'rental_and_lease_key_type': {'key': 'rentalAndLeaseKeyType', 'type': 'str'},
         'rental_duration': {'key': 'rentalDuration', 'type': 'long'},
     }
 
