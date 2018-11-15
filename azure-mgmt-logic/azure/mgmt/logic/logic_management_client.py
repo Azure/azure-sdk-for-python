@@ -21,6 +21,8 @@ from .operations.workflow_trigger_histories_operations import WorkflowTriggerHis
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
 from .operations.workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
+from .operations.workflow_run_action_repetitions_request_histories_operations import WorkflowRunActionRepetitionsRequestHistoriesOperations
+from .operations.workflow_run_action_request_histories_operations import WorkflowRunActionRequestHistoriesOperations
 from .operations.workflow_run_action_scope_repetitions_operations import WorkflowRunActionScopeRepetitionsOperations
 from .operations.workflow_run_operations import WorkflowRunOperations
 from .operations.integration_accounts_operations import IntegrationAccountsOperations
@@ -90,6 +92,10 @@ class LogicManagementClient(SDKClient):
     :vartype workflow_run_actions: azure.mgmt.logic.operations.WorkflowRunActionsOperations
     :ivar workflow_run_action_repetitions: WorkflowRunActionRepetitions operations
     :vartype workflow_run_action_repetitions: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsOperations
+    :ivar workflow_run_action_repetitions_request_histories: WorkflowRunActionRepetitionsRequestHistories operations
+    :vartype workflow_run_action_repetitions_request_histories: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations
+    :ivar workflow_run_action_request_histories: WorkflowRunActionRequestHistories operations
+    :vartype workflow_run_action_request_histories: azure.mgmt.logic.operations.WorkflowRunActionRequestHistoriesOperations
     :ivar workflow_run_action_scope_repetitions: WorkflowRunActionScopeRepetitions operations
     :vartype workflow_run_action_scope_repetitions: azure.mgmt.logic.operations.WorkflowRunActionScopeRepetitionsOperations
     :ivar workflow_run_operations: WorkflowRunOperations operations
@@ -149,6 +155,10 @@ class LogicManagementClient(SDKClient):
         self.workflow_run_actions = WorkflowRunActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
