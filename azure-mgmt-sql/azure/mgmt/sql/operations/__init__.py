@@ -62,6 +62,7 @@ from .long_term_retention_backups_operations import LongTermRetentionBackupsOper
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .managed_databases_operations import ManagedDatabasesOperations
+from .sensitivity_labels_operations import SensitivityLabelsOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
@@ -136,6 +137,7 @@ __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedBackupShortTermRetentionPoliciesOperations',
     'ManagedDatabasesOperations',
+    'SensitivityLabelsOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'ServerSecurityAlertPoliciesOperations',
