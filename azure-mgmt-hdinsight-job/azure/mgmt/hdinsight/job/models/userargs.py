@@ -36,8 +36,6 @@ class Userargs(Model):
     :type jar: str
     :param statusdir: The status directory defined by the user.
     :type statusdir: object
-    :param username: The username.
-    :type username: str
     """
 
     _validation = {
@@ -55,7 +53,6 @@ class Userargs(Model):
         'files': {'key': 'files', 'type': 'object'},
         'jar': {'key': 'jar', 'type': 'str'},
         'statusdir': {'key': 'statusdir', 'type': 'object'},
-        'username': {'key': 'user\\.name', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -69,4 +66,3 @@ class Userargs(Model):
         self.files = kwargs.get('files', None)
         self.jar = kwargs.get('jar', None)
         self.statusdir = kwargs.get('statusdir', None)
-        self.username = kwargs.get('username', None)
