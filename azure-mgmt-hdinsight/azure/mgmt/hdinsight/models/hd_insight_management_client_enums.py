@@ -29,6 +29,13 @@ class Tier(str, Enum):
     premium = "Premium"
 
 
+class JsonWebKeyEncryptionAlgorithm(str, Enum):
+
+    rsa_oaep = "RSA-OAEP"
+    rsa_oaep_256 = "RSA-OAEP-256"
+    rsa1_5 = "RSA1_5"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
