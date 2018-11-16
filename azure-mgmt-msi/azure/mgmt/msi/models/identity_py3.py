@@ -35,7 +35,9 @@ class Identity(Model):
      random generated UUID by MSI.
     :vartype client_id: str
     :ivar client_secret_url:  The ManagedServiceIdentity DataPlane URL that
-     can be queried to obtain the identity credentials.
+     can be queried to obtain the identity credentials. If identity is user
+     assigned identity, the value of clientSecretUrl is null. If identity is
+     system assigned or proxy resource, the clientSecretUrl is not null.
     :vartype client_secret_url: str
     :ivar type: The type of resource i.e.
      Microsoft.ManagedIdentity/userAssignedIdentities. Possible values include:
