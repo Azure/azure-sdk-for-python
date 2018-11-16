@@ -12,17 +12,19 @@
 from msrest.serialization import Model
 
 
-class VersionsCapability(Model):
-    """The version capability.
+class AppState(Model):
+    """The State of the application.
 
-    :param available: The list of version capabilities.
-    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    :param state: The State of the application. Possible values are “NEW”,
+     “NEW_SAVING”, “SUBMITTED”, “ACCEPTED”, “RUNNING”, “FINISHED”, “FAILED”,
+     “KILLED”
+    :type state: str
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[VersionSpec]'},
+        'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(VersionsCapability, self).__init__(**kwargs)
-        self.available = kwargs.get('available', None)
+    def __init__(self, *, state: str=None, **kwargs) -> None:
+        super(AppState, self).__init__(**kwargs)
+        self.state = state

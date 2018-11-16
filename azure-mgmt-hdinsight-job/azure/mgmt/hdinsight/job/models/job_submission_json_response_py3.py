@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class VersionsCapability(Model):
-    """The version capability.
+class JobSubmissionJsonResponse(Model):
+    """The job submission json response.
 
-    :param available: The list of version capabilities.
-    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    :param id: The Id of the created job.
+    :type id: str
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[VersionSpec]'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, available=None, **kwargs) -> None:
-        super(VersionsCapability, self).__init__(**kwargs)
-        self.available = available
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(JobSubmissionJsonResponse, self).__init__(**kwargs)
+        self.id = id

@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class VmSizesCapability(Model):
-    """The virtual machine sizes capability.
+class JobSubmissionJsonResponse(Model):
+    """The job submission json response.
 
-    :param available: The list of virtual machine size capabilities.
-    :type available: list[str]
+    :param id: The Id of the created job.
+    :type id: str
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[str]'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, available=None, **kwargs) -> None:
-        super(VmSizesCapability, self).__init__(**kwargs)
-        self.available = available
+    def __init__(self, **kwargs):
+        super(JobSubmissionJsonResponse, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

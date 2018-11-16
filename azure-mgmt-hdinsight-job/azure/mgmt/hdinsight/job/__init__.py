@@ -9,20 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .hd_insight_job_management_client import HDInsightJobManagementClient
+from .version import VERSION
 
+__all__ = ['HDInsightJobManagementClient']
 
-class RegionsCapability(Model):
-    """The regions capability.
+__version__ = VERSION
 
-    :param available: The list of region capabilities.
-    :type available: list[str]
-    """
-
-    _attribute_map = {
-        'available': {'key': 'available', 'type': '[str]'},
-    }
-
-    def __init__(self, *, available=None, **kwargs) -> None:
-        super(RegionsCapability, self).__init__(**kwargs)
-        self.available = available

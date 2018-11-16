@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class VmSizesCapability(Model):
-    """The virtual machine sizes capability.
+class JobListJsonObject(Model):
+    """The List Job operation response.
 
-    :param available: The list of virtual machine size capabilities.
-    :type available: list[str]
+    :param detail: The detail of the job.
+    :type detail: ~azure.mgmt.hdinsight.job.models.JobDetailRootJsonObject
+    :param id: The Id of the job.
+    :type id: str
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[str]'},
+        'detail': {'key': 'detail', 'type': 'JobDetailRootJsonObject'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(VmSizesCapability, self).__init__(**kwargs)
-        self.available = kwargs.get('available', None)
+    def __init__(self, *, detail=None, id: str=None, **kwargs) -> None:
+        super(JobListJsonObject, self).__init__(**kwargs)
+        self.detail = detail
+        self.id = id

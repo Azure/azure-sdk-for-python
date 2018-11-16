@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class QuotaCapability(Model):
-    """The regional quota capability.
+class JobListJsonObject(Model):
+    """The List Job operation response.
 
-    :param regional_quotas: The list of region quota capabilities.
-    :type regional_quotas:
-     list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
+    :param detail: The detail of the job.
+    :type detail: ~azure.mgmt.hdinsight.job.models.JobDetailRootJsonObject
+    :param id: The Id of the job.
+    :type id: str
     """
 
     _attribute_map = {
-        'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
+        'detail': {'key': 'detail', 'type': 'JobDetailRootJsonObject'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, regional_quotas=None, **kwargs) -> None:
-        super(QuotaCapability, self).__init__(**kwargs)
-        self.regional_quotas = regional_quotas
+    def __init__(self, **kwargs):
+        super(JobListJsonObject, self).__init__(**kwargs)
+        self.detail = kwargs.get('detail', None)
+        self.id = kwargs.get('id', None)
