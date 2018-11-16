@@ -12,28 +12,31 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """A Media Services REST API operation.
+class OperationListResult(Model):
+    """Result of the request to list Media Services operations.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
-    :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.media.models.OperationDisplay
+    :ivar value: List of Media Services operations supported by the
+     Microsoft.Media resource provider.
+    :vartype value: list[~azure.mgmt.media.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if
+     there are any.
+    :vartype next_link: str
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
-        self.display = kwargs.get('display', None)
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None

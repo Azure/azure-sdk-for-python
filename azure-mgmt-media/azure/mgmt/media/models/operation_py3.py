@@ -13,34 +13,27 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """An operation.
+    """A Media Services REST API operation.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: Required. The operation name.
-    :type name: str
-    :param display: The operation display name.
+    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :vartype name: str
+    :param display: The object that represents the operation.
     :type display: ~azure.mgmt.media.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Operation properties format.
-    :type properties: ~azure.mgmt.media.models.MetricProperties
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricProperties'},
     }
 
-    def __init__(self, *, name: str, display=None, origin: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
-        self.name = name
+        self.name = None
         self.display = display
-        self.origin = origin
-        self.properties = properties

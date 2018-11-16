@@ -14,19 +14,23 @@ from msrest.exceptions import HttpOperationError
 
 
 class ApiError(Model):
-    """The API error.
+    """The error returned from a failed Media Services REST API call.
 
-    :param error: ApiError. The error properties.
-    :type error: ~azure.mgmt.media.models.ODataError
+    :param code: Error code.
+    :type code: str
+    :param message: Error message.
+    :type message: str
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ODataError'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ApiError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class ApiErrorException(HttpOperationError):

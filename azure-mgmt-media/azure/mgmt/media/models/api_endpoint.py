@@ -12,23 +12,21 @@
 from msrest.serialization import Model
 
 
-class SyncStorageKeysInput(Model):
-    """The request  body for a SyncStorageKeys API.
+class ApiEndpoint(Model):
+    """The properties for a Media Services REST API endpoint.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The id of the storage account resource.
-    :type id: str
+    :param endpoint: The Media Services REST endpoint.
+    :type endpoint: str
+    :param major_version: The version of Media Services REST API.
+    :type major_version: str
     """
 
-    _validation = {
-        'id': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'major_version': {'key': 'majorVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SyncStorageKeysInput, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        super(ApiEndpoint, self).__init__(**kwargs)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.major_version = kwargs.get('major_version', None)
