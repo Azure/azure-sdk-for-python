@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .auto_suggest_search_api import AutoSuggestSearchAPI
+from .auto_suggest_client import AutoSuggestClient
 from .version import VERSION
 
-__all__ = ['AutoSuggestSearchAPI']
+__all__ = ['AutoSuggestClient']
 
 __version__ = VERSION
 
