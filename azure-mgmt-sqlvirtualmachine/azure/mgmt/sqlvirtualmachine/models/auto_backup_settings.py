@@ -20,7 +20,7 @@ class AutoBackupSettings(Model):
     :param enable_encryption: Enable or disable encryption for backup on SQL
      virtual machine.
     :type enable_encryption: bool
-    :param retention_period: Retention period of backup.
+    :param retention_period: Retention period of backup: 1-30 days.
     :type retention_period: int
     :param storage_account_url: Storage account url where backup will be taken
      to.
@@ -37,15 +37,18 @@ class AutoBackupSettings(Model):
      include: 'Manual', 'Automated'
     :type backup_schedule_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.BackupScheduleType
-    :param full_backup_frequency: Full backup frequency. Possible values
+    :param full_backup_frequency: Frequency of full backups. In both cases,
+     full backups begin during the next scheduled time window. Possible values
      include: 'Daily', 'Weekly'
     :type full_backup_frequency: str or
      ~azure.mgmt.sqlvirtualmachine.models.FullBackupFrequencyType
-    :param full_backup_start_time: Full backup startup time.
+    :param full_backup_start_time: Start time of a given day during which full
+     backups can take place. 0-23 hours.
     :type full_backup_start_time: int
-    :param full_backup_window_hours: Full backup window hours.
+    :param full_backup_window_hours: Duration of the time window of a given
+     day during which full backups can take place. 1-23 hours.
     :type full_backup_window_hours: int
-    :param log_backup_frequency: Log backup frequency.
+    :param log_backup_frequency: Frequency of log backups. 5-60 minutes.
     :type log_backup_frequency: int
     """
 
