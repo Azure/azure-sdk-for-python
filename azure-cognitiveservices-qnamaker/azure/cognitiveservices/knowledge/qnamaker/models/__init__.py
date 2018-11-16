@@ -68,7 +68,10 @@ except (SyntaxError, ImportError):
     from .word_alterations_dto import WordAlterationsDTO
     from .endpoint_keys_dto import EndpointKeysDTO
 from .qn_amaker_client_enums import (
-    OperationState,
+    KnowledgebaseEnvironmentType,
+    ErrorCodeType,
+    OperationStateType,
+    EnvironmentType,
 )
 
 __all__ = [
@@ -100,5 +103,8 @@ __all__ = [
     'AlterationsDTO',
     'WordAlterationsDTO',
     'EndpointKeysDTO',
-    'OperationState',
+    'KnowledgebaseEnvironmentType',
+    'ErrorCodeType',
+    'OperationStateType',
+    'EnvironmentType',
 ]

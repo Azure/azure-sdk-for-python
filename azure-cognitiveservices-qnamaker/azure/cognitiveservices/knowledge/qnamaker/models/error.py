@@ -24,7 +24,8 @@ class Error(Model):
      'QuotaExceeded', 'QnaRuntimeError', 'SKULimitExceeded',
      'OperationNotFound', 'ServiceError', 'ValidationFailure',
      'ExtractionFailure'
-    :type code: str or ~azure.cognitiveservices.knowledge.qnamaker.models.enum
+    :type code: str or
+     ~azure.cognitiveservices.knowledge.qnamaker.models.ErrorCodeType
     :param message: A human-readable representation of the error.
     :type message: str
     :param target: The target of the error.

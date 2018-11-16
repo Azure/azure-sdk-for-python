@@ -18,7 +18,7 @@ class Operation(Model):
     :param operation_state: Operation state. Possible values include:
      'Failed', 'NotStarted', 'Running', 'Succeeded'
     :type operation_state: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.models.OperationState
+     ~azure.cognitiveservices.knowledge.qnamaker.models.OperationStateType
     :param created_timestamp: Timestamp when the operation was created.
     :type created_timestamp: str
     :param last_action_timestamp: Timestamp when the current state was
@@ -37,7 +37,7 @@ class Operation(Model):
     """
 
     _attribute_map = {
-        'operation_state': {'key': 'operationState', 'type': 'OperationState'},
+        'operation_state': {'key': 'operationState', 'type': 'str'},
         'created_timestamp': {'key': 'createdTimestamp', 'type': 'str'},
         'last_action_timestamp': {'key': 'lastActionTimestamp', 'type': 'str'},
         'resource_location': {'key': 'resourceLocation', 'type': 'str'},

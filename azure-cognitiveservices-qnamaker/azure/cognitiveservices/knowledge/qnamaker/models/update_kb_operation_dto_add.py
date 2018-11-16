@@ -15,7 +15,7 @@ from .create_kb_input_dto import CreateKbInputDTO
 class UpdateKbOperationDTOAdd(CreateKbInputDTO):
     """An instance of CreateKbInputDTO for add operation.
 
-    :param qna_list: list of QNA to be added to the index. Ids are generated
+    :param qna_list: List of QNA to be added to the index. Ids are generated
      by the service and should be omitted.
     :type qna_list:
      list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]

@@ -12,9 +12,39 @@
 from enum import Enum
 
 
-class OperationState(str, Enum):
+class KnowledgebaseEnvironmentType(str, Enum):
+
+    prod = "Prod"
+    test = "Test"
+
+
+class ErrorCodeType(str, Enum):
+
+    bad_argument = "BadArgument"
+    forbidden = "Forbidden"
+    not_found = "NotFound"
+    kb_not_found = "KbNotFound"
+    unauthorized = "Unauthorized"
+    unspecified = "Unspecified"
+    endpoint_keys_error = "EndpointKeysError"
+    quota_exceeded = "QuotaExceeded"
+    qna_runtime_error = "QnaRuntimeError"
+    sku_limit_exceeded = "SKULimitExceeded"
+    operation_not_found = "OperationNotFound"
+    service_error = "ServiceError"
+    validation_failure = "ValidationFailure"
+    extraction_failure = "ExtractionFailure"
+
+
+class OperationStateType(str, Enum):
 
     failed = "Failed"
     not_started = "NotStarted"
     running = "Running"
     succeeded = "Succeeded"
+
+
+class EnvironmentType(str, Enum):
+
+    prod = "Prod"
+    test = "Test"
