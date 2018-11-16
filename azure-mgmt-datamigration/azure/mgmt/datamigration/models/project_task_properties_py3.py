@@ -48,6 +48,9 @@ class ProjectTaskProperties(Model):
     :ivar commands: Array of command properties.
     :vartype commands:
      list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     """
@@ -63,6 +66,7 @@ class ProjectTaskProperties(Model):
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
         'task_type': {'key': 'taskType', 'type': 'str'},
     }
 
@@ -70,9 +74,10 @@ class ProjectTaskProperties(Model):
         'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties'}
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, client_data=None, **kwargs) -> None:
         super(ProjectTaskProperties, self).__init__(**kwargs)
         self.errors = None
         self.state = None
         self.commands = None
+        self.client_data = client_data
         self.task_type = None

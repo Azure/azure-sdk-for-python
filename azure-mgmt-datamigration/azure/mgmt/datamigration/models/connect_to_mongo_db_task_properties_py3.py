@@ -30,6 +30,9 @@ class ConnectToMongoDbTaskProperties(ProjectTaskProperties):
     :ivar commands: Array of command properties.
     :vartype commands:
      list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     :param input:
@@ -50,13 +53,14 @@ class ConnectToMongoDbTaskProperties(ProjectTaskProperties):
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'input': {'key': 'input', 'type': 'MongoDbConnectionInfo'},
         'output': {'key': 'output', 'type': '[MongoDbClusterInfo]'},
     }
 
-    def __init__(self, *, input=None, **kwargs) -> None:
-        super(ConnectToMongoDbTaskProperties, self).__init__(**kwargs)
+    def __init__(self, *, client_data=None, input=None, **kwargs) -> None:
+        super(ConnectToMongoDbTaskProperties, self).__init__(client_data=client_data, **kwargs)
         self.input = input
         self.output = None
         self.task_type = 'Connect.MongoDb'
