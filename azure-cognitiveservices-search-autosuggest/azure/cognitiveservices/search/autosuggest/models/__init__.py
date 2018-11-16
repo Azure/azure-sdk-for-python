@@ -39,7 +39,7 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .creative_work import CreativeWork
     from .response_base import ResponseBase
-from .auto_suggest_search_api_enums import (
+from .auto_suggest_client_enums import (
     ScenarioType,
     SearchKind,
     ErrorCode,
