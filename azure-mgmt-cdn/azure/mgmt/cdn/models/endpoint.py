@@ -78,7 +78,7 @@ class Endpoint(TrackedResource):
      routes for the CDN. This is relative to the origin path.
     :type probe_path: str
     :param geo_filters: List of rules defining the user's geo access within a
-     CDN endpoint. Each geo filter defines an acess rule to a specified path or
+     CDN endpoint. Each geo filter defines an access rule to a specified path or
      content, e.g. block APAC for path /pictures/
     :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
     :param delivery_policy: A policy that specifies the delivery rules to be
