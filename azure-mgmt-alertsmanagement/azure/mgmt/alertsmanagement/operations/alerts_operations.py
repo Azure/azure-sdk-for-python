@@ -102,7 +102,7 @@ class AlertsOperations(object):
          others. Possible values include: 'asc', 'desc'
         :type sort_order: str
         :param select: This filter allows to selection of the fields(comma
-         seperated) which would  be part of the the essential section. This
+         separated) which would  be part of the the essential section. This
          would allow to project only the  required fields rather than getting
          entire content.  Default is to fetch all the fields in the essentials
          section.
