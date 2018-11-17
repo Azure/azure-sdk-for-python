@@ -65,7 +65,7 @@ class AlertsOperations(object):
          to select all. Possible values include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
@@ -426,7 +426,7 @@ class AlertsOperations(object):
          to select all. Possible values include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
