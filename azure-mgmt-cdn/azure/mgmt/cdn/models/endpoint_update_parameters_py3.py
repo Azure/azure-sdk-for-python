@@ -24,7 +24,7 @@ class EndpointUpdateParameters(Model):
      default.
     :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
-     retreive content from, e.g. contoso.cloudapp.net/originpath.
+     retrieve content from, e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
      compression applies. The value should be a valid MIME type.
