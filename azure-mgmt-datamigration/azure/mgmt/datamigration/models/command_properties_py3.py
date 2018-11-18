@@ -17,7 +17,8 @@ class CommandProperties(Model):
     supported by current client, this object is returned.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MigrateSyncCompleteCommandProperties
+    sub-classes are: MigrateSyncCompleteCommandProperties,
+    MongoDbCancelCommand, MongoDbFinishCommand, MongoDbRestartCommand
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -47,7 +48,7 @@ class CommandProperties(Model):
     }
 
     _subtype_map = {
-        'command_type': {'Migrate.Sync.Complete.Database': 'MigrateSyncCompleteCommandProperties'}
+        'command_type': {'Migrate.Sync.Complete.Database': 'MigrateSyncCompleteCommandProperties', 'cancel': 'MongoDbCancelCommand', 'finish': 'MongoDbFinishCommand', 'restart': 'MongoDbRestartCommand'}
     }
 
     def __init__(self, **kwargs) -> None:

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ListContainerSasInput(Model):
-    """The parameters to the list SAS requet.
+    """The parameters to the list SAS request.
 
     :param permissions: The permissions to set on the SAS URL. Possible values
      include: 'Read', 'ReadWrite', 'ReadWriteDelete'

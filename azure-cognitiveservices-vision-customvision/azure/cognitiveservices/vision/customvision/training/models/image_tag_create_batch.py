@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class ImageTagCreateBatch(Model):
-    """ImageTagCreateBatch.
+    """Batch of image tags.
 
-    :param tags:
+    :param tags: Image Tag entries to include in this batch.
     :type tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateEntry]
     """

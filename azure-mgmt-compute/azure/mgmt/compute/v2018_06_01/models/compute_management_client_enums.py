@@ -19,6 +19,12 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
+class AvailabilitySetSkuTypes(str, Enum):
+
+    classic = "Classic"
+    aligned = "Aligned"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
@@ -215,6 +221,11 @@ class StorageAccountTypes(str, Enum):
     premium_lrs = "Premium_LRS"
     standard_ssd_lrs = "StandardSSD_LRS"
     ultra_ssd_lrs = "UltraSSD_LRS"
+
+
+class DiffDiskOptions(str, Enum):
+
+    local = "Local"
 
 
 class PassNames(str, Enum):

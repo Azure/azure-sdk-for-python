@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_subscription_destination import EventSubscriptionDestination
+from .event_subscription_destination_py3 import EventSubscriptionDestination
 
 
 class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):
