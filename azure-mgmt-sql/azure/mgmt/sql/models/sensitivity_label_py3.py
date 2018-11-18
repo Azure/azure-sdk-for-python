@@ -26,8 +26,12 @@ class SensitivityLabel(ProxyResource):
     :vartype type: str
     :param label_name: The label name.
     :type label_name: str
+    :param label_id: The label ID.
+    :type label_id: str
     :param information_type: The information type.
     :type information_type: str
+    :param information_type_id: The information type ID.
+    :type information_type_id: str
     """
 
     _validation = {
@@ -41,10 +45,14 @@ class SensitivityLabel(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'label_name': {'key': 'properties.labelName', 'type': 'str'},
+        'label_id': {'key': 'properties.labelId', 'type': 'str'},
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
+        'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
     }
 
-    def __init__(self, *, label_name: str=None, information_type: str=None, **kwargs) -> None:
+    def __init__(self, *, label_name: str=None, label_id: str=None, information_type: str=None, information_type_id: str=None, **kwargs) -> None:
         super(SensitivityLabel, self).__init__(**kwargs)
         self.label_name = label_name
+        self.label_id = label_id
         self.information_type = information_type
+        self.information_type_id = information_type_id

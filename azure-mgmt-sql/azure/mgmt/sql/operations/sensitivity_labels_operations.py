@@ -361,7 +361,7 @@ class SensitivityLabelsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}'}
 
     def create_or_update(
-            self, resource_group_name, server_name, database_name, schema_name, table_name, column_name, label_name=None, information_type=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, schema_name, table_name, column_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the sensitivity label of a given column.
 
         :param resource_group_name: The name of the resource group that
@@ -378,10 +378,8 @@ class SensitivityLabelsOperations(object):
         :type table_name: str
         :param column_name: The name of the column.
         :type column_name: str
-        :param label_name: The label name.
-        :type label_name: str
-        :param information_type: The information type.
-        :type information_type: str
+        :param parameters: The column sensitivity label resource.
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -392,8 +390,6 @@ class SensitivityLabelsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.SensitivityLabel(label_name=label_name, information_type=information_type)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
