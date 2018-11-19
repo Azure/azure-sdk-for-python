@@ -66,7 +66,6 @@ from .operations.long_term_retention_backups_operations import LongTermRetention
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .operations.managed_databases_operations import ManagedDatabasesOperations
-from .operations.sensitivity_labels_operations import SensitivityLabelsOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
@@ -234,8 +233,6 @@ class SqlManagementClient(SDKClient):
     :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
-    :ivar sensitivity_labels: SensitivityLabels operations
-    :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -399,8 +396,6 @@ class SqlManagementClient(SDKClient):
         self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.sensitivity_labels = SensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
