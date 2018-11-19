@@ -22,6 +22,8 @@ class DeploymentExtended(Model):
     :vartype id: str
     :ivar name: The name of the deployment.
     :vartype name: str
+    :ivar type: The type of the deployment.
+    :vartype type: str
     :param location: the location of the deployment.
     :type location: str
     :param properties: Deployment properties.
@@ -32,11 +34,13 @@ class DeploymentExtended(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
@@ -45,5 +49,6 @@ class DeploymentExtended(Model):
         super(DeploymentExtended, self).__init__(**kwargs)
         self.id = None
         self.name = None
+        self.type = None
         self.location = location
         self.properties = properties
