@@ -355,8 +355,8 @@ class AppServiceCertificateOrdersOperations(object):
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order.
         :type certificate_order_name: str
-        :param certificate_distinguished_name: Distinguished name to to use
-         for the certificate order.
+        :param certificate_distinguished_name: Distinguished name to use for
+         the certificate order.
         :type certificate_distinguished_name:
          ~azure.mgmt.web.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
@@ -468,8 +468,8 @@ class AppServiceCertificateOrdersOperations(object):
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order.
         :type certificate_order_name: str
-        :param certificate_distinguished_name: Distinguished name to to use
-         for the certificate order.
+        :param certificate_distinguished_name: Distinguished name to use for
+         the certificate order.
         :type certificate_distinguished_name:
          ~azure.mgmt.web.models.AppServiceCertificateOrderPatchResource
         :param dict custom_headers: headers that will be added to the request
