@@ -37,9 +37,7 @@ class VirtualMachineUpdate(UpdateResource):
     :type storage_profile:
      ~azure.mgmt.compute.v2018_06_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled
-     or disabled on the virtual machine. For instance: whether the virtual
-     machine has the capability to support attaching managed data disks with
-     UltraSSD_LRS storage account type.
+     or disabled on the virtual machine.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2018_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual

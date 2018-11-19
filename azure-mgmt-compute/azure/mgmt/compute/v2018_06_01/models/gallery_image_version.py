@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class GalleryImageVersion(Resource):
-    """Specifies information about the gallery image version that you want to
+    """Specifies information about the gallery Image Version that you want to
     create or update.
 
     Variables are only populated by the server, and will be ignored when
@@ -34,7 +34,7 @@ class GalleryImageVersion(Resource):
     :param publishing_profile: Required.
     :type publishing_profile:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery image version.
+    :ivar provisioning_state: The current state of the gallery Image Version.
      The provisioning state, which only appears in the response. Possible
      values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
      'Migrating'

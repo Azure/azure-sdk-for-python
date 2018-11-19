@@ -32,6 +32,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         livenessprob_period_seconds = 5
         log_analytics_workspace_id = 'workspaceId'
         log_analytics_workspace_key = 'workspaceKey'
+        identity_system_assigned = 'SystemAssigned'
 
         empty_volume = Volume(name='empty-volume', empty_dir={})
         volume_mount = VolumeMount(name='empty-volume', mount_path='/mnt/mydir')
@@ -40,6 +41,9 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
             resource_group.name,
             container_group_name,
             {
+                'identity': {
+                    'type': identity_system_assigned
+                },
                 'location': location,
                 'containers': [{
                     'name': container_group_name,
@@ -76,6 +80,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
 
         self.assertEqual(container_group.name, container_group_name)
         self.assertEqual(container_group.location, location)
+        self.assertEqual(container_group.identity.type, identity_system_assigned)
         self.assertEqual(container_group.os_type, os_type)
         self.assertEqual(container_group.restart_policy, restart_policy)
         self.assertEqual(container_group.diagnostics.log_analytics.workspace_id, log_analytics_workspace_id)

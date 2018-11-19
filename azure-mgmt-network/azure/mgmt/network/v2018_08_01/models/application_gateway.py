@@ -105,6 +105,10 @@ class ApplicationGateway(Resource):
     :param provisioning_state: Provisioning state of the application gateway
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param custom_error_configurations: Custom error configurations of the
+     application gateway resource.
+    :type custom_error_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayCustomError]
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -147,6 +151,7 @@ class ApplicationGateway(Resource):
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -175,5 +180,6 @@ class ApplicationGateway(Resource):
         self.autoscale_configuration = kwargs.get('autoscale_configuration', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.custom_error_configurations = kwargs.get('custom_error_configurations', None)
         self.etag = kwargs.get('etag', None)
         self.zones = kwargs.get('zones', None)

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .input_schema_mapping import InputSchemaMapping
+from .input_schema_mapping_py3 import InputSchemaMapping
 
 
 class JsonInputSchemaMapping(InputSchemaMapping):

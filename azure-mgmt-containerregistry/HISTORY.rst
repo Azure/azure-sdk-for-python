@@ -3,6 +3,19 @@
 Release History
 ===============
 
+2.4.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add context token to task step
+
+2.3.0 (2018-10-17)
+++++++++++++++++++
+
+- Support context path, source location URL, and pull request based triggers for task/run.
+- Allow specifying credentials for source registry on import image.
+
 2.2.0 (2018-09-11)
 ++++++++++++++++++
 
