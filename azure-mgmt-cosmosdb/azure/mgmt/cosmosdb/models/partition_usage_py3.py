@@ -30,7 +30,7 @@ class PartitionUsage(Usage):
     :vartype limit: int
     :ivar current_value: Current value for this metric
     :vartype current_value: int
-    :ivar partition_id: The parition id (GUID identifier) of the usages.
+    :ivar partition_id: The partition id (GUID identifier) of the usages.
     :vartype partition_id: str
     :ivar partition_key_range_id: The partition key range id (integer
      identifier) of the usages.

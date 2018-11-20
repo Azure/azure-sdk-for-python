@@ -198,7 +198,7 @@ class DatabaseOperations(object):
 
     def list_metric_definitions(
             self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
-        """Retrieves metric defintions for the given database.
+        """Retrieves metric definitions for the given database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
