@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
-class ServerSecurityAlertPolicy(ProxyResource):
-    """A server security alert policy.
+class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
+    """A managed database security alert policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -75,13 +75,13 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.disabled_alerts = kwargs.get('disabled_alerts', None)
-        self.email_addresses = kwargs.get('email_addresses', None)
-        self.email_account_admins = kwargs.get('email_account_admins', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
-        self.retention_days = kwargs.get('retention_days', None)
+    def __init__(self, *, state, disabled_alerts=None, email_addresses=None, email_account_admins: bool=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, **kwargs) -> None:
+        super(ManagedDatabaseSecurityAlertPolicy, self).__init__(**kwargs)
+        self.state = state
+        self.disabled_alerts = disabled_alerts
+        self.email_addresses = email_addresses
+        self.email_account_admins = email_account_admins
+        self.storage_endpoint = storage_endpoint
+        self.storage_account_access_key = storage_account_access_key
+        self.retention_days = retention_days
         self.creation_time = None

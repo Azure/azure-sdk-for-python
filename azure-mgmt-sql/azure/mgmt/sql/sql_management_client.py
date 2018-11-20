@@ -70,6 +70,8 @@ from .operations.server_automatic_tuning_operations import ServerAutomaticTuning
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.restore_points_operations import RestorePointsOperations
+from .operations.managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
+from .operations.managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -241,6 +243,10 @@ class SqlManagementClient(SDKClient):
     :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
+    :ivar managed_database_security_alert_policies: ManagedDatabaseSecurityAlertPolicies operations
+    :vartype managed_database_security_alert_policies: azure.mgmt.sql.operations.ManagedDatabaseSecurityAlertPoliciesOperations
+    :ivar managed_server_security_alert_policies: ManagedServerSecurityAlertPolicies operations
+    :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -404,6 +410,10 @@ class SqlManagementClient(SDKClient):
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_security_alert_policies = ManagedDatabaseSecurityAlertPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)

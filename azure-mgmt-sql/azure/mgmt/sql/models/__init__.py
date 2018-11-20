@@ -115,6 +115,8 @@ try:
     from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
+    from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
+    from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -260,6 +262,8 @@ except (SyntaxError, ImportError):
     from .server_security_alert_policy import ServerSecurityAlertPolicy
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
+    from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
+    from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -542,6 +546,8 @@ __all__ = [
     'ServerSecurityAlertPolicy',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
+    'ManagedDatabaseSecurityAlertPolicy',
+    'ManagedServerSecurityAlertPolicy',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
