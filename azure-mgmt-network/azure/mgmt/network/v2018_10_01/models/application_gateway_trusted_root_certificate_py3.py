@@ -19,8 +19,9 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
     :type id: str
     :param data: Certificate public data.
     :type data: str
-    :param keyvault_secret_id: KeyVault Secret Id for certificate.
-    :type keyvault_secret_id: str
+    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
+     'Secret' or 'Certificate' object stored in KeyVault.
+    :type key_vault_secret_id: str
     :param provisioning_state: Provisioning state of the trusted root
      certificate resource. Possible values are: 'Updating', 'Deleting', and
      'Failed'.
@@ -38,17 +39,17 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'data': {'key': 'properties.data', 'type': 'str'},
-        'keyvault_secret_id': {'key': 'properties.keyvaultSecretId', 'type': 'str'},
+        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, data: str=None, keyvault_secret_id: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, data: str=None, key_vault_secret_id: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
         super(ApplicationGatewayTrustedRootCertificate, self).__init__(id=id, **kwargs)
         self.data = data
-        self.keyvault_secret_id = keyvault_secret_id
+        self.key_vault_secret_id = key_vault_secret_id
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

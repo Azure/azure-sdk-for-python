@@ -71,6 +71,8 @@ try:
     from .application_gateway_firewall_exclusion_py3 import ApplicationGatewayFirewallExclusion
     from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
     from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
+    from .managed_service_identity_user_assigned_identities_value_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from .managed_service_identity_py3 import ManagedServiceIdentity
     from .application_gateway_py3 import ApplicationGateway
     from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group_py3 import ApplicationGatewayFirewallRuleGroup
@@ -349,6 +351,8 @@ except (SyntaxError, ImportError):
     from .application_gateway_firewall_exclusion import ApplicationGatewayFirewallExclusion
     from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
     from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
+    from .managed_service_identity_user_assigned_identities_value import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from .managed_service_identity import ManagedServiceIdentity
     from .application_gateway import ApplicationGateway
     from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
     from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
@@ -650,6 +654,7 @@ from .network_management_client_enums import (
     ApplicationGatewayRedirectType,
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
+    ResourceIdentityType,
     ProvisioningState,
     AzureFirewallRCActionType,
     AzureFirewallApplicationRuleProtocolType,
@@ -782,6 +787,8 @@ __all__ = [
     'ApplicationGatewayFirewallExclusion',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGatewayAutoscaleConfiguration',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
+    'ManagedServiceIdentity',
     'ApplicationGateway',
     'ApplicationGatewayFirewallRule',
     'ApplicationGatewayFirewallRuleGroup',
@@ -1082,6 +1089,7 @@ __all__ = [
     'ApplicationGatewayRedirectType',
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
+    'ResourceIdentityType',
     'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
