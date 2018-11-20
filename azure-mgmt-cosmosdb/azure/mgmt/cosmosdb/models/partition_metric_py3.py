@@ -34,7 +34,7 @@ class PartitionMetric(Metric):
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values: list[~azure.mgmt.cosmosdb.models.MetricValue]
-    :ivar partition_id: The parition id (GUID identifier) of the metric
+    :ivar partition_id: The partition id (GUID identifier) of the metric
      values.
     :vartype partition_id: str
     :ivar partition_key_range_id: The partition key range id (integer
