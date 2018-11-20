@@ -18,16 +18,14 @@ class SubscriptionCreationParameters(Model):
 
     :param display_name: The display name of the subscription.
     :type display_name: str
-    :param owners: The list of principals that should be granted Owner access
-     on the subscription. Principals should be of type User, Service Principal
-     or Security Group.
-    :type owners: list[~azure.mgmt.subscription.models.AdPrincipal]
-    :param offer_type: The offer type of the subscription. For example,
-     MS-AZR-0017P (EnterpriseAgreement) and MS-AZR-0148P (EnterpriseAgreement
-     devTest) are available. Only valid when creating a subscription in a
-     enrollment account scope. Possible values include: 'MS-AZR-0017P',
-     'MS-AZR-0148P'
-    :type offer_type: str or ~azure.mgmt.subscription.models.OfferType
+    :param billing_profile_id: The ARM id of the billing profile.
+    :type billing_profile_id: str
+    :param sku_id: The commerce id of the sku.
+    :type sku_id: str
+    :param cost_center: optional customer cost center
+    :type cost_center: str
+    :param owner: rbac owner of the subscription
+    :type owner: ~azure.mgmt.subscription.models.AdPrincipal
     :param additional_parameters: Additional, untyped parameters to support
      custom subscription creation scenarios.
     :type additional_parameters: dict[str, object]
@@ -35,14 +33,18 @@ class SubscriptionCreationParameters(Model):
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
-        'offer_type': {'key': 'offerType', 'type': 'str'},
+        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
+        'cost_center': {'key': 'costCenter', 'type': 'str'},
+        'owner': {'key': 'owner', 'type': 'AdPrincipal'},
         'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
     }
 
-    def __init__(self, *, display_name: str=None, owners=None, offer_type=None, additional_parameters=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, sku_id: str=None, cost_center: str=None, owner=None, additional_parameters=None, **kwargs) -> None:
         super(SubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = display_name
-        self.owners = owners
-        self.offer_type = offer_type
+        self.billing_profile_id = billing_profile_id
+        self.sku_id = sku_id
+        self.cost_center = cost_center
+        self.owner = owner
         self.additional_parameters = additional_parameters

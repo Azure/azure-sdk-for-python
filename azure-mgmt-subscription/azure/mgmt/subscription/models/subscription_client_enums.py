@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class OfferType(str, Enum):
-
-    ms_azr_0017_p = "MS-AZR-0017P"
-    ms_azr_0148_p = "MS-AZR-0148P"
-
-
 class SubscriptionState(str, Enum):
 
     enabled = "Enabled"
