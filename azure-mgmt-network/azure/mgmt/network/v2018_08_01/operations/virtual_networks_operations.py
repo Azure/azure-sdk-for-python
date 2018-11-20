@@ -522,15 +522,15 @@ class VirtualNetworksOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks'}
 
     def check_ip_address_availability(
-            self, ip_address, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_name, ip_address, custom_headers=None, raw=False, **operation_config):
         """Checks whether a private IP address is available for use.
 
-        :param ip_address: The private IP address to be verified.
-        :type ip_address: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network.
         :type virtual_network_name: str
+        :param ip_address: The private IP address to be verified.
+        :type ip_address: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
