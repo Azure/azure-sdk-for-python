@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class VolumeList(Model):
-    """List of volume resources.
-
-    :param value: List of volumes
-    :type value: list[~azure.mgmt.netapp.models.Volume]
+class MountTargetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MountTarget <azure.mgmt.netapp.models.MountTarget>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Volume]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MountTarget]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(VolumeList, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(MountTargetPaged, self).__init__(*args, **kwargs)

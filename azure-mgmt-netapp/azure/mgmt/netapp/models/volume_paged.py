@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class CapacityPoolList(Model):
-    """List of capacity pool resources.
-
-    :param value: List of Capacity pools
-    :type value: list[~azure.mgmt.netapp.models.CapacityPool]
+class VolumePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Volume <azure.mgmt.netapp.models.Volume>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CapacityPool]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Volume]'}
     }
 
-    def __init__(self, **kwargs):
-        super(CapacityPoolList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(VolumePaged, self).__init__(*args, **kwargs)
