@@ -115,7 +115,7 @@ class CustomDomainsOperations(object):
 
     def get(
             self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an exisitng custom domain within an endpoint.
+        """Gets an existing custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.

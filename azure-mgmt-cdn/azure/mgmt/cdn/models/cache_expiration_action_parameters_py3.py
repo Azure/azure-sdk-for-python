@@ -30,7 +30,7 @@ class CacheExpirationActionParameters(Model):
     :ivar cache_type: Required. The level at which the content needs to be
      cached. Default value: "All" .
     :vartype cache_type: str
-    :param cache_duration: The duration for which the the content needs to be
+    :param cache_duration: The duration for which the content needs to be
      cached. Allowed format is [d.]hh:mm:ss
     :type cache_duration: str
     """
