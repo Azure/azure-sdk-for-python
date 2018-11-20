@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SnapshotsList(Model):
-    """List of Snapshots.
-
-    :param value: A list of Snapshots
-    :type value: list[~azure.mgmt.netapp.models.Snapshot]
+class NetAppAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NetAppAccount <azure.mgmt.netapp.models.NetAppAccount>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Snapshot]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetAppAccount]'}
     }
 
-    def __init__(self, **kwargs):
-        super(SnapshotsList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(NetAppAccountPaged, self).__init__(*args, **kwargs)

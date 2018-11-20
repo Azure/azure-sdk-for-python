@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MountTargetList(Model):
-    """List of Mount Targets.
-
-    :param value: A list of Mount targets
-    :type value: list[~azure.mgmt.netapp.models.MountTarget]
+class CapacityPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CapacityPool <azure.mgmt.netapp.models.CapacityPool>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MountTarget]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CapacityPool]'}
     }
 
-    def __init__(self, **kwargs):
-        super(MountTargetList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(CapacityPoolPaged, self).__init__(*args, **kwargs)
