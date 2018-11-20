@@ -21,7 +21,7 @@ class BackendServiceFabricClusterProperties(Model):
      thumbprint for the management endpoint.
     :type client_certificatethumbprint: str
     :param max_partition_resolution_retries: Maximum number of retries while
-     attempting resolve the parition.
+     attempting resolve the partition.
     :type max_partition_resolution_retries: int
     :param management_endpoints: Required. The cluster management endpoint.
     :type management_endpoints: list[str]
