@@ -119,6 +119,9 @@ class ApplicationGateway(Resource):
     :param zones: A list of availability zones denoting where the resource
      needs to come from.
     :type zones: list[str]
+    :param identity: The identity of the application gateway, if configured.
+    :type identity:
+     ~azure.mgmt.network.v2018_10_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -159,6 +162,7 @@ class ApplicationGateway(Resource):
         'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -189,3 +193,4 @@ class ApplicationGateway(Resource):
         self.custom_error_configurations = kwargs.get('custom_error_configurations', None)
         self.etag = kwargs.get('etag', None)
         self.zones = kwargs.get('zones', None)
+        self.identity = kwargs.get('identity', None)

@@ -188,6 +188,14 @@ class ApplicationGatewayFirewallMode(str, Enum):
     prevention = "Prevention"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
 class ProvisioningState(str, Enum):
 
     succeeded = "Succeeded"

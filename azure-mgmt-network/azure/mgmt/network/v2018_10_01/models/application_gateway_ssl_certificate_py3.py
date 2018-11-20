@@ -26,6 +26,9 @@ class ApplicationGatewaySslCertificate(SubResource):
     :param public_cert_data: Base-64 encoded Public cert data corresponding to
      pfx specified in data. Only applicable in GET request.
     :type public_cert_data: str
+    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
+     'Secret' or 'Certificate' object stored in KeyVault.
+    :type key_vault_secret_id: str
     :param provisioning_state: Provisioning state of the SSL certificate
      resource Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -44,17 +47,19 @@ class ApplicationGatewaySslCertificate(SubResource):
         'data': {'key': 'properties.data', 'type': 'str'},
         'password': {'key': 'properties.password', 'type': 'str'},
         'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
+        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, data: str=None, password: str=None, public_cert_data: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, data: str=None, password: str=None, public_cert_data: str=None, key_vault_secret_id: str=None, provisioning_state: str=None, name: str=None, etag: str=None, type: str=None, **kwargs) -> None:
         super(ApplicationGatewaySslCertificate, self).__init__(id=id, **kwargs)
         self.data = data
         self.password = password
         self.public_cert_data = public_cert_data
+        self.key_vault_secret_id = key_vault_secret_id
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

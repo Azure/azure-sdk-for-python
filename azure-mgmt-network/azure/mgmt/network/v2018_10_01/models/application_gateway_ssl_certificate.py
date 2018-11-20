@@ -26,6 +26,9 @@ class ApplicationGatewaySslCertificate(SubResource):
     :param public_cert_data: Base-64 encoded Public cert data corresponding to
      pfx specified in data. Only applicable in GET request.
     :type public_cert_data: str
+    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
+     'Secret' or 'Certificate' object stored in KeyVault.
+    :type key_vault_secret_id: str
     :param provisioning_state: Provisioning state of the SSL certificate
      resource Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -44,6 +47,7 @@ class ApplicationGatewaySslCertificate(SubResource):
         'data': {'key': 'properties.data', 'type': 'str'},
         'password': {'key': 'properties.password', 'type': 'str'},
         'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
+        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -55,6 +59,7 @@ class ApplicationGatewaySslCertificate(SubResource):
         self.data = kwargs.get('data', None)
         self.password = kwargs.get('password', None)
         self.public_cert_data = kwargs.get('public_cert_data', None)
+        self.key_vault_secret_id = kwargs.get('key_vault_secret_id', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
