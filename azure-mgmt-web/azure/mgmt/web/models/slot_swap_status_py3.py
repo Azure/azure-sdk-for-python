@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SlotSwapStatus(Model):
-    """The status of the last successfull slot swap operation.
+    """The status of the last successful slot swap operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
