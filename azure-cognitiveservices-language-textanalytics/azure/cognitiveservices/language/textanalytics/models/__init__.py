@@ -24,10 +24,10 @@ try:
     from .language_batch_result_py3 import LanguageBatchResult
     from .sentiment_batch_result_item_py3 import SentimentBatchResultItem
     from .sentiment_batch_result_py3 import SentimentBatchResult
-    from .match_record_py3 import MatchRecord
-    from .entity_record_py3 import EntityRecord
-    from .entities_batch_result_item_py3 import EntitiesBatchResultItem
-    from .entities_batch_result_py3 import EntitiesBatchResult
+    from .match_record_v2dot1_py3 import MatchRecordV2dot1
+    from .entity_record_v2dot1_py3 import EntityRecordV2dot1
+    from .entities_batch_result_item_v2dot1_py3 import EntitiesBatchResultItemV2dot1
+    from .entities_batch_result_v2dot1_py3 import EntitiesBatchResultV2dot1
 except (SyntaxError, ImportError):
     from .multi_language_input import MultiLanguageInput
     from .multi_language_batch_input import MultiLanguageBatchInput
@@ -43,10 +43,10 @@ except (SyntaxError, ImportError):
     from .language_batch_result import LanguageBatchResult
     from .sentiment_batch_result_item import SentimentBatchResultItem
     from .sentiment_batch_result import SentimentBatchResult
-    from .match_record import MatchRecord
-    from .entity_record import EntityRecord
-    from .entities_batch_result_item import EntitiesBatchResultItem
-    from .entities_batch_result import EntitiesBatchResult
+    from .match_record_v2dot1 import MatchRecordV2dot1
+    from .entity_record_v2dot1 import EntityRecordV2dot1
+    from .entities_batch_result_item_v2dot1 import EntitiesBatchResultItemV2dot1
+    from .entities_batch_result_v2dot1 import EntitiesBatchResultV2dot1
 
 __all__ = [
     'MultiLanguageInput',
@@ -63,8 +63,8 @@ __all__ = [
     'LanguageBatchResult',
     'SentimentBatchResultItem',
     'SentimentBatchResult',
-    'MatchRecord',
-    'EntityRecord',
-    'EntitiesBatchResultItem',
-    'EntitiesBatchResult',
+    'MatchRecordV2dot1',
+    'EntityRecordV2dot1',
+    'EntitiesBatchResultItemV2dot1',
+    'EntitiesBatchResultV2dot1',
 ]
