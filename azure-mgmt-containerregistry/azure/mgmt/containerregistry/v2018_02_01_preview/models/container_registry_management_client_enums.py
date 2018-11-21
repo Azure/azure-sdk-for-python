@@ -44,6 +44,12 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
