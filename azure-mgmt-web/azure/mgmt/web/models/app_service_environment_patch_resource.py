@@ -13,7 +13,7 @@ from .proxy_only_resource import ProxyOnlyResource
 
 
 class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
-    """ARM resource for a app service enviroment.
+    """ARM resource for a app service environment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
