@@ -33,7 +33,8 @@ class SkuInformation(Model):
     :ivar api_versions: Api versions that support this Sku.
     :vartype api_versions: list[str]
     :ivar disabled_reason: Reason why the Sku is disabled. Possible values
-     include: 'None', 'Country', 'Region', 'Feature', 'OfferType'
+     include: 'None', 'Country', 'Region', 'Feature', 'OfferType',
+     'NoSubscriptionInfo'
     :vartype disabled_reason: str or
      ~azure.mgmt.databox.models.SkuDisabledReason
     :ivar disabled_reason_message: Message for why the Sku is disabled.

@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .destination_account_details_py3 import DestinationAccountDetails
 
 
-class DestinationAccountDetails(Model):
-    """Details of the destination of the data.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DestinationManagedDiskDetails,
-    DestinationStorageAccountDetails
+class DestinationStorageAccountDetails(DestinationAccountDetails):
+    """Details for the destination storage account.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,22 +22,22 @@ class DestinationAccountDetails(Model):
     :type account_id: str
     :param data_destination_type: Required. Constant filled by server.
     :type data_destination_type: str
+    :param storage_account_id: Required. Destination Storage Account Arm Id.
+    :type storage_account_id: str
     """
 
     _validation = {
         'data_destination_type': {'required': True},
+        'storage_account_id': {'required': True},
     }
 
     _attribute_map = {
         'account_id': {'key': 'accountId', 'type': 'str'},
         'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
+        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'data_destination_type': {'ManagedDisk': 'DestinationManagedDiskDetails', 'StorageAccount': 'DestinationStorageAccountDetails'}
-    }
-
-    def __init__(self, *, account_id: str=None, **kwargs) -> None:
-        super(DestinationAccountDetails, self).__init__(**kwargs)
-        self.account_id = account_id
-        self.data_destination_type = None
+    def __init__(self, *, storage_account_id: str, account_id: str=None, **kwargs) -> None:
+        super(DestinationStorageAccountDetails, self).__init__(account_id=account_id, **kwargs)
+        self.storage_account_id = storage_account_id
+        self.data_destination_type = 'StorageAccount'

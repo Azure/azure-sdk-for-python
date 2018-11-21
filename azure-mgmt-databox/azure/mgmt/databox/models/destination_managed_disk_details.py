@@ -9,15 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .destination_account_details import DestinationAccountDetails
 
 
-class DestinationAccountDetails(Model):
-    """Details of the destination of the data.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DestinationManagedDiskDetails,
-    DestinationStorageAccountDetails
+class DestinationManagedDiskDetails(DestinationAccountDetails):
+    """Details for the destination compute disks.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,22 +22,29 @@ class DestinationAccountDetails(Model):
     :type account_id: str
     :param data_destination_type: Required. Constant filled by server.
     :type data_destination_type: str
+    :param resource_group_id: Required. Destination Resource Group Id where
+     the Compute disks should be created.
+    :type resource_group_id: str
+    :param staging_storage_account_id: Required. Arm Id of the storage account
+     that can be used to copy the vhd for staging.
+    :type staging_storage_account_id: str
     """
 
     _validation = {
         'data_destination_type': {'required': True},
+        'resource_group_id': {'required': True},
+        'staging_storage_account_id': {'required': True},
     }
 
     _attribute_map = {
         'account_id': {'key': 'accountId', 'type': 'str'},
         'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'data_destination_type': {'ManagedDisk': 'DestinationManagedDiskDetails', 'StorageAccount': 'DestinationStorageAccountDetails'}
+        'resource_group_id': {'key': 'resourceGroupId', 'type': 'str'},
+        'staging_storage_account_id': {'key': 'stagingStorageAccountId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(DestinationAccountDetails, self).__init__(**kwargs)
-        self.account_id = kwargs.get('account_id', None)
-        self.data_destination_type = None
+        super(DestinationManagedDiskDetails, self).__init__(**kwargs)
+        self.resource_group_id = kwargs.get('resource_group_id', None)
+        self.staging_storage_account_id = kwargs.get('staging_storage_account_id', None)
+        self.data_destination_type = 'ManagedDisk'

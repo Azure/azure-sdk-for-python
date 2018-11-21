@@ -41,6 +41,8 @@ try:
     from .data_box_secret_py3 import DataBoxSecret
     from .databox_job_secrets_py3 import DataboxJobSecrets
     from .destination_account_details_py3 import DestinationAccountDetails
+    from .destination_managed_disk_details_py3 import DestinationManagedDiskDetails
+    from .destination_storage_account_details_py3 import DestinationStorageAccountDetails
     from .error_py3 import Error
     from .job_error_details_py3 import JobErrorDetails
     from .job_stages_py3 import JobStages
@@ -90,6 +92,8 @@ except (SyntaxError, ImportError):
     from .data_box_secret import DataBoxSecret
     from .databox_job_secrets import DataboxJobSecrets
     from .destination_account_details import DestinationAccountDetails
+    from .destination_managed_disk_details import DestinationManagedDiskDetails
+    from .destination_storage_account_details import DestinationStorageAccountDetails
     from .error import Error
     from .job_error_details import JobErrorDetails
     from .job_stages import JobStages
@@ -156,6 +160,8 @@ __all__ = [
     'DataBoxSecret',
     'DataboxJobSecrets',
     'DestinationAccountDetails',
+    'DestinationManagedDiskDetails',
+    'DestinationStorageAccountDetails',
     'Error',
     'JobErrorDetails',
     'JobStages',
