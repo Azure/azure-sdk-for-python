@@ -12,30 +12,31 @@
 from msrest.serialization import Model
 
 
-class EntitiesBatchResultItem(Model):
-    """EntitiesBatchResultItem.
+class EntitiesBatchResultV2dot1(Model):
+    """EntitiesBatchResultV2dot1.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Unique document identifier.
-    :vartype id: str
-    :ivar entities: Recognized entities in the document.
-    :vartype entities:
-     list[~azure.cognitiveservices.language.textanalytics.models.EntityRecord]
+    :ivar documents:
+    :vartype documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResultItemV2dot1]
+    :ivar errors:
+    :vartype errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.ErrorRecord]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'entities': {'readonly': True},
+        'documents': {'readonly': True},
+        'errors': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'entities': {'key': 'entities', 'type': '[EntityRecord]'},
+        'documents': {'key': 'documents', 'type': '[EntitiesBatchResultItemV2dot1]'},
+        'errors': {'key': 'errors', 'type': '[ErrorRecord]'},
     }
 
     def __init__(self, **kwargs):
-        super(EntitiesBatchResultItem, self).__init__(**kwargs)
-        self.id = None
-        self.entities = None
+        super(EntitiesBatchResultV2dot1, self).__init__(**kwargs)
+        self.documents = None
+        self.errors = None

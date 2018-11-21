@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class MatchRecord(Model):
-    """MatchRecord.
+class MatchRecordV2dot1(Model):
+    """MatchRecordV2dot1.
 
     :param text: Entity text as appears in the request.
     :type text: str
@@ -30,8 +30,8 @@ class MatchRecord(Model):
         'length': {'key': 'length', 'type': 'int'},
     }
 
-    def __init__(self, *, text: str=None, offset: int=None, length: int=None, **kwargs) -> None:
-        super(MatchRecord, self).__init__(**kwargs)
-        self.text = text
-        self.offset = offset
-        self.length = length
+    def __init__(self, **kwargs):
+        super(MatchRecordV2dot1, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
