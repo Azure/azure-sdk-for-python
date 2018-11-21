@@ -16,8 +16,8 @@ class NetworkRuleSet(Model):
     """The network rule set for a container registry.
 
     :param default_action: The default action of allow or deny when no other
-     rules match. Possible values include: 'Allow', 'Deny'. Default value: "0"
-     .
+     rules match. Possible values include: 'Allow', 'Deny'. Default value:
+     "Allow" .
     :type default_action: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules
@@ -32,5 +32,5 @@ class NetworkRuleSet(Model):
 
     def __init__(self, **kwargs):
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.default_action = kwargs.get('default_action', "0")
+        self.default_action = kwargs.get('default_action', "Allow")
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
