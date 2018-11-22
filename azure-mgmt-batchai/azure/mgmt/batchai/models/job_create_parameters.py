@@ -26,8 +26,9 @@ class JobCreateParameters(Model):
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
     :param mount_volumes: Mount volumes. Information on mount volumes to be
      used by the job. These volumes will be mounted before the job execution
-     and will be unmouted after the job completion. The volumes will be mounted
-     at location specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
+     and will be unmounted after the job completion. The volumes will be
+     mounted at location specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment
+     variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
     :param node_count: Required. Node count. Number of compute nodes to run
      the job on. The job will be gang scheduled on that many compute nodes.

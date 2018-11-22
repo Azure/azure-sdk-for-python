@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UnmanagedFileSystemReference(Model):
-    """Unmananged file system mounting configuration.
+    """Unmanaged file system mounting configuration.
 
     All required parameters must be populated in order to send to Azure.
 

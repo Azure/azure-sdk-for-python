@@ -18,7 +18,7 @@ class OutputDirectory(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param id: Required. ID. The ID of the output directory. The job can use
-     AZ_BATCHAI_OUTPUT_<id> environment variale to find the directory path,
+     AZ_BATCHAI_OUTPUT_<id> environment variable to find the directory path,
      where <id> is the value of id attribute.
     :type id: str
     :param path_prefix: Required. Path prefix. The prefix path where the
