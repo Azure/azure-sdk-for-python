@@ -29,7 +29,7 @@ class StreamingLocatorContentKey(Model):
     :param label_reference_in_streaming_policy: Label of Content Key as
      specified in the Streaming Policy
     :type label_reference_in_streaming_policy: str
-    :param value: Value of  of Content Key
+    :param value: Value of Content Key
     :type value: str
     :ivar policy_name: ContentKeyPolicy used by Content Key
     :vartype policy_name: str
