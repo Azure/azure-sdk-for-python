@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from .operations.endpoint_operations import EndpointOperations
+from .operations.endpoint_keys_operations import EndpointKeysOperations
 from .operations.alterations_operations import AlterationsOperations
 from .operations.knowledgebase_operations import KnowledgebaseOperations
 from .operations.operations import Operations
@@ -55,8 +55,8 @@ class QnAMakerClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: QnAMakerClientConfiguration
 
-    :ivar endpoint: Endpoint operations
-    :vartype endpoint: azure.cognitiveservices.knowledge.qnamaker.operations.EndpointOperations
+    :ivar endpoint_keys: EndpointKeys operations
+    :vartype endpoint_keys: azure.cognitiveservices.knowledge.qnamaker.operations.EndpointKeysOperations
     :ivar alterations: Alterations operations
     :vartype alterations: azure.cognitiveservices.knowledge.qnamaker.operations.AlterationsOperations
     :ivar knowledgebase: Knowledgebase operations
@@ -83,7 +83,7 @@ class QnAMakerClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.endpoint = EndpointOperations(
+        self.endpoint_keys = EndpointKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alterations = AlterationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
