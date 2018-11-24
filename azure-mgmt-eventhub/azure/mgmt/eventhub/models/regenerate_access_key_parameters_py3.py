@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class RegenerateAccessKeyParameters(Model):
     """Parameters supplied to the Regenerate Authorization Rule operation,
-    specifies which key neeeds to be reset.
+    specifies which key needs to be reset.
 
     All required parameters must be populated in order to send to Azure.
 

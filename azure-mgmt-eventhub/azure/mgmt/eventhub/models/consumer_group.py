@@ -28,7 +28,7 @@ class ConsumerGroup(Resource):
     :vartype created_at: datetime
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: datetime
-    :param user_metadata: Usermetadata is a placeholder to store user-defined
+    :param user_metadata: User Metadata is a placeholder to store user-defined
      string data with maximum length 1024. e.g. it can be used to store
      descriptive data, such as list of teams and their contact information also
      user-defined configuration settings can be stored.

@@ -50,7 +50,7 @@ class ConsumerGroupsOperations(object):
         :type event_hub_name: str
         :param consumer_group_name: The consumer group name
         :type consumer_group_name: str
-        :param user_metadata: Usermetadata is a placeholder to store
+        :param user_metadata: User Metadata is a placeholder to store
          user-defined string data with maximum length 1024. e.g. it can be used
          to store descriptive data, such as list of teams and their contact
          information also user-defined configuration settings can be stored.
