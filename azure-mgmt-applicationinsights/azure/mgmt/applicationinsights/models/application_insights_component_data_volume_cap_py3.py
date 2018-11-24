@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ApplicationInsightsComponentDataVolumeCap(Model):
-    """An Application Insights component daily data volumne cap.
+    """An Application Insights component daily data volume cap.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

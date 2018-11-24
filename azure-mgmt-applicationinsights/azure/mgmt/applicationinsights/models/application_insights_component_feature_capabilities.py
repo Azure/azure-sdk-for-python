@@ -44,7 +44,7 @@ class ApplicationInsightsComponentFeatureCapabilities(Model):
     :vartype multiple_step_web_test: bool
     :ivar api_access_level: Reserved, not used now.
     :vartype api_access_level: str
-    :ivar tracking_type: The applciation insights component used tracking
+    :ivar tracking_type: The application insights component used tracking
      type.
     :vartype tracking_type: str
     :ivar daily_cap: Daily data volume cap in GB.

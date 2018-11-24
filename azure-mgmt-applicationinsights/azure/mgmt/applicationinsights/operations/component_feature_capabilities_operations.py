@@ -39,7 +39,7 @@ class ComponentFeatureCapabilitiesOperations(object):
 
     def get(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Returns feature capabilites of the application insights component.
+        """Returns feature capabilities of the application insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
