@@ -33,7 +33,7 @@ class Job(ProxyResource):
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
     :param mount_volumes: Mount volumes. Collection of mount volumes available
      to the job during execution. These volumes are mounted before the job
-     execution and unmouted after the job completion. The volumes are mounted
+     execution and unmounted after the job completion. The volumes are mounted
      at location specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
     :param node_count: Number of compute nodes to run the job on. The job will
@@ -120,7 +120,7 @@ class Job(ProxyResource):
      up container specified on the job - it does not necessarily mean that the
      job command line has started executing. terminating - The job is
      terminated by the user, the terminate operation is in progress. succeeded
-     - The job has completed running succesfully and exited with exit code 0.
+     - The job has completed running successfully and exited with exit code 0.
      failed - The job has finished unsuccessfully (failed with a non-zero exit
      code) and has exhausted its retry limit. A job is also marked as failed if
      an error occurred launching the job. Possible values include: 'queued',
