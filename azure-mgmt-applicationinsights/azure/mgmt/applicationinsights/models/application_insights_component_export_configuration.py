@@ -19,7 +19,7 @@ class ApplicationInsightsComponentExportConfiguration(Model):
     sending a request.
 
     :ivar export_id: The unique ID of the export configuration inside an
-     Applciation Insights component. It is auto generated when the Continuous
+     Application Insights component. It is auto generated when the Continuous
      Export configuration is created.
     :vartype export_id: str
     :ivar instrumentation_key: The instrumentation key of the Application
@@ -119,11 +119,11 @@ class ApplicationInsightsComponentExportConfiguration(Model):
         'container_name': {'key': 'ContainerName', 'type': 'str'},
     }
 
-    def __init__(self, record_types=None, notification_queue_enabled=None):
-        super(ApplicationInsightsComponentExportConfiguration, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentExportConfiguration, self).__init__(**kwargs)
         self.export_id = None
         self.instrumentation_key = None
-        self.record_types = record_types
+        self.record_types = kwargs.get('record_types', None)
         self.application_name = None
         self.subscription_id = None
         self.resource_group = None
@@ -133,7 +133,7 @@ class ApplicationInsightsComponentExportConfiguration(Model):
         self.destination_type = None
         self.is_user_enabled = None
         self.last_user_update = None
-        self.notification_queue_enabled = notification_queue_enabled
+        self.notification_queue_enabled = kwargs.get('notification_queue_enabled', None)
         self.export_status = None
         self.last_success_time = None
         self.last_gap_time = None
