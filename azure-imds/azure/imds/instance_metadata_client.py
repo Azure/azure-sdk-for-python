@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 from . import models
 
@@ -36,7 +35,7 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'https://169.254.169.254/metadata'
+            base_url = 'http://169.254.169.254/metadata'
 
         super(InstanceMetadataClientConfiguration, self).__init__(base_url)
 
@@ -81,9 +80,11 @@ class InstanceMetadataClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: Instance or ClientRawResponse if raw=true
+        :rtype: ~azure.imds.models.Instance or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
         """
         metadata = "true"
 
@@ -109,29 +110,13 @@ class InstanceMetadataClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 403, 404, 405, 429, 500, 503]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('Instance', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 405:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 503:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -153,9 +138,11 @@ class InstanceMetadataClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: Attested or ClientRawResponse if raw=true
+        :rtype: ~azure.imds.models.Attested or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
         """
         metadata = "true"
 
@@ -183,29 +170,13 @@ class InstanceMetadataClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 403, 404, 405, 429, 500, 503]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('Attested', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 405:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 503:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -250,9 +221,11 @@ class InstanceMetadataClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: TokenResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.imds.models.TokenResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
         """
         metadata = "true"
 
@@ -289,25 +262,13 @@ class InstanceMetadataClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404, 405, 429, 500]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('TokenResponse', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 405:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -328,9 +289,11 @@ class InstanceMetadataClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: InfoResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.imds.models.InfoResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
         """
         metadata = "true"
 
@@ -356,25 +319,13 @@ class InstanceMetadataClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404, 405, 429, 500]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('InfoResponse', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 405:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -10,26 +10,36 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """ErrorResponse.
+    """Describes the format of Error response.
 
-    :param error: Error code. Possible values include: 'invalid_request',
-     'unauthorize_client', 'access_denied', 'unsupported_response_type',
-     'invalid_scope', 'server_error', 'service_unavailable', 'bad_request',
-     'forbidden', 'not_found', 'method_not_allowed', 'too_many_requests'
-    :type error: str or ~azure.imds.models.enum
-    :param error_description: Error description
-    :type error_description: str
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'str'},
-        'error_description': {'key': 'error_description', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-        self.error_description = kwargs.get('error_description', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

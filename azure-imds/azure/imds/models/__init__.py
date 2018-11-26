@@ -22,7 +22,7 @@ try:
     from .network_py3 import Network
     from .instance_py3 import Instance
     from .attested_py3 import Attested
-    from .error_response_py3 import ErrorResponse
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .token_response_py3 import TokenResponse
     from .info_response_py3 import InfoResponse
 except (SyntaxError, ImportError):
@@ -38,7 +38,7 @@ except (SyntaxError, ImportError):
     from .network import Network
     from .instance import Instance
     from .attested import Attested
-    from .error_response import ErrorResponse
+    from .error_response import ErrorResponse, ErrorResponseException
     from .token_response import TokenResponse
     from .info_response import InfoResponse
 
@@ -55,7 +55,7 @@ __all__ = [
     'Network',
     'Instance',
     'Attested',
-    'ErrorResponse',
+    'ErrorResponse', 'ErrorResponseException',
     'TokenResponse',
     'InfoResponse',
 ]
