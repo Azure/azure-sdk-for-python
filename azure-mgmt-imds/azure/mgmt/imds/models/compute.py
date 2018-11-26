@@ -39,6 +39,8 @@ class Compute(Model):
     :type platform_fault_domain: str
     :param platform_update_domain: This is the update domain in which the VM.
     :type platform_update_domain: str
+    :param provider: This is the provider of the VM.
+    :type provider: str
     :param publisher: This is the publisher of the VM image.
     :type publisher: str
     :param resource_group_name: This is the resource group for the VM.
@@ -72,6 +74,7 @@ class Compute(Model):
         'public_keys': {'key': 'publicKeys', 'type': '[PublicKeysProperties]'},
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'str'},
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': 'str'},
         'publisher': {'key': 'publisher', 'type': 'str'},
         'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
@@ -96,6 +99,7 @@ class Compute(Model):
         self.public_keys = kwargs.get('public_keys', None)
         self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
         self.platform_update_domain = kwargs.get('platform_update_domain', None)
+        self.provider = kwargs.get('provider', None)
         self.publisher = kwargs.get('publisher', None)
         self.resource_group_name = kwargs.get('resource_group_name', None)
         self.sku = kwargs.get('sku', None)

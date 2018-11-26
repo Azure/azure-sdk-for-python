@@ -39,6 +39,8 @@ class Compute(Model):
     :type platform_fault_domain: str
     :param platform_update_domain: This is the update domain in which the VM.
     :type platform_update_domain: str
+    :param provider: This is the provider of the VM.
+    :type provider: str
     :param publisher: This is the publisher of the VM image.
     :type publisher: str
     :param resource_group_name: This is the resource group for the VM.
@@ -72,6 +74,7 @@ class Compute(Model):
         'public_keys': {'key': 'publicKeys', 'type': '[PublicKeysProperties]'},
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'str'},
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': 'str'},
         'publisher': {'key': 'publisher', 'type': 'str'},
         'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
@@ -84,7 +87,7 @@ class Compute(Model):
         'zone': {'key': 'zone', 'type': 'str'},
     }
 
-    def __init__(self, *, az_environment: str=None, location: str=None, name: str=None, offer: str=None, os_type: str=None, placement_group_id: str=None, plan=None, public_keys=None, platform_fault_domain: str=None, platform_update_domain: str=None, publisher: str=None, resource_group_name: str=None, sku: str=None, subscription_id: str=None, tags: str=None, version: str=None, vm_id: str=None, vm_scale_set_name: str=None, vm_size: str=None, zone: str=None, **kwargs) -> None:
+    def __init__(self, *, az_environment: str=None, location: str=None, name: str=None, offer: str=None, os_type: str=None, placement_group_id: str=None, plan=None, public_keys=None, platform_fault_domain: str=None, platform_update_domain: str=None, provider: str=None, publisher: str=None, resource_group_name: str=None, sku: str=None, subscription_id: str=None, tags: str=None, version: str=None, vm_id: str=None, vm_scale_set_name: str=None, vm_size: str=None, zone: str=None, **kwargs) -> None:
         super(Compute, self).__init__(**kwargs)
         self.az_environment = az_environment
         self.location = location
@@ -96,6 +99,7 @@ class Compute(Model):
         self.public_keys = public_keys
         self.platform_fault_domain = platform_fault_domain
         self.platform_update_domain = platform_update_domain
+        self.provider = provider
         self.publisher = publisher
         self.resource_group_name = resource_group_name
         self.sku = sku

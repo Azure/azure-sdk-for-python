@@ -36,7 +36,7 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'http://169.254.169.254/metadata'
+            base_url = 'https://169.254.169.254/metadata'
 
         super(InstanceMetadataClientConfiguration, self).__init__(base_url)
 
@@ -47,7 +47,7 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
 
 
 class InstanceMetadataClient(SDKClient):
-    """The Azure Instance Metadata Client.
+    """The Azure Instance Metadata Client
 
     :ivar config: Configuration for client.
     :vartype config: InstanceMetadataClientConfiguration
@@ -70,7 +70,7 @@ class InstanceMetadataClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def instance_method(
+    def get_instance(
             self, api_version, custom_headers=None, raw=False, **operation_config):
         """Get Instance Metadata for the Virtual Machine.
 
@@ -88,7 +88,7 @@ class InstanceMetadataClient(SDKClient):
         metadata = "true"
 
         # Construct URL
-        url = self.instance_method.metadata['url']
+        url = self.get_instance.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -138,9 +138,9 @@ class InstanceMetadataClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    instance_method.metadata = {'url': '/instance'}
+    get_instance.metadata = {'url': '/instance'}
 
-    def attested_method(
+    def get_attested(
             self, api_version, nonce=None, custom_headers=None, raw=False, **operation_config):
         """Get Attested Data for the Virtual Machine.
 
@@ -160,7 +160,7 @@ class InstanceMetadataClient(SDKClient):
         metadata = "true"
 
         # Construct URL
-        url = self.attested_method.metadata['url']
+        url = self.get_attested.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -212,7 +212,7 @@ class InstanceMetadataClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    attested_method.metadata = {'url': '/attested/document'}
+    get_attested.metadata = {'url': '/attested/document'}
 
     def get_token(
             self, resource, api_version, client_id=None, object_id=None, msi_res_id=None, authority=None, bypass_cache=None, custom_headers=None, raw=False, **operation_config):
