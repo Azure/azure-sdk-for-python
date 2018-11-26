@@ -65,7 +65,7 @@ class AlertsOperations(object):
          include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
@@ -102,9 +102,9 @@ class AlertsOperations(object):
          others. Possible values include: 'asc', 'desc'
         :type sort_order: str
         :param select: This filter allows to selection of the fields(comma
-         seperated) which would  be part of the the essential section. This
-         would allow to project only the  required fields rather than getting
-         entire content.  Default is to fetch all the fields in the essentials
+         separated) which would  be part of the essential section. This would
+         allow to project only the  required fields rather than getting entire
+         content.  Default is to fetch all the fields in the essentials
          section.
         :type select: str
         :param time_range: Filter by time range by below listed values.
@@ -429,7 +429,7 @@ class AlertsOperations(object):
          include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
