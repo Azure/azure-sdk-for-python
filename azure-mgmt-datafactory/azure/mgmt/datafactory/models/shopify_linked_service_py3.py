@@ -13,7 +13,7 @@ from .linked_service_py3 import LinkedService
 
 
 class ShopifyLinkedService(LinkedService):
-    """Shopify Serivce linked service.
+    """Shopify Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 

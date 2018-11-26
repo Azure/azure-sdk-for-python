@@ -13,7 +13,7 @@ from .linked_service import LinkedService
 
 
 class ConcurLinkedService(LinkedService):
-    """Concur Serivce linked service.
+    """Concur Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 
