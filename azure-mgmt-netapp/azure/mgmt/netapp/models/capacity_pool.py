@@ -35,12 +35,13 @@ class CapacityPool(Model):
     :type account_id: str
     :ivar pool_id: poolId. UUID v4 used to identify the Pool
     :vartype pool_id: str
-    :param size: size. Provisioned size of the pool (in GB). Default value:
-     4096 .
+    :param size: size. Provisioned size of the pool (in bytes). Allowed values
+     are in 4TiB chunks (value must be multiply of 4398046511104). Default
+     value: 4398046511104 .
     :type size: int
     :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Basic', 'Standard', 'Premium'. Default value:
-     "Standard" .
+     Possible values include: 'Standard', 'Premium', 'Extreme'. Default value:
+     "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
@@ -53,7 +54,7 @@ class CapacityPool(Model):
         'type': {'readonly': True},
         'account_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'minimum': 4096},
+        'size': {'maximum': 549755813888000, 'minimum': 4398046511104},
         'provisioning_state': {'readonly': True},
     }
 
@@ -79,6 +80,6 @@ class CapacityPool(Model):
         self.tags = kwargs.get('tags', None)
         self.account_id = kwargs.get('account_id', None)
         self.pool_id = None
-        self.size = kwargs.get('size', 4096)
-        self.service_level = kwargs.get('service_level', "Standard")
+        self.size = kwargs.get('size', 4398046511104)
+        self.service_level = kwargs.get('service_level', "Premium")
         self.provisioning_state = None

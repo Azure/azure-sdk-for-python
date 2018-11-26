@@ -26,6 +26,8 @@ class Snapshot(Model):
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param tags: Resource tags
     :type tags: object
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
@@ -45,6 +47,7 @@ class Snapshot(Model):
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'snapshot_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'name1': {'readonly': True},
@@ -56,6 +59,7 @@ class Snapshot(Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
@@ -69,6 +73,7 @@ class Snapshot(Model):
         self.location = location
         self.id = None
         self.name = None
+        self.type = None
         self.tags = tags
         self.snapshot_id = None
         self.file_system_id = file_system_id

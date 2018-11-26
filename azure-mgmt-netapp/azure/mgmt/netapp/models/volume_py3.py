@@ -38,12 +38,13 @@ class Volume(Model):
      file path for the volume. Used when creating mount targets
     :type creation_token: str
     :param service_level: Required. serviceLevel. The service level of the
-     file system. Possible values include: 'Basic', 'Standard', 'Premium'.
-     Default value: "Standard" .
+     file system. Possible values include: 'Standard', 'Premium', 'Extreme'.
+     Default value: "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
-     a file system in bytes. This is a soft quota used for alerting only. Upper
-     limit is 100TB. Default value: 0 .
+     a file system in bytes. This is a soft quota used for alerting only.
+     Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
+     107374182400 .
     :type usage_threshold: long
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
@@ -60,7 +61,7 @@ class Volume(Model):
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True},
         'service_level': {'required': True},
-        'usage_threshold': {'maximum': 109951162777600, 'minimum': 0},
+        'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
     }
 
@@ -79,7 +80,7 @@ class Volume(Model):
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, tags=None, name1: str=None, service_level="Standard", usage_threshold: int=0, subnet_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, tags=None, name1: str=None, service_level="Premium", usage_threshold: int=107374182400, subnet_id: str=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
