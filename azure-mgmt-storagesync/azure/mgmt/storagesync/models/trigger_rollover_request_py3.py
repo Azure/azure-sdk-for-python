@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class TriggerRolloverRequest(Model):
     """Trigger Rollover Request.
 
-    :param server_certificate: Certificate Data
-    :type server_certificate: str
+    :param certificate_data: Certificate Data
+    :type certificate_data: str
     """
 
     _attribute_map = {
-        'server_certificate': {'key': 'serverCertificate', 'type': 'str'},
+        'certificate_data': {'key': 'certificateData', 'type': 'str'},
     }
 
-    def __init__(self, *, server_certificate: str=None, **kwargs) -> None:
+    def __init__(self, *, certificate_data: str=None, **kwargs) -> None:
         super(TriggerRolloverRequest, self).__init__(**kwargs)
-        self.server_certificate = server_certificate
+        self.certificate_data = certificate_data
