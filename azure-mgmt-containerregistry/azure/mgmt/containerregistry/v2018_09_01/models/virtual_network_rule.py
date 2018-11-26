@@ -15,10 +15,16 @@ from msrest.serialization import Model
 class VirtualNetworkRule(Model):
     """The virtual network rule for a container registry.
 
-    :param id: Resource ID of a subnet, for example:
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class NetworkRuleSet(Model):
     """The network rule set for a container registry.
 
-    :param default_action: The default action of allow or deny when no other
-     rules match. Possible values include: 'Allow', 'Deny'. Default value:
-     "Allow" .
+    All required parameters must be populated in order to send to Azure.
+
+    :param default_action: Required. The default action of allow or deny when
+     no other rules match. Possible values include: 'Allow', 'Deny'. Default
+     value: "Allow" .
     :type default_action: str or
      ~azure.mgmt.containerregistry.v2017_10_01.models.DefaultAction
     :param virtual_network_rules: The virtual network rules
     :type virtual_network_rules:
      list[~azure.mgmt.containerregistry.v2017_10_01.models.VirtualNetworkRule]
     """
+
+    _validation = {
+        'default_action': {'required': True},
+    }
 
     _attribute_map = {
         'default_action': {'key': 'defaultAction', 'type': 'str'},

@@ -56,6 +56,9 @@ class Run(ProxyResource):
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
      ~azure.mgmt.containerregistry.v2018_09_01.models.SourceTriggerDescriptor
+    :param is_archive_enabled: The value that indicates whether archiving is
+     enabled or not. Default value: False .
+    :type is_archive_enabled: bool
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
@@ -68,9 +71,6 @@ class Run(ProxyResource):
      'Canceled'
     :type provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.ProvisioningState
-    :param is_archive_enabled: The value that indicates whether archiving is
-     enabled or not. Default value: False .
-    :type is_archive_enabled: bool
     """
 
     _validation = {
@@ -94,13 +94,13 @@ class Run(ProxyResource):
         'task': {'key': 'properties.task', 'type': 'str'},
         'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
         'source_trigger': {'key': 'properties.sourceTrigger', 'type': 'SourceTriggerDescriptor'},
+        'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, is_archive_enabled: bool=False, platform=None, agent_configuration=None, provisioning_state=None, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
@@ -113,7 +113,7 @@ class Run(ProxyResource):
         self.task = task
         self.image_update_trigger = image_update_trigger
         self.source_trigger = source_trigger
+        self.is_archive_enabled = is_archive_enabled
         self.platform = platform
         self.agent_configuration = agent_configuration
         self.provisioning_state = provisioning_state
-        self.is_archive_enabled = is_archive_enabled
