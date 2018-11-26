@@ -112,7 +112,7 @@ class ComponentCurrentBillingFeaturesOperations(object):
          resource.
         :type resource_name: str
         :param data_volume_cap: An Application Insights component daily data
-         volumne cap
+         volume cap
         :type data_volume_cap:
          ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentDataVolumeCap
         :param current_billing_features: Current enabled pricing plan. When

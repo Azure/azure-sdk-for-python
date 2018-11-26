@@ -22,17 +22,17 @@ class ApplicationInsightsComponentFeature(Model):
     :vartype feature_name: str
     :ivar meter_id: The meter id used for the feature.
     :vartype meter_id: str
-    :ivar meter_rate_frequency: The meter meter rate for the feature's meter.
+    :ivar meter_rate_frequency: The meter rate for the feature's meter.
     :vartype meter_rate_frequency: str
     :ivar resouce_id: Reserved, not used now.
     :vartype resouce_id: str
     :ivar is_hidden: Reserved, not used now.
     :vartype is_hidden: bool
-    :ivar capabilities: A list of Application Insigths component feature
+    :ivar capabilities: A list of Application Insights component feature
      capability.
     :vartype capabilities:
      list[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFeatureCapability]
-    :ivar title: Desplay name of the feature.
+    :ivar title: Display name of the feature.
     :vartype title: str
     :ivar is_main_feature: Whether can apply addon feature on to it.
     :vartype is_main_feature: bool

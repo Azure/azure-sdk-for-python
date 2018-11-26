@@ -25,16 +25,21 @@ class ComponentPurgeBodyFilters(Model):
      number (e.g., > 100), a string (timestamp >= '2017-09-01') or array of
      values.
     :type value: object
+    :param key: When filtering over custom dimensions, this key will be used
+     as the name of the custom dimension.
+    :type key: str
     """
 
     _attribute_map = {
         'column': {'key': 'column', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'value': {'key': 'value', 'type': 'object'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, *, column: str=None, operator: str=None, value=None, **kwargs) -> None:
+    def __init__(self, *, column: str=None, operator: str=None, value=None, key: str=None, **kwargs) -> None:
         super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
         self.column = column
         self.operator = operator
         self.value = value
+        self.key = key
