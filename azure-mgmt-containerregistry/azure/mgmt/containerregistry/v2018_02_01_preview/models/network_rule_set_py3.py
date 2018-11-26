@@ -22,7 +22,7 @@ class NetworkRuleSet(Model):
      value: "Allow" .
     :type default_action: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.DefaultAction
-    :param virtual_network_rules: The virtual network rules
+    :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.VirtualNetworkRule]
     """
