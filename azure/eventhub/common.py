@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import unicode_literals
 
 import datetime
 import time
 import json
+
+import six
 
 from uamqp import Message, BatchMessage
 from uamqp import types, constants, errors
@@ -63,6 +66,8 @@ class EventData(object):
         :type body: str, bytes or list
         :param batch: A data generator to send batched messages.
         :type batch: Generator
+        :param to_device: An IoT device to route to.
+        :type to_device: str
         :param message: The received message.
         :type message: ~uamqp.message.Message
         """
@@ -94,7 +99,7 @@ class EventData(object):
         """
         The sequence number of the event data object.
 
-        :rtype: int
+        :rtype: int or long
         """
         return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
@@ -103,7 +108,7 @@ class EventData(object):
         """
         The offset of the event data object.
 
-        :rtype: int
+        :rtype: ~azure.eventhub.common.Offset
         """
         try:
             return Offset(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
@@ -200,13 +205,13 @@ class EventData(object):
 
         :param encoding: The encoding to use for decoding message data.
          Default is 'UTF-8'
-        :rtype: str
+        :rtype: str or unicode
         """
         data = self.body
         try:
             return "".join(b.decode(encoding) for b in data)
         except TypeError:
-            return str(data)
+            return six.text_type(data)
         except:  # pylint: disable=bare-except
             pass
         try:
@@ -269,7 +274,7 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (time.mktime(self.value.timetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        if isinstance(self.value, int):
+        if isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
@@ -310,7 +315,7 @@ class EventHubError(Exception):
 
     def _parse_error(self, error_list):
         details = []
-        self.message = error_list if isinstance(error_list, str) else error_list.decode('UTF-8')
+        self.message = error_list if isinstance(error_list, six.text_type) else error_list.decode('UTF-8')
         details_index = self.message.find(" Reference:")
         if details_index >= 0:
             details_msg = self.message[details_index + 1:]

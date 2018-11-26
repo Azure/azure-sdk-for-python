@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,6 +8,7 @@
 import os
 import pytest
 import time
+import json
 
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient
@@ -140,6 +142,24 @@ def test_send_partition(connection_str, receivers):
     assert len(partition_0) == 0
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
+
+
+def test_send_non_ascii(connection_str, receivers):
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    sender = client.add_sender(partition="0")
+    try:
+        client.run()
+        sender.send(EventData(u"é,è,à,ù,â,ê,î,ô,û"))
+        sender.send(EventData(json.dumps({"foo": u"漢字"})))
+    except:
+        raise
+    finally:
+        client.stop()
+
+    partition_0 = receivers[0].receive(timeout=2)
+    assert len(partition_0) == 2
+    assert partition_0[0].body_as_str() == u"é,è,à,ù,â,ê,î,ô,û"
+    assert partition_0[1].body_as_json() == {"foo": u"漢字"}
 
 
 def test_send_partition_batch(connection_str, receivers):

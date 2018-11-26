@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -8,6 +9,7 @@ import os
 import asyncio
 import pytest
 import time
+import json
 
 from azure.eventhub import EventData, EventHubClientAsync
 
@@ -121,6 +123,25 @@ async def test_send_partition_async(connection_str, receivers):
     assert len(partition_0) == 0
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
+
+
+@pytest.mark.asyncio
+async def test_send_non_ascii_async(connection_str, receivers):
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
+    sender = client.add_async_sender(partition="0")
+    try:
+        await client.run_async()
+        await sender.send(EventData("é,è,à,ù,â,ê,î,ô,û"))
+        await sender.send(EventData(json.dumps({"foo": "漢字"})))
+    except:
+        raise
+    finally:
+        await client.stop_async()
+
+    partition_0 = receivers[0].receive(timeout=2)
+    assert len(partition_0) == 2
+    assert partition_0[0].body_as_str() == "é,è,à,ù,â,ê,î,ô,û"
+    assert partition_0[1].body_as_json() == {"foo": "漢字"}
 
 
 @pytest.mark.asyncio

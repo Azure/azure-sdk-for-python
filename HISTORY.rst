@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.2.0
++++++
+
+- Support for Python 2.7 in azure.eventhub module (azure.eventprocessorhost will not support Python 2.7).
+- Parse EventData.enqueued_time as a UTC timestamp (issue #72, thanks @vjrantal)
+
+
 1.1.1 (2019-10-03)
 ++++++++++++++++++
 

@@ -104,8 +104,8 @@ class AsyncReceiver(Receiver):
                 properties=self.client.create_properties(),
                 loop=self.loop)
         await self._handler.open_async()
-        while not await self.has_started():
-            await self._handler._connection.work_async()
+        while not await self._handler.client_ready_async():
+            await asyncio.sleep(0.05)
 
     async def reconnect_async(self):
         """If the Receiver was disconnected from the service with
@@ -132,8 +132,8 @@ class AsyncReceiver(Receiver):
             loop=self.loop)
         try:
             await self._handler.open_async()
-            while not await self.has_started():
-                await self._handler._connection.work_async()
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05)
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncReceiver detached. Attempting reconnect.")
@@ -163,6 +163,7 @@ class AsyncReceiver(Receiver):
         Whether the handler has completed all start up processes such as
         establishing the connection, session, link and authentication, and
         is not ready to process messages.
+        **This function is now deprecated and will be removed in v2.0+.**
 
         :rtype: bool
         """

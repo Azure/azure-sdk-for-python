@@ -7,10 +7,7 @@ import logging
 import asyncio
 import time
 import datetime
-try:
-    from urllib import urlparse, unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (

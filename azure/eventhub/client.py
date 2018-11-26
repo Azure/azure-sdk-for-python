@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import unicode_literals
 
 import logging
 import datetime
@@ -10,7 +11,8 @@ import uuid
 import time
 import functools
 try:
-    from urllib import urlparse, unquote_plus, urlencode, quote_plus
+    from urlparse import urlparse
+    from urllib import unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 

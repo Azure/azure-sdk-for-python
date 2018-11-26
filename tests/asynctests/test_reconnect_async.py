@@ -6,58 +6,69 @@
 
 import os
 import time
+import asyncio
 import pytest
 
 from azure import eventhub
 from azure.eventhub import (
+    EventHubClientAsync,
     EventData,
     Offset,
-    EventHubError,
-    EventHubClient)
+    EventHubError)
 
 
-def test_send_with_long_interval_sync(connection_str, receivers):
+@pytest.mark.asyncio
+async def test_send_with_long_interval_async(connection_str, receivers):
     #pytest.skip("long running")
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
-    sender = client.add_sender()
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
+    sender = client.add_async_sender()
     try:
-        client.run()
-        sender.send(EventData(b"A single event"))
+        await client.run_async()
+        await sender.send(EventData(b"A single event"))
         for _ in range(2):
-            time.sleep(300)
-            sender.send(EventData(b"A single event"))
+            await asyncio.sleep(300)
+            await sender.send(EventData(b"A single event"))
     finally:
-        client.stop()
+        await client.stop_async()
 
     received = []
     for r in receivers:
        received.extend(r.receive(timeout=1))
-
     assert len(received) == 3
     assert list(received[0].body)[0] == b"A single event"
 
 
-def test_send_with_forced_conn_close_sync(connection_str, receivers):
+def pump(receiver):
+    messages = []
+    batch = receiver.receive(timeout=1)
+    messages.extend(batch)
+    while batch:
+        batch = receiver.receive(timeout=1)
+        messages.extend(batch)
+    return messages
+
+@pytest.mark.asyncio
+async def test_send_with_forced_conn_close_async(connection_str, receivers):
     #pytest.skip("long running")
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
-    sender = client.add_sender()
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
+    sender = client.add_async_sender()
     try:
-        client.run()
-        sender.send(EventData(b"A single event"))
+        await client.run_async()
+        await sender.send(EventData(b"A single event"))
         sender._handler._message_sender.destroy()
-        time.sleep(300)
-        sender.send(EventData(b"A single event"))
-        sender.send(EventData(b"A single event"))
+        await asyncio.sleep(300)
+        await sender.send(EventData(b"A single event"))
+        await sender.send(EventData(b"A single event"))
         sender._handler._message_sender.destroy()
-        time.sleep(300)
-        sender.send(EventData(b"A single event"))
-        sender.send(EventData(b"A single event"))
+        await asyncio.sleep(300)
+        await sender.send(EventData(b"A single event"))
+        await sender.send(EventData(b"A single event"))
     finally:
-        client.stop()
+        await client.stop_async()
     
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
+       received.extend(pump(r))
     assert len(received) == 5
     assert list(received[0].body)[0] == b"A single event"
 

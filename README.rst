@@ -31,17 +31,6 @@ Wheels are provided for all major operating systems, so you can install directly
 
     $ pip install azure-eventhub
 
-Python 2.7 support
-++++++++++++++++++
-
-Python 2.7 will be supported for the synchronous operations in azure.eventhub from v1.2.0.
-This is available as a pre-release.
-
-.. code:: shell
-
-    $ pip install azure-eventhub --pre
-
-Python 2.7 support is not planned for azure.eventprocessorhost.
 
 Documentation
 +++++++++++++
