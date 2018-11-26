@@ -18,7 +18,7 @@ class ApplicationInsightsComponentAvailableFeatures(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar result: A list of Application Insigths component feature.
+    :ivar result: A list of Application Insights component feature.
     :vartype result:
      list[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFeature]
     """

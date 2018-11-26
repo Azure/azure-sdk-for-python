@@ -22,7 +22,7 @@ class ApplicationInsightsComponentFeatureCapability(Model):
     :vartype name: str
     :ivar description: The description of the capability.
     :vartype description: str
-    :ivar value: The vaule of the capability.
+    :ivar value: The value of the capability.
     :vartype value: str
     :ivar unit: The unit of the capability.
     :vartype unit: str
