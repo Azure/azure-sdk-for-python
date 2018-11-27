@@ -20,6 +20,8 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -78,6 +80,7 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},

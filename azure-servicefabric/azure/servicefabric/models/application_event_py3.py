@@ -17,22 +17,24 @@ class ApplicationEvent(FabricEvent):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ApplicationCreatedEvent, ApplicationDeletedEvent,
-    ApplicationHealthReportCreatedEvent, ApplicationHealthReportExpiredEvent,
-    ApplicationUpgradeCompleteEvent, ApplicationUpgradeDomainCompleteEvent,
-    ApplicationUpgradeRollbackCompleteEvent,
-    ApplicationUpgradeRollbackStartEvent, ApplicationUpgradeStartEvent,
-    DeployedApplicationHealthReportCreatedEvent,
-    DeployedApplicationHealthReportExpiredEvent, ProcessDeactivatedEvent,
-    ContainerDeactivatedEvent, DeployedServiceHealthReportCreatedEvent,
-    DeployedServiceHealthReportExpiredEvent,
-    ChaosRestartCodePackageFaultScheduledEvent,
-    ChaosRestartCodePackageFaultCompletedEvent
+    ApplicationNewHealthReportEvent, ApplicationHealthReportExpiredEvent,
+    ApplicationUpgradeCompletedEvent, ApplicationUpgradeDomainCompletedEvent,
+    ApplicationUpgradeRollbackCompletedEvent,
+    ApplicationUpgradeRollbackStartedEvent, ApplicationUpgradeStartedEvent,
+    DeployedApplicationNewHealthReportEvent,
+    DeployedApplicationHealthReportExpiredEvent, ApplicationProcessExitedEvent,
+    ApplicationContainerInstanceExitedEvent,
+    DeployedServicePackageNewHealthReportEvent,
+    DeployedServicePackageHealthReportExpiredEvent,
+    ChaosCodePackageRestartScheduledEvent
 
     All required parameters must be populated in order to send to Azure.
 
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -59,6 +61,7 @@ class ApplicationEvent(FabricEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -66,10 +69,10 @@ class ApplicationEvent(FabricEvent):
     }
 
     _subtype_map = {
-        'kind': {'ApplicationCreated': 'ApplicationCreatedEvent', 'ApplicationDeleted': 'ApplicationDeletedEvent', 'ApplicationHealthReportCreated': 'ApplicationHealthReportCreatedEvent', 'ApplicationHealthReportExpired': 'ApplicationHealthReportExpiredEvent', 'ApplicationUpgradeComplete': 'ApplicationUpgradeCompleteEvent', 'ApplicationUpgradeDomainComplete': 'ApplicationUpgradeDomainCompleteEvent', 'ApplicationUpgradeRollbackComplete': 'ApplicationUpgradeRollbackCompleteEvent', 'ApplicationUpgradeRollbackStart': 'ApplicationUpgradeRollbackStartEvent', 'ApplicationUpgradeStart': 'ApplicationUpgradeStartEvent', 'DeployedApplicationHealthReportCreated': 'DeployedApplicationHealthReportCreatedEvent', 'DeployedApplicationHealthReportExpired': 'DeployedApplicationHealthReportExpiredEvent', 'ProcessDeactivated': 'ProcessDeactivatedEvent', 'ContainerDeactivated': 'ContainerDeactivatedEvent', 'DeployedServiceHealthReportCreated': 'DeployedServiceHealthReportCreatedEvent', 'DeployedServiceHealthReportExpired': 'DeployedServiceHealthReportExpiredEvent', 'ChaosRestartCodePackageFaultScheduled': 'ChaosRestartCodePackageFaultScheduledEvent', 'ChaosRestartCodePackageFaultCompleted': 'ChaosRestartCodePackageFaultCompletedEvent'}
+        'kind': {'ApplicationCreated': 'ApplicationCreatedEvent', 'ApplicationDeleted': 'ApplicationDeletedEvent', 'ApplicationNewHealthReport': 'ApplicationNewHealthReportEvent', 'ApplicationHealthReportExpired': 'ApplicationHealthReportExpiredEvent', 'ApplicationUpgradeCompleted': 'ApplicationUpgradeCompletedEvent', 'ApplicationUpgradeDomainCompleted': 'ApplicationUpgradeDomainCompletedEvent', 'ApplicationUpgradeRollbackCompleted': 'ApplicationUpgradeRollbackCompletedEvent', 'ApplicationUpgradeRollbackStarted': 'ApplicationUpgradeRollbackStartedEvent', 'ApplicationUpgradeStarted': 'ApplicationUpgradeStartedEvent', 'DeployedApplicationNewHealthReport': 'DeployedApplicationNewHealthReportEvent', 'DeployedApplicationHealthReportExpired': 'DeployedApplicationHealthReportExpiredEvent', 'ApplicationProcessExited': 'ApplicationProcessExitedEvent', 'ApplicationContainerInstanceExited': 'ApplicationContainerInstanceExitedEvent', 'DeployedServicePackageNewHealthReport': 'DeployedServicePackageNewHealthReportEvent', 'DeployedServicePackageHealthReportExpired': 'DeployedServicePackageHealthReportExpiredEvent', 'ChaosCodePackageRestartScheduled': 'ChaosCodePackageRestartScheduledEvent'}
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(ApplicationEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
         self.application_id = application_id
         self.kind = 'ApplicationEvent'
