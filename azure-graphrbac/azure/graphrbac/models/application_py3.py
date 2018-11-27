@@ -58,6 +58,11 @@ class Application(DirectoryObject):
      of required resource access drives the consent experience.
     :type required_resource_access:
      list[~azure.graphrbac.models.RequiredResourceAccess]
+    :param key_credentials: A collection of KeyCredential objects.
+    :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
+    :param password_credentials: A collection of PasswordCredential objects
+    :type password_credentials:
+     list[~azure.graphrbac.models.PasswordCredential]
     """
 
     _validation = {
@@ -81,9 +86,11 @@ class Application(DirectoryObject):
         'homepage': {'key': 'homepage', 'type': 'str'},
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
         'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
+        'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
+        'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, *, additional_properties=None, app_id: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, identifier_uris=None, reply_urls=None, homepage: str=None, oauth2_allow_implicit_flow: bool=None, required_resource_access=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, app_id: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, identifier_uris=None, reply_urls=None, homepage: str=None, oauth2_allow_implicit_flow: bool=None, required_resource_access=None, key_credentials=None, password_credentials=None, **kwargs) -> None:
         super(Application, self).__init__(additional_properties=additional_properties, **kwargs)
         self.app_id = app_id
         self.app_roles = app_roles
@@ -95,4 +102,6 @@ class Application(DirectoryObject):
         self.homepage = homepage
         self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
         self.required_resource_access = required_resource_access
+        self.key_credentials = key_credentials
+        self.password_credentials = password_credentials
         self.object_type = 'Application'
