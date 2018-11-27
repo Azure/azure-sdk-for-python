@@ -13,7 +13,7 @@ from .copy_source_py3 import CopySource
 
 
 class ConcurSource(CopySource):
-    """A copy activity Concur Serivce source.
+    """A copy activity Concur Service source.
 
     All required parameters must be populated in order to send to Azure.
 

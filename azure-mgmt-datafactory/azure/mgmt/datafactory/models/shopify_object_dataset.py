@@ -13,7 +13,7 @@ from .dataset import Dataset
 
 
 class ShopifyObjectDataset(Dataset):
-    """Shopify Serivce dataset.
+    """Shopify Service dataset.
 
     All required parameters must be populated in order to send to Azure.
 

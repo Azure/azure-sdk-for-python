@@ -13,7 +13,7 @@ from .dataset_py3 import Dataset
 
 
 class SquareObjectDataset(Dataset):
-    """Square Serivce dataset.
+    """Square Service dataset.
 
     All required parameters must be populated in order to send to Azure.
 

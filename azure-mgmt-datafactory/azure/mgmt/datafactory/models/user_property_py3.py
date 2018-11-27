@@ -17,9 +17,9 @@ class UserProperty(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. User proprety name.
+    :param name: Required. User property name.
     :type name: str
-    :param value: Required. User proprety value. Type: string (or Expression
+    :param value: Required. User property value. Type: string (or Expression
      with resultType string).
     :type value: object
     """

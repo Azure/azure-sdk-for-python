@@ -13,7 +13,7 @@ from .copy_source_py3 import CopySource
 
 
 class XeroSource(CopySource):
-    """A copy activity Xero Serivce source.
+    """A copy activity Xero Service source.
 
     All required parameters must be populated in order to send to Azure.
 
