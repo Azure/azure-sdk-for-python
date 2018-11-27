@@ -10,37 +10,23 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error response when invoking an operation on the API.
+    """Error information returned by the API.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param error_type:
-    :type error_type: str
+    :param status_code: HTTP Status code
+    :type status_code: int
+    :param message: Cause of the error.
+    :type message: str
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'error_type': {'key': 'errorType', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, error_type: str=None, **kwargs) -> None:
+    def __init__(self, *, status_code: int=None, message: str=None, **kwargs) -> None:
         super(ErrorResponse, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.error_type = error_type
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+        self.status_code = status_code
+        self.message = message

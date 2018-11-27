@@ -16,9 +16,9 @@ try:
     from .composite_entity_model_py3 import CompositeEntityModel
     from .sentiment_py3 import Sentiment
     from .luis_result_py3 import LuisResult
+    from .api_error_py3 import APIError
     from .entity_with_score_py3 import EntityWithScore
     from .entity_with_resolution_py3 import EntityWithResolution
-    from .api_error_py3 import APIError, APIErrorException
 except (SyntaxError, ImportError):
     from .intent_model import IntentModel
     from .entity_model import EntityModel
@@ -26,9 +26,9 @@ except (SyntaxError, ImportError):
     from .composite_entity_model import CompositeEntityModel
     from .sentiment import Sentiment
     from .luis_result import LuisResult
+    from .api_error import APIError
     from .entity_with_score import EntityWithScore
     from .entity_with_resolution import EntityWithResolution
-    from .api_error import APIError, APIErrorException
 
 __all__ = [
     'IntentModel',
@@ -37,7 +37,7 @@ __all__ = [
     'CompositeEntityModel',
     'Sentiment',
     'LuisResult',
+    'APIError',
     'EntityWithScore',
     'EntityWithResolution',
-    'APIError', 'APIErrorException',
 ]

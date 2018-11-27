@@ -90,7 +90,7 @@ try:
     from .user_access_list_py3 import UserAccessList
     from .user_collaborator_py3 import UserCollaborator
     from .collaborators_array_py3 import CollaboratorsArray
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .error_response_py3 import ErrorResponse
     from .operation_error_py3 import OperationError
     from .prebuilt_domain_item_py3 import PrebuiltDomainItem
     from .prebuilt_domain_py3 import PrebuiltDomain
@@ -108,6 +108,7 @@ try:
     from .pattern_any_entity_extractor_py3 import PatternAnyEntityExtractor
     from .pattern_rule_info_py3 import PatternRuleInfo
     from .label_text_object_py3 import LabelTextObject
+    from .app_version_setting_object_py3 import AppVersionSettingObject
     from .hierarchical_child_model_update_object_py3 import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object_py3 import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object_py3 import CompositeChildModelCreateObject
@@ -192,7 +193,7 @@ except (SyntaxError, ImportError):
     from .user_access_list import UserAccessList
     from .user_collaborator import UserCollaborator
     from .collaborators_array import CollaboratorsArray
-    from .error_response import ErrorResponse, ErrorResponseException
+    from .error_response import ErrorResponse
     from .operation_error import OperationError
     from .prebuilt_domain_item import PrebuiltDomainItem
     from .prebuilt_domain import PrebuiltDomain
@@ -210,6 +211,7 @@ except (SyntaxError, ImportError):
     from .pattern_any_entity_extractor import PatternAnyEntityExtractor
     from .pattern_rule_info import PatternRuleInfo
     from .label_text_object import LabelTextObject
+    from .app_version_setting_object import AppVersionSettingObject
     from .hierarchical_child_model_update_object import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object import CompositeChildModelCreateObject
@@ -299,7 +301,7 @@ __all__ = [
     'UserAccessList',
     'UserCollaborator',
     'CollaboratorsArray',
-    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponse',
     'OperationError',
     'PrebuiltDomainItem',
     'PrebuiltDomain',
@@ -317,6 +319,7 @@ __all__ = [
     'PatternAnyEntityExtractor',
     'PatternRuleInfo',
     'LabelTextObject',
+    'AppVersionSettingObject',
     'HierarchicalChildModelUpdateObject',
     'HierarchicalChildModelCreateObject',
     'CompositeChildModelCreateObject',

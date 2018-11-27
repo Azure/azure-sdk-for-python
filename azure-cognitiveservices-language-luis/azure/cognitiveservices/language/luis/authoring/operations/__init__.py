@@ -17,6 +17,7 @@ from .versions_operations import VersionsOperations
 from .train_operations import TrainOperations
 from .permissions_operations import PermissionsOperations
 from .pattern_operations import PatternOperations
+from .settings_operations import SettingsOperations
 
 __all__ = [
     'FeaturesOperations',
@@ -27,4 +28,5 @@ __all__ = [
     'TrainOperations',
     'PermissionsOperations',
     'PatternOperations',
+    'SettingsOperations',
 ]

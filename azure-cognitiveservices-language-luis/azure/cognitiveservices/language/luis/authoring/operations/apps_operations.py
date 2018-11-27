@@ -50,10 +50,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.add.metadata['url']
@@ -71,6 +71,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(application_create_object, 'ApplicationCreateObject')
@@ -79,13 +80,21 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [201, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('str', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -108,12 +117,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.ApplicationInfoResponse]
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -134,18 +141,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[ApplicationInfoResponse]', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -170,10 +186,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.import_method.metadata['url']
@@ -193,6 +209,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(luis_app, 'LuisApp')
@@ -201,13 +218,21 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [201, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('str', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -225,12 +250,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PersonalAssistantsResponse or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.PersonalAssistantsResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_cortana_endpoints.metadata['url']
@@ -247,18 +270,25 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('PersonalAssistantsResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -276,10 +306,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[str] or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_domains.metadata['url']
@@ -296,18 +326,25 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[str]', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -325,10 +362,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[str] or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_usage_scenarios.metadata['url']
@@ -345,18 +382,25 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[str]', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -374,12 +418,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.AvailableCulture]
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_supported_cultures.metadata['url']
@@ -396,18 +438,25 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[AvailableCulture]', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -417,7 +466,7 @@ class AppsOperations(object):
     list_supported_cultures.metadata = {'url': '/apps/cultures'}
 
     def download_query_logs(
-            self, app_id, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, app_id, custom_headers=None, raw=False, **operation_config):
         """Gets the query logs of the past month for the application.
 
         :param app_id: The application ID.
@@ -425,15 +474,10 @@ class AppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
@@ -450,21 +494,30 @@ class AppsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/octet-stream'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=True, **operation_config)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 400, 401, 403, 429]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._client.stream_download(response, callback)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -484,12 +537,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInfoResponse or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationInfoResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -507,18 +558,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('ApplicationInfoResponse', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -542,12 +602,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         application_update_object = models.ApplicationUpdateObject(name=name, description=description)
 
@@ -568,6 +626,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(application_update_object, 'ApplicationUpdateObject')
@@ -576,13 +635,21 @@ class AppsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -602,12 +669,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -625,18 +690,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -646,28 +720,28 @@ class AppsOperations(object):
     delete.metadata = {'url': '/apps/{appId}'}
 
     def publish(
-            self, app_id, application_publish_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id=None, is_staging=False, custom_headers=None, raw=False, **operation_config):
         """Publishes a specific version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param application_publish_object: The application publish object. The
-         region is the target region that the application is published to.
-        :type application_publish_object:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationPublishObject
+        :param version_id: The version ID to publish.
+        :type version_id: str
+        :param is_staging: Indicates if the staging slot should be used,
+         instead of the Production one.
+        :type is_staging: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ProductionOrStagingEndpointInfo or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.ProductionOrStagingEndpointInfo
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
+        application_publish_object = models.ApplicationPublishObject(version_id=version_id, is_staging=is_staging)
+
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {
@@ -685,6 +759,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(application_publish_object, 'ApplicationPublishObject')
@@ -693,13 +768,21 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [201, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -719,12 +802,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationSettings or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationSettings
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.get_settings.metadata['url']
@@ -742,18 +823,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('ApplicationSettings', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -776,12 +866,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         application_setting_update_object = models.ApplicationSettingUpdateObject(public=public)
 
@@ -802,6 +890,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(application_setting_update_object, 'ApplicationSettingUpdateObject')
@@ -810,13 +899,21 @@ class AppsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -836,12 +933,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PublishSettings or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.PublishSettings
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.get_publish_settings.metadata['url']
@@ -859,18 +954,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('PublishSettings', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -894,12 +998,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.update_publish_settings.metadata['url']
@@ -918,6 +1020,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(publish_setting_update_object, 'PublishSettingUpdateObject')
@@ -926,13 +1029,21 @@ class AppsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -952,10 +1063,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: dict or ClientRawResponse if raw=true
-        :rtype: dict[str, str] or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_endpoints.metadata['url']
@@ -973,18 +1084,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('{str}', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1002,12 +1122,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.PrebuiltDomain]
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_available_custom_prebuilt_domains.metadata['url']
@@ -1024,18 +1142,25 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[PrebuiltDomain]', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1057,10 +1182,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         prebuilt_domain_create_object = models.PrebuiltDomainCreateObject(domain_name=domain_name, culture=culture)
 
@@ -1080,6 +1205,7 @@ class AppsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(prebuilt_domain_create_object, 'PrebuiltDomainCreateObject')
@@ -1088,13 +1214,21 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [201, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('str', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1114,12 +1248,10 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.PrebuiltDomain]
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
         url = self.list_available_custom_prebuilt_domains_for_culture.metadata['url']
@@ -1137,18 +1269,27 @@ class AppsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[PrebuiltDomain]', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class APIError(Model):
-    """Error information returned by the API.
+class AppVersionSettingObject(Model):
+    """Object model of an application version setting.
 
-    :param status_code: HTTP Status code
-    :type status_code: int
-    :param message: Cause of the error.
-    :type message: str
+    :param name: The application version setting name.
+    :type name: str
+    :param value: The application version setting value.
+    :type value: str
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, status_code: int=None, message: str=None, **kwargs) -> None:
-        super(APIError, self).__init__(**kwargs)
-        self.status_code = status_code
-        self.message = message
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(AppVersionSettingObject, self).__init__(**kwargs)
+        self.name = name
+        self.value = value

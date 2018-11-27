@@ -10,20 +10,19 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
 class APIError(Model):
     """Error information returned by the API.
 
     :param status_code: HTTP Status code
-    :type status_code: str
+    :type status_code: int
     :param message: Cause of the error.
     :type message: str
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
@@ -31,15 +30,3 @@ class APIError(Model):
         super(APIError, self).__init__(**kwargs)
         self.status_code = kwargs.get('status_code', None)
         self.message = kwargs.get('message', None)
-
-
-class APIErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'APIError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(APIErrorException, self).__init__(deserialize, response, 'APIError', *args)

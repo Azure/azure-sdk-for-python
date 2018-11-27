@@ -20,7 +20,7 @@ class PhraselistCreateObject(Model):
     :type phrases: str
     :param name: The Phraselist name.
     :type name: str
-    :param is_exchangeable: An exchangeable phrase list feature are serves as
+    :param is_exchangeable: An exchangeable phrase list feature serves as a
      single feature to the LUIS underlying training algorithm. It is used as a
      lexicon lookup feature where its value is 1 if the lexicon contains a
      given word or 0 if it doesn’t. Think of an exchangeable as a synonyms
