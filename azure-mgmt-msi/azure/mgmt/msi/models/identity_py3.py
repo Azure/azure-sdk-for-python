@@ -36,8 +36,8 @@ class Identity(Model):
     :vartype client_id: str
     :ivar client_secret_url:  The ManagedServiceIdentity DataPlane URL that
      can be queried to obtain the identity credentials. If identity is user
-     assigned, the clientSecretUrl is null, otherwise the clientSecretUrl is
-     not null
+     assigned, then the clientSecretUrl will not be present in the response,
+     otherwise it will be present.
     :vartype client_secret_url: str
     :ivar type: The type of resource i.e.
      Microsoft.ManagedIdentity/userAssignedIdentities. Possible values include:
