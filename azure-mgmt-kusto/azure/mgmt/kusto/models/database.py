@@ -32,7 +32,7 @@ class Database(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :ivar etag: An etag of the resource created
+    :ivar etag: An ETag of the resource created.
     :vartype etag: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
@@ -41,6 +41,11 @@ class Database(TrackedResource):
     :param soft_delete_period_in_days: Required. The number of days data
      should be kept before it stops being accessible to queries.
     :type soft_delete_period_in_days: int
+    :param hot_cache_period_in_days: The number of days of data that should be
+     kept in cache for fast queries.
+    :type hot_cache_period_in_days: int
+    :param statistics: The statistics of the database.
+    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     """
 
     _validation = {
@@ -62,6 +67,8 @@ class Database(TrackedResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
+        'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
     def __init__(self, **kwargs):
@@ -69,3 +76,5 @@ class Database(TrackedResource):
         self.etag = None
         self.provisioning_state = None
         self.soft_delete_period_in_days = kwargs.get('soft_delete_period_in_days', None)
+        self.hot_cache_period_in_days = kwargs.get('hot_cache_period_in_days', None)
+        self.statistics = kwargs.get('statistics', None)
