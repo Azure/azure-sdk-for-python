@@ -661,8 +661,11 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: ProductionOrStagingEndpointInfo or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.ProductionOrStagingEndpointInfo
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
@@ -693,17 +696,13 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 207, 503]:
+        if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
-        if response.status_code == 207:
-            deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
-        if response.status_code == 503:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
