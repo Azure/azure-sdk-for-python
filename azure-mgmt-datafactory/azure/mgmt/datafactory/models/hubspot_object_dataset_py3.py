@@ -13,7 +13,7 @@ from .dataset_py3 import Dataset
 
 
 class HubspotObjectDataset(Dataset):
-    """Hubspot Serivce dataset.
+    """Hubspot Service dataset.
 
     All required parameters must be populated in order to send to Azure.
 

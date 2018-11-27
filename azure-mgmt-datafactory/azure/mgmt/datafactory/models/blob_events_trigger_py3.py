@@ -13,7 +13,7 @@ from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
 
 
 class BlobEventsTrigger(MultiplePipelineTrigger):
-    """Trigger that runs everytime a Blob event occurs.
+    """Trigger that runs every time a Blob event occurs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -13,7 +13,7 @@ from .dataset_py3 import Dataset
 
 
 class JiraObjectDataset(Dataset):
-    """Jira Serivce dataset.
+    """Jira Service dataset.
 
     All required parameters must be populated in order to send to Azure.
 

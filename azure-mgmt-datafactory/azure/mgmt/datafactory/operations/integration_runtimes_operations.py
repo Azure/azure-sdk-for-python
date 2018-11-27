@@ -983,7 +983,8 @@ class IntegrationRuntimesOperations(object):
 
     def upgrade(
             self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
-        """Upgrade self-hosted integration runtime to latest version if availably.
+        """Upgrade self-hosted integration runtime to latest version if
+        availability.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
