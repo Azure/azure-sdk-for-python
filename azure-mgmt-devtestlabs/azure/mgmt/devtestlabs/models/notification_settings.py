@@ -25,7 +25,7 @@ class NotificationSettings(Model):
      sent.
     :type webhook_url: str
     :param email_recipient: The email recipient to send notifications to (can
-     be a list of semi-colon seperated email addresses).
+     be a list of semi-colon separated email addresses).
     :type email_recipient: str
     :param notification_locale: The locale to use when sending a notification
      (fallback for unsupported languages is EN).

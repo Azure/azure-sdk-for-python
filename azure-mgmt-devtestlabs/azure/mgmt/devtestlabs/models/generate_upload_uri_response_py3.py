@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GenerateUploadUriResponse(Model):
-    """Reponse body for generating an upload URI.
+    """Response body for generating an upload URI.
 
     :param upload_uri: The upload URI for the VHD.
     :type upload_uri: str
