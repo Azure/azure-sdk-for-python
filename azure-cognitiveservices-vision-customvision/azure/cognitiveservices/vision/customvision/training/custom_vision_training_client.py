@@ -17,50 +17,54 @@ from msrest.exceptions import HttpOperationError
 from . import models
 
 
-class TrainingApiConfiguration(Configuration):
-    """Configuration for TrainingApi
+class CustomVisionTrainingClientConfiguration(Configuration):
+    """Configuration for CustomVisionTrainingClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param api_key:
     :type api_key: str
-    :param str base_url: Service URL
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     """
 
     def __init__(
-            self, api_key, base_url=None):
+            self, api_key, endpoint):
 
         if api_key is None:
             raise ValueError("Parameter 'api_key' must not be None.")
-        if not base_url:
-            base_url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.1/Training'
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+        base_url = '{Endpoint}/customvision/v2.2/Training'
 
-        super(TrainingApiConfiguration, self).__init__(base_url)
+        super(CustomVisionTrainingClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-customvision/{}'.format(VERSION))
 
         self.api_key = api_key
+        self.endpoint = endpoint
 
 
-class TrainingApi(SDKClient):
-    """TrainingApi
+class CustomVisionTrainingClient(SDKClient):
+    """CustomVisionTrainingClient
 
     :ivar config: Configuration for client.
-    :vartype config: TrainingApiConfiguration
+    :vartype config: CustomVisionTrainingClientConfiguration
 
     :param api_key:
     :type api_key: str
-    :param str base_url: Service URL
+    :param endpoint: Supported Cognitive Services endpoints
+    :type endpoint: str
     """
 
     def __init__(
-            self, api_key, base_url=None):
+            self, api_key, endpoint):
 
-        self.config = TrainingApiConfiguration(api_key, base_url)
-        super(TrainingApi, self).__init__(None, self.config)
+        self.config = CustomVisionTrainingClientConfiguration(api_key, endpoint)
+        super(CustomVisionTrainingClient, self).__init__(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.1'
+        self.api_version = '2.2'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -83,20 +87,24 @@ class TrainingApi(SDKClient):
         """
         # Construct URL
         url = self.get_domains.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -117,7 +125,7 @@ class TrainingApi(SDKClient):
             self, domain_id, custom_headers=None, raw=False, **operation_config):
         """Get information about a specific domain.
 
-        :param domain_id: The id of the domain to get information about
+        :param domain_id: The id of the domain to get information about.
         :type domain_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -134,6 +142,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_domain.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'domainId': self._serialize.url("domain_id", domain_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -143,14 +152,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -167,6 +176,366 @@ class TrainingApi(SDKClient):
         return deserialized
     get_domain.metadata = {'url': '/domains/{domainId}'}
 
+    def get_tagged_image_count(
+            self, project_id, iteration_id=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the number of images tagged with the provided {tagIds}.
+
+        The filtering is on an and/or relationship. For example, if the
+        provided tag ids are for the "Dog" and
+        "Cat" tags, then only images tagged with Dog and/or Cat will be
+        returned.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param iteration_id: The iteration id. Defaults to workspace.
+        :type iteration_id: str
+        :param tag_ids: A list of tags ids to filter the images to count.
+         Defaults to all tags when null.
+        :type tag_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: int or ClientRawResponse if raw=true
+        :rtype: int or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_tagged_image_count.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if iteration_id is not None:
+            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
+        if tag_ids is not None:
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('int', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_tagged_image_count.metadata = {'url': '/projects/{projectId}/images/tagged/count'}
+
+    def get_untagged_image_count(
+            self, project_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the number of untagged images.
+
+        This API returns the images which have no tags for a given project and
+        optionally an iteration. If no iteration is specified the
+        current workspace is used.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param iteration_id: The iteration id. Defaults to workspace.
+        :type iteration_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: int or ClientRawResponse if raw=true
+        :rtype: int or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_untagged_image_count.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if iteration_id is not None:
+            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('int', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_untagged_image_count.metadata = {'url': '/projects/{projectId}/images/untagged/count'}
+
+    def create_image_tags(
+            self, project_id, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Associate a set of images with a set of tags.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param tags: Image Tag entries to include in this batch.
+        :type tags:
+         list[~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateEntry]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ImageTagCreateSummary or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateSummary
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        batch = models.ImageTagCreateBatch(tags=tags)
+
+        # Construct URL
+        url = self.create_image_tags.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(batch, 'ImageTagCreateBatch')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImageTagCreateSummary', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
+
+    def delete_image_tags(
+            self, project_id, image_ids, tag_ids, custom_headers=None, raw=False, **operation_config):
+        """Remove a set of tags from a set of images.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param image_ids: Image ids. Limited to 64 images.
+        :type image_ids: list[str]
+        :param tag_ids: Tags to be deleted from the specified images. Limted
+         to 20 tags.
+        :type tag_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.delete_image_tags.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
+        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
+
+    def create_image_regions(
+            self, project_id, regions=None, custom_headers=None, raw=False, **operation_config):
+        """Create a set of image regions.
+
+        This API accepts a batch of image regions, and optionally tags, to
+        update existing images with region information.
+        There is a limit of 64 entries in the batch.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param regions:
+        :type regions:
+         list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateEntry]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ImageRegionCreateSummary or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateSummary
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        batch = models.ImageRegionCreateBatch(regions=regions)
+
+        # Construct URL
+        url = self.create_image_regions.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(batch, 'ImageRegionCreateBatch')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImageRegionCreateSummary', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_image_regions.metadata = {'url': '/projects/{projectId}/images/regions'}
+
+    def delete_image_regions(
+            self, project_id, region_ids, custom_headers=None, raw=False, **operation_config):
+        """Delete a set of image regions.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param region_ids: Regions to delete. Limited to 64.
+        :type region_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.delete_image_regions.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',')
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_image_regions.metadata = {'url': '/projects/{projectId}/images/regions'}
+
     def get_tagged_images(
             self, project_id, iteration_id=None, tag_ids=None, order_by=None, take=50, skip=0, custom_headers=None, raw=False, **operation_config):
         """Get tagged images for a given project iteration.
@@ -180,21 +549,21 @@ class TrainingApi(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images. Defaults to
-         all tagged images when null. Limited to 20
+         all tagged images when null. Limited to 20.
         :type tag_ids: list[str]
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -211,6 +580,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_tagged_images.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -230,14 +600,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -263,18 +633,18 @@ class TrainingApi(SDKClient):
         Use the {take} and {skip} parameters to control how many images to
         return in a given batch.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -291,6 +661,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_untagged_images.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -308,14 +679,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -332,132 +703,6 @@ class TrainingApi(SDKClient):
         return deserialized
     get_untagged_images.metadata = {'url': '/projects/{projectId}/images/untagged'}
 
-    def get_tagged_image_count(
-            self, project_id, iteration_id=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the number of images tagged with the provided {tagIds}.
-
-        The filtering is on an and/or relationship. For example, if the
-        provided tag ids are for the "Dog" and
-        "Cat" tags, then only images tagged with Dog and/or Cat will be
-        returned.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
-        :type iteration_id: str
-        :param tag_ids: A list of tags ids to filter the images to count.
-         Defaults to all tags when null.
-        :type tag_ids: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: int or ClientRawResponse if raw=true
-        :rtype: int or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_tagged_image_count.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if iteration_id is not None:
-            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
-        if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('int', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_tagged_image_count.metadata = {'url': '/projects/{projectId}/images/tagged/count'}
-
-    def get_untagged_image_count(
-            self, project_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the number of untagged images.
-
-        This API returns the images which have no tags for a given project and
-        optionally an iteration. If no iteration is specified the
-        current workspace is used.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
-        :type iteration_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: int or ClientRawResponse if raw=true
-        :rtype: int or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_untagged_image_count.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if iteration_id is not None:
-            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('int', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_untagged_image_count.metadata = {'url': '/projects/{projectId}/images/untagged/count'}
-
     def get_images_by_ids(
             self, project_id, image_ids=None, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Get images by id for a given project iteration.
@@ -466,11 +711,11 @@ class TrainingApi(SDKClient):
         optionally iteration. If no iteration is specified the
         current workspace is used.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_ids: The list of image ids to retrieve. Limited to 256
+        :param image_ids: The list of image ids to retrieve. Limited to 256.
         :type image_ids: list[str]
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -487,6 +732,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_images_by_ids.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -500,14 +746,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -532,12 +778,12 @@ class TrainingApi(SDKClient):
         application/octet-stream. When using multipart
         multiple image files can be sent at once, with a maximum of 64 files.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_data:
+        :param image_data: Binary image data.
         :type image_data: Generator
         :param tag_ids: The tags ids with which to tag each image. Limited to
-         20
+         20.
         :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -554,6 +800,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.create_images_from_data.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -565,6 +812,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -576,9 +824,8 @@ class TrainingApi(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -599,10 +846,10 @@ class TrainingApi(SDKClient):
             self, project_id, image_ids, custom_headers=None, raw=False, **operation_config):
         """Delete images from the set of training images.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param image_ids: Ids of the images to be deleted. Limted to 256
-         images per batch
+         images per batch.
         :type image_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -617,6 +864,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.delete_images.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -627,14 +875,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -651,7 +898,7 @@ class TrainingApi(SDKClient):
         This API accepts a batch of files, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -675,6 +922,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.create_images_from_files.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -684,6 +932,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -693,9 +942,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageFileCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -719,7 +967,7 @@ class TrainingApi(SDKClient):
         This API accepts a batch of urls, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -743,6 +991,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.create_images_from_urls.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -752,6 +1001,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -761,9 +1011,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageUrlCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -787,7 +1036,7 @@ class TrainingApi(SDKClient):
         This API creates a batch of images from predicted images specified.
         There is a limit of 64 images and 20 tags.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
         :param images:
         :type images:
@@ -811,6 +1060,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.create_images_from_predictions.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -820,6 +1070,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -829,9 +1080,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(batch, 'ImageIdCreateBatch')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -848,236 +1098,6 @@ class TrainingApi(SDKClient):
         return deserialized
     create_images_from_predictions.metadata = {'url': '/projects/{projectId}/images/predictions'}
 
-    def create_image_tags(
-            self, project_id, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Associate a set of images with a set of tags.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param tags:
-        :type tags:
-         list[~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateEntry]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ImageTagCreateSummary or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateSummary
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        batch = models.ImageTagCreateBatch(tags=tags)
-
-        # Construct URL
-        url = self.create_image_tags.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(batch, 'ImageTagCreateBatch')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImageTagCreateSummary', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
-
-    def delete_image_tags(
-            self, project_id, image_ids, tag_ids, custom_headers=None, raw=False, **operation_config):
-        """Remove a set of tags from a set of images.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param image_ids: Image ids. Limited to 64 images
-        :type image_ids: list[str]
-        :param tag_ids: Tags to be deleted from the specified images. Limted
-         to 20 tags
-        :type tag_ids: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.delete_image_tags.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
-        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
-
-    def create_image_regions(
-            self, project_id, regions=None, custom_headers=None, raw=False, **operation_config):
-        """Create a set of image regions.
-
-        This API accepts a batch of image regions, and optionally tags, to
-        update existing images with region information.
-        There is a limit of 64 entries in the batch.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param regions:
-        :type regions:
-         list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateEntry]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ImageRegionCreateSummary or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateSummary
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        batch = models.ImageRegionCreateBatch(regions=regions)
-
-        # Construct URL
-        url = self.create_image_regions.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(batch, 'ImageRegionCreateBatch')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImageRegionCreateSummary', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_image_regions.metadata = {'url': '/projects/{projectId}/images/regions'}
-
-    def delete_image_regions(
-            self, project_id, region_ids, custom_headers=None, raw=False, **operation_config):
-        """Delete a set of image regions.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param region_ids: Regions to delete. Limited to 64
-        :type region_ids: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.delete_image_regions.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_image_regions.metadata = {'url': '/projects/{projectId}/images/regions'}
-
     def get_image_region_proposals(
             self, project_id, image_id, custom_headers=None, raw=False, **operation_config):
         """Get region proposals for an image. Returns empty array if no proposals
@@ -1086,9 +1106,9 @@ class TrainingApi(SDKClient):
         This API will get region proposals for an image along with confidences
         for the region. It returns an empty array if no proposals are found.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_id: The image id
+        :param image_id: The image id.
         :type image_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1105,6 +1125,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_image_region_proposals.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'imageId': self._serialize.url("image_id", image_id, 'str')
         }
@@ -1115,14 +1136,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1144,9 +1165,9 @@ class TrainingApi(SDKClient):
         """Delete a set of predicted images and their associated prediction
         results.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param ids: The prediction ids. Limited to 64
+        :param ids: The prediction ids. Limited to 64.
         :type ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1161,6 +1182,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.delete_prediction.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1171,14 +1193,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -1188,73 +1209,11 @@ class TrainingApi(SDKClient):
             return client_raw_response
     delete_prediction.metadata = {'url': '/projects/{projectId}/predictions'}
 
-    def query_predictions(
-            self, project_id, query, custom_headers=None, raw=False, **operation_config):
-        """Get images that were sent to your prediction endpoint.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param query: Parameters used to query the predictions. Limited to
-         combining 2 tags
-        :type query:
-         ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PredictionQueryResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.query_predictions.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(query, 'PredictionQueryToken')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('PredictionQueryResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    query_predictions.metadata = {'url': '/projects/{projectId}/predictions/query'}
-
     def quick_test_image_url(
             self, project_id, iteration_id=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image url.
 
-        :param project_id: The project to evaluate against
+        :param project_id: The project to evaluate against.
         :type project_id: str
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1279,6 +1238,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.quick_test_image_url.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1290,6 +1250,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1299,9 +1260,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1322,9 +1282,9 @@ class TrainingApi(SDKClient):
             self, project_id, image_data, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param image_data:
+        :param image_data: Binary image data.
         :type image_data: Generator
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1345,6 +1305,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.quick_test_image.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1356,6 +1317,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1367,9 +1329,8 @@ class TrainingApi(SDKClient):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1386,27 +1347,32 @@ class TrainingApi(SDKClient):
         return deserialized
     quick_test_image.metadata = {'url': '/projects/{projectId}/quicktest/image'}
 
-    def train_project(
-            self, project_id, custom_headers=None, raw=False, **operation_config):
-        """Queues project for training.
+    def query_predictions(
+            self, project_id, query, custom_headers=None, raw=False, **operation_config):
+        """Get images that were sent to your prediction endpoint.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
+        :param query: Parameters used to query the predictions. Limited to
+         combining 2 tags.
+        :type query:
+         ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Iteration or ClientRawResponse if raw=true
+        :return: PredictionQueryResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = self.train_project.metadata['url']
+        url = self.query_predictions.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1416,287 +1382,18 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Iteration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    train_project.metadata = {'url': '/projects/{projectId}/train'}
-
-    def get_projects(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get your projects.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.customvision.training.models.Project]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_projects.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[Project]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_projects.metadata = {'url': '/projects'}
-
-    def create_project(
-            self, name, description=None, domain_id=None, classification_type=None, custom_headers=None, raw=False, **operation_config):
-        """Create a project.
-
-        :param name: Name of the project
-        :type name: str
-        :param description: The description of the project
-        :type description: str
-        :param domain_id: The id of the domain to use for this project.
-         Defaults to General
-        :type domain_id: str
-        :param classification_type: The type of classifier to create for this
-         project. Possible values include: 'Multiclass', 'Multilabel'
-        :type classification_type: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Project or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Project
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.create_project.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['name'] = self._serialize.query("name", name, 'str')
-        if description is not None:
-            query_parameters['description'] = self._serialize.query("description", description, 'str')
-        if domain_id is not None:
-            query_parameters['domainId'] = self._serialize.query("domain_id", domain_id, 'str')
-        if classification_type is not None:
-            query_parameters['classificationType'] = self._serialize.query("classification_type", classification_type, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Project', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_project.metadata = {'url': '/projects'}
-
-    def get_project(
-            self, project_id, custom_headers=None, raw=False, **operation_config):
-        """Get a specific project.
-
-        :param project_id: The id of the project to get
-        :type project_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Project or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Project
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_project.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Project', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_project.metadata = {'url': '/projects/{projectId}'}
-
-    def delete_project(
-            self, project_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a specific project.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.delete_project.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_project.metadata = {'url': '/projects/{projectId}'}
-
-    def update_project(
-            self, project_id, updated_project, custom_headers=None, raw=False, **operation_config):
-        """Update a specific project.
-
-        :param project_id: The id of the project to update
-        :type project_id: str
-        :param updated_project: The updated project model
-        :type updated_project:
-         ~azure.cognitiveservices.vision.customvision.training.models.Project
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Project or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Project
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.update_project.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct body
-        body_content = self._serialize.body(updated_project, 'Project')
+        body_content = self._serialize.body(query, 'PredictionQueryToken')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -1704,254 +1401,27 @@ class TrainingApi(SDKClient):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Project', response)
+            deserialized = self._deserialize('PredictionQueryResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_project.metadata = {'url': '/projects/{projectId}'}
-
-    def get_iterations(
-            self, project_id, custom_headers=None, raw=False, **operation_config):
-        """Get iterations for the project.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.customvision.training.models.Iteration]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_iterations.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[Iteration]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_iterations.metadata = {'url': '/projects/{projectId}/iterations'}
-
-    def get_iteration(
-            self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
-        """Get a specific iteration.
-
-        :param project_id: The id of the project the iteration belongs to
-        :type project_id: str
-        :param iteration_id: The id of the iteration to get
-        :type iteration_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Iteration or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_iteration.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Iteration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
-
-    def delete_iteration(
-            self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a specific iteration of a project.
-
-        :param project_id: The project id
-        :type project_id: str
-        :param iteration_id: The iteration id
-        :type iteration_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.delete_iteration.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
-
-    def update_iteration(
-            self, project_id, iteration_id, name=None, is_default=None, custom_headers=None, raw=False, **operation_config):
-        """Update a specific iteration.
-
-        :param project_id: Project id
-        :type project_id: str
-        :param iteration_id: Iteration id
-        :type iteration_id: str
-        :param name: Gets or sets the name of the iteration
-        :type name: str
-        :param is_default: Gets or sets a value indicating whether the
-         iteration is the default iteration for the project
-        :type is_default: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Iteration or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        updated_iteration = models.Iteration(name=name, is_default=is_default)
-
-        # Construct URL
-        url = self.update_iteration.metadata['url']
-        path_format_arguments = {
-            'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(updated_iteration, 'Iteration')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Iteration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
+    query_predictions.metadata = {'url': '/projects/{projectId}/predictions/query'}
 
     def get_iteration_performance(
             self, project_id, iteration_id, threshold=None, overlap_threshold=None, custom_headers=None, raw=False, **operation_config):
         """Get detailed performance information about an iteration.
 
-        :param project_id: The id of the project the iteration belongs to
+        :param project_id: The id of the project the iteration belongs to.
         :type project_id: str
-        :param iteration_id: The id of the iteration to get
+        :param iteration_id: The id of the iteration to get.
         :type iteration_id: str
-        :param threshold: The threshold used to determine true predictions
+        :param threshold: The threshold used to determine true predictions.
         :type threshold: float
         :param overlap_threshold: If applicable, the bounding box overlap
-         threshold used to determine true predictions
+         threshold used to determine true predictions.
         :type overlap_threshold: float
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1968,6 +1438,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_iteration_performance.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
@@ -1982,14 +1453,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2019,21 +1490,21 @@ class TrainingApi(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images. Defaults to
-         all tagged images when null. Limited to 20
+         all tagged images when null. Limited to 20.
         :type tag_ids: list[str]
         :param order_by: The ordering. Defaults to newest. Possible values
          include: 'Newest', 'Oldest'
         :type order_by: str
         :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256
+         limited to 256.
         :type take: int
         :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0
+         batch. Defaults to 0.
         :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2050,6 +1521,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_image_performances.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
@@ -2068,14 +1540,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2103,9 +1575,9 @@ class TrainingApi(SDKClient):
         "Cat" tags, then only images tagged with Dog and/or Cat will be
         returned.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param tag_ids: A list of tags ids to filter the images to count.
          Defaults to all tags when null.
@@ -2123,6 +1595,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_image_performance_count.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
@@ -2135,14 +1608,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2159,13 +1632,581 @@ class TrainingApi(SDKClient):
         return deserialized
     get_image_performance_count.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/performance/images/count'}
 
+    def get_projects(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get your projects.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.vision.customvision.training.models.Project]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_projects.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[Project]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_projects.metadata = {'url': '/projects'}
+
+    def create_project(
+            self, name, description=None, domain_id=None, classification_type=None, custom_headers=None, raw=False, **operation_config):
+        """Create a project.
+
+        :param name: Name of the project.
+        :type name: str
+        :param description: The description of the project.
+        :type description: str
+        :param domain_id: The id of the domain to use for this project.
+         Defaults to General.
+        :type domain_id: str
+        :param classification_type: The type of classifier to create for this
+         project. Possible values include: 'Multiclass', 'Multilabel'
+        :type classification_type: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Project or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Project
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.create_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['name'] = self._serialize.query("name", name, 'str')
+        if description is not None:
+            query_parameters['description'] = self._serialize.query("description", description, 'str')
+        if domain_id is not None:
+            query_parameters['domainId'] = self._serialize.query("domain_id", domain_id, 'str')
+        if classification_type is not None:
+            query_parameters['classificationType'] = self._serialize.query("classification_type", classification_type, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Project', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_project.metadata = {'url': '/projects'}
+
+    def get_project(
+            self, project_id, custom_headers=None, raw=False, **operation_config):
+        """Get a specific project.
+
+        :param project_id: The id of the project to get.
+        :type project_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Project or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Project
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Project', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_project.metadata = {'url': '/projects/{projectId}'}
+
+    def delete_project(
+            self, project_id, custom_headers=None, raw=False, **operation_config):
+        """Delete a specific project.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.delete_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_project.metadata = {'url': '/projects/{projectId}'}
+
+    def update_project(
+            self, project_id, updated_project, custom_headers=None, raw=False, **operation_config):
+        """Update a specific project.
+
+        :param project_id: The id of the project to update.
+        :type project_id: str
+        :param updated_project: The updated project model.
+        :type updated_project:
+         ~azure.cognitiveservices.vision.customvision.training.models.Project
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Project or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Project
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.update_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(updated_project, 'Project')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Project', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_project.metadata = {'url': '/projects/{projectId}'}
+
+    def get_iterations(
+            self, project_id, custom_headers=None, raw=False, **operation_config):
+        """Get iterations for the project.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.vision.customvision.training.models.Iteration]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_iterations.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[Iteration]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_iterations.metadata = {'url': '/projects/{projectId}/iterations'}
+
+    def get_iteration(
+            self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
+        """Get a specific iteration.
+
+        :param project_id: The id of the project the iteration belongs to.
+        :type project_id: str
+        :param iteration_id: The id of the iteration to get.
+        :type iteration_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Iteration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.get_iteration.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str'),
+            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Iteration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
+
+    def delete_iteration(
+            self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
+        """Delete a specific iteration of a project.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param iteration_id: The iteration id.
+        :type iteration_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.delete_iteration.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str'),
+            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
+
+    def update_iteration(
+            self, project_id, iteration_id, name=None, is_default=None, custom_headers=None, raw=False, **operation_config):
+        """Update a specific iteration.
+
+        :param project_id: Project id.
+        :type project_id: str
+        :param iteration_id: Iteration id.
+        :type iteration_id: str
+        :param name: Gets or sets the name of the iteration.
+        :type name: str
+        :param is_default: Gets or sets a value indicating whether the
+         iteration is the default iteration for the project.
+        :type is_default: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Iteration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        updated_iteration = models.Iteration(name=name, is_default=is_default)
+
+        # Construct URL
+        url = self.update_iteration.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str'),
+            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(updated_iteration, 'Iteration')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Iteration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
+
+    def train_project(
+            self, project_id, custom_headers=None, raw=False, **operation_config):
+        """Queues project for training.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Iteration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.train_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Iteration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    train_project.metadata = {'url': '/projects/{projectId}/train'}
+
     def get_exports(
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
         """Get the list of exports for a specific iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id
+        :param iteration_id: The iteration id.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2182,6 +2223,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_exports.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
@@ -2192,14 +2234,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2220,15 +2262,15 @@ class TrainingApi(SDKClient):
             self, project_id, iteration_id, platform, flavor=None, custom_headers=None, raw=False, **operation_config):
         """Export a trained iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id
+        :param iteration_id: The iteration id.
         :type iteration_id: str
-        :param platform: The target platform (coreml or tensorflow). Possible
-         values include: 'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
+        :param platform: The target platform. Possible values include:
+         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
         :type platform: str
-        :param flavor: The flavor of the target platform (Windows, Linux, ARM,
-         or GPU). Possible values include: 'Linux', 'Windows'
+        :param flavor: The flavor of the target platform. Possible values
+         include: 'Linux', 'Windows', 'ONNX10', 'ONNX12'
         :type flavor: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2245,6 +2287,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.export_iteration.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
@@ -2258,14 +2301,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2286,12 +2329,12 @@ class TrainingApi(SDKClient):
             self, project_id, tag_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Get information about a specific tag.
 
-        :param project_id: The project this tag belongs to
+        :param project_id: The project this tag belongs to.
         :type project_id: str
-        :param tag_id: The tag id
+        :param tag_id: The tag id.
         :type tag_id: str
         :param iteration_id: The iteration to retrieve this tag from.
-         Optional, defaults to current training set
+         Optional, defaults to current training set.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2308,6 +2351,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_tag.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
         }
@@ -2320,14 +2364,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2348,9 +2392,9 @@ class TrainingApi(SDKClient):
             self, project_id, tag_id, custom_headers=None, raw=False, **operation_config):
         """Delete a tag from the project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param tag_id: Id of the tag to be deleted
+        :param tag_id: Id of the tag to be deleted.
         :type tag_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2365,6 +2409,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.delete_tag.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
         }
@@ -2375,14 +2420,13 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise HttpOperationError(self._deserialize, response)
@@ -2393,17 +2437,16 @@ class TrainingApi(SDKClient):
     delete_tag.metadata = {'url': '/projects/{projectId}/tags/{tagId}'}
 
     def update_tag(
-            self, project_id, tag_id, name=None, description=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, tag_id, updated_tag, custom_headers=None, raw=False, **operation_config):
         """Update a tag.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param tag_id: The id of the target tag
+        :param tag_id: The id of the target tag.
         :type tag_id: str
-        :param name: Gets or sets the name of the tag
-        :type name: str
-        :param description: Gets or sets the description of the tag
-        :type description: str
+        :param updated_tag: The updated tag model.
+        :type updated_tag:
+         ~azure.cognitiveservices.vision.customvision.training.models.Tag
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2416,11 +2459,10 @@ class TrainingApi(SDKClient):
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
-        updated_tag = models.Tag(name=name, description=description)
-
         # Construct URL
         url = self.update_tag.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
         }
@@ -2431,6 +2473,7 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -2440,9 +2483,8 @@ class TrainingApi(SDKClient):
         body_content = self._serialize.body(updated_tag, 'Tag')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2463,9 +2505,9 @@ class TrainingApi(SDKClient):
             self, project_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Get the tags for a given project and iteration.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace
+        :param iteration_id: The iteration id. Defaults to workspace.
         :type iteration_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2482,6 +2524,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.get_tags.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2493,14 +2536,14 @@ class TrainingApi(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
@@ -2518,15 +2561,18 @@ class TrainingApi(SDKClient):
     get_tags.metadata = {'url': '/projects/{projectId}/tags'}
 
     def create_tag(
-            self, project_id, name, description=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, name, description=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Create a tag for the project.
 
-        :param project_id: The project id
+        :param project_id: The project id.
         :type project_id: str
-        :param name: The tag name
+        :param name: The tag name.
         :type name: str
-        :param description: Optional description for the tag
+        :param description: Optional description for the tag.
         :type description: str
+        :param type: Optional type for the tag. Possible values include:
+         'Regular', 'Negative'
+        :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2542,6 +2588,7 @@ class TrainingApi(SDKClient):
         # Construct URL
         url = self.create_tag.metadata['url']
         path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2551,17 +2598,19 @@ class TrainingApi(SDKClient):
         query_parameters['name'] = self._serialize.query("name", name, 'str')
         if description is not None:
             query_parameters['description'] = self._serialize.query("description", description, 'str')
+        if type is not None:
+            query_parameters['type'] = self._serialize.query("type", type, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
