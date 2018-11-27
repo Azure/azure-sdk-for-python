@@ -28,8 +28,9 @@ class NetworkInterface(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param virtual_machine: The reference of a virtual machine.
-    :type virtual_machine: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :ivar virtual_machine: The reference of a virtual machine.
+    :vartype virtual_machine:
+     ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
     :type network_security_group:
@@ -76,6 +77,7 @@ class NetworkInterface(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'virtual_machine': {'readonly': True},
         'interface_endpoint': {'readonly': True},
         'hosted_workloads': {'readonly': True},
     }
@@ -104,7 +106,7 @@ class NetworkInterface(Resource):
 
     def __init__(self, **kwargs):
         super(NetworkInterface, self).__init__(**kwargs)
-        self.virtual_machine = kwargs.get('virtual_machine', None)
+        self.virtual_machine = None
         self.network_security_group = kwargs.get('network_security_group', None)
         self.interface_endpoint = None
         self.ip_configurations = kwargs.get('ip_configurations', None)
