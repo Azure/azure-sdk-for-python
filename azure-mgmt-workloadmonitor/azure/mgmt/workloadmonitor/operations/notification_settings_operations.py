@@ -23,6 +23,7 @@ class NotificationSettingsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2018-08-31-preview".
+    :ivar notification_setting_name: Default string modeled as parameter for URL to work correctly. Constant value: "default".
     """
 
     models = models
@@ -33,6 +34,7 @@ class NotificationSettingsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2018-08-31-preview"
+        self.notification_setting_name = "default"
 
         self.config = config
 
@@ -118,7 +120,7 @@ class NotificationSettingsOperations(object):
     list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceNamespace}/{resourceType}/{resourceName}/providers/Microsoft.WorkloadMonitor/notificationSettings'}
 
     def get(
-            self, resource_group_name, resource_namespace, resource_type, resource_name, notification_setting_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_namespace, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Get a of notification setting for a resource.
 
         :param resource_group_name: The name of the resource group. The name
@@ -130,8 +132,6 @@ class NotificationSettingsOperations(object):
         :type resource_type: str
         :param resource_name: Name of the resource.
         :type resource_name: str
-        :param notification_setting_name: Name of the notificationSetting
-        :type notification_setting_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -151,7 +151,7 @@ class NotificationSettingsOperations(object):
             'resourceNamespace': self._serialize.url("resource_namespace", resource_namespace, 'str'),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'notificationSettingName': self._serialize.url("notification_setting_name", notification_setting_name, 'str')
+            'notificationSettingName': self._serialize.url("self.notification_setting_name", self.notification_setting_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -189,7 +189,7 @@ class NotificationSettingsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceNamespace}/{resourceType}/{resourceName}/providers/Microsoft.WorkloadMonitor/notificationSettings/{notificationSettingName}'}
 
     def update(
-            self, resource_group_name, resource_namespace, resource_type, resource_name, notification_setting_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_namespace, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Update notification settings for a resource.
 
         :param resource_group_name: The name of the resource group. The name
@@ -201,8 +201,6 @@ class NotificationSettingsOperations(object):
         :type resource_type: str
         :param resource_name: Name of the resource.
         :type resource_name: str
-        :param notification_setting_name: Name of the notificationSetting
-        :type notification_setting_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -224,7 +222,7 @@ class NotificationSettingsOperations(object):
             'resourceNamespace': self._serialize.url("resource_namespace", resource_namespace, 'str'),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'notificationSettingName': self._serialize.url("notification_setting_name", notification_setting_name, 'str')
+            'notificationSettingName': self._serialize.url("self.notification_setting_name", self.notification_setting_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
