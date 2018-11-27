@@ -9,14 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .databases_operations import DatabasesOperations
-from .event_hub_connections_operations import EventHubConnectionsOperations
-from .operations import Operations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClustersOperations',
-    'DatabasesOperations',
-    'EventHubConnectionsOperations',
-    'Operations',
-]
+
+class DatabaseStatistics(Model):
+    """DatabaseStatistics.
+
+    :param size: The database size - the total size of compressed data and
+     index in bytes.
+    :type size: float
+    """
+
+    _attribute_map = {
+        'size': {'key': 'size', 'type': 'float'},
+    }
+
+    def __init__(self, *, size: float=None, **kwargs) -> None:
+        super(DatabaseStatistics, self).__init__(**kwargs)
+        self.size = size

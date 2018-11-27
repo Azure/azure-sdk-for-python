@@ -9,14 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .databases_operations import DatabasesOperations
-from .event_hub_connections_operations import EventHubConnectionsOperations
-from .operations import Operations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClustersOperations',
-    'DatabasesOperations',
-    'EventHubConnectionsOperations',
-    'Operations',
-]
+
+class TrustedExternalTenant(Model):
+    """TrustedExternalTenant.
+
+    :param value: GUID representing an external tenant.
+    :type value: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, value: str=None, **kwargs) -> None:
+        super(TrustedExternalTenant, self).__init__(**kwargs)
+        self.value = value
