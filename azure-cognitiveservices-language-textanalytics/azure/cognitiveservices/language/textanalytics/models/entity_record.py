@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class EntityRecordV2dot1(Model):
-    """EntityRecordV2dot1.
+class EntityRecord(Model):
+    """EntityRecord.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,7 +22,7 @@ class EntityRecordV2dot1(Model):
     :type name: str
     :param matches: List of instances this entity appears in the text.
     :type matches:
-     list[~azure.cognitiveservices.language.textanalytics.models.MatchRecordV2dot1]
+     list[~azure.cognitiveservices.language.textanalytics.models.MatchRecord]
     :param wikipedia_language: Wikipedia language for which the WikipediaId
      and WikipediaUrl refers to.
     :type wikipedia_language: str
@@ -45,18 +45,18 @@ class EntityRecordV2dot1(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'matches': {'key': 'matches', 'type': '[MatchRecordV2dot1]'},
-        'wikipedia_language': {'key': 'wikipediaLanguage', 'type': 'str'},
-        'wikipedia_id': {'key': 'wikipediaId', 'type': 'str'},
-        'wikipedia_url': {'key': 'wikipediaUrl', 'type': 'str'},
-        'bing_id': {'key': 'bingId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sub_type': {'key': 'subType', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'matches': {'key': 'Matches', 'type': '[MatchRecord]'},
+        'wikipedia_language': {'key': 'WikipediaLanguage', 'type': 'str'},
+        'wikipedia_id': {'key': 'WikipediaId', 'type': 'str'},
+        'wikipedia_url': {'key': 'WikipediaUrl', 'type': 'str'},
+        'bing_id': {'key': 'BingId', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
+        'sub_type': {'key': 'SubType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(EntityRecordV2dot1, self).__init__(**kwargs)
+        super(EntityRecord, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.matches = kwargs.get('matches', None)
         self.wikipedia_language = kwargs.get('wikipedia_language', None)

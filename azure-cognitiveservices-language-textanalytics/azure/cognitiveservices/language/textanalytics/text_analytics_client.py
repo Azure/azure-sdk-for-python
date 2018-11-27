@@ -300,12 +300,12 @@ class TextAnalyticsClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EntitiesBatchResultV2dot1 or ClientRawResponse if raw=true
+        :return: EntitiesBatchResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResultV2dot1
+         ~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
+         :class:`EntitiesErrorResponseException<azure.cognitiveservices.language.textanalytics.models.EntitiesErrorResponseException>`
         """
         input = models.MultiLanguageBatchInput(documents=documents)
 
@@ -334,12 +334,12 @@ class TextAnalyticsClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.EntitiesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EntitiesBatchResultV2dot1', response)
+            deserialized = self._deserialize('EntitiesBatchResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

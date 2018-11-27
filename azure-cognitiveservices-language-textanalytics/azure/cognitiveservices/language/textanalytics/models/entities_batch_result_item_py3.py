@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class EntitiesBatchResultItemV2dot1(Model):
-    """EntitiesBatchResultItemV2dot1.
+class EntitiesBatchResultItem(Model):
+    """EntitiesBatchResultItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,7 +22,7 @@ class EntitiesBatchResultItemV2dot1(Model):
     :vartype id: str
     :ivar entities: Recognized entities in the document.
     :vartype entities:
-     list[~azure.cognitiveservices.language.textanalytics.models.EntityRecordV2dot1]
+     list[~azure.cognitiveservices.language.textanalytics.models.EntityRecord]
     """
 
     _validation = {
@@ -31,11 +31,11 @@ class EntitiesBatchResultItemV2dot1(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'entities': {'key': 'entities', 'type': '[EntityRecordV2dot1]'},
+        'id': {'key': 'Id', 'type': 'str'},
+        'entities': {'key': 'Entities', 'type': '[EntityRecord]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(EntitiesBatchResultItemV2dot1, self).__init__(**kwargs)
+        super(EntitiesBatchResultItem, self).__init__(**kwargs)
         self.id = None
         self.entities = None

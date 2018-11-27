@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class MatchRecordV2dot1(Model):
-    """MatchRecordV2dot1.
+class MatchRecord(Model):
+    """MatchRecord.
 
     :param text: Entity text as appears in the request.
     :type text: str
@@ -25,13 +25,13 @@ class MatchRecordV2dot1(Model):
     """
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'offset': {'key': 'Offset', 'type': 'int'},
+        'length': {'key': 'Length', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(MatchRecordV2dot1, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+    def __init__(self, *, text: str=None, offset: int=None, length: int=None, **kwargs) -> None:
+        super(MatchRecord, self).__init__(**kwargs)
+        self.text = text
+        self.offset = offset
+        self.length = length
