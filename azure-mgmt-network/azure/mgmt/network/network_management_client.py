@@ -79,7 +79,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-08-01'
+    DEFAULT_API_VERSION = '2018-10-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -123,7 +123,9 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2018-08-01':
+        if api_version == '2018-10-01':
+            from .v2018_08_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-08-01':
             from .v2018_08_01 import NetworkManagementClient as ClientClass
         elif api_version == '2018-07-01':
             from .v2018_07_01 import NetworkManagementClient as ClientClass
