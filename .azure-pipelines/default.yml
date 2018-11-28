@@ -1,0 +1,28 @@
+trigger:
+- master
+
+jobs:
+- job: 'Windows'
+
+  pool:
+    vmImage: 'vs2017-win2016'  
+
+  steps:
+  - script: |
+     python -m venv .\
+     
+     pip install git+https://github.com/lmazuel/swagger-to-sdk
+     pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
+     
+     mkdir dist
+    displayName: 'Prep Environment, Install Packages'
+
+  - script: 'python ./build_package.py --dest %BUILD_SOURCESDIRECTORY%\dist "azure-keyvault"'
+    displayName: 'Generate KeyVault Tarball'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+    inputs:
+      PathtoPublish: dist
+
+      ArtifactName: packages
