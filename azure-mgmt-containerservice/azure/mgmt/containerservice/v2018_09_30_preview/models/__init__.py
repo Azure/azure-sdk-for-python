@@ -35,6 +35,7 @@ except (SyntaxError, ImportError):
     from .open_shift_managed_cluster import OpenShiftManagedCluster
     from .open_shift_managed_cluster_aad_identity_provider import OpenShiftManagedClusterAADIdentityProvider
     from .tags_object import TagsObject
+from .open_shift_managed_cluster_paged import OpenShiftManagedClusterPaged
 from .container_service_client_enums import (
     OSType,
     OpenShiftContainerServiceVMSize,
@@ -54,6 +55,7 @@ __all__ = [
     'OpenShiftManagedCluster',
     'OpenShiftManagedClusterAADIdentityProvider',
     'TagsObject',
+    'OpenShiftManagedClusterPaged',
     'OSType',
     'OpenShiftContainerServiceVMSize',
     'OpenShiftAgentPoolProfileRole',
