@@ -22,7 +22,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
     :type name: str
     :param count: Required. Number of agents (VMs) to host docker containers.
      Allowed values must be in the range of 1 to 5 (inclusive). The default
-     value is 2. . Default value: 2 .
+     value is 2.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_D2s_v3', 'Standard_D4s_v3', 'Standard_D8s_v3',
@@ -53,7 +53,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
 
     _validation = {
         'name': {'required': True},
-        'count': {'required': True, 'maximum': 5, 'minimum': 1},
+        'count': {'required': True},
         'vm_size': {'required': True},
     }
 
@@ -66,7 +66,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=2, subnet_cidr: str="10.0.0.0/24", os_type="Linux", role=None, **kwargs) -> None:
+    def __init__(self, *, name: str, count: int, vm_size, subnet_cidr: str="10.0.0.0/24", os_type="Linux", role=None, **kwargs) -> None:
         super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
