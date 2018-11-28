@@ -21,8 +21,6 @@ try:
     from .application_setting_update_object_py3 import ApplicationSettingUpdateObject
     from .publish_setting_update_object_py3 import PublishSettingUpdateObject
     from .example_label_object_py3 import ExampleLabelObject
-    from .dispatch_connected_service_delete_object_py3 import DispatchConnectedServiceDeleteObject
-    from .dispatch_connected_service_object_py3 import DispatchConnectedServiceObject
     from .phraselist_create_object_py3 import PhraselistCreateObject
     from .sub_closed_list_py3 import SubClosedList
     from .sub_closed_list_response_py3 import SubClosedListResponse
@@ -111,6 +109,7 @@ try:
     from .pattern_rule_info_py3 import PatternRuleInfo
     from .label_text_object_py3 import LabelTextObject
     from .app_version_setting_object_py3 import AppVersionSettingObject
+    from .azure_account_info_object_py3 import AzureAccountInfoObject
     from .hierarchical_child_model_update_object_py3 import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object_py3 import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object_py3 import CompositeChildModelCreateObject
@@ -126,8 +125,6 @@ except (SyntaxError, ImportError):
     from .application_setting_update_object import ApplicationSettingUpdateObject
     from .publish_setting_update_object import PublishSettingUpdateObject
     from .example_label_object import ExampleLabelObject
-    from .dispatch_connected_service_delete_object import DispatchConnectedServiceDeleteObject
-    from .dispatch_connected_service_object import DispatchConnectedServiceObject
     from .phraselist_create_object import PhraselistCreateObject
     from .sub_closed_list import SubClosedList
     from .sub_closed_list_response import SubClosedListResponse
@@ -216,6 +213,7 @@ except (SyntaxError, ImportError):
     from .pattern_rule_info import PatternRuleInfo
     from .label_text_object import LabelTextObject
     from .app_version_setting_object import AppVersionSettingObject
+    from .azure_account_info_object import AzureAccountInfoObject
     from .hierarchical_child_model_update_object import HierarchicalChildModelUpdateObject
     from .hierarchical_child_model_create_object import HierarchicalChildModelCreateObject
     from .composite_child_model_create_object import CompositeChildModelCreateObject
@@ -236,8 +234,6 @@ __all__ = [
     'ApplicationSettingUpdateObject',
     'PublishSettingUpdateObject',
     'ExampleLabelObject',
-    'DispatchConnectedServiceDeleteObject',
-    'DispatchConnectedServiceObject',
     'PhraselistCreateObject',
     'SubClosedList',
     'SubClosedListResponse',
@@ -326,6 +322,7 @@ __all__ = [
     'PatternRuleInfo',
     'LabelTextObject',
     'AppVersionSettingObject',
+    'AzureAccountInfoObject',
     'HierarchicalChildModelUpdateObject',
     'HierarchicalChildModelCreateObject',
     'CompositeChildModelCreateObject',

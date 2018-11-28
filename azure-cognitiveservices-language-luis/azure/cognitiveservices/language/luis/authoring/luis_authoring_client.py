@@ -12,6 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
+from msrest.pipeline import ClientRawResponse
 from msrest.exceptions import HttpOperationError
 from .operations.features_operations import FeaturesOperations
 from .operations.examples_operations import ExamplesOperations
@@ -22,7 +23,6 @@ from .operations.train_operations import TrainOperations
 from .operations.permissions_operations import PermissionsOperations
 from .operations.pattern_operations import PatternOperations
 from .operations.settings_operations import SettingsOperations
-from .operations.dispatch_operations import DispatchOperations
 from . import models
 
 
@@ -80,8 +80,6 @@ class LUISAuthoringClient(SDKClient):
     :vartype pattern: azure.cognitiveservices.language.luis.authoring.operations.PatternOperations
     :ivar settings: Settings operations
     :vartype settings: azure.cognitiveservices.language.luis.authoring.operations.SettingsOperations
-    :ivar dispatch: Dispatch operations
-    :vartype dispatch: azure.cognitiveservices.language.luis.authoring.operations.DispatchOperations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
@@ -120,5 +118,271 @@ class LUISAuthoringClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.dispatch = DispatchOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+
+    def fivebe_three_two_two_two_eighte_eight_four_seven_threede_one_one_six_three_two_five_five_one_five(
+            self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+        """apps - Assign a LUIS azure accounts to an application.
+
+        Assigns an azure account to the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param azure_account_info_object: The azure account information
+         object.
+        :type azure_account_info_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.fivebe_three_two_two_two_eighte_eight_four_seven_threede_one_one_six_three_two_five_five_one_five.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if azure_account_info_object is not None:
+            body_content = self._serialize.body(azure_account_info_object, 'AzureAccountInfoObject')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    fivebe_three_two_two_two_eighte_eight_four_seven_threede_one_one_six_three_two_five_five_one_five.metadata = {'url': '/apps/{appId}/azureaccounts'}
+
+    def fivebe_three_two_zero_two_eighta_oned_four_eightf_eight_eightcfd_five_sevene_two_zero(
+            self, app_id, custom_headers=None, raw=False, **operation_config):
+        """apps - Get LUIS azure accounts assigned to the application.
+
+        Gets the LUIS azure accounts assigned to the application for the user
+        using his ARM token.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.fivebe_three_two_zero_two_eighta_oned_four_eightf_eight_eightcfd_five_sevene_two_zero.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[AzureAccountInfoObject]', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    fivebe_three_two_zero_two_eighta_oned_four_eightf_eight_eightcfd_five_sevene_two_zero.metadata = {'url': '/apps/{appId}/azureaccounts'}
+
+    def fivebe_three_two_five_five_fourf_eight_five_nine_onedb_threea_eight_six_two_three_twoe_one(
+            self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+        """apps - Removes an assigned LUIS azure account from an application.
+
+        Removes assigned azure account from the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param azure_account_info_object: The azure account information
+         object.
+        :type azure_account_info_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.fivebe_three_two_five_five_fourf_eight_five_nine_onedb_threea_eight_six_two_three_twoe_one.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if azure_account_info_object is not None:
+            body_content = self._serialize.body(azure_account_info_object, 'AzureAccountInfoObject')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    fivebe_three_two_five_five_fourf_eight_five_nine_onedb_threea_eight_six_two_three_twoe_one.metadata = {'url': '/apps/{appId}/azureaccounts'}
+
+    def fivebe_three_one_threecec_one_eight_oneae_seven_two_zeroaa_twob_two_sixc(
+            self, custom_headers=None, raw=False, **operation_config):
+        """user - Get LUIS azure accounts.
+
+        Gets the LUIS azure accounts for the user using his ARM token.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.fivebe_three_one_threecec_one_eight_oneae_seven_two_zeroaa_twob_two_sixc.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[AzureAccountInfoObject]', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    fivebe_three_one_threecec_one_eight_oneae_seven_two_zeroaa_twob_two_sixc.metadata = {'url': '/azureaccounts'}

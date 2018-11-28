@@ -28,6 +28,8 @@ class EndpointInfo(Model):
     :type assigned_endpoint_key: str
     :param endpoint_region: The endpoint's region.
     :type endpoint_region: str
+    :param failed_regions: Regions where publishing failed.
+    :type failed_regions: str
     :param published_date_time: Timestamp when was last published.
     :type published_date_time: str
     """
@@ -39,10 +41,11 @@ class EndpointInfo(Model):
         'region': {'key': 'region', 'type': 'str'},
         'assigned_endpoint_key': {'key': 'assignedEndpointKey', 'type': 'str'},
         'endpoint_region': {'key': 'endpointRegion', 'type': 'str'},
+        'failed_regions': {'key': 'failedRegions', 'type': 'str'},
         'published_date_time': {'key': 'publishedDateTime', 'type': 'str'},
     }
 
-    def __init__(self, *, version_id: str=None, is_staging: bool=None, endpoint_url: str=None, region: str=None, assigned_endpoint_key: str=None, endpoint_region: str=None, published_date_time: str=None, **kwargs) -> None:
+    def __init__(self, *, version_id: str=None, is_staging: bool=None, endpoint_url: str=None, region: str=None, assigned_endpoint_key: str=None, endpoint_region: str=None, failed_regions: str=None, published_date_time: str=None, **kwargs) -> None:
         super(EndpointInfo, self).__init__(**kwargs)
         self.version_id = version_id
         self.is_staging = is_staging
@@ -50,4 +53,5 @@ class EndpointInfo(Model):
         self.region = region
         self.assigned_endpoint_key = assigned_endpoint_key
         self.endpoint_region = endpoint_region
+        self.failed_regions = failed_regions
         self.published_date_time = published_date_time
