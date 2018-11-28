@@ -13,7 +13,7 @@ from .proxy_only_resource import ProxyOnlyResource
 
 
 class User(ProxyOnlyResource):
-    """User crendentials used for publishing activity.
+    """User credentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
