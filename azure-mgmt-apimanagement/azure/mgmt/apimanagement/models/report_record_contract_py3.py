@@ -25,7 +25,7 @@ class ReportRecordContract(Model):
      following format: `yyyy-MM-ddTHH:mm:ssZ` as specified by the ISO 8601
      standard.
     :type timestamp: datetime
-    :param interval: Length of agregation period.  Interval must be multiple
+    :param interval: Length of aggregation period.  Interval must be multiple
      of 15 minutes and may not be zero. The value should be in ISO 8601 format
      (http://en.wikipedia.org/wiki/ISO_8601#Durations).
     :type interval: str
@@ -49,12 +49,12 @@ class ReportRecordContract(Model):
     :param subscription_id: Subscription identifier path.
      /subscriptions/{subscriptionId}
     :type subscription_id: str
-    :param call_count_success: Number of succesful calls. This includes calls
+    :param call_count_success: Number of successful calls. This includes calls
      returning HttpStatusCode <= 301 and HttpStatusCode.NotModified and
      HttpStatusCode.TemporaryRedirect
     :type call_count_success: int
     :param call_count_blocked: Number of calls blocked due to invalid
-     credentials. This includes calls returning HttpStatusCode.Unauthorize and
+     credentials. This includes calls returning HttpStatusCode.Unauthorized and
      HttpStatusCode.Forbidden and HttpStatusCode.TooManyRequests
     :type call_count_blocked: int
     :param call_count_failed: Number of calls failed due to proxy or backend

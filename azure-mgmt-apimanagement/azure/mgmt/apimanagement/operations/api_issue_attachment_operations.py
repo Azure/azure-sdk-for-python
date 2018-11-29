@@ -38,7 +38,7 @@ class ApiIssueAttachmentOperations(object):
 
     def list_by_service(
             self, resource_group_name, service_name, api_id, issue_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all comments for the Issue assosiated with the specified API.
+        """Lists all comments for the Issue associated with the specified API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
