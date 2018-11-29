@@ -60,7 +60,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
 
 
 class CdnManagementClient(SDKClient):
-    """Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
+    """These are the best APIS! Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
 
     :ivar config: Configuration for client.
     :vartype config: CdnManagementClientConfiguration
