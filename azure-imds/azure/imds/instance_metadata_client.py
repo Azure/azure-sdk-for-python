@@ -13,8 +13,9 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-import uuid
+from .operations.instance_operations import InstanceOperations
+from .operations.attested_operations import AttestedOperations
+from .operations.identity_operations import IdentityOperations
 from . import models
 
 
@@ -26,11 +27,16 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param api_version1: This is the API version to use. Possible values
+     include: '2018-02-01', '2018-04-02', '2018-10-01'
+    :type api_version1: str or ~azure.imds.models.ApiVersion
+    :ivar metadata: This must be set to 'true'.
+    :type metadata: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, api_version1=None, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -43,6 +49,8 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.api_version1 = api_version1
+        self.metadata = "true"
 
 
 class InstanceMetadataClient(SDKClient):
@@ -51,16 +59,26 @@ class InstanceMetadataClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: InstanceMetadataClientConfiguration
 
+    :ivar instance: Instance operations
+    :vartype instance: azure.imds.operations.InstanceOperations
+    :ivar attested: Attested operations
+    :vartype attested: azure.imds.operations.AttestedOperations
+    :ivar identity: Identity operations
+    :vartype identity: azure.imds.operations.IdentityOperations
+
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param api_version1: This is the API version to use. Possible values
+     include: '2018-02-01', '2018-04-02', '2018-10-01'
+    :type api_version1: str or ~azure.imds.models.ApiVersion
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, api_version1=None, base_url=None):
 
-        self.config = InstanceMetadataClientConfiguration(credentials, base_url)
+        self.config = InstanceMetadataClientConfiguration(credentials, api_version1, base_url)
         super(InstanceMetadataClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -68,268 +86,9 @@ class InstanceMetadataClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-
-    def get_instance(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Get Instance Metadata for the Virtual Machine.
-
-        :param api_version: This is the version of API to invoke.
-        :type api_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Instance or ClientRawResponse if raw=true
-        :rtype: ~azure.imds.models.Instance or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
-        """
-        metadata = "true"
-
-        # Construct URL
-        url = self.get_instance.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("metadata", metadata, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Instance', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_instance.metadata = {'url': '/instance'}
-
-    def get_attested(
-            self, api_version, nonce=None, custom_headers=None, raw=False, **operation_config):
-        """Get Attested Data for the Virtual Machine.
-
-        :param api_version: This is the version of API to invoke.
-        :type api_version: str
-        :param nonce: 10-digit random number.
-        :type nonce: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Attested or ClientRawResponse if raw=true
-        :rtype: ~azure.imds.models.Attested or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
-        """
-        metadata = "true"
-
-        # Construct URL
-        url = self.get_attested.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if nonce is not None:
-            query_parameters['nonce'] = self._serialize.query("nonce", nonce, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("metadata", metadata, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Attested', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_attested.metadata = {'url': '/attested/document'}
-
-    def get_token(
-            self, resource, api_version, client_id=None, object_id=None, msi_res_id=None, authority=None, bypass_cache=None, custom_headers=None, raw=False, **operation_config):
-        """Get a Token from Azure AD.
-
-        :param resource: This is the urlencoded identifier URI of the sink
-         resource for the requested Azure AD token. The resulting token
-         contains the corresponding aud for this resource.
-        :type resource: str
-        :param api_version: This is the API version to use. Possible values
-         include: '2018-02-01', '2018-04-02', '2018-10-01'
-        :type api_version: str
-        :param client_id: This identifies, by Azure AD client id, a specific
-         explicit identity to use when authenticating to Azure AD. Mutually
-         exclusive with object_id and msi_res_id.
-        :type client_id: str
-        :param object_id: This identifies, by Azure AD object id, a specific
-         explicit identity to use when authenticating to Azure AD. Mutually
-         exclusive with client_id and msi_res_id.
-        :type object_id: str
-        :param msi_res_id: This identifies, by urlencoded ARM resource id, a
-         specific explicit identity to use when authenticating to Azure AD.
-         Mutually exclusive with client_id and object_id.
-        :type msi_res_id: str
-        :param authority: This indicates the authority to request AAD tokens
-         from. Defaults to the known authority of the identity to be used.
-        :type authority: str
-        :param bypass_cache: If provided, the value must be 'true'. This
-         indicates to the server that the token must be retrieved from Azure AD
-         and cannot be retrieved from an internal cache. Possible values
-         include: 'true'
-        :type bypass_cache: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TokenResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.imds.models.TokenResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
-        """
-        metadata = "true"
-
-        # Construct URL
-        url = self.get_token.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['resource'] = self._serialize.query("resource", resource, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if client_id is not None:
-            query_parameters['client_id'] = self._serialize.query("client_id", client_id, 'str')
-        if object_id is not None:
-            query_parameters['object_id'] = self._serialize.query("object_id", object_id, 'str')
-        if msi_res_id is not None:
-            query_parameters['msi_res_id'] = self._serialize.query("msi_res_id", msi_res_id, 'str')
-        if authority is not None:
-            query_parameters['authority'] = self._serialize.query("authority", authority, 'str')
-        if bypass_cache is not None:
-            query_parameters['bypass_cache'] = self._serialize.query("bypass_cache", bypass_cache, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("metadata", metadata, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('TokenResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_token.metadata = {'url': '/identity/oauth2/token'}
-
-    def get_info(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Get information about AAD Metadata.
-
-        :param api_version: This is the API version to use. Possible values
-         include: '2018-02-01', '2018-04-02', '2018-10-01'
-        :type api_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: InfoResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.imds.models.InfoResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.imds.models.ErrorResponseException>`
-        """
-        metadata = "true"
-
-        # Construct URL
-        url = self.get_info.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("metadata", metadata, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('InfoResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_info.metadata = {'url': '/identity/info'}
+        self.instance = InstanceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.attested = AttestedOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.identity = IdentityOperations(
+            self._client, self.config, self._serialize, self._deserialize)

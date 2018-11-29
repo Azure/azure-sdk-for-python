@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Attested(Model):
-    """Attested.
+    """This is the response from the Attested_GetDocument operation.
 
     :param signature: This is the encoded string containing the VM ID, plan
      information, and nonce value.

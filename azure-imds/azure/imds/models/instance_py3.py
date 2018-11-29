@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Instance(Model):
-    """Instance.
+    """This is the response from the Instance_GetMetadata operation.
 
     :param compute: Compute Metadata
     :type compute: ~azure.imds.models.Compute

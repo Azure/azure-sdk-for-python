@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PublicKeysProperties(Model):
-    """PublicKeysProperties.
+    """This contains the data about the public key.
 
     :param path: This specifies the full path on the VM where the SSH public
      key is stored.

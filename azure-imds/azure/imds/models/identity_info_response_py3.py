@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class SubnetProperties(Model):
-    """This contains the properties of the subnet.
+class IdentityInfoResponse(Model):
+    """This is the response from the Identity_GetInfo operation.
 
-    :param address: This is the address range of the subnet.
-    :type address: str
-    :param prefix: This is the prefix of the subnet.
-    :type prefix: str
+    :param tenant_id: This is the AAD tenantId of the identity of the caller.
+    :type tenant_id: str
     """
 
     _attribute_map = {
-        'address': {'key': 'address', 'type': 'str'},
-        'prefix': {'key': 'prefix', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, address: str=None, prefix: str=None, **kwargs) -> None:
-        super(SubnetProperties, self).__init__(**kwargs)
-        self.address = address
-        self.prefix = prefix
+    def __init__(self, *, tenant_id: str=None, **kwargs) -> None:
+        super(IdentityInfoResponse, self).__init__(**kwargs)
+        self.tenant_id = tenant_id

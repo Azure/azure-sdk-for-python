@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class TokenResponse(Model):
-    """TokenResponse.
+class IdentityTokenResponse(Model):
+    """This is the response from the Identity_GetToken operation.
 
     :param access_token: This is the requested access token. The app can use
      this token to authenticate to the sink resource.
@@ -58,15 +58,15 @@ class TokenResponse(Model):
         'msi_res_id': {'key': 'msi_res_id', 'type': 'str'},
     }
 
-    def __init__(self, *, access_token: str=None, expires_in: str=None, expires_on: str=None, ext_expires_in: str=None, not_before: str=None, resource: str=None, token_type: str=None, client_id: str=None, object_id: str=None, msi_res_id: str=None, **kwargs) -> None:
-        super(TokenResponse, self).__init__(**kwargs)
-        self.access_token = access_token
-        self.expires_in = expires_in
-        self.expires_on = expires_on
-        self.ext_expires_in = ext_expires_in
-        self.not_before = not_before
-        self.resource = resource
-        self.token_type = token_type
-        self.client_id = client_id
-        self.object_id = object_id
-        self.msi_res_id = msi_res_id
+    def __init__(self, **kwargs):
+        super(IdentityTokenResponse, self).__init__(**kwargs)
+        self.access_token = kwargs.get('access_token', None)
+        self.expires_in = kwargs.get('expires_in', None)
+        self.expires_on = kwargs.get('expires_on', None)
+        self.ext_expires_in = kwargs.get('ext_expires_in', None)
+        self.not_before = kwargs.get('not_before', None)
+        self.resource = kwargs.get('resource', None)
+        self.token_type = kwargs.get('token_type', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.msi_res_id = kwargs.get('msi_res_id', None)

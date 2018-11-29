@@ -9,20 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .instance_operations import InstanceOperations
+from .attested_operations import AttestedOperations
+from .identity_operations import IdentityOperations
 
-
-class InfoResponse(Model):
-    """InfoResponse.
-
-    :param tenant_id: This is the AAD tenantId of the identity of the caller.
-    :type tenant_id: str
-    """
-
-    _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, *, tenant_id: str=None, **kwargs) -> None:
-        super(InfoResponse, self).__init__(**kwargs)
-        self.tenant_id = tenant_id
+__all__ = [
+    'InstanceOperations',
+    'AttestedOperations',
+    'IdentityOperations',
+]

@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class InfoResponse(Model):
-    """InfoResponse.
+class IdentityInfoResponse(Model):
+    """This is the response from the Identity_GetInfo operation.
 
     :param tenant_id: This is the AAD tenantId of the identity of the caller.
     :type tenant_id: str
@@ -24,5 +24,5 @@ class InfoResponse(Model):
     }
 
     def __init__(self, **kwargs):
-        super(InfoResponse, self).__init__(**kwargs)
+        super(IdentityInfoResponse, self).__init__(**kwargs)
         self.tenant_id = kwargs.get('tenant_id', None)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SubnetProperties(Model):
-    """SubnetProperties.
+    """This contains the properties of the subnet.
 
     :param address: This is the address range of the subnet.
     :type address: str

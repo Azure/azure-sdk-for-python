@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Ipv4Properties(Model):
-    """Ipv4Properties.
+    """This contains the IPv4 properties.
 
     :param private_ip_address: This is the private IP address assigned to the
      interface.

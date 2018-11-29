@@ -23,8 +23,9 @@ try:
     from .instance_py3 import Instance
     from .attested_py3 import Attested
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .token_response_py3 import TokenResponse
-    from .info_response_py3 import InfoResponse
+    from .identity_error_response_py3 import IdentityErrorResponse, IdentityErrorResponseException
+    from .identity_token_response_py3 import IdentityTokenResponse
+    from .identity_info_response_py3 import IdentityInfoResponse
 except (SyntaxError, ImportError):
     from .plan_properties import PlanProperties
     from .public_keys_properties import PublicKeysProperties
@@ -39,8 +40,14 @@ except (SyntaxError, ImportError):
     from .instance import Instance
     from .attested import Attested
     from .error_response import ErrorResponse, ErrorResponseException
-    from .token_response import TokenResponse
-    from .info_response import InfoResponse
+    from .identity_error_response import IdentityErrorResponse, IdentityErrorResponseException
+    from .identity_token_response import IdentityTokenResponse
+    from .identity_info_response import IdentityInfoResponse
+from .instance_metadata_client_enums import (
+    Error,
+    ApiVersion,
+    BypassCache,
+)
 
 __all__ = [
     'PlanProperties',
@@ -56,6 +63,10 @@ __all__ = [
     'Instance',
     'Attested',
     'ErrorResponse', 'ErrorResponseException',
-    'TokenResponse',
-    'InfoResponse',
+    'IdentityErrorResponse', 'IdentityErrorResponseException',
+    'IdentityTokenResponse',
+    'IdentityInfoResponse',
+    'Error',
+    'ApiVersion',
+    'BypassCache',
 ]

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PlanProperties(Model):
-    """PlanProperties.
+    """This contains the data about the plan.
 
     :param name: This is the Plan ID.
     :type name: str

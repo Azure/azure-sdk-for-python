@@ -14,23 +14,19 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Describes the format of Error response.
+    """This is the response from an operation in the case an error occurs.
 
-    :param code: Error code
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :param error: Error message indicating why the operation failed.
+    :type error: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.error = kwargs.get('error', None)
 
 
 class ErrorResponseException(HttpOperationError):
