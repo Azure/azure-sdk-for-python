@@ -22,6 +22,7 @@ class IdentityOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar metadata: This must be set to 'true'. Constant value: "true".
     :ivar api_version: This is the API version to use. Possible values include: '2018-02-01', '2018-04-02', '2018-10-01'. Constant value: "2018-10-01".
     """
 
@@ -32,6 +33,7 @@ class IdentityOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.metadata = "true"
         self.api_version = "2018-10-01"
 
         self.config = config
@@ -99,7 +101,7 @@ class IdentityOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("self.config.metadata", self.config.metadata, 'str')
+        header_parameters['Metadata'] = self._serialize.header("self.metadata", self.metadata, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -160,7 +162,7 @@ class IdentityOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("self.config.metadata", self.config.metadata, 'str')
+        header_parameters['Metadata'] = self._serialize.header("self.metadata", self.metadata, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

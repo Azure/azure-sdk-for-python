@@ -30,8 +30,6 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
     :param api_version1: This is the API version to use. Possible values
      include: '2018-02-01', '2018-04-02', '2018-10-01'
     :type api_version1: str or ~azure.imds.models.ApiVersion
-    :ivar metadata: This must be set to 'true'.
-    :type metadata: str
     :param str base_url: Service URL
     """
 
@@ -50,7 +48,6 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.api_version1 = api_version1
-        self.metadata = "true"
 
 
 class InstanceMetadataClient(SDKClient):

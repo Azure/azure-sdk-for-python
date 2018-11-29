@@ -23,6 +23,7 @@ class AttestedOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: This is the API version to use. Possible values include: '2018-02-01', '2018-04-02', '2018-10-01'. Constant value: "2018-10-01".
+    :ivar metadata: This must be set to 'true'. Constant value: "true".
     """
 
     models = models
@@ -33,6 +34,7 @@ class AttestedOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2018-10-01"
+        self.metadata = "true"
 
         self.config = config
 
@@ -69,7 +71,7 @@ class AttestedOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Metadata'] = self._serialize.header("self.config.metadata", self.config.metadata, 'str')
+        header_parameters['Metadata'] = self._serialize.header("self.metadata", self.metadata, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
