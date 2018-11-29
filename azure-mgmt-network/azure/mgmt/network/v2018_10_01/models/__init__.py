@@ -579,7 +579,6 @@ from .ddos_protection_plan_paged import DdosProtectionPlanPaged
 from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
-from .express_route_circuit_connection_paged import ExpressRouteCircuitConnectionPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
@@ -1016,7 +1015,6 @@ __all__ = [
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
-    'ExpressRouteCircuitConnectionPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
