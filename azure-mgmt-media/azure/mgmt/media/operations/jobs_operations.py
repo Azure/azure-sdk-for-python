@@ -37,7 +37,7 @@ class JobsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, transform_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, transform_name, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List Jobs.
 
         Lists all of the Jobs for the Transform.
@@ -51,14 +51,9 @@ class JobsOperations(object):
         :type transform_name: str
         :param filter: Restricts the set of items returned.
         :type filter: str
-        :param top: Specifies a non-negative integer n that limits the number
-         of items returned from a collection. The service returns the number of
-         available items up to but not greater than the specified value n.
-        :type top: int
-        :param skip: Specifies a non-negative integer n that excludes the
-         first n items of the queried collection from the result. The service
-         returns items starting at position n+1.
-        :type skip: int
+        :param orderby: Specifies the the key by which the result collection
+         should be ordered.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -88,10 +83,8 @@ class JobsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
@@ -338,7 +331,9 @@ class JobsOperations(object):
             self, resource_group_name, account_name, transform_name, job_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update Job.
 
-        Updates a Job.
+        Update is only supported for description and priority. Updating
+        Priority will take effect when the Job state is Queued or Scheduled and
+        depending on the timing the priority update may be ignored.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.

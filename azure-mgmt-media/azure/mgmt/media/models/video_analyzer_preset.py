@@ -46,7 +46,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'audio_language': {'key': 'audioLanguage', 'type': 'str'},
-        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'InsightsType'},
+        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

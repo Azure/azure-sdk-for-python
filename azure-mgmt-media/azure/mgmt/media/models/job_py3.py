@@ -68,12 +68,12 @@ class Job(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'JobState'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'input': {'key': 'properties.input', 'type': 'JobInput'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
-        'priority': {'key': 'properties.priority', 'type': 'Priority'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
         'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
     }
 
