@@ -9,15 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .connection_info_py3 import ConnectionInfo
 
 
-class ConnectionInfo(Model):
-    """Defines the connection properties of a server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MiSqlConnectionInfo, PostgreSqlConnectionInfo,
-    MySqlConnectionInfo, MongoDbConnectionInfo, SqlConnectionInfo
+class MiSqlConnectionInfo(ConnectionInfo):
+    """Properties required to create a connection to Azure SQL database Managed
+    instance.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,24 +24,24 @@ class ConnectionInfo(Model):
     :type password: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param managed_instance_resource_id: Required. Resource id for Azure SQL
+     database Managed instance
+    :type managed_instance_resource_id: str
     """
 
     _validation = {
         'type': {'required': True},
+        'managed_instance_resource_id': {'required': True},
     }
 
     _attribute_map = {
         'user_name': {'key': 'userName', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_instance_resource_id': {'key': 'managedInstanceResourceId', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'MiSqlConnectionInfo': 'MiSqlConnectionInfo', 'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'MongoDbConnectionInfo': 'MongoDbConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
-    }
-
-    def __init__(self, *, user_name: str=None, password: str=None, **kwargs) -> None:
-        super(ConnectionInfo, self).__init__(**kwargs)
-        self.user_name = user_name
-        self.password = password
-        self.type = None
+    def __init__(self, *, managed_instance_resource_id: str, user_name: str=None, password: str=None, **kwargs) -> None:
+        super(MiSqlConnectionInfo, self).__init__(user_name=user_name, password=password, **kwargs)
+        self.managed_instance_resource_id = managed_instance_resource_id
+        self.type = 'MiSqlConnectionInfo'

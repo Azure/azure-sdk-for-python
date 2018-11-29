@@ -9,17 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .command_properties_py3 import CommandProperties
 
 
-class CommandProperties(Model):
-    """Base class for all types of DMS command properties. If command is not
-    supported by current client, this object is returned.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MigrateMISyncCompleteCommandProperties,
-    MigrateSyncCompleteCommandProperties, MongoDbCancelCommand,
-    MongoDbFinishCommand, MongoDbRestartCommand
+class MigrateMISyncCompleteCommandProperties(CommandProperties):
+    """Properties for the command that completes sync migration for a managed
+    instance database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,26 +29,31 @@ class CommandProperties(Model):
     :vartype state: str or ~azure.mgmt.datamigration.models.CommandState
     :param command_type: Required. Constant filled by server.
     :type command_type: str
+    :param input: Command input
+    :type input:
+     ~azure.mgmt.datamigration.models.MigrateMISyncCompleteCommandInput
+    :ivar output: Command output. This is ignored if submitted.
+    :vartype output:
+     ~azure.mgmt.datamigration.models.MigrateMISyncCompleteCommandOutput
     """
 
     _validation = {
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'command_type': {'required': True},
+        'output': {'readonly': True},
     }
 
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
         'command_type': {'key': 'commandType', 'type': 'str'},
+        'input': {'key': 'input', 'type': 'MigrateMISyncCompleteCommandInput'},
+        'output': {'key': 'output', 'type': 'MigrateMISyncCompleteCommandOutput'},
     }
 
-    _subtype_map = {
-        'command_type': {'Migrate.SqlServer.AzureDbSqlMi.Complete': 'MigrateMISyncCompleteCommandProperties', 'Migrate.Sync.Complete.Database': 'MigrateSyncCompleteCommandProperties', 'cancel': 'MongoDbCancelCommand', 'finish': 'MongoDbFinishCommand', 'restart': 'MongoDbRestartCommand'}
-    }
-
-    def __init__(self, **kwargs):
-        super(CommandProperties, self).__init__(**kwargs)
-        self.errors = None
-        self.state = None
-        self.command_type = None
+    def __init__(self, *, input=None, **kwargs) -> None:
+        super(MigrateMISyncCompleteCommandProperties, self).__init__(**kwargs)
+        self.input = input
+        self.output = None
+        self.command_type = 'Migrate.SqlServer.AzureDbSqlMi.Complete'

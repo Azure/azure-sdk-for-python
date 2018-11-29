@@ -12,30 +12,36 @@
 from msrest.serialization import Model
 
 
-class MigrateSyncCompleteCommandOutput(Model):
-    """Output for command that completes sync migration for a database.
+class ValidateMigrationInputSqlServerSqlMISyncTaskOutput(Model):
+    """Output for task that validates migration input for Azure SQL Database
+    Managed Instance online migration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Result identifier
+    :ivar id: Database identifier
     :vartype id: str
-    :ivar errors: List of errors that happened during the command execution
-    :vartype errors:
+    :ivar name: Name of database
+    :vartype name: str
+    :ivar validation_errors: Errors associated with a selected database object
+    :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'errors': {'readonly': True},
+        'name': {'readonly': True},
+        'validation_errors': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[ReportableException]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MigrateSyncCompleteCommandOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ValidateMigrationInputSqlServerSqlMISyncTaskOutput, self).__init__(**kwargs)
         self.id = None
-        self.errors = None
+        self.name = None
+        self.validation_errors = None

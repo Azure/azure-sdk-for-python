@@ -22,7 +22,7 @@ class ConnectToSourceMySqlTaskInput(Model):
     :type source_connection_info:
      ~azure.mgmt.datamigration.models.MySqlConnectionInfo
     :param target_platform: Target Platform for the migration. Possible values
-     include: 'AzureDbForMySQL'
+     include: 'SqlServer', 'AzureDbForMySQL'
     :type target_platform: str or
      ~azure.mgmt.datamigration.models.MySqlTargetPlatformType
     :param check_permissions_group: Permission group for validations. Possible
@@ -39,7 +39,7 @@ class ConnectToSourceMySqlTaskInput(Model):
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'MySqlConnectionInfo'},
         'target_platform': {'key': 'targetPlatform', 'type': 'str'},
-        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'str'},
+        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'ServerLevelPermissionsGroup'},
     }
 
     def __init__(self, **kwargs):

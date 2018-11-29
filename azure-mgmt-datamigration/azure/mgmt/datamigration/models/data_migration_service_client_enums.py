@@ -183,6 +183,31 @@ class MigrationStatus(str, Enum):
     completed_with_warnings = "CompletedWithWarnings"
 
 
+class BackupFileStatus(str, Enum):
+
+    arrived = "Arrived"
+    queued = "Queued"
+    uploading = "Uploading"
+    uploaded = "Uploaded"
+    restoring = "Restoring"
+    restored = "Restored"
+    cancelled = "Cancelled"
+
+
+class DatabaseMigrationState(str, Enum):
+
+    undefined = "UNDEFINED"
+    initial = "INITIAL"
+    full_backup_upload_start = "FULL_BACKUP_UPLOAD_START"
+    log_shipping_start = "LOG_SHIPPING_START"
+    upload_log_files_start = "UPLOAD_LOG_FILES_START"
+    cutover_start = "CUTOVER_START"
+    post_cutover_complete = "POST_CUTOVER_COMPLETE"
+    completed = "COMPLETED"
+    cancelled = "CANCELLED"
+    failed = "FAILED"
+
+
 class LoginMigrationStage(str, Enum):
 
     none = "None"
@@ -339,6 +364,7 @@ class ResourceSkuCapacityScaleType(str, Enum):
 
 class MySqlTargetPlatformType(str, Enum):
 
+    sql_server = "SqlServer"
     azure_db_for_my_sql = "AzureDbForMySQL"
 
 

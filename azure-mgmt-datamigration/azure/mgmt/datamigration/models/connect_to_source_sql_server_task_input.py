@@ -44,7 +44,7 @@ class ConnectToSourceSqlServerTaskInput(Model):
 
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
-        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'str'},
+        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'ServerLevelPermissionsGroup'},
         'collect_logins': {'key': 'collectLogins', 'type': 'bool'},
         'collect_agent_jobs': {'key': 'collectAgentJobs', 'type': 'bool'},
         'collect_tde_certificate_info': {'key': 'collectTdeCertificateInfo', 'type': 'bool'},
