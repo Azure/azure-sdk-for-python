@@ -15,14 +15,25 @@ jobs:
      pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
      
      mkdir dist
-    displayName: 'Prep Environment, Install Packages'
+    displayName: 'Prep Environment, Install Packages copy'
 
-  - script: 'python ./build_package.py --dest %BUILD_SOURCESDIRECTORY%\dist "azure-keyvault"'
-    displayName: 'Generate KeyVault Tarball'
+  - powershell: |
+     $input_filter_string="$(build_targeting_string)"
+     
+     if ([string]::IsNullOrEmpty($input_filter_string)) 
+     {
+         $foldersToIterate=Get-ChildItem -Recurse -Filter "azure-*"
+     }
+     else {
+         $foldersToIterate=$input_filter_string.split(",")
+     }
+     
+     foreach ($folder in $foldersToIterate)
+     {
+         python ./build_package.py --dest $(Build.ArtifactStagingDirectory) "$folder"
+     }
+     
+    displayName: 'Generate Packages'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
-    inputs:
-      PathtoPublish: dist
-
-      ArtifactName: packages
