@@ -22,7 +22,9 @@ class ImageRegistryCredential(Model):
     :type server: str
     :param username: Required. The username for the private registry.
     :type username: str
-    :param password: The password for the private registry.
+    :param password: The password for the private registry. The password is
+     required for create or update operations, however it is not returned in
+     the get or list operations.
     :type password: str
     """
 

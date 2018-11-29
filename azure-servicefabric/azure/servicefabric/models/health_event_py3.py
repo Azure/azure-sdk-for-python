@@ -78,7 +78,7 @@ class HealthEvent(HealthInformation):
      of this property is false by default.
      When clients report periodically, they should set RemoveWhenExpired false
      (default).
-     This way, is the reporter has issues (eg. deadlock) and can't report, the
+     This way, if the reporter has issues (e.g. deadlock) and can't report, the
      entity is evaluated at error when the health report expires.
      This flags the entity as being in Error health state.
     :type remove_when_expired: bool
