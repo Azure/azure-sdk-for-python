@@ -16,7 +16,8 @@ _CONFIG = {
     "package_pprint_name": "MyService Management",
     "package_doc_id": "",
     "is_stable": False,
-    "is_arm": True
+    "is_arm": True,
+    "need_msrestazure": True
 }
 
 def read_conf(folder: Path) -> Dict[str, Any]:
