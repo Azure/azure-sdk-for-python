@@ -35,7 +35,7 @@ class SourceControlSyncJobById(Model):
     :param sync_type: The sync type. Possible values include: 'PartialSync',
      'FullSync'
     :type sync_type: str or ~azure.mgmt.automation.models.SyncType
-    :param exception: The exceptions that occured while running the sync job.
+    :param exception: The exceptions that occurred while running the sync job.
     :type exception: str
     """
 

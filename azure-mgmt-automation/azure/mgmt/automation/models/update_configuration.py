@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UpdateConfiguration(Model):
-    """Update specifc properties of the software update configuration.
+    """Update specific properties of the software update configuration.
 
     All required parameters must be populated in order to send to Azure.
 

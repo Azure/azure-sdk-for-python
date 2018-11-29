@@ -18,7 +18,7 @@ class RunbookParameter(Model):
     :param type: Gets or sets the type of the parameter.
     :type type: str
     :param is_mandatory: Gets or sets a Boolean value to indicate whether the
-     parameter is madatory or not.
+     parameter is mandatory or not.
     :type is_mandatory: bool
     :param position: Get or sets the position of the parameter.
     :type position: int

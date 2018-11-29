@@ -33,7 +33,7 @@ class DscNodeConfiguration(ProxyResource):
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
     :param source: Source of node configuration.
     :type source: str
-    :param node_count: Number of nodes with this nodeconfiguration assigned
+    :param node_count: Number of nodes with this node configuration assigned
     :type node_count: long
     :param increment_node_configuration_build: If a new build version of
      NodeConfiguration is required.
