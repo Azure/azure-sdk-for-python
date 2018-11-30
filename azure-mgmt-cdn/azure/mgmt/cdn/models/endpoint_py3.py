@@ -86,7 +86,7 @@ class Endpoint(TrackedResource):
     :type delivery_policy:
      ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
     :ivar host_name: The host name of the endpoint structured as
-     {endpointName}.{DNSZone}, e.g. consoto.azureedge.net
+     {endpointName}.{DNSZone}, e.g. contoso.azureedge.net
     :vartype host_name: str
     :param origins: Required. The source of the content being delivered via
      CDN.
