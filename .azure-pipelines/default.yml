@@ -30,7 +30,7 @@ jobs:
      
        foreach ($folder in $foldersToIterate)
        {
-         Write-Host python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
+         python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
        }
      }
      
