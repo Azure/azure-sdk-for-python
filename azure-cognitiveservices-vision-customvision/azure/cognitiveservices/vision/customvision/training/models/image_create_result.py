@@ -18,14 +18,16 @@ class ImageCreateResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar source_url:
+    :ivar source_url: Source URL of the image.
     :vartype source_url: str
-    :ivar status: Possible values include: 'OK', 'OKDuplicate', 'ErrorSource',
-     'ErrorImageFormat', 'ErrorImageSize', 'ErrorStorage', 'ErrorLimitExceed',
-     'ErrorTagLimitExceed', 'ErrorRegionLimitExceed', 'ErrorUnknown'
+    :ivar status: Status of the image creation. Possible values include: 'OK',
+     'OKDuplicate', 'ErrorSource', 'ErrorImageFormat', 'ErrorImageSize',
+     'ErrorStorage', 'ErrorLimitExceed', 'ErrorTagLimitExceed',
+     'ErrorRegionLimitExceed', 'ErrorUnknown',
+     'ErrorNegativeAndRegularTagOnSameImage'
     :vartype status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ImageUploadStatus
-    :ivar image:
+     ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateStatus
+    :ivar image: The image.
     :vartype image:
      ~azure.cognitiveservices.vision.customvision.training.models.Image
     """

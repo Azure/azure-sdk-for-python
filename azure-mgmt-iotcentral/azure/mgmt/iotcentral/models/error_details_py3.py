@@ -25,6 +25,8 @@ class ErrorDetails(Model):
     :vartype message: str
     :ivar target: The target of the particular error.
     :vartype target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.iotcentral.models.ErrorResponseBody]
     """
 
     _validation = {
@@ -34,16 +36,18 @@ class ErrorDetails(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        'code': {'key': 'error.code', 'type': 'str'},
+        'message': {'key': 'error.message', 'type': 'str'},
+        'target': {'key': 'error.target', 'type': 'str'},
+        'details': {'key': 'error.details', 'type': '[ErrorResponseBody]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, details=None, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
+        self.details = details
 
 
 class ErrorDetailsException(HttpOperationError):
