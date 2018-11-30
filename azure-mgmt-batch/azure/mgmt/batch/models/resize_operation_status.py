@@ -54,11 +54,11 @@ class ResizeOperationStatus(Model):
         'errors': {'key': 'errors', 'type': '[ResizeError]'},
     }
 
-    def __init__(self, target_dedicated_nodes=None, target_low_priority_nodes=None, resize_timeout=None, node_deallocation_option=None, start_time=None, errors=None):
-        super(ResizeOperationStatus, self).__init__()
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.resize_timeout = resize_timeout
-        self.node_deallocation_option = node_deallocation_option
-        self.start_time = start_time
-        self.errors = errors
+    def __init__(self, **kwargs):
+        super(ResizeOperationStatus, self).__init__(**kwargs)
+        self.target_dedicated_nodes = kwargs.get('target_dedicated_nodes', None)
+        self.target_low_priority_nodes = kwargs.get('target_low_priority_nodes', None)
+        self.resize_timeout = kwargs.get('resize_timeout', None)
+        self.node_deallocation_option = kwargs.get('node_deallocation_option', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.errors = kwargs.get('errors', None)

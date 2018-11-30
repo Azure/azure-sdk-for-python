@@ -52,10 +52,10 @@ class ImageReference(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, offer=None, sku=None, version=None, id=None):
-        super(ImageReference, self).__init__()
-        self.publisher = publisher
-        self.offer = offer
-        self.sku = sku
-        self.version = version
-        self.id = id
+    def __init__(self, **kwargs):
+        super(ImageReference, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.offer = kwargs.get('offer', None)
+        self.sku = kwargs.get('sku', None)
+        self.version = kwargs.get('version', None)
+        self.id = kwargs.get('id', None)

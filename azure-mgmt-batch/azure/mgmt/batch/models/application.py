@@ -38,10 +38,10 @@ class Application(Model):
         'default_version': {'key': 'defaultVersion', 'type': 'str'},
     }
 
-    def __init__(self, id=None, display_name=None, packages=None, allow_updates=None, default_version=None):
-        super(Application, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.packages = packages
-        self.allow_updates = allow_updates
-        self.default_version = default_version
+    def __init__(self, **kwargs):
+        super(Application, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.packages = kwargs.get('packages', None)
+        self.allow_updates = kwargs.get('allow_updates', None)
+        self.default_version = kwargs.get('default_version', None)
