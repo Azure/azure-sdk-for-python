@@ -33,7 +33,7 @@ class Invoice(Resource):
     :ivar invoice_period_end_date: The end of the date range covered by the
      invoice.
     :vartype invoice_period_end_date: date
-    :ivar billing_period_ids: Array of billing perdiod ids that the invoice is
+    :ivar billing_period_ids: Array of billing period ids that the invoice is
      attributed to.
     :vartype billing_period_ids: list[str]
     """
