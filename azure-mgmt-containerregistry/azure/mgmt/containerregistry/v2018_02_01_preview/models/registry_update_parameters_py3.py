@@ -28,6 +28,9 @@ class RegistryUpdateParameters(Model):
      registry.
     :type storage_account:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.StorageAccountProperties
+    :param network_rule_set: The network rule set for a container registry.
+    :type network_rule_set:
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -35,11 +38,13 @@ class RegistryUpdateParameters(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
+        'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, *, tags=None, sku=None, admin_user_enabled: bool=None, storage_account=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, admin_user_enabled: bool=None, storage_account=None, network_rule_set=None, **kwargs) -> None:
         super(RegistryUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
         self.admin_user_enabled = admin_user_enabled
         self.storage_account = storage_account
+        self.network_rule_set = network_rule_set
