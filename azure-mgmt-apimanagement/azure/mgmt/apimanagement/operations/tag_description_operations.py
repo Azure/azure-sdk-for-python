@@ -271,7 +271,7 @@ class TagDescriptionOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_name, api_id, tag_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
-        """Create/Update tag fescription in scope of the Api.
+        """Create/Update tag description in scope of the Api.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -38,7 +38,7 @@ class DiagnosticLoggerOperations(object):
 
     def list_by_service(
             self, resource_group_name, service_name, diagnostic_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all loggers assosiated with the specified Diagnostic of the API
+        """Lists all loggers associated with the specified Diagnostic of the API
         Management service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -193,7 +193,7 @@ class DiagnosticLoggerOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_name, diagnostic_id, loggerid, custom_headers=None, raw=False, **operation_config):
-        """Attaches a logger to a dignostic.
+        """Attaches a logger to a diagnostic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

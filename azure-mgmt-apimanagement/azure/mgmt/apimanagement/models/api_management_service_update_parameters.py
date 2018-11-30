@@ -91,7 +91,7 @@ class ApiManagementServiceUpdateParameters(ApimResource):
      is 10.
     :type certificates:
      list[~azure.mgmt.apimanagement.models.CertificateConfiguration]
-    :param virtual_network_type: The type of VPN in which API Managemet
+    :param virtual_network_type: The type of VPN in which API Management
      service needs to be configured in. None (Default Value) means the API
      Management service is not part of any Virtual Network, External means the
      API Management deployment is set up inside a Virtual Network having an

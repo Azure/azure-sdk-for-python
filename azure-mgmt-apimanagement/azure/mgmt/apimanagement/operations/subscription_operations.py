@@ -350,7 +350,7 @@ class SubscriptionOperations(object):
 
     def update(
             self, resource_group_name, service_name, sid, parameters, if_match, notify=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the details of a subscription specificied by its identifier.
+        """Updates the details of a subscription specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -363,7 +363,7 @@ class ReportsOperations(object):
 
     def list_by_geo(
             self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists report records by GeoGraphy.
+        """Lists report records by geography.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -537,7 +537,7 @@ class ReportsOperations(object):
          minutes and may not be zero. The value should be in ISO  8601 format
          (http://en.wikipedia.org/wiki/ISO_8601#Durations).This code can be
          used to convert TimeSpan to a valid interval string:
-         XmlConvert.ToString(new TimeSpan(hours, minutes, secconds))
+         XmlConvert.ToString(new TimeSpan(hours, minutes, seconds))
         :type interval: timedelta
         :param filter: The filter to apply on the operation.
         :type filter: str

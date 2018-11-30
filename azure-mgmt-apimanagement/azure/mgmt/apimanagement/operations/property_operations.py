@@ -399,7 +399,7 @@ class PropertyOperations(object):
 
     def delete(
             self, resource_group_name, service_name, prop_id, if_match, custom_headers=None, raw=False, **operation_config):
-        """Deletes specific property from the the API Management service instance.
+        """Deletes specific property from the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
