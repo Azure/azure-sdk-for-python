@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class AppState(Model):
     """The State of the application.
 
-    :param state: The State of the application. Possible values are “NEW”,
-     “NEW_SAVING”, “SUBMITTED”, “ACCEPTED”, “RUNNING”, “FINISHED”, “FAILED”,
-     “KILLED”
-    :type state: str
+    :param state: The State of the application. Possible values include:
+     'NEW', 'NEW_SAVING', 'SUBMITTED', 'ACCEPTED', 'RUNNING', 'FINISHED',
+     'FAILED', 'KILLED'
+    :type state: str or ~azure.mgmt.hdinsight.job.models.ApplicationState
     """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, *, state: str=None, **kwargs) -> None:
+    def __init__(self, *, state=None, **kwargs) -> None:
         super(AppState, self).__init__(**kwargs)
         self.state = state

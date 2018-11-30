@@ -20,7 +20,8 @@ class Status(Model):
     :param failure_info: The information about any failures that have
      occurred.
     :type failure_info: str
-    :param finish_time: The time at which the job completed.
+    :param finish_time: The time at which the job completed. It is an integer
+     in milliseconds, as a Unix timestamp relative to 1/1/1970 00:00:00.
     :type finish_time: long
     :param history_file: The history file of the job.
     :type history_file: str
@@ -58,11 +59,12 @@ class Status(Model):
     :type retired: bool
     :param run_state: The current state of the job.
     :type run_state: int
-    :param scheduling_info: The information about the scheduling of the
+    :param scheduling_info: The information about the scheduling of the job.
     :type scheduling_info: str
     :param setup_progress: The progress made on the setup.
     :type setup_progress: float
-    :param start_time: The time at which the job started.
+    :param start_time: The time at which the job started. It is an integer in
+     milliseconds, as a Unix timestamp relative to 1/1/1970 00:00:00.
     :type start_time: long
     :param state: The state of the job.
     :type state: str

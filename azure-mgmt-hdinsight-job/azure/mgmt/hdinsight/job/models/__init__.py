@@ -29,6 +29,9 @@ except (SyntaxError, ImportError):
     from .job_detail_root_json_object import JobDetailRootJsonObject
     from .job_list_json_object import JobListJsonObject
     from .job_submission_json_response import JobSubmissionJsonResponse
+from .hd_insight_job_management_client_enums import (
+    ApplicationState,
+)
 
 __all__ = [
     'AppState',
@@ -40,4 +43,5 @@ __all__ = [
     'JobDetailRootJsonObject',
     'JobListJsonObject',
     'JobSubmissionJsonResponse',
+    'ApplicationState',
 ]

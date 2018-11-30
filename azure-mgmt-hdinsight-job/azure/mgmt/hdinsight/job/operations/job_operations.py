@@ -22,8 +22,8 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar fields: The description of fields. Constant value: "*".
-    :ivar showall: The description of showall. Constant value: "true".
+    :ivar fields: If fields set to '*', the request will return full details of the job. Currently the value can only be '*'. Constant value: "*".
+    :ivar showall: If showall is set to 'true', the request will return all jobs the user has permission to view, not only the jobs belonging to the user. Constant value: "true".
     """
 
     models = models
