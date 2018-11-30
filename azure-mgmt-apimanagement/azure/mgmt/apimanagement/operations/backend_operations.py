@@ -474,7 +474,7 @@ class BackendOperations(object):
          the current API Management service instance.
         :type backendid: str
         :param after: Duration in ISO8601 format after which reconnect will be
-         initiated. Minimum duration of the Reconect is PT2M.
+         initiated. Minimum duration of the Reconnect is PT2M.
         :type after: timedelta
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -21,7 +21,7 @@ class SubscriptionCreateParameters(Model):
      being created in form /users/{uid}
     :type user_id: str
     :param product_id: Required. Product (product id path) for which
-     subscription is being created in form /products/{productid}
+     subscription is being created in form /products/{productId}
     :type product_id: str
     :param display_name: Required. Subscription name.
     :type display_name: str
