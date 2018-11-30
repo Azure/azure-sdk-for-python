@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AgentRegistration(Model):
-    """Definition of the agent registration infomration type.
+    """Definition of the agent registration information type.
 
     :param dsc_meta_configuration: Gets or sets the dsc meta configuration.
     :type dsc_meta_configuration: str

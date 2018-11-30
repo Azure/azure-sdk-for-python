@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RunbookDraftUndoEditResult(Model):
-    """The response model for the undoedit runbook operation.
+    """The response model for the undo edit runbook operation.
 
     :param status_code: Possible values include: 'Continue',
      'SwitchingProtocols', 'OK', 'Created', 'Accepted',

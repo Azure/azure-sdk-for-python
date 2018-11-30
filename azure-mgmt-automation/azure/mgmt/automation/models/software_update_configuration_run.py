@@ -43,7 +43,7 @@ class SoftwareUpdateConfigurationRun(Model):
     :vartype computer_count: int
     :ivar failed_count: Number of computers with failed status.
     :vartype failed_count: int
-    :ivar creation_time: Creation time of theresource, which only appears in
+    :ivar creation_time: Creation time of the resource, which only appears in
      the response.
     :vartype creation_time: datetime
     :ivar created_by: CreatedBy property, which only appears in the response.

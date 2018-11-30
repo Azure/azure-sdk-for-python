@@ -52,7 +52,7 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :param job: Job associated with the software update configuration machine
      run
     :type job: ~azure.mgmt.automation.models.JobNavigation
-    :ivar creation_time: Creation time of theresource, which only appears in
+    :ivar creation_time: Creation time of the resource, which only appears in
      the response.
     :vartype creation_time: datetime
     :ivar created_by: createdBy property, which only appears in the response.
@@ -63,7 +63,7 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :ivar last_modified_by: lastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
-    :param error: detailes of provisioning error
+    :param error: Details of provisioning error
     :type error: ~azure.mgmt.automation.models.ErrorResponse
     """
 
