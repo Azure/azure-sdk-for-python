@@ -13,27 +13,20 @@ jobs:
      
      pip install git+https://github.com/lmazuel/swagger-to-sdk
      pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
-     
-     mkdir dist
+
     displayName: 'Prep Environment, Install Packages copy'
 
   - powershell: |
-     $input_filter_string="$(build_targeting_string)"
-     
-     if ([string]::IsNullOrEmpty($input_filter_string)) 
+     foreach($inputFilter in "$(build_targeting_string)".split(","))
      {
-         $foldersToIterate=Get-ChildItem -Recurse -Filter "azure-*"
-     }
-     else {
-         $foldersToIterate=$input_filter_string.split(",")
-     }
+       $foldersToIterate=Get-ChildItem -Recurse -Filter "$inputFilter"
      
-     foreach ($folder in $foldersToIterate)
-     {
+       foreach ($folder in $foldersToIterate)
+       {
          python ./build_package.py --dest $(Build.ArtifactStagingDirectory) "$folder"
+       }
      }
-     
-    displayName: 'Generate Packages'
+    displayName: 'Generate KeyVault Tarball'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
