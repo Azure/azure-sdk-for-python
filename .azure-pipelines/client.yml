@@ -36,8 +36,8 @@ jobs:
      
     displayName: 'Generate KeyVault Tarball'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifacts'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
 
 - template: client.test.yml
   parameters:
