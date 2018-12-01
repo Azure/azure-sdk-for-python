@@ -47,8 +47,8 @@ class OSDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
-    :param diff_disk_settings: Specifies the differencing Disk Settings for
-     the operating system disk used by the virtual machine.
+    :param diff_disk_settings: Specifies the ephemeral Disk Settings for the
+     operating system disk used by the virtual machine.
     :type diff_disk_settings:
      ~azure.mgmt.compute.v2018_10_01.models.DiffDiskSettings
     :param create_option: Required. Specifies how the virtual machine should

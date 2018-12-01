@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class VirtualMachineReimageParameters(Model):
     """Paramaters for Reimaging Virtual Machine. Default value for OSDisk : true.
 
-    :param temp_disk: Specified whether to reimage temp disk. Default value:
+    :param temp_disk: Specifies whether to reimage temp disk. Default value:
      false.
     :type temp_disk: bool
     """

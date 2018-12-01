@@ -15,7 +15,7 @@ from .virtual_machine_reimage_parameters_py3 import VirtualMachineReimageParamet
 class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
-    :param temp_disk: Specified whether to reimage temp disk. Default value:
+    :param temp_disk: Specifies whether to reimage temp disk. Default value:
      false.
     :type temp_disk: bool
     """

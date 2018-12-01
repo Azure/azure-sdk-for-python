@@ -1540,13 +1540,15 @@ class VirtualMachineScaleSetsOperations(object):
     def reimage(
             self, resource_group_name, vm_scale_set_name, temp_disk=None, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) one or more virtual machines in
-        a VM scale set.
+        a VM scale set which don't have a ephemeral OS disk, for virtual
+        machines who have a ephemeral OS disk the virtual machine is reset to
+        initial state.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param temp_disk: Specified whether to reimage temp disk. Default
+        :param temp_disk: Specifies whether to reimage temp disk. Default
          value: false.
         :type temp_disk: bool
         :param instance_ids: The virtual machine scale set instance ids.
