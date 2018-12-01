@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceOperation(Model):
-    """Individial resource operation information.
+    """Individual resource operation information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
