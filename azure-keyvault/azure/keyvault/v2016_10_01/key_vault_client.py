@@ -790,7 +790,7 @@ class KeyVaultClient(SDKClient):
         be performed using public portion of the key. This operation is
         supported for asymmetric keys as a convenience for callers that have a
         key-reference but do not have access to the public key material. This
-        operation requires the keys/encypt permission.
+        operation requires the keys/encrypt permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.

@@ -19,7 +19,7 @@ class AdministratorDetails(Model):
     :type first_name: str
     :param last_name: Last name.
     :type last_name: str
-    :param email_address: Email addresss.
+    :param email_address: Email address.
     :type email_address: str
     :param phone: Phone number.
     :type phone: str
