@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class JsonFieldWithDefault(Model):
     """This is used to express the source of an input schema mapping for a single
     target field in the Event Grid Event schema. This is currently used in the
-    mappings for the 'subject','eventtype' and 'dataversion' properties. This
+    mappings for the 'subject','eventType' and 'dataVersion' properties. This
     represents a field in the input event schema along with a default value to
     be used, and at least one of these two properties should be provided.
 
