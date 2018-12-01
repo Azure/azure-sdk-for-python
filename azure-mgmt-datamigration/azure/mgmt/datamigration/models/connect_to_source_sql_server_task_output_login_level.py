@@ -35,7 +35,7 @@ class ConnectToSourceSqlServerTaskOutputLoginLevel(ConnectToSourceSqlServerTaskO
     :vartype default_database: str
     :ivar is_enabled: The state of the login.
     :vartype is_enabled: bool
-    :ivar migration_eligibility: Information about eligiblity of login for
+    :ivar migration_eligibility: Information about eligibility of login for
      migration.
     :vartype migration_eligibility:
      ~azure.mgmt.datamigration.models.MigrationEligibilityInfo
