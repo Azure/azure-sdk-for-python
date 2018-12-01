@@ -13,7 +13,7 @@ from .job_secrets import JobSecrets
 
 
 class DataBoxHeavyJobSecrets(JobSecrets):
-    """The secrets related to a databox heavy job.
+    """The secrets related to a DataBoxHeavy job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -23,7 +23,7 @@ class DataBoxHeavyJobSecrets(JobSecrets):
     :param job_secrets_type: Required. Constant filled by server.
     :type job_secrets_type: str
     :ivar cabinet_pod_secrets: Contains the list of secret objects for a
-     databox heavy job.
+     DataBoxHeavy job.
     :vartype cabinet_pod_secrets:
      list[~azure.mgmt.databox.models.DataBoxHeavySecret]
     """

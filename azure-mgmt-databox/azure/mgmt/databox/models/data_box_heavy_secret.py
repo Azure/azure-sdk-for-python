@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DataBoxHeavySecret(Model):
-    """The secrets related to a databox heavy.
+    """The secrets related to a DataBoxHeavy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

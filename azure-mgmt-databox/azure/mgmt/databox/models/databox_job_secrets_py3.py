@@ -13,7 +13,7 @@ from .job_secrets_py3 import JobSecrets
 
 
 class DataboxJobSecrets(JobSecrets):
-    """The secrets related to a databox job.
+    """The secrets related to a DataBox job.
 
     All required parameters must be populated in order to send to Azure.
 
