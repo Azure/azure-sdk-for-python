@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class CapabilitiesListResult(Model):
     """The response containing list of capabilities.
 
-    :param value: The list of cached images.
+    :param value: The list of capabilities.
     :type value: list[~azure.mgmt.containerinstance.models.Capabilities]
-    :param next_link: The URI to fetch the next page of cached images.
+    :param next_link: The URI to fetch the next page of capabilities.
     :type next_link: str
     """
 

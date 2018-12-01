@@ -109,7 +109,7 @@ class ContainerInstanceManagementClient(SDKClient):
         self.service_association_link = ServiceAssociationLinkOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
-    def get_cached_images(
+    def list_cached_images(
             self, location, custom_headers=None, raw=False, **operation_config):
         """Get the list of cached images.
 
@@ -129,7 +129,7 @@ class ContainerInstanceManagementClient(SDKClient):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_cached_images.metadata['url']
+        url = self.list_cached_images.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -169,9 +169,9 @@ class ContainerInstanceManagementClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_cached_images.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/cachedImages'}
+    list_cached_images.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/cachedImages'}
 
-    def get_capabilities(
+    def list_capabilities(
             self, location, custom_headers=None, raw=False, **operation_config):
         """Get the list of capabilities of the location.
 
@@ -190,7 +190,7 @@ class ContainerInstanceManagementClient(SDKClient):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_capabilities.metadata['url']
+        url = self.list_capabilities.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -230,4 +230,4 @@ class ContainerInstanceManagementClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_capabilities.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/capabilities'}
+    list_capabilities.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/capabilities'}
