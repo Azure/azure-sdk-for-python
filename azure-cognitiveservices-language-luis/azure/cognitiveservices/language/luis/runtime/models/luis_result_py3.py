@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class LuisResult(Model):
     """Prediction, based on the input query, containing intent(s) and entities.
 
-    :param query: The input utterance that was analized.
+    :param query: The input utterance that was analyzed.
     :type query: str
     :param altered_query: The corrected utterance (when spell checking was
      enabled).

@@ -21,7 +21,7 @@ class PublishSettings(Model):
     :type id: str
     :param is_sentiment_analysis_enabled: Required. Setting sentiment analysis
      as true returns the Sentiment of the input utterance along with the
-     resopnse
+     response
     :type is_sentiment_analysis_enabled: bool
     :param is_speech_enabled: Required. Setting speech as public enables
      speech priming in your app
