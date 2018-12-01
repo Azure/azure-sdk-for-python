@@ -31,9 +31,11 @@ class JobInformationBasic(Model):
     :ivar submitter: The user or account that submitted the job.
     :vartype submitter: str
     :param degree_of_parallelism: The degree of parallelism used for this job.
-     This must be greater than 0, if set to less than 0 it will default to 1.
      Default value: 1 .
     :type degree_of_parallelism: int
+    :ivar degree_of_parallelism_percent: the degree of parallelism in
+     percentage used for this job.
+    :vartype degree_of_parallelism_percent: float
     :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
@@ -47,7 +49,7 @@ class JobInformationBasic(Model):
     :ivar state: The job state. When the job is in the Ended state, refer to
      Result and ErrorMessage for details. Possible values include: 'Accepted',
      'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
-     'Starting', 'Paused', 'WaitingForCapacity'
+     'Starting', 'Paused', 'WaitingForCapacity', 'Yielded', 'Finalizing'
     :vartype state: str or ~azure.mgmt.datalake.analytics.job.models.JobState
     :ivar result: The result of job execution or the current result of the
      running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
@@ -67,6 +69,10 @@ class JobInformationBasic(Model):
     :param tags: The key-value pairs used to add additional metadata to the
      job information. (Only for use internally with Scope job type.)
     :type tags: dict[str, str]
+    :ivar hierarchy_queue_node: the name of hierarchy queue node this job is
+     assigned to, Null if job has not been assigned yet or the account doesn't
+     have hierarchy queue.
+    :vartype hierarchy_queue_node: str
     """
 
     _validation = {
@@ -74,12 +80,14 @@ class JobInformationBasic(Model):
         'name': {'required': True},
         'type': {'required': True},
         'submitter': {'readonly': True},
+        'degree_of_parallelism_percent': {'readonly': True},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'state': {'readonly': True},
         'result': {'readonly': True},
         'log_folder': {'readonly': True},
+        'hierarchy_queue_node': {'readonly': True},
     }
 
     _attribute_map = {
@@ -88,6 +96,7 @@ class JobInformationBasic(Model):
         'type': {'key': 'type', 'type': 'JobType'},
         'submitter': {'key': 'submitter', 'type': 'str'},
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+        'degree_of_parallelism_percent': {'key': 'degreeOfParallelismPercent', 'type': 'float'},
         'priority': {'key': 'priority', 'type': 'int'},
         'submit_time': {'key': 'submitTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -98,6 +107,7 @@ class JobInformationBasic(Model):
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'hierarchy_queue_node': {'key': 'hierarchyQueueNode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -107,6 +117,7 @@ class JobInformationBasic(Model):
         self.type = kwargs.get('type', None)
         self.submitter = None
         self.degree_of_parallelism = kwargs.get('degree_of_parallelism', 1)
+        self.degree_of_parallelism_percent = None
         self.priority = kwargs.get('priority', None)
         self.submit_time = None
         self.start_time = None
@@ -117,3 +128,4 @@ class JobInformationBasic(Model):
         self.log_file_patterns = kwargs.get('log_file_patterns', None)
         self.related = kwargs.get('related', None)
         self.tags = kwargs.get('tags', None)
+        self.hierarchy_queue_node = None

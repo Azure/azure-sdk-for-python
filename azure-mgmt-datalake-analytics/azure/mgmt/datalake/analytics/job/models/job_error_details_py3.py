@@ -36,7 +36,7 @@ class JobErrorDetails(Model):
     :ivar details: The details of the error message.
     :vartype details: str
     :ivar line_number: The specific line number in the job where the error
-     occured.
+     occurred.
     :vartype line_number: int
     :ivar start_offset: The start offset in the job where the error was found
     :vartype start_offset: int
