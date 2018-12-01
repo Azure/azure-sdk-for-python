@@ -39,7 +39,7 @@ class NotificationChannelsOperations(object):
 
     def list(
             self, resource_group_name, lab_name, expand=None, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
-        """List notificationchannels in a given lab.
+        """List notification channels in a given lab.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -129,7 +129,7 @@ class NotificationChannelsOperations(object):
 
     def get(
             self, resource_group_name, lab_name, name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Get notificationchannel.
+        """Get notification channel.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -273,7 +273,7 @@ class NotificationChannelsOperations(object):
 
     def delete(
             self, resource_group_name, lab_name, name, custom_headers=None, raw=False, **operation_config):
-        """Delete notificationchannel.
+        """Delete notification channel.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -329,7 +329,7 @@ class NotificationChannelsOperations(object):
 
     def update(
             self, resource_group_name, lab_name, name, notification_channel, custom_headers=None, raw=False, **operation_config):
-        """Modify properties of notificationchannels.
+        """Modify properties of notification channels.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

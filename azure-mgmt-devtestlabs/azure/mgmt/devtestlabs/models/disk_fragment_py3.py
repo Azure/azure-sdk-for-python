@@ -20,7 +20,7 @@ class DiskFragment(UpdateResource):
     :param disk_type: The storage type for the disk (i.e. Standard, Premium).
      Possible values include: 'Standard', 'Premium'
     :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
+    :param disk_size_gi_b: The size of the disk in Gibibytes.
     :type disk_size_gi_b: int
     :param leased_by_lab_vm_id: The resource ID of the VM to which this disk
      is leased.

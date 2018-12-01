@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AttachNewDataDiskOptions(Model):
     """Properties to attach new disk to the Virtual Machine.
 
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
+    :param disk_size_gi_b: Size of the disk to be attached in Gibibytes.
     :type disk_size_gi_b: int
     :param disk_name: The name of the disk to be attached.
     :type disk_name: str
