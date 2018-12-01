@@ -49,6 +49,11 @@ try:
     from .container_exec_request_py3 import ContainerExecRequest
     from .container_exec_response_py3 import ContainerExecResponse
     from .resource_py3 import Resource
+    from .cached_images_py3 import CachedImages
+    from .cached_images_list_result_py3 import CachedImagesListResult
+    from .capabilities_capabilities_py3 import CapabilitiesCapabilities
+    from .capabilities_py3 import Capabilities
+    from .capabilities_list_result_py3 import CapabilitiesListResult
 except (SyntaxError, ImportError):
     from .container_port import ContainerPort
     from .environment_variable import EnvironmentVariable
@@ -89,6 +94,11 @@ except (SyntaxError, ImportError):
     from .container_exec_request import ContainerExecRequest
     from .container_exec_response import ContainerExecResponse
     from .resource import Resource
+    from .cached_images import CachedImages
+    from .cached_images_list_result import CachedImagesListResult
+    from .capabilities_capabilities import CapabilitiesCapabilities
+    from .capabilities import Capabilities
+    from .capabilities_list_result import CapabilitiesListResult
 from .container_group_paged import ContainerGroupPaged
 from .container_instance_management_client_enums import (
     ContainerNetworkProtocol,
@@ -142,6 +152,11 @@ __all__ = [
     'ContainerExecRequest',
     'ContainerExecResponse',
     'Resource',
+    'CachedImages',
+    'CachedImagesListResult',
+    'CapabilitiesCapabilities',
+    'Capabilities',
+    'CapabilitiesListResult',
     'ContainerGroupPaged',
     'ContainerNetworkProtocol',
     'GpuSku',
