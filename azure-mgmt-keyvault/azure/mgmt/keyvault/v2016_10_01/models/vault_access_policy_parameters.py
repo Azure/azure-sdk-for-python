@@ -26,7 +26,7 @@ class VaultAccessPolicyParameters(Model):
     :vartype name: str
     :ivar type: The resource name of the access policy.
     :vartype type: str
-    :ivar location: The resource type of the the access policy.
+    :ivar location: The resource type of the access policy.
     :vartype location: str
     :param properties: Required. Properties of the access policy
     :type properties:

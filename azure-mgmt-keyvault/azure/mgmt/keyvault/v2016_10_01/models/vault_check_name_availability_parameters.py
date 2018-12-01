@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VaultCheckNameAvailabilityParameters(Model):
-    """The parameters used to check the availabity of the vault name.
+    """The parameters used to check the availability of the vault name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
