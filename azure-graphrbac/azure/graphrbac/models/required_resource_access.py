@@ -18,7 +18,7 @@ class RequiredResourceAccess(Model):
     OAuth 2.0 permission scopes may be requested by client applications
     (through the requiredResourceAccess collection) when calling a resource
     application. The requiredResourceAccess property of the Application entity
-    is a collection of ReqiredResourceAccess.
+    is a collection of RequiredResourceAccess.
 
     All required parameters must be populated in order to send to Azure.
 
