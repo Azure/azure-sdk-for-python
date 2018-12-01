@@ -37,7 +37,7 @@ class ReservationSummary(Resource):
      to which the reservation benefit can be applied to.
     :vartype reservation_id: str
     :ivar sku_name: This is the ARM Sku name. It can be used to join with the
-     servicetype field in additoinalinfo in usage records.
+     serviceType field in additional info in usage records.
     :vartype sku_name: str
     :ivar reserved_hours: This is the total hours reserved. E.g. if
      reservation for 1 instance was made on 1 PM, this will be 11 hours for

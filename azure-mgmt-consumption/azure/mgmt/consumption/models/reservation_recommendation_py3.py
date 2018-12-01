@@ -40,7 +40,7 @@ class ReservationRecommendation(Model):
     :ivar cost_with_no_reserved_instances: The total amount of cost without
      reserved instances.
     :vartype cost_with_no_reserved_instances: decimal.Decimal
-    :ivar recommended_quantity: Recomended quality for reserved instances.
+    :ivar recommended_quantity: Recommended quality for reserved instances.
     :vartype recommended_quantity: decimal.Decimal
     :ivar total_cost_with_reserved_instances: The total amount of cost with
      reserved instances.

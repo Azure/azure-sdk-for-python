@@ -124,8 +124,8 @@ class MarketplacesOperations(object):
     def list_by_billing_period(
             self, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billing period and
-        subscripotionId. Marketplaces are available via this API only for May
-        1, 2014 or later.
+        subscriptionId. Marketplaces are available via this API only for May 1,
+        2014 or later.
 
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
