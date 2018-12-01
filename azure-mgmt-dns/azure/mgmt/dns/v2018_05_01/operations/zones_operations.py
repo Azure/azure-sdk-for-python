@@ -54,7 +54,7 @@ class ZonesOperations(object):
         :type parameters: ~azure.mgmt.dns.v2018_05_01.models.Zone
         :param if_match: The etag of the DNS zone. Omit this value to always
          overwrite the current zone. Specify the last-seen etag value to
-         prevent accidentally overwritting any concurrent changes.
+         prevent accidentally overwriting any concurrent changes.
         :type if_match: str
         :param if_none_match: Set to '*' to allow a new DNS zone to be
          created, but to prevent updating an existing zone. Other values will
@@ -287,7 +287,7 @@ class ZonesOperations(object):
         :type zone_name: str
         :param if_match: The etag of the DNS zone. Omit this value to always
          overwrite the current zone. Specify the last-seen etag value to
-         prevent accidentally overwritting any concurrent changes.
+         prevent accidentally overwriting any concurrent changes.
         :type if_match: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
