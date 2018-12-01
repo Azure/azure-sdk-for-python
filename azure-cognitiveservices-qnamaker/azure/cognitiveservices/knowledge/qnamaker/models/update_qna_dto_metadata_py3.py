@@ -18,7 +18,7 @@ class UpdateQnaDTOMetadata(UpdateMetadataDTO):
     :param delete: List of Metadata associated with answer to be deleted
     :type delete:
      list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
-    :param add: List of Metadat associated with answer to be added
+    :param add: List of metadata associated with answer to be added
     :type add:
      list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
     """
