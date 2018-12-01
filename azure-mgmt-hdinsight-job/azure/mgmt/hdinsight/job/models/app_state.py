@@ -22,7 +22,7 @@ class AppState(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'ApplicationState'},
     }
 
     def __init__(self, **kwargs):
