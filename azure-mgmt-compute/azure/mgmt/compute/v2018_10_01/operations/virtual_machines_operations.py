@@ -1421,14 +1421,14 @@ class VirtualMachinesOperations(object):
 
     def reimage(
             self, resource_group_name, vm_name, temp_disk=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Reimages (upgrade the operating system) virtual machine. This operation
-        is only supported for differencing OS disks.
+        """Reimages the virtual machine which has an ephemeral OS disk back to its
+        initial state.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
-        :param temp_disk: Specified whether to reimage temp disk. Default
+        :param temp_disk: Specifies whether to reimage temp disk. Default
          value: false.
         :type temp_disk: bool
         :param dict custom_headers: headers that will be added to the request

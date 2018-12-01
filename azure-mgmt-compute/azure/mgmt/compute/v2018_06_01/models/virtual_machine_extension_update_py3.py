@@ -38,9 +38,6 @@ class VirtualMachineExtensionUpdate(UpdateResource):
      protectedSettings or protectedSettingsFromKeyVault or no protected
      settings at all.
     :type protected_settings: object
-    :param provision_after_extensions: Collection of extension names after
-     which this extension needs to be provisioned.
-    :type provision_after_extensions: list[str]
     """
 
     _attribute_map = {
@@ -52,10 +49,9 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
         super(VirtualMachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
@@ -64,4 +60,3 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provision_after_extensions = provision_after_extensions

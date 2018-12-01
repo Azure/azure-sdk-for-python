@@ -38,9 +38,6 @@ class VirtualMachineExtensionUpdate(UpdateResource):
      protectedSettings or protectedSettingsFromKeyVault or no protected
      settings at all.
     :type protected_settings: object
-    :param provision_after_extensions: Collection of extension names after
-     which this extension needs to be provisioned.
-    :type provision_after_extensions: list[str]
     """
 
     _attribute_map = {
@@ -52,7 +49,6 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -64,4 +60,3 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
-        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)

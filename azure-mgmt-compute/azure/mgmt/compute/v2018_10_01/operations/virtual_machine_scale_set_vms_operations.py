@@ -100,7 +100,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
-        :param temp_disk: Specified whether to reimage temp disk. Default
+        :param temp_disk: Specifies whether to reimage temp disk. Default
          value: false.
         :type temp_disk: bool
         :param dict custom_headers: headers that will be added to the request
