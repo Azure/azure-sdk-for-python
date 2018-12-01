@@ -22,7 +22,7 @@ class DpsCertificateOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-11-15".
+    :ivar api_version: The version of the API. Constant value: "2018-01-22".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DpsCertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-01-22"
 
         self.config = config
 
@@ -193,7 +193,7 @@ class DpsCertificateOperations(object):
             self, resource_group_name, if_match, provisioning_service_name, certificate_name, certificatename=None, certificateraw_bytes=None, certificateis_verified=None, certificatepurpose=None, certificatecreated=None, certificatelast_updated=None, certificatehas_private_key=None, certificatenonce=None, custom_headers=None, raw=False, **operation_config):
         """Delete the Provisioning Service Certificate.
 
-        Deletes the specified certificate assosciated with the Provisioning
+        Deletes the specified certificate associated with the Provisioning
         Service.
 
         :param resource_group_name: Resource group identifier.

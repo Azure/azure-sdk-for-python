@@ -25,7 +25,7 @@ class IotDpsResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-11-15".
+    :ivar api_version: The version of the API. Constant value: "2018-01-22".
     """
 
     models = models
@@ -35,7 +35,7 @@ class IotDpsResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-01-22"
 
         self.config = config
 
