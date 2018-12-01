@@ -3,7 +3,7 @@ parameters:
   vmImage: ''
 
 jobs:
-- job: ${{ format('Test {0}', parameters.name ) }}
+- job: ${{ format('Test_{0}', parameters.name ) }}
   dependsOn:
   - 'Publish'
   pool:
