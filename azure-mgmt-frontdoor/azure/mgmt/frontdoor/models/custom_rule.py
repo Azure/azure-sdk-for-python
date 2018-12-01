@@ -35,7 +35,7 @@ class CustomRule(Model):
     :param rate_limit_duration_in_minutes: Defines rate limit duration.
      Default - 1 minute
     :type rate_limit_duration_in_minutes: int
-    :param rate_limit_threshold: Defines rate limit thresold
+    :param rate_limit_threshold: Defines rate limit threshold
     :type rate_limit_threshold: int
     :param match_conditions: Required. List of match conditions
     :type match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition1]

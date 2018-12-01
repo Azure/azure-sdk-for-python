@@ -22,7 +22,7 @@ class ManagedRuleSet(Model):
 
     :param priority: Describes priority of the rule
     :type priority: int
-    :param version: defines version of the ruleset
+    :param version: defines version of the rule set
     :type version: int
     :param rule_set_type: Required. Constant filled by server.
     :type rule_set_type: str
