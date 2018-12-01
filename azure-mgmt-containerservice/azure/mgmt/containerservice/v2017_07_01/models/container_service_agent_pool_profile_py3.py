@@ -87,7 +87,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
      pool.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool.
+    :ivar fqdn: FQDN for the agent pool.
     :vartype fqdn: str
     :param ports: Ports number array used to expose on this agent pool. The
      default opened ports are different based on your choice of orchestrator.
@@ -98,7 +98,7 @@ class ContainerServiceAgentPoolProfile(Model):
      'StorageAccount', 'ManagedDisks'
     :type storage_profile: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceStorageProfileTypes
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
+    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet
      identifier.
     :type vnet_subnet_id: str
     :param os_type: OsType to be used to specify os type. Choose from Linux

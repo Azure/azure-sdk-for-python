@@ -41,14 +41,14 @@ class OpenShiftManagedClustersOperations(object):
 
     def get(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a openshift managed cluster.
+        """Gets a OpenShift managed cluster.
 
-        Gets the details of the managed openshift cluster with a specified
+        Gets the details of the managed OpenShift cluster with a specified
         resource group and name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the openshift managed cluster
+        :param resource_name: The name of the OpenShift managed cluster
          resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -160,14 +160,14 @@ class OpenShiftManagedClustersOperations(object):
 
     def create_or_update(
             self, resource_group_name, resource_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates an openshift managed cluster.
+        """Creates or updates an OpenShift managed cluster.
 
-        Creates or updates a openshift managed cluster with the specified
+        Creates or updates a OpenShift managed cluster with the specified
         configuration for agents and OpenShift version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the openshift managed cluster
+        :param resource_name: The name of the OpenShift managed cluster
          resource.
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update an
@@ -268,13 +268,13 @@ class OpenShiftManagedClustersOperations(object):
 
     def update_tags(
             self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates tags on an openshift managed cluster.
+        """Updates tags on an OpenShift managed cluster.
 
-        Updates an openshift managed cluster with the specified tags.
+        Updates an OpenShift managed cluster with the specified tags.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the openshift managed cluster
+        :param resource_name: The name of the OpenShift managed cluster
          resource.
         :type resource_name: str
         :param tags: Resource tags.
@@ -359,14 +359,14 @@ class OpenShiftManagedClustersOperations(object):
 
     def delete(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an openshift managed cluster.
+        """Deletes an OpenShift managed cluster.
 
-        Deletes the openshift managed cluster with a specified resource group
+        Deletes the OpenShift managed cluster with a specified resource group
         and name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the openshift managed cluster
+        :param resource_name: The name of the OpenShift managed cluster
          resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
