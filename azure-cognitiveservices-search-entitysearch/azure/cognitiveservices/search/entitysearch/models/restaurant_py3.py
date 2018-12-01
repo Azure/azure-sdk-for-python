@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .food_establishment import FoodEstablishment
+from .food_establishment_py3 import FoodEstablishment
 
 
 class Restaurant(FoodEstablishment):

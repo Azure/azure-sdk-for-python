@@ -87,7 +87,7 @@ except (SyntaxError, ImportError):
     from .lodging_business import LodgingBusiness
     from .restaurant import Restaurant
     from .hotel import Hotel
-from .entity_search_api_enums import (
+from .entity_search_client_enums import (
     EntityQueryScenario,
     EntityScenario,
     EntityType,

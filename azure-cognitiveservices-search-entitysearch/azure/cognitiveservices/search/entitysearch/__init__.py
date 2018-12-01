@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_search_api import EntitySearchAPI
+from .entity_search_client import EntitySearchClient
 from .version import VERSION
 
-__all__ = ['EntitySearchAPI']
+__all__ = ['EntitySearchClient']
 
 __version__ = VERSION
 

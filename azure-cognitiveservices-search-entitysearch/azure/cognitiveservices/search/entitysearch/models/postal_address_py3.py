@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .structured_value import StructuredValue
+from .structured_value_py3 import StructuredValue
 
 
 class PostalAddress(StructuredValue):
@@ -68,7 +68,7 @@ class PostalAddress(StructuredValue):
      located. This could be the two-letter ISO code. For example, US, or the
      full name, United States.
     :vartype address_country: str
-    :ivar country_iso: The two letter ISO code of this countr. For example,
+    :ivar country_iso: The two letter ISO code of this country. For example,
      US.
     :vartype country_iso: str
     :ivar neighborhood: The neighborhood where the street address is located.
