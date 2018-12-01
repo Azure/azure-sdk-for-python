@@ -26,7 +26,7 @@ class Evaluate(Model):
     :param is_image_adult_classified: Indicates if an image is classified as
      adult.
     :type is_image_adult_classified: bool
-    :param racy_classification_score: The racy classication score.
+    :param racy_classification_score: The racy classification score.
     :type racy_classification_score: float
     :param is_image_racy_classified: Indicates if the image is classified as
      racy.
