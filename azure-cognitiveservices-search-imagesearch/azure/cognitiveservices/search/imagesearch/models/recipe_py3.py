@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .creative_work_py3 import CreativeWork
 
 
 class Recipe(CreativeWork):

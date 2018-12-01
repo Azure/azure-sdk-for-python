@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .collection_page import CollectionPage
+from .collection_page_py3 import CollectionPage
 
 
 class ImageGallery(CollectionPage):

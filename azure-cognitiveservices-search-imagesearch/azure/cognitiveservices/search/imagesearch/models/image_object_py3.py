@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_object import MediaObject
+from .media_object_py3 import MediaObject
 
 
 class ImageObject(MediaObject):
@@ -80,7 +80,7 @@ class ImageObject(MediaObject):
      image is of an apple pie, this object includes a count of the number of
      websites where you can buy an apple pie. To indicate the number of offers
      in your UX, include badging such as a shopping cart icon that contains the
-     count. When the user clicks on the icon, use imageInisghtsToken to get the
+     count. When the user clicks on the icon, use imageInsightsToken to get the
      list of websites.
     :vartype insights_metadata:
      ~azure.cognitiveservices.search.imagesearch.models.ImagesImageMetadata

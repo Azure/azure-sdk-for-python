@@ -99,7 +99,7 @@ except (SyntaxError, ImportError):
     from .rating import Rating
     from .collection_page import CollectionPage
     from .structured_value import StructuredValue
-from .image_search_api_enums import (
+from .image_search_client_enums import (
     Currency,
     ItemAvailability,
     ErrorCode,
