@@ -2,7 +2,7 @@ trigger:
 - master
 
 jobs:
-- job: 'Windows'
+- job: 'Publish'
 
   pool:
     vmImage: 'vs2017-win2016'  
