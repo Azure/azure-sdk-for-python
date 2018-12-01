@@ -1,0 +1,31 @@
+parameters:
+  name: ''
+  vmImage: ''
+
+jobs:
+- job: ${{ format('Test_{0}', parameters.name ) }}
+  dependsOn:
+  - 'Publish'
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+    maxParallel: 3
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(python.version)'
+    inputs:
+      versionSpec: '$(python.version)'
+
+  - script: 'python scripts/dev_setup.py'
+    displayName: 'Test Setup'
+
+  - script: |
+     pytest .
+     python ./setup.py check -r -s
+    displayName: 'Run Tests'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
