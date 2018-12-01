@@ -14,7 +14,7 @@ jobs:
      pip install git+https://github.com/lmazuel/swagger-to-sdk
      pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
 
-    displayName: 'Prep Environment, Install Packages copy'
+    displayName: 'Prep Environment, Install Packages'
 
   - powershell: |
      $inputFilterSet="$(build_targeting_string)"

@@ -3,14 +3,20 @@ parameters:
   vmImage: ''
 
 jobs:
-- job: ${{ format('Test_{0}', parameters.name ) }}
+- job: ${{ format('Test {0}', parameters.name ) }}
   dependsOn:
   - 'Publish'
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
-      Python36:
+      Python_2_7:
+        python.version: '2.7'
+      Python_3_4:
+        python.version: '3.4'
+      Python_3_5:
+        python.version: '3.5'
+      Python_3_6:
         python.version: '3.6'
     maxParallel: 3
   steps:
