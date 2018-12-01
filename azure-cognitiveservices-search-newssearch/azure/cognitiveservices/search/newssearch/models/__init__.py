@@ -49,7 +49,7 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .media_object import MediaObject
     from .response_base import ResponseBase
-from .news_search_api_enums import (
+from .news_search_client_enums import (
     ErrorCode,
     ErrorSubCode,
     Freshness,

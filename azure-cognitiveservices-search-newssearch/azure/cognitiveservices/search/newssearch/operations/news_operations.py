@@ -321,6 +321,10 @@ class NewsOperations(object):
         """
         # Construct URL
         url = self.search.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -350,7 +354,7 @@ class NewsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
@@ -366,8 +370,8 @@ class NewsOperations(object):
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -386,11 +390,11 @@ class NewsOperations(object):
 
     def category(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, category=None, count=None, headline_count=None, market=None, offset=None, original_image=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The News Category API lets lets you search on Bing and get back a list
-        of top news articles by category. This section provides technical
-        details about the query parameters and headers that you use to request
-        news and the JSON response objects that contain them.  For examples
-        that show how to make requests, see [Searching the web for
+        """The News Category API lets you search on Bing and get back a list of
+        top news articles by category. This section provides technical details
+        about the query parameters and headers that you use to request news and
+        the JSON response objects that contain them.  For examples that show
+        how to make requests, see [Searching the web for
         news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
         :param accept_language: A comma-delimited list of one or more
@@ -667,6 +671,10 @@ class NewsOperations(object):
         """
         # Construct URL
         url = self.category.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -695,7 +703,7 @@ class NewsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
@@ -711,8 +719,8 @@ class NewsOperations(object):
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -731,9 +739,9 @@ class NewsOperations(object):
 
     def trending(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, market=None, offset=None, safe_search=None, set_lang=None, since=None, sort_by=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The News Trending Topics API lets lets you search on Bing and get back
-        a list of trending news topics that are currently trending on Bing.
-        This section provides technical details about the query parameters and
+        """The News Trending Topics API lets you search on Bing and get back a
+        list of trending news topics that are currently trending on Bing. This
+        section provides technical details about the query parameters and
         headers that you use to request news and the JSON response objects that
         contain them.  For examples that show how to make requests, see
         [Searching the web for
@@ -995,6 +1003,10 @@ class NewsOperations(object):
         """
         # Construct URL
         url = self.trending.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -1021,7 +1033,7 @@ class NewsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
@@ -1037,8 +1049,8 @@ class NewsOperations(object):
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
