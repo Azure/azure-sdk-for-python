@@ -23,7 +23,7 @@ jobs:
        for i in "${FILTERS[@]}"; do
        folderNames=$(ls -d $i)
          for folderName in $folderNames; do
-           echo python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folderName"
+           python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folderName"
          done
        done
      done <<< "$IN"
