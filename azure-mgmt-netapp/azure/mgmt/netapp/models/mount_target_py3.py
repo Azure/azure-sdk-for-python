@@ -34,7 +34,7 @@ class MountTarget(Model):
     :param file_system_id: Required. fileSystemId. UUID v4 used to identify
      the MountTarget
     :type file_system_id: str
-    :ivar ip_address: ipAddress. The mount targets's IPv4 address
+    :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
     :ivar name1: name. The name of the mount target
     :vartype name1: str
