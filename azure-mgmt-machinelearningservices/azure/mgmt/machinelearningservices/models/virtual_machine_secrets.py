@@ -19,7 +19,7 @@ class VirtualMachineSecrets(ComputeSecrets):
 
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
-    :param administrator_account: Admin creadentials for virtual machine.
+    :param administrator_account: Admin credentials for virtual machine.
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
     """
