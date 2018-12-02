@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServerUpdateParameters(Model):
-    """Parameters allowd to update for a server.
+    """Parameters allowed to update for a server.
 
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mariadb.models.Sku
