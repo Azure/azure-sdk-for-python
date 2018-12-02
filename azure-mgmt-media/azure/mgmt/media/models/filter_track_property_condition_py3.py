@@ -20,7 +20,7 @@ class FilterTrackPropertyCondition(Model):
     :param property: Required. The track property type. Possible values
      include: 'Unknown', 'Type', 'Name', 'Language', 'FourCC', 'Bitrate'
     :type property: str or ~azure.mgmt.media.models.FilterTrackPropertyType
-    :param value: Required. The track proprty value.
+    :param value: Required. The track property value.
     :type value: str
     :param operation: Required. The track property condition operation.
      Possible values include: 'Equal', 'NotEqual'

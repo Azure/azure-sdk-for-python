@@ -22,7 +22,7 @@ class CommonEncryptionCenc(Model):
     :param content_keys: Representing default content key for each encryption
      scheme and separate content keys for specific tracks
     :type content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
-    :param drm: Configuration of DRMs for CommonEncryptionCenc encryption
+    :param drm: Configuration of DRM for CommonEncryptionCenc encryption
      scheme
     :type drm: ~azure.mgmt.media.models.CencDrmConfiguration
     """
