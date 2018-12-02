@@ -42,8 +42,8 @@ class SystemService(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, system_service_type, **kwargs) -> None:
         super(SystemService, self).__init__(**kwargs)
-        self.system_service_type = kwargs.get('system_service_type', None)
+        self.system_service_type = system_service_type
         self.public_ip_address = None
         self.version = None

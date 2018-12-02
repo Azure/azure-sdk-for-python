@@ -27,6 +27,6 @@ class OperationalizationClusterUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(OperationalizationClusterUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
