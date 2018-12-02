@@ -22,7 +22,7 @@ class MarketplaceAgreementsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2015-06-01".
     :ivar offer_type: Offer Type, currently only virtualmachine type is supported. Constant value: "virtualmachine".
     """
@@ -61,7 +61,7 @@ class MarketplaceAgreementsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'offerType': self._serialize.url("self.offer_type", self.offer_type, 'str'),
@@ -77,7 +77,7 @@ class MarketplaceAgreementsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -86,8 +86,8 @@ class MarketplaceAgreementsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -104,6 +104,7 @@ class MarketplaceAgreementsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'}
 
     def create(
             self, publisher_id, offer_id, plan_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -132,7 +133,7 @@ class MarketplaceAgreementsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.marketplaceordering.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'offerType': self._serialize.url("self.offer_type", self.offer_type, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -148,6 +149,7 @@ class MarketplaceAgreementsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -160,9 +162,8 @@ class MarketplaceAgreementsOperations(object):
         body_content = self._serialize.body(parameters, 'AgreementTerms')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -177,3 +178,4 @@ class MarketplaceAgreementsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'}
