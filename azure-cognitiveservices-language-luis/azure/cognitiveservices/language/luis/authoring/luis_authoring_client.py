@@ -23,7 +23,6 @@ from .operations.train_operations import TrainOperations
 from .operations.permissions_operations import PermissionsOperations
 from .operations.pattern_operations import PatternOperations
 from .operations.settings_operations import SettingsOperations
-from .operations.dispatch_operations import DispatchOperations
 from . import models
 
 
@@ -81,8 +80,6 @@ class LUISAuthoringClient(SDKClient):
     :vartype pattern: azure.cognitiveservices.language.luis.authoring.operations.PatternOperations
     :ivar settings: Settings operations
     :vartype settings: azure.cognitiveservices.language.luis.authoring.operations.SettingsOperations
-    :ivar dispatch: Dispatch operations
-    :vartype dispatch: azure.cognitiveservices.language.luis.authoring.operations.DispatchOperations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
@@ -120,8 +117,6 @@ class LUISAuthoringClient(SDKClient):
         self.pattern = PatternOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dispatch = DispatchOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def fivebe_three_two_two_two_eighte_eight_four_seven_threede_one_one_six_three_two_five_five_one_five(

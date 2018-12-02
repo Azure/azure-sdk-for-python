@@ -21,8 +21,6 @@ try:
     from .application_setting_update_object_py3 import ApplicationSettingUpdateObject
     from .publish_setting_update_object_py3 import PublishSettingUpdateObject
     from .example_label_object_py3 import ExampleLabelObject
-    from .dispatch_connected_service_delete_object_py3 import DispatchConnectedServiceDeleteObject
-    from .dispatch_connected_service_object_py3 import DispatchConnectedServiceObject
     from .phraselist_create_object_py3 import PhraselistCreateObject
     from .sub_closed_list_py3 import SubClosedList
     from .sub_closed_list_response_py3 import SubClosedListResponse
@@ -127,8 +125,6 @@ except (SyntaxError, ImportError):
     from .application_setting_update_object import ApplicationSettingUpdateObject
     from .publish_setting_update_object import PublishSettingUpdateObject
     from .example_label_object import ExampleLabelObject
-    from .dispatch_connected_service_delete_object import DispatchConnectedServiceDeleteObject
-    from .dispatch_connected_service_object import DispatchConnectedServiceObject
     from .phraselist_create_object import PhraselistCreateObject
     from .sub_closed_list import SubClosedList
     from .sub_closed_list_response import SubClosedListResponse
@@ -238,8 +234,6 @@ __all__ = [
     'ApplicationSettingUpdateObject',
     'PublishSettingUpdateObject',
     'ExampleLabelObject',
-    'DispatchConnectedServiceDeleteObject',
-    'DispatchConnectedServiceObject',
     'PhraselistCreateObject',
     'SubClosedList',
     'SubClosedListResponse',
