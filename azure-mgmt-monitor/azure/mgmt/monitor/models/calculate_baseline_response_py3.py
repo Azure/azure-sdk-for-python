@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CalculateBaselineResponse(Model):
-    """The response to a calcualte baseline call.
+    """The response to a calculate baseline call.
 
     All required parameters must be populated in order to send to Azure.
 

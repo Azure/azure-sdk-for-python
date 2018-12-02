@@ -13,7 +13,7 @@ from .action import Action
 
 
 class AlertingAction(Action):
-    """Specifiy action need to be taken when rule type is Alert.
+    """Specify action need to be taken when rule type is Alert.
 
     All required parameters must be populated in order to send to Azure.
 
