@@ -16,25 +16,18 @@ jobs:
 
     displayName: 'Prep Environment, Install Packages'
 
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
+  - bash: |
+     IN=$(build_targeting_string)
      
-     if ($inputFilterSet -eq "")
-     {
-         $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in "$inputFilterSet".split(","))
-     {
-       $foldersToIterate=Get-ChildItem -Recurse -Filter "$inputFilter"
-     
-       foreach ($folder in $foldersToIterate)
-       {
-         python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
-       }
-     }
-     
-    displayName: 'Generate KeyVault Tarball'
+     while IFS=',' read -ra FILTERS; do
+       for i in "${FILTERS[@]}"; do
+       folderNames=$(ls -d $i)
+         for folderName in $folderNames; do
+           echo python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folderName"
+         done
+       done
+     done <<< "$IN"
+    displayName: 'Generate Packages'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
