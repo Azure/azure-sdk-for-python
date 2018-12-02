@@ -1275,15 +1275,13 @@ class AppsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
+        if response.status_code not in [200, 401, 403, 429]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[PrebuiltDomain]', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
         if response.status_code == 401:
             deserialized = self._deserialize('ErrorResponse', response)
         if response.status_code == 403:
