@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceNameAvailability(Model):
-    """Information regarding availbility of a resource name.
+    """Information regarding availability of a resource name.
 
     :param name_available: <code>true</code> indicates name is valid and
      available. <code>false</code> indicates the name is invalid, unavailable,
