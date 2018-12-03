@@ -13,7 +13,7 @@ from .project_task_properties import ProjectTaskProperties
 
 
 class ConnectToSourcePostgreSqlSyncTaskProperties(ProjectTaskProperties):
-    """Properties for the task that validates connection to PostgreSql server and
+    """Properties for the task that validates connection to PostgreSQL server and
     source server requirements for online migration.
 
     Variables are only populated by the server, and will be ignored when

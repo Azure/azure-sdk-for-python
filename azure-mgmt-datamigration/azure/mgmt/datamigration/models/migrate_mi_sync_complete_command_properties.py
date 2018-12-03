@@ -13,8 +13,8 @@ from .command_properties import CommandProperties
 
 
 class MigrateMISyncCompleteCommandProperties(CommandProperties):
-    """Properties for the command that completes sync migration for a managed
-    instance database.
+    """Properties for the command that completes online migration for an Azure SQL
+    Database Managed Instance.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

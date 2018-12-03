@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class MigrateMISyncCompleteCommandOutput(Model):
-    """Output for command that completes sync migration for a managed instance
-    database.
+    """Output for command that completes online migration for an Azure SQL
+    Database Managed Instance.
 
     :param errors: List of errors that happened during the command execution
     :type errors: list[~azure.mgmt.datamigration.models.ReportableException]

@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class MigrateMISyncCompleteCommandInput(Model):
-    """Input for command that completes sync migration for a managed instance
-    database.
+    """Input for command that completes online migration for an Azure SQL Database
+    Managed Instance.
 
     All required parameters must be populated in order to send to Azure.
 

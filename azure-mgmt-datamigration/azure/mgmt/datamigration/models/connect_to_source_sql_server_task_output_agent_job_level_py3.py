@@ -39,8 +39,8 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
     :ivar validation_errors: Validation errors
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
-    :ivar migration_eligibility: Information about eligiblity of agent job for
-     migration.
+    :ivar migration_eligibility: Information about eligibility of agent job
+     for migration.
     :vartype migration_eligibility:
      ~azure.mgmt.datamigration.models.MigrationEligibilityInfo
     """
