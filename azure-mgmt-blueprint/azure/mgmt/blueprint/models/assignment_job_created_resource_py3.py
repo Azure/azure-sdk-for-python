@@ -24,7 +24,7 @@ class AssignmentJobCreatedResource(AzureResourceBase):
     :vartype type: str
     :ivar name: Name of this resource.
     :vartype name: str
-    :param properties:
+    :param properties: additional properties in a dictionary.
     :type properties: dict[str, str]
     """
 
