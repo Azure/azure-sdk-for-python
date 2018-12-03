@@ -10,13 +10,11 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
-      Python_2_7:
+      Python_27:
         python.version: '2.7'
-      Python_3_4:
-        python.version: '3.4'
-      Python_3_5:
+      Python_35:
         python.version: '3.5'
-      Python_3_6:
+      Python_36:
         python.version: '3.6'
     maxParallel: 3
   steps:

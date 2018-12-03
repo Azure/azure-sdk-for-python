@@ -16,17 +16,24 @@ jobs:
 
     displayName: 'Prep Environment, Install Packages'
 
-  - bash: |
-     IN=$(build_targeting_string)
+  - powershell: |
+     $inputFilterSet="$(build_targeting_string)"
      
-     while IFS=',' read -ra FILTERS; do
-       for i in "${FILTERS[@]}"; do
-       folderNames=$(ls -d $i)
-         for folderName in $folderNames; do
-           python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folderName"
-         done
-       done
-     done <<< "$IN"
+     if ($inputFilterSet -eq "")
+     {
+         $inputFilterSet = "azure-*"
+     }
+     
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+       $foldersToIterate=Get-ChildItem -Recurse -Filter "$inputFilter"
+     
+       foreach ($folder in $foldersToIterate)
+       {
+         python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
+       }
+     }
+     
     displayName: 'Generate Packages'
 
   - task: PublishBuildArtifacts@1
