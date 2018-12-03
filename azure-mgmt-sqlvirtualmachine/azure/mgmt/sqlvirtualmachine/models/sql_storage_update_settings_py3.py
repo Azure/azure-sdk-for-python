@@ -17,6 +17,8 @@ class SqlStorageUpdateSettings(Model):
 
     :param disk_count: Virtual machine disk count.
     :type disk_count: int
+    :param starting_device_id: Device id of the first disk to be updated.
+    :type starting_device_id: int
     :param disk_configuration_type: Disk configuration to apply to SQL Server.
      Possible values include: 'NEW', 'EXTEND', 'ADD'
     :type disk_configuration_type: str or
@@ -25,10 +27,12 @@ class SqlStorageUpdateSettings(Model):
 
     _attribute_map = {
         'disk_count': {'key': 'diskCount', 'type': 'int'},
+        'starting_device_id': {'key': 'startingDeviceId', 'type': 'int'},
         'disk_configuration_type': {'key': 'diskConfigurationType', 'type': 'str'},
     }
 
-    def __init__(self, *, disk_count: int=None, disk_configuration_type=None, **kwargs) -> None:
+    def __init__(self, *, disk_count: int=None, starting_device_id: int=None, disk_configuration_type=None, **kwargs) -> None:
         super(SqlStorageUpdateSettings, self).__init__(**kwargs)
         self.disk_count = disk_count
+        self.starting_device_id = starting_device_id
         self.disk_configuration_type = disk_configuration_type
