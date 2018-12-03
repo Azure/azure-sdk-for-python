@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RemediationDeploymentSummary(Model):
-    """The deployment status summary for all deplyoments created by the
+    """The deployment status summary for all deployments created by the
     remediation.
 
     :param total_deployments: The number of deployments required by the
