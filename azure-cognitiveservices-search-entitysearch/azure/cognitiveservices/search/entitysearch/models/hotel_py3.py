@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .lodging_business import LodgingBusiness
+from .lodging_business_py3 import LodgingBusiness
 
 
 class Hotel(LodgingBusiness):
