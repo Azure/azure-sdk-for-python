@@ -13,7 +13,7 @@ from .metric_alert_criteria import MetricAlertCriteria
 
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
-    """Speficies the metric alert criteria for multiple resource that has multiple
+    """Specifies the metric alert criteria for multiple resource that has multiple
     metric criteria.
 
     All required parameters must be populated in order to send to Azure.

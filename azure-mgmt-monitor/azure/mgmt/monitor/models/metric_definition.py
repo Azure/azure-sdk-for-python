@@ -21,7 +21,7 @@ class MetricDefinition(Model):
     :param resource_id: the resource identifier of the resource that emitted
      the metric.
     :type resource_id: str
-    :param namespace: the namespace the metric blongs to.
+    :param namespace: the namespace the metric belongs to.
     :type namespace: str
     :param name: the name and the display name of the metric, i.e. it is a
      localizable string.

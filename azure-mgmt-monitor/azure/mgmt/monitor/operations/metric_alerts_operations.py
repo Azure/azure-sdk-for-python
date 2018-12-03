@@ -102,7 +102,7 @@ class MetricAlertsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve alert rule defintions in a resource group.
+        """Retrieve alert rule definitions in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -168,7 +168,7 @@ class MetricAlertsOperations(object):
 
     def get(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve an alert rule definiton.
+        """Retrieve an alert rule definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -363,7 +363,7 @@ class MetricAlertsOperations(object):
 
     def delete(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an alert rule defitiniton.
+        """Delete an alert rule definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

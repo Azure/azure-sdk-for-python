@@ -13,8 +13,7 @@ from .action_py3 import Action
 
 
 class LogToMetricAction(Action):
-    """Specifiy action need to be taken when rule type is converting log to
-    metric.
+    """Specify action need to be taken when rule type is converting log to metric.
 
     All required parameters must be populated in order to send to Azure.
 
