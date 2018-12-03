@@ -17,8 +17,8 @@ class DPMProtectedItem(ProtectedItem):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup managemenent for the backed
-     up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+    :param backup_management_type: Type of backup management for the backed up
+     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
     :type backup_management_type: str or
@@ -53,7 +53,7 @@ class DPMProtectedItem(ProtectedItem):
     :param backup_engine_name: Backup Management server protecting this backup
      item
     :type backup_engine_name: str
-    :param protection_state: Protection state of the backupengine. Possible
+    :param protection_state: Protection state of the backup engine. Possible
      values include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or
