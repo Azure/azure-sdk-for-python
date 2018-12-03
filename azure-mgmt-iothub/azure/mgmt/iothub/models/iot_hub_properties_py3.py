@@ -26,7 +26,7 @@ class IotHubProperties(Model):
     :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
-    :ivar state: Thehub state state.
+    :ivar state: The hub state.
     :vartype state: str
     :ivar host_name: The name of the host.
     :vartype host_name: str
