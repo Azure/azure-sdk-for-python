@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MediaLiveEventIncomingDataChunkDroppedEventData(Model):
-    """Ingest fragment dropped event event data.
+    """Ingest fragment dropped event data.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
