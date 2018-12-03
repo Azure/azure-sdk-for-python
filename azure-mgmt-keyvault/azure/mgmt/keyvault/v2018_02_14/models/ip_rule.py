@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IPRule(Model):
-    """A rule governing the accesibility of a vault from a specific ip address or
+    """A rule governing the accessibility of a vault from a specific ip address or
     ip range.
 
     All required parameters must be populated in order to send to Azure.

@@ -21,7 +21,7 @@ class OperationDisplay(Model):
     :type resource: str
     :param operation: Type of operation: get, read, delete, etc.
     :type operation: str
-    :param description: Decription of operation.
+    :param description: Description of operation.
     :type description: str
     """
 
