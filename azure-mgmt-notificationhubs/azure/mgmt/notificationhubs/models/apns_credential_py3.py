@@ -21,7 +21,7 @@ class ApnsCredential(Model):
     :type certificate_key: str
     :param endpoint: The endpoint of this credential.
     :type endpoint: str
-    :param thumbprint: The Apns certificate Thumbprint
+    :param thumbprint: The APNS certificate Thumbprint
     :type thumbprint: str
     :param key_id: A 10-character key identifier (kid) key, obtained from your
      developer account
