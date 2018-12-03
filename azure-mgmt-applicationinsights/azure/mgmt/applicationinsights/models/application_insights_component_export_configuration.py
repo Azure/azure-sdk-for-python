@@ -19,7 +19,7 @@ class ApplicationInsightsComponentExportConfiguration(Model):
     sending a request.
 
     :ivar export_id: The unique ID of the export configuration inside an
-     Applciation Insights component. It is auto generated when the Continuous
+     Application Insights component. It is auto generated when the Continuous
      Export configuration is created.
     :vartype export_id: str
     :ivar instrumentation_key: The instrumentation key of the Application

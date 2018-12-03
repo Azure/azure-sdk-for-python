@@ -366,7 +366,7 @@ class WebTestsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get all Application Insights web test alerts definitioned within a
+        """Get all Application Insights web test alerts definitions within a
         subscription.
 
         :param dict custom_headers: headers that will be added to the request

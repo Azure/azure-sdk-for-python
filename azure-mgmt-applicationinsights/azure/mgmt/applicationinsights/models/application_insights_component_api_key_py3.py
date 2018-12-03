@@ -18,7 +18,7 @@ class ApplicationInsightsComponentAPIKey(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique ID of the API key inside an Applciation Insights
+    :ivar id: The unique ID of the API key inside an Application Insights
      component. It is auto generated when the API key is created.
     :vartype id: str
     :ivar api_key: The API key value. It will be only return once when the API
