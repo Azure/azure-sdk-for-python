@@ -38,7 +38,7 @@ class ReservationRecommendationsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """List of recomendations for purchasing reserved instances.
+        """List of recommendations for purchasing reserved instances.
 
         :param filter: May be used to filter reservationRecommendations by
          properties/scope and properties/lookBackPeriod.
