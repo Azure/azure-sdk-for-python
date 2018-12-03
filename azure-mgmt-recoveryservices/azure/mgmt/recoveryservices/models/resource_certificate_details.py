@@ -23,7 +23,7 @@ class ResourceCertificateDetails(Model):
 
     :param certificate: The base64 encoded certificate raw data string.
     :type certificate: bytearray
-    :param friendly_name: Certificate friendlyname.
+    :param friendly_name: Certificate friendly name.
     :type friendly_name: str
     :param issuer: Certificate issuer.
     :type issuer: str
