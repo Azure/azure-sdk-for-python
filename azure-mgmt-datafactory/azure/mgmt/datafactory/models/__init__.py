@@ -76,6 +76,7 @@ try:
     from .operation_metric_specification_py3 import OperationMetricSpecification
     from .operation_service_specification_py3 import OperationServiceSpecification
     from .operation_py3 import Operation
+    from .get_ssis_object_metadata_request_py3 import GetSsisObjectMetadataRequest
     from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference_py3 import TriggerReference
     from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
@@ -359,6 +360,8 @@ try:
     from .integration_runtime_compute_properties_py3 import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime_py3 import ManagedIntegrationRuntime
     from .integration_runtime_node_ip_address_py3 import IntegrationRuntimeNodeIpAddress
+    from .ssis_object_metadata_py3 import SsisObjectMetadata
+    from .ssis_object_metadata_list_response_py3 import SsisObjectMetadataListResponse
     from .integration_runtime_node_monitoring_data_py3 import IntegrationRuntimeNodeMonitoringData
     from .integration_runtime_monitoring_data_py3 import IntegrationRuntimeMonitoringData
     from .integration_runtime_auth_keys_py3 import IntegrationRuntimeAuthKeys
@@ -431,6 +434,7 @@ except (SyntaxError, ImportError):
     from .operation_metric_specification import OperationMetricSpecification
     from .operation_service_specification import OperationServiceSpecification
     from .operation import Operation
+    from .get_ssis_object_metadata_request import GetSsisObjectMetadataRequest
     from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference import TriggerReference
     from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
@@ -714,6 +718,8 @@ except (SyntaxError, ImportError):
     from .integration_runtime_compute_properties import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime import ManagedIntegrationRuntime
     from .integration_runtime_node_ip_address import IntegrationRuntimeNodeIpAddress
+    from .ssis_object_metadata import SsisObjectMetadata
+    from .ssis_object_metadata_list_response import SsisObjectMetadataListResponse
     from .integration_runtime_node_monitoring_data import IntegrationRuntimeNodeMonitoringData
     from .integration_runtime_monitoring_data import IntegrationRuntimeMonitoringData
     from .integration_runtime_auth_keys import IntegrationRuntimeAuthKeys
@@ -786,6 +792,7 @@ from .data_factory_management_client_enums import (
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
+    SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
 )
 
@@ -856,6 +863,7 @@ __all__ = [
     'OperationMetricSpecification',
     'OperationServiceSpecification',
     'Operation',
+    'GetSsisObjectMetadataRequest',
     'SelfDependencyTumblingWindowTriggerReference',
     'TriggerReference',
     'TumblingWindowTriggerDependencyReference',
@@ -1139,6 +1147,8 @@ __all__ = [
     'IntegrationRuntimeComputeProperties',
     'ManagedIntegrationRuntime',
     'IntegrationRuntimeNodeIpAddress',
+    'SsisObjectMetadata',
+    'SsisObjectMetadataListResponse',
     'IntegrationRuntimeNodeMonitoringData',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeAuthKeys',
@@ -1210,5 +1220,6 @@ __all__ = [
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',
+    'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
 ]
