@@ -35,7 +35,7 @@ class Remediation(Model):
      resources to remediate.
     :type filters: ~azure.mgmt.policyinsights.models.RemediationFilters
     :param deployment_status: The deployment status summary for all
-     deplyoments created by the remediation.
+     deployments created by the remediation.
     :type deployment_status:
      ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
     :ivar id: The ID of the remediation.
