@@ -17,7 +17,7 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup managemenent to backup an
+    :param backup_management_type: Type of backup management to backup an
      item.
     :type backup_management_type: str
     :param workload_type: Type of workload for the backup management
@@ -45,11 +45,11 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
     :type is_auto_protectable: bool
     :param is_auto_protected: Indicates if protectable item is auto-protected
     :type is_auto_protected: bool
-    :param subinquireditemcount: For instance or AG, indicates number of DB's
+    :param subinquireditemcount: For instance or AG, indicates number of DBs
      present
     :type subinquireditemcount: int
     :param subprotectableitemcount: For instance or AG, indicates number of
-     DB's to be protected
+     DBs to be protected
     :type subprotectableitemcount: int
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:

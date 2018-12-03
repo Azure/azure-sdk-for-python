@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class KeyAndSecretDetails(Model):
     """BEK is bitlocker key.
     KEK is encryption key for BEK
-    If the VM was encrypted then we will store follwing details :
+    If the VM was encrypted then we will store following details :
     1. Secret(BEK) - Url + Backup Data + vaultId.
     2. Key(KEK) - Url + Backup Data + vaultId.
     3. EncryptionMechanism
-    BEK and KEK can potentiallty have different vault ids.
+    BEK and KEK can potentially have different vault ids.
 
     :param kek_details: KEK is encryption key for BEK.
     :type kek_details: ~azure.mgmt.recoveryservicesbackup.models.KEKDetails
-    :param bek_details: BEK is bitlocker encrpytion key.
+    :param bek_details: BEK is bitlocker encryption key.
     :type bek_details: ~azure.mgmt.recoveryservicesbackup.models.BEKDetails
     :param encryption_mechanism: Encryption mechanism: None/ SinglePass/
      DoublePass

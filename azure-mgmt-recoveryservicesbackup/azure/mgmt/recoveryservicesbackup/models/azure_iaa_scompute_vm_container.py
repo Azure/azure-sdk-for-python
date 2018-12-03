@@ -20,7 +20,7 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer):
 
     :param friendly_name: Friendly name of the container.
     :type friendly_name: str
-    :param backup_management_type: Type of backup managemenent for the
+    :param backup_management_type: Type of backup management for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'

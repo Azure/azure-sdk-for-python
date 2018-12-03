@@ -17,7 +17,7 @@ class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup managemenent to backup an
+    :param backup_management_type: Type of backup management to backup an
      item.
     :type backup_management_type: str
     :param workload_type: Type of workload for the backup management
@@ -37,11 +37,11 @@ class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
     :type server_name: str
     :param is_auto_protectable: Indicates if workload item is auto-protectable
     :type is_auto_protectable: bool
-    :param subinquireditemcount: For instance or AG, indicates number of DB's
+    :param subinquireditemcount: For instance or AG, indicates number of DBs
      present
     :type subinquireditemcount: int
     :param sub_workload_item_count: For instance or AG, indicates number of
-     DB's to be protected
+     DBs to be protected
     :type sub_workload_item_count: int
     """
 
