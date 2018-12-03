@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VirtualMachineReimageParameters(Model):
-    """Paramaters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk
+    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk
     will always be reimaged.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
