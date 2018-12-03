@@ -138,8 +138,8 @@ class CertificateStoreLocation(str, Enum):
 class CertificateVisibility(str, Enum):
 
     start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run.
-    task = "Task"  #: The certificate should be visibile to the user accounts under which job tasks are run.
-    remote_user = "RemoteUser"  #: The certificate should be visibile to the user accounts under which users remotely access the node.
+    task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
+    remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
 
 class NameAvailabilityReason(str, Enum):
