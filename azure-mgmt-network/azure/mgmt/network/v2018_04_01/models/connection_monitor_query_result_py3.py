@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectionMonitorQueryResult(Model):
-    """List of connection states snaphots.
+    """List of connection states snapshots.
 
     :param source_status: Status of connection monitor source. Possible values
      include: 'Uknown', 'Active', 'Inactive'

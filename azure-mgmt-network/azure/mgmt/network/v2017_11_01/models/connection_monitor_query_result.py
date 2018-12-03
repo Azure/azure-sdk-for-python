@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectionMonitorQueryResult(Model):
-    """List of connection states snaphots.
+    """List of connection states snapshots.
 
     :param states: Information about connection states.
     :type states:

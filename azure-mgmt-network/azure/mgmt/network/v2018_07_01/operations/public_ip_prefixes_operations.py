@@ -124,7 +124,7 @@ class PublicIPPrefixesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param public_ip_prefix_name: The name of the PublicIPPrefx.
+        :param public_ip_prefix_name: The name of the Public IP Prefix.
         :type public_ip_prefix_name: str
         :param expand: Expands referenced resources.
         :type expand: str
