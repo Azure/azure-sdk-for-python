@@ -13,7 +13,7 @@ from .job_details import JobDetails
 
 
 class DataBoxHeavyJobDetails(JobDetails):
-    """Databox Heavy Device Job Details.
+    """DataBoxHeavy Device Job Details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -21,7 +21,7 @@ class DataBoxHeavyJobDetails(JobDetails):
     All required parameters must be populated in order to send to Azure.
 
     :param expected_data_size_in_tera_bytes: The expected size of the data,
-     which needs to be transfered in this job, in tera bytes.
+     which needs to be transferred in this job, in terabytes.
     :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]

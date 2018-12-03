@@ -15,7 +15,7 @@ from enum import Enum
 class ShareDestinationFormatType(str, Enum):
 
     unknown_type = "UnknownType"  #: Unknown format.
-    hcs = "HCS"  #: Storsimple data format.
+    hcs = "HCS"  #: StorSimple data format.
     block_blob = "BlockBlob"  #: Azure storage block blob format.
     page_blob = "PageBlob"  #: Azure storage page blob format.
     azure_file = "AzureFile"  #: Azure storage file format.
@@ -44,9 +44,9 @@ class AddressType(str, Enum):
 
 class SkuName(str, Enum):
 
-    data_box = "DataBox"  #: Databox.
-    data_box_disk = "DataBoxDisk"  #: DataboxDisk.
-    data_box_heavy = "DataBoxHeavy"  #: DataboxHeavy.
+    data_box = "DataBox"  #: DataBox.
+    data_box_disk = "DataBoxDisk"  #: DataBoxDisk.
+    data_box_heavy = "DataBoxHeavy"  #: DataBoxHeavy.
 
 
 class SkuDisabledReason(str, Enum):
@@ -71,7 +71,7 @@ class NotificationStageName(str, Enum):
 
 class CopyStatus(str, Enum):
 
-    not_started = "NotStarted"  #: Data copy hasnt started yet.
+    not_started = "NotStarted"  #: Data copy hasn't started yet.
     in_progress = "InProgress"  #: Data copy is in progress.
     completed = "Completed"  #: Data copy completed.
     completed_with_errors = "CompletedWithErrors"  #: Data copy completed with errors.

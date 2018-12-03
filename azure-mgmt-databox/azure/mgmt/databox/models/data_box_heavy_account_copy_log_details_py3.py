@@ -13,7 +13,7 @@ from .copy_log_details_py3 import CopyLogDetails
 
 
 class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
-    """Copy log details for a storage account for Databox heavy.
+    """Copy log details for a storage account for DataBoxHeavy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
