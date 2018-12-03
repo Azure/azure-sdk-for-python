@@ -32,7 +32,7 @@ class JsonWebKeyCurveName(str, Enum):
 class DeletionRecoveryLevel(str, Enum):
 
     purgeable = "Purgeable"  #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and irreversible data loss.
-    recoverable_purgeable = "Recoverable+Purgeable"  #: Soft-delete is enabled for this vault; A priveleged user may trigger an immediate, irreversible deletion(purge) of a deleted entity.
+    recoverable_purgeable = "Recoverable+Purgeable"  #: Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible deletion(purge) of a deleted entity.
     recoverable = "Recoverable"  #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain in this state until recovered, or the end of the retention interval.
     recoverable_protected_subscription = "Recoverable+ProtectedSubscription"  #: Soft-delete is enabled for this vault, and the subscription is protected against immediate deletion.
 

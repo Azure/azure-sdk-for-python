@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Contact(Model):
     """The contact information for the vault certificates.
 
-    :param email_address: Email addresss.
+    :param email_address: Email address.
     :type email_address: str
     :param name: Name.
     :type name: str
