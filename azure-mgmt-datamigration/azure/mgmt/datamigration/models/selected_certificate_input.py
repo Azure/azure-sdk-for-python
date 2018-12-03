@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SelectedCertificateInput(Model):
-    """Info for ertificate to be exported for TDE enabled databases.
+    """Info for certificate to be exported for TDE enabled databases.
 
     All required parameters must be populated in order to send to Azure.
 

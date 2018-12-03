@@ -26,7 +26,7 @@ class ProjectFileProperties(Model):
     :type file_path: str
     :ivar last_modified: Modification DateTime.
     :vartype last_modified: datetime
-    :param media_type: File content type. This propery can be modified to
+    :param media_type: File content type. This property can be modified to
      reflect the file content type.
     :type media_type: str
     :ivar size: File size.
