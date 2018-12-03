@@ -34,7 +34,7 @@ class UpgradeDetails(Model):
     :ivar message: Message to the user containing information about the
      upgrade operation.
     :vartype message: str
-    :ivar trigger_type: The way the vault upgradation was triggered. Possible
+    :ivar trigger_type: The way the vault upgrade was triggered. Possible
      values include: 'UserTriggered', 'ForcedUpgrade'
     :vartype trigger_type: str or
      ~azure.mgmt.recoveryservices.models.TriggerType
