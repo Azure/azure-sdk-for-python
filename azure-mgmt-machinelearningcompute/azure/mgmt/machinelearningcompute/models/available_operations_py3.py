@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class KubernetesClusterProperties(Model):
-    """Kubernetes cluster specific properties.
+class AvailableOperations(Model):
+    """Available operation list.
 
-    :param service_principal: The Azure Service Principal used by Kubernetes
-    :type service_principal:
-     ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
+    :param value: An array of available operations.
+    :type value:
+     list[~azure.mgmt.machinelearningcompute.models.ResourceOperation]
     """
 
     _attribute_map = {
-        'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
+        'value': {'key': 'value', 'type': '[ResourceOperation]'},
     }
 
-    def __init__(self, **kwargs):
-        super(KubernetesClusterProperties, self).__init__(**kwargs)
-        self.service_principal = kwargs.get('service_principal', None)
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(AvailableOperations, self).__init__(**kwargs)
+        self.value = value

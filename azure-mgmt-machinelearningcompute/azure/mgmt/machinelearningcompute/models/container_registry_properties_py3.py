@@ -12,10 +12,12 @@
 from msrest.serialization import Model
 
 
-class AppInsightsProperties(Model):
-    """Properties of App Insights.
+class ContainerRegistryProperties(Model):
+    """Properties of Azure Container Registry.
 
-    :param resource_id: ARM resource ID of the App Insights.
+    :param resource_id: ARM resource ID of the Azure Container Registry used
+     to store Docker images for web services in the cluster. If not provided
+     one will be created. This cannot be changed once the cluster is created.
     :type resource_id: str
     """
 
@@ -23,6 +25,6 @@ class AppInsightsProperties(Model):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AppInsightsProperties, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(ContainerRegistryProperties, self).__init__(**kwargs)
+        self.resource_id = resource_id

@@ -32,6 +32,6 @@ class CheckSystemServicesUpdatesAvailableResponse(Model):
         'updates_available': {'key': 'updatesAvailable', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(CheckSystemServicesUpdatesAvailableResponse, self).__init__(**kwargs)
         self.updates_available = None
