@@ -17,7 +17,7 @@ class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: The filter key. Represents an event property with upto two
+    :param key: The filter key. Represents an event property with up to two
      levels of nesting.
     :type key: str
     :param operator_type: Required. Constant filled by server.
