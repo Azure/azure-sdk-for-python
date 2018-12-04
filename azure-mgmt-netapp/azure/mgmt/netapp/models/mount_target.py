@@ -36,8 +36,6 @@ class MountTarget(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
-    :ivar name1: name. The name of the mount target
-    :vartype name1: str
     :param vlan_id: vlanid. Vlan Id
     :type vlan_id: int
     :param start_ip: startIp. The start of IPv4 address range to use when
@@ -63,7 +61,6 @@ class MountTarget(Model):
         'mount_target_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'ip_address': {'readonly': True},
-        'name1': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -75,7 +72,6 @@ class MountTarget(Model):
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'name1': {'key': 'properties.name', 'type': 'str'},
         'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
         'start_ip': {'key': 'properties.startIp', 'type': 'str'},
         'end_ip': {'key': 'properties.endIp', 'type': 'str'},
@@ -93,7 +89,6 @@ class MountTarget(Model):
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
         self.ip_address = None
-        self.name1 = None
         self.vlan_id = kwargs.get('vlan_id', None)
         self.start_ip = kwargs.get('start_ip', None)
         self.end_ip = kwargs.get('end_ip', None)

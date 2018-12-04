@@ -26,6 +26,8 @@ class Snapshot(Model):
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param tags: Resource tags
     :type tags: object
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
@@ -33,8 +35,6 @@ class Snapshot(Model):
     :param file_system_id: Required. fileSystemId. UUID v4 used to identify
      the FileSystem
     :type file_system_id: str
-    :ivar name1: name. The name of the snapshot
-    :vartype name1: str
     :ivar creation_date: name. The creation date of the snapshot
     :vartype creation_date: datetime
     :ivar provisioning_state: Azure lifecycle management
@@ -45,9 +45,9 @@ class Snapshot(Model):
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'snapshot_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'name1': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -56,10 +56,10 @@ class Snapshot(Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
-        'name1': {'key': 'properties.name', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -69,9 +69,9 @@ class Snapshot(Model):
         self.location = kwargs.get('location', None)
         self.id = None
         self.name = None
+        self.type = None
         self.tags = kwargs.get('tags', None)
         self.snapshot_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
-        self.name1 = None
         self.creation_date = None
         self.provisioning_state = None
